@@ -70,9 +70,13 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
 
         code.Eol().Str("$name = ");
         if (code.HasValue(prop_window_name))
+        {
             code.QuotedString(prop_window_name);
+        }
         else
+        {
             code += "\"frame\"";
+        }
         code.Str(" unless defined $name;");
     }
     else if (code.is_python())
@@ -81,9 +85,13 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         // https://docs.wxpython.org/wx.lib.docview.DocParentFrame.html
         code.Add("class ").NodeName();
         if (frame_type == frame_aui)
+        {
             code.Str("wx.aui.AuiMDIParentFrame):\n");
+        }
         else
+        {
             code.Str("(wx.Frame):\n");
+        }
         code.Eol().Tab().Add("def __init__(self, ");
         if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
         {
@@ -106,9 +114,13 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.HasValue(prop_window_name))
+        {
             code.QuotedString(prop_window_name);
+        }
         else
+        {
             code.Str("wx.FrameNameStr");
+        }
         code.Str("):");
         code.Unindent();
         code.Eol() += "wx.Frame.__init__(self)";
@@ -129,9 +141,13 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         }
         code.Add("class ").NodeName();
         if (frame_type == frame_aui)
+        {
             code.Str(" < Wx::AUI::AuiMDIParentFrame").Eol();
+        }
         else
+        {
             code.Str(" < Wx::Frame").Eol();
+        }
         code.AddPublicRubyMembers();
         code.Eol(eol_if_needed).Tab().Str("def initialize(parent");
         // Indent any wrapped lines
@@ -242,9 +258,13 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
             code += code.node()->as_string(prop_subclass_params);
             code.RightTrim();
             if (code.back() != ',')
+            {
                 code.Comma();
+            }
             else
+            {
                 code += ' ';
+            }
         }
         if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
         {
@@ -379,7 +399,7 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
         }
     }
 
-    auto& center = code.node()->as_string(prop_center);
+    const auto& center = code.node()->as_string(prop_center);
     if (center.size() && !center.is_sameas("no"))
     {
         code.Eol(eol_if_needed).FormFunction("Centre(").AddConstant(center).EndFunction();
@@ -416,7 +436,7 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     }
     code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
-    auto& title = node->as_string(prop_title);
+    const auto& title = node->as_string(prop_title);
     if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
@@ -449,8 +469,8 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
         code.WxSize(prop_size, no_dpi_scaling);
     }
 
-    auto& style = node->as_string(prop_style);
-    auto& win_style = node->as_string(prop_window_style);
+    const auto& style = node->as_string(prop_style);
+    const auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
     {
         code.Comma().Str("long style = 0");
@@ -590,7 +610,7 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
 {
     if (prop->isProp(prop_extra_style))
     {
-        auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
         wxue::string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
@@ -600,7 +620,7 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
 
         if (newValue.contains("wxFRAME_EX_CONTEXTHELP"))
         {
-            auto& style = node->as_string(prop_style);
+            const auto& style = node->as_string(prop_style);
             if (style.contains("wxDEFAULT_FRAME_STYLE") || style.contains("wxMINIMIZE_BOX") ||
                 style.contains("wxMINIMIZE_BOX"))
             {

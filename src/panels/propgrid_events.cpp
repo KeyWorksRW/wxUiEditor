@@ -647,7 +647,7 @@ void PropGridPanel::AllowDirectoryChange(wxPropertyGridEvent& event, NodePropert
     {
         // Displaying the message box can cause a focus change event which will call validation
         // again in the OnIdle() processing. Preserve the focus to avoid validating twice.
-        auto focus = wxWindow::FindFocus();
+        auto* focus = wxWindow::FindFocus();
 
         auto result =
             wxMessageBox(wxString() << "The directory \"" << newValue.GetFullPath()
@@ -687,7 +687,9 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
         wxFileName newValue;
         newValue.Assign(event.GetPropertyValue().GetString());
         if (!newValue.IsOk())
+        {
             return;
+        }
 
         newValue.MakeAbsolute();
         newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
@@ -700,12 +702,14 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
         for (const auto& child: forms)
         {
             if (child == node)
+            {
                 continue;
+            }
             if (prop->isProp(prop_base_file))
             {
                 if (child->as_string(prop_base_file).filename() == filename)
                 {
-                    auto focus = wxWindow::FindFocus();
+                    auto* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The base filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -730,7 +734,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
             {
                 if (child->as_string(prop_python_file).filename() == filename)
                 {
-                    auto focus = wxWindow::FindFocus();
+                    auto* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The python filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -755,7 +759,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
             {
                 if (child->as_string(prop_ruby_file).filename() == filename)
                 {
-                    auto focus = wxWindow::FindFocus();
+                    auto* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The ruby filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -780,7 +784,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
             {
                 if (child->as_string(prop_perl_file).filename() == filename)
                 {
-                    auto focus = wxWindow::FindFocus();
+                    auto* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The perl filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -808,7 +812,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                 // same filename provided it is in a different directory.
                 if (child->as_string(prop_xrc_file) == filename)
                 {
-                    auto focus = wxWindow::FindFocus();
+                    auto* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The xrc filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -847,7 +851,9 @@ void PropGridPanel::OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop
     wxFileName newValue;
     newValue.AssignDir(event.GetPropertyValue().GetString());
     if (!newValue.IsOk())
+    {
         return;
+    }
 
     if (!node->is_Gen(gen_wxFilePickerCtrl))
     {
@@ -883,12 +889,16 @@ void PropGridPanel::OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop
 
 void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
 {
-    auto& old_path = Project.as_string(prop_derived_directory);
+    const auto& old_path = Project.as_string(prop_derived_directory);
     path.backslashestoforward();
     if (path == "./")
+    {
         path.clear();
+    }
     if (path.size() && path.back() == '/')
+    {
         path.pop_back();
+    }
 
     auto undo_derived = std::make_shared<ModifyProperties>("Derived directory");
     undo_derived->addProperty(Project.get_ProjectNode()->get_PropPtr(prop_derived_directory), path);
@@ -904,7 +914,9 @@ void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')
+            {
                 cur_path.pop_back();
+            }
 
             // if the current directory and the old directory aren't the same, then leave it alone
             if (!old_path.is_sameas(cur_path, wxue::CASE::either))
@@ -923,12 +935,16 @@ void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
 
 void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
 {
-    auto& old_path = Project.as_string(prop_base_directory);
+    const auto& old_path = Project.as_string(prop_base_directory);
     path.backslashestoforward();
     if (path == "./")
+    {
         path.clear();
+    }
     if (path.size() && path.back() == '/')
+    {
         path.pop_back();
+    }
 
     auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
     undo_derived->addProperty(Project.get_ProjectNode()->get_PropPtr(prop_base_directory), path);
@@ -944,7 +960,9 @@ void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')
+            {
                 cur_path.pop_back();
+            }
 
             // if the current directory and the old directory aren't the same, then leave it alone
             if (!old_path.is_sameas(cur_path, wxue::CASE::either))

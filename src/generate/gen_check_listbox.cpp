@@ -20,9 +20,9 @@ using namespace code;
 
 wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                     DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr,
-                                     node->as_int(prop_type) | GetStyleInt(node));
+    auto* widget = new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                      DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0,
+                                      nullptr, node->as_int(prop_type) | GetStyleInt(node));
 
     auto items = node->as_checklist_items(prop_contents);
     if (items.size())
@@ -31,7 +31,9 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             auto pos = widget->Append(iter.label.wx());
             if (iter.checked == "1")
+            {
                 widget->Check(pos);
+            }
         }
 
         if (node->as_string(prop_selection_string).size())
@@ -42,7 +44,9 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) widget->GetCount())
+            {
                 widget->SetSelection(sel);
+            }
         }
     }
 
@@ -61,9 +65,13 @@ bool CheckListBoxGenerator::ConstructionCode(Code& code)
         code.Comma().Pos().Comma().WxSize();
         code.Comma();
         if (code.is_cpp())
+        {
             code += "0, nullptr";
+        }
         else
+        {
             code += "[]";
+        }
         code.Comma().Style(nullptr, code.node()->as_string(prop_type));
 
         if (params_needed & window_name_needed)
@@ -80,7 +88,7 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -116,15 +124,21 @@ bool CheckListBoxGenerator::SettingsCode(Code& code)
         {
             code.OpenBrace();
             if (code.is_cpp())
+            {
                 code += "int item_position;";
+            }
             for (auto& iter: contents)
             {
                 code.Eol(eol_if_empty);
                 if (iter.checked == "1")
+                {
                     code += "item_position = ";
+                }
                 code.NodeName().Function("Append(").QuotedString(iter.label).EndFunction();
                 if (iter.checked == "1")
+                {
                     code.Eol().NodeName().Function("Check(item_position").EndFunction();
+                }
             }
             code.CloseBrace();
         }
@@ -165,7 +179,9 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 {
     InsertGeneratorInclude(node, "#include <wx/checklst.h>", set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 
@@ -197,12 +213,16 @@ int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     // TODO: [KeyWorks - 06-04-2022] This needs to be supported in XRC
     if (node->HasValue(prop_selection_string))
+    {
         item.append_child("value").text().set(node->as_string(prop_selection_string));
+    }
 
     // Older versions of wxWidgets didn't support setting the selection via the value property,
     // so we add the property here even if the above is set.
     if (node->as_int(prop_selection_int) >= 0)
+    {
         item.append_child("selection").text().set(node->as_string(prop_selection_int));
+    }
 
     GenXrcStylePosSize(node, item, prop_type);
     GenXrcWindowSettings(node, item);

@@ -247,27 +247,29 @@ auto resForm::AppendStyle(GenEnum::PropName prop_name, wxue::string_view style) 
     m_form_node->set_value(prop_name, updated_style);
 }
 
-[[nodiscard]] auto resForm::ConvertFormID(wxue::string_view id) -> wxue::string
+[[nodiscard]] auto resForm::ConvertFormID(wxue::string_view res_id) -> wxue::string
 {
-    id.moveto_nonspace();
+    res_id.moveto_nonspace();
     wxue::string value;
-    if (id.at(0) == '"')
+    if (res_id.at(0) == '"')
     {
-        value.AssignSubString(id);
+        value.AssignSubString(res_id);
     }
     else if (wxue::is_digit(value[0]))
     {
-        value << "id_" << id;
+        value << "id_" << res_id;
     }
     else
     {
-        value = id;
+        value = res_id;
     }
 
     value.RightTrim();
 
     if (value.starts_with("IDD_"))
+    {
         value.erase(0, sizeof("IDD_") - 1);
+    }
 
     if (value.size() > 1 && std::isupper(value[1]))
     {

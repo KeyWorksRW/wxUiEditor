@@ -100,11 +100,15 @@ bool CustomControl::ConstructionCode(Code& code)
     code.AddAuto().NodeName();
     code.Str(" = ").AddIfCpp("new ");
     if (code.HasValue(prop_namespace) && code.is_cpp())
+    {
         code.as_string(prop_namespace) += "::";
+    }
 
     wxue::string parameters(code.view(prop_parameters));
     if (parameters.starts_with('('))
+    {
         parameters.erase(0, 1);
+    }
     parameters.Replace("${parent}", code.node()->get_ParentName(code.get_language(), true),
                        wxue::REPLACE::all);
     if (code.is_cpp())
@@ -162,7 +166,9 @@ bool CustomControl::ConstructionCode(Code& code)
     }
 
     if (parameters.size() && parameters.back() != ')')
+    {
         parameters += ")";
+    }
 
     code.as_string(prop_class_name)
         .Str("(")

@@ -34,9 +34,11 @@ wxObject* DataGenerator::CreateMockup(Node* node, wxObject* wxobject)
     auto* flex_grid_sizer = new wxFlexGridSizer(
         number_of_columns, static_cast<int>(node->get_ChildCount()), horizontal_spacing);
 
-    auto cur_sel_node = wxGetFrame().getSelectedNode();
+    auto* cur_sel_node = wxGetFrame().getSelectedNode();
     if (cur_sel_node->is_Gen(gen_data_folder))
+    {
         node = cur_sel_node;
+    }
     for (auto& iter: node->get_ChildNodePtrs())
     {
         auto* var_name = new wxStaticText(parent, wxID_ANY, iter->as_string(prop_var_name));

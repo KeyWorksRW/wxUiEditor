@@ -17,27 +17,33 @@
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxButton(wxStaticCast(parent, wxWindow), node->as_id(prop_id), wxEmptyString,
                      DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_label))
     {
         if (node->as_bool(prop_markup))
+        {
             widget->SetLabelMarkup(node->as_wxString(prop_label));
+        }
         else
+        {
             widget->SetLabel(node->as_wxString(prop_label));
+        }
     }
 
     if (node->as_bool(prop_default))
     {
         widget->SetDefault();
-        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->as_id(prop_id) != wxID_ANY)
+        if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg && node->as_id(prop_id) != wxID_ANY)
+        {
             dlg->SetAffirmativeId(node->as_id(prop_id));
+        }
     }
     else
     {
-        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->as_id(prop_id) != wxID_ANY)
+        if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg && node->as_id(prop_id) != wxID_ANY)
         {
             switch (node->as_id(prop_id))
             {
@@ -60,39 +66,59 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->as_bool(prop_auth_needed))
+    {
         widget->SetAuthNeeded();
+    }
 
     if (node->HasValue(prop_bitmap))
     {
         widget->SetBitmap(node->as_wxBitmapBundle(prop_bitmap));
 
         if (node->HasValue(prop_disabled_bmp))
+        {
             widget->SetBitmapDisabled(node->as_wxBitmapBundle(prop_disabled_bmp));
+        }
 
         if (node->HasValue(prop_pressed_bmp))
+        {
             widget->SetBitmapPressed(node->as_wxBitmapBundle(prop_pressed_bmp));
+        }
 
         if (node->HasValue(prop_focus_bmp))
+        {
             widget->SetBitmapFocus(node->as_wxBitmapBundle(prop_focus_bmp));
+        }
 
         if (node->HasValue(prop_current))
+        {
             widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
+        }
 
         if (node->HasValue(prop_position))
+        {
             widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
+        }
 
         if (node->HasValue(prop_margins))
+        {
             widget->SetBitmapMargins(node->as_wxSize(prop_margins));
+        }
     }
 
     if (!node->is_PropValue(prop_variant, "normal"))
     {
         if (node->is_PropValue(prop_variant, "small"))
+        {
             widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+        }
         else if (node->is_PropValue(prop_variant, "mini"))
+        {
             widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+        }
         else
+        {
             widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+        }
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -104,7 +130,9 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
 {
     // In case the widget hasn't been fully specified yet
     if (!widget || !node || !prop)
+    {
         return false;
+    }
 
     // We do not support changing the "markup" property because while the control displays correctly
     // when markup is set, it does not revert when markup is cleared (at least on Windows where
@@ -112,15 +140,19 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
 
     if (prop->isProp(prop_label) && prop->HasValue())
     {
-        auto ctrl = wxStaticCast(widget, wxButton);
+        auto* ctrl = wxStaticCast(widget, wxButton);
         if (node->as_bool(prop_markup))
+        {
             ctrl->SetLabelMarkup(node->as_wxString(prop_label));
+        }
         else
+        {
             ctrl->SetLabel(node->as_wxString(prop_label));
+        }
 
         return true;
     }
-    else if (prop->isProp(prop_markup))
+    if (prop->isProp(prop_markup))
     {
         // Turning markup on switches to generic rending of the button. However, you have to
         // recreate it to switch it off and go back to native rendering.
@@ -218,9 +250,13 @@ bool ButtonGenerator::SettingsCode(Code& code)
         }
 
         if (code.is_cpp())
+        {
             GenBtnBitmapCode(code.node(), code);
+        }
         else
+        {
             PythonBtnBitmapCode(code);
+        }
     }
 
     return true;
@@ -283,7 +319,9 @@ bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 

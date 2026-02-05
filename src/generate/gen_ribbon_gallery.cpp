@@ -21,8 +21,8 @@
 
 wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(node, prop_pos),
-                                      DlgSize(node, prop_size), 0);
+    auto* widget = new wxRibbonGallery(wxStaticCast(parent, wxRibbonPanel), wxID_ANY,
+                                       DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -32,7 +32,7 @@ wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                            bool /* is_preview */)
 {
-    auto gallery = wxStaticCast(wxobject, wxRibbonGallery);
+    auto* gallery = wxStaticCast(wxobject, wxRibbonGallery);
 
     for (const auto& child: node->get_ChildNodePtrs())
     {
@@ -40,7 +40,9 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
         {
             auto bmp = child->as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
+            {
                 bmp = GetInternalImage("default");
+            }
 
             // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
             gallery->Append(bmp, wxID_ANY);

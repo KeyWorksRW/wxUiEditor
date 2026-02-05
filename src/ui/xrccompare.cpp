@@ -132,7 +132,9 @@ extern const char* txt_dlg_name;
 XrcCompare::~XrcCompare()
 {
     if (m_created)
+    {
         wxXmlResource::Get()->Unload(m_res_name);
+    }
 }
 
 bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import)
@@ -179,7 +181,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
 
     m_created = true;
 
-    auto xrc_resource = wxXmlResource::Get();
+    auto* xrc_resource = wxXmlResource::Get();
     xrc_resource->InitAllHandlers();
     xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
     xrc_resource->AddHandler(new wxAuiXmlHandler);
@@ -195,7 +197,9 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                 if (m_compare_import)
                 {
                     if (!InitImport(form_node))
+                    {
                         return false;
+                    }
                 }
                 else
                 {
@@ -203,9 +207,11 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                 }
 
                 if (!InitXrc(form_node))
+                {
                     return false;
+                }
 
-                if (auto object = xrc_resource->LoadObject(
+                if (auto* object = xrc_resource->LoadObject(
                         this, form_node->as_string(prop_class_name), "wxPanel");
                     object)
                 {
@@ -232,7 +238,9 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                 if (m_compare_import)
                 {
                     if (!InitImport(form_node))
+                    {
                         return false;
+                    }
                 }
                 else
                 {
@@ -247,11 +255,13 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                 // GenerateXrcStr will return a wxPanel using the name txt_dlg_name
                 // ("_wxue_temp_dlg")
                 if (!InitXrc(form_node))
+                {
                     return false;
+                }
 
                 if (m_compare_import)
                 {
-                    if (auto object = xrc_resource->LoadObject(
+                    if (auto* object = xrc_resource->LoadObject(
                             this, wxue::string(form_node->as_string(prop_class_name)) << "_import",
                             "wxPanel");
                         object)
@@ -266,7 +276,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
                     }
                 }
 
-                if (auto object = xrc_resource->LoadObject(this, txt_dlg_name, "wxPanel"); object)
+                if (auto* object = xrc_resource->LoadObject(this, txt_dlg_name, "wxPanel"); object)
                 {
                     m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2),
                                           wxGBSpan(1, 1), wxALL, 5);

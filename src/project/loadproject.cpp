@@ -195,10 +195,14 @@ auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> boo
         wxGetFrame().setImportedFlag(false);
         wxGetFrame().FireProjectLoadedEvent();
         if (wxGetApp().isTestingMenuEnabled())
+        {
             wxGetFrame().getImportPanel()->SetImportFile(file);
+        }
 
         if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
+        {
             wxGetFrame().setModified();
+        }
     }
     return true;
 }
@@ -269,11 +273,15 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 {
     auto class_name = xml_obj.attribute("class").as_str();
     if (class_name.empty())
+    {
         return NodeSharedPtr();
+    }
 
     // This should never be the case, but let's switch it in the off chance it slips through
     if (class_name == "wxListCtrl")
+    {
         class_name = "wxListView";
+    }
 
     auto new_node = CreateNode(class_name, parent).first;
     if (!new_node)
@@ -286,11 +294,13 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
     for (auto& iter: xml_obj.attributes())
     {
         if (iter.name() == "class")
+        {
             continue;
+        }
 
         if (iter.name().starts_with("wxEVT_"))
         {
-            if (auto event = new_node->get_Event(iter.name()); event)
+            if (auto* event = new_node->get_Event(iter.name()); event)
             {
                 event->set_value(iter.value());
             }
@@ -321,7 +331,9 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     for (auto& item: items)
                     {
                         if (value.size())
+                        {
                             value << ';';
+                        }
                         value << item;
                     }
 
@@ -350,10 +362,14 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                             if (tokens.size())
                             {
                                 if (tokens[0].size())
+                                {
                                     result.x = tokens[0].atoi();
+                                }
 
                                 if (tokens.size() > 1 && tokens[1].size())
+                                {
                                     result.y = tokens[1].atoi();
+                                }
                             }
                         }
                         return result;
@@ -432,7 +448,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                         case type_option:
                             {
                                 bool found = false;
-                                for (auto& friendly_pair: g_friend_constant)
+                                for (const auto& friendly_pair: g_friend_constant)
                                 {
                                     if (wxue::is_sameas(friendly_pair.second, iter.value()))
                                     {
@@ -456,7 +472,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                 wxue::string new_value;
                                 for (auto& bit_value: mstr)
                                 {
-                                    for (auto& friendly_pair: g_friend_constant)
+                                    for (const auto& friendly_pair: g_friend_constant)
                                     {
                                         if (wxue::is_sameas(friendly_pair.second, bit_value))
                                         {
@@ -485,7 +501,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                                     prop->set_value(iter.value());
                                 }
 
-                                if (auto gen = new_node->get_Generator(); gen)
+                                if (auto* gen = new_node->get_Generator(); gen)
                                 {
                                     gen->VerifyProperty(prop);
                                 }
@@ -559,11 +575,11 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
         else
         {
             bool is_event = false;
-            for (auto& iterStdBtns: lstStdButtonEvents)
+            for (const auto& iterStdBtns: lstStdButtonEvents)
             {
                 if (wxue::is_sameas(iter.name(), iterStdBtns))
                 {
-                    if (auto event = new_node->get_Event(iter.name()); event)
+                    if (auto* event = new_node->get_Event(iter.name()); event)
                     {
                         event->set_value(iter.value());
                     }
@@ -573,7 +589,9 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
             }
 
             if (is_event)
+            {
                 continue;
+            }
 
             if (auto value = iter.value(); value.size())
             {
@@ -660,18 +678,18 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
 NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui)
 {
-    auto node_decl = m_a_declarations[gen_Project];
+    auto* node_decl = m_a_declarations[gen_Project];
     auto new_node = std::make_shared<Node>(node_decl);
 
     // Calling GetBaseClassCount() is expensive, so do it once and store the result
     auto node_info_base_count = m_a_declarations[gen_Project]->GetBaseClassCount();
 
     size_t base = 0;
-    for (auto class_info = node_decl; class_info; class_info = node_decl->GetBaseClass(base++))
+    for (auto* class_info = node_decl; class_info; class_info = node_decl->GetBaseClass(base++))
     {
         for (size_t index = 0; index < class_info->get_PropertyCount(); ++index)
         {
-            auto prop_declaration = class_info->get_PropDeclaration(index);
+            auto* prop_declaration = class_info->get_PropDeclaration(index);
 
             // Set the default value, either from the property info, or an override from this class
             auto defaultValue = prop_declaration->getDefaultValue();
@@ -679,10 +697,12 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
             {
                 auto result = node_decl->GetOverRideDefValue(prop_declaration->get_name());
                 if (result)
+                {
                     defaultValue = result.value();
+                }
             }
 
-            auto prop = new_node->AddNodeProperty(prop_declaration);
+            auto* prop = new_node->AddNodeProperty(prop_declaration);
             prop->set_value(defaultValue);
         }
 
@@ -692,16 +712,22 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
         }
 
         if (base >= node_info_base_count)
+        {
             break;
+        }
     }
 
     if (!xml_obj)
+    {
         return new_node;
+    }
 
     for (auto& iter: xml_obj->attributes())
     {
         if (iter.name() == "class")
+        {
             continue;
+        }
 
         NodeProperty* prop = nullptr;
         if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
@@ -733,7 +759,9 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
                         for (auto& item: items)
                         {
                             if (value.size())
+                            {
                                 value << ';';
+                            }
                             value << item;
                         }
                         prop->set_value(value);
@@ -1046,8 +1074,8 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
                 if (auto old_project = LoadProject(doc, allow_ui);
                     old_project && old_project->get_ChildCount())
                 {
-                    auto old_form = old_project->get_Child(0);
-                    auto new_form = m_project_node->get_Child(0);
+                    auto* old_form = old_project->get_Child(0);
+                    auto* new_form = m_project_node->get_Child(0);
                     new_form->set_value(prop_class_name, old_form->as_string(prop_class_name));
                     new_form->set_value(prop_base_file, old_form->as_string(prop_base_file));
                 }
@@ -1070,7 +1098,9 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
 bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 {
     if (allow_ui && wxGetFrame().isModified() && wxGetMainFrame() && !wxGetFrame().SaveWarning())
+    {
         return false;
+    }
 
     if (create_empty)
     {
@@ -1309,16 +1339,20 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
                 return;
             }
 
-            auto cur_sel = wxGetFrame().getSelectedNode();
+            auto* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
+            {
                 cur_sel = m_project_node.get();
+            }
             else
             {
                 if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
                     cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
+                    {
                         cur_sel = m_project_node.get();
+                    }
                 }
             }
 
@@ -1363,16 +1397,20 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
                 return;
             }
 
-            auto cur_sel = wxGetFrame().getSelectedNode();
+            auto* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
+            {
                 cur_sel = m_project_node.get();
+            }
             else
             {
                 if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
                     cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
+                    {
                         cur_sel = m_project_node.get();
+                    }
                 }
             }
 

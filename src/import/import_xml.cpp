@@ -166,7 +166,7 @@ auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
     -> void
 {
     auto flag_value = xml_prop.text().as_sview();
-    std::string border_value = "";
+    std::string border_value;
 
     auto append_with_pipe = [](std::string& value, std::string_view val) -> void
     {
@@ -219,7 +219,7 @@ auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
         }
     }
 
-    std::string align_value = "";
+    std::string align_value;
     if (flag_value.contains("wxALIGN_LEFT") && !is_HorizontalSizer)
     {
         align_value = "wxALIGN_LEFT";
@@ -270,7 +270,7 @@ auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
         node->set_value(prop_alignment, align_value);
     }
 
-    std::string flags_value = "";
+    std::string flags_value;
     if (flag_value.contains("wxEXPAND") || flag_value.contains("wxGROW"))
     {
         // You can't use wxEXPAND with any alignment flags
@@ -448,7 +448,7 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->is_Gen(gen_wxListView))
     {
-        std::string style = "";
+        std::string style;
         wxue::ViewVector mstr(xml_prop.text().as_view(), '|');
         for (auto& iter: mstr)
         {
@@ -1205,7 +1205,7 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
 
 auto ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node) -> void
 {
-    std::string choices = "";
+    std::string choices;
     for (const auto& iter: xml_obj.children())
     {
         if (iter.name() == "item" || iter.name() == "choice")
@@ -1298,9 +1298,9 @@ auto ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
             // the conversion to a relative path to be incorrect
             file.Replace(":\\\\\\\\", ":\\\\");
 
-            wxFileName fn(file);
-            fn.MakeRelativeTo(wxString::FromUTF8(wxGetCwd()));
-            wxString relative = fn.GetFullPath();
+            wxFileName filename(file);
+            filename.MakeRelativeTo(wxString::FromUTF8(wxGetCwd()));
+            wxString relative = filename.GetFullPath();
             wxue::back_slashesto_forward(relative);
             bitmap += relative.ToStdString();
             bitmap += ";[-1,-1]";

@@ -52,8 +52,8 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     SetOwnBackgroundColour(
         wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE).ChangeLightness(100));
 
-    auto mockup_sizer = new wxBoxSizer(wxVERTICAL);
-    auto form_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* mockup_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* form_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_MockupWindow = new wxPanel(this);
 
@@ -61,10 +61,10 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     m_panelTitleBar->SetMinSize(wxSize(46, 26));
     m_panelTitleBar->SetBackgroundColour(wxColour(127, 188, 248));
 
-    auto title_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* title_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_text_title = new wxStaticText(m_panelTitleBar, wxID_ANY, wxEmptyString);
     title_sizer->Add(m_text_title, wxSizerFlags(1).Center().Border());
-    auto bmp =
+    auto* bmp =
         new wxStaticBitmap(m_panelTitleBar, wxID_ANY,
                            wxBitmap(LoadHeaderImage(title_close_png, sizeof(title_close_png))));
     title_sizer->Add(bmp, wxSizerFlags());
@@ -145,7 +145,9 @@ void MockupParent::CreateContent()
     }
 
     if (!IsShown())
+    {
         return;
+    }
 
     m_form = wxGetFrame().getSelectedForm();
     if (!m_form)
@@ -252,7 +254,9 @@ void MockupParent::CreateContent()
         m_MockupWindow->Enable(false);
     }
     else
+    {
         m_MockupWindow->Enable();
+    }
 }
 
 void MockupParent::OnNodeDeleted(CustomEvent& /* event */)
@@ -275,7 +279,9 @@ void MockupParent::OnNodeDeleted(CustomEvent& /* event */)
     }
 
     if (!IsShown())
+    {
         return;
+    }
 
     m_MockupWindow->Hide();
 }
@@ -283,10 +289,14 @@ void MockupParent::OnNodeDeleted(CustomEvent& /* event */)
 void MockupParent::OnNodeSelected(CustomEvent& event)
 {
     if (!IsShown())
+    {
         return;
+    }
 
     if (wxGetFrame().getSelectedForm() != m_form)
+    {
         m_isIgnoreSelection = false;
+    }
 
     if (m_isIgnoreSelection)
     {
@@ -317,7 +327,9 @@ void MockupParent::MagnifyWindow(bool show)
 void MockupParent::SelectNode(wxObject* wxobject)
 {
     if (m_isPropertyChanging)
+    {
         return;
+    }
 
     // Setting this to true will ignore the next selection event, and clear the flag
     m_isIgnoreSelection = true;
@@ -343,7 +355,7 @@ wxObject* MockupParent::Get_wxObject(Node* node)
 
 wxObject* MockupParent::get_Child(wxObject* wxobject, size_t childIndex)
 {
-    if (auto node = getNode(wxobject); node)
+    if (auto* node = getNode(wxobject); node)
     {
         if (childIndex >= node->get_ChildCount())
         {
@@ -361,8 +373,10 @@ wxObject* MockupParent::get_ParentNode(wxObject* wxobject)
 {
     ASSERT(wxobject);
 
-    if (auto node = getNode(wxobject); node)
+    if (auto* node = getNode(wxobject); node)
+    {
         return Get_wxObject(node->get_Parent());
+    }
 
     FAIL_MSG("wxobject not found!");
 
@@ -422,18 +436,20 @@ static const PropName NonUiProps[] = {
 void MockupParent::OnNodePropModified(CustomEvent& event)
 {
     if (!IsShown())
+    {
         return;
+    }
 
-    auto prop = event.GetNodeProperty();
+    auto* prop = event.GetNodeProperty();
     if (prop->isProp(prop_tooltip))
     {
-        if (auto node = wxGetFrame().getSelectedNode(); node)
+        if (auto* node = wxGetFrame().getSelectedNode(); node)
         {
             if (node->is_StaticBoxSizer())
             {
                 node->get_Generator()->OnPropertyChange(Get_wxObject(node), node, prop);
             }
-            else if (auto window = wxDynamicCast(Get_wxObject(node), wxWindow); window)
+            else if (auto* window = wxDynamicCast(Get_wxObject(node), wxWindow); window)
             {
                 window->SetToolTip(prop->as_wxString());
             }
@@ -443,7 +459,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     if (prop->isProp(prop_initial) || prop->isProp(prop_min) || prop->isProp(prop_max))
     {
-        if (auto node = wxGetFrame().getSelectedNode(); node)
+        if (auto* node = wxGetFrame().getSelectedNode(); node)
         {
             node->get_Generator()->OnPropertyChange(Get_wxObject(node), node, prop);
         }
@@ -455,12 +471,15 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         if (prop->isProp(iter))
         {
             if (prop->isProp(prop_message) && prop->getNode()->is_Gen(gen_wxBannerWindow))
+            {
                 break;  // In this case, Mockup does need to be redrawn
-            else if (prop->isProp(prop_id) && prop->getNode()->is_Gen(gen_wxButton))
+            }
+            if (prop->isProp(prop_id) && prop->getNode()->is_Gen(gen_wxButton))
+            {
                 break;  // In this case, Mockup does need to be redrawn since label could have
                         // changed
-            else
-                return;
+            }
+            return;
         }
     }
 
@@ -472,11 +491,11 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     bool is_updated = false;
 
-    if (auto node = wxGetFrame().getSelectedNode(); node)
+    if (auto* node = wxGetFrame().getSelectedNode(); node)
     {
         if (prop->isProp(prop_disabled))
         {
-            auto window = Get_wxObject(node);
+            auto* window = Get_wxObject(node);
             if (!window)
             {
                 // For some content such as FormPanel, the selected node doesn't have a window that
@@ -484,14 +503,18 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
                 CreateContent();
                 return;
             }
-            else if (node->is_StaticBoxSizer())
+            if (node->is_StaticBoxSizer())
+            {
                 wxStaticCast(window, wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
+            }
             else
+            {
                 wxStaticCast(window, wxWindow)->Enable(!prop->as_bool());
+            }
             return;
         }
 
-        auto generator = node->get_Generator();
+        auto* generator = node->get_Generator();
         if (generator && generator->OnPropertyChange(Get_wxObject(node), node, prop))
         {
             wxWindowUpdateLocker freeze(this);

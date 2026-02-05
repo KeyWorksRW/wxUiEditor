@@ -178,9 +178,13 @@ bool WizardFormGenerator::SettingsCode(Code& code)
         if (is_bitmaps_list)
         {
             if (code.is_cpp())
+            {
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+            }
             else if (code.is_python())
+            {
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            }
         }
         else
         {
@@ -241,19 +245,25 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
                 // In C++, Chain() returns a reference, so "." is used instead of "->"
                 // Python and Ruby both use "."
                 if (code.is_cpp())
+                {
                     code.Str(".").Add("Chain(");
+                }
                 else
+                {
                     code.Function("Chain(");
+                }
                 code.Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
             }
             if (code.is_cpp())
+            {
                 code += ";";
+            }
         }
         code.Eol(eol_if_needed).FormFunction("GetPageAreaSizer()").Function("Add(");
         code.Str(panes[0]->as_string(prop_var_name)).EndFunction();
     }
 
-    if (auto& center = code.node()->as_string(prop_center);
+    if (const auto& center = code.node()->as_string(prop_center);
         center.size() && !center.is_sameas("no"))
     {
         code.Eol(eol_if_needed).FormFunction("Center(").Add(center).EndFunction();
@@ -280,7 +290,7 @@ bool WizardFormGenerator::HeaderCode(Code& code)
 
     code.as_string(prop_class_name).Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
-    auto& title = node->as_string(prop_title);
+    const auto& title = node->as_string(prop_title);
     if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
@@ -294,14 +304,20 @@ bool WizardFormGenerator::HeaderCode(Code& code)
 
     auto position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
-    auto& style = node->as_string(prop_style);
-    auto& win_style = node->as_string(prop_window_style);
+    const auto& style = node->as_string(prop_style);
+    const auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
+    {
         code.Comma().Str("long style = 0");
+    }
     else
     {
         code.Comma();
@@ -360,10 +376,7 @@ std::optional<wxue::string> WizardFormGenerator::GetHint(NodeProperty* prop)
     {
         return wxue::string("Title bar text");
     }
-    else
-    {
-        return {};
-    }
+    return {};
 }
 
 bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
@@ -435,32 +448,44 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     }
 
     if (node->HasValue(prop_pos))
+    {
         item.append_child("pos").text().set(node->as_string(prop_pos));
+    }
     if (node->HasValue(prop_size))
+    {
         item.append_child("size").text().set(node->as_string(prop_size));
+    }
 
     if (node->HasValue(prop_border) && node->as_int(prop_border) > 0)
+    {
         item.append_child("border").text().set(node->as_string(prop_border));
+    }
 
     if (node->HasValue(prop_bmp_placement))
     {
         item.append_child("bitmap-placement").text().set(node->as_string(prop_bmp_placement));
         if (node->as_int(prop_bmp_min_width) > 0)
+        {
             item.append_child("bitmap-minwidth").text().set(node->as_string(prop_bmp_min_width));
+        }
         if (node->HasValue(prop_bmp_background_colour))
+        {
             item.append_child("bitmap-bg")
                 .text()
                 .set(node->as_wxColour(prop_bmp_background_colour)
                          .GetAsString(wxC2S_HTML_SYNTAX)
                          .ToUTF8()
                          .data());
+        }
     }
 
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_persist))
+        {
             item.append_child(pugi::node_comment)
                 .set_value(" persist is not supported in the XRC file. ");
+        }
 
         GenXrcComments(node, item);
     }
@@ -531,7 +556,9 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
             }
             else if (code.is_python())
+            {
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            }
         }
         else
         {

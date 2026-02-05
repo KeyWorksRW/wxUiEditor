@@ -17,12 +17,14 @@
 
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                     node->as_wxString(prop_value), DlgPoint(node, prop_pos),
-                                     DlgSize(node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
+    auto* widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                      node->as_wxString(prop_value), DlgPoint(node, prop_pos),
+                                      DlgSize(node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
 
     if (node->HasValue(prop_hint))
+    {
         widget->SetHint(node->as_wxString(prop_hint));
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -51,7 +53,7 @@ bool RichTextCtrlGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -95,15 +97,14 @@ bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-bool RichTextCtrlGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool RichTextCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                       GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/rtc'");
         return true;
     }
-    else
-    {
-    }
+
     return false;
 }

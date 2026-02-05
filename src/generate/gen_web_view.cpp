@@ -24,9 +24,13 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         wxString msg = "wxWebView not available in ";
         if (Project.get_CodePreference() == GEN_LANG_RUBY)
+        {
             msg += "wxRuby3";
+        }
         else
+        {
             msg += "XRC";
+        }
         auto* widget =
             new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, msg, wxDefaultPosition,
                              wxDefaultSize, wxALIGN_CENTER_HORIZONTAL | wxBORDER_RAISED);
@@ -34,7 +38,7 @@ wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
         return widget;
     }
 #if defined(WIN32)
-    auto widget =
+    auto* widget =
         wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_url),
                        DlgPoint(node, prop_pos), DlgSize(node, prop_size), wxWebViewBackendDefault,
                        GetStyleInt(node));
@@ -65,7 +69,9 @@ bool WebViewGenerator::ConstructionCode(Code& code)
     {
         code.Comma().Add("wxWebViewBackendDefault").Comma().Style();
         if (params_needed & window_name_needed)
+        {
             code.Comma().QuotedString(prop_window_name);
+        }
     }
     code.EndFunction();
     return true;
@@ -94,7 +100,7 @@ std::optional<wxue::string> WebViewGenerator::GetWarning(Node* node, GenLang lan
         case GEN_LANG_RUBY:
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

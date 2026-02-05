@@ -23,10 +23,12 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     auto* sizer =
         new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow),
                              node->as_wxString(prop_label));
-    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
+        {
             dlg->SetSizer(sizer);
+        }
     }
 
     auto min_size = node->as_wxSize(prop_minimum_size);
@@ -50,7 +52,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     wxue::string parent_name(code.is_cpp() ? "this" : code.is_perl() ? "$self" : "self");
     if (!node->get_Parent()->is_Form())
     {
-        auto parent = node->get_Parent();
+        auto* parent = node->get_Parent();
         while (parent)
         {
             if (parent->is_Container())
@@ -61,17 +63,23 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
                 parent_name = name.NodeName();
                 break;
             }
-            else if (parent->is_Gen(gen_wxStaticBoxSizer) ||
-                     parent->is_Gen(gen_StaticCheckboxBoxSizer) ||
-                     parent->is_Gen(gen_StaticRadioBtnBoxSizer))
+            if (parent->is_Gen(gen_wxStaticBoxSizer) ||
+                parent->is_Gen(gen_StaticCheckboxBoxSizer) ||
+                parent->is_Gen(gen_StaticRadioBtnBoxSizer))
             {
                 parent_name = parent->get_NodeName(code.get_language());
                 if (code.is_cpp())
+                {
                     parent_name << "->GetStaticBox()";
+                }
                 else if (code.is_python())
+                {
                     parent_name << ".GetStaticBox()";
+                }
                 else if (code.is_ruby())
+                {
                     parent_name << ".get_static_box";
+                }
                 break;
             }
             parent = parent->get_Parent();
@@ -79,16 +87,20 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
         if (parent)
         {
             if (code.is_python() && !parent->is_Local())
+            {
                 parent_name = "self." + parent_name;
+            }
             else if (code.is_ruby() && !parent->is_Local())
+            {
                 parent_name = "@" + parent_name;
+            }
         }
     }
     code.AddAuto().NodeName().CreateClass();
     if (code.is_perl())
     {
         code.Str("Wx::StaticBox->new(").Str(parent_name).Str(", wxID_ANY");
-        if (auto& label = node->as_string(prop_label); label.size())
+        if (const auto& label = node->as_string(prop_label); label.size())
         {
             code.Comma().QuotedString(label);
         }
@@ -97,7 +109,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     else
     {
         code.Add(prop_orientation).Comma().Str(parent_name);
-        if (auto& label = node->as_string(prop_label); label.size())
+        if (const auto& label = node->as_string(prop_label); label.size())
         {
             code.Comma().QuotedString(label);
         }
@@ -130,7 +142,7 @@ bool StaticBoxSizerGenerator::SettingsCode(Code& code)
 
 bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
-    auto parent = code.node()->get_Parent();
+    auto* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -148,9 +160,13 @@ bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
             else
             {
                 if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                {
                     code.FormFunction("SetSizerAndFit(");
+                }
                 else  // Don't call Fit() if size has been specified
+                {
                     code.FormFunction("SetSizer(");
+                }
             }
             code.NodeName().EndFunction();
         }

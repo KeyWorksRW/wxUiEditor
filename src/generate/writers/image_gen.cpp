@@ -34,7 +34,7 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
     // -12 to account for 8 indent + max 3 chars for number + comma
     const size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
 
-    for (auto iter_array: m_embedded_images)
+    for (const auto* iter_array: m_embedded_images)
     {
         // The images form contains global images, so no need to generate code for them here.
         // if (iter_array->get_Form() == images_form)

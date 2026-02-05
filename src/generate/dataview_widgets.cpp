@@ -22,7 +22,7 @@
 class DataViewModel : public wxDataViewModel
 {
 public:
-    unsigned int GetChildren(const wxDataViewItem&,
+    unsigned int GetChildren(const wxDataViewItem& /* item */,
                              wxDataViewItemArray& /*children*/) const override
     {
         return 0;
@@ -32,13 +32,17 @@ public:
     {
         return wxVariant("Dummy").GetType();
     }
-    wxDataViewItem GetParent(const wxDataViewItem&) const override
+    wxDataViewItem GetParent(const wxDataViewItem& /* item */) const override
     {
         return wxDataViewItem(nullptr);
     }
-    bool IsContainer(const wxDataViewItem&) const override { return false; }
-    void GetValue(wxVariant&, const wxDataViewItem&, unsigned int /*col*/) const override {}
-    bool SetValue(const wxVariant&, const wxDataViewItem&, unsigned int /*col*/) override
+    bool IsContainer(const wxDataViewItem& /* item */) const override { return false; }
+    void GetValue(wxVariant& /* value */, const wxDataViewItem& /* item */,
+                  unsigned int /*col*/) const override
+    {
+    }
+    bool SetValue(const wxVariant& /* value */, const wxDataViewItem& /* item */,
+                  unsigned int /*col*/) override
     {
         return true;
     }
@@ -46,7 +50,7 @@ public:
 
 wxObject* DataViewCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                            DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -62,12 +66,12 @@ wxObject* DataViewCtrl::CreateMockup(Node* node, wxObject* parent)
 void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
                                  bool /* is_preview */)
 {
-    auto list = wxStaticCast(wxobject, wxDataViewCtrl);
+    auto* list = wxStaticCast(wxobject, wxDataViewCtrl);
 
     size_t count = node->get_ChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->get_Child(i);
+        auto* childObj = node->get_Child(i);
         if (childObj->is_Gen(gen_dataViewColumn))
         {
             if (childObj->as_string(prop_type) == "Text")
@@ -204,7 +208,9 @@ void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& han
 std::pair<bool, wxue::string> DataViewCtrl::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    {
         return { true, {} };
+    }
 
     return { false, wxue::string()
                         << "wxDataViewCtrl is not supported by " << GenLangToString(language) };
@@ -218,7 +224,7 @@ std::optional<wxue::string> DataViewCtrl::GetWarning(Node* node, GenLang languag
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -235,7 +241,7 @@ std::optional<wxue::string> DataViewCtrl::GetWarning(Node* node, GenLang languag
 
 wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                                DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -247,17 +253,17 @@ wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
 void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
                                      bool /* is_preview */)
 {
-    auto list = wxStaticCast(wxobject, wxDataViewListCtrl);
+    auto* list = wxStaticCast(wxobject, wxDataViewListCtrl);
 
     size_t count = node->get_ChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto childObj = node->get_Child(i);
+        auto* childObj = node->get_Child(i);
         if (childObj->is_Gen(gen_dataViewListColumn))
         {
             if (childObj->as_string(prop_type) == "Text")
             {
-                auto col = list->AppendTextColumn(
+                auto* col = list->AppendTextColumn(
                     childObj->as_wxString(prop_label),
                     static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
                     childObj->as_int(prop_width),
@@ -271,7 +277,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
             }
             else if (childObj->as_string(prop_type) == "Toggle")
             {
-                auto col = list->AppendToggleColumn(
+                auto* col = list->AppendToggleColumn(
                     childObj->as_wxString(prop_label),
                     static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
                     childObj->as_int(prop_width),
@@ -285,7 +291,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
             }
             else if (childObj->as_string(prop_type) == "Progress")
             {
-                auto col = list->AppendProgressColumn(
+                auto* col = list->AppendProgressColumn(
                     childObj->as_wxString(prop_label),
                     static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
                     childObj->as_int(prop_width),
@@ -299,7 +305,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
             }
             else if (childObj->as_string(prop_type) == "IconText")
             {
-                auto col = list->AppendIconTextColumn(
+                auto* col = list->AppendIconTextColumn(
                     childObj->as_wxString(prop_label),
                     static_cast<wxDataViewCellMode>(childObj->as_int(prop_mode)),
                     childObj->as_int(prop_width),
@@ -361,7 +367,9 @@ void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
 std::pair<bool, wxue::string> DataViewListCtrl::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    {
         return { true, {} };
+    }
 
     return { false, wxue::string()
                         << "wxDataViewListCtrl is not supported by " << GenLangToString(language) };
@@ -375,7 +383,7 @@ std::optional<wxue::string> DataViewListCtrl::GetWarning(Node* node, GenLang lan
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -392,7 +400,7 @@ std::optional<wxue::string> DataViewListCtrl::GetWarning(Node* node, GenLang lan
 
 wxObject* DataViewTreeCtrl::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                                DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -419,7 +427,9 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
 std::pair<bool, wxue::string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    {
         return { true, {} };
+    }
 
     return { false, wxue::string()
                         << "wxDataViewTreeCtrl is not supported by " << GenLangToString(language) };
@@ -433,7 +443,7 @@ std::optional<wxue::string> DataViewTreeCtrl::GetWarning(Node* node, GenLang lan
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -490,10 +500,14 @@ bool DataViewColumn::ConstructionCode(Code& code)
         .as_string(prop_width);
     code.Comma();
     if (code.is_cpp())
+    {
         code.Str("static_cast<wxAlignment>(");
+    }
     code.Add(prop_align);
     if (code.is_cpp())
+    {
         code << ')';
+    }
     code.Comma().Add(prop_flags).EndFunction();
 
     if (code.HasValue(prop_ellipsize))
@@ -527,7 +541,7 @@ std::optional<wxue::string> DataViewColumn::GetWarning(Node* node, GenLang langu
         case GEN_LANG_RUBY:
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }
@@ -549,10 +563,14 @@ bool DataViewListColumn::ConstructionCode(Code& code)
     code.QuotedString(prop_label).Comma().as_string(prop_mode).Comma().as_string(prop_width);
     code.Comma();
     if (code.is_cpp())
+    {
         code.Str("static_cast<wxAlignment>(");
+    }
     code.Add(prop_align);
     if (code.is_cpp())
+    {
         code << ')';
+    }
     code.Comma().Add(prop_flags).EndFunction();
 
     if (code.HasValue(prop_ellipsize))
@@ -571,7 +589,9 @@ bool DataViewListColumn::ConstructionCode(Code& code)
 std::pair<bool, wxue::string> DataViewListColumn::isLanguageVersionSupported(GenLang language)
 {
     if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    {
         return { true, {} };
+    }
 
     return { false, wxue::string()
                         << "DataViewListColumn is not supported by " << GenLangToString(language) };
@@ -584,7 +604,7 @@ std::optional<wxue::string> DataViewListColumn::GetWarning(Node* node, GenLang l
         case GEN_LANG_RUBY:
             {
                 wxue::string msg;
-                if (auto form = node->get_Form(); form && form->HasValue(prop_class_name))
+                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
                     msg << form->as_string(prop_class_name) << ": ";
                 }

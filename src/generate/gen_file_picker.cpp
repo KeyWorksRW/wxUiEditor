@@ -51,7 +51,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    if (auto& path = code.node()->as_string(prop_initial_path); path.size())
+    if (const auto& path = code.node()->as_string(prop_initial_path); path.size())
     {
         code.QuotedString(path);
     }
@@ -61,7 +61,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (auto& msg = code.node()->as_string(prop_message); msg.size())
+    if (const auto& msg = code.node()->as_string(prop_message); msg.size())
     {
         code.QuotedString(msg);
     }
@@ -70,13 +70,17 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
         // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support
         // wxFileSelectorPromptStr
         if (code.is_perl())
+        {
             code.QuotedString(wxue::string_view("Select a file"));
+        }
         else
+        {
             code.AddType("wxFileSelectorPromptStr");
+        }
     }
 
     code.Comma();
-    if (auto& msg = code.node()->as_string(prop_wildcard); msg.size())
+    if (const auto& msg = code.node()->as_string(prop_wildcard); msg.size())
     {
         code.QuotedString(msg);
     }
@@ -85,9 +89,13 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
         // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support
         // wxFileSelectorDefaultWildcardStr
         if (code.is_perl())
+        {
             code.Str("wxFileSelectorDefaultWildcardStr->new()");
+        }
         else
+        {
             code.AddType("wxFileSelectorDefaultWildcardStr");
+        }
     }
 
     code.PosSizeFlags(code::allow_scaling, true, "wxFLP_DEFAULT_STYLE");
@@ -99,7 +107,7 @@ bool FilePickerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -124,10 +132,7 @@ std::optional<wxue::string> FilePickerGenerator::GetPropertyDescription(NodeProp
         return (wxue::string() << "Title bar text for the file picker dialog. If not specified, "
                                   "\"Select a file\" will be used.");
     }
-    else
-    {
-        return {};
-    }
+    return {};
 }
 
 // ../../wxSnapShot/src/xrc/xh_filepicker.cpp

@@ -19,18 +19,22 @@ using namespace code;
 
 wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                 DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr,
-                                 GetStyleInt(node));
+    auto* widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                                  DlgPoint(node, prop_pos), DlgSize(node, prop_size), 0, nullptr,
+                                  GetStyleInt(node));
 
     if (node->HasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
+    {
         widget->SetHint(node->as_wxString(prop_hint));
+    }
 
     if (node->HasValue(prop_contents))
     {
         auto array = node->as_ArrayString(prop_contents);
         for (auto& iter: array)
+        {
             widget->Append(iter.wx());
+        }
 
         if (node->HasValue(prop_selection_string))
         {
@@ -40,7 +44,9 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int sel = node->as_int(prop_selection_int);
             if (sel > -1 && sel < (to_int) array.size())
+            {
                 widget->SetSelection(sel);
+            }
         }
     }
 
@@ -100,7 +106,7 @@ bool ComboBoxGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto form = code.node()->get_Form();
+        auto* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -125,9 +131,13 @@ bool ComboBoxGenerator::SettingsCode(Code& code)
                 code.as_string(prop_validator_variable) << " = ";
                 code.QuotedString(prop_selection_string);
                 if (code.is_cpp())
+                {
                     code << ";  // set validator variable";
+                }
                 else
+                {
                     code << "  # set validator variable";
+                }
             }
             else
             {
@@ -157,7 +167,9 @@ bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/combobox.h>", set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 
@@ -180,12 +192,18 @@ int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     }
 
     if (node->HasValue(prop_selection_string))
+    {
         item.append_child("value").text().set(node->as_string(prop_selection_string));
+    }
     else if (node->as_int(prop_selection_int) >= 0)
+    {
         item.append_child("selection").text().set(node->as_string(prop_selection_int));
+    }
 
     if (node->HasValue(prop_hint) && !node->as_string(prop_style).contains("wxCB_READONLY"))
+    {
         item.append_child("hint").text().set(node->as_string(prop_hint));
+    }
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

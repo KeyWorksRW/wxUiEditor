@@ -149,15 +149,15 @@ void WriteCode::WriteCodeLine(wxue::string_view code, size_t indentation)
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);
-        for (auto ch: code)
+        for (auto chr: code)
         {
-            if (ch == '\t')
+            if (chr == '\t')
             {
                 tab_code += m_TabSpaces;
             }
             else
             {
-                tab_code.push_back(ch);
+                tab_code.push_back(chr);
             }
         }
         doWrite(tab_code);
@@ -219,7 +219,9 @@ void WriteCode::writeLine()
 {
     m_isLineWriting = false;
     if (m_IsLastLineBlank)
+    {
         return;
+    }
     doWrite("\n");
     m_IsLastLineBlank = true;
 }
@@ -248,15 +250,15 @@ void WriteCode::write(wxue::string_view code, bool auto_indent)
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);
-        for (auto ch: code)
+        for (auto chr: code)
         {
-            if (ch == '\t')
+            if (chr == '\t')
             {
                 tab_code += m_TabSpaces;
             }
             else
             {
-                tab_code.push_back(ch);
+                tab_code.push_back(chr);
             }
         }
         doWrite(tab_code);

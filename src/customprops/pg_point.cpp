@@ -28,7 +28,9 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     {
         wxue::string value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
+        {
             value.pop_back();
+        }
         m_value = value;
         InitValues(value);
     }
@@ -38,7 +40,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         parts.SetString(std::string_view { prop->as_string() }, ';');
         if (parts.size() > IndexImage)
         {
-            auto embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 m_org_size = embed->get_wxSize();
@@ -85,7 +87,9 @@ auto CustomPointProperty::RefreshChildren() -> void
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
         if (m_prop_type != type_SVG && m_prop_type != type_ART && m_prop_type != type_BITMAP)
+        {
             Item(2)->SetValue(m_dpi_scaling);
+        }
     }
 }
 
@@ -94,7 +98,9 @@ wxVariant CustomPointProperty::ChildChanged([[maybe_unused]] wxVariant& thisValu
 {
     wxString value = childValue;
     if (value.empty())
+    {
         return value;
+    }
 
     wxPoint point { m_point };
     bool dpi_scaling = m_dpi_scaling;
@@ -118,7 +124,9 @@ wxVariant CustomPointProperty::ChildChanged([[maybe_unused]] wxVariant& thisValu
     value << point.x << ',' << point.y;
     if (!dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART &&
         m_prop_type != type_BITMAP)
+    {
         value << 'n';
+    }
 
     return value;
 }
@@ -134,9 +142,13 @@ auto CustomPointProperty::InitValues(wxue::string_view value) -> void
     {
         wxue::ViewVector parts;
         if (value.contains(";"))
+        {
             parts.SetString(value, ';');
+        }
         else
+        {
             parts.SetString(value, ',');
+        }
 
         if (m_prop_type == type_BITMAP)
         {
@@ -183,7 +195,9 @@ auto CustomPointProperty::CombineValues() -> wxue::string
     value << m_point.x << ',' << m_point.y;
     if (!m_dpi_scaling && m_prop_type != type_SVG && m_prop_type != type_ART &&
         m_prop_type != type_BITMAP)
+    {
         value << 'n';
+    }
     return value;
 }
 
@@ -199,7 +213,9 @@ wxString CustomBoolProperty::ValueToString(wxVariant& value, wxPGPropValFormatFl
             return m_label;
         }
         if (!!(flags & wxPGPropValFormatFlags::UneditableCompositeFragment))
+        {
             return wxString();
+        }
 
         return (wxString("No ") + m_label);
     }

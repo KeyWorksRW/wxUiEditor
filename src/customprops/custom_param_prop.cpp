@@ -75,7 +75,9 @@ void EditParamsDialog::OnOK(wxCommandEvent& event)
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
     {
         if (m_value.size())
+        {
             m_value += ", ";
+        }
         m_value += m_grid->GetCellValue(row, 0);
         m_value.Trim();
     }

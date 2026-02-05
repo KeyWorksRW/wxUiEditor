@@ -21,10 +21,12 @@
 wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto* sizer = new wxGridBagSizer(node->as_int(prop_vgap), node->as_int(prop_hgap));
-    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
         if (!dlg->GetSizer())
+        {
             dlg->SetSizer(sizer);
+        }
     }
 
     sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
@@ -44,8 +46,10 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 {
     if (node->as_bool(prop_hide_children))
     {
-        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        if (auto* sizer = wxStaticCast(wxobject, wxSizer); sizer)
+        {
             sizer->ShowItems(getMockup()->IsShowingHidden());
+        }
     }
 
     // For storing objects whose position needs to be determined
@@ -64,12 +68,18 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
     {
         const wxObject* child;
         if (!is_preview)
+        {
             child = getMockup()->get_Child(wxobject, i);
+        }
         else
+        {
             child = node->get_Child(i)->get_MockupObject();
+        }
 
         if (!child)
+        {
             continue;  // spacer's don't have objects
+        }
 
         // Get the location of the item
         wxGBSpan span(node->as_int(prop_rowspan), node->as_int(prop_colspan));
@@ -79,7 +89,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         {
             // Needs to be auto positioned after the other children are added
 
-            if (auto item = GetGBSizerItem(node, lastPosition, span, const_cast<wxObject*>(child));
+            if (auto* item = GetGBSizerItem(node, lastPosition, span, const_cast<wxObject*>(child));
                 item)
             {
                 newNodes.push_back(
@@ -99,7 +109,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 
         lastPosition = position;
 
-        if (auto item = GetGBSizerItem(node, position, span, const_cast<wxObject*>(child)); item)
+        if (auto* item = GetGBSizerItem(node, position, span, const_cast<wxObject*>(child)); item)
         {
             sizer->Add(item);
         }
@@ -121,7 +131,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->as_string(prop_name); growable.size())
+        if (const auto& growable = node->as_string(prop_name); growable.size())
         {
             wxue::ViewVector values(growable, ',');
             for (const auto& iter: values)
@@ -177,7 +187,7 @@ bool GridBagSizerGenerator::ConstructionCode(Code& code)
         code.NodeName().Function("SetEmptyCellSize(").WxSize(prop_empty_cell_size).EndFunction();
     }
 
-    auto& direction = node->as_string(prop_flexible_direction);
+    const auto& direction = node->as_string(prop_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         return true;
@@ -185,7 +195,7 @@ bool GridBagSizerGenerator::ConstructionCode(Code& code)
 
     code.NodeName().Function("SetFlexibleDirection(").Add(direction).EndFunction();
 
-    auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
+    const auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         return true;
@@ -205,7 +215,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (auto& growable = node->as_string(prop_name); growable.size())
+        if (const auto& growable = node->as_string(prop_name); growable.size())
         {
             wxue::ViewVector values(growable, ',');
             for (const auto& iter: values)
@@ -222,16 +232,24 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
                     proportion = wxue::atoi(wxue::find_nonspace(iter.subview(pos + 1)));
                 }
                 if (!code.size() || !wxue::is_whitespace(code.GetCode().back()))
+                {
                     code.Eol();
+                }
 
                 // Note that iter may start with a space, so using itoa() ensures that we
                 // don't add any extra space.
                 if (prop_name == prop_growablerows)
+                {
                     code.NodeName().Function("AddGrowableRow(").itoa(val);
+                }
                 else
+                {
                     code.NodeName().Function("AddGrowableCol(").itoa(val);
+                }
                 if (proportion > 0)
+                {
                     code.Comma().itoa(proportion);
+                }
                 code.EndFunction();
             }
         }
@@ -249,7 +267,7 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto parent = code.node()->get_Parent();
+    auto* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -267,9 +285,13 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
             else
             {
                 if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                {
                     code.FormFunction("SetSizerAndFit(");
+                }
                 else  // Don't call Fit() if size has been specified
+                {
                     code.FormFunction("SetSizer(");
+                }
             }
             code.NodeName().EndFunction();
         }
@@ -298,26 +320,24 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
     }
 
     // Add the child (window or sizer) to the sizer
-    auto windowChild = wxDynamicCast(child, wxWindow);
-    auto sizerChild = wxDynamicCast(child, wxSizer);
+    auto* windowChild = wxDynamicCast(child, wxWindow);
+    auto* sizerChild = wxDynamicCast(child, wxSizer);
 
     if (windowChild)
     {
         return new wxGBSizerItem(windowChild, position, span, sizer_flags.GetFlags(),
                                  sizer_flags.GetBorderInPixels());
     }
-    else if (sizerChild)
+    if (sizerChild)
     {
         return new wxGBSizerItem(sizerChild, position, span, sizer_flags.GetFlags(),
                                  sizer_flags.GetBorderInPixels());
     }
-    else
-    {
-        FAIL_MSG("The GBSizerItem component's child is not a wxWindow or a wxSizer or a Spacer - "
-                 "this should not be "
-                 "possible!");
-        return nullptr;
-    }
+
+    FAIL_MSG("The GBSizerItem component's child is not a wxWindow or a wxSizer or a Spacer - "
+             "this should not be "
+             "possible!");
+    return nullptr;
 }
 
 // ../../wxSnapShot/src/xrc/xh_sizer.cpp

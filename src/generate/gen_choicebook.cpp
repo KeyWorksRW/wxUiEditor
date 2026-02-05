@@ -18,7 +18,7 @@
 
 wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                          DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -29,9 +29,11 @@ wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 }
 void ChoicebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxChoicebook);
+    auto* book = wxDynamicCast(event.GetEventObject(), wxChoicebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
+    {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    }
     event.Skip();
 }
 
@@ -70,7 +72,9 @@ int ChoicebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     if (node->as_string(prop_tab_position) != "wxCHB_DEFAULT")
     {
         if (styles.size())
+        {
             styles << '|';
+        }
         styles << node->as_string(prop_tab_position);
     }
 

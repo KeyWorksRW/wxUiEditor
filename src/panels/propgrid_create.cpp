@@ -69,19 +69,7 @@ void PropGridPanel::Create()
             pageName = m_prop_grid->GetPageName(pageNumber);
         }
 
-        // Note that AddPage() won't actually add a page, it simply sets an internal flag to
-        // indicate there is one page. That's required for m_prop_grid->Clear() to work -- because
-        // Clear() *only* clears pages.
-
-        m_prop_grid->Clear();
-        m_prop_grid->AddPage();
-        m_event_grid->Clear();
-        m_event_grid->AddPage();
-
-        m_property_map.clear();
-        m_event_map.clear();
-
-        wxue::string lang_created;
+        InitializePropertyGrids(pageName);
 
         if (auto* declaration = node->get_NodeDeclaration(); declaration)
         {
@@ -96,155 +84,18 @@ void PropGridPanel::Create()
             CreatePropCategory(declaration->get_DeclName(), node, declaration, prop_set);
             CreateEventCategory(declaration->get_DeclName(), node, declaration, event_set);
 
-            // Calling GetBaseClassCount() is exepensive, so do it once and store the result
-            auto num_base_classes = declaration->GetBaseClassCount();
-
-            auto lang_prefix = GenLangToString(Project.get_CodePreference());
-
             if (node->is_Form() || node->is_Gen(gen_Project))
             {
-                bool lang_found = false;
-                size_t lang_start = 0;
-                for (size_t i = 0; i < num_base_classes; i++)
-                {
-                    auto* info_base = declaration->GetBaseClass(i);
-                    if (info_base->is_Gen(gen_sizer_child))
-                    {
-                        continue;
-                    }
-                    if (!lang_found)
-                    {
-                        // There are a few forms like gen_wxDialog which have have a category
-                        // that appears *before* the various language categories. All
-                        // non-language categories need to be created in the same order as they
-                        // were specified in the XML interface file, so create those here if we
-                        // haven't seen a language category yet.
-
-                        for (auto& iter: s_lang_category_prefix)
-                        {
-                            if (info_base->get_DeclName().find(iter.second) !=
-                                std::string_view::npos)
-                            {
-                                lang_found = true;
-                                lang_start = i;  // save this for the for loop used later
-                                break;
-                            }
-                        }
-                        if (!lang_found)
-                        {
-                            if (!(info_base->get_DeclName() == "Window Events"))
-                            {
-                                CreatePropCategory(info_base->get_DeclName(), node, info_base,
-                                                   prop_set);
-                            }
-                            else
-                            {
-                                CreateEventCategory(info_base->get_DeclName(), node, info_base,
-                                                    event_set);
-                            }
-                            continue;
-                        }
-                    }
-
-                    // We get here if we've seen a language category, so we check to see if it
-                    // is the preferred language, and if so, create it now and break out of the
-                    // loop.
-                    if (info_base->get_DeclName().starts_with(lang_prefix))
-                    {
-                        CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
-
-                        // C++ settings are divided into three categories in consecutive order,
-                        // so we need to create the other two categories here if the preferred
-                        // language is C++.
-
-                        if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
-                            info_base->get_DeclName().find("Settings") != std::string_view::npos)
-                        {
-                            info_base = declaration->GetBaseClass(++i);
-                            CreatePropCategory(info_base->get_DeclName(), node, info_base,
-                                               prop_set);
-                            info_base = declaration->GetBaseClass(++i);
-                            CreatePropCategory(info_base->get_DeclName(), node, info_base,
-                                               prop_set);
-                        }
-
-                        break;
-                    }
-                }
-
-                // At this point, we've created any pre-language categories, and the preferred
-                // language categories. Now we create any remaining categories.
-                for (; lang_start < num_base_classes; lang_start++)
-                {
-                    auto* info_base = declaration->GetBaseClass(lang_start);
-                    if (info_base->is_Gen(gen_sizer_child))
-                    {
-                        continue;
-                    }
-                    if (!(info_base->get_DeclName() == "Window Events"))
-                    {
-                        if (info_base->get_DeclName().starts_with(lang_prefix))
-                        {
-                            if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
-                                info_base->get_DeclName().find("Settings") !=
-                                    std::string_view::npos)
-                            {
-                                lang_start +=
-                                    2;  // skip over Header Settings and Derived Class Settings
-                            }
-                            continue;  // already added above
-                        }
-                        CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
-                    }
-                    CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
-                }
+                ProcessFormLanguageCategories(node, declaration, prop_set, event_set);
             }
             else
             {
-                for (size_t i = 0; i < num_base_classes; i++)
-                {
-                    auto* info_base = declaration->GetBaseClass(i);
-                    if (info_base->is_Gen(gen_sizer_child))
-                    {
-                        continue;
-                    }
-                    if (!(info_base->get_DeclName() == "Window Events"))
-                    {
-                        if ((node->is_Form() || node->is_Gen(gen_Project)) &&
-                            info_base->get_DeclName().starts_with(lang_prefix))
-                        {
-                            continue;  // already added above
-                        }
-                        CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
-                    }
-                    CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
-                }
-            }
-            if (node->is_Spacer())
-            {
-                if (node->is_Parent(gen_wxGridBagSizer))
-                {
-                    CreateLayoutCategory(node);
-                }
-            }
-            if ((node->get_Parent() != nullptr) && node->get_Parent()->is_Sizer())
-            {
-                CreateLayoutCategory(node);
+                ProcessStandardBaseClasses(node, declaration, prop_set, event_set);
             }
 
-            if (m_prop_grid->GetPageCount() > 0)
-            {
-                int pageIndex = m_prop_grid->GetPageByName(pageName);
-                if (wxNOT_FOUND != pageIndex)
-                {
-                    m_prop_grid->SelectPage(pageIndex);
-                }
-                else
-                {
-                    m_prop_grid->SelectPage(0);
-                }
-            }
-            m_prop_grid->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, (long) 1);
+            AddLayoutCategoryIfNeeded(node);
+
+            RestoreSelectedPage(m_pageName);
         }
 
         ReselectItem();
@@ -321,7 +172,7 @@ static constexpr std::initializer_list<PropName> lst_GridBagProps = {
 
 void PropGridPanel::CreateLayoutCategory(Node* node)
 {
-    auto* id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
+    auto* category_id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
     if (!node->is_Parent(gen_wxGridBagSizer))
     {
@@ -374,15 +225,15 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
         }
     }
 
-    m_prop_grid->Expand(id);
+    m_prop_grid->Expand(category_id);
 
     if (UserPrefs.is_DarkMode())
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#1d677c"));
+        m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#1d677c"));
     }
     else
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
+        m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#e1f3f8"));
     }
 }
 
@@ -785,7 +636,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 if (wxGetApp().isTestingMenuEnabled())
                 {
-                    for (auto& iter: umap_PropTypes)
+                    for (const auto& iter: umap_PropTypes)
                     {
                         if (iter.second == type)
                         {
@@ -807,13 +658,17 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     auto& category = declaration->GetCategory();
 
     if (!category.getCategoryCount() && !category.get_PropNameCount())
+    {
         return;
+    }
 
     auto generate_languages = Project.get_GenerateLanguages();
 
     // Ignore if the user doesn't want to generate this language
     if (!(static_cast<size_t>(ConvertToGenLang(name)) & generate_languages))
+    {
         return;
+    }
 
     if (name.contains("CheckBoxState Validator") || name.contains("Colour Validator"))
     {
@@ -826,7 +681,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         }
         // REVIEW: [Randalphwa - 09-01-2025] It's possible that wxPerl does support it, but it's
         // unlikely
-        else if (preferred_language == GEN_LANG_PYTHON || preferred_language == GEN_LANG_PERL)
+        if (preferred_language == GEN_LANG_PYTHON || preferred_language == GEN_LANG_PERL)
         {
             return;
         }
@@ -835,7 +690,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         // to be sure.
     }
 
-    auto id =
+    auto* category_id =
         m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);
 
@@ -844,127 +699,309 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     {
         // TODO: [KeyWorks - 07-25-2020] Need to see if parent is using AUI, and if so, don't
         // collapse this
-        m_prop_grid->Collapse(id);
+        m_prop_grid->Collapse(category_id);
     }
     else if (name.is_sameas("Bitmaps") || name.is_sameas("Command Bitmaps"))
     {
         if (!node->is_Gen(gen_wxBitmapToggleButton))
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#304869"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#304869"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#dce4ef"));
         }
     }
     else if (name.contains("Validator"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#996900"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#fff1d2"));
         }
 
         // It's going to be rare to want a validator for these classes, so collapse the validator
         // for them
         if (node->is_Gen(gen_wxButton) || node->is_Gen(gen_wxStaticText))
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("C++"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#000099"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#000099"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));  // Light blue
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccccff"));  // Light blue
         }
         if (Project.get_CodePreference(node) != GEN_LANG_CPLUSPLUS)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("wxPerl"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#996900"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#996900"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ffe7b3"));  // Light yellow
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ffe7b3"));  // Light yellow
         }
         if (Project.get_CodePreference(node) != GEN_LANG_PERL)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("wxPython"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#009900"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#009900"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));  // Light green
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccffcc"));  // Light green
         }
         if (Project.get_CodePreference(node) != GEN_LANG_PYTHON)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("wxRuby"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#8e0b3d"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#8e0b3d"));
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#f8a9c7"));  // Ruby
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#f8a9c7"));  // Ruby
         }
         if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
     else if (name.contains("XRC"))
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#00b35c"));  // Gainsboro
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#00b35c"));  // Gainsboro
         }
         else
         {
-            m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffe6"));  // Mint Cream
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccffe6"));  // Mint Cream
         }
         if (Project.get_CodePreference(node) != GEN_LANG_XRC)
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
 
-    if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
-        it != m_expansion_map.end())
+    if (auto found_iter =
+            m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
+        found_iter != m_expansion_map.end())
     {
-        if (it->second)
+        if (found_iter->second)
         {
-            m_prop_grid->Expand(id);
+            m_prop_grid->Expand(category_id);
         }
         else
         {
-            m_prop_grid->Collapse(id);
+            m_prop_grid->Collapse(category_id);
         }
     }
+}
+
+void PropGridPanel::InitializePropertyGrids(const wxString& current_page_name)
+{
+    m_pageName = current_page_name;
+
+    // Note that AddPage() won't actually add a page, it simply sets an internal flag to
+    // indicate there is one page. That's required for m_prop_grid->Clear() to work -- because
+    // Clear() *only* clears pages.
+
+    m_prop_grid->Clear();
+    m_prop_grid->AddPage();
+    m_event_grid->Clear();
+    m_event_grid->AddPage();
+
+    m_property_map.clear();
+    m_event_map.clear();
+}
+
+void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* declaration,
+                                                  PropNameSet& prop_set, EventSet& event_set)
+{
+    auto num_base_classes = declaration->GetBaseClassCount();
+    auto lang_prefix = GenLangToString(Project.get_CodePreference());
+
+    bool lang_found = false;
+    size_t lang_start = 0;
+
+    // First pass: Create pre-language categories and preferred language category
+    for (size_t i = 0; i < num_base_classes; ++i)
+    {
+        auto* info_base = declaration->GetBaseClass(i);
+        if (info_base->is_Gen(gen_sizer_child))
+        {
+            continue;
+        }
+
+        if (!lang_found)
+        {
+            // There are a few forms like gen_wxDialog which have have a category
+            // that appears *before* the various language categories. All
+            // non-language categories need to be created in the same order as they
+            // were specified in the XML interface file, so create those here if we
+            // haven't seen a language category yet.
+
+            for (auto& iter: s_lang_category_prefix)
+            {
+                if (info_base->get_DeclName().find(iter.second) != std::string_view::npos)
+                {
+                    lang_found = true;
+                    lang_start = i;  // save this for the second pass
+                    break;
+                }
+            }
+
+            if (!lang_found)
+            {
+                if (!(info_base->get_DeclName() == "Window Events"))
+                {
+                    CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
+                }
+                else
+                {
+                    CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
+                }
+                continue;
+            }
+        }
+
+        // We get here if we've seen a language category, so we check to see if it
+        // is the preferred language, and if so, create it now and break out of the
+        // loop.
+        if (info_base->get_DeclName().starts_with(lang_prefix))
+        {
+            CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
+
+            // C++ settings are divided into three categories in consecutive order,
+            // so we need to create the other two categories here if the preferred
+            // language is C++.
+
+            if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
+                info_base->get_DeclName().find("Settings") != std::string_view::npos)
+            {
+                info_base = declaration->GetBaseClass(++i);
+                CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
+                info_base = declaration->GetBaseClass(++i);
+                CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
+            }
+
+            break;
+        }
+    }
+
+    // Second pass: Create any remaining categories
+    for (; lang_start < num_base_classes; ++lang_start)
+    {
+        auto* info_base = declaration->GetBaseClass(lang_start);
+        if (info_base->is_Gen(gen_sizer_child))
+        {
+            continue;
+        }
+
+        if (!(info_base->get_DeclName() == "Window Events"))
+        {
+            if (info_base->get_DeclName().starts_with(lang_prefix))
+            {
+                if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
+                    info_base->get_DeclName().find("Settings") != std::string_view::npos)
+                {
+                    lang_start += 2;  // skip over Header Settings and Derived Class Settings
+                }
+                continue;  // already added above
+            }
+            CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
+        }
+        CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
+    }
+}
+
+void PropGridPanel::ProcessStandardBaseClasses(Node* node, NodeDeclaration* declaration,
+                                               PropNameSet& prop_set, EventSet& event_set)
+{
+    auto num_base_classes = declaration->GetBaseClassCount();
+    auto lang_prefix = GenLangToString(Project.get_CodePreference());
+
+    for (size_t i = 0; i < num_base_classes; ++i)
+    {
+        auto* info_base = declaration->GetBaseClass(i);
+        if (info_base->is_Gen(gen_sizer_child))
+        {
+            continue;
+        }
+
+        if (!(info_base->get_DeclName() == "Window Events"))
+        {
+            if ((node->is_Form() || node->is_Gen(gen_Project)) &&
+                info_base->get_DeclName().starts_with(lang_prefix))
+            {
+                continue;  // already added above
+            }
+            CreatePropCategory(info_base->get_DeclName(), node, info_base, prop_set);
+        }
+        CreateEventCategory(info_base->get_DeclName(), node, info_base, event_set);
+    }
+}
+
+void PropGridPanel::AddLayoutCategoryIfNeeded(Node* node)
+{
+    if (node->is_Spacer())
+    {
+        if (node->is_Parent(gen_wxGridBagSizer))
+        {
+            CreateLayoutCategory(node);
+        }
+    }
+    if ((node->get_Parent() != nullptr) && node->get_Parent()->is_Sizer())
+    {
+        CreateLayoutCategory(node);
+    }
+}
+
+void PropGridPanel::RestoreSelectedPage(const wxString& page_name)
+{
+    if (m_prop_grid->GetPageCount() > 0)
+    {
+        int pageIndex = m_prop_grid->GetPageByName(page_name);
+        if (wxNOT_FOUND != pageIndex)
+        {
+            m_prop_grid->SelectPage(pageIndex);
+        }
+        else
+        {
+            m_prop_grid->SelectPage(0);
+        }
+    }
+    m_prop_grid->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, (long) 1);
 }

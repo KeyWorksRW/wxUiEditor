@@ -45,7 +45,7 @@ bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
         wxStaticCast(widget, wxCheckBox)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
-    else if (prop->isProp(prop_checked))
+    if (prop->isProp(prop_checked))
     {
         wxStaticCast(widget, wxCheckBox)->SetValue(prop->as_bool());
         return true;
@@ -77,7 +77,9 @@ bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 
@@ -119,7 +121,7 @@ wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
                        DlgPoint(node, prop_pos), DlgSize(node, prop_size), style_value);
 
-    auto& state = node->as_string(prop_initial_state);
+    const auto& state = node->as_string(prop_initial_state);
     if (state == "wxCHK_UNCHECKED")
     {
         widget->Set3StateValue(wxCHK_UNCHECKED);
@@ -145,15 +147,21 @@ bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
         wxStaticCast(widget, wxCheckBox)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
-    else if (prop->isProp(prop_initial_state))
+    if (prop->isProp(prop_initial_state))
     {
-        auto& state = prop->as_string();
+        const auto& state = prop->as_string();
         if (state == "wxCHK_UNCHECKED")
+        {
             wxStaticCast(widget, wxCheckBox)->Set3StateValue(wxCHK_UNCHECKED);
+        }
         else if (state == "wxCHK_CHECKED")
+        {
             wxStaticCast(widget, wxCheckBox)->Set3StateValue(wxCHK_CHECKED);
+        }
         else
+        {
             wxStaticCast(widget, wxCheckBox)->Set3StateValue(wxCHK_UNDETERMINED);
+        }
         return true;
     }
 
@@ -171,7 +179,7 @@ bool Check3StateGenerator::ConstructionCode(Code& code)
 
 bool Check3StateGenerator::SettingsCode(Code& code)
 {
-    auto& state = code.node()->as_string(prop_initial_state);
+    const auto& state = code.node()->as_string(prop_initial_state);
     if (state == "wxCHK_CHECKED")
     {
         if (code.is_ruby())
@@ -182,7 +190,9 @@ bool Check3StateGenerator::SettingsCode(Code& code)
             code.NodeName().Str(".set3state_value(").Add("wxCHK_CHECKED").EndFunction();
         }
         else
+        {
             code.NodeName().Function("Set3StateValue(").Add("wxCHK_CHECKED").EndFunction();
+        }
     }
     else if (state == "wxCHK_UNDETERMINED")
     {
@@ -191,7 +201,9 @@ bool Check3StateGenerator::SettingsCode(Code& code)
             code.NodeName().Str(".set3state_value(").Add("wxCHK_UNDETERMINED").EndFunction();
         }
         else
+        {
             code.NodeName().Function("Set3StateValue(").Add("wxCHK_UNDETERMINED").EndFunction();
+        }
     }
 
     return true;

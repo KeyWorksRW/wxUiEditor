@@ -70,20 +70,20 @@ auto NodeProperty::as_id() const -> int
 // Static class function
 auto NodeProperty::get_PropId(const wxue::string& complete_id) -> wxue::string
 {
-    wxue::string id;
+    wxue::string identifier;
     if (auto pos = complete_id.find('='); pos != wxue::npos)
     {
         while (pos > 0 && wxue::is_whitespace(complete_id[pos - 1]))
         {
             --pos;
         }
-        id = complete_id.substr(0, pos);
+        identifier = complete_id.substr(0, pos);
     }
     else
     {
-        id = complete_id;
+        identifier = complete_id;
     }
-    return id;
+    return identifier;
 }
 
 auto NodeProperty::get_PropId() const -> wxue::string
@@ -235,10 +235,14 @@ auto NodeProperty::as_point() const -> wxPoint
         if (tokens.size())
         {
             if (tokens[0].size())
+            {
                 result.x = tokens[0].atoi();
+            }
 
             if (tokens.size() > 1 && tokens[1].size())
+            {
                 result.y = tokens[1].atoi();
+            }
         }
     }
     return result;
@@ -361,9 +365,9 @@ auto NodeProperty::as_escape_text() const -> wxue::string
 {
     wxue::string result;
 
-    for (auto ch: m_value)
+    for (auto chr: m_value)
     {
-        switch (ch)
+        switch (chr)
         {
             case '\n':
                 result += "\\n";
@@ -382,7 +386,7 @@ auto NodeProperty::as_escape_text() const -> wxue::string
                 break;
 
             default:
-                result += ch;
+                result += chr;
                 break;
         }
     }
@@ -438,11 +442,9 @@ auto NodeProperty::as_ArrayString(char separator) const -> std::vector<wxue::str
 
         return result;
     }
-    else
-    {
-        wxue::StringVector result(std::string_view(m_value), separator, wxue::TRIM::both);
-        return result;
-    }
+
+    wxue::StringVector result(std::string_view(m_value), separator, wxue::TRIM::both);
+    return result;
 }
 
 auto NodeProperty::as_wxArrayString() const -> wxArrayString
@@ -529,7 +531,9 @@ auto NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD
     for (const auto& field: fields)
     {
         if (result.size())
+        {
             result << ';';
+        }
         result << field.style << '|' << field.width;
     }
     return result;
@@ -542,10 +546,14 @@ auto NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>&
     for (auto& item: items)
     {
         if (result.size())
+        {
             result << ';';
+        }
         result << item.label;
         if (item.checked.size() || item.checked.atoi() != 0)
+        {
             result << '|' << item.checked;
+        }
     }
     return result;
 }
@@ -557,12 +565,16 @@ auto NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& i
     for (auto& item: items)
     {
         if (result.size())
+        {
             result << ';';
+        }
         result << item.label;
         if (item.enabled.atoi() != 1 || item.show.atoi() != 1 || item.tooltip.size() ||
             item.helptext.size())
+        {
             result << '|' << item.enabled << '|' << item.show << '|' << item.tooltip << '|'
                    << item.helptext;
+        }
     }
     return result;
 }
@@ -574,10 +586,14 @@ auto NodeProperty::convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>&
     for (auto& item: items)
     {
         if (result.size())
+        {
             result << ';';
+        }
         result << item.label;
         if (item.bitmap.size())
+        {
             result << '|' << item.bitmap;
+        }
     }
     return result;
 }
@@ -689,15 +705,25 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
         wxue::StringVector parts(field, '|');
         NODEPROP_RADIOBOX_ITEM item;
         if (parts.size() > 0)
+        {
             item.label = parts[0];
+        }
         if (parts.size() > 1)
+        {
             item.enabled = parts[1];
+        }
         if (parts.size() > 2)
+        {
             item.show = parts[2];
+        }
         if (parts.size() > 3)
+        {
             item.tooltip = parts[3];
+        }
         if (parts.size() > 4)
+        {
             item.helptext = parts[4];
+        }
         result.emplace_back(item);
     }
 

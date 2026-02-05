@@ -645,10 +645,14 @@ auto ChangeParentAction::Revert() -> void
     m_node->set_Parent(m_revert_parent);
     m_revert_parent->AddChild(m_node);
     m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
-    if (auto prop = m_node->get_PropPtr(prop_row); prop)
+    if (auto* prop = m_node->get_PropPtr(prop_row); prop)
+    {
         prop->set_value(m_revert_row);
-    if (auto prop = m_node->get_PropPtr(prop_column); prop)
+    }
+    if (auto* prop = m_node->get_PropPtr(prop_column); prop)
+    {
         prop->set_value(m_revert_col);
+    }
 
     wxGetFrame().FireParentChangedEvent(this);
     if (isAllowedSelectEvent())
@@ -734,7 +738,7 @@ GridBagAction::GridBagAction(Node* cur_gbsizer, std::string_view undo_str) : Und
     m_cur_gbsizer = cur_gbsizer->get_SharedPtr();
     m_old_gbsizer = NodeCreation.MakeCopy(cur_gbsizer);
 
-    auto nav_panel = wxGetFrame().getNavigationPanel();
+    auto* nav_panel = wxGetFrame().getNavigationPanel();
 
     // Thaw() is called when GridBagAction::Update() is called
     nav_panel->Freeze();
@@ -749,7 +753,7 @@ void GridBagAction::Change()
 {
     if (m_isReverted)
     {
-        auto nav_panel = wxGetFrame().getNavigationPanel();
+        auto* nav_panel = wxGetFrame().getNavigationPanel();
         wxWindowUpdateLocker freeze(nav_panel);
 
         for (const auto& child: m_cur_gbsizer->get_ChildNodePtrs())
@@ -780,7 +784,7 @@ void GridBagAction::Change()
 
 auto GridBagAction::Revert() -> void
 {
-    auto nav_panel = wxGetFrame().getNavigationPanel();
+    auto* nav_panel = wxGetFrame().getNavigationPanel();
     wxWindowUpdateLocker freeze(nav_panel);
 
     for (const auto& child: m_cur_gbsizer->get_ChildNodePtrs())
@@ -809,7 +813,7 @@ auto GridBagAction::Revert() -> void
 
 auto GridBagAction::Update() -> void
 {
-    auto nav_panel = wxGetFrame().getNavigationPanel();
+    auto* nav_panel = wxGetFrame().getNavigationPanel();
 
     for (const auto& child: m_cur_gbsizer->get_ChildNodePtrs())
     {
@@ -823,26 +827,26 @@ auto GridBagAction::Update() -> void
 
 ///////////////////////////////// SortProjectAction ////////////////////////////////////
 
-static auto CompareClassNames(NodeSharedPtr a, NodeSharedPtr b) -> bool
+static auto CompareClassNames(NodeSharedPtr node_a, NodeSharedPtr node_b) -> bool
 {
     // Sort folders first, then forms
-    if (a->is_Gen(gen_folder) && !b->is_Gen(gen_folder))
+    if (node_a->is_Gen(gen_folder) && !node_b->is_Gen(gen_folder))
     {
         return true;
     }
-    if (a->is_Gen(gen_folder) && b->is_Gen(gen_folder))
+    if (node_a->is_Gen(gen_folder) && node_b->is_Gen(gen_folder))
     {
-        return (a->as_string(prop_label).compare(b->as_string(prop_label)) < 0);
+        return (node_a->as_string(prop_label).compare(node_b->as_string(prop_label)) < 0);
     }
-    if (a->is_Gen(gen_sub_folder) && !b->is_Gen(gen_sub_folder))
+    if (node_a->is_Gen(gen_sub_folder) && !node_b->is_Gen(gen_sub_folder))
     {
         return true;
     }
-    if (a->is_Gen(gen_sub_folder) && b->is_Gen(gen_sub_folder))
+    if (node_a->is_Gen(gen_sub_folder) && node_b->is_Gen(gen_sub_folder))
     {
-        return (a->as_string(prop_label).compare(b->as_string(prop_label)) < 0);
+        return (node_a->as_string(prop_label).compare(node_b->as_string(prop_label)) < 0);
     }
-    return (a->as_string(prop_class_name).compare(b->as_string(prop_class_name)) < 0);
+    return (node_a->as_string(prop_class_name).compare(node_b->as_string(prop_class_name)) < 0);
 }
 
 SortProjectAction::SortProjectAction()

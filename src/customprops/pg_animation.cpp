@@ -62,13 +62,17 @@ auto PropertyGrid_Animation::RefreshChildren() -> void
         wxArrayString array_art_ids;
         auto art_dir = Project.ArtDirectory();
         if (art_dir.empty())
+        {
             art_dir = "./";
+        }
         wxDir dir;
         wxArrayString array_files;
         dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif",
                         wxDIR_FILES);
         if (m_img_props.type == "Embed")
+        {
             dir.GetAllFiles(art_dir, &array_files, "*.ani");
+        }
         for (auto& iter: array_files)
         {
             wxFileName name(iter);
@@ -99,7 +103,9 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
             {
                 auto index = childValue.GetLong();
                 if (index == 0)
+                {
                     img_props.type = s_type_names[1];
+                }
 
                 if (index >= 0)
                 {

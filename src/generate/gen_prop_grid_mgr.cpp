@@ -24,9 +24,9 @@
 
 wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                            DlgPoint(node, prop_pos), DlgSize(node, prop_size),
-                                            GetStyleInt(node));
+    auto* widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                             DlgPoint(node, prop_pos), DlgSize(node, prop_size),
+                                             GetStyleInt(node));
 
     if (node->HasValue(prop_extra_style))
     {
@@ -41,12 +41,12 @@ wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* paren
 
 void PropertyGridManagerGenerator::OnPageChanged(wxPropertyGridEvent& event)
 {
-    if (auto pgm = wxDynamicCast(event.GetEventObject(), wxPropertyGridManager); pgm)
+    if (auto* pgm = wxDynamicCast(event.GetEventObject(), wxPropertyGridManager); pgm)
     {
-        if (auto cur_page = pgm->GetCurrentPage(); cur_page)
+        if (auto* cur_page = pgm->GetCurrentPage(); cur_page)
         {
             auto page_index = cur_page->GetIndex();
-            if (auto parent = getMockup()->getNode(event.GetEventObject()); parent)
+            if (auto* parent = getMockup()->getNode(event.GetEventObject()); parent)
             {
                 for (size_t idx_page = 0; idx_page < parent->get_ChildCount(); ++idx_page)
                 {
@@ -65,7 +65,7 @@ void PropertyGridManagerGenerator::OnPageChanged(wxPropertyGridEvent& event)
 void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */,
                                                  Node* node, bool /* is_preview */)
 {
-    auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
+    auto* pgm = wxStaticCast(wxobject, wxPropertyGridManager);
     for (auto& child: node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_propGridPage))
@@ -95,7 +95,9 @@ bool PropertyGridManagerGenerator::ConstructionCode(Code& code)
     code.PosSizeFlags(code::allow_scaling, false, "wxPGMAN_DEFAULT_STYLE");
 
     if (code.HasValue(prop_extra_style))
+    {
         code.Eol().NodeName().Function("SetExtraStyle(").Add(prop_extra_style).EndFunction();
+    }
 
     return true;
 }
@@ -121,22 +123,16 @@ bool PropertyGridManagerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowHeader(").True().EndFunction();
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
-bool PropertyGridManagerGenerator::GetImports(Node*, std::set<std::string>& set_imports,
-                                              GenLang language)
+bool PropertyGridManagerGenerator::GetImports([[maybe_unused]] Node* node,
+                                              std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/pg'");
         return true;
-    }
-    else
-    {
     }
     return false;
 }
@@ -158,9 +154,13 @@ bool PropertyGridPageGenerator::ConstructionCode(Code& code)
         if (is_bitmaps_list)
         {
             if (code.is_cpp())
+            {
                 code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+            }
             else
+            {
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
+            }
         }
         else
         {

@@ -19,7 +19,9 @@
 auto NewMdiForm::OnOK(wxCommandEvent& /* event unused */) -> void
 {
     if (!Validate() || !TransferDataFromWindow())
+    {
         return;
+    }
 
     if (m_filter.empty())
     {
@@ -79,15 +81,25 @@ auto NewMdiForm::CreateNode() -> void
 
     auto doc_type = DOC_TYPE_UNKNOWN;
     if (m_view_type == "Image")
+    {
         doc_type = DOC_TYPE_IMAGE;
+    }
     else if (m_view_type == "wxRichTextCtrl")
+    {
         doc_type = DOC_TYPE_RICHTEXT;
+    }
     else if (m_view_type == "wxStyledTextCtrl")
+    {
         doc_type = DOC_TYPE_STYLED;
+    }
     else if (m_view_type == "wxTextCtrl")
+    {
         doc_type = DOC_TYPE_TEXT;
+    }
     else if (m_view_type == "wxSplitterWindow")
+    {
         doc_type = DOC_TYPE_SPLITTER;
+    }
 
     if (doc_type == DOC_TYPE_UNKNOWN)
     {
@@ -379,7 +391,7 @@ auto NewMdiForm::CreateNode() -> void
     view->set_value(prop_class_name, get_view_class());
     doc_node->AdoptChild(view);
 
-    auto parent_node = wxGetFrame().getSelectedNode();
+    auto* parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
     {
         parent_node = Project.get_ProjectNode();

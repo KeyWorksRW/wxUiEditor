@@ -33,7 +33,7 @@ const int node_marker = 1;
 
 ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
 {
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
     m_scintilla = new wxStyledTextCtrl(this, wxID_ANY);
 
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
@@ -123,7 +123,7 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
                     }
 
                     wxue::string keywords_str;
-                    for (auto& iter: keywords)
+                    for (const auto& iter: keywords)
                     {
                         keywords_str << iter << " ";
                     }
@@ -259,12 +259,12 @@ void ImportPanel::OnNodeSelected(Node* node)
     // Helper lambda to find line containing a string
     auto find_line_containing = [this](const wxue::string& str) -> int
     {
-        auto it = std::ranges::find_if(m_view,
-                                       [&str](const wxue::string_view& line)
-                                       {
-                                           return line.contains(str);
-                                       });
-        return (it != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), it)) : -1;
+        auto iter = std::ranges::find_if(m_view,
+                                         [&str](const wxue::string_view& line)
+                                         {
+                                             return line.contains(str);
+                                         });
+        return (iter != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), iter)) : -1;
     };
 
     line = find_line_containing(search);
@@ -281,7 +281,9 @@ void ImportPanel::OnNodeSelected(Node* node)
         search = node->get_NodeDeclaration()->get_DeclName();
         // DialogBlocks uses wbClassName instead of the expected wxClassName
         if (search.size() > 1 && search[1] == 'x')
+        {
             search[1] = 'b';
+        }
         line = find_line_containing(search);
     }
 

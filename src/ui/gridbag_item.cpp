@@ -19,28 +19,28 @@ void GridBagItem::OnInit(wxInitDialogEvent& /* event unused */)
 {
     if (m_gbsizer)
     {
-        GridBag gb(m_gbsizer);
-        m_max_column = gb.GetMaxColumn();
-        m_max_row = gb.GetMaxRow();
+        GridBag gridbag(m_gbsizer);
+        m_max_column = gridbag.GetMaxColumn();
+        m_max_row = gridbag.GetMaxRow();
         m_spin_row->SetValue(m_max_row + 1);
     }
-    else if (auto cur_node = wxGetFrame().getSelectedNode();
+    else if (auto* cur_node = wxGetFrame().getSelectedNode();
              cur_node && !cur_node->is_Gen(gen_Project))
     {
         if (cur_node->is_Gen(gen_wxGridBagSizer))
         {
             m_gbsizer = cur_node;
-            GridBag gb(cur_node);
-            m_max_column = gb.GetMaxColumn();
-            m_max_row = gb.GetMaxRow();
+            GridBag gridbag(cur_node);
+            m_max_column = gridbag.GetMaxColumn();
+            m_max_row = gridbag.GetMaxRow();
             m_spin_row->SetValue(m_max_row + 1);
         }
         else if (cur_node->get_Parent()->is_Gen(gen_wxGridBagSizer))
         {
             m_gbsizer = cur_node->get_Parent();
-            GridBag gb(m_gbsizer);
-            m_max_column = gb.GetMaxColumn();
-            m_max_row = gb.GetMaxRow();
+            GridBag gridbag(m_gbsizer);
+            m_max_column = gridbag.GetMaxColumn();
+            m_max_row = gridbag.GetMaxRow();
 
             m_spin_row->SetValue(cur_node->as_int(prop_row));
             m_spin_column->SetValue(GetNewColumn(cur_node->as_int(prop_row)));
@@ -81,10 +81,14 @@ void GridBagItem::OnColumn(wxSpinEvent& /* event unused */)
                 if (m_gbsizer->get_Child(child_idx)->as_int(prop_row) == row)
                 {
                     if (column < m_gbsizer->get_Child(child_idx)->as_int(prop_column))
+                    {
                         continue;
-                    else if (column > m_gbsizer->get_Child(child_idx)->as_int(prop_column) +
-                                          m_gbsizer->get_Child(child_idx)->as_int(prop_colspan))
+                    }
+                    if (column > m_gbsizer->get_Child(child_idx)->as_int(prop_column) +
+                                     m_gbsizer->get_Child(child_idx)->as_int(prop_colspan))
+                    {
                         continue;
+                    }
                     is_inuse = true;
                     break;
                 }
@@ -151,7 +155,9 @@ int GridBagItem::GetNewColumn(int row)
             auto column = m_gbsizer->get_Child(child_idx)->as_int(prop_column) +
                           m_gbsizer->get_Child(child_idx)->as_int(prop_colspan);
             if (column > new_column)
+            {
                 new_column = column;
+            }
         }
     }
     return new_column;

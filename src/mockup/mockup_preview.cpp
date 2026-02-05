@@ -30,7 +30,9 @@ auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 {
 #if defined(__WINDOWS__)
     if (node->HasValue(prop_platforms) && !node->as_string(prop_platforms).contains("Windows"))
+    {
         return;
+    }
 #elif defined(__UNIX__)
     if (node->HasValue(prop_platforms) && !node->as_string(prop_platforms).contains("Unix"))
         return;
@@ -39,12 +41,14 @@ auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
         return;
 #endif
 
-    auto generator = node->get_Generator();
+    auto* generator = node->get_Generator();
     ASSERT_MSG(generator, wxString() << "Missing component for " << wxString(node->get_DeclName()));
     if (!generator)
+    {
         return;
+    }
 
-    auto created_object = generator->CreateMockup(node, parent);
+    auto* created_object = generator->CreateMockup(node, parent);
     if (!created_object)
     {
         if (node->is_Spacer() && parent_object)
@@ -101,12 +105,11 @@ auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
         // BUGBUG: [Randalphwa - 09-09-2022] Er, why are we returning?
         return;
     }
-    else if (node->is_Sizer() || node->is_Gen(gen_wxStdDialogButtonSizer) ||
-             node->is_Gen(gen_TextSizer))
+    if (node->is_Sizer() || node->is_Gen(gen_wxStdDialogButtonSizer) || node->is_Gen(gen_TextSizer))
     {
         if (node->is_StaticBoxSizer())
         {
-            auto staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
+            auto* staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
             created_window = staticBoxSizer->GetStaticBox();
             created_sizer = staticBoxSizer;
         }
@@ -134,13 +137,13 @@ auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 
     if (node->is_Gen(gen_wxCollapsiblePane))
     {
-        auto collpane = wxStaticCast(created_object, wxCollapsiblePane);
+        auto* collpane = wxStaticCast(created_object, wxCollapsiblePane);
         new_wxparent = collpane->GetPane();
     }
 
     if (node->is_Gen(gen_PageCtrl) && node->get_ChildCount())
     {
-        auto page_child = node->get_Child(0);
+        auto* page_child = node->get_Child(0);
         if (page_child)
         {
             for (const auto& child: page_child->get_ChildNodePtrs())
@@ -159,7 +162,7 @@ auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 
     if (parent && (created_window || created_sizer))
     {
-        if (auto node_parent = node->get_Parent(); node_parent)
+        if (auto* node_parent = node->get_Parent(); node_parent)
         {
             if (node_parent->is_Gen(gen_wxChoicebook) && node->is_Type(type_widget))
             {
@@ -172,20 +175,24 @@ auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                 auto sizer_flags = node->getSizerFlags();
                 if (node_parent->is_Gen(gen_wxGridBagSizer))
                 {
-                    auto sizer = wxStaticCast(parent_object, wxGridBagSizer);
+                    auto* sizer = wxStaticCast(parent_object, wxGridBagSizer);
                     wxGBPosition position(node->as_int(prop_row), node->as_int(prop_column));
                     wxGBSpan span(node->as_int(prop_rowspan), node->as_int(prop_colspan));
 
                     if (created_window)
+                    {
                         sizer->Add(created_window, position, span, sizer_flags.GetFlags(),
                                    sizer_flags.GetBorderInPixels());
+                    }
                     else
+                    {
                         sizer->Add(created_sizer, position, span, sizer_flags.GetFlags(),
                                    sizer_flags.GetBorderInPixels());
+                    }
                 }
                 else
                 {
-                    auto sizer = wxStaticCast(parent_object, wxSizer);
+                    auto* sizer = wxStaticCast(parent_object, wxSizer);
                     if (created_window && !node->is_StaticBoxSizer())
                     {
                         sizer->Add(created_window, sizer_flags.GetProportion(),
@@ -208,16 +215,24 @@ auto CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
         {
             auto* gb_sizer = wxStaticCast(parent_sizer, wxGridBagSizer);
             if (created_window && !node->is_StaticBoxSizer())
+            {
                 gb_sizer->Add(created_window, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+            }
             else if (created_sizer)
+            {
                 gb_sizer->Add(created_sizer, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+            }
         }
         else
         {
             if (created_window && !node->is_StaticBoxSizer())
+            {
                 parent_sizer->Add(created_window, wxSizerFlags().Expand());
+            }
             else if (created_sizer)
+            {
                 parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());
+            }
         }
     }
 

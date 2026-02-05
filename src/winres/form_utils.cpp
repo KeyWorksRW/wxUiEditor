@@ -154,13 +154,13 @@ auto resForm::SortCtrls() -> void
     // sort them horizontally.
 
     std::sort(m_ctrls.begin(), m_ctrls.end(),
-              [](resCtrl a, resCtrl b)
+              [](const resCtrl& lhs, const resCtrl& rhs)
               {
-                  if (a.du_top() == b.du_top())
+                  if (lhs.du_top() == rhs.du_top())
                   {
-                      return (a.du_left() < b.du_left());
+                      return (lhs.du_left() < rhs.du_left());
                   }
-                  return (a.du_top() < b.du_top());
+                  return (lhs.du_top() < rhs.du_top());
               });
 
     // Sometimes a static text control will be placed to the left of another control such as an edit
@@ -201,9 +201,9 @@ auto resForm::SortCtrls() -> void
         if (end > begin + 1)
         {
             std::sort(m_ctrls.begin() + begin, m_ctrls.begin() + end,
-                      [](resCtrl a, resCtrl b)
+                      [](const resCtrl& lhs, const resCtrl& rhs)
                       {
-                          return a.du_left() < b.du_left();
+                          return lhs.du_left() < rhs.du_left();
                       });
         }
     }

@@ -25,7 +25,9 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property,
     auto validation_behaviour = static_cast<int>(m_validationInfo.GetFailureBehavior());
 
     if (validation_behaviour & static_cast<int>(wxPGVFBFlags::Beep))
+    {
         ::wxBell();
+    }
 
     if ((validation_behaviour & static_cast<int>(wxPGVFBFlags::MarkCell)) &&
         !property->HasFlag(wxPGFlags::InvalidValue))
@@ -44,7 +46,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property,
         {
             SetInternalFlag(wxPG_FL_CELL_OVERRIDES_SEL);
 
-            if (auto editor = GetEditorControl(); editor)
+            if (auto* editor = GetEditorControl(); editor)
             {
                 editor->SetForegroundColour(foreground_colour);
                 editor->SetBackgroundColour(background_colour);
@@ -72,7 +74,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property,
         {
             if (!wxPGGlobalVars->m_offline)
             {
-                if (auto pStatusBar = GetStatusBar(); pStatusBar)
+                if (auto* pStatusBar = GetStatusBar(); pStatusBar)
                 {
                     pStatusBar->SetStatusText(msg);
                 }
@@ -84,7 +86,7 @@ bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property,
             // Displaying the message box can cause a focus change which will result in idle
             // processing sending the validation event again. Preserving the focus window avoids
             // validating twice.
-            auto focus_window = wxWindow::FindFocus();
+            auto* focus_window = wxWindow::FindFocus();
 
             /* TRANSLATORS: Caption of message box displaying any property error */
             ::wxMessageBox(msg, _("Property Error"), wxOK, focus_window);

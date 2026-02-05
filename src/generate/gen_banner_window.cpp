@@ -59,7 +59,9 @@ bool BannerWindowGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     if (code.is_cpp())
+    {
         code.ValidParentName().Comma().as_string(prop_direction);
+    }
     else if (code.is_python() || code.is_ruby())
     {
         code.ValidParentName().Comma().Add(prop_id).Comma().Add(prop_direction);
@@ -119,7 +121,7 @@ bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-bool BannerWindowGenerator::GetPythonImports(Node*, std::set<std::string>& set_imports)
+bool BannerWindowGenerator::GetPythonImports(Node* /* node */, std::set<std::string>& set_imports)
 {
     set_imports.insert("import wx.adv");
     return true;

@@ -19,7 +19,7 @@ using namespace code;
 
 wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                          DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -27,7 +27,9 @@ wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     widget->SetValue(node->as_int(prop_initial));
 
     if (node->as_int(prop_inc) > 1)
+    {
         widget->SetIncrement(node->as_int(prop_inc));
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -73,7 +75,9 @@ bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 {
     InsertGeneratorInclude(node, "#include <wx/spinbutt.h>", set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
     return true;
 }
 
@@ -90,7 +94,9 @@ int SpinButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     ADD_ITEM_PROP(prop_initial, "value")
 
     if (node->as_int(prop_inc) > 1)
+    {
         ADD_ITEM_PROP(prop_inc, "inc")
+    }
 
     if (node->HasValue(prop_style))
     {

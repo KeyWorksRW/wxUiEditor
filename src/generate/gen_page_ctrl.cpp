@@ -18,16 +18,18 @@
 wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     if (!node->get_ChildCount())
+    {
         return nullptr;
+    }
 
-    auto child_generator = node->get_Child(0)->get_Generator();
+    auto* child_generator = node->get_Child(0)->get_Generator();
     ASSERT(child_generator);
-    auto widget = child_generator->CreateMockup(node->get_Child(0), parent);
+    auto* widget = child_generator->CreateMockup(node->get_Child(0), parent);
     ASSERT(widget);
 
-    auto node_parent = node->get_Parent();
+    auto* node_parent = node->get_Parent();
 
-    if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
+    if (auto* book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
         if (node_parent->is_Gen(gen_wxToolbook))
         {
@@ -37,13 +39,12 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (child.get() == node)
                 {
                     if (idx_image < 0)
+                    {
                         idx_image = 0;
+                    }
                     break;
                 }
-                else
-                {
-                    ++idx_image;
-                }
+                ++idx_image;
             }
             book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false,
                           idx_image);
@@ -56,14 +57,18 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 if (node_parent->get_Child(idx_child) == node)
                 {
                     if (idx_image < 0)
+                    {
                         idx_image = 0;
+                    }
                     break;
                 }
                 if (node_parent->get_Child(idx_child)->HasValue(prop_bitmap) ||
                     node_parent->is_Gen(gen_wxToolbook))
                 {
                     if (idx_image < 0)
+                    {
                         idx_image = 0;
+                    }
 
                     ++idx_image;
                 }
@@ -89,7 +94,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
+        auto* aui_book = wxDynamicCast(parent, wxAuiNotebook);
         if (aui_book)
         {
             if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
@@ -100,14 +105,18 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                     if (node_parent->get_Child(idx_child) == node)
                     {
                         if (idx_image < 0)
+                        {
                             idx_image = 0;
+                        }
 
                         break;
                     }
                     if (node_parent->get_Child(idx_child)->HasValue(prop_bitmap))
                     {
                         if (idx_image < 0)
+                        {
                             idx_image = 0;
+                        }
                         ++idx_image;
                     }
                 }
@@ -139,11 +148,13 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
     if (!node->get_ChildCount())
-        return false;
-
-    if (auto child_node = code.node()->get_Child(0); child_node)
     {
-        if (auto child_generator = child_node->get_Generator(); child_generator)
+        return false;
+    }
+
+    if (auto* child_node = code.node()->get_Child(0); child_node)
+    {
+        if (auto* child_generator = child_node->get_Generator(); child_generator)
         {
             Code gen_code(child_node, code.get_language());
             if (child_generator->ConstructionCode(gen_code))
@@ -154,13 +165,15 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
 
                 // Default is false, so only add parameter if it is true.
                 if (code.IsTrue(prop_select))
+                {
                     code.Comma().True();
+                }
 
                 if (node->HasValue(prop_bitmap) &&
                     (node->get_Parent()->as_bool(prop_display_images) ||
                      node->is_Parent(gen_wxToolbook)))
                 {
-                    auto node_parent = node->get_Parent();
+                    auto* node_parent = node->get_Parent();
                     int idx_image = -1;
                     for (size_t idx_child = 0; idx_child < node_parent->get_ChildCount();
                          ++idx_child)
@@ -168,14 +181,18 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
                         if (node_parent->get_Child(idx_child) == node)
                         {
                             if (idx_image < 0)
+                            {
                                 idx_image = 0;
+                            }
 
                             break;
                         }
                         if (node_parent->get_Child(idx_child)->HasValue(prop_bitmap))
                         {
                             if (idx_image < 0)
+                            {
                                 idx_image = 0;
+                            }
 
                             ++idx_image;
                         }
@@ -183,7 +200,9 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
 
                     // If it is true, then the parameter has already been added
                     if (!node->as_bool(prop_select))
+                    {
                         code.Comma().False();
+                    }
                     code.Comma().itoa(idx_image);
                 }
                 code.EndFunction();

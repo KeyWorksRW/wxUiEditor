@@ -60,7 +60,7 @@ const char* g_perl_keywords =
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : wxPanel(parent)
 {
     m_panel_type = panel_type;
-    auto top_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* top_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
@@ -189,21 +189,21 @@ BasePanel::~BasePanel()
 
 wxString BasePanel::GetSelectedText()
 {
-    auto notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
+    auto* notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
     auto text = notebook->GetPageText(notebook->GetSelection());
     if (text == "source")
     {
         return m_source_panel->GetTextCtrl()->GetSelectedText();
     }
-    else if (text == "derived_src")
+    if (text == "derived_src")
     {
         return m_derived_src_panel->GetTextCtrl()->GetSelectedText();
     }
-    else if (text == "header" || text == "inherit" || text == "info")
+    if (text == "header" || text == "inherit" || text == "info")
     {
         return m_hdr_info_panel->GetTextCtrl()->GetSelectedText();
     }
-    else if (text == "derived_hdr")
+    if (text == "derived_hdr")
     {
         return m_derived_hdr_panel->GetTextCtrl()->GetSelectedText();
     }
@@ -213,7 +213,7 @@ wxString BasePanel::GetSelectedText()
 
 void BasePanel::OnFind(wxFindDialogEvent& event)
 {
-    auto notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
+    auto* notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
     ASSERT(notebook);
 
     auto text = notebook->GetPageText(notebook->GetSelection());
@@ -242,13 +242,21 @@ PANEL_PAGE BasePanel::GetPanelPage() const
     if (auto* page = child_panel->m_notebook->GetCurrentPage(); page)
     {
         if (page == child_panel->m_source_panel)
+        {
             return PANEL_PAGE::SOURCE_PANEL;
-        else if (page == child_panel->m_hdr_info_panel)
+        }
+        if (page == child_panel->m_hdr_info_panel)
+        {
             return PANEL_PAGE::HDR_INFO_PANEL;
-        else if (page == child_panel->m_derived_src_panel)
+        }
+        if (page == child_panel->m_derived_src_panel)
+        {
             return PANEL_PAGE::DERIVED_SRC_PANEL;
-        else if (page == child_panel->m_derived_hdr_panel)
+        }
+        if (page == child_panel->m_derived_hdr_panel)
+        {
             return PANEL_PAGE::DERIVED_HDR_PANEL;
+        }
     }
     return PANEL_PAGE::SOURCE_PANEL;
 }
@@ -256,7 +264,9 @@ PANEL_PAGE BasePanel::GetPanelPage() const
 void BasePanel::GenerateBaseClass()
 {
     if (!IsShown())
+    {
         return;
+    }
 
     // If no form is selected, display the first child form of the project
     m_cur_form = wxGetFrame().getSelectedForm();
@@ -277,9 +287,13 @@ void BasePanel::GenerateBaseClass()
             m_source_panel->Clear();
             m_hdr_info_panel->Clear();
             if (m_derived_src_panel)
+            {
                 m_derived_src_panel->Clear();
+            }
             if (m_derived_hdr_panel)
+            {
                 m_derived_hdr_panel->Clear();
+            }
             return;
         }
     }
@@ -287,7 +301,7 @@ void BasePanel::GenerateBaseClass()
     wxWindowUpdateLocker freeze(this);
 
     PANEL_PAGE panel_page = PANEL_PAGE::SOURCE_PANEL;
-    if (auto page = m_notebook->GetCurrentPage(); page)
+    if (auto* page = m_notebook->GetCurrentPage(); page)
     {
         if (page == m_hdr_info_panel)
         {
@@ -360,9 +374,11 @@ void BasePanel::GenerateBaseClass()
 void BasePanel::OnNodeSelected(CustomEvent& event)
 {
     if (!IsShown())
+    {
         return;
+    }
 
-    auto form = event.getNode()->get_Form();
+    auto* form = event.getNode()->get_Form();
 
     if (form != m_cur_form)
     {
@@ -370,7 +386,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
         GenerateBaseClass();
     }
 
-    if (auto page = m_notebook->GetCurrentPage(); page)
+    if (auto* page = m_notebook->GetCurrentPage(); page)
     {
         if (page == m_hdr_info_panel)
         {

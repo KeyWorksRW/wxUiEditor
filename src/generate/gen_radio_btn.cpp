@@ -42,7 +42,8 @@ bool RadioButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
         wxStaticCast(widget, wxRadioButton)->SetLabel(node->as_wxString(prop_label));
         return true;
     }
-    else if (prop->isProp(prop_checked))
+
+    if (prop->isProp(prop_checked))
     {
         wxStaticCast(widget, wxRadioButton)->SetValue(prop->as_bool());
         return true;
@@ -101,7 +102,9 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 {
     InsertGeneratorInclude(node, "#include <wx/radiobut.h>", set_src, set_hdr);
     if (node->as_string(prop_validator_variable).size())
+    {
         set_src.insert("#include <wx/valgen.h>");
+    }
 
     return true;
 }
@@ -117,13 +120,13 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
             m_info_warning = false;
         }
 
-        auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        auto* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
         auto variant = event->GetPropertyValue();
         wxue::string newValue = property->ValueToString(variant).utf8_string();
 
         if (newValue.contains("wxRB_GROUP"))
         {
-            auto parent = node->get_Parent();
+            auto* parent = node->get_Parent();
             auto pos = parent->get_ChildPosition(node);
             if (pos > 0 && parent->get_Child(pos - 1)->is_Gen(gen_wxRadioButton) &&
                 parent->get_Child(pos - 1)->as_string(prop_style).contains("wxRB_GROUP"))
@@ -149,10 +152,8 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
         // groups)
         return true;
     }
-    else
-    {
-        return BaseGenerator::AllowPropertyChange(event, prop, node);
-    }
+
+    return BaseGenerator::AllowPropertyChange(event, prop, node);
 }
 
 void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
@@ -160,11 +161,11 @@ void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
 {
     if (changed_prop->isProp(prop_style))
     {
-        if (auto pg_parent = prop_grid->GetProperty("style"); pg_parent)
+        if (auto* pg_parent = prop_grid->GetProperty("style"); pg_parent)
         {
             for (unsigned int idx = 0; idx < pg_parent->GetChildCount(); ++idx)
             {
-                if (auto pg_setting = pg_parent->Item(idx); pg_setting)
+                if (auto* pg_setting = pg_parent->Item(idx); pg_setting)
                 {
                     auto label = pg_setting->GetLabel();
                     if (label == "wxRB_GROUP")

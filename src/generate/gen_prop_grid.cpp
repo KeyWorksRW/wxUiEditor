@@ -17,7 +17,7 @@
 
 wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                            DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -43,7 +43,9 @@ bool PropertyGridGenerator::ConstructionCode(Code& code)
     code.PosSizeFlags(code::allow_scaling, false, "wxPG_DEFAULT_STYLE");
 
     if (code.HasValue(prop_extra_style))
+    {
         code.Eol().NodeName().Function("SetExtraStyle(").Add(prop_extra_style).EndFunction();
+    }
 
     return true;
 }
@@ -61,15 +63,13 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-bool PropertyGridGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool PropertyGridGenerator::GetImports([[maybe_unused]] Node* node,
+                                       std::set<std::string>& set_imports, GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/pg'");
         return true;
-    }
-    else
-    {
     }
     return false;
 }

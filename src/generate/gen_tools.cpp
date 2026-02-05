@@ -40,9 +40,9 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
 
     for (const auto& child: code.node()->get_ChildNodePtrs())
     {
-        auto old_parent = child->get_Parent();
+        auto* old_parent = child->get_Parent();
         child->set_Parent(menu_node_ptr.get());
-        if (auto gen = child->get_NodeDeclaration()->get_Generator(); gen)
+        if (auto* gen = child->get_NodeDeclaration()->get_Generator(); gen)
         {
             Code child_code(child.get(), code.get_language());
             if (gen->ConstructionCode(child_code))
@@ -61,7 +61,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
         {
             for (const auto& grandchild: child->get_ChildNodePtrs())
             {
-                if (auto gen = grandchild->get_NodeDeclaration()->get_Generator(); gen)
+                if (auto* gen = grandchild->get_NodeDeclaration()->get_Generator(); gen)
                 {
                     Code child_code(grandchild.get(), code.get_language());
                     if (gen->ConstructionCode(child_code))
@@ -79,7 +79,7 @@ bool ToolDropDownGenerator::SettingsCode(Code& code)
                 {
                     for (const auto& great_grandchild: grandchild->get_ChildNodePtrs())
                     {
-                        if (auto gen = great_grandchild->get_NodeDeclaration()->get_Generator();
+                        if (auto* gen = great_grandchild->get_NodeDeclaration()->get_Generator();
                             gen)
                         {
                             Code child_code(great_grandchild.get(), code.get_language());
@@ -120,7 +120,7 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         for (const auto& child: node->get_ChildNodePtrs())
         {
             auto child_object = object.append_child("object");
-            auto child_generator = child->get_NodeDeclaration()->get_Generator();
+            auto* child_generator = child->get_NodeDeclaration()->get_Generator();
             if (child_generator->GenXrcObject(child.get(), child_object, xrc_flags) ==
                 BaseGenerator::xrc_not_supported)
             {
@@ -133,7 +133,7 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
                 for (const auto& grandchild: child->get_ChildNodePtrs())
                 {
                     auto grandchild_object = child_object.append_child("object");
-                    auto grandchild_generator = grandchild->get_NodeDeclaration()->get_Generator();
+                    auto* grandchild_generator = grandchild->get_NodeDeclaration()->get_Generator();
                     if (grandchild_generator->GenXrcObject(grandchild.get(), grandchild_object,
                                                            xrc_flags) ==
                         BaseGenerator::xrc_not_supported)
@@ -146,7 +146,7 @@ int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
                         for (const auto& great_grandchild: grandchild->get_ChildNodePtrs())
                         {
                             auto great_grandchild_object = grandchild_object.append_child("object");
-                            auto great_grandchild_generator =
+                            auto* great_grandchild_generator =
                                 grandchild->get_NodeDeclaration()->get_Generator();
                             if (great_grandchild_generator->GenXrcObject(
                                     great_grandchild.get(), great_grandchild_object, xrc_flags) ==
@@ -225,32 +225,32 @@ int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& objec
     return BaseGenerator::xrc_updated;
 }
 
-wxue::string ToolSeparatorGenerator::GetHelpURL(Node*)
+wxue::string ToolSeparatorGenerator::GetHelpURL(Node* /* node */)
 {
     return "wx_tool_bar.html";
 }
 
-wxue::string ToolSeparatorGenerator::GetHelpText(Node*)
+wxue::string ToolSeparatorGenerator::GetHelpText(Node* /* node */)
 {
     return "wxToolBar";
 }
 
-wxue::string ToolSeparatorGenerator::GetPythonURL(Node*)
+wxue::string ToolSeparatorGenerator::GetPythonURL(Node* /* node */)
 {
     return "wx.ToolBar.html?highlight=addseparator#wx.ToolBar.AddSeparator";
 }
 
-wxue::string ToolSeparatorGenerator::GetPythonHelpText(Node*)
+wxue::string ToolSeparatorGenerator::GetPythonHelpText(Node* /* node */)
 {
     return "wx.ToolBar";
 }
 
-wxue::string ToolSeparatorGenerator::GetRubyURL(Node*)
+wxue::string ToolSeparatorGenerator::GetRubyURL(Node* /* node */)
 {
     return "Wx/ToolBar.html#add_separator-instance_method";
 }
 
-wxue::string ToolSeparatorGenerator::GetRubyHelpText(Node*)
+wxue::string ToolSeparatorGenerator::GetRubyHelpText(Node* /* node */)
 {
     return "Wx/ToolBar.html";
 }
@@ -289,32 +289,32 @@ int ToolStretchableGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& obj
     return BaseGenerator::xrc_updated;
 }
 
-wxue::string ToolStretchableGenerator::GetHelpURL(Node*)
+wxue::string ToolStretchableGenerator::GetHelpURL(Node* /* node */)
 {
     return "wx_tool_bar.html";
 }
 
-wxue::string ToolStretchableGenerator::GetHelpText(Node*)
+wxue::string ToolStretchableGenerator::GetHelpText(Node* /* node */)
 {
     return "wxToolBar";
 }
 
-wxue::string ToolStretchableGenerator::GetPythonURL(Node*)
+wxue::string ToolStretchableGenerator::GetPythonURL(Node* /* node */)
 {
     return "wx.ToolBar.html?highlight=addstretchablespace#wx.ToolBar.AddStretchableSpace";
 }
 
-wxue::string ToolStretchableGenerator::GetPythonHelpText(Node*)
+wxue::string ToolStretchableGenerator::GetPythonHelpText(Node* /* node */)
 {
     return "wx.ToolBar";
 }
 
-wxue::string ToolStretchableGenerator::GetRubyURL(Node*)
+wxue::string ToolStretchableGenerator::GetRubyURL(Node* /* node */)
 {
     return "Wx/ToolBar.html#add_stretchable_space-instance_method";
 }
 
-wxue::string ToolStretchableGenerator::GetRubyHelpText(Node*)
+wxue::string ToolStretchableGenerator::GetRubyHelpText(Node* /* node */)
 {
     return "Wx/ToolBar.html";
 }

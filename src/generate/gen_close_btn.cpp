@@ -18,7 +18,7 @@
 
 wxObject* CloseButtonGenerator::CreateMockup(Node* /* node */, wxObject* parent)
 {
-    auto widget = new wxBitmapButton;
+    auto* widget = new wxBitmapButton;
     widget->CreateCloseButton(wxStaticCast(parent, wxWindow), wxID_ANY);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -31,7 +31,9 @@ bool CloseButtonGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().Add(" = ").Class("wxBitmapButton").ClassMethod("NewCloseButton(");
     code.ValidParentName().Comma().as_string(prop_id);
     if (code.HasValue(prop_window_name))
+    {
         code.Comma().QuotedString(prop_window_name);
+    }
     code.EndFunction();
 
     return true;

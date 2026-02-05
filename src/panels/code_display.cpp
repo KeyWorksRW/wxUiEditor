@@ -185,11 +185,15 @@ void CodeDisplay::OnNodeSelected(Node* node)
             {
                 auto value = iter.second.get_value();
                 if (value.empty())
+                {
                     continue;
+                }
 
                 line = (to_int) m_view.FindLineContaining(value);
                 if (wxue::is_found(line))
+                {
                     break;
+                }
             }
         }
     }
@@ -263,7 +267,9 @@ void CodeDisplay::OnNodeSelected(Node* node)
     }
 
     if (!wxue::is_found(line))
+    {
         return;
+    }
 
     m_scintilla->MarkerDeleteAll(node_marker);
     m_scintilla->MarkerAdd(line, node_marker);
@@ -284,7 +290,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 void CodeDisplay::OnRibbonToolSelected(Node* node)
 {
     wxue::string search;
-    if (auto parent = node->get_Parent(); parent)
+    if (auto* parent = node->get_Parent(); parent)
     {
         if (parent->is_Gen(gen_wxRibbonButtonBar))
         {
@@ -325,9 +331,13 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
         if (func_name.size())
         {
             if (func_name.starts_with("wxue_img::"))
+            {
                 func_name.erase(0, sizeof("wxue_img::") - 1);
+            }
             if (auto pos = func_name.find("("); pos != wxue::npos)
+            {
                 func_name.erase(pos, wxue::npos);
+            }
 
             if (auto line = (to_int) m_view.FindLineContaining(func_name); line >= 0)
             {

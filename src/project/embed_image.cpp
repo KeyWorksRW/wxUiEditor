@@ -130,7 +130,7 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         // file load.
         auto script_nodes = doc.select_nodes("//*[translate(name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', "
                                              "'abcdefghijklmnopqrstuvwxyz') = 'script']");
-        for (auto& xpath_node: script_nodes)
+        for (const auto& xpath_node: script_nodes)
         {
             auto script_node = xpath_node.node();
             auto parent = script_node.parent();

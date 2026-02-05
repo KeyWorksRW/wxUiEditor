@@ -17,9 +17,9 @@
 
 wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                         node->as_wxColour(prop_colour), DlgPoint(node, prop_pos),
-                                         DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget = new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                          node->as_wxColour(prop_colour), DlgPoint(node, prop_pos),
+                                          DlgSize(node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -31,13 +31,19 @@ bool ColourPickerGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.node()->as_string(prop_colour).size())
+    {
         ColourCode(code, prop_colour);
+    }
     else
     {
         if (code.is_cpp())
+        {
             code.Str("*wxBLACK");
+        }
         else
+        {
             code.Add("wxBLACK");
+        }
     }
     code.PosSizeFlags(code::allow_scaling, true, "wxCLRP_DEFAULT_STYLE");
 

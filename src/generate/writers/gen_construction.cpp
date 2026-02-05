@@ -56,8 +56,8 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     }
 
     auto type = node->get_GenType();
-    auto declaration = node->get_NodeDeclaration();
-    auto generator = declaration->get_Generator();
+    auto* declaration = node->get_NodeDeclaration();
+    auto* generator = declaration->get_Generator();
     if (!generator)
     {
         return;
@@ -83,7 +83,9 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     {
         BeginPlatformCode(gen_code, node->as_string(prop_platforms));
         if (m_language != GEN_LANG_PYTHON)
+        {
             gen_code.Eol();
+        }
         m_source->writeLine(gen_code);
         gen_code.clear();
         if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_RUBY)
@@ -135,7 +137,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         return;
     }
 
-    auto parent = node->get_Parent();
+    auto* parent = node->get_Parent();
 
     if (GenAfterChildren(node, need_closing_brace))
     {
@@ -159,9 +161,13 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         wxue::string code;
         gen_code.clear();
         if (parent->is_Type(type_toolbar_form) || parent->is_Type(type_aui_toolbar_form))
+        {
             gen_code.Str("AddControl(").as_string(prop_var_name).EndFunction();
+        }
         else
+        {
             gen_code.ParentName().Function("AddControl(").NodeName().EndFunction();
+        }
         m_source->writeLine(gen_code);
     }
     else if (node->get_GenType() == type_widget && parent->is_Gen(gen_wxChoicebook))
@@ -183,9 +189,13 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
             gen_code.CheckLineLength(sizeof("wxSizerFlags().Expand().Border(wxALL));"))
                 .Add("wxSizerFlags");
             if (gen_code.is_ruby())
+            {
                 gen_code.Str(".new.expand.border(Wx::ALL)");
+            }
             else if (gen_code.is_cpp())
+            {
                 gen_code.Str("().Expand().Border(").Add("wxALL)");
+            }
             else
                 FAIL_MSG("Unknown language!");
             gen_code.EndFunction();
@@ -198,7 +208,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         // type_page will have already constructed the code for the child. However, we still need to
         // generate settings and process any grandchildren.
 
-        auto page_child = node->get_Child(0);
+        auto* page_child = node->get_Child(0);
         if (page_child)
         {
             GenSettings(page_child);
@@ -235,9 +245,13 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
             else
             {
                 if (get_ParentName(node, m_language) != "this")
+                {
                     gen_code.ParentName();
+                }
                 else if (gen_code.is_python())
+                {
                     gen_code.Str("self");
+                }
                 gen_code.Function("SetSizerAndFit(").NodeName().EndFunction();
             }
 
@@ -258,9 +272,13 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         {
             gen_code.NodeName();
             if (node->as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
+            {
                 gen_code.Function("SplitVertically(");
+            }
             else
+            {
                 gen_code.Function("SplitHorizontally(");
+            }
 
             gen_code.NodeName(node->get_Child(0))
                 .Comma()
@@ -339,33 +357,49 @@ auto BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platfo
         {
             case GEN_LANG_CPLUSPLUS:
                 if (code.size())
+                {
                     code << " || ";
+                }
                 else
+                {
                     code.Eol() << "#if ";
+                }
                 code << "defined(__UNIX__)";
                 break;
 
             case GEN_LANG_PERL:
                 if (code.size())
+                {
                     code << " or ";
+                }
                 else
+                {
                     code.Eol() << "if ";
+                }
                 code << "$^O eq 'linux' or $^O eq 'darwin'";
                 break;
 
             case GEN_LANG_PYTHON:
                 if (code.size())
+                {
                     code << " or ";
+                }
                 else
+                {
                     code.Eol() << "if ";
+                }
                 code << "wx.Platform == \"unix\"";
                 break;
 
             case GEN_LANG_RUBY:
                 if (code.size())
+                {
                     code << " || ";
+                }
                 else
+                {
                     code.Eol() << "if ";
+                }
                 code << "Wx::PLATFORM == 'WXUNIX'";
                 break;
 
@@ -379,33 +413,49 @@ auto BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platfo
         {
             case GEN_LANG_CPLUSPLUS:
                 if (code.size())
+                {
                     code << " || ";
+                }
                 else
+                {
                     code.Eol() << "#if ";
+                }
                 code << "defined(__WXOSX__)";
                 break;
 
             case GEN_LANG_PERL:
                 if (code.size())
+                {
                     code << " or ";
+                }
                 else
+                {
                     code.Eol() << "if ";
+                }
                 code << "$^O eq 'darwin'";
                 break;
 
             case GEN_LANG_PYTHON:
                 if (code.size())
+                {
                     code << " or ";
+                }
                 else
+                {
                     code.Eol() << "if ";
+                }
                 code << "wx.Platform == \"mac\"";
                 break;
 
             case GEN_LANG_RUBY:
                 if (code.size())
+                {
                     code << " || ";
+                }
                 else
+                {
                     code.Eol() << "if ";
+                }
                 code << "Wx::PLATFORM == 'WXOSX'";
                 break;
 
@@ -497,24 +547,34 @@ auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
 
         code.GenWindowSettings();
         if (code.size())
+        {
             m_source->writeLine(code);
+        }
     }
 }
 
 bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
-    auto generator = node->get_Generator();
+    auto* generator = node->get_Generator();
 
     if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
     {
         if (m_language == GEN_LANG_CPLUSPLUS && disable_langs.contains("C++"))
+        {
             return false;
-        else if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+        }
+        if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
+        {
             return false;
-        else if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        }
+        if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        {
             return false;
-        else if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        }
+        if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        {
             return false;
+        }
     }
 
     Code gen_code(node, m_language);
@@ -529,7 +589,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
         }
 
         m_source->writeLine(gen_code);
-        auto parent = node->get_Parent();
+        auto* parent = node->get_Parent();
 
         // Code for spacer's is handled by the component's GenConstruction() call
         if (parent->is_Sizer() && !node->is_Gen(gen_spacer))
@@ -537,7 +597,9 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             gen_code.clear();
 
             if (need_closing_brace)
+            {
                 gen_code.Tab();
+            }
             gen_code.Tab().ParentName().Function("Add(").NodeName().Comma();
 
             if (parent->is_Gen(gen_wxGridBagSizer))
@@ -548,16 +610,22 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                     << "), ";
 
                 if (node->HasValue(prop_borders))
+                {
                     gen_code.as_string(prop_borders);
+                }
                 if (node->as_string(prop_flags).size())
                 {
                     if (node->HasValue(prop_borders))
+                    {
                         gen_code.GetCode() += '|';
+                    }
                     gen_code.as_string(prop_flags);
                 }
 
                 if (!node->HasValue(prop_borders) && !node->HasValue(prop_flags))
+                {
                     gen_code.GetCode() += '0';
+                }
 
                 gen_code.Comma().BorderSize().EndFunction();
                 gen_code.GetCode().Replace(", 0, 0)", ")");
@@ -583,16 +651,13 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> void
 {
-    auto declaration = node->get_NodeDeclaration();
-    auto generator = declaration->get_Generator();
+    auto* declaration = node->get_NodeDeclaration();
+    auto* generator = declaration->get_Generator();
 
     Code code(node, m_language);
     if (generator->AfterChildrenCode(code))
@@ -645,7 +710,9 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
                 }
             }
             else
+            {
                 code.ParentName().Function("Add(").NodeName() << ", ";
+            }
         }
         else
         {
@@ -665,18 +732,26 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
             if (node->as_string(prop_flags).size())
             {
                 if (flags.size())
+                {
                     flags << '|';
+                }
                 flags << node->as_string(prop_flags);
             }
 
             if (flags.empty())
+            {
                 flags << '0';
+            }
 
             code.Add(flags).Comma().BorderSize().EndFunction();
             if (code.is_cpp())
+            {
                 code.Replace(", 0, 0);", ");");
+            }
             else
+            {
                 code.Replace(", 0, 0)", ")");
+            }
         }
         else
         {

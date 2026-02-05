@@ -21,8 +21,9 @@ wxObject* ListbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     // Note the currently, wxListbook does not have a "style" property since the only thing that can
     // be set is the label (tab) position
-    auto widget = new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget =
+        new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                       DlgSize(node, prop_size), GetStyleInt(node));
 
     AddBookImageList(node, widget);
 
@@ -34,9 +35,11 @@ wxObject* ListbookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void ListbookGenerator::OnPageChanged(wxListbookEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxListbook);
+    auto* book = wxDynamicCast(event.GetEventObject(), wxListbook);
     if (book && event.GetSelection() != wxNOT_FOUND)
+    {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    }
     event.Skip();
 }
 
@@ -77,7 +80,9 @@ int ListbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->as_string(prop_tab_position) != "wxBK_DEFAULT")
     {
         if (styles.size())
+        {
             styles << '|';
+        }
         styles << node->as_string(prop_tab_position);
     }
 
@@ -87,7 +92,9 @@ int ListbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_persist))
+        {
             item.append_child(pugi::node_comment).set_value(" persist is not supported in XRC. ");
+        }
 
         GenXrcComments(node, item);
     }

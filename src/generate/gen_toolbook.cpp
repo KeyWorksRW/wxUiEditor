@@ -20,8 +20,9 @@
 
 wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget =
+        new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                       DlgSize(node, prop_size), GetStyleInt(node));
 
     wxBookCtrlBase::Images bundle_list;
     for (size_t idx_child = 0; idx_child < node->get_ChildCount(); ++idx_child)
@@ -37,7 +38,7 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
             bundle_list.push_back(bundle);
         }
     }
-    auto book = wxStaticCast(widget, wxBookCtrlBase);
+    auto* book = wxStaticCast(widget, wxBookCtrlBase);
     book->SetImages(bundle_list);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -48,9 +49,11 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void ToolbookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxToolbook);
+    auto* book = wxDynamicCast(event.GetEventObject(), wxToolbook);
     if (book && event.GetSelection() != wxNOT_FOUND)
+    {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    }
     event.Skip();
 }
 

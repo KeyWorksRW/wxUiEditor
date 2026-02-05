@@ -19,8 +19,9 @@
 
 wxObject* TreebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTreebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                                 DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget =
+        new wxTreebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                       DlgSize(node, prop_size), GetStyleInt(node));
 
     AddBookImageList(node, widget);
 
@@ -32,9 +33,11 @@ wxObject* TreebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void TreebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxTreebook);
+    auto* book = wxDynamicCast(event.GetEventObject(), wxTreebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
+    {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    }
     event.Skip();
 }
 
@@ -83,7 +86,9 @@ int TreebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (xrc_flags & xrc::add_comments)
     {
         if (node->as_bool(prop_persist))
+        {
             item.append_child(pugi::node_comment).set_value(" persist is not supported in XRC. ");
+        }
 
         GenXrcComments(node, item);
     }

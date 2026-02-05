@@ -16,7 +16,7 @@
 
 bool PropertyGridItemGenerator::ConstructionCode(Code& code)
 {
-    auto parent = code.node()->get_Parent();
+    auto* parent = code.node()->get_Parent();
     if (parent->is_Gen(gen_propGridCategory))
     {
         parent = parent->get_Parent();
@@ -59,17 +59,29 @@ wxue::string PropertyGridItemGenerator::GetHelpURL(Node* node)
     else
     {
         if (!type.starts_with("string"))
+        {
             type.Replace("string", "_string");
+        }
         if (!type.starts_with("choice"))
+        {
             type.Replace("choice", "_choice");
+        }
         if (!type.starts_with("colour"))
+        {
             type.Replace("colour", "_colour");
+        }
         if (!type.starts_with("enum"))
+        {
             type.Replace("enum", "_enum");
+        }
         if (!type.starts_with("int"))
+        {
             type.Replace("int", "_int");
+        }
         if (!type.starts_with("file"))
+        {
             type.Replace("file", "_file");
+        }
 
         url << type << "_property.html";
     }
@@ -81,8 +93,12 @@ wxue::string PropertyGridItemGenerator::GetHelpText(Node* node)
 {
     wxue::string help_text("wx");
     if (node->as_string(prop_type) == "Category")
+    {
         help_text << "PropertyCategory";
+    }
     else
+    {
         help_text << node->as_string(prop_type) << "Property";
+    }
     return help_text;
 }

@@ -111,7 +111,9 @@ void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
                     auto index = m_listbox->Append(form->as_string(prop_class_name),
                                                    static_cast<void*>(form));
                     if (m_form == wxGetMainFrame()->getSelectedNode())
+                    {
                         idx_cur_sel = index;
+                    }
                 }
                 break;
 
@@ -121,7 +123,9 @@ void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
     }
 
     if (m_listbox->GetCount())
+    {
         m_listbox->SetSelection(idx_cur_sel);
+    }
 }
 
 void XrcListDlg::OnOK(wxCommandEvent& /* event unused */)

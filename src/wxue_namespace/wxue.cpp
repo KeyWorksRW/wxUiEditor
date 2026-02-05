@@ -420,7 +420,7 @@ auto wxue::is_sameas(std::string_view str1, std::string_view str2, CASE checkcas
     {
         return (str1.compare(str2) == 0);
     }
-    else if (checkcase == CASE::either)
+    if (checkcase == CASE::either)
     {
         auto main = str1.begin();
         auto sub = str2.begin();
@@ -440,7 +440,7 @@ auto wxue::is_sameas(std::string_view str1, std::string_view str2, CASE checkcas
         }
         return (main != str1.end() ? false : true);
     }
-    else if (checkcase == CASE::utf8)
+    if (checkcase == CASE::utf8)
     {
         // For UTF-8, use wxString which properly handles multi-byte sequences
         wxString wxStr1 = wxString::FromUTF8(str1);
@@ -456,10 +456,14 @@ auto wxue::is_sameas(std::string_view str1, std::string_view str2, CASE checkcas
 auto wxue::is_sameprefix(std::string_view strMain, std::string_view strSub, CASE checkcase) -> bool
 {
     if (strSub.empty())
+    {
         return strMain.empty();
+    }
 
     if (strMain.empty() || strMain.size() < strSub.size())
+    {
         return false;
+    }
 
     if (checkcase == CASE::exact)
     {
@@ -473,17 +477,19 @@ auto wxue::is_sameprefix(std::string_view strMain, std::string_view strSub, CASE
         }
         return true;
     }
-    else if (checkcase == CASE::either)
+    if (checkcase == CASE::either)
     {
         auto iterMain = strMain.begin();
         for (auto iterSub: strSub)
         {
             if (std::tolower(*iterMain++) != std::tolower(iterSub))
+            {
                 return false;
+            }
         }
         return true;
     }
-    else if (checkcase == CASE::utf8)
+    if (checkcase == CASE::utf8)
     {
         // For UTF-8, use wxString which properly handles multi-byte sequences
         wxString wxMain = wxString::FromUTF8(strMain);

@@ -584,6 +584,13 @@ private:
     auto TryCreateInParent(GenName name, [[maybe_unused]] int pos)
         -> std::pair<NodeSharedPtr, Node::Validity>;
 
+    // Helper methods for CreateToolNode to reduce complexity
+    auto AdjustNameForFrameForm(GenName& name) -> void;
+    auto CreateFolderNode(GenName& name) -> bool;
+    auto CreateImagesListNode() -> bool;
+    auto CreateDataListNode() -> bool;
+    auto PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void;
+
     // Helper methods for FixDuplicateNodeNames to reduce complexity
     static auto InitializeNameSet(std::unordered_set<std::string>& name_set) -> void;
     static auto GenerateUniqueNameFromBase(const std::string& base_name,

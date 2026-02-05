@@ -38,9 +38,9 @@
 #include "menuspin.h"
 #include "menustaticsizer.h"
 
-bool CreateViaNewDlg(size_t id)
+bool CreateViaNewDlg(size_t menu_id)
 {
-    switch (id)
+    switch (menu_id)
     {
         case CreateNewDialog:
             {
@@ -145,23 +145,23 @@ RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent) {}
 
 void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 {
-    size_t id = event.GetId();
+    size_t tool_id = event.GetId();
 
-    if (id == CreateNewRibbon &&
+    if (tool_id == CreateNewRibbon &&
         (!wxGetFrame().getSelectedNode() || wxGetFrame().getSelectedNode()->is_Gen(gen_Project)))
     {
-        id = CreateNewFormRibbon;
+        tool_id = CreateNewFormRibbon;
     }
 
-    if (id < gen_name_array_size)
+    if (tool_id < gen_name_array_size)
     {
         wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));
         return;
     }
-    else
+
+    if (CreateViaNewDlg(tool_id))
     {
-        if (CreateViaNewDlg(id))
-            return;
+        return;
     }
 
     FAIL_MSG(
@@ -192,7 +192,9 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
             {
                 const auto* cur_sel = wxGetFrame().getSelectedNode();
                 if (!cur_sel || cur_sel->is_Gen(gen_Project))
+                {
                     return;
+                }
                 if (cur_sel && (cur_sel->is_Gen(gen_wxAuiToolBar) ||
                                 cur_sel->get_Parent()->is_Gen(gen_wxAuiToolBar)))
                 {
@@ -213,7 +215,9 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
             {
                 const auto* cur_sel = wxGetFrame().getSelectedNode();
                 if (!cur_sel || cur_sel->is_Gen(gen_Project))
+                {
                     return;
+                }
                 if (cur_sel && (cur_sel->is_Gen(gen_wxToolBar) || cur_sel->is_Gen(gen_ToolBar) ||
                                 cur_sel->get_Parent()->is_Gen(gen_wxToolBar) ||
                                 cur_sel->get_Parent()->is_Gen(gen_ToolBar)))

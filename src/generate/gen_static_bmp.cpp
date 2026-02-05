@@ -21,18 +21,24 @@
 
 wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxGenericStaticBitmap(
+    auto* widget = new wxGenericStaticBitmap(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxBitmapBundle(prop_bitmap),
         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
     if (auto value = node->as_string(prop_scale_mode); value != "None")
     {
         if (value == "Fill")
+        {
             widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
+        }
         else if (value == "AspectFit")
+        {
             widget->SetScaleMode(wxStaticBitmap::Scale_AspectFit);
+        }
         else if (value == "AspectFill")
+        {
             widget->SetScaleMode(wxStaticBitmap::Scale_AspectFill);
+        }
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -72,19 +78,23 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
             {
                 bool is_list_created = PythonBitmapList(code, prop_bitmap);
                 if (!use_generic_version)
+                {
                     code.NodeName()
                         .CreateClass()
                         .ValidParentName()
                         .Comma()
                         .as_string(prop_id)
                         .Comma();
+                }
                 else
+                {
                     code.NodeName()
                         .CreateClass("GenericStaticBitmap")
                         .ValidParentName()
                         .Comma()
                         .as_string(prop_id)
                         .Comma();
+                }
 
                 if (is_list_created)
                 {
@@ -98,12 +108,14 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
             else if (code.is_ruby())
             {
                 if (!use_generic_version)
+                {
                     code.NodeName()
                         .CreateClass()
                         .ValidParentName()
                         .Comma()
                         .as_string(prop_id)
                         .Comma();
+                }
                 else
                 {
                     code.NodeName()
@@ -142,7 +154,7 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
 
     if (node->HasValue(prop_bitmap))
     {
-        auto& description = node->as_string(prop_bitmap);
+        const auto& description = node->as_string(prop_bitmap);
         wxue::string bundle_code;
         bool is_vector_code = GenerateBundleCode(description, bundle_code);
         code.UpdateBreakAt();
@@ -159,7 +171,9 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
         }
 
         if (node->is_Local())
+        {
             code << "auto* ";
+        }
 
         switch (class_override_type)
         {
@@ -173,9 +187,13 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                     code += node->as_string(prop_subclass_params);
                     code.RightTrim();
                     if (code.back() != ',')
+                    {
                         code.Comma();
+                    }
                     else
+                    {
                         code += ' ';
+                    }
                 }
                 break;
             case ClassOverrideType::None:
@@ -197,7 +215,9 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
     else  // no bitmap
     {
         if (node->is_Local())
+        {
             code << "auto* ";
+        }
 
         switch (class_override_type)
         {
@@ -211,9 +231,13 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
                     code += node->as_string(prop_subclass_params);
                     code.RightTrim();
                     if (code.back() != ',')
+                    {
                         code.Comma();
+                    }
                     else
+                    {
                         code += ' ';
+                    }
                 }
                 break;
             case ClassOverrideType::None:
@@ -235,9 +259,13 @@ bool StaticBitmapGenerator::SettingsCode(Code& code)
         // C++ and wxRuby3 use wxStaticBitmap::ScaleMode, wxPython uses
         // wxGenericStaticBitmap::ScaleMode
         if (!code.is_python())
+        {
             code.NodeName().Function("SetScaleMode(").Add("wxStaticBitmap");
+        }
         else
+        {
             code.NodeName().Function("SetScaleMode(").Add("wxGenericStaticBitmap");
+        }
         if (code.is_cpp())
         {
             code += "::Scale_";
@@ -276,9 +304,13 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 {
     if (node->as_string(prop_scale_mode) != "None" ||
         node->as_string(prop_subclass).starts_with("wxGeneric"))
+    {
         InsertGeneratorInclude(node, "#include <wx/generic/statbmpg.h>", set_src, set_hdr);
+    }
     else
+    {
         InsertGeneratorInclude(node, "#include <wx/statbmp.h>", set_src, set_hdr);
+    }
 
     // Add wxBitmapBundle header -- the BaseCodeGenerator class will see it and replace it with a
     // conditional include if needed.

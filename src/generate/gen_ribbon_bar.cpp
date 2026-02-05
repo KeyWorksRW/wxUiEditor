@@ -19,7 +19,7 @@
 
 wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                         DlgSize(node, prop_size), GetStyleInt(node));
 
@@ -43,16 +43,18 @@ wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 void RibbonBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
                                            Node* /* node */, bool /* is_preview */)
 {
-    auto btn_bar = wxStaticCast(wxobject, wxRibbonBar);
+    auto* btn_bar = wxStaticCast(wxobject, wxRibbonBar);
     btn_bar->Realize();
 }
 
 void RibbonBarFormGenerator::OnPageChanged(wxRibbonBarEvent& event)
 {
-    auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
+    auto* bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
     if (bar)
+    {
         // BUGBUG: [Randalphwa - 06-12-2022] Don't use getMockup() if is_preview is true!
         getMockup()->SelectNode(event.GetPage());
+    }
     event.Skip();
 }
 
@@ -123,8 +125,8 @@ bool RibbonBarFormGenerator::HeaderCode(Code& code)
         code.WxSize(prop_size, no_dpi_scaling);
     }
 
-    auto& style = node->as_string(prop_style);
-    auto& win_style = node->as_string(prop_window_style);
+    const auto& style = node->as_string(prop_style);
+    const auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
     {
         code.Comma().Str("long style = 0");
@@ -171,7 +173,7 @@ bool RibbonBarFormGenerator::BaseClassNameCode(Code& code)
 
 bool RibbonBarFormGenerator::SettingsCode(Code& code)
 {
-    auto& theme = code.node()->as_string(prop_theme);
+    const auto& theme = code.node()->as_string(prop_theme);
     if (theme.is_sameas("Default"))
     {
         code.FormFunction("SetArtProvider(")
@@ -217,15 +219,13 @@ bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     return true;
 }
 
-bool RibbonBarFormGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool RibbonBarFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                        GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/rbn'");
         return true;
-    }
-    else
-    {
     }
     return false;
 }
@@ -235,16 +235,22 @@ bool RibbonBarFormGenerator::GetImports(Node*, std::set<std::string>& set_import
 
 wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                         DlgSize(node, prop_size), GetStyleInt(node));
 
     if (node->as_string(prop_theme) == "Default")
+    {
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
+    }
     else if (node->as_string(prop_theme) == "Generic")
+    {
         widget->SetArtProvider(new wxRibbonAUIArtProvider);
+    }
     else if (node->as_string(prop_theme) == "MSW")
+    {
         widget->SetArtProvider(new wxRibbonMSWArtProvider);
+    }
 
     widget->Bind(wxEVT_RIBBONBAR_PAGE_CHANGED, &RibbonBarGenerator::OnPageChanged, this);
 
@@ -256,16 +262,18 @@ wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 void RibbonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
                                        bool /* is_preview */)
 {
-    auto btn_bar = wxStaticCast(wxobject, wxRibbonBar);
+    auto* btn_bar = wxStaticCast(wxobject, wxRibbonBar);
     btn_bar->Realize();
 }
 
 void RibbonBarGenerator::OnPageChanged(wxRibbonBarEvent& event)
 {
-    auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
+    auto* bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
     if (bar)
+    {
         // BUGBUG: [Randalphwa - 06-12-2022] Don't use getMockup() if is_preview is true!
         getMockup()->SelectNode(event.GetPage());
+    }
     event.Skip();
 }
 
@@ -280,7 +288,7 @@ bool RibbonBarGenerator::ConstructionCode(Code& code)
 
 bool RibbonBarGenerator::SettingsCode(Code& code)
 {
-    auto& theme = code.node()->as_string(prop_theme);
+    const auto& theme = code.node()->as_string(prop_theme);
     if (theme.is_sameas("Default"))
     {
         code.Eol()
@@ -337,11 +345,17 @@ int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     wxue::string art(node->as_string(prop_theme));
     if (art == "Generic")
+    {
         art = "aui";
+    }
     else if (art == "MSW")
+    {
         art = "msw";
+    }
     else
+    {
         art = "default";
+    }
 
     item.append_child("art-provider").text().set(art);
 
@@ -361,15 +375,13 @@ void RibbonBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxRibbonXmlHandler");
 }
 
-bool RibbonBarGenerator::GetImports(Node*, std::set<std::string>& set_imports, GenLang language)
+bool RibbonBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
+                                    GenLang language)
 {
     if (language == GEN_LANG_RUBY)
     {
         set_imports.insert("require 'wx/rbn'");
         return true;
-    }
-    else
-    {
     }
     return false;
 }

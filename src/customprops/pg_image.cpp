@@ -167,14 +167,18 @@ auto PropertyGrid_Image::RefreshChildren() -> void
                         // will be converted to an alpha channel which is what we want.
 
                         if (!img.HasAlpha())
+                        {
                             img.InitAlpha();
+                        }
                         bundle = wxBitmapBundle::FromBitmap(img);
                     }
                 }
             }
 
             if (!bundle.IsOk())
+            {
                 bundle = wxue_img::bundle_empty_png();
+            }
 
             Item(IndexImage)->SetValueImage(bundle);
 
@@ -206,7 +210,7 @@ auto PropertyGrid_Image::SetAutoComplete() -> void
     wxArrayString array_art_ids;
     if (m_img_props.type == "Art")
     {
-        for (auto& iter: set_art_ids)
+        for (const auto& iter: set_art_ids)
         {
             array_art_ids.Add(iter);
         }
@@ -215,7 +219,9 @@ auto PropertyGrid_Image::SetAutoComplete() -> void
     {
         auto art_dir = Project.as_string(prop_art_directory);
         if (art_dir.empty())
+        {
             art_dir = "./";
+        }
         wxDir dir;
         wxArrayString array_files;
         wxBusyCursor hourglass;

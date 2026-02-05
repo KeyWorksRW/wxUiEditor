@@ -36,10 +36,12 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
     if (project_version < curSupportedVer)
     {
         // Don't check if the version is already as high as we support -- this speeds up the process
-        if (auto gen = get_Generator(); gen)
+        if (auto* gen = get_Generator(); gen)
         {
             if (gen->GetRequiredVersion(this) > project_version)
+            {
                 project_version = gen->GetRequiredVersion(this);
+            }
         }
     }
 
@@ -50,15 +52,19 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
         auto& value = iter.as_string();
         if (value.size())
         {
-            auto info = iter.get_PropDeclaration();
+            auto* info = iter.get_PropDeclaration();
 
             // If the value hasn't changed from the default, don't save it
             if (info->getDefaultValue() == value)
+            {
                 continue;
+            }
 
             auto attr = node.append_attribute(iter.get_DeclName());
             if (iter.type() == type_bool)
+            {
                 attr.set_value(iter.as_bool());
+            }
             else
             {
                 if (iter.is_Type(type_image) || iter.is_Type(type_animation))
@@ -68,7 +74,9 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 
                     wxue::StringVector parts(value, ';', wxue::TRIM::both);
                     if (parts.size() < 2)
+                    {
                         continue;
+                    }
 
                     wxue::string description(parts[0]);
                     parts[1].backslashestoforward();
@@ -100,7 +108,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 
     for (auto& iter: m_map_events)
     {
-        auto& value = iter.second.get_value();
+        const auto& value = iter.second.get_value();
         if (value.size())
         {
             node.append_attribute(iter.second.get_name()) = value;

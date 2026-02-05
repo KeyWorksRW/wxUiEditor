@@ -21,8 +21,8 @@
 
 wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
-                              DlgSize(node, prop_size), GetStyleInt(node));
+    auto* widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
+                               DlgSize(node, prop_size), GetStyleInt(node));
     if (!node->HasValue(prop_extra_style))
     {
         int ex_style = 0;
@@ -81,9 +81,13 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.HasValue(prop_window_name))
+        {
             code.QuotedString(prop_window_name);
+        }
         else
+        {
             code.Str("wx.PanelNameStr");
+        }
         code.Str("):");
         code.Unindent();
         code.Eol() += "wx.Panel.__init__(self)";
@@ -225,7 +229,7 @@ bool PanelFormGenerator::SettingsCode(Code& code)
 
 bool PanelFormGenerator::AfterChildrenCode(Code& code)
 {
-    Node* form;
+    Node* form = nullptr;
     auto* node = code.node();
     Node* form_sizer = nullptr;
     if (node->is_Form())
@@ -323,12 +327,18 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
                 code_temp.clear();
                 code_temp.FormFunction("Fit(").EndFunction();
                 while (code_temp.size() < comment_column)
+                {
                     code_temp += ' ';
+                }
                 code.Eol().Str(code_temp);
                 if (size.x == wxDefaultCoord)
+                {
                     code += "// calculate width";
+                }
                 else
+                {
                     code += "// calculate height";
+                }
 
                 code.Eol()
                     .FormFunction("SetSize(")
@@ -340,7 +350,9 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
                 code_temp.clear();
                 code_temp.FormFunction("Layout(").EndFunction();
                 while (code_temp.size() < comment_column)
+                {
                     code_temp += ' ';
+                }
                 code.Eol().Str(code_temp).Str("// change layout to match SetSize() value");
             }
             else
@@ -374,22 +386,32 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
     auto position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     auto size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
-    auto& style = node->as_string(prop_style);
-    auto& win_style = node->as_string(prop_window_style);
+    const auto& style = node->as_string(prop_style);
+    const auto& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
+    {
         code.Comma().Str("long style = 0");
+    }
     else
     {
         code.Comma();
@@ -426,19 +448,29 @@ bool PanelFormGenerator::HeaderCode(Code& code)
     code.Comma().Str("const wxPoint& pos = ");
 
     if (position == wxDefaultPosition)
+    {
         code.Str("wxDefaultPosition");
+    }
     else
+    {
         code.Pos(prop_pos, no_dpi_scaling);
+    }
 
     code.Comma().Str("const wxSize& size = ");
 
     if (size == wxDefaultSize)
+    {
         code.Str("wxDefaultSize");
+    }
     else
+    {
         code.WxSize(prop_size, no_dpi_scaling);
+    }
 
     if (style.empty() && win_style.empty())
+    {
         code.Comma().Str("long style = 0");
+    }
     else
     {
         code.Comma();
@@ -461,9 +493,13 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxString &name = ");
     if (node->HasValue(prop_window_name))
+    {
         code.QuotedString(prop_window_name);
+    }
     else
+    {
         code.Str("wxPanelNameStr");
+    }
 
     // Extra eols at end to force space before "Protected:" section
     code.EndFunction().Eol().Eol();
@@ -489,7 +525,9 @@ int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 {
     auto result = BaseGenerator::xrc_updated;
     if (node->get_Parent() && node->get_Parent()->is_Sizer())
+    {
         result = BaseGenerator::xrc_sizer_item_created;
+    }
     auto item = InitializeXrcObject(node, object);
 
     item.append_attribute("class").set_value("wxPanel");

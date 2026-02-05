@@ -70,8 +70,8 @@ bool CheckAdvancePropertyInclude(Node* node)
     {
         if (child->is_Gen(gen_propGridItem))
         {
-            auto& value = child->as_string(prop_type);
-            for (auto& iter: advanced_items)
+            const auto& value = child->as_string(prop_type);
+            for (const auto& iter: advanced_items)
             {
                 if (value == iter)
                 {

@@ -275,7 +275,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
         // actually store the data in an image buffer.
         isUiditorFile = false;
 
-        auto save_ptr = buf_ptr;
+        const auto* save_ptr = buf_ptr;
 
         do
         {
@@ -285,7 +285,9 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
 
                 // Step over any hex digit
                 if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
+                {
                     buf_ptr += 2;
+                }
 
                 // Now step over the digit, then fall through and step over the first character
                 // following the digit
@@ -320,7 +322,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    auto out_buffer = image_buffer.get();
+    auto* out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -410,9 +412,13 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
             if (handler->LoadFile(&image, stream))
             {
                 if (p_original_size)
+                {
                     *p_original_size = actual_size;
+                }
                 if (p_mime_type)
+                {
                     *p_mime_type = handler->GetMimeType().utf8_string();
+                }
 
                 return image;
             }
@@ -432,7 +438,7 @@ auto LoadHeaderImage(const unsigned char* data, size_t size_data) -> wxImage
     // Images are almost always in PNG format, so check that first. If it fails, then let wxWidgets
     // figure out the format.
 
-    auto handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
+    auto* handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
     if (handler && handler->CanRead(stream) && handler->LoadFile(&image, stream))
     {
         return image;
@@ -470,7 +476,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
     size_t image_buffer_size = 0;
     size_t actual_size = 0;
 
-    auto buf_ptr = strchr(in_buf.c_str(), '[');
+    const auto* buf_ptr = strchr(in_buf.c_str(), '[');
     if (buf_ptr)
     {
         image_buffer_size = wxue::atoi(++buf_ptr);
@@ -492,7 +498,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
         // actually store the data in an animation buffer.
         isUiditorFile = false;
 
-        auto save_ptr = buf_ptr;
+        const auto* save_ptr = buf_ptr;
 
         do
         {
@@ -502,7 +508,9 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
 
                 // Step over any hex digit
                 if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
+                {
                     buf_ptr += 2;
+                }
 
                 // Now step over the digit, then fall through and step over the first character
                 // following the digit
@@ -537,7 +545,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    auto out_buffer = image_buffer.get();
+    auto* out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -579,27 +587,41 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
             if (*buf_ptr >= '0' && *buf_ptr <= '9')
             {
                 if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
+                {
                     buf_ptr += 2;
+                }
 
                 unsigned char value = 0;
 
                 // Get the high value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
+                {
                     value = (to_uchar) (*buf_ptr - '0') * 16;
+                }
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
+                {
                     value = (to_uchar) ((*buf_ptr - 'A') + 10) * 16;
+                }
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
+                {
                     value = (to_uchar) ((*buf_ptr - 'a') + 10) * 16;
+                }
 
                 ++buf_ptr;
 
                 // Get the low value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
+                {
                     value += (to_uchar) (*buf_ptr - '0');
+                }
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
+                {
                     value += (to_uchar) ((*buf_ptr - 'A') + 10);
+                }
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
+                {
                     value += (to_uchar) ((*buf_ptr - 'a') + 10);
+                }
 
                 out_buffer[actual_size] = value;
 

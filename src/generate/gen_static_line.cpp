@@ -18,7 +18,7 @@
 
 wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
+    auto* widget =
         new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                          DlgSize(node, prop_size), GetStyleInt(node));
 

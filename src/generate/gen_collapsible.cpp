@@ -23,14 +23,18 @@ wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
     // ALWAYS add wxCP_NO_TLW_RESIZE to the Mockup version, otherwise the entire wxUiEditor main
     // window will be resized when the pane is collapsed or expanded.
 
-    auto widget = new wxCollapsiblePane(
+    auto* widget = new wxCollapsiblePane(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxString(prop_label),
         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node) | wxCP_NO_TLW_RESIZE);
 
     if (getMockup()->IsShowingHidden())
+    {
         widget->Collapse(false);
+    }
     else
+    {
         widget->Collapse(node->as_bool(prop_collapsed));
+    }
 
     widget->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, &CollapsiblePaneGenerator::OnCollapse, this);
 
@@ -39,9 +43,9 @@ wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
 {
-    if (auto wxobject = event.GetEventObject(); wxobject)
+    if (auto* wxobject = event.GetEventObject(); wxobject)
     {
-        auto node = wxGetFrame().getMockup()->getNode(wxobject);
+        auto* node = wxGetFrame().getMockup()->getNode(wxobject);
 
         if (wxGetFrame().getSelectedNode() != node)
         {

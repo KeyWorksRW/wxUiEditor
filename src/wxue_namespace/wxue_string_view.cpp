@@ -585,13 +585,11 @@ namespace wxue
 
             return string_view(data() + start, offset - start);
         }
-        else
-        {
-            // if the string didn't start with chBegin, just copy the string. Note that offset may
-            // have changed if chBegin was not whitespace and at(offset) was whitespace.
 
-            return subview(offset);
-        }
+        // if the string didn't start with chBegin, just copy the string. Note that offset may
+        // have changed if chBegin was not whitespace and at(offset) was whitespace.
+
+        return subview(offset);
     }
 
     string_view string_view::subview(size_t start, size_t len) const
@@ -696,8 +694,8 @@ namespace wxue
             for (--len; len != std::string::npos; --len)
             {
                 // char ch = at(len);
-                char ch = data()[len];
-                if (ch != ' ' && ch != '\t' && ch != '\r' && ch != '\n' && ch != '\f')
+                char chr = data()[len];
+                if (chr != ' ' && chr != '\t' && chr != '\r' && chr != '\n' && chr != '\f')
                 {
                     ++len;
                     break;

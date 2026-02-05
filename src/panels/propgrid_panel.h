@@ -128,6 +128,15 @@ protected:
     void OnAuiNotebookPageChanged(wxAuiNotebookEvent& event);
 
 private:
+    // Helper functions for Create()
+    void InitializePropertyGrids(const wxString& current_page_name);
+    void ProcessFormLanguageCategories(Node* node, NodeDeclaration* declaration,
+                                       PropNameSet& prop_set, EventSet& event_set);
+    void ProcessStandardBaseClasses(Node* node, NodeDeclaration* declaration, PropNameSet& prop_set,
+                                    EventSet& event_set);
+    void AddLayoutCategoryIfNeeded(Node* node);
+    void RestoreSelectedPage(const wxString& page_name);
+
     std::map<wxPGProperty*, NodeProperty*> m_property_map;
     std::map<wxPGProperty*, NodeEvent*> m_event_map;
 

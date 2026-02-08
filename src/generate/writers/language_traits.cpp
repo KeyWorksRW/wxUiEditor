@@ -8,8 +8,14 @@
 #include "language_traits.h"
 
 #include "strategy_cpp.h"
+#include "strategy_fortran.h"
+#include "strategy_go.h"
+#include "strategy_julia.h"
+#include "strategy_luajit.h"
+#include "strategy_perl.h"
 #include "strategy_python.h"
 #include "strategy_ruby.h"
+#include "strategy_rust.h"
 
 // clang-format off
 namespace
@@ -131,9 +137,9 @@ constexpr LanguageTraits ruby_traits
 // Phase 5 will assign GenLang values and wire these into GetLanguageTraits().
 // All FFI languages share identical constant/function naming via kwxFFI.
 
-[[maybe_unused]] constexpr LanguageTraits fortran_traits
+constexpr LanguageTraits fortran_traits
 {
-    .language = GEN_LANG_NONE,  // Phase 5: GEN_LANG_FORTRAN
+    .language = GEN_LANG_FORTRAN,
     .true_literal = ".TRUE.",
     .false_literal = ".FALSE.",
     .null_literal = "C_NULL_PTR",
@@ -167,9 +173,9 @@ constexpr LanguageTraits ruby_traits
     .supports_classes = true,
 };
 
-[[maybe_unused]] constexpr LanguageTraits go_traits
+constexpr LanguageTraits go_traits
 {
-    .language = GEN_LANG_NONE,  // Phase 5: GEN_LANG_GO
+    .language = GEN_LANG_GO,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nil",
@@ -203,9 +209,9 @@ constexpr LanguageTraits ruby_traits
     .supports_classes = false,
 };
 
-[[maybe_unused]] constexpr LanguageTraits julia_traits
+constexpr LanguageTraits julia_traits
 {
-    .language = GEN_LANG_NONE,  // Phase 5: GEN_LANG_JULIA
+    .language = GEN_LANG_JULIA,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nothing",
@@ -239,9 +245,9 @@ constexpr LanguageTraits ruby_traits
     .supports_classes = true,
 };
 
-[[maybe_unused]] constexpr LanguageTraits luajit_traits
+constexpr LanguageTraits luajit_traits
 {
-    .language = GEN_LANG_NONE,  // Phase 5: GEN_LANG_LUAJIT
+    .language = GEN_LANG_LUAJIT,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nil",
@@ -275,9 +281,9 @@ constexpr LanguageTraits ruby_traits
     .supports_classes = true,
 };
 
-[[maybe_unused]] constexpr LanguageTraits kwxperl_traits
+constexpr LanguageTraits perl_traits
 {
-    .language = GEN_LANG_NONE,  // Phase 5: GEN_LANG_PERL
+    .language = GEN_LANG_PERL,
     .true_literal = "1",
     .false_literal = "0",
     .null_literal = "undef",
@@ -311,9 +317,9 @@ constexpr LanguageTraits ruby_traits
     .supports_classes = true,
 };
 
-[[maybe_unused]] constexpr LanguageTraits rust_traits
+constexpr LanguageTraits rust_traits
 {
-    .language = GEN_LANG_NONE,  // Phase 5: GEN_LANG_RUST
+    .language = GEN_LANG_RUST,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "std::ptr::null_mut()",
@@ -362,6 +368,20 @@ auto GetLanguageTraits(GenLang language) -> const LanguageTraits*
             return &python_traits;
         case GEN_LANG_RUBY:
             return &ruby_traits;
+
+        case GEN_LANG_FORTRAN:
+            return &fortran_traits;
+        case GEN_LANG_GO:
+            return &go_traits;
+        case GEN_LANG_JULIA:
+            return &julia_traits;
+        case GEN_LANG_LUAJIT:
+            return &luajit_traits;
+        case GEN_LANG_PERL:
+            return &perl_traits;
+        case GEN_LANG_RUST:
+            return &rust_traits;
+
         default:
             return nullptr;
     }
@@ -379,6 +399,24 @@ auto CreateLanguageStrategy(GenLang language) -> std::unique_ptr<LanguageStrateg
 
         case GEN_LANG_RUBY:
             return std::make_unique<RubyStrategy>(ruby_traits);
+
+        case GEN_LANG_FORTRAN:
+            return std::make_unique<FortranStrategy>(fortran_traits);
+
+        case GEN_LANG_GO:
+            return std::make_unique<GoStrategy>(go_traits);
+
+        case GEN_LANG_JULIA:
+            return std::make_unique<JuliaStrategy>(julia_traits);
+
+        case GEN_LANG_LUAJIT:
+            return std::make_unique<LuaJITStrategy>(luajit_traits);
+
+        case GEN_LANG_PERL:
+            return std::make_unique<PerlStrategy>(perl_traits);
+
+        case GEN_LANG_RUST:
+            return std::make_unique<RustStrategy>(rust_traits);
 
         default:
             return nullptr;

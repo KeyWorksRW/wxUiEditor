@@ -84,7 +84,7 @@ struct LanguageTraits
     {
         native_cpp,         // C++ (only language with direct wxWidgets access)
         wx_binding,         // wxPython, wxRuby (C wrapper, near-full parity)
-        wx_binding_legacy,  // wxPerl (declining, being replaced by kwxPerl)
+        wx_binding_legacy,  // wxPerl (legacy, replaced by Perl via kwxFFI)
         ffi                 // All kwxFFI languages (identical naming/constants)
     };
     Family family;
@@ -147,9 +147,16 @@ struct LanguageTraits
 //   LanguageStrategy (abstract)
 //   ├── CppStrategy                     (direct C++ — unique)
 //   └── CWrapperStrategy (abstract)     (shared: all non-C++ go through C wrappers)
-//       └── WxBindingStrategy (abstract)(CPython/Ruby C APIs, near-full parity)
-//           ├── PythonStrategy
-//           └── RubyStrategy
+//       ├── WxBindingStrategy (abstract)(CPython/Ruby C APIs, near-full parity)
+//       │   ├── PythonStrategy
+//       │   └── RubyStrategy
+//       └── FFIStrategy (abstract)      (kwxFFI C API, full C++ parity)
+//           ├── FortranStrategy
+//           ├── GoStrategy
+//           ├── JuliaStrategy
+//           ├── LuaJITStrategy
+//           ├── PerlStrategy
+//           └── RustStrategy
 //
 // The strategy pattern handles complex behavioral differences that can't be reduced to
 // simple data lookups in LanguageTraits — such as construction patterns, event binding,

@@ -82,8 +82,15 @@ set( file_list
     generate/writers/language_traits.cpp   # LanguageTraits -- Language characteristics for code generation
     generate/writers/strategy_cpp.cpp      # CppStrategy -- C++ language strategy
     generate/writers/strategy_cwrapper.cpp  # CWrapperStrategy/WxBindingStrategy -- Shared non-C++ base
+    generate/writers/strategy_ffi.cpp      # FFIStrategy -- Shared FFI language strategy base
+    generate/writers/strategy_fortran.cpp  # FortranStrategy -- Fortran language strategy
+    generate/writers/strategy_go.cpp       # GoStrategy -- Go language strategy
+    generate/writers/strategy_julia.cpp    # JuliaStrategy -- Julia language strategy
+    generate/writers/strategy_perl.cpp     # PerlStrategy -- Perl language strategy
+    generate/writers/strategy_luajit.cpp   # LuaJITStrategy -- LuaJIT language strategy
     generate/writers/strategy_python.cpp   # PythonStrategy -- Python language strategy
     generate/writers/strategy_ruby.cpp     # RubyStrategy -- Ruby language strategy
+    generate/writers/strategy_rust.cpp     # RustStrategy -- Rust language strategy
     generate/writers/comment_blocks.cpp    # Shared generated comment blocks
     generate/writers/common_strings.cpp    # Common strings used by code generators
 
@@ -112,8 +119,14 @@ set( file_list
     generate/writers/gen_cpp_header.cpp    # Generate C++ code header content
     generate/writers/gen_cpp_variables.cpp # C++ code generation variable and validator functions
     generate/writers/gen_derived.cpp       # Generate C++ Derived code
+    generate/writers/gen_fortran.cpp       # Generate Fortran code via kwxFFI
+    generate/writers/gen_go.cpp            # Generate Go code via kwxFFI
+    generate/writers/gen_julia.cpp         # Generate Julia code via kwxFFI
+    generate/writers/gen_perl.cpp          # Generate Perl code via kwxFFI
+    generate/writers/gen_luajit.cpp        # Generate LuaJIT code via kwxFFI
     generate/writers/gen_python.cpp        # Generate wxPython code
     generate/writers/gen_ruby.cpp          # Generate wxRuby3 code
+    generate/writers/gen_rust.cpp          # Generate Rust code via kwxFFI
     generate/writers/gen_script_common.cpp # Common functions for generating Script Languages
     generate/writers/gen_xrc.cpp           # Generate XRC
     generate/writers/verify_codegen.cpp    # Verify that code generation did not change

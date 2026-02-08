@@ -309,6 +309,12 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
             return {};
 
         default:
+            // All FFI languages use wx_ prefix — no special prefix mapping needed
+            if (auto* traits = GetLanguageTraits(language);
+                traits && traits->family == LanguageTraits::Family::ffi)
+            {
+                return "wx_";
+            }
             FAIL_MSG("Unknown language");
             return {};
     }

@@ -10,10 +10,16 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
-#include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
-#include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
-#include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
-#include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
+#include "gen_cpp.h"      // CppCodeGenerator -- Generate C++ code
+#include "gen_fortran.h"  // FortranCodeGenerator -- Generate Fortran code
+#include "gen_go.h"       // GoCodeGenerator -- Generate Go code
+#include "gen_julia.h"    // JuliaCodeGenerator -- Generate Julia code
+#include "gen_luajit.h"   // LuaJITCodeGenerator -- Generate LuaJIT code
+#include "gen_perl.h"     // PerlCodeGenerator -- Generate Perl code
+#include "gen_python.h"   // PythonCodeGenerator -- Generate wxPython code
+#include "gen_ruby.h"     // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_rust.h"     // RustCodeGenerator -- Generate Rust code
+#include "gen_xrc.h"      // XrcGenerator -- Generate XRC code
 
 #include "pugixml.hpp"
 #include <memory>

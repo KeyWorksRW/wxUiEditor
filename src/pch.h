@@ -163,7 +163,8 @@ enum GenLang : std::uint16_t
 
 // Frozen set containing all supported code generation languages
 constexpr auto gen_lang_set = frozen::make_set<GenLang>(
-    { GEN_LANG_CPLUSPLUS, GEN_LANG_PERL, GEN_LANG_PYTHON, GEN_LANG_RUBY, GEN_LANG_XRC });
+    { GEN_LANG_CPLUSPLUS, GEN_LANG_FORTRAN, GEN_LANG_GO, GEN_LANG_JULIA, GEN_LANG_LUAJIT,
+      GEN_LANG_PERL, GEN_LANG_PYTHON, GEN_LANG_RUBY, GEN_LANG_RUST, GEN_LANG_XRC });
 
 // Used to index fields in a bitmap property
 enum PropIndex : std::uint8_t

@@ -288,6 +288,16 @@ auto App::OnRun() -> int
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_ruby", "verify generating Ruby files did not change",
                          wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_fortran", "verify generating Fortran files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_go", "verify generating Go files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_julia", "verify generating Julia files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_luajit", "verify generating LuaJIT files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_rust", "verify generating Rust files did not change",
+                         wxCMD_LINE_HIDDEN);
 
     parser.AddLongSwitch("verify_all", "verify generating all language files did not change",
                          wxCMD_LINE_HIDDEN);
@@ -390,9 +400,10 @@ auto App::OnRun() -> int
     */
 
     bool is_verify_mode = false;
-    constexpr frozen::set<std::string_view, 5> verify_options = { "verify_cpp", "verify_perl",
-                                                                  "verify_python", "verify_ruby",
-                                                                  "verify_all" };
+    constexpr frozen::set<std::string_view, 10> verify_options = {
+        "verify_cpp", "verify_perl",  "verify_python", "verify_ruby", "verify_fortran",
+        "verify_go",  "verify_julia", "verify_luajit", "verify_rust", "verify_all"
+    };
 
     for (const auto& opt: verify_options)
     {

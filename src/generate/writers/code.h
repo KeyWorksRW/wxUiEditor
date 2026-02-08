@@ -123,6 +123,13 @@ public:
     [[nodiscard]] auto is_python() const -> bool { return m_language == GEN_LANG_PYTHON; }
     [[nodiscard]] auto is_ruby() const -> bool { return m_language == GEN_LANG_RUBY; }
 
+    // Returns true if the language is an FFI-based language (Fortran, Go, Julia, LuaJIT, Perl,
+    // Rust)
+    [[nodiscard]] auto is_ffi() const -> bool
+    {
+        return m_traits && m_traits->family == LanguageTraits::Family::ffi;
+    }
+
     [[nodiscard]] auto is_local_var() const -> bool;
 
     // Equivalent to calling m_node->as_int(prop_name)

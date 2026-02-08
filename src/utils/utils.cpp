@@ -584,18 +584,10 @@ auto FileNameToVarName(wxue::string_view filename, size_t max_length) -> std::op
     return var_name;
 }
 
-auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_language) -> bool
+auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, [[maybe_unused]] GenLang m_language)
+    -> bool
 {
-    if (wxue::contains(node->as_string(prop_name), 'n', wxue::CASE::either))
-    {
-        return false;
-    }
-
-#if !PERL_FROM_DIP
-    // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does
-    // not have a FromDIP function. So we need to disable DPI scaling for Perl.
-#endif
-    return true;
+    return !wxue::contains(node->as_string(prop_name), 'n', wxue::CASE::either);
 }
 
 auto GenLangToString(GenLang language) -> std::string_view
@@ -609,6 +601,18 @@ auto GenLangToString(GenLang language) -> std::string_view
             return "Python";
         case GEN_LANG_RUBY:
             return "Ruby";
+        case GEN_LANG_FORTRAN:
+            return "Fortran";
+        case GEN_LANG_GO:
+            return "Go";
+        case GEN_LANG_JULIA:
+            return "Julia";
+        case GEN_LANG_LUAJIT:
+            return "LuaJIT";
+        case GEN_LANG_PERL:
+            return "Perl";
+        case GEN_LANG_RUST:
+            return "Rust";
         case GEN_LANG_XRC:
             return "XRC";
         default:
@@ -653,6 +657,18 @@ auto GetLanguageExtension(GenLang language) -> std::string
             return ".py";
         case GEN_LANG_RUBY:
             return ".rb";
+        case GEN_LANG_FORTRAN:
+            return ".f90";
+        case GEN_LANG_GO:
+            return ".go";
+        case GEN_LANG_JULIA:
+            return ".jl";
+        case GEN_LANG_LUAJIT:
+            return ".lua";
+        case GEN_LANG_PERL:
+            return ".pl";
+        case GEN_LANG_RUST:
+            return ".rs";
         case GEN_LANG_XRC:
             return ".xrc";
 

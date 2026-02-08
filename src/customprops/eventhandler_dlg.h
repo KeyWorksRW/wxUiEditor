@@ -60,7 +60,6 @@ public:
     // This will return a string as if Perl was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Perl is not enabled and another language specified a value.
-    static auto GetPerlValue(wxue::string_view value) -> wxue::string;
 
     // This will return a string as if Python was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
@@ -101,7 +100,6 @@ protected:
 private:
     NodeEvent* m_event;
 
-    int m_perl_page;
     int m_python_page;
     int m_ruby_page;
 
@@ -109,7 +107,6 @@ private:
     GenLang m_code_preference;  // This will be one of the GEN_LANG values
 
     bool m_is_cpp_enabled { false };
-    bool m_is_perl_enabled { false };
     bool m_is_python_enabled { false };
     bool m_is_ruby_enabled { false };
 

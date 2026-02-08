@@ -36,103 +36,12 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
                 BundleRuby(parts);
                 break;
 
-            case GEN_LANG_PERL:
-                BundlePerl(parts);
-                break;
-
             default:
                 break;
         }
     }
 
     return *this;
-}
-
-void Code::BundlePerl(const wxue::StringVector& parts)
-{
-    if (parts[IndexType].contains("Art"))
-    {
-        std::string art_id(parts[IndexArtID].c_str());
-        std::string art_client;
-        if (auto pos = art_id.find('|'); pos != std::string::npos)
-        {
-            art_client = art_id.substr(pos + 1);
-            art_id.erase(pos);
-        }
-
-        *this << "Wx::ArtProvider::GetBitmap(" << art_id;
-        if (!art_client.empty())
-        {
-            *this << ", " << art_client;
-        }
-        wxSize art_size { 16, 16 };
-        art_size = GetSizeInfo(parts[IndexSize]);
-
-        if (parts.size() > IndexSize && parts[IndexSize].size())
-        {
-            wxSize svg_size { -1, -1 };
-            svg_size = GetSizeInfo(parts[IndexSize]);
-
-            if (svg_size != wxDefaultSize)
-            {
-                art_size = svg_size;
-            }
-        }
-        CheckLineLength(sizeof(", Wx::Size->new((999, 999)))"));
-
-        *this << ", Wx::Size->new(" << art_size.x << ", " << art_size.y << "))";
-        return;
-    }
-
-    auto path = MakePerlPath(node());
-
-    // TODO: [Randalphwa - 06-30-2025] wxPerl3 currently does not support SVG images, so we need to
-    // do something here...
-
-    if (const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
-        bundle && !bundle->lst_filenames.empty())
-    {
-        wxFileName filepath(bundle->lst_filenames[0]);
-        filepath.MakeAbsolute();
-        if (!filepath.FileExists())
-        {
-            filepath = Project.ArtDirectory();
-            filepath.SetFullName(bundle->lst_filenames[0]);
-        }
-        filepath.MakeAbsolute();
-        filepath.MakeRelativeTo(path);
-        auto name = filepath.GetFullPath(wxPATH_UNIX);
-
-        if (parts[IndexType].contains("XPM"))
-        {
-            Str("Wx::Bitmap->new(");
-            CheckLineLength(name.size() + 3);
-            QuotedString(name).Comma().Str("wxBITMAP_TYPE_XPM)");
-        }
-
-        else if (bundle->lst_filenames.size() == 1)
-        {
-            *this += "Wx::BitmapBundle.FromBitmap(";
-            bool is_embed_success = false;
-
-            if (parts[IndexType].starts_with("Embed"))
-            {
-                if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
-                {
-                    CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap)"));
-                    AddPerlImageName(embed);
-                    *this += ".Bitmap)";
-                    is_embed_success = true;
-                }
-            }
-
-            if (!is_embed_success)
-            {
-                CheckLineLength(name.size() + sizeof("Wx::Bitmap->new()"));
-                Str("Wx::Bitmap->new(").QuotedString(name) += "))";
-            }
-        }
-    }
 }
 
 void Code::BundlePython(const wxue::StringVector& parts)

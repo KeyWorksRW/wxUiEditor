@@ -50,10 +50,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
     }
-    else if (code.get_language() == GEN_LANG_PERL)
-    {
-        event_code = EventHandlerDlg::GetPerlValue(event->get_value());
-    }
+
     else if (code.get_language() == GEN_LANG_PYTHON)
     {
         event_code = EventHandlerDlg::GetPythonValue(event->get_value());
@@ -142,9 +139,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         }
         else if (event_name == "wxEVT_CLOSE_WINDOW")
         {
-            if (code.is_python() || code.is_ruby() || code.is_perl())
+            if (code.is_python() || code.is_ruby())
             {
-                // wxPerl, wxPython, and wxRuby use EVT_CLOSE instead of EVT_CLOSE_WINDOW
+                // wxPython and wxRuby use EVT_CLOSE instead of EVT_CLOSE_WINDOW
                 event_name = "wxEVT_CLOSE";
             }
         }
@@ -161,20 +158,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                 handler.Add(", self.") << event_code;
             }
         }
-        else if (code.is_perl())
-        {
-            // remove "wx" prefix
-            event_name.erase(0, 2);
-            if (event_name == "EVT_CLOSE")
-            {
-                handler.Str(event_name).Str("($self, $self->can('") << event_code << "'));";
-            }
-            else
-            {
-                handler.Str(event_name).Str("($self, ").NodeName().Str("->GetId(), $self->can('")
-                    << event_code << "'));";
-            }
-        }
+
         else if (code.is_ruby())
         {
             // remove "wx" prefix, make the rest of the name lower case
@@ -339,10 +323,6 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
                 code.Comma() << result->second;
             }
         }
-        else if (code.is_perl())
-        {
-            code << handler;
-        }
     }
     else
     {
@@ -351,7 +331,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code.NodeName(event->getNode()).Function("Bind(") << handler.GetCode();
             code.EndFunction();
         }
-        else if (code.is_ruby() || code.is_perl())
+        else if (code.is_ruby())
         {
             code << handler;
         }

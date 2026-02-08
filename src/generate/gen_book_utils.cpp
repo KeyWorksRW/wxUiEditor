@@ -99,10 +99,6 @@ void BookCtorAddImagelist(Code& code)
     if ((code.IsTrue(prop_display_images) || code.IsGen(gen_wxToolbook)) &&
         isBookHasImage(code.node()))
     {
-        if (code.is_perl())
-        {
-            code.Eol();
-        }
         code.OpenBrace();
         code.Eol(eol_if_needed);
         if (code.is_cpp())
@@ -226,91 +222,12 @@ void BookCtorAddImagelist(Code& code)
             code.Unindent();
             code.Eol(eol_if_needed).Str("]");
         }
-        else if (code.is_perl())
-        {
-            code << "my $images = Wx::ImageList->new(";
-            bool size_found = false;
-            for (const auto& child_node: code.node()->get_ChildNodePtrs())
-            {
-                if (child_node->HasValue(prop_bitmap))
-                {
-                    const auto& description = child_node->as_string(prop_bitmap);
-                    if (description.empty())
-                    {
-                        continue;
-                    }
-                    wxue::ViewVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
-                    if (parts.size() <= 1 || parts[IndexImage].empty())
-                    {
-                        continue;
-                    }
-                    if (parts[IndexType].contains("Art"))
-                    {
-                        auto art_size = GetSizeInfo(parts[IndexSize]);
-                        if (art_size != wxDefaultSize)
-                        {
-                            code << art_size.x << ", " << art_size.y;
-                            size_found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (!size_found)
-            {
-                code << "16, 16";  // Default size
-            }
-            code << ");";
-
-            if (code.node()->is_Gen(gen_wxTreebook))
-            {
-                auto rlambda = [&](Node* parent, auto&& rlambda) -> void
-                {
-                    for (const auto& child_node: parent->get_ChildNodePtrs())
-                    {
-                        if (child_node->is_Gen(gen_BookPage))
-                        {
-                            if (child_node->HasValue(prop_bitmap))
-                            {
-                                Code bundle_code(child_node.get(), code.get_language());
-                                bundle_code.Bundle(prop_bitmap);
-                                // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is
-                                // imperative that the comma is not broken out into the next line.
-                                code.Eol().Str("$images->Add(") << bundle_code << ");";
-                            }
-                            rlambda(child_node.get(), rlambda);
-                        }
-                    }
-                };
-                rlambda(code.node(), rlambda);
-            }
-            else
-            {
-                for (const auto& child_node: code.node()->get_ChildNodePtrs())
-                {
-                    if (child_node->HasValue(prop_bitmap))
-                    {
-                        Code bundle_code(child_node.get(), code.get_language());
-                        bundle_code.Bundle(prop_bitmap);
-                        // Do *not* use code.Comma() or code.Str() here -- in wxRuby, it is
-                        // imperative that the comma is not broken out into the next line.
-                        code.Eol().Str("$images->Add(") << bundle_code << ");";
-                    }
-                }
-            }
-            code.Eol(eol_if_needed);
-            code.NodeName().Function("AssignImageList($images);");
-        }
         else
         {
             FAIL_MSG("Unknown language");
         }
 
-        if (!code.is_perl())
-        {
-            code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
-        }
+        code.Eol().NodeName().Function("SetImages(bundle_list").EndFunction();
 
         code.CloseBrace();
     }

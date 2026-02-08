@@ -470,13 +470,7 @@ MainFrame::MainFrame() :
                 OnGenerateSingleLanguage(GEN_LANG_RUBY);
             },
             id_GenSingleRuby);
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_PERL);
-            },
-            id_GenSinglePerl);
+
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
@@ -492,14 +486,6 @@ MainFrame::MainFrame() :
                 OnGenerateLanguage(GEN_LANG_RUBY);
             },
             id_GenerateRuby);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GEN_LANG_PERL);
-            },
-            id_GeneratePerl);
 
         Bind(
             wxEVT_MENU,

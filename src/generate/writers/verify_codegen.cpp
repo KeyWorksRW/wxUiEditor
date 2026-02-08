@@ -38,10 +38,9 @@ namespace
     {
         constexpr auto switches = std::to_array<std::pair<std::string_view, size_t>>({
             { "verify_cpp", GEN_LANG_CPLUSPLUS },
-            { "verify_perl", GEN_LANG_PERL },
             { "verify_python", GEN_LANG_PYTHON },
             { "verify_ruby", GEN_LANG_RUBY },
-            { "verify_all", GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY },
+            { "verify_all", GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY },
         });
 
         for (const auto& [switch_name, lang]: switches)
@@ -249,7 +248,6 @@ namespace
 
     constexpr auto languages = std::to_array<GenLang>({
         GEN_LANG_CPLUSPLUS,
-        GEN_LANG_PERL,
         GEN_LANG_PYTHON,
         GEN_LANG_RUBY,
     });

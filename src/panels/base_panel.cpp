@@ -20,7 +20,6 @@
 #include "project_handler.h"  // ProjectHandler class
 
 #include "gen_cpp.h"      // CppCodeGenerator -- Generate C++ code
-#include "gen_perl.h"     // PerlCodeGenerator class
 #include "gen_python.h"   // PythonCodeGenerator -- Generate wxPython code
 #include "gen_results.h"  // GenResults -- Code generation orchestrator
 #include "gen_ruby.h"     // RubyCodeGenerator -- Generate wxRuby code
@@ -82,13 +81,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
 
         m_derived_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_derived_hdr_panel, "derived_hdr", false, wxWithImages::NO_IMAGE);
-    }
-    else if (m_panel_type == GEN_LANG_PERL)
-    {
-        m_source_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
-        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_PYTHON)
     {

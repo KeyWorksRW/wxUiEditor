@@ -92,14 +92,3 @@ void GaugeGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& h
 {
     handlers.emplace("wxGauge");
 }
-
-bool GaugeGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:gauge];");
-        return true;
-    }
-    return false;
-}

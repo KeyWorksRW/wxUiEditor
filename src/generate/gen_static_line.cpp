@@ -74,14 +74,3 @@ void StaticLineGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 {
     handlers.emplace("wxStaticLineXmlHandler");
 }
-
-bool StaticLineGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                     GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:staticline];");
-        return true;
-    }
-    return false;
-}

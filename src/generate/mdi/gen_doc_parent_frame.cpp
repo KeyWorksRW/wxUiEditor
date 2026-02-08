@@ -58,15 +58,6 @@ bool DocParentFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, No
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool DocParentFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
-                                         GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-    }
-    return false;
-}
-
 /////////////////////////////// DocChildFrame //////////////////////////////////////
 
 bool DocChildFrame::ConstructionCode(Code& code)
@@ -105,13 +96,4 @@ bool DocChildFrame::GetIncludes(Node* node, std::set<std::string>& set_src,
 bool DocChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
-}
-
-bool DocChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
-                               GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-    }
-    return false;
 }

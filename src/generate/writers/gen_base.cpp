@@ -17,6 +17,7 @@
 #include "base_generator.h"                   // BaseGenerator -- Base Generator class
 #include "code.h"                             // Code -- Helper class for generating code
 #include "image_handler.h"                    // ImageHandler class
+#include "language_traits.h"                  // LanguageTraits, CreateLanguageStrategy
 #include "mainframe.h"                        // MainFrame class
 #include "node.h"                             // Node class
 #include "node_decl.h"                        // NodeDeclaration class
@@ -28,7 +29,8 @@
 using namespace GenEnum;
 
 BaseCodeGenerator::BaseCodeGenerator(GenLang language, Node* form_node) :
-    m_header(nullptr), m_source(nullptr), m_form_node(form_node), m_language(language)
+    m_header(nullptr), m_source(nullptr), m_form_node(form_node), m_language(language),
+    m_strategy(CreateLanguageStrategy(language))
 {
 }
 

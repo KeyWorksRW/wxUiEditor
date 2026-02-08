@@ -114,7 +114,6 @@ void CodePreferenceDlg::OnInit(wxInitDialogEvent& event)
 {
     if (!wxGetApp().isTestingSwitch())
     {
-        m_radioBtn_Perl->Hide();
         m_radioBtn_XRC->Hide();
 
         Layout();

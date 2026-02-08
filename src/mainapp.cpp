@@ -648,15 +648,14 @@ auto App::DbgCurrentTest(wxCommandEvent& /* event unused */) -> void  // NOLINT 
 auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool>
 {
     // Map option names to their corresponding generation type values
-    constexpr frozen::map<std::string_view, size_t, 8> gen_options = {
+    constexpr frozen::map<std::string_view, size_t, 7> gen_options = {
         { "gen_cpp", GEN_LANG_CPLUSPLUS },
-        { "gen_perl", GEN_LANG_PERL },
         { "gen_python", GEN_LANG_PYTHON },
         { "gen_ruby", GEN_LANG_RUBY },
         { "gen_xrc", GEN_LANG_XRC },
-        { "gen_all", (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
-        { "gen_quick", (GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
-        { "gen_coverage", (GEN_LANG_CPLUSPLUS | GEN_LANG_PERL | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
+        { "gen_all", (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
+        { "gen_quick", (GEN_LANG_PYTHON | GEN_LANG_RUBY) },
+        { "gen_coverage", (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
     };
 
     size_t generate_type = GEN_LANG_NONE;
@@ -686,9 +685,10 @@ auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool
     }
 
     // Check test_* options (can be combined)
-    constexpr frozen::map<std::string_view, GenLang, 5> test_options = {
-        { "test_cpp", GEN_LANG_CPLUSPLUS }, { "test_perl", GEN_LANG_PERL },
-        { "test_python", GEN_LANG_PYTHON }, { "test_ruby", GEN_LANG_RUBY },
+    constexpr frozen::map<std::string_view, GenLang, 4> test_options = {
+        { "test_cpp", GEN_LANG_CPLUSPLUS },
+        { "test_python", GEN_LANG_PYTHON },
+        { "test_ruby", GEN_LANG_RUBY },
         { "test_xrc", GEN_LANG_XRC },
     };
 
@@ -848,7 +848,6 @@ auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
     };
 
     GenCode(GEN_LANG_CPLUSPLUS);
-    GenCode(GEN_LANG_PERL);
     GenCode(GEN_LANG_PYTHON);
     GenCode(GEN_LANG_RUBY);
     GenCode(GEN_LANG_XRC);

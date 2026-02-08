@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // AI Context: This file implements BaseCodeGenerator, an abstract base class for generating
-// complete source and header files in C++, Python, Perl, and Ruby. Derived classes
+// complete source and header files in C++, Python, and Ruby. Derived classes
 // (CppCodeGenerator, PythonCodeGenerator, etc.) must implement GenerateClass() which orchestrates
 // code generation through WriteCode objects (m_header and m_source). The class manages event
 // collection (m_events, m_ctx_menu_events, m_map_conditional_events), embedded image tracking
@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <memory>
 #include <mutex>
 #include <set>
 
@@ -38,6 +39,8 @@ class wxWindow;
 class wxProgressDialog;
 
 class EmbeddedImage;
+
+#include "language_traits.h"  // LanguageTraits, LanguageStrategy
 
 // The NodeEvent class is used to store event information specific to what the user has
 // requested (node containing the event, name of the event handler) along with a pointer to
@@ -94,6 +97,10 @@ public:
     auto GetSrcWriter() { return m_source; }
 
     auto GetPanelType() -> PANEL_PAGE { return m_panel_type; }
+
+    // Returns the language strategy for the current generation language.
+    // May be nullptr if the language doesn't have a strategy yet.
+    [[nodiscard]] auto get_strategy() const -> LanguageStrategy* { return m_strategy.get(); }
 
     static void CollectIDs(Node* node, std::set<std::string>& set_enum_ids,
                            std::set<std::string>& set_const_ids);
@@ -199,6 +206,7 @@ protected:
     PANEL_PAGE m_panel_type { PANEL_PAGE::NOT_PANEL };
 
     GenLang m_language { GEN_LANG_CPLUSPLUS };
+    std::unique_ptr<LanguageStrategy> m_strategy;
 
     bool m_is_derived_class { true };
 

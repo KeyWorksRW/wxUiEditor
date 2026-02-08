@@ -350,21 +350,7 @@ void ToolBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
     handlers.emplace("wxToolBarXmlHandler");
 }
 
-bool ToolBarFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                      GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx::Event qw(EVT_TOOL);");
-        set_imports.emplace("use Wx qw[:toolbar];");
-
-        return true;
-    }
-    return false;
-}
-
-//////////////////////////////////////////  ToolBarGenerator
-/////////////////////////////////////////////
+/////////////////////////////////////////  ToolBarGenerator //////////////////////////////////////
 
 wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -577,17 +563,4 @@ int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
 void ToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxToolBarXmlHandler");
-}
-
-bool ToolBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                  GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx::Event qw(EVT_TOOL);");
-        set_imports.emplace("use Wx qw[:toolbar];");
-        return true;
-    }
-
-    return false;
 }

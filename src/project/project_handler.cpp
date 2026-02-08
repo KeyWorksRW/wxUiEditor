@@ -302,8 +302,7 @@ auto ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language, Node*& 
     else
     {
         static const std::map<GenLang, PropName> langFolderPropMap = {
-            { GEN_LANG_PERL, prop_folder_perl_output_folder },
-            { GEN_LANG_PYTHON, prop_folder_python_output_folder },
+
             { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
             { GEN_LANG_XRC, prop_folder_xrc_directory }
         };
@@ -322,7 +321,6 @@ auto ProjectHandler::GetProjectOutputPath(GenLang language) const -> wxue::strin
 {
     static const std::map<GenLang, PropName> langProjectPropMap = {
         { GEN_LANG_CPLUSPLUS, prop_base_directory },
-        { GEN_LANG_PERL, prop_perl_output_folder },
         { GEN_LANG_PYTHON, prop_python_output_folder },
         { GEN_LANG_RUBY, prop_ruby_output_folder },
         { GEN_LANG_XRC, prop_xrc_directory }
@@ -349,7 +347,6 @@ auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> wxue
         { GEN_LANG_CPLUSPLUS, prop_base_file },
         { GEN_LANG_PYTHON, prop_python_file },
         { GEN_LANG_RUBY, prop_ruby_file },
-        { GEN_LANG_PERL, prop_perl_file },
         { GEN_LANG_XRC, prop_xrc_file }
     };
 
@@ -543,7 +540,6 @@ auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
     // clang-format off
     static const std::map<std::string_view, GenLang> langStringMap = {
         { "C++", GEN_LANG_CPLUSPLUS },
-        { "Perl", GEN_LANG_PERL },
         { "Python", GEN_LANG_PYTHON },
         { "Ruby", GEN_LANG_RUBY },
         { "XRC", GEN_LANG_XRC }
@@ -568,7 +564,6 @@ auto ProjectHandler::get_GenerateLanguages() const -> size_t
     // clang-format off
     static const std::map<std::string_view, size_t> langBitMap = {
         { "C++", GEN_LANG_CPLUSPLUS },
-        { "Perl", GEN_LANG_PERL },
         { "Python", GEN_LANG_PYTHON },
         { "Ruby", GEN_LANG_RUBY },
         { "XRC", GEN_LANG_XRC }
@@ -651,9 +646,6 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
                     std::to_array<OutputLangInfo>({ { .base_file_property = prop_base_file,
                                                       .language = GEN_LANG_CPLUSPLUS,
                                                       .output_flag = OUTPUT_CPLUS },
-                                                    { .base_file_property = prop_perl_file,
-                                                      .language = GEN_LANG_PERL,
-                                                      .output_flag = OUTPUT_PERL },
                                                     { .base_file_property = prop_python_file,
                                                       .language = GEN_LANG_PYTHON,
                                                       .output_flag = OUTPUT_PYTHON },
@@ -888,7 +880,6 @@ namespace
     // clang-format off
     const std::map<GenLang, PropName> langPropMap = {
         { GEN_LANG_CPLUSPLUS, prop_wxWidgets_version },
-        { GEN_LANG_PERL, prop_wxPerl_version },
         { GEN_LANG_PYTHON, prop_wxPython_version },
         { GEN_LANG_RUBY, prop_wxRuby_version },
         { GEN_LANG_XRC, prop_wxWidgets_version }

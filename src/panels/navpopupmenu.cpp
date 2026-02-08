@@ -325,12 +325,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case MenuSingleGenPerl:
-            {
-                OnGenerateSingleLanguage(GEN_LANG_PERL);
-            }
-            break;
-
         case MenuSingleGenPython:
             {
                 OnGenerateSingleLanguage(GEN_LANG_PYTHON);

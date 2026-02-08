@@ -70,14 +70,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.NodeName().CreateClass().ParentName().Comma();
         if (node->as_string(prop_stock_id) != "none")
         {
-            if (code.is_perl())
-            {
-                code.Str(node->as_string(prop_stock_id)).EndFunction();
-            }
-            else
-            {
-                code.Add(prop_stock_id).EndFunction();
-            }
+            code.Add(prop_stock_id).EndFunction();
             return true;
         }
         code.as_string(prop_id).Comma();
@@ -210,10 +203,6 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         {
             code.NodeName().Function("SetBitmap(");
             code.Bundle(prop_bitmap).EndFunction();
-        }
-        else if (code.is_perl())
-        {
-            code.AddComment("# TODO: wxBitmapBundle in wxPerl not currently supported");
         }
         else
         {
@@ -421,17 +410,6 @@ bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, wxue::string_view val
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
         }
-    }
-    return false;
-}
-
-bool MenuItemGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                   GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:menu];");
-        return true;
     }
     return false;
 }

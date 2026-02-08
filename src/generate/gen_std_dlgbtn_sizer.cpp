@@ -115,23 +115,10 @@ namespace
         }
         else
         {
-            if (code.is_perl())
-            {
-                btn_name = "$self->{";
-                btn_name += code.node()->get_NodeName(GEN_LANG_PERL);
-                btn_name += "_";
-            }
-            else
-            {
-                btn_name = "_";
-            }
+            btn_name = "_";
             for (const auto& character: var_name)
             {
                 btn_name += static_cast<char>(std::tolower(character));
-            }
-            if (code.is_perl())
-            {
-                btn_name += "}";
             }
         }
         return btn_name;
@@ -148,27 +135,18 @@ namespace
                         std::string_view var_name, std::string_view def_btn_name)
     {
         code.Eol();
-        if (!code.is_perl())
-        {
-            code.NodeName();
-        }
+        code.NodeName();
         code.Str(btn_name).CreateClass(false, "wxButton");
         code.FormParent().Comma().Add(button_id).EndFunction();
 
         code.Eol().NodeName().Function("AddButton(");
-        if (!code.is_perl())
-        {
-            code.NodeName();
-        }
+        code.NodeName();
         code.Str(btn_name).EndFunction();
 
         if (def_btn_name == var_name)
         {
             code.Eol();
-            if (!code.is_perl())
-            {
-                code.NodeName();
-            }
+            code.NodeName();
             code.Str(btn_name).Function("SetDefault(").EndFunction();
         }
     }
@@ -508,8 +486,7 @@ namespace
                 return EventHandlerDlg::GetPythonValue(value);
             case GEN_LANG_RUBY:
                 return EventHandlerDlg::GetRubyValue(value);
-            case GEN_LANG_PERL:
-                return EventHandlerDlg::GetPerlValue(value);
+
             default:
                 FAIL_MSG(wxue::string() << "No event handlers for " << GenLangToString(language)
                                         << " (" << language << ")");
@@ -622,11 +599,6 @@ namespace
         {
             code.Str(event_name == "wxEVT_BUTTON" ? "evt_button(" : "evt_update_ui(");
         }
-        else if (code.is_perl())
-        {
-            event_name.remove_prefix(2);  // remove "wx" prefix
-            code.Str(event_name).Str("($self, ");
-        }
         else
         {
             code.Add("Bind(").Add(event_name) << comma << handler_code << comma;
@@ -638,22 +610,12 @@ namespace
     {
         const auto& event_name = event->get_name();
         const auto is_script_lang =
-            (code.get_language() == GEN_LANG_PERL || code.get_language() == GEN_LANG_PYTHON ||
-             code.get_language() == GEN_LANG_RUBY);
+            (code.get_language() == GEN_LANG_PYTHON || code.get_language() == GEN_LANG_RUBY);
 
         if (is_script_lang)
         {
             if (CanUseCreateStdDialogButtonSizer(event->getNode()))
             {
-                if (code.is_perl())
-                {
-                    const auto id_constant = GetButtonIdConstant(event_name);
-                    code.Add(id_constant);
-                    auto event_code =
-                        GetEventCodeForLanguage(code.get_language(), event->get_value());
-                    code.Comma().Str("$self->can('") << event_code << "')";
-                    return true;
-                }
                 if (code.is_python())
                 {
                     code.Str("self");
@@ -676,14 +638,6 @@ namespace
             else
             {
                 code.NodeName(event->getNode()).Add(GetButtonIdSuffix(event_name));
-                if (code.is_perl())
-                {
-                    code.Replace("}", "");
-                    auto event_code =
-                        GetEventCodeForLanguage(code.get_language(), event->get_value());
-                    code.Str("}->GetId(), $self->can('") << event_code << "')";
-                    return true;
-                }
             }
         }
         else
@@ -698,7 +652,8 @@ namespace
         return false;
     }
 
-    void FinalizeEventCode(Code& code, const std::string& event_code, const Code& handler_code)
+    void FinalizeEventCode(Code& code, [[maybe_unused]] const std::string& event_code,
+                           const Code& handler_code)
     {
         if (code.is_ruby())
         {
@@ -707,11 +662,6 @@ namespace
         else if (code.is_python())
         {
             code.Comma() << handler_code;
-        }
-        else if (code.is_perl())
-        {
-            code.Replace("}", "");
-            code.Str("}->GetId(), $self->can('") << event_code << "')";
         }
     }
 }  // namespace
@@ -750,19 +700,4 @@ auto StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
     }
 
     return true;
-}
-
-auto StdDialogButtonSizerGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
-                                               GenLang language) -> bool
-{
-    if (language == GEN_LANG_PERL)
-    {
-        if (node->as_bool(prop_ContextHelp))
-        {
-            set_imports.emplace("use Wx::Help;");
-            return true;
-        }
-    }
-
-    return false;
 }

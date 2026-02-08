@@ -33,11 +33,6 @@ wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool ActivityIndicatorGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_perl())
-    {
-        code.AddComment("Wx::ActivityIndicator is not currently supported in wxPerl", true);
-        return true;
-    }
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id);
     code.PosSizeFlags();
@@ -49,10 +44,7 @@ bool ActivityIndicatorGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_auto_start))
     {
-        if (!code.is_perl())
-        {
-            code.NodeName().Function("Start(").EndFunction();
-        }
+        code.NodeName().Function("Start(").EndFunction();
     }
     return true;
 }

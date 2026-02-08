@@ -47,38 +47,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             code.EndFunction();
         }
     }
-    else if (code.is_perl())
-    {
-        code += "sub new {";
-        code.Indent();
-        code.Eol().Str("my ($class");
-        if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
-        {
-            code.Str("$manager").Comma();
-        }
-        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
-        {
-            code.Str("$manager, $view").Comma();
-        }
-        code.Comma().Str("$parent, $id, $title, $pos, $size, $style, $name) = @_;");
-        code.Eol() += "$parent = undef unless defined $parent;";
-        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
-        code.Eol().Str("$title = ").QuotedString(prop_title).Str(" unless defined $title;");
-        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
-        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
-        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
 
-        code.Eol().Str("$name = ");
-        if (code.HasValue(prop_window_name))
-        {
-            code.QuotedString(prop_window_name);
-        }
-        else
-        {
-            code += "\"frame\"";
-        }
-        code.Str(" unless defined $name;");
-    }
     else if (code.is_python())
     {
         // https://docs.wxpython.org/wx.lib.docview.DocMDIParentFrame.html
@@ -287,11 +256,6 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     {
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
     }
-    else if (code.is_perl())
-    {
-        code.Eol(eol_if_needed) +=
-            "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
-    }
     else
     {
         return false;
@@ -301,28 +265,12 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
         isScalingEnabled(code.node(), prop_size, code.get_language()))
     {
         code.Eol(eol_if_needed).BeginConditional();
-        if (code.is_perl())
-        {
-            code.Str("$pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
-            code.Str("$size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
-            code.Str("my $dip_pos = $self->FromDIP->new($pos);").Eol();
-            code.Str("my $dip_size = $self->FromDIP->new($size);").Eol();
-            code.Str("$self->SetSize($dip_pos->x, $dip_pos->y, $dip_size->x, $dip_size->y,").Eol();
-            code.Tab().Str("wxSIZE_USE_EXISTING);").Eol();
-        }
-        else
-        {
-            code.Str("pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
-            code.Str("size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
-            code.FormFunction("SetSize(");
-            code.FormFunction("FromDIP(pos).x")
-                .Comma()
-                .FormFunction("FromDIP(pos).y")
-                .Comma()
-                .Eol();
-            code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
-            code.Add("wxSIZE_USE_EXISTING").EndFunction();
-        }
+        code.Str("pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
+        code.Str("size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
+        code.FormFunction("SetSize(");
+        code.FormFunction("FromDIP(pos).x").Comma().FormFunction("FromDIP(pos).y").Comma().Eol();
+        code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
+        code.Add("wxSIZE_USE_EXISTING").EndFunction();
         code.CloseBrace(true);
     }
 
@@ -634,23 +582,4 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
     }
 
     return true;
-}
-
-bool FrameCommon::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use base qw[Wx::Frame];");
-        set_imports.emplace("use Wx qw[:frame];");
-        set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
-
-        if (auto qw_events = GatherPerlNodeEvents(node); qw_events.size())
-        {
-            set_imports.emplace(qw_events);
-        }
-
-        return true;
-    }
-
-    return false;
 }

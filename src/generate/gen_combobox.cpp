@@ -224,14 +224,3 @@ void ComboBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
 {
     handlers.emplace("wxComboBoxXmlHandler");
 }
-
-bool ComboBoxGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                   GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:combobox];");
-    }
-
-    return false;
-}

@@ -159,17 +159,3 @@ void FontPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 {
     handlers.emplace("wxFontPickerCtrlXmlHandler");
 }
-
-bool FontPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                     GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace(
-            "use Wx qw(wxFNTP_DEFAULT_STYLE wxFNTP_USE_TEXTCTRL wxFNTP_FONTDESC_AS_LABEL\n"
-            "          wxFNTP_USEFONT_FOR_LABEL);");
-        set_imports.emplace("use Wx qw[:font];");
-        return true;
-    }
-    return false;
-}

@@ -239,14 +239,6 @@ const view_map g_map_ruby_prefix
 
 };
 
-const view_map g_map_perl_prefix
-{
-};
-
-static const view_map s_short_perl_map
-{
-};
-
 // clang-format on
 
 constexpr size_t MIN_VALID_LINE_LENGTH_INIT = 50;  // NOLINT (magic number)
@@ -259,8 +251,7 @@ constexpr size_t DEFAULT_LINE_LENGTH = 90;         // NOLINT (magic number)
     {
         case GEN_LANG_CPLUSPLUS:
             return Project.as_size_t(prop_cpp_line_length);
-        case GEN_LANG_PERL:
-            return Project.as_size_t(prop_perl_line_length);
+
         case GEN_LANG_PYTHON:
             return Project.as_size_t(prop_python_line_length);
         case GEN_LANG_RUBY:
@@ -269,48 +260,6 @@ constexpr size_t DEFAULT_LINE_LENGTH = 90;         // NOLINT (magic number)
             return XRC_LINE_LENGTH;
         default:
             return DEFAULT_LINE_LENGTH;
-    }
-}
-
-[[nodiscard]] auto Code::GetLanguagePrefixForInit(GenLang language) -> std::string_view
-{
-    switch (language)
-    {
-        case GEN_LANG_CPLUSPLUS:
-        case GEN_LANG_XRC:
-            return "wx";
-        case GEN_LANG_PERL:
-        case GEN_LANG_RUBY:
-            return "Wx::";
-        case GEN_LANG_PYTHON:
-            return "wx.";
-        default:
-            return "wx";
-    }
-}
-
-[[nodiscard]] auto Code::GetIndentSize(GenLang language) -> int
-{
-    switch (language)
-    {
-        case GEN_LANG_PERL:
-            return 4;
-        case GEN_LANG_RUBY:
-            return 2;
-        default:
-            return 4;
-    }
-}
-
-[[nodiscard]] auto Code::GetLineOffset(GenLang language) -> size_t
-{
-    switch (language)
-    {
-        case GEN_LANG_PYTHON:
-        case GEN_LANG_RUBY:
-            return 2;  // Two tabs
-        default:
-            return 1;  // One tab
     }
 }
 
@@ -332,17 +281,6 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
 
     switch (language)
     {
-        case GEN_LANG_PERL:
-            if (auto result = find_prefix_match(s_short_perl_map, candidate))
-            {
-                return *result;
-            }
-            if (auto result = g_map_perl_prefix.find(candidate); result != g_map_perl_prefix.end())
-            {
-                return result->second;
-            }
-            break;
-
         case GEN_LANG_PYTHON:
             if (auto result = find_prefix_match(s_short_python_map, candidate))
             {
@@ -388,18 +326,21 @@ void Code::Init(Node* node, GenLang language)
 {
     m_node = node;
     m_language = language;
+    m_traits = GetLanguageTraits(language);
 
-    const auto indent_size = GetIndentSize(language);
-    if (indent_size != 4)
+    if (m_traits)
     {
-        m_indent_size = indent_size;
+        if (m_traits->indent_size != 4)
+        {
+            m_indent_size = m_traits->indent_size;
+        }
+        m_language_wxPrefix = m_traits->wx_prefix;
     }
 
-    m_language_wxPrefix = GetLanguagePrefixForInit(language);
     m_break_length = GetLineBreakLength(language);
 
-    const auto line_offset = GetLineOffset(language);
-    m_break_length -= (static_cast<size_t>(m_indent_size * line_offset));
+    const size_t line_offset = m_traits ? m_traits->line_offset : 1;
+    m_break_length -= (static_cast<size_t>(m_indent_size) * line_offset);
 
     if (m_break_length < MIN_VALID_LINE_LENGTH_INIT)
     {
@@ -493,36 +434,19 @@ Code& Code::Eol(int flag)
 
 Code& Code::OpenBrace(bool all_languages)
 {
-    if (!all_languages && !is_cpp() && !is_perl())
+    if (!all_languages && !is_cpp())
     {
         return *this;
     }
 
-    if (is_cpp() || is_perl())
+    if (is_cpp())
     {
-        // Perl place the brace at the end of the function. wxUiEditor
-        // follows CppCoreGuidelines and places the brace on the next line for
-        // C++ code.
-        if (is_cpp())
-        {
-            Eol(eol_if_needed);
-        }
-        else if (is_perl())
-        {
-            if (size() && back() != ' ')
-            {
-                *this += ' ';
-            }
-        }
+        // Place the brace on the following line for C++ code to follow
+        // the project's guideline.
+        Eol(eol_if_needed);
         *this += "{";
         Indent();
         Eol();
-        // m_within_braces = true;
-    }
-    else
-    {
-        Indent();
-        Eol(eol_if_needed);
     }
 
     return *this;
@@ -530,7 +454,7 @@ Code& Code::OpenBrace(bool all_languages)
 
 auto Code::CloseBrace(bool all_languages, bool close_ruby) -> Code&
 {
-    if (!all_languages && !is_cpp() && !is_perl())
+    if (!all_languages && !is_cpp())
     {
         return *this;
     }
@@ -542,7 +466,7 @@ auto Code::CloseBrace(bool all_languages, bool close_ruby) -> Code&
     }
     Unindent();
 
-    if (is_cpp() || is_perl())
+    if (is_cpp())
     {
         m_within_braces = false;
         Eol();
@@ -559,7 +483,7 @@ auto Code::CloseBrace(bool all_languages, bool close_ruby) -> Code&
 
 void Code::OpenFontBrace()
 {
-    if (is_cpp() || is_perl())
+    if (is_cpp())
     {
         m_within_font_braces = true;
         Eol(eol_if_needed);
@@ -571,7 +495,7 @@ void Code::OpenFontBrace()
 
 void Code::CloseFontBrace()
 {
-    if (is_cpp() || is_perl())
+    if (is_cpp())
     {
         while (size() && wxue::is_whitespace(back()))
         {
@@ -622,7 +546,7 @@ auto Code::Function(wxue::string_view text, bool add_operator) -> Code&
 {
     if (!add_operator)
     {
-        if (text.is_sameprefix("wx") && (is_python() || is_ruby() || is_perl()))
+        if (text.is_sameprefix("wx") && (is_python() || is_ruby()))
         {
             AddFunctionNoOperatorWithWx(text);
         }
@@ -631,7 +555,7 @@ auto Code::Function(wxue::string_view text, bool add_operator) -> Code&
             *this += text;
         }
     }
-    else if (is_cpp() || is_perl())
+    else if (is_cpp())
     {
         *this << "->" << text;
     }
@@ -649,15 +573,9 @@ auto Code::Function(wxue::string_view text, bool add_operator) -> Code&
 
 auto Code::ClassMethod(wxue::string_view function_name) -> Code&
 {
-    if (is_cpp() || is_perl())
-    {
-        *this += "::";
-    }
-    else
-    {
-        *this += '.';
-    }
-    if (is_ruby())
+    ASSERT(m_traits);
+    *this += m_traits->scope_operator;
+    if (m_traits->uses_snake_case_methods)
     {
         *this += ConvertToSnakeCase(function_name);
     }
@@ -671,15 +589,9 @@ auto Code::ClassMethod(wxue::string_view function_name) -> Code&
 
 auto Code::VariableMethod(wxue::string_view function_name) -> Code&
 {
-    if (is_perl())
-    {
-        *this += "->";
-    }
-    else
-    {
-        *this += '.';
-    }
-    if (is_ruby())
+    ASSERT(m_traits);
+    *this += '.';
+    if (m_traits->uses_snake_case_methods)
     {
         *this += ConvertToSnakeCase(function_name);
     }
@@ -693,42 +605,26 @@ auto Code::VariableMethod(wxue::string_view function_name) -> Code&
 
 auto Code::FormFunction(wxue::string_view text) -> Code&
 {
+    ASSERT(m_traits);
     if (is_python())
     {
         *this += "self.";
     }
-    else if (is_ruby())
+    if (m_traits->uses_snake_case_methods)
     {
         *this += ConvertToSnakeCase(text);
-        return *this;
     }
-    else if (is_perl())
+    else
     {
-        *this += "$self->";
+        *this += text;
     }
-
-    *this += text;
     return *this;
 }
 
 auto Code::FormParent() -> Code&
 {
-    if (is_cpp())
-    {
-        *this += "this";
-    }
-    else if (is_python() || is_ruby())
-    {
-        *this += "self";
-    }
-    else if (is_perl())
-    {
-        *this += "$self";
-    }
-    else
-    {
-        MSG_WARNING("unknown language");
-    }
+    ASSERT(m_traits);
+    *this += m_traits->self_reference;
     return *this;
 }
 
@@ -749,7 +645,7 @@ auto Code::Class(wxue::string_view text) -> Code&
             *this += text;
         }
     }
-    else if (is_ruby() || is_perl())
+    else if (is_ruby())
     {
         if (text.is_sameprefix("wx"))
         {
@@ -770,18 +666,7 @@ auto Code::Object(wxue::string_view class_name) -> Code&
     {
         *this += class_name;
     }
-    else if (is_perl())
-    {
-        if (class_name.is_sameprefix("wx"))
-        {
-            *this << "Wx::" << class_name.substr(2);
-        }
-        else
-        {
-            *this += class_name;
-        }
-        *this << "->new";
-    }
+
     else if (is_python())
     {
         if (class_name.is_sameprefix("wx"))
@@ -803,7 +688,10 @@ auto Code::Object(wxue::string_view class_name) -> Code&
         {
             *this += class_name;
         }
-        *this << ".new";
+    }
+    if (m_traits && m_traits->construction_suffix.size())
+    {
+        *this += m_traits->construction_suffix;
     }
     *this << '(';
 
@@ -883,16 +771,17 @@ auto Code::Assign(wxue::string_view class_name) -> Code&
         return *this;
     }
 
-    if (is_cpp())
+    ASSERT(m_traits);
+    if (m_traits->is_cpp_family())
     {
         *this << "new " << class_name << ';';
     }
     else
     {
         *this << m_language_wxPrefix << class_name.substr(2);
-        if (is_ruby())
+        if (m_traits->construction_suffix.size())
         {
-            *this << ".new";
+            *this += m_traits->construction_suffix;
         }
     }
 
@@ -901,7 +790,8 @@ auto Code::Assign(wxue::string_view class_name) -> Code&
 
 auto Code::EndFunction() -> Code&
 {
-    if (is_ruby() && back() == '(')
+    ASSERT(m_traits);
+    if (m_traits->removes_empty_parens && back() == '(')
     {
         // Ruby style guidelines recommend not using empty parentheses
         pop_back();
@@ -911,9 +801,9 @@ auto Code::EndFunction() -> Code&
         *this += ')';
     }
 
-    if (is_cpp() || is_perl())
+    if (m_traits->stmt_end.size())
     {
-        *this += ';';
+        *this += m_traits->stmt_end;
     }
     return *this;
 }
@@ -936,35 +826,6 @@ auto Code::NodeName(Node* node) -> Code&
     else if (is_ruby() && !node->is_Form() && !node->is_Local() && node_name[0] != '@')
     {
         *this += "@";
-    }
-    else if (is_perl() && !node->is_Form())
-    {
-        if (node->is_Local())
-        {
-            if (!node_name.starts_with("$") && (size() < 1 || back() != '$'))
-            {
-                *this += "$";
-            }
-            *this += node_name;
-            return *this;
-        }
-
-        if (node_name.starts_with("$self->"))
-        {
-            *this += node_name;
-            return *this;
-        }
-        *this += "$self->{";
-        if (node_name.starts_with("$"))
-        {
-            *this += node_name.substr(1);
-        }
-        else
-        {
-            *this += node_name;
-        }
-        *this += "}";
-        return *this;
     }
 
     *this += node_name;
@@ -997,25 +858,6 @@ auto Code::VarName(wxue::string_view var_name, bool class_access) -> Code&
         {
             *this += "@";
         }
-        else if (is_perl())
-        {
-            Str("$self->{");
-            if (var_name.is_sameprefix("m_"))
-            {
-                *this += var_name.subview(2);
-            }
-            else
-            {
-                *this += var_name;
-            }
-            *this += "}";
-            return *this;
-        }
-    }
-
-    else if (is_perl())
-    {
-        *this += "$";
     }
 
     if (var_name.is_sameprefix("m_"))
@@ -1071,18 +913,8 @@ constexpr auto s_GenParentTypes = std::to_array<GenType>(
 
 void Code::AddFormParentName()
 {
-    if (is_cpp())
-    {
-        *this += "this";
-    }
-    else if (is_perl())
-    {
-        *this += "$self";
-    }
-    else
-    {
-        *this += "self";
-    }
+    ASSERT(m_traits);
+    *this += m_traits->self_reference;
 }
 
 auto Code::ValidParentName() -> Code&
@@ -1219,7 +1051,7 @@ auto Code::ValidParentName() -> Code&
 auto Code::SizerFlagsFunction(wxue::string_view function_name) -> Code&
 {
     *this += '.';
-    if (is_ruby())
+    if (m_traits && m_traits->uses_snake_case_methods)
     {
         *this += ConvertToSnakeCase(function_name);
     }
@@ -1281,14 +1113,6 @@ auto Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling
     {
         return false;
     }
-#if !PERL_FROM_DIP
-    // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does not
-    // have a FromDIP function. So we need to disable DPI scaling for Perl.
-    if (m_language == GEN_LANG_PERL)
-    {
-        return false;
-    }
-#endif
 
     if (enable_dpi_scaling == code::conditional_scaling && m_node->is_Form())
     {
@@ -1300,66 +1124,29 @@ auto Code::is_ScalingEnabled(GenEnum::PropName prop_name, int enable_dpi_scaling
 
 auto Code::BeginConditional() -> Code&
 {
-    if (is_cpp() || is_perl())
-    {
-        *this << "if (";
-    }
-    else
-    {
-        *this << "if ";
-    }
+    ASSERT(m_traits);
+    *this << m_traits->conditional_begin;
     return *this;
 }
 
 auto Code::EndConditional() -> Code&
 {
-    if (is_cpp() || is_perl())
-    {
-        *this << ')';
-    }
-    else if (is_python())
-    {
-        *this << ':';
-    }
-
-    // Ruby doesn't need anything to complete the conditional statement
-
+    ASSERT(m_traits);
+    *this << m_traits->conditional_end;
     return *this;
 }
 
 auto Code::True() -> Code&
 {
-    if (is_python())
-    {
-        *this << "True";
-    }
-    else if (is_perl())
-    {
-        *this << "1";
-    }
-    else
-    {
-        *this << "true";
-    }
-
+    ASSERT(m_traits);
+    *this << m_traits->true_literal;
     return *this;
 }
 
 auto Code::False() -> Code&
 {
-    if (is_python())
-    {
-        *this << "False";
-    }
-    else if (is_perl())
-    {
-        *this << "0";
-    }
-    else
-    {
-        *this << "false";
-    }
-
+    ASSERT(m_traits);
+    *this << m_traits->false_literal;
     return *this;
 }
 

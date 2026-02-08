@@ -29,7 +29,6 @@
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_cpp.h"
-#include "gen_perl.h"    // PerlCodeGenerator class
 #include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
 #include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
 #include "gen_xrc.h"     // XrcCodeGenerator -- Generate XRC code
@@ -319,10 +318,6 @@ auto GenResults::GenerateForDisplay() -> bool
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
-        case GEN_LANG_PERL:
-            code_generator = std::make_unique<PerlCodeGenerator>(form);
-            break;
-
         case GEN_LANG_XRC:
             code_generator = std::make_unique<XrcCodeGenerator>(form);
             break;
@@ -585,10 +580,6 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
-        case GEN_LANG_PERL:
-            code_generator = std::make_unique<PerlCodeGenerator>(form);
-            break;
-
         case GEN_LANG_XRC:
             code_generator = std::make_unique<XrcCodeGenerator>(form);
             break;
@@ -608,9 +599,6 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             break;
         case GEN_LANG_RUBY:
             file_ext = ".rb";
-            break;
-        case GEN_LANG_PERL:
-            file_ext = ".pm";
             break;
         case GEN_LANG_XRC:
             file_ext = ".xrc";
@@ -636,7 +624,7 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     // Generate code into the FileCodeWriter buffer
     // m_languages should be a single language at this point (set in Generate() loop)
     ASSERT_MSG(m_languages == GEN_LANG_PYTHON || m_languages == GEN_LANG_RUBY ||
-                   m_languages == GEN_LANG_PERL || m_languages == GEN_LANG_XRC,
+                   m_languages == GEN_LANG_XRC,
                "GenerateLanguageForm expects m_languages to be a single language");
     code_generator->GenerateClass(m_languages);
 

@@ -996,8 +996,6 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
         {
             if (language & GEN_LANG_CPLUSPLUS)
                 project_node->set_value(prop_code_preference, "C++");
-            else if (language & GEN_LANG_PERL)  // wxGlade can generate Perl
-                project_node->set_value(prop_code_preference, "Perl");
             else if (language & GEN_LANG_PYTHON)
                 project_node->set_value(prop_code_preference, "Python");
             else if (language & GEN_LANG_XRC)
@@ -1021,10 +1019,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
                 {
                     project_node->set_value(prop_code_preference, "Ruby");
                 }
-                else if (dlg.is_gen_perl())
-                {
-                    project_node->set_value(prop_code_preference, "Perl");
-                }
+
                 else if (dlg.is_gen_xrc())
                 {
                     project_node->set_value(prop_code_preference, "XRC");
@@ -1139,17 +1134,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                         generated_changed = true;
                     }
                 }
-                else if (dlg.is_gen_perl())
-                {
-                    project->set_value(prop_code_preference, "Perl");
-                    if (!generate_languages.contains("Perl", wxue::CASE::either))
-                    {
-                        if (generate_languages.size())
-                            generate_languages << '|';
-                        generate_languages << "Perl";
-                        generated_changed = true;
-                    }
-                }
+
                 else if (dlg.is_gen_xrc())
                 {
                     project->set_value(prop_code_preference, "XRC");

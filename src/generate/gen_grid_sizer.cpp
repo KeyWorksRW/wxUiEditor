@@ -49,10 +49,8 @@ void GridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
 bool GridSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
-    if (code.node()->as_int(prop_rows) != 0 || code.is_perl())
+    if (code.node()->as_int(prop_rows) != 0)
     {
-        // REVIEW: [Randalphwa - 04-22-2025] Currently, wxPerl requires all 4 parameters, unlike the
-        // other languages.
         code.as_string(prop_rows).Comma();
     }
     code.as_string(prop_cols)

@@ -25,8 +25,6 @@ protected:
     wxMenu* MakeSubMenu(Node* node);
     void OnLeftMenuClick(wxMouseEvent& event);
 
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
-
 private:
     Node* m_node_menubar;
 };

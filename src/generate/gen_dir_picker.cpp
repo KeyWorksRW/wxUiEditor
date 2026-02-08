@@ -62,10 +62,6 @@ bool DirPickerGenerator::ConstructionCode(Code& code)
         {
             code.Str("Wx::DIR_SELECTOR_PROMPT_STR");
         }
-        else if (code.is_perl())
-        {
-            code.QuotedString(wxue::string_view("Select a directory"));
-        }
         else
         {
             code.Add("wxDirSelectorPromptStr");
@@ -127,18 +123,4 @@ int DirPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void DirPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxDirPickerCtrlXmlHandler");
-}
-
-bool DirPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                    GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace(
-            "use Wx qw(wxDIRP_DEFAULT_STYLE wxDIRP_USE_TEXTCTRL wxDIRP_DIR_MUST_EXIST\n"
-            "          wxDIRP_CHANGE_DIR wxDIRP_SMALL);");
-
-        return true;
-    }
-    return false;
 }

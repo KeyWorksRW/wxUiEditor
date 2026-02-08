@@ -45,10 +45,6 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
         {
             m_language = GEN_LANG_CPLUSPLUS;
         }
-        else if (language == "Perl")
-        {
-            m_language = GEN_LANG_PERL;
-        }
     }
     else
     {

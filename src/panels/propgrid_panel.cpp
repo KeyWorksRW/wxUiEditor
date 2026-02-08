@@ -634,10 +634,6 @@ void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
             ChangeOutputFile(prop_base_file);
             break;
 
-        case GEN_LANG_PERL:
-            ChangeOutputFile(prop_perl_file);
-            break;
-
         case GEN_LANG_PYTHON:
             ChangeOutputFile(prop_python_file);
             break;

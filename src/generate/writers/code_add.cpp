@@ -17,45 +17,6 @@
 
 // clang-format off
 
-constexpr auto set_perl_constants = frozen::make_set<std::string_view>({
-
-    "wxALL",
-    "wxLEFT",
-    "wxRIGHT",
-    "wxTOP",
-    "wxBOTTOM",
-
-    "wxEXPAND",
-    "wxSHAPED",
-    "wxFIXED_MINSIZE",
-    "wxRESERVE_SPACE_EVEN_IF_HIDDEN",
-
-    "wxALIGN_CENTER_HORIZONTAL",
-    "wxALIGN_CENTER_VERTICAL",
-    "wxALIGN_LEFT",
-    "wxALIGN_RIGHT",
-    "wxALIGN_TOP",
-    "wxALIGN_BOTTOM",
-    "wxALIGN_CENTER",
-
-    "wxITEM_CHECK",
-    "wxITEM_DROPDOWN",
-    "wxITEM_NORMAL",
-    "wxITEM_RADIO",
-
-    "wxNullBitmap",
-    "wxID_ANY",
-
-    "wxVERTICAL",
-    "wxHORIZONTAL",
-    "wxBOTH",
-
-    "wxWINDOW_VARIANT_LARGE",
-    "wxWINDOW_VARIANT_SMALL",
-    "wxWINDOW_VARIANT_MINI",
-
-});
-
 // clang-format on
 
 void Code::AddClassNameForLanguage(const std::string& class_name)
@@ -84,14 +45,10 @@ void Code::AddClassNameForLanguage(const std::string& class_name)
         *this += class_name;
     }
 
-    // Add language-specific instantiation syntax
-    if (is_perl())
+    // Add language-specific instantiation suffix (e.g., ".new" for Ruby)
+    if (m_traits->construction_suffix.size())
     {
-        *this += "->new";
-    }
-    else if (is_ruby())
-    {
-        *this += ".new";
+        *this += m_traits->construction_suffix;
     }
 }
 
@@ -164,15 +121,8 @@ auto Code::Add(wxue::string_view text) -> Code&
     //
     // "wx" is the shortest string that could be changed -- no single letter will ever be changed by
     // this function.
-    if (is_cpp() || is_perl() || text.size() < (sizeof("wx") - 1))
+    if (is_cpp() || text.size() < (sizeof("wx") - 1))
     {
-        if (is_perl() && text == "wxEmptyString")
-        {
-            // wxPerl doesn't support wxEmptyString
-            *this += "\"\"";
-            return *this;
-        }
-
         CheckLineLength(text.size());
         *this += text;
         return *this;
@@ -287,34 +237,8 @@ auto Code::AddCombinedValues(wxue::string_view text) -> Code&
 // Helper method: Handle wx-prefixed constants with language transformations
 auto Code::AddWxPrefixedConstant(wxue::string_view text) -> Code&
 {
-    if (is_perl())
-    {
-        if (HasPerlMapConstant(text) || set_perl_constants.contains(text))
-        {
-            CheckLineLength(text.size());
-            *this += text;
-            return *this;
-        }
-        if (text == "wxEmptyString")
-        {
-            *this << "\"\"";
-            return *this;
-        }
-
-        if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
-            language_prefix.size())
-        {
-            CheckLineLength(language_prefix.size() + text.size() - 2);
-            *this << language_prefix << text.substr(2);
-        }
-        else
-        {
-            CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
-            *this << m_language_wxPrefix << text.substr(2);
-        }
-    }
-    else if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
-             language_prefix.size())
+    if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
+        language_prefix.size())
     {
         CheckLineLength(language_prefix.size() + text.size() - 2);
         *this << language_prefix << text.substr(2);
@@ -333,21 +257,9 @@ auto Code::AddComment(std::string_view comment, bool force) -> Code&
     {
         return *this;
     }
+    ASSERT(m_traits);
     Eol(eol_if_needed);
-    switch (m_language)
-    {
-        case GEN_LANG_CPLUSPLUS:
-            *this << "// " << comment;
-            break;
-
-        case GEN_LANG_PYTHON:
-        case GEN_LANG_RUBY:
-        case GEN_LANG_PERL:
-        default:
-            *this << "# " << comment;
-            break;
-    }
-
+    *this << m_traits->line_comment << comment;
     Eol(eol_if_needed);
 
     return *this;
@@ -355,58 +267,25 @@ auto Code::AddComment(std::string_view comment, bool force) -> Code&
 
 auto Code::AddAuto() -> Code&
 {
-    if (is_local_var())
+    ASSERT(m_traits);
+    if (is_local_var() && !m_traits->local_var_keyword.empty())
     {
-        if (is_cpp())
-        {
-            *this += "auto* ";
-        }
-        else if (is_perl())
-        {
-            *this += "my $";
-        }
-        else if (is_python() || is_ruby())
-        {
-            return *this;  // no modifier for local variables in Python or Ruby
-        }
+        *this += m_traits->local_var_keyword;
     }
     return *this;
 }
 
 auto Code::AddConditionalAnd() -> Code&
 {
-    if (is_cpp() || is_ruby() || is_perl())
-    {
-        *this << " && ";
-    }
-    else if (is_python())
-    {
-        *this << " and ";
-    }
-
-    else
-    {
-        MSG_WARNING("unknown language");
-    }
-
+    ASSERT(m_traits);
+    *this << m_traits->logical_and;
     return *this;
 }
 
 auto Code::AddConditionalOr() -> Code&
 {
-    if (is_cpp() || is_ruby() || is_perl())
-    {
-        *this << " || ";
-    }
-    else if (is_python())
-    {
-        *this << " or ";
-    }
-    else
-    {
-        MSG_WARNING("unknown language");
-    }
-
+    ASSERT(m_traits);
+    *this << m_traits->logical_or;
     return *this;
 }
 
@@ -414,23 +293,6 @@ auto Code::AddConstant(GenEnum::PropName prop_name, wxue::string_view short_name
 {
     return Add(m_node->as_constant(prop_name, short_name));
 }
-
-// clang-format off
-constexpr auto show_effect_map = frozen::make_map<std::string_view, std::string_view>({
-    { "wxSHOW_EFFECT_NONE", "0" },
-    { "wxSHOW_EFFECT_ROLL_TO_LEFT", "1" },
-    { "wxSHOW_EFFECT_ROLL_TO_RIGHT", "2" },
-    { "wxSHOW_EFFECT_ROLL_TO_TOP", "3" },
-    { "wxSHOW_EFFECT_ROLL_TO_BOTTOM", "4" },
-    { "wxSHOW_EFFECT_SLIDE_TO_LEFT", "5" },
-    { "wxSHOW_EFFECT_SLIDE_TO_RIGHT", "6" },
-    { "wxSHOW_EFFECT_SLIDE_TO_TOP", "7" },
-    { "wxSHOW_EFFECT_SLIDE_TO_BOTTOM", "8" },
-    { "wxSHOW_EFFECT_BLEND", "9" },
-    { "wxSHOW_EFFECT_EXPAND", "10" },
-    { "wxSHOW_EFFECT_MAX", "11" }
-});
-// clang-format on
 
 auto Code::AddConstant(wxue::string_view text) -> Code&
 {
@@ -440,38 +302,7 @@ auto Code::AddConstant(wxue::string_view text) -> Code&
         *this += text;
         return *this;
     }
-    if (is_perl())
-    {
-        // In some cases, wxPerl doesn't support a constant, but if we use the numeric value
-        // instead, then it works fine.
-        if (text.contains("wxBU_NOTEXT"))
-        {
-            wxue::string new_value(text);
-            new_value.Replace("wxBU_NOTEXT", "2");
-            CheckLineLength(new_value.size());
-            *this += new_value;
-        }
-        else if (text.contains("wxSHOW_EFFECT"))
-        {
-            wxue::string new_value(text);
-            for (const auto& iter: show_effect_map)
-            {
-                if (new_value.Replace(iter.first, iter.second))
-                {
-                    break;
-                }
-            }
-            CheckLineLength(new_value.size());
-            *this += new_value;
-        }
-        else
-        {
-            *this += text;
-        }
-        return *this;
-    }
 
-    // Ruby, Python,
     return Add(text);
 }
 
@@ -518,7 +349,7 @@ void Code::AddPublicRubyMembers()
 
 auto Code::AddType(wxue::string_view text) -> Code&
 {
-    if (is_cpp() || is_perl() || text.size() < 3)
+    if (is_cpp() || text.size() < 3)
     {
         CheckLineLength(text.size());
         *this += text;

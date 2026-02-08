@@ -26,8 +26,6 @@ public:
                      GenLang /* language */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
-
     wxue::string GetPythonHelpText(Node*) override;
     wxue::string GetRubyHelpText(Node*) override;
     wxue::string GetPythonURL(Node*) override;

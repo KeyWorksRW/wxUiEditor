@@ -420,10 +420,6 @@ auto isValidVarName(const std::string& str, GenLang language) -> bool
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
     }
-    if (language == GEN_LANG_PERL)
-    {
-        return lambda(g_set_perl_keywords, g_perl_keywords);
-    }
 
     return true;
 }
@@ -598,11 +594,6 @@ auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, GenLang m_languag
 #if !PERL_FROM_DIP
     // REVIEW: [Randalphwa - 03-02-2025] As far as I have been able to determine, wxPerl does
     // not have a FromDIP function. So we need to disable DPI scaling for Perl.
-
-    if (m_language == GEN_LANG_PERL)
-    {
-        return false;
-    }
 #endif
     return true;
 }
@@ -613,8 +604,7 @@ auto GenLangToString(GenLang language) -> std::string_view
     {
         case GEN_LANG_CPLUSPLUS:
             return "C++";
-        case GEN_LANG_PERL:
-            return "Perl";
+
         case GEN_LANG_PYTHON:
             return "Python";
         case GEN_LANG_RUBY:
@@ -632,11 +622,7 @@ auto ConvertToGenLang(wxue::string_view language) -> GenLang
     {
         return GEN_LANG_CPLUSPLUS;
     }
-    if (language == "Perl" || language.starts_with("wxPerl") ||
-        language.starts_with("Folder wxPerl"))
-    {
-        return GEN_LANG_PERL;
-    }
+
     if (language == "Python" || language.starts_with("wxPython") ||
         language.starts_with("Folder wxPython"))
     {
@@ -653,7 +639,7 @@ auto ConvertToGenLang(wxue::string_view language) -> GenLang
     }
     // If this wasn't an actual language setting, then return all languages
     return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
-                                GEN_LANG_PERL | GEN_LANG_XRC);
+                                GEN_LANG_XRC);
 }
 
 auto GetLanguageExtension(GenLang language) -> std::string
@@ -662,8 +648,7 @@ auto GetLanguageExtension(GenLang language) -> std::string
     {
         case GEN_LANG_CPLUSPLUS:
             return ".cpp";
-        case GEN_LANG_PERL:
-            return ".pl";
+
         case GEN_LANG_PYTHON:
             return ".py";
         case GEN_LANG_RUBY:

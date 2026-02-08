@@ -198,54 +198,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
     return sub_menu;
 }
 
-bool MenuBarBase::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        bool update_ui_found = false;
-
-        for (auto& menu: node->get_ChildNodePtrs())
-        {
-            if (update_ui_found)
-            {
-                break;
-            }
-            for (auto& menu_item: menu->get_ChildNodePtrs())
-            {
-                if (update_ui_found)
-                {
-                    break;
-                }
-                for (auto& iter: menu_item->get_MapEvents())
-                {
-                    if (iter.second.get_value().size())
-                    {
-                        const auto& event_name = iter.first;
-                        if (event_name == "wxEVT_UPDATE_UI")
-                        {
-                            update_ui_found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        if (update_ui_found)
-        {
-            set_imports.emplace("use Wx::Event qw(EVT_MENU EVT_UPDATE_UI);");
-        }
-        else
-        {
-            set_imports.emplace("use Wx::Event qw(EVT_MENU);");
-        }
-
-        return true;
-    }
-    return false;
-}
-
-//////////////////////////////////////////  MenuBarGenerator
-/////////////////////////////////////////////
+///////////////////////////////////////  MenuBarGenerator ////////////////////////////////////////
 
 bool MenuBarGenerator::ConstructionCode(Code& code)
 {

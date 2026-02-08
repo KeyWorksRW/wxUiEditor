@@ -185,14 +185,3 @@ void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
         BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
     }
 }
-
-bool RadioButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                      GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:radiobutton];");
-        return true;
-    }
-    return false;
-}

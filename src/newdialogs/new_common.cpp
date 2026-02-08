@@ -17,11 +17,7 @@ void UpdateFormClass(Node* form_node)
     auto filename = CreateBaseFilename(form_node, form_node->as_string(prop_class_name));
     form_node->set_value(prop_base_file, filename);
 
-    if (Project.get_CodePreference() == GEN_LANG_PERL)
-    {
-        form_node->set_value(prop_perl_file, filename);
-    }
-    else if (Project.get_CodePreference() == GEN_LANG_PYTHON)
+    if (Project.get_CodePreference() == GEN_LANG_PYTHON)
     {
         form_node->set_value(prop_python_file, filename);
     }

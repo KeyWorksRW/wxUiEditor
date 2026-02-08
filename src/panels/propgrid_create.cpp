@@ -681,7 +681,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         }
         // REVIEW: [Randalphwa - 09-01-2025] It's possible that wxPerl does support it, but it's
         // unlikely
-        if (preferred_language == GEN_LANG_PYTHON || preferred_language == GEN_LANG_PERL)
+        if (preferred_language == GEN_LANG_PYTHON)
         {
             return;
         }
@@ -750,22 +750,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->Collapse(category_id);
         }
     }
-    else if (name.contains("wxPerl"))
-    {
-        if (UserPrefs.is_DarkMode())
-        {
-            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#996900"));
-        }
-        else
-        {
-            m_prop_grid->SetPropertyBackgroundColour(category_id,
-                                                     wxColour("#ffe7b3"));  // Light yellow
-        }
-        if (Project.get_CodePreference(node) != GEN_LANG_PERL)
-        {
-            m_prop_grid->Collapse(category_id);
-        }
-    }
+
     else if (name.contains("wxPython"))
     {
         if (UserPrefs.is_DarkMode())

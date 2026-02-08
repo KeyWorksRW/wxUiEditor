@@ -57,24 +57,8 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
         if (code.HasValue(prop_bitmap))
         {
             bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
-            if (code.is_perl())
-            {
-                bool is_list_created = PerlBitmapList(code, prop_bitmap);
-                if (code.is_local_var())
-                {
-                    code << "my ";
-                }
-                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
-                if (is_list_created)
-                {
-                    code += "Wx::BitmapBundle::FromBitmaps($bitmaps)";
-                }
-                else
-                {
-                    code.Bundle(prop_bitmap);
-                }
-            }
-            else if (code.is_python())
+
+            if (code.is_python())
             {
                 bool is_list_created = PythonBitmapList(code, prop_bitmap);
                 if (!use_generic_version)

@@ -60,14 +60,7 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
 {
     if (code.IsTrue(prop_hide_children))
     {
-        if (code.is_perl())
-        {
-            code.AddComment("Perl does not support ShowItems()", true);
-        }
-        else
-        {
-            code.NodeName().Function("ShowItems(").False().EndFunction();
-        }
+        code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
     auto* parent = code.node()->get_Parent();

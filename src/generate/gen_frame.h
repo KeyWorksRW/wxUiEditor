@@ -30,6 +30,4 @@ public:
 
     wxue::string GetPythonHelpText(Node*) override { return "wx.Frame"; }
     wxue::string GetPythonURL(Node*) override { return "wx.Frame.html"; }
-
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };

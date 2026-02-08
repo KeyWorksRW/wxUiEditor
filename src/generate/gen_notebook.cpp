@@ -99,13 +99,3 @@ void NotebookGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
 {
     handlers.emplace("wxNotebookXmlHandler");
 }
-
-bool NotebookGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                   GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:bookctrl];");
-    }
-    return false;
-}

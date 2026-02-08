@@ -23,7 +23,6 @@ extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
-extern const char* g_perl_keywords;
 extern const char* g_ruby_keywords;
 
 #ifndef SCI_SETKEYWORDS
@@ -31,17 +30,14 @@ extern const char* g_ruby_keywords;
 #endif
 
 constexpr int EVENT_PAGE_CPP = 0;
-constexpr int EVENT_PAGE_PERL = 1;
-constexpr int EVENT_PAGE_PYTHON = 2;
-constexpr int EVENT_PAGE_RUBY = 3;
+constexpr int EVENT_PAGE_PYTHON = 1;
+constexpr int EVENT_PAGE_RUBY = 2;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
-    EventHandlerDlgBase(parent), m_event(event), m_perl_page(EVENT_PAGE_PERL),
-    m_python_page(EVENT_PAGE_PYTHON), m_ruby_page(EVENT_PAGE_RUBY),
-    m_gen_languages(Project.get_GenerateLanguages()),
+    EventHandlerDlgBase(parent), m_event(event), m_python_page(EVENT_PAGE_PYTHON),
+    m_ruby_page(EVENT_PAGE_RUBY), m_gen_languages(Project.get_GenerateLanguages()),
     m_code_preference(Project.get_CodePreference(event->getNode())),
     m_is_cpp_enabled(m_gen_languages & GEN_LANG_CPLUSPLUS),
-    m_is_perl_enabled(m_gen_languages & GEN_LANG_PERL),
     m_is_python_enabled(m_gen_languages & GEN_LANG_PYTHON),
     m_is_ruby_enabled(m_gen_languages & GEN_LANG_RUBY)
 {
@@ -51,16 +47,15 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     if (!m_is_cpp_enabled)
     {
         m_notebook->RemovePage(EVENT_PAGE_CPP);
-        m_perl_page--;
         m_python_page--;
         m_ruby_page--;
     }
-    if (!m_is_perl_enabled)
-    {
-        m_notebook->RemovePage(m_perl_page);
-        m_python_page--;
-        m_ruby_page--;
-    }
+
+    // Always remove the Perl page (legacy wxPerl generation has been removed)
+    m_notebook->RemovePage(m_is_cpp_enabled ? 1 : 0);
+    m_python_page--;
+    m_ruby_page--;
+
     if (!m_is_python_enabled)
     {
         m_notebook->RemovePage(m_python_page);
@@ -76,10 +71,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     {
         SetStcColors(m_cpp_stc_lambda, GEN_LANG_CPLUSPLUS);
     }
-    if (m_is_perl_enabled)
-    {
-        SetStcColors(m_perl_stc_lambda, GEN_LANG_PERL);
-    }
+
     if (m_is_ruby_enabled)
     {
         SetStcColors(m_ruby_stc_lambda, GEN_LANG_RUBY);
@@ -112,12 +104,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         // m_py_text_lambda is a single line text control, so there is no scintilla properties to
         // set.
 
-        if (m_is_perl_enabled)
-        {
-            m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
-            m_perl_stc_lambda->SendMsg(SCI_SETKEYWORDS, 0,
-                                       reinterpret_cast<wxIntPtr>(g_perl_keywords));
-        }
         if (m_is_ruby_enabled)
         {
             // Unfortunately, RUBY_LEXER only supports one set of keywords so we either combine
@@ -157,10 +143,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     {
         m_notebook->SetSelection(EVENT_PAGE_CPP);
     }
-    else if (m_code_preference == GEN_LANG_PERL)
-    {
-        m_notebook->SetSelection(m_perl_page);
-    }
+
     else if (m_code_preference == GEN_LANG_PYTHON)
     {
         m_notebook->SetSelection(m_python_page);
@@ -193,12 +176,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
             m_cpp_radio_use_function->SetValue(true);
             m_cpp_lambda_box->GetStaticBox()->Enable(false);
         }
-        if (m_is_perl_enabled)
-        {
-            m_perl_text_function->SetValue(m_value);
-            m_perl_radio_use_function->SetValue(true);
-            m_perl_lambda_box->GetStaticBox()->Enable(false);
-        }
+
         if (m_is_python_enabled)
         {
             // Pylint recommends snake_case for Python functions, so we convert the default
@@ -260,19 +238,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
                 }
             }
         }
-        if (m_is_perl_enabled)
-        {
-            value = GetPerlValue(m_value.utf8_string());
-            if (value.size())
-            {
-                m_perl_radio_use_anon_func->SetValue(false);
-                m_perl_lambda_box->GetStaticBox()->Enable(false);
 
-                m_perl_function_box->GetStaticBox()->Enable(true);
-                m_perl_radio_use_function->SetValue(true);
-                m_perl_text_function->SetValue(value.wx());
-            }
-        }
         if (m_is_python_enabled)
         {
             value = GetPythonValue(m_value.utf8_string());
@@ -528,10 +494,6 @@ void EventHandlerDlg::OnNone(wxCommandEvent& /* event unused */)
     {
         m_cpp_text_function->SetValue("none");
     }
-    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
-    {
-        m_perl_text_function->SetValue("none");
-    }
     else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
     {
         m_py_text_function->SetValue("none");
@@ -558,10 +520,6 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
     if (m_is_cpp_enabled && m_notebook->GetCurrentPage() == m_cpp_bookpage)
     {
         m_cpp_text_function->SetValue(value);
-    }
-    else if (m_is_perl_enabled && m_notebook->GetCurrentPage() == m_perl_bookpage)
-    {
-        m_perl_text_function->SetValue(value);
     }
     else if (m_is_python_enabled && m_notebook->GetCurrentPage() == m_python_bookpage)
     {
@@ -756,7 +714,6 @@ void EventHandlerDlg::Update_m_value()
     wxue::string cpp_value;
     wxue::string py_value;
     wxue::string ruby_value;
-    wxue::string perl_value;
 
     m_value.clear();
 
@@ -867,30 +824,11 @@ void EventHandlerDlg::Update_m_value()
         }
     }
 
-    if (m_is_perl_enabled)
-    {
-        if (m_perl_radio_use_function->GetValue())
-        {
-            if (!m_is_cpp_enabled && !m_is_python_enabled && !m_is_ruby_enabled)
-            {
-                perl_value = m_perl_text_function->GetValue().utf8_string();
-            }
-            else
-            {
-                perl_value << "[perl:" << m_perl_text_function->GetValue().utf8_string() << "]";
-            }
-        }
-    }
-
     // If we get here, then more than one language has been specified.
 
     if (m_is_cpp_enabled)
     {
         m_value = cpp_value.wx();
-    }
-    if (m_is_perl_enabled)
-    {
-        m_value << perl_value.wx();
     }
     if (m_is_python_enabled)
     {
@@ -914,60 +852,12 @@ auto EventHandlerDlg::GetCppValue(std::string_view value) -> std::string
     {
         value.remove_suffix(value.size() - pos);
     }
-    if (auto pos = value.find("[perl:"); pos != wxue::npos)
-    {
-        value.remove_suffix(value.size() - pos);
-    }
     if (auto pos = value.find("[ruby:"); pos != wxue::npos)
     {
         value.remove_suffix(value.size() - pos);
     }
 
     return std::string(value);
-}
-
-// This is a static function
-
-auto EventHandlerDlg::GetPerlValue(wxue::string_view value) -> wxue::string
-{
-    wxue::string result;
-    auto pos = value.find("[perl:");
-    if (pos == wxue::npos)
-    {
-        if (value.front() == '[')
-        {
-            // Unfortunately, this is a static function, so we have no access to m_event.
-            result = "OnEvent";
-        }
-        else
-        {
-            result = value;
-            if (auto pos_other = result.find("[ruby:"); pos_other != wxue::npos)
-            {
-                result.erase(pos_other, result.size() - pos_other);
-            }
-            if (auto pos_other = result.find("[python:"); pos_other != wxue::npos)
-            {
-                result.erase(pos_other, result.size() - pos_other);
-            }
-        }
-        return result;
-    }
-
-    value.remove_prefix(pos);
-
-    if (!value.starts_with("[perl:lambda]"))
-    {
-        // This is just a function name, so remove the "[perl:" and the trailing ']'
-        value.remove_prefix(sizeof("[perl:") - 1);
-        if (auto end = value.find(']'); end != wxue::npos)
-        {
-            value.remove_suffix(value.size() - end);
-        }
-    }
-
-    result << value;
-    return result;
 }
 
 // This is a static function

@@ -78,10 +78,8 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 
     // If rows is empty, only columns are supplied and wxFlexGridSizer will deduece the number of
     // rows to use
-    if (node->as_int(prop_rows) != 0 || code.is_perl())
+    if (node->as_int(prop_rows) != 0)
     {
-        // REVIEW: [Randalphwa - 04-22-2025] Currently, wxPerl requires all 4 parameters, unlike the
-        // other languages.
         code.as_string(prop_rows).Comma();
     }
     code.as_string(prop_cols)

@@ -22,6 +22,4 @@ public:
     bool ModifyProperty(NodeProperty* prop, wxue::string_view value) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };

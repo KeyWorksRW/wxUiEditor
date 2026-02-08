@@ -549,7 +549,7 @@ auto Node::get_NodeName(GenLang lang) const -> std::string_view
         }
         return name;
     }
-    if (name[0] == '$' && lang != GEN_LANG_PERL)
+    if (name[0] == '$')
     {
         name.remove_prefix(1);
         return name;

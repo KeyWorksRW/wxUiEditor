@@ -217,14 +217,3 @@ void ChoiceGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& 
 {
     handlers.emplace("wxChoiceXmlHandler");
 }
-
-bool ChoiceGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                 GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:combobox];");
-    }
-
-    return false;
-}

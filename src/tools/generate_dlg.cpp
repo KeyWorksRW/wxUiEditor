@@ -102,7 +102,6 @@ namespace
 
     bool gen_base_code = false;
     bool gen_derived_code = false;
-    bool gen_perl_code = false;
     bool gen_python_code = false;
     bool gen_ruby_code = false;
     bool gen_xrc_code = false;
@@ -208,11 +207,7 @@ auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
         lang_flags |= GEN_LANG_CPLUSPLUS;
     }
 
-    gen_perl_code = dlg.is_gen_perl();
-    if (gen_perl_code)
-    {
-        lang_flags |= GEN_LANG_PERL;
-    }
+
 
     gen_python_code = dlg.is_gen_python();
     if (gen_python_code)
@@ -259,7 +254,7 @@ void MainFrame::SaveGenerationPreferences()
     config->Write("gen_xrc_code", gen_xrc_code);
     config->Write("gen_base_code", gen_base_code);
     config->Write("gen_derived_code", gen_derived_code);
-    config->Write("gen_perl_code", gen_perl_code);
+
     config->Write("gen_python_code", gen_python_code);
     config->Write("gen_ruby_code", gen_ruby_code);
     config->SetPath("/");
@@ -350,9 +345,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         case GEN_LANG_CPLUSPLUS:
             gen_base_code = true;
             break;
-        case GEN_LANG_PERL:
-            gen_perl_code = true;
-            break;
+
         case GEN_LANG_PYTHON:
             gen_python_code = true;
             break;
@@ -380,17 +373,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkDerived->SetToolTip("Generate any derived files that don\'t currently exist");
         m_grid_sizer->Add(m_checkDerived, wxSizerFlags().Border(wxALL));
     }
-    if (languages & GEN_LANG_PERL && gen_perl_code)
-    {
-        m_gen_perl_code = gen_perl_code;
-        m_checkPerl = new wxCheckBox(this, wxID_ANY, "Perl");
-        m_checkPerl->SetValidator(wxGenericValidator(&m_gen_perl_code));
-        m_grid_sizer->Add(m_checkPerl, wxSizerFlags().Border(wxALL));
-        if (gen_perl_code)
-        {
-            m_checkPerl->SetValue(true);
-        }
-    }
+
     if (languages & GEN_LANG_PYTHON || gen_python_code)
     {
         m_gen_python_code = gen_python_code;

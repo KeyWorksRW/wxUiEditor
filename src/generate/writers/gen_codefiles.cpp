@@ -11,7 +11,6 @@
 #include "project_handler.h"  // ProjectHandler class
 
 #include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
-#include "gen_perl.h"    // PerlCodeGenerator class
 #include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
 #include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
 #include "gen_xrc.h"     // XrcGenerator -- Generate XRC code

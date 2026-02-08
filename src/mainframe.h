@@ -85,7 +85,7 @@ public:
 
     auto GetFirstCodePanel() -> BasePanel*;
     auto GetCppPanel() -> BasePanel* { return m_cppPanel; }
-    auto GetPerlPanel() -> BasePanel* { return m_perlPanel; }
+
     auto GetPythonPanel() -> BasePanel* { return m_pythonPanel; }
     auto GetRubyPanel() -> BasePanel* { return m_rubyPanel; }
     auto GetXrcPanel() -> BasePanel* { return m_xrcPanel; }
@@ -274,7 +274,7 @@ public:
 
     void OnCodeCompare(wxCommandEvent& event) override;
     void OnGenSingleCpp(wxCommandEvent& event);
-    void OnGenSinglePerl(wxCommandEvent& event);
+
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
@@ -384,7 +384,7 @@ private:
 
     // Language panels -- whether they are actually created is dependent on definitions in pch.h as
     // well as user preferences.
-    BasePanel* m_perlPanel { nullptr };
+
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };

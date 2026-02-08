@@ -112,24 +112,6 @@ auto MainFrame::UpdateLanguagePanels() -> void
         m_cppPanel = nullptr;
     }
 
-    if (languages & GEN_LANG_PERL && !m_perlPanel)
-    {
-        m_perlPanel = new BasePanel(m_notebook, this, GEN_LANG_PERL);
-        if (Project.get_CodePreference() == GEN_LANG_PERL)
-        {
-            m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-        }
-        else
-        {
-            m_notebook->AddPage(m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
-        }
-    }
-    else if (!(languages & GEN_LANG_PERL) && m_perlPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_perlPanel));
-        m_perlPanel = nullptr;
-    }
-
     if (languages & GEN_LANG_PYTHON && !m_pythonPanel)
     {
         m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
@@ -176,16 +158,6 @@ auto MainFrame::UpdateLanguagePanels() -> void
             {
                 m_notebook->RemovePage(position);
                 m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_PERL:
-            ASSERT(m_perlPanel);
-            position = m_notebook->GetPageIndex(m_perlPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_perlPanel, "Perl", false, wxWithImages::NO_IMAGE);
             }
             break;
 

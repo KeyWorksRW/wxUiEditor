@@ -2,10 +2,12 @@
 
 This document provides a high-level overview of the `.wxui` file format used by wxUiEditor.
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## Purpose
 
 The `.wxui` format is an XML-based project file that defines wxWidgets user interface layouts. wxUiEditor reads these files and generates code in multiple languages (C++, Python, Ruby, Perl).
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## Key Characteristics
 
 ### 1. XML-Based Structure
@@ -17,9 +19,14 @@ The `.wxui` format is an XML-based project file that defines wxWidgets user inte
 ### 2. Multi-Language Code Generation
 From a single `.wxui` file, wxUiEditor can generate:
 - **C++**: Base and derived classes with header/source files
+- **Fortran**: kwxFortran classes
+- **GO**: kwxGO classes
+- **Julia**: kwxJulia classes
+- **luaJIT**: kwxLuaJIT classes
+- **Perl**: kwxPerl modules
 - **Python**: wxPython classes
 - **Ruby**: wxRuby classes
-- **Perl**: wxPerl modules
+- **Rust**: kwxRust modules
 - **XRC**: wxWidgets XML Resource files
 
 Each project has a `code_preference` property that specifies the primary language for code generation. When creating a new project, only the preferred language should be enabled in the `generate_languages` property. Additional languages can be enabled later if needed for multi-language generation.
@@ -46,9 +53,10 @@ wxUiEditor generates a **base class** (auto-regenerated) and optionally a **deri
   - Base class members may be changed to private instead of protected
   - User can either edit the base class directly (after "End of generated code" marker), or create a separate source file including the generated base class header file.
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## Basic Structure
 
-A `.wxui` file contains:
+A `.wxui` file contains contents similar to the following:
 
 ```xml
 <?xml version="1.0"?>
@@ -98,10 +106,12 @@ A `.wxui` file contains:
    - Embedded data files
    - External resource references
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## File Extension
 
 All wxUiEditor project files use the `.wxui` extension.
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## Design Philosophy
 
 ### Declarative UI Definition
@@ -146,7 +156,8 @@ try {
 
 **Note:** The `--data-version` command-line option is available in wxUiEditor 1.3.0 and later. Earlier versions will not recognize this command. On Windows, the installer registers wxUiEditor with a `.wxui` file association, making it accessible even if not in the system PATH.
 
-## Typical Workflow
+<!-- REVIEW:DONE @2026-02-07 -->
+## Typical User Workflow
 
 1. **Create/Open Project**: Use wxUiEditor to create a new `.wxui` file or open an existing one
 2. **Design UI Visually**: Add widgets, configure properties, design layout
@@ -155,20 +166,19 @@ try {
 5. **Implement Logic**: Add custom code (C++ uses derived classes; other languages add code after the generated section)
 6. **Iterate**: Modify UI in wxUiEditor, regenerate base classes (custom code unchanged)
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## When to Edit `.wxui` Files Manually
 
 **Recommended scenarios:**
 - Batch renaming (search/replace with care)
 - Fixing merge conflicts from version control
 - Scripted project modifications
-
-**Not recommended:**
 - Adding new widgets (use wxUiEditor's visual editor)
 - Complex layout changes (easier visually)
-- Learning the format (start with simple visual editing)
 
-**Warning**: Manual edits may be overwritten when wxUiEditor saves. Always backup before manual editing.
+**Warning**: Manual edits *will* be overwritten if wxUiEditor is running with the same project file loaded and then saves. Always backup before manual editing.
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## AI-Assisted Development
 
 This documentation enables AI tools to:
@@ -186,6 +196,7 @@ AI tools should:
 5. Include only non-default property values
 6. Use appropriate variable naming conventions
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## Quick Start Example
 
 Here's a minimal "Hello World" dialog:
@@ -205,6 +216,7 @@ Here's a minimal "Hello World" dialog:
 
 This generates a dialog with a single text label, demonstrating the core structure of `.wxui` files.
 
+<!-- REVIEW:DONE @2026-02-07 -->
 ## Further Reading
 
 Read the documentation in order for comprehensive understanding:
@@ -218,27 +230,19 @@ Read the documentation in order for comprehensive understanding:
 - **[07-advanced.md](07-advanced.md)** - Advanced features (inheritance, custom widgets, etc.)
 - **[08-troubleshooting.md](08-troubleshooting.md)** - Common issues and solutions
 
-## Related Documentation
-
-- **For Contributors**: See [../../contributors/xml_definitions.md](../../contributors/xml_definitions.md) for details on wxUiEditor's internal XML definition system
-- **For Users**: See [../../users/wxui_file_format.md](../../users/wxui_file_format.md) for user-friendly format overview
-
+<!-- REVIEW:DONE @2026-02-07 -->
 ## Reference Implementation
 
-For a comprehensive example of `.wxui` format and generated code across multiple languages, see the **wxUiEditor_tests** repository:
+For a comprehensive example of `.wxui` format and generated code across multiple languages, see the **wxUiEditor** repository:
 
-**Repository:** https://github.com/Randalphwa/wxUiEditor_tests
+**Repository:** https://github.com/KeyWorksRW/wxUiEditor
 
 This repository contains:
-- **wxUiTesting.wxui**: An extensive project demonstrating nearly every form type and control
+- **src/wxui/wxUiEditor.wxui**: An extensive project demonstrating nearly every form type and control
 - **Generated code examples** in:
   - `cpp/` - C++ implementation
-  - `python/` - wxPython implementation
-  - `ruby/` - wxRuby implementation
-  - `perl/` - wxPerl implementation (available in v1.3+)
 
 This is particularly useful for AI tools to:
 - Understand how complex `.wxui` projects are structured
-- See examples of generated code for all supported languages
 - Learn patterns for specific widgets and layout combinations
 - Validate generated code against working reference implementations

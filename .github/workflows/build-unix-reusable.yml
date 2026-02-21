@@ -22,6 +22,9 @@ on:
 jobs:
   buildUnix:
     runs-on: ${{ inputs.runner-type == 'self-hosted' && fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
+    env:
+      CCACHE_DIR: ${{github.workspace}}/.ccache
+      CCACHE_CONFIGPATH: ${{github.workspace}}/.ccache/ccache.conf
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -51,11 +54,9 @@ jobs:
         ccache --version
 
     - name: Setup ccache
-      env:
-        CCACHE_CONFIGPATH: ${{runner.workspace}}/.ccache/ccache.conf
       run: |
-        mkdir -p ${{runner.workspace}}/.ccache
-        ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
+        mkdir -p ${{github.workspace}}/.ccache
+        ccache --set-config=cache_dir=${{github.workspace}}/.ccache
         ccache --set-config=compression=true
         ccache --set-config=max_size=15G
         ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
@@ -68,7 +69,7 @@ jobs:
       id: cache-ccache-restore
       uses: actions/cache/restore@v4
       with:
-        path: ${{runner.workspace}}/.ccache
+        path: ${{github.workspace}}/.ccache
         key: ${{ runner.os }}-ccache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-ccache-
@@ -88,7 +89,7 @@ jobs:
       if: inputs.runner-type != 'self-hosted' && steps.cache-ccache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
-        path: ${{runner.workspace}}/.ccache
+        path: ${{github.workspace}}/.ccache
         key: ${{ runner.os }}-ccache-${{ github.sha }}
 
     - name: Build Setup

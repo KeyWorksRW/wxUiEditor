@@ -29,6 +29,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Xcode
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16'
+
     - name: Setup CMake 3.30+ and Ninja
       uses: lukka/get-cmake@latest
       with:
@@ -40,8 +46,8 @@ jobs:
     - name: Install dependencies
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       run: |
-        brew install llvm ccache
-        echo "LLVM_PREFIX=$(brew --prefix llvm)" >> $GITHUB_ENV
+        brew install ccache
+        clang++ --version
         cmake --version
         ccache --version
 
@@ -73,12 +79,8 @@ jobs:
 
     - name: Configure CMake
       run: |
-        CC="${LLVM_PREFIX:-$(brew --prefix llvm)}/bin/clang"
-        CXX="${LLVM_PREFIX:-$(brew --prefix llvm)}/bin/clang++"
-        echo "Using C compiler: $CC"
-        echo "Using C++ compiler: $CXX"
-        $CXX --version
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
+        clang++ --version
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja
 
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor

@@ -13,12 +13,10 @@
     #if (_MSVC_LANG < 202302L)
         #error "This project requires C++23 or later"
     #endif
-#elif defined(__apple_build_version__)
-    // Apple Clang does not set __cplusplus to 202302L for C++23
-    #if (__cplusplus < 202101L)
-        #error "This project requires C++23 or later"
-    #endif
-#elif (__cplusplus < 202302L)
+#elif (__cplusplus < 202101L)
+    // CMAKE_CXX_STANDARD=23 with REQUIRED enforces C++23 at configure time.
+    // Some compilers (Apple Clang, older LLVM) report __cplusplus as 202101L
+    // even in C++23 mode, so we check for C++20 as the minimum here.
     #error "This project requires C++23 or later"
 #endif
 

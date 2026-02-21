@@ -13,6 +13,11 @@
     #if (_MSVC_LANG < 202302L)
         #error "This project requires C++23 or later"
     #endif
+#elif defined(__apple_build_version__)
+    // Apple Clang does not set __cplusplus to 202302L for C++23
+    #if (__cplusplus < 202101L)
+        #error "This project requires C++23 or later"
+    #endif
 #elif (__cplusplus < 202302L)
     #error "This project requires C++23 or later"
 #endif

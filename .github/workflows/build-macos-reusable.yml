@@ -35,6 +35,7 @@ jobs:
     - run: mkdir ${{github.workspace}}/build
 
     - name: Install dependencies
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       run: |
         brew install ccache
         cmake --version

@@ -51,7 +51,10 @@ jobs:
         ccache --version
 
     - name: Setup ccache
+      env:
+        CCACHE_CONFIGPATH: ${{runner.workspace}}/.ccache/ccache.conf
       run: |
+        mkdir -p ${{runner.workspace}}/.ccache
         ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
         ccache --set-config=compression=true
         ccache --set-config=max_size=15G

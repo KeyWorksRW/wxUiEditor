@@ -140,7 +140,7 @@ jobs:
         # Run extracted linuxdeploy (no FUSE required)
         ./linuxdeploy/AppRun \
           --appdir AppDir \
-          --executable ${{github.workspace}}/build/bin/wxUiEditor \
+          --executable ${{github.workspace}}/bin/wxUiEditor \
           --desktop-file ${{github.workspace}}/wxUiEditor-appimage.desktop \
           --icon-file ${{github.workspace}}/wxUiEditor.png \
           --output appimage

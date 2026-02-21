@@ -41,7 +41,7 @@ jobs:
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       run: |
         brew install llvm ccache
-        echo "$(brew --prefix llvm)/bin" >> $GITHUB_PATH
+        echo "LLVM_PREFIX=$(brew --prefix llvm)" >> $GITHUB_ENV
         cmake --version
         ccache --version
 
@@ -73,8 +73,12 @@ jobs:
 
     - name: Configure CMake
       run: |
-        which clang++ && clang++ --version
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        CC="${LLVM_PREFIX:-$(brew --prefix llvm)}/bin/clang"
+        CXX="${LLVM_PREFIX:-$(brew --prefix llvm)}/bin/clang++"
+        echo "Using C compiler: $CC"
+        echo "Using C++ compiler: $CXX"
+        $CXX --version
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
 
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor

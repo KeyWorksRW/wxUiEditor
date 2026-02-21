@@ -40,7 +40,8 @@ jobs:
     - name: Install dependencies
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       run: |
-        brew install ccache
+        brew install llvm ccache
+        echo "$(brew --prefix llvm)/bin" >> $GITHUB_PATH
         cmake --version
         ccache --version
 
@@ -71,7 +72,9 @@ jobs:
     # due to partial/mismatched source files.
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+      run: |
+        which clang++ && clang++ --version
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor

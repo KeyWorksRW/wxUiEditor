@@ -22,6 +22,9 @@ on:
 jobs:
   buildMacOS:
     runs-on: ${{ inputs.runner-type }}
+    env:
+      CCACHE_DIR: ${{github.workspace}}/.ccache
+      CCACHE_CONFIGPATH: ${{github.workspace}}/.ccache/ccache.conf
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -35,6 +38,7 @@ jobs:
     - run: mkdir ${{github.workspace}}/build
 
     - name: Install dependencies
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       run: |
         brew install ccache
         cmake --version
@@ -42,7 +46,8 @@ jobs:
 
     - name: Setup ccache
       run: |
-        ccache --set-config=cache_dir=${{runner.workspace}}/.ccache
+        mkdir -p ${{github.workspace}}/.ccache
+        ccache --set-config=cache_dir=${{github.workspace}}/.ccache
         ccache --set-config=compression=true
         ccache --set-config=max_size=15G
         ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
@@ -55,7 +60,7 @@ jobs:
       id: cache-ccache-restore
       uses: actions/cache/restore@v4
       with:
-        path: ${{runner.workspace}}/.ccache
+        path: ${{github.workspace}}/.ccache
         key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-${{ runner.arch }}-ccache-
@@ -75,7 +80,7 @@ jobs:
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && always() && steps.cache-ccache-restore.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@v4
       with:
-        path: ${{runner.workspace}}/.ccache
+        path: ${{github.workspace}}/.ccache
         key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
 
     - name: Build DMG

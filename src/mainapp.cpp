@@ -236,9 +236,16 @@ auto App::OnRun() -> int
                          wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
 
     parser.AddLongOption("gen_cpp", "generate C++ files and exit");
-    parser.AddLongOption("gen_perl", "generate Perl files and exit");
     parser.AddLongOption("gen_python", "generate python files and exit");
+
+    parser.AddLongOption("gen_fortran", "generate Fortran files and exit");
+    parser.AddLongOption("gen_go", "generate Go files and exit");
+    parser.AddLongOption("gen_julia", "generate Julia files and exit");
+    parser.AddLongOption("gen_luajit", "generate LuaJIT files and exit");
+    parser.AddLongOption("gen_perl", "generate Perl files and exit");
     parser.AddLongOption("gen_ruby", "generate ruby files and exit");
+    parser.AddLongOption("gen_rust", "generate Rust files and exit");
+
     parser.AddLongOption("gen_xrc", "generate XRC files and exit");
 
     parser.AddLongOption("gen_all", "generate all language files and exit");
@@ -268,11 +275,7 @@ auto App::OnRun() -> int
 
     parser.AddLongSwitch("verify_cpp", "verify generating C++ files did not change",
                          wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("verify_perl", "verify generating Perl files did not change",
-                         wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_python", "verify generating Python files did not change",
-                         wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("verify_ruby", "verify generating Ruby files did not change",
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_fortran", "verify generating Fortran files did not change",
                          wxCMD_LINE_HIDDEN);
@@ -281,6 +284,10 @@ auto App::OnRun() -> int
     parser.AddLongSwitch("verify_julia", "verify generating Julia files did not change",
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_luajit", "verify generating LuaJIT files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_perl", "verify generating Perl files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_ruby", "verify generating Ruby files did not change",
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_rust", "verify generating Rust files did not change",
                          wxCMD_LINE_HIDDEN);
@@ -328,9 +335,16 @@ auto App::OnRun() -> int
     // The log file (project_name.log) contains generation timing and any warnings.
 
     parser.AddLongSwitch("test_cpp", "generate C++ code and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_python", "generate Python code and exit", wxCMD_LINE_HIDDEN);
+
+    parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_fortran", "generate Fortran code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_go", "generate Go code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_julia", "generate Julia code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_luajit", "generate LuaJIT code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_ruby", "generate Ruby code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_rust", "generate Rust code and exit", wxCMD_LINE_HIDDEN);
+
     parser.AddLongSwitch("test_xrc", "generate XRC code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_all", "generate all code and exit", wxCMD_LINE_HIDDEN);
 
@@ -387,8 +401,8 @@ auto App::OnRun() -> int
 
     bool is_verify_mode = false;
     constexpr frozen::set<std::string_view, 10> verify_options = {
-        "verify_cpp", "verify_perl",  "verify_python", "verify_ruby", "verify_fortran",
-        "verify_go",  "verify_julia", "verify_luajit", "verify_rust", "verify_all"
+        "verify_cpp",    "verify_python", "verify_fortran", "verify_go",   "verify_julia",
+        "verify_luajit", "verify_perl",   "verify_ruby",    "verify_rust", "verify_all"
     };
 
     for (const auto& opt: verify_options)
@@ -645,10 +659,16 @@ auto App::DbgCurrentTest(wxCommandEvent& /* event unused */) -> void  // NOLINT 
 auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool>
 {
     // Map option names to their corresponding generation type values
-    constexpr frozen::map<std::string_view, size_t, 7> gen_options = {
+    constexpr frozen::map<std::string_view, size_t, 13> gen_options = {
         { "gen_cpp", GEN_LANG_CPLUSPLUS },
         { "gen_python", GEN_LANG_PYTHON },
+        { "gen_fortran", GEN_LANG_FORTRAN },
+        { "gen_go", GEN_LANG_GO },
+        { "gen_julia", GEN_LANG_JULIA },
+        { "gen_luajit", GEN_LANG_LUAJIT },
+        { "gen_perl", GEN_LANG_PERL },
         { "gen_ruby", GEN_LANG_RUBY },
+        { "gen_rust", GEN_LANG_RUST },
         { "gen_xrc", GEN_LANG_XRC },
         { "gen_all", (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
         { "gen_quick", (GEN_LANG_PYTHON | GEN_LANG_RUBY) },
@@ -682,6 +702,7 @@ auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool
     }
 
     // Check test_* options (can be combined)
+    // REVIEW: [Randalphwa - 02-21-2026] Do we still need these?
     constexpr frozen::map<std::string_view, GenLang, 4> test_options = {
         { "test_cpp", GEN_LANG_CPLUSPLUS },
         { "test_python", GEN_LANG_PYTHON },
@@ -846,7 +867,15 @@ auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
 
     GenCode(GEN_LANG_CPLUSPLUS);
     GenCode(GEN_LANG_PYTHON);
+
+    GenCode(GEN_LANG_FORTRAN);
+    GenCode(GEN_LANG_GO);
+    GenCode(GEN_LANG_JULIA);
+    GenCode(GEN_LANG_LUAJIT);
+    GenCode(GEN_LANG_PERL);
     GenCode(GEN_LANG_RUBY);
+    GenCode(GEN_LANG_RUST);
+
     GenCode(GEN_LANG_XRC);
 }
 

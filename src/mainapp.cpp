@@ -160,20 +160,6 @@ App::App() = default;
 
 auto App::OnInit() -> bool
 {
-#if defined(_WIN32) && defined(_DEBUG)
-    #if !defined(USE_CRT_MEMORY_DUMP)
-
-    _CrtSetDbgFlag(0);
-
-    #else
-
-    // If memory dump shows a leak, uncomment the following and use the memory dump number you want
-    // to check. Works with Visual Studio Debugger, does not work with Visual Studio Code debugger.
-
-    // _CrtSetBreakAlloc(25045);
-    #endif
-#endif
-
     wxInitAllImageHandlers();
 
     // The name is sort of a standard. More importantly, it is sometimes used as the mask in Windows

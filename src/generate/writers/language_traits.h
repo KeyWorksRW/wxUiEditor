@@ -209,9 +209,9 @@ protected:
     const LanguageTraits& m_traits;
 
     LanguageStrategy(const LanguageStrategy&) = default;
-    auto operator=(const LanguageStrategy&) -> LanguageStrategy& = default;
+    auto operator=(const LanguageStrategy&) -> LanguageStrategy& = delete;
     LanguageStrategy(LanguageStrategy&&) = default;
-    auto operator=(LanguageStrategy&&) -> LanguageStrategy& = default;
+    auto operator=(LanguageStrategy&&) -> LanguageStrategy& = delete;
 };
 
 // Factory: create the appropriate LanguageStrategy for the given language.

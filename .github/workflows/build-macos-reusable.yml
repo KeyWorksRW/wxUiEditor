@@ -14,10 +14,10 @@ on:
         type: string
         default: 'Release'
       runner-type:
-        description: 'Runner label (macos-14 for x64, macos-14 for ARM64, or self-hosted labels)'
+        description: 'Runner label (macos-15 for x64, macos-15 for ARM64, or self-hosted labels)'
         required: false
         type: string
-        default: 'macos-14'
+        default: 'macos-15'
 
 jobs:
   buildMacOS:
@@ -33,7 +33,7 @@ jobs:
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '16'
+        xcode-version: '26.2'
 
     - name: Setup CMake 3.30+ and Ninja
       uses: lukka/get-cmake@latest
@@ -83,7 +83,8 @@ jobs:
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja
 
     - name: Build wxUiEditor
-      run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
+      run: |
+        cmake --build ${{github.workspace}}/build -j$(nproc 2>/dev/null || sysctl -n hw.ncpu) --config ${{inputs.build-type}} --target wxUiEditor
 
     - name: Save ccache
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && always() && steps.cache-ccache-restore.outputs.cache-hit != 'true' }}

@@ -23,14 +23,7 @@ jobs:
       create-setup: true
       build-type: Release
 
-  buildMacOS-ARM64:
-    uses: ./.github/workflows/build-macos-reusable.yml
-    with:
-      create-setup: true
-      build-type: Release
-      runner-type: macos-15
-
-  buildMacOS-x64:
+  buildMacOS:
     uses: ./.github/workflows/build-macos-reusable.yml
     with:
       create-setup: true

@@ -83,7 +83,8 @@ jobs:
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja
 
     - name: Build wxUiEditor
-      run: cmake --build ${{github.workspace}}/build -j$(($(sysctl -n hw.ncpu) - 2)) --config ${{inputs.build-type}} --target wxUiEditor
+      run: |
+        cmake --build ${{github.workspace}}/build -j$(nproc 2>/dev/null || sysctl -n hw.ncpu) --config ${{inputs.build-type}} --target wxUiEditor
 
     - name: Save ccache
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && always() && steps.cache-ccache-restore.outputs.cache-hit != 'true' }}

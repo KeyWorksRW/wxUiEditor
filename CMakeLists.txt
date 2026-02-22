@@ -394,7 +394,7 @@ endforeach()
 target_link_libraries( wxUiEditor PRIVATE ${wxWidgets_LIBRARIES} ${SYSTEM_LIBS} )
 
 # ###################### Packaging Instructions #######################
-if( UNIX )
+if( UNIX AND NOT APPLE )
     INSTALL( FILES wxUiEditor.desktop DESTINATION share/applications )
     INSTALL( FILES ${CMAKE_CURRENT_LIST_DIR}/src/art_src/wxUiEditor.svg DESTINATION /usr/share/icons/hicolor/scalable/apps )
 endif()

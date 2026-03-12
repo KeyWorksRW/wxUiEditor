@@ -32,9 +32,14 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
     bool is_gen_cpp() const { return m_gen_cpp_code; }
+    bool is_gen_fortran() const { return m_gen_fortran_code; }
+    bool is_gen_go() const { return m_gen_go_code; }
+    bool is_gen_julia() const { return m_gen_jullia_code; }
+    bool is_gen_luajit() const { return m_gen_luajit_code; }
+    bool is_gen_perl() const { return m_gen_perl_code; }
     bool is_gen_python() const { return m_gen_python_code; }
     bool is_gen_ruby() const { return m_gen_ruby_code; }
-    bool is_gen_perl() const { return m_gen_perl_code; }
+    bool is_gen_rust() const { return m_gen_rust_code; }
     bool is_gen_xrc() const { return m_gen_xrc_code; }
 
 protected:
@@ -46,14 +51,23 @@ protected:
     // Validator variables
 
     bool m_gen_cpp_code { true };
+    bool m_gen_fortran_code { false };
+    bool m_gen_go_code { false };
+    bool m_gen_jullia_code { false };
+    bool m_gen_luajit_code { false };
     bool m_gen_perl_code { false };
     bool m_gen_python_code { false };
     bool m_gen_ruby_code { false };
+    bool m_gen_rust_code { false };
     bool m_gen_xrc_code { false };
 
     // Class member variables
 
     wxRadioButton* m_radioBtn_CPP;
+    wxRadioButton* m_radioBtn_Fortran;
+    wxRadioButton* m_radioBtn_Go;
+    wxRadioButton* m_radioBtn_Julia;
+    wxRadioButton* m_radioBtn_LuaJIT;
     wxRadioButton* m_radioBtn_Perl;
     wxRadioButton* m_radioBtn_Python;
     wxRadioButton* m_radioBtn_XRC;

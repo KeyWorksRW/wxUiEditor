@@ -13,11 +13,11 @@
 #pragma once
 
 #include <wx/checkbox.h>
+#include <wx/choicebk.h>
 #include <wx/colour.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/radiobut.h>
 #include <wx/settings.h>
@@ -63,17 +63,40 @@ protected:
 
     wxCheckBox* m_check_capture_this;
     wxCheckBox* m_check_include_event;
-    wxNotebook* m_notebook;
+    wxChoicebook* m_notebook;
     wxPanel* m_cpp_bookpage;
+    wxPanel* m_fortran_bookpage;
+    wxPanel* m_go_bookpage;
+    wxPanel* m_julia_bookpage;
+    wxPanel* m_lua_bookpage;
     wxPanel* m_perl_bookpage;
     wxPanel* m_python_bookpage;
     wxPanel* m_ruby_bookpage;
+    wxPanel* m_rust_bookpage;
     wxRadioButton* m_cpp_radio_use_function;
     wxStaticBoxSizer* m_cpp_function_box;
     wxRadioButton* m_cpp_radio_use_lambda;
     wxStaticBoxSizer* m_cpp_lambda_box;
+    wxRadioButton* m_perl_radio_use_anon_func2;
+    wxStaticBoxSizer* m_perl_lambda_box2;
+    wxRadioButton* m_perl_radio_use_anon_func3;
+    wxStaticBoxSizer* m_perl_lambda_box3;
+    wxRadioButton* m_perl_radio_use_anon_func4;
+    wxStaticBoxSizer* m_perl_lambda_box4;
+    wxRadioButton* m_perl_radio_use_anon_func5;
+    wxStaticBoxSizer* m_perl_lambda_box5;
     wxRadioButton* m_perl_radio_use_anon_func;
     wxStaticBoxSizer* m_perl_lambda_box;
+    wxRadioButton* m_perl_radio_use_function2;
+    wxStaticBoxSizer* m_perl_function_box2;
+    wxRadioButton* m_perl_radio_use_function3;
+    wxStaticBoxSizer* m_perl_function_box3;
+    wxRadioButton* m_perl_radio_use_function4;
+    wxStaticBoxSizer* m_perl_function_box4;
+    wxRadioButton* m_perl_radio_use_function5;
+    wxStaticBoxSizer* m_perl_function_box5;
+    wxRadioButton* m_perl_radio_use_function6;
+    wxStaticBoxSizer* m_perl_function_box6;
     wxRadioButton* m_perl_radio_use_function;
     wxStaticBoxSizer* m_perl_function_box;
     wxRadioButton* m_py_radio_use_function;
@@ -86,9 +109,18 @@ protected:
     wxStaticBoxSizer* m_ruby_lambda_box;
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_cpp_stc_lambda;
+    wxStyledTextCtrl* m_perl_stc_lambda2;
+    wxStyledTextCtrl* m_perl_stc_lambda3;
+    wxStyledTextCtrl* m_perl_stc_lambda4;
+    wxStyledTextCtrl* m_perl_stc_lambda5;
     wxStyledTextCtrl* m_perl_stc_lambda;
     wxStyledTextCtrl* m_ruby_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
+    wxTextCtrl* m_perl_text_function2;
+    wxTextCtrl* m_perl_text_function3;
+    wxTextCtrl* m_perl_text_function4;
+    wxTextCtrl* m_perl_text_function5;
+    wxTextCtrl* m_perl_text_function6;
     wxTextCtrl* m_perl_text_function;
     wxTextCtrl* m_py_text_function;
     wxTextCtrl* m_py_text_lambda;

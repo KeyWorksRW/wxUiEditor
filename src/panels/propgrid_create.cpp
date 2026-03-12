@@ -38,7 +38,15 @@
 #include "../customprops/txt_string_prop.h"     // dialog for editing single-line strings
 #include "wx/string.h"
 
+#include <frozen/set.h>
+
 extern std::map<GenLang, std::string> s_lang_category_prefix;
+
+namespace
+{
+    constexpr auto supported_languages = frozen::make_set<std::string_view>(
+        { "C++", "Fortran", "GO", "Julia", "Lua", "Perl", "Python", "Ruby", "Rust", "XRC" });
+}  // namespace
 
 void PropGridPanel::Create()
 {
@@ -361,10 +369,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 {
                     for (auto& iter: propInfo->getOptions())
                     {
-                        // If not testing, do not show Code preference options for code we don't
-                        // currently generate
-                        if (iter.name != "C++" && iter.name != "Perl" && iter.name != "Python" &&
-                            iter.name != "Ruby" && iter.name != "XRC")
+                        if (!supported_languages.contains(iter.name))
                         {
                             continue;
                         }
@@ -424,10 +429,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 {
                     for (auto& iter: propInfo->getOptions())
                     {
-                        // If not testing, do not show Code preference options for code we don't
-                        // currently generate
-                        if (iter.name != "C++" && iter.name != "Python" && iter.name != "Ruby" &&
-                            iter.name != "XRC")
+                        if (!supported_languages.contains(iter.name))
                         {
                             continue;
                         }
@@ -763,6 +765,102 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
                                                      wxColour("#ccffcc"));  // Light green
         }
         if (Project.get_CodePreference(node) != GEN_LANG_PYTHON)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
+    else if (name.contains("kwxFortran"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#cc6600"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ffe5b4"));  // Apricot
+        }
+        if (Project.get_CodePreference(node) != GEN_LANG_FORTRAN)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
+    else if (name.contains("kwxGo"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#007080"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccf2f4"));  // Light cyan
+        }
+        if (Project.get_CodePreference(node) != GEN_LANG_GO)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
+    else if (name.contains("kwxJulia"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#660099"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#e6ccff"));  // Light purple
+        }
+        if (Project.get_CodePreference(node) != GEN_LANG_JULIA)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
+    else if (name.contains("kwxLua"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#003380"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ccd9ff"));  // Light navy
+        }
+        if (Project.get_CodePreference(node) != GEN_LANG_LUAJIT)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
+    else if (name.contains("kwxPerl"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#805500"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ffeecc"));  // Light amber
+        }
+        if (Project.get_CodePreference(node) != GEN_LANG_PERL)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
+    else if (name.contains("kwxRust"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#b34700"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ffd9b3"));  // Light rust
+        }
+        if (Project.get_CodePreference(node) != GEN_LANG_RUST)
         {
             m_prop_grid->Collapse(category_id);
         }

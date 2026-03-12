@@ -107,7 +107,8 @@ void Code::ProcessEscapedChar(char chr, bool& has_escape)
                                });
 }
 
-void Code::AddQuoteClosing([[maybe_unused]] bool has_escape, [[maybe_unused]] size_t begin_quote, bool has_utf_char)
+void Code::AddQuoteClosing([[maybe_unused]] bool has_escape, [[maybe_unused]] size_t begin_quote,
+                           bool has_utf_char)
 {
     if (is_ruby())
     {

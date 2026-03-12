@@ -673,9 +673,14 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
             class_info->AddBaseClass(get_NodeDeclaration("C++ Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("C++ Header Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("C++ Derived Class Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxFortran Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxGO Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxJulia Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxLuaJIT Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxPerl Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxRust Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("wxPython Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("wxRuby Settings"));
-            class_info->AddBaseClass(get_NodeDeclaration("wxPerl Settings"));
 
             elem_base = elem_base.next_sibling("inherits");
             continue;

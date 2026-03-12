@@ -78,132 +78,83 @@ auto MainFrame::UpdateLanguagePanels() -> void
 {
     wxWindowUpdateLocker freeze(this);
 
-    // Temporarily remove XRC and DocView panels which are at the end. This allows us to simply add
-    // Language panels in order, then restore the XRC and DocView panels after all language panels
-    // have been added.
-
+    // Temporarily remove end panels so language panels can be added in display order,
+    // then restored at the end.
     if (m_importPanel)
     {
         m_notebook->RemovePage(m_notebook->GetPageIndex(m_importPanel));
     }
-
-    m_notebook->RemovePage(m_notebook->GetPageIndex(m_xrcPanel));
     if (m_docviewPanel)
     {
         m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
     }
 
     const auto languages = Project.get_GenerateLanguages();
-    if (languages & GEN_LANG_CPLUSPLUS && !m_cppPanel)
-    {
-        m_cppPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
-        if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
-        {
-            m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
-        }
-        else
-        {
-            m_notebook->AddPage(m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
-        }
-    }
-    else if (!(languages & GEN_LANG_CPLUSPLUS) && m_cppPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_cppPanel));
-        m_cppPanel = nullptr;
-    }
 
-    if (languages & GEN_LANG_PYTHON && !m_pythonPanel)
+    // For each language: create the panel if newly enabled, or destroy it if disabled.
+    auto manage_panel = [&](GenLang flag, BasePanel*& panel, const char* label)
     {
-        m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
-        if (Project.get_CodePreference() == GEN_LANG_PYTHON)
+        if ((languages & flag) && !panel)
         {
-            m_notebook->InsertPage(1, m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+            panel = new BasePanel(m_notebook, this, flag);
+            m_notebook->AddPage(panel, label, false, wxWithImages::NO_IMAGE);
         }
-        else
+        else if (!(languages & flag) && panel)
         {
-            m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+            m_notebook->DeletePage(m_notebook->GetPageIndex(panel));
+            panel = nullptr;
         }
-    }
-    else if (!(languages & GEN_LANG_PYTHON) && m_pythonPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_pythonPanel));
-        m_pythonPanel = nullptr;
-    }
+    };
 
-    if (languages & GEN_LANG_RUBY && !m_rubyPanel)
-    {
-        m_rubyPanel = new BasePanel(m_notebook, this, GEN_LANG_RUBY);
-        if (Project.get_CodePreference() == GEN_LANG_RUBY)
-        {
-            m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
-        }
-        else
-        {
-            m_notebook->AddPage(m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
-        }
-    }
-    else if (!(languages & GEN_LANG_RUBY) && m_rubyPanel)
-    {
-        m_notebook->DeletePage(m_notebook->GetPageIndex(m_rubyPanel));
-        m_rubyPanel = nullptr;
-    }
+    manage_panel(GEN_LANG_CPLUSPLUS, m_cppPanel, "C++");
+    manage_panel(GEN_LANG_PYTHON, m_pythonPanel, "Python");
+    manage_panel(GEN_LANG_FORTRAN, m_fortranPanel, "Fortran");
+    manage_panel(GEN_LANG_GO, m_goPanel, "Go");
+    manage_panel(GEN_LANG_JULIA, m_juliaPanel, "Julia");
+    manage_panel(GEN_LANG_LUAJIT, m_luajitPanel, "LuaJIT");
+    manage_panel(GEN_LANG_PERL, m_perlPanel, "Perl");
+    manage_panel(GEN_LANG_RUBY, m_rubyPanel, "Ruby");
+    manage_panel(GEN_LANG_RUST, m_rustPanel, "Rust");
+    manage_panel(GEN_LANG_XRC, m_xrcPanel, "XRC");
 
-    int position;
-    switch (Project.get_CodePreference())
+    // Ensure the preferred language panel sits at notebook position 1.
+    struct LangInfo
     {
-        case GEN_LANG_CPLUSPLUS:
-            ASSERT(m_cppPanel);
-            position = m_notebook->GetPageIndex(m_cppPanel);
-            if (position != 1)
+        GenLang flag;
+        BasePanel* panel;
+        const char* label;
+    };
+    const auto preferred = Project.get_CodePreference();
+    const std::array lang_info = {
+        LangInfo { GEN_LANG_CPLUSPLUS, m_cppPanel, "C++" },
+        LangInfo { GEN_LANG_PYTHON, m_pythonPanel, "Python" },
+        LangInfo { GEN_LANG_FORTRAN, m_fortranPanel, "Fortran" },
+        LangInfo { GEN_LANG_GO, m_goPanel, "Go" },
+        LangInfo { GEN_LANG_JULIA, m_juliaPanel, "Julia" },
+        LangInfo { GEN_LANG_LUAJIT, m_luajitPanel, "LuaJIT" },
+        LangInfo { GEN_LANG_PERL, m_perlPanel, "Perl" },
+        LangInfo { GEN_LANG_RUBY, m_rubyPanel, "Ruby" },
+        LangInfo { GEN_LANG_RUST, m_rustPanel, "Rust" },
+        LangInfo { GEN_LANG_XRC, m_xrcPanel, "XRC" },
+    };
+    for (const auto& [flag, panel, label]: lang_info)
+    {
+        if (flag == preferred && panel)
+        {
+            const int pos = m_notebook->GetPageIndex(panel);
+            if (pos != 1)
             {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_cppPanel, "C++", false, wxWithImages::NO_IMAGE);
+                m_notebook->RemovePage(pos);
+                m_notebook->InsertPage(1, panel, label, false, wxWithImages::NO_IMAGE);
             }
             break;
-
-        case GEN_LANG_PYTHON:
-            ASSERT(m_pythonPanel);
-            position = m_notebook->GetPageIndex(m_pythonPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_RUBY:
-            ASSERT(m_rubyPanel);
-            position = m_notebook->GetPageIndex(m_rubyPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_rubyPanel, "Ruby", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        case GEN_LANG_XRC:
-            ASSERT(m_xrcPanel);
-            position = m_notebook->GetPageIndex(m_xrcPanel);
-            if (position != 1)
-            {
-                m_notebook->RemovePage(position);
-                m_notebook->InsertPage(1, m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
-            }
-            break;
-
-        default:
-            break;
+        }
     }
 
-    // Now add back the XRC and DocView panels at the end.
+    // Restore end panels in fixed order: Import, Docs.
     if (m_importPanel)
     {
         m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
-    }
-
-    if (Project.get_CodePreference() != GEN_LANG_XRC)
-    {
-        m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
     }
     if (m_docviewPanel)
     {

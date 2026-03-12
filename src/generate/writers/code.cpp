@@ -77,7 +77,7 @@ const view_map g_map_python_prefix
     { "wxCommandLinkButton",    "wx.adv."},
     { "wxDatePickerCtrl",       "wx.adv."},
     { "wxEditableListBox",      "wx.adv."},
-    { "wxGenericAnimationCtrl", "wx.adv."},
+    { "wxGeneriRcAnimationCtrl", "wx.adv."},
     { "wxHtmlWindow",           "wx.html."},
     { "wxSimpleHtmlListBox",    "wx.html."},
     { "wxHyperlinkCtrl",        "wx.adv."},

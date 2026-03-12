@@ -744,10 +744,22 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
         FontProperty font_prop(wxue::string_view(m_btn_font->GetMainLabel().utf8_string()));
         auto font = font_prop.GetFont();
         UserPrefs.set_CodeDisplayFont(font_prop.as_string());
-        wxGetFrame().GetCppPanel()->SetCodeFont(font);
-        wxGetFrame().GetPythonPanel()->SetCodeFont(font);
-        wxGetFrame().GetRubyPanel()->SetCodeFont(font);
-        wxGetFrame().GetXrcPanel()->SetCodeFont(font);
+        if (auto* cpp_panel = wxGetFrame().GetCppPanel(); cpp_panel)
+        {
+            cpp_panel->SetCodeFont(font);
+        }
+        if (auto* python_panel = wxGetFrame().GetPythonPanel(); python_panel)
+        {
+            python_panel->SetCodeFont(font);
+        }
+        if (auto* ruby_panel = wxGetFrame().GetRubyPanel(); ruby_panel)
+        {
+            ruby_panel->SetCodeFont(font);
+        }
+        if (auto* xrc_panel = wxGetFrame().GetXrcPanel(); xrc_panel)
+        {
+            xrc_panel->SetCodeFont(font);
+        }
     }
 
     auto line_length = wxue::atoi(m_cpp_line_length.ToStdString());

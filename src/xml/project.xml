@@ -4,29 +4,42 @@
 <GeneratorDefinitions>
     <gen class="Project" type="project" image="project">
         <inherits class="C++"/>
-        <inherits class="wxPerl"/>
         <inherits class="wxPython"/>
+        <inherits class="kwxFortran"/>
+        <inherits class="kwxGO"/>
+        <inherits class="kwxLuaJIT"/>
+        <inherits class="kwxJulia"/>
+        <inherits class="kwxPerl"/>
+        <inherits class="kwxRust"/>
         <inherits class="wxRuby"/>
         <inherits class="XRC"/>
 
         <property name="code_preference" type="option"
             help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
             <option name="C++"/>
+			<option name="Fortran"/>
+			<option name="GO"/>
+			<option name="Julia"/>
+			<option name="Lua"/>
 			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
+			<option name="Rust"/>
 			<option name="XRC"/>
-
             C++</property>
         <property name="generate_languages" type="bitlist"
             help="Specify the programming languages you might want to view or generate from this project. The code preference language above will always be available when this project is loaded.">
             <option name="C++"/>
+			<option name="Fortran"/>
+			<option name="GO"/>
+			<option name="Julia"/>
+			<option name="Lua"/>
 			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
+			<option name="Rust"/>
 			<option name="XRC"/>
-
-            C++ | Python | Ruby
+            C++ | Python
         </property>
         <property name="art_directory" type="path"
             help="The directory containing your images (png, ico, xpm, etc.).">./</property>

@@ -17,4 +17,7 @@ public:
     void GenerateClass(GenLang language = GEN_LANG_RUST,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
+
+private:
+    auto GenerateConstructionCode(Code& code) -> void;
 };

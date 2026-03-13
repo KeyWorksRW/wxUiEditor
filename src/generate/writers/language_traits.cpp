@@ -149,7 +149,7 @@ constexpr LanguageTraits fortran_traits
     .scope_operator = "%",
     .local_var_keyword = "",
     .line_comment = "! ",
-    .indent_size = 2,
+    .indent_size = 3,
     .line_offset = 1,
     .stmt_end = "",
     .construction_suffix = "",

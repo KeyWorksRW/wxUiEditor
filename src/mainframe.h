@@ -393,13 +393,13 @@ private:
     // Language panels -- whether they are actually created is dependent on project preferences.
 
     BasePanel* m_pythonPanel { nullptr };
+    BasePanel* m_rubyPanel { nullptr };
 
     BasePanel* m_fortranPanel { nullptr };
     BasePanel* m_goPanel { nullptr };
     BasePanel* m_juliaPanel { nullptr };
     BasePanel* m_luajitPanel { nullptr };
     BasePanel* m_perlPanel { nullptr };
-    BasePanel* m_rubyPanel { nullptr };
     BasePanel* m_rustPanel { nullptr };
 
     BasePanel* m_xrcPanel { nullptr };

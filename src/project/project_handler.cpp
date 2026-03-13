@@ -542,6 +542,12 @@ auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
         { "C++", GEN_LANG_CPLUSPLUS },
         { "Python", GEN_LANG_PYTHON },
         { "Ruby", GEN_LANG_RUBY },
+        { "GO", GEN_LANG_GO },
+        { "Fortran", GEN_LANG_FORTRAN },
+        { "Julia", GEN_LANG_JULIA },
+        { "LuaJIT", GEN_LANG_LUAJIT },
+        { "Perl", GEN_LANG_PERL },
+        { "Rust", GEN_LANG_RUST },
         { "XRC", GEN_LANG_XRC }
     };
     // clang-format on
@@ -564,8 +570,14 @@ auto ProjectHandler::get_GenerateLanguages() const -> size_t
     // clang-format off
     static const std::map<std::string_view, size_t> langBitMap = {
         { "C++", GEN_LANG_CPLUSPLUS },
+        { "Fortran", GEN_LANG_FORTRAN },
+        { "GO", GEN_LANG_GO },
+        { "Julia", GEN_LANG_JULIA },
+        { "LuaJIT", GEN_LANG_LUAJIT },
+        { "Perl", GEN_LANG_PERL },
         { "Python", GEN_LANG_PYTHON },
         { "Ruby", GEN_LANG_RUBY },
+        { "Rust", GEN_LANG_RUST },
         { "XRC", GEN_LANG_XRC }
     };
     // clang-format on

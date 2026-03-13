@@ -45,7 +45,7 @@ extern std::map<GenLang, std::string> s_lang_category_prefix;
 namespace
 {
     constexpr auto supported_languages = frozen::make_set<std::string_view>(
-        { "C++", "Fortran", "GO", "Julia", "Lua", "Perl", "Python", "Ruby", "Rust", "XRC" });
+        { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Perl", "Python", "Ruby", "Rust", "XRC" });
 }  // namespace
 
 void PropGridPanel::Create()
@@ -511,6 +511,11 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_python_file:
                     case prop_ruby_combined_file:
                     case prop_ruby_file:
+                    case prop_fortran_file:
+                    case prop_go_file:
+                    case prop_julia_file:
+                    case prop_lua_file:
+                    case prop_rust_file:
                     case prop_subclass_header:
                     case prop_xrc_file:
                         return new ttFileProperty(prop);
@@ -757,14 +762,29 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#009900"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#003380"));
         }
         else
         {
             m_prop_grid->SetPropertyBackgroundColour(category_id,
-                                                     wxColour("#ccffcc"));  // Light green
+                                                     wxColour("#ccd9ff"));  // Light navy
         }
         if (Project.get_CodePreference(node) != GEN_LANG_PYTHON)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
+    else if (name.contains("wxRuby"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#8e0b3d"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#f8a9c7"));  // Ruby
+        }
+        if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -785,7 +805,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->Collapse(category_id);
         }
     }
-    else if (name.contains("kwxGo"))
+    else if (name.contains("kwxGO"))
     {
         if (UserPrefs.is_DarkMode())
         {
@@ -821,12 +841,12 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     {
         if (UserPrefs.is_DarkMode())
         {
-            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#003380"));
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#009900"));
         }
         else
         {
             m_prop_grid->SetPropertyBackgroundColour(category_id,
-                                                     wxColour("#ccd9ff"));  // Light navy
+                                                     wxColour("#ccffcc"));  // Light green
         }
         if (Project.get_CodePreference(node) != GEN_LANG_LUAJIT)
         {
@@ -861,21 +881,6 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
                                                      wxColour("#ffd9b3"));  // Light rust
         }
         if (Project.get_CodePreference(node) != GEN_LANG_RUST)
-        {
-            m_prop_grid->Collapse(category_id);
-        }
-    }
-    else if (name.contains("wxRuby"))
-    {
-        if (UserPrefs.is_DarkMode())
-        {
-            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#8e0b3d"));
-        }
-        else
-        {
-            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#f8a9c7"));  // Ruby
-        }
-        if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
         {
             m_prop_grid->Collapse(category_id);
         }

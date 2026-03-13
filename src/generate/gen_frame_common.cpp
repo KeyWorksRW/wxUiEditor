@@ -15,9 +15,9 @@
 
 using namespace FrameCommon;
 
-bool FrameCommon::ConstructionCode(Code& code, int frame_type)
+namespace
 {
-    if (code.is_cpp())
+    void ConstructionCodeCpp(Code& code, int frame_type)
     {
         code.Str("bool ").as_string(prop_class_name).Str("::Create(");
 
@@ -48,7 +48,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         }
     }
 
-    else if (code.is_python())
+    void ConstructionCodePython(Code& code, int frame_type)
     {
         // https://docs.wxpython.org/wx.lib.docview.DocMDIParentFrame.html
         // https://docs.wxpython.org/wx.lib.docview.DocParentFrame.html
@@ -94,7 +94,8 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.Unindent();
         code.Eol() += "wx.Frame.__init__(self)";
     }
-    else if (code.is_ruby())
+
+    void ConstructionCodeRuby(Code& code, int frame_type)
     {
         if (frame_type == frame_sdi_doc)
         {
@@ -158,6 +159,155 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             indent_pos -= code.GetCode().find("\n");
             std::string spaces(indent_pos, ' ');
             code.GetCode().Replace("\t\t\t\t", spaces, true);
+        }
+    }
+
+    void ConstructionCodeFortran(Code& code, int /* frame_type */)
+    {
+        // module MyFrame_mod
+        //     use kwx_fortran
+        //     implicit none
+        //     type(wx_frame_t) :: self
+        // contains
+        // subroutine create(parent)
+        //     type(c_ptr), intent(in) :: parent
+
+        code.Str("module ").NodeName().Str("_mod").Eol();
+        code.Tab().Str("use kwx_fortran").Eol();
+        code.Tab().Str("implicit none").Eol();
+        code.Tab().Str("type(wx_frame_t) :: self").Eol();
+        code.Eol();
+        code.Str("contains").Eol();
+        code.Eol();
+        code.Str("subroutine create(parent)").Eol();
+        code.Tab().Str("type(c_ptr), intent(in) :: parent");
+    }
+
+    void ConstructionCodeGo(Code& code, int /* frame_type */)
+    {
+        // type MyFrame struct {
+        //     frame *wx.Frame
+        // }
+        //
+        // func NewMyFrame(parent wx.Pointer) *MyFrame {
+        //     self := &MyFrame{}
+
+        code.Str("type ").NodeName().Str(" struct {").Eol();
+        code.Tab().Str("frame *wx.Frame").Eol();
+        code.Str("}").Eol();
+        code.Eol();
+        code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
+        code.Tab().Str("self := &").NodeName().Str("{}");
+    }
+
+    void ConstructionCodeJulia(Code& code, int /* frame_type */)
+    {
+        // mutable struct MyFrame
+        //     frame::Ptr{Cvoid}
+        //
+        //     function MyFrame(parent=nothing)
+        //         self = new()
+
+        code.Str("mutable struct ").NodeName().Eol();
+        code.Indent();
+        code.Tab().Str("frame::Ptr{Cvoid}").Eol();
+        code.Eol();
+        code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
+        code.Indent();
+        code.Tab().Str("self = new()");
+    }
+
+    void ConstructionCodeLuaJIT(Code& code, int /* frame_type */)
+    {
+        // local MyFrame = {}
+        // MyFrame.__index = MyFrame
+        //
+        // function MyFrame:new(parent)
+        //     local self = setmetatable({}, MyFrame)
+
+        code.Str("local ").NodeName().Str(" = {}").Eol();
+        code.NodeName().Str(".__index = ").NodeName().Eol();
+        code.Eol();
+        code.Str("function ").NodeName().Str(":new(parent)").Eol();
+        code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")");
+    }
+
+    void ConstructionCodePerl(Code& code, int /* frame_type */)
+    {
+        // package MyFrame;
+        // use strict;
+        // use warnings;
+        //
+        // sub new {
+        //     my ($class, $parent) = @_;
+        //     my $self = bless {}, $class;
+
+        code.Str("package ").NodeName().Str(";").Eol();
+        code.Str("use strict;").Eol();
+        code.Str("use warnings;").Eol();
+        code.Eol();
+        code.Str("sub new {").Eol();
+        code.Tab().Str("my ($class, $parent) = @_;").Eol();
+        code.Tab().Str("my $self = bless {}, $class;");
+    }
+
+    void ConstructionCodeRust(Code& code, int /* frame_type */)
+    {
+        // pub struct MyFrame {
+        //     frame: wx::Frame,
+        // }
+        //
+        // impl MyFrame {
+        //     pub fn new(parent: Option<*mut std::ffi::c_void>) -> Self {
+
+        code.Str("pub struct ").NodeName().Str(" {").Eol();
+        code.Tab().Str("frame: wx::Frame,").Eol();
+        code.Str("}").Eol();
+        code.Eol();
+        code.Str("impl ").NodeName().Str(" {").Eol();
+        code.Tab().Str("pub fn new(parent: Option<*mut std::ffi::c_void>) -> Self {");
+    }
+}  // namespace
+
+bool FrameCommon::ConstructionCode(Code& code, int frame_type)
+{
+    if (code.is_cpp())
+    {
+        ConstructionCodeCpp(code, frame_type);
+    }
+    else if (code.is_python())
+    {
+        ConstructionCodePython(code, frame_type);
+    }
+    else if (code.is_ruby())
+    {
+        ConstructionCodeRuby(code, frame_type);
+    }
+    else if (code.is_ffi())
+    {
+        switch (code.get_language())
+        {
+            case GEN_LANG_FORTRAN:
+                ConstructionCodeFortran(code, frame_type);
+                break;
+            case GEN_LANG_GO:
+                ConstructionCodeGo(code, frame_type);
+                break;
+            case GEN_LANG_JULIA:
+                ConstructionCodeJulia(code, frame_type);
+                break;
+            case GEN_LANG_LUAJIT:
+                ConstructionCodeLuaJIT(code, frame_type);
+                break;
+            case GEN_LANG_PERL:
+                ConstructionCodePerl(code, frame_type);
+                break;
+            case GEN_LANG_RUST:
+                ConstructionCodeRust(code, frame_type);
+                break;
+            default:
+                code.AddComment("Unsupported FFI language", true);
+                break;
         }
     }
     else

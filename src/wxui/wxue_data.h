@@ -49,7 +49,7 @@ namespace wxue_data
     // ../xml/forms.xml
     extern const unsigned char forms[6635]; // Original size: 55,979 bytes
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[11370]; // Original size: 58,005 bytes
+    extern const unsigned char interfaces[11346]; // Original size: 57,911 bytes
     // ../xml/mdi.xml
     extern const unsigned char mdi[1995]; // Original size: 17,170 bytes
     // ../xml/pickers.xml

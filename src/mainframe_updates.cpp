@@ -108,12 +108,12 @@ auto MainFrame::UpdateLanguagePanels() -> void
 
     manage_panel(GEN_LANG_CPLUSPLUS, m_cppPanel, "C++");
     manage_panel(GEN_LANG_PYTHON, m_pythonPanel, "Python");
+    manage_panel(GEN_LANG_RUBY, m_rubyPanel, "Ruby");
     manage_panel(GEN_LANG_FORTRAN, m_fortranPanel, "Fortran");
     manage_panel(GEN_LANG_GO, m_goPanel, "Go");
     manage_panel(GEN_LANG_JULIA, m_juliaPanel, "Julia");
     manage_panel(GEN_LANG_LUAJIT, m_luajitPanel, "LuaJIT");
     manage_panel(GEN_LANG_PERL, m_perlPanel, "Perl");
-    manage_panel(GEN_LANG_RUBY, m_rubyPanel, "Ruby");
     manage_panel(GEN_LANG_RUST, m_rustPanel, "Rust");
     manage_panel(GEN_LANG_XRC, m_xrcPanel, "XRC");
 
@@ -128,12 +128,12 @@ auto MainFrame::UpdateLanguagePanels() -> void
     const std::array lang_info = {
         LangInfo { GEN_LANG_CPLUSPLUS, m_cppPanel, "C++" },
         LangInfo { GEN_LANG_PYTHON, m_pythonPanel, "Python" },
+        LangInfo { GEN_LANG_RUBY, m_rubyPanel, "Ruby" },
         LangInfo { GEN_LANG_FORTRAN, m_fortranPanel, "Fortran" },
-        LangInfo { GEN_LANG_GO, m_goPanel, "Go" },
+        LangInfo { GEN_LANG_GO, m_goPanel, "GO" },
         LangInfo { GEN_LANG_JULIA, m_juliaPanel, "Julia" },
         LangInfo { GEN_LANG_LUAJIT, m_luajitPanel, "LuaJIT" },
         LangInfo { GEN_LANG_PERL, m_perlPanel, "Perl" },
-        LangInfo { GEN_LANG_RUBY, m_rubyPanel, "Ruby" },
         LangInfo { GEN_LANG_RUST, m_rustPanel, "Rust" },
         LangInfo { GEN_LANG_XRC, m_xrcPanel, "XRC" },
     };

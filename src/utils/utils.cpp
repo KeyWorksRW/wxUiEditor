@@ -363,11 +363,21 @@ extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
 extern const char* g_perl_keywords;
+extern const char* g_fortran_keywords;
+extern const char* g_go_keywords;
+extern const char* g_julia_keywords;
+extern const char* g_luajit_keywords;
+extern const char* g_rust_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;
 std::set<std::string> g_set_ruby_keywords;
+std::set<std::string> g_set_fortran_keywords;
+std::set<std::string> g_set_go_keywords;
+std::set<std::string> g_set_julia_keywords;
+std::set<std::string> g_set_luajit_keywords;
 std::set<std::string> g_set_perl_keywords;
+std::set<std::string> g_set_rust_keywords;
 
 auto isValidVarName(const std::string& str, GenLang language) -> bool
 {
@@ -419,6 +429,14 @@ auto isValidVarName(const std::string& str, GenLang language) -> bool
     if (language == GEN_LANG_RUBY)
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
+    }
+    if (language == GEN_LANG_PERL)
+    {
+        return lambda(g_set_perl_keywords, g_perl_keywords);
+    }
+    if (language == GEN_LANG_RUST)
+    {
+        return lambda(g_set_rust_keywords, g_rust_keywords);
     }
 
     return true;
@@ -636,6 +654,35 @@ auto ConvertToGenLang(wxue::string_view language) -> GenLang
         language.starts_with("Folder wxRuby"))
     {
         return GEN_LANG_RUBY;
+    }
+    if (language == "GO" || language.starts_with("kwxGO") || language.starts_with("Folder kwxGO"))
+    {
+        return GEN_LANG_GO;
+    }
+    if (language == "Fortran" || language.starts_with("kwxFortran") ||
+        language.starts_with("Folder kwxFortran"))
+    {
+        return GEN_LANG_FORTRAN;
+    }
+    if (language == "Julia" || language.starts_with("kwxJulia") ||
+        language.starts_with("Folder kwxJulia"))
+    {
+        return GEN_LANG_JULIA;
+    }
+    if (language == "LuaJIT" || language.starts_with("kwxLuaJIT") ||
+        language.starts_with("Folder kwxLuaJIT"))
+    {
+        return GEN_LANG_LUAJIT;
+    }
+    if (language == "Perl" || language.starts_with("kwxPerl") ||
+        language.starts_with("Folder kwxPerl"))
+    {
+        return GEN_LANG_PERL;
+    }
+    if (language == "Rust" || language.starts_with("kwxRust") ||
+        language.starts_with("Folder kwxRust"))
+    {
+        return GEN_LANG_RUST;
     }
     if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
     {

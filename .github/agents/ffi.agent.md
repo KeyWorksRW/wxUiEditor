@@ -1,6 +1,7 @@
 ---
 description: 'Implement FFI code generation for kwxFFI languages (Fortran, Go, Julia, LuaJIT, Perl, Rust)'
-tools: ['execute/getTerminalOutput', 'execute/awaitTerminal', 'execute/killTerminal', 'execute/runTask', 'execute/createAndRunTask', 'execute/runInTerminal', 'read/problems', 'read/readFile', 'read/terminalSelection', 'read/terminalLastCommand', 'read/getTaskOutput', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'web', 'oraios/serena/activate_project', 'oraios/serena/check_onboarding_performed', 'oraios/serena/find_file', 'oraios/serena/find_referencing_symbols', 'oraios/serena/find_symbol', 'oraios/serena/get_current_config', 'oraios/serena/get_symbols_overview', 'oraios/serena/initial_instructions', 'oraios/serena/insert_after_symbol', 'oraios/serena/insert_before_symbol', 'oraios/serena/list_dir', 'oraios/serena/onboarding', 'oraios/serena/rename_symbol', 'oraios/serena/replace_symbol_body', 'oraios/serena/search_for_pattern', 'oraios/serena/think_about_collected_information', 'oraios/serena/think_about_task_adherence', 'oraios/serena/think_about_whether_you_are_done', 'keyworks.key/key_open', 'keyworks.key/key_close', 'keyworks.key/key_term', 'keyworks.key/key_memory', 'keyworks.key/key_symbols', 'keyworks.key/key_read_lines', 'keyworks.key/key_cpp']
+agents: ['code-sweep', 'research']
+tools: [vscode/askQuestions, agent, web, keyworks.key/key_open, keyworks.key/key_term, keyworks.key/key_git, keyworks.key/key_memory, keyworks.key/key_symbols, keyworks.key/key_file_info, keyworks.key/key_bash, keyworks.key/key_read_file, keyworks.key/key_guide, keyworks.key/key_build, keyworks.key/key_grep, keyworks.key/key_rename_symbol, keyworks.key/key_bookmark, keyworks.key/key_edit_file, keyworks.key/key_create_file, keyworks.key/key_create_directory]
 ---
 
 # FFI Code Generator Agent
@@ -10,8 +11,6 @@ Implement kwxFFI code generation for 6 languages: Fortran, Go, Julia, LuaJIT, Pe
 ## Critical Context
 
 Read `.github/copilot-instructions.md` at session start — it contains project-wide coding standards. Read `.private/generator_plan.md` for the Phase 6 tier breakdown.
-
-**Memory keys to check:** `phase5-complete` (infrastructure status).
 
 ## Architecture Overview
 
@@ -52,6 +51,50 @@ All 6 FFI languages share **ONE naming convention** — identical constant names
 - **One `is_ffi()` block** per shared generator file covers all 6 languages
 - **FFIStrategy::MapClassName()** converts `wxFooBar` → `wx_foo_bar` for all 6
 - Per-language strategies only override syntax-specific methods
+
+### 🔴 LanguageTraits Is the Single Source of Truth
+
+**`language_traits.h` defines ALL static language characteristics.** Never hardcode values that traits already provide — always read from traits at runtime.
+
+**Key traits available** (see `LanguageTraits` struct in `language_traits.h`):
+
+| Trait | Purpose | Example Values |
+|-------|---------|----------------|
+| `indent_size` | Spaces per indent level | 2 (Ruby), 3 (Fortran), 4 (most) |
+| `true_literal` / `false_literal` | Boolean literals | `"true"`, `"True"`, `"1"`, `".TRUE."` |
+| `null_literal` | Null/nil/none | `"nullptr"`, `"None"`, `"nil"`, `"C_NULL_PTR"` |
+| `empty_string` | Empty string literal | `"wxEmptyString"`, `"\"\""` |
+| `self_reference` | Self/this reference | `"this"`, `"self"`, `"$self"` |
+| `member_operator` | Member access | `"->"`, `"."`, `"%"` |
+| `scope_operator` | Scope resolution | `"::"`, `"."` |
+| `line_comment` | Comment prefix | `"// "`, `"# "`, `"! "`, `"-- "` |
+| `stmt_end` | Statement terminator | `";"`, `""` |
+| `wx_prefix` | wxWidgets prefix | `"wx"`, `"wx."`, `"Wx::"`, `"wx_"` |
+| `block_begin` / `block_end` | Block delimiters | `"{"` / `"}"`, `""` / `"end"` |
+| `conditional_begin` / `conditional_end` | If-statement syntax | `"if ("` / `")"`, `"if "` / `" then"` |
+
+**Access patterns in generator code:**
+
+```cpp
+// In GenerateClass() — initialize WriteCode indentation from traits
+m_source->SetTabToSpaces(GetLanguageTraits(m_language)->indent_size);
+
+// In widget generators — query traits via Code object
+const auto& traits = code.get_traits();
+code.Str(traits.true_literal);     // Emits language-correct "true"
+code.Str(traits.line_comment);     // Emits language-correct comment prefix
+code.Str(traits.stmt_end);         // Emits ";" or "" as appropriate
+
+// Via strategy (for behavioral differences)
+auto mapped = code.get_strategy()->MapClassName("wxButton");  // "wx_button" for FFI
+```
+
+**❌ NEVER do this:**
+```cpp
+m_source->SetTabToSpaces(4);           // Hardcoded — use traits.indent_size
+code.Str("true");                      // Hardcoded — use traits.true_literal
+code.Str(";");                         // Hardcoded — use traits.stmt_end
+```
 
 ## Key File Map
 
@@ -153,14 +196,10 @@ Study `gen_python.cpp::GenerateClass()` for the structure. FFI writers need:
 5. Event handler stubs (Phase 6 Tier 4)
 6. Close class/module
 
-### Step 5: Build and verify
-```sh
-ninja -C build -f build-Debug.ninja
-./bin/Debug/wxUiEditor.exe --verify_cpp ./src/wxui/wxUiEditor.wxui
-```
+### Step 5: Build
+Run `ninja -f build-Debug.ninja` using `key_build`.
 
 ## Per-Language Syntax Quick Reference
-
 | Aspect | Fortran | Go | Julia | LuaJIT | Perl | Rust |
 |--------|---------|-----|-------|--------|---------|------|
 | Variable | `type(c_ptr) :: x` | `var x T` | `x` (dynamic) | `local x` | `my $x` | `let x: T` |
@@ -172,18 +211,7 @@ ninja -C build -f build-Debug.ninja
 | Block begin | `then`/implicit | `{` | (indent) | `then`/`do` | `{` | `{` |
 | Block end | `end` | `}` | `end` | `end` | `}` | `}` |
 
-## Communication & Terminal
-
-- Use `key_term` for git, file searches, and PowerShell commands
-- Use `run_in_terminal` for `ninja` builds only
-- Build command: `ninja -C build -f build-Debug.ninja` (from workspace root)
-- Use `key_symbols` for symbol lookup (language server). Fall back to Serena if empty.
-- **NEVER commit or push** unless explicitly told
-- **ALWAYS use LF line endings** (never CRLF)
-- Use `key_memory` to save/load progress between sessions
-
 ## Tier-by-Tier Approach
-
 Work through Phase 6 tiers in order. For each tier:
 1. **Read the relevant generator files** to understand existing C++/Python/Ruby code
 2. **Add `is_ffi()` branches** to shared generators (or extend traits/strategies)
@@ -192,4 +220,8 @@ Work through Phase 6 tiers in order. For each tier:
 5. **Verify** — `--verify_cpp` must still pass (no C++/Python/Ruby regressions)
 6. **Report** what was implemented and what you need the boss to visually verify
 
-The boss creates test forms in wxUiEditor and visually verifies generated code compiles and runs in all 9 languages. You implement the generator logic.
+## Demo Reference files:
+- Fortran: C:\rwCode\wxLanguages\kwxFortran\examples\demo.f90
+- GO: C:\rwCode\wxLanguages\kwxGO\examples\demo\main.go
+- Julia: C:\rwCode\wxLanguages\kwxJulia\examples\controls_demo.jl
+- LuaJIT: C:\rwCode\wxLanguages\kwxLuaJit-dev\examples\demo.lua

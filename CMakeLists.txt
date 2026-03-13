@@ -145,11 +145,8 @@ if( MSVC )
     string( APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608" ) # 8MB stack
 else()
     # For GCC/Clang/Xcode, optimize for size in Release builds
-    string( REPLACE "-O3" "-Os" cl_optimize ${CMAKE_CXX_FLAGS_RELEASE} )
+    string( REPLACE "-O3" "-Os" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}" )
     set( CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE )
-
-    string( REPLACE "-O3" "-Os" cl_optimize ${CMAKE_C_FLAGS_RELEASE} )
-    set( CMAKE_C_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C Release flags" FORCE )
 
     if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE STREQUAL "Debug" )
         # -g3 includes macro definitions (vs -g/-g2); enables backtraces and variable inspection

@@ -146,13 +146,14 @@ enum GenLang : std::uint16_t
     GEN_LANG_NONE = 0,
     GEN_LANG_CPLUSPLUS = 1,
     GEN_LANG_PYTHON = 1 << 2,
+    GEN_LANG_RUBY = 1 << 3,
 
-    GEN_LANG_FORTRAN = 1 << 3,
-    GEN_LANG_GO = 1 << 4,
-    GEN_LANG_JULIA = 1 << 5,
-    GEN_LANG_LUAJIT = 1 << 6,
-    GEN_LANG_PERL = 1 << 7,
-    GEN_LANG_RUBY = 1 << 8,
+    // These 6 are the kwx languages (kwxFortran, kwxGO, etc.)
+    GEN_LANG_FORTRAN = 1 << 4,
+    GEN_LANG_GO = 1 << 5,
+    GEN_LANG_JULIA = 1 << 6,
+    GEN_LANG_LUAJIT = 1 << 7,
+    GEN_LANG_PERL = 1 << 8,
     GEN_LANG_RUST = 1 << 9,
 
     // These should always be the last languages in the list.

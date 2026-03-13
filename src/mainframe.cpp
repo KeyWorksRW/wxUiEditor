@@ -470,13 +470,7 @@ MainFrame::MainFrame() :
                 OnGenerateSingleLanguage(GEN_LANG_RUBY);
             },
             id_GenSingleRuby);
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GEN_LANG_PERL);
-            },
-            id_GenSinglePerl);
+
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
@@ -492,14 +486,6 @@ MainFrame::MainFrame() :
                 OnGenerateLanguage(GEN_LANG_RUBY);
             },
             id_GenerateRuby);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GEN_LANG_PERL);
-            },
-            id_GeneratePerl);
 
         Bind(
             wxEVT_MENU,
@@ -641,9 +627,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     m_mockupPanel = new MockupParent(m_notebook, this);
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
-
-    m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
-    m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 
 #if wxUSE_WEBVIEW
     m_docviewPanel = new DocViewPanel(m_notebook, this);

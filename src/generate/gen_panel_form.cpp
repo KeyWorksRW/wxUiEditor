@@ -137,30 +137,6 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
             code.GetCode().Replace("\t\t\t\t", spaces, true);
         }
     }
-    else if (code.is_perl())
-    {
-        code.Str("sub new {");
-        code.Indent();
-        code.Eol().Str("my( $class, $parent, $id, $pos, $size, $style, $name ) = @_;");
-        code.Eol() += "$parent = undef unless defined $parent;";
-        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
-        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
-        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
-        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
-        code.Eol().Str("$name = ");
-        if (code.HasValue(prop_window_name))
-        {
-            code.QuotedString(prop_window_name);
-        }
-        else
-        {
-            code += "\"panel\"";
-        }
-        code.Str(" unless defined $name;");
-
-        code.Eol().Str(
-            "my $self = $class->SUPER::new( $parent, $id, $pos, $size, $style, $name );");
-    }
     else
     {
         code.AddComment("Unknown language", true);
@@ -559,26 +535,6 @@ bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
 
     return true;
-}
-
-bool PanelFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
-                                    GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use base qw[Wx::Panel];");
-        set_imports.emplace("use Wx qw[:panel];");
-        set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
-
-        if (auto qw_events = GatherPerlNodeEvents(node); qw_events.size())
-        {
-            set_imports.emplace(qw_events);
-        }
-
-        return true;
-    }
-
-    return false;
 }
 
 wxue::string PanelFormGenerator::GetPythonHelpText(Node* /* node */)

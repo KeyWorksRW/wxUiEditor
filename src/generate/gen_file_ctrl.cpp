@@ -62,14 +62,7 @@ bool FileCtrlGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        if (code.is_perl())
-        {
-            code.Str("Wx::wxMSW() ? \"*.*\" : \"*\"");
-        }
-        else
-        {
-            code.AddType("wxFileSelectorDefaultWildcardStr");
-        }
+        code.AddType("wxFileSelectorDefaultWildcardStr");
     }
 
     // Unlike most controls, wxFileCtrl expects the style to be specified *before* the
@@ -171,15 +164,4 @@ int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 void FileCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxFileCtrlXmlHandler");
-}
-
-bool FileCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                   GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:filectrl];");
-        return true;
-    }
-    return false;
 }

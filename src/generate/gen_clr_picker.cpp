@@ -86,16 +86,3 @@ void ColourPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::str
 {
     handlers.emplace("wxColourPickerCtrlXmlHandler");
 }
-
-bool ColourPickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                       GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:color];");
-        set_imports.emplace(
-            "use Wx qw(wxCLRP_DEFAULT_STYLE wxCLRP_SHOW_LABEL wxCLRP_USE_TEXTCTRL);");
-        return true;
-    }
-    return false;
-}

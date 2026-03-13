@@ -15,9 +15,9 @@
 
 using namespace FrameCommon;
 
-bool FrameCommon::ConstructionCode(Code& code, int frame_type)
+namespace
 {
-    if (code.is_cpp())
+    void ConstructionCodeCpp(Code& code, int frame_type)
     {
         code.Str("bool ").as_string(prop_class_name).Str("::Create(");
 
@@ -47,39 +47,8 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             code.EndFunction();
         }
     }
-    else if (code.is_perl())
-    {
-        code += "sub new {";
-        code.Indent();
-        code.Eol().Str("my ($class");
-        if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
-        {
-            code.Str("$manager").Comma();
-        }
-        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
-        {
-            code.Str("$manager, $view").Comma();
-        }
-        code.Comma().Str("$parent, $id, $title, $pos, $size, $style, $name) = @_;");
-        code.Eol() += "$parent = undef unless defined $parent;";
-        code.Eol().Str("$id = ").as_string(prop_id).Str(" unless defined $id;");
-        code.Eol().Str("$title = ").QuotedString(prop_title).Str(" unless defined $title;");
-        code.Eol().Str("$pos = ").Pos().Str(" unless defined $pos;");
-        code.Eol().Str("$size = ").WxSize(prop_size).Str(" unless defined $size;");
-        code.Eol().Str("$style = ").Style().Str(" unless defined $style;");
 
-        code.Eol().Str("$name = ");
-        if (code.HasValue(prop_window_name))
-        {
-            code.QuotedString(prop_window_name);
-        }
-        else
-        {
-            code += "\"frame\"";
-        }
-        code.Str(" unless defined $name;");
-    }
-    else if (code.is_python())
+    void ConstructionCodePython(Code& code, int frame_type)
     {
         // https://docs.wxpython.org/wx.lib.docview.DocMDIParentFrame.html
         // https://docs.wxpython.org/wx.lib.docview.DocParentFrame.html
@@ -125,7 +94,8 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
         code.Unindent();
         code.Eol() += "wx.Frame.__init__(self)";
     }
-    else if (code.is_ruby())
+
+    void ConstructionCodeRuby(Code& code, int frame_type)
     {
         if (frame_type == frame_sdi_doc)
         {
@@ -189,6 +159,155 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             indent_pos -= code.GetCode().find("\n");
             std::string spaces(indent_pos, ' ');
             code.GetCode().Replace("\t\t\t\t", spaces, true);
+        }
+    }
+
+    void ConstructionCodeFortran(Code& code, int /* frame_type */)
+    {
+        // module MyFrame_mod
+        //     use kwx_fortran
+        //     implicit none
+        //     type(wx_frame_t) :: self
+        // contains
+        // subroutine create(parent)
+        //     type(c_ptr), intent(in) :: parent
+
+        code.Str("module ").NodeName().Str("_mod").Eol();
+        code.Tab().Str("use kwx_fortran").Eol();
+        code.Tab().Str("implicit none").Eol();
+        code.Tab().Str("type(wx_frame_t) :: self").Eol();
+        code.Eol();
+        code.Str("contains").Eol();
+        code.Eol();
+        code.Str("subroutine create(parent)").Eol();
+        code.Tab().Str("type(c_ptr), intent(in) :: parent");
+    }
+
+    void ConstructionCodeGo(Code& code, int /* frame_type */)
+    {
+        // type MyFrame struct {
+        //     frame *wx.Frame
+        // }
+        //
+        // func NewMyFrame(parent wx.Pointer) *MyFrame {
+        //     self := &MyFrame{}
+
+        code.Str("type ").NodeName().Str(" struct {").Eol();
+        code.Tab().Str("frame *wx.Frame").Eol();
+        code.Str("}").Eol();
+        code.Eol();
+        code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
+        code.Tab().Str("self := &").NodeName().Str("{}");
+    }
+
+    void ConstructionCodeJulia(Code& code, int /* frame_type */)
+    {
+        // mutable struct MyFrame
+        //     frame::Ptr{Cvoid}
+        //
+        //     function MyFrame(parent=nothing)
+        //         self = new()
+
+        code.Str("mutable struct ").NodeName().Eol();
+        code.Indent();
+        code.Tab().Str("frame::Ptr{Cvoid}").Eol();
+        code.Eol();
+        code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
+        code.Indent();
+        code.Tab().Str("self = new()");
+    }
+
+    void ConstructionCodeLuaJIT(Code& code, int /* frame_type */)
+    {
+        // local MyFrame = {}
+        // MyFrame.__index = MyFrame
+        //
+        // function MyFrame:new(parent)
+        //     local self = setmetatable({}, MyFrame)
+
+        code.Str("local ").NodeName().Str(" = {}").Eol();
+        code.NodeName().Str(".__index = ").NodeName().Eol();
+        code.Eol();
+        code.Str("function ").NodeName().Str(":new(parent)").Eol();
+        code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")");
+    }
+
+    void ConstructionCodePerl(Code& code, int /* frame_type */)
+    {
+        // package MyFrame;
+        // use strict;
+        // use warnings;
+        //
+        // sub new {
+        //     my ($class, $parent) = @_;
+        //     my $self = bless {}, $class;
+
+        code.Str("package ").NodeName().Str(";").Eol();
+        code.Str("use strict;").Eol();
+        code.Str("use warnings;").Eol();
+        code.Eol();
+        code.Str("sub new {").Eol();
+        code.Tab().Str("my ($class, $parent) = @_;").Eol();
+        code.Tab().Str("my $self = bless {}, $class;");
+    }
+
+    void ConstructionCodeRust(Code& code, int /* frame_type */)
+    {
+        // pub struct MyFrame {
+        //     frame: wx::Frame,
+        // }
+        //
+        // impl MyFrame {
+        //     pub fn new(parent: Option<*mut std::ffi::c_void>) -> Self {
+
+        code.Str("pub struct ").NodeName().Str(" {").Eol();
+        code.Tab().Str("frame: wx::Frame,").Eol();
+        code.Str("}").Eol();
+        code.Eol();
+        code.Str("impl ").NodeName().Str(" {").Eol();
+        code.Tab().Str("pub fn new(parent: Option<*mut std::ffi::c_void>) -> Self {");
+    }
+}  // namespace
+
+bool FrameCommon::ConstructionCode(Code& code, int frame_type)
+{
+    if (code.is_cpp())
+    {
+        ConstructionCodeCpp(code, frame_type);
+    }
+    else if (code.is_python())
+    {
+        ConstructionCodePython(code, frame_type);
+    }
+    else if (code.is_ruby())
+    {
+        ConstructionCodeRuby(code, frame_type);
+    }
+    else if (code.is_ffi())
+    {
+        switch (code.get_language())
+        {
+            case GEN_LANG_FORTRAN:
+                ConstructionCodeFortran(code, frame_type);
+                break;
+            case GEN_LANG_GO:
+                ConstructionCodeGo(code, frame_type);
+                break;
+            case GEN_LANG_JULIA:
+                ConstructionCodeJulia(code, frame_type);
+                break;
+            case GEN_LANG_LUAJIT:
+                ConstructionCodeLuaJIT(code, frame_type);
+                break;
+            case GEN_LANG_PERL:
+                ConstructionCodePerl(code, frame_type);
+                break;
+            case GEN_LANG_RUST:
+                ConstructionCodeRust(code, frame_type);
+                break;
+            default:
+                code.AddComment("Unsupported FFI language", true);
+                break;
         }
     }
     else
@@ -287,11 +406,6 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     {
         code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
     }
-    else if (code.is_perl())
-    {
-        code.Eol(eol_if_needed) +=
-            "my $self = $class->SUPER::new($parent, $id, $title, $pos, $size, $style, $name);";
-    }
     else
     {
         return false;
@@ -301,28 +415,12 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
         isScalingEnabled(code.node(), prop_size, code.get_language()))
     {
         code.Eol(eol_if_needed).BeginConditional();
-        if (code.is_perl())
-        {
-            code.Str("$pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
-            code.Str("$size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
-            code.Str("my $dip_pos = $self->FromDIP->new($pos);").Eol();
-            code.Str("my $dip_size = $self->FromDIP->new($size);").Eol();
-            code.Str("$self->SetSize($dip_pos->x, $dip_pos->y, $dip_size->x, $dip_size->y,").Eol();
-            code.Tab().Str("wxSIZE_USE_EXISTING);").Eol();
-        }
-        else
-        {
-            code.Str("pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
-            code.Str("size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
-            code.FormFunction("SetSize(");
-            code.FormFunction("FromDIP(pos).x")
-                .Comma()
-                .FormFunction("FromDIP(pos).y")
-                .Comma()
-                .Eol();
-            code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
-            code.Add("wxSIZE_USE_EXISTING").EndFunction();
-        }
+        code.Str("pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
+        code.Str("size != ").AddConstant("wxDefaultSize").EndConditional().OpenBrace(true);
+        code.FormFunction("SetSize(");
+        code.FormFunction("FromDIP(pos).x").Comma().FormFunction("FromDIP(pos).y").Comma().Eol();
+        code.FormFunction("FromDIP(size).x").Comma().FormFunction("FromDIP(size).y").Comma();
+        code.Add("wxSIZE_USE_EXISTING").EndFunction();
         code.CloseBrace(true);
     }
 
@@ -634,23 +732,4 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
     }
 
     return true;
-}
-
-bool FrameCommon::GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use base qw[Wx::Frame];");
-        set_imports.emplace("use Wx qw[:frame];");
-        set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
-
-        if (auto qw_events = GatherPerlNodeEvents(node); qw_events.size())
-        {
-            set_imports.emplace(qw_events);
-        }
-
-        return true;
-    }
-
-    return false;
 }

@@ -29,7 +29,4 @@ public:
     {
         return "wx.adv.CalendarCtrl.html";
     }
-
-    auto GetImports(Node* /*unused*/, std::set<std::string>& set_imports, GenLang language)
-        -> bool override;
 };

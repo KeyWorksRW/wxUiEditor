@@ -42,10 +42,6 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
     wxCommandEvent dummy;
     switch (language)
     {
-        case GEN_LANG_PERL:
-            m_radio_perl->SetValue(true);
-            break;
-
         case GEN_LANG_PYTHON:
             m_radio_python->SetValue(true);
             break;
@@ -178,7 +174,8 @@ void CodeCompare::OnRuby(wxCommandEvent& /* event unused */)
 
 void CodeCompare::OnPerl(wxCommandEvent& /* event */)
 {
-    OnRadioButton(GEN_LANG_PERL);
+    // Legacy wxPerl generation has been removed. This stub satisfies the pure virtual
+    // in the auto-generated base class.
 }
 
 void CodeCompare::OnXRC(wxCommandEvent& /* event */)

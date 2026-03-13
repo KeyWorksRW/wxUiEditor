@@ -58,14 +58,7 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
     if (m_node->as_wxPoint(prop_name) == wxDefaultPosition)
     {
         CheckLineLength((sizeof("DefaultPosition") - 1) + m_language_wxPrefix.size());
-        if (is_perl())
-        {
-            *this << "wxDefaultPosition";
-        }
-        else
-        {
-            *this << m_language_wxPrefix << "DefaultPosition";
-        }
+        *this << m_language_wxPrefix << "DefaultPosition";
         return *this;
     }
 

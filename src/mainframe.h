@@ -85,9 +85,17 @@ public:
 
     auto GetFirstCodePanel() -> BasePanel*;
     auto GetCppPanel() -> BasePanel* { return m_cppPanel; }
-    auto GetPerlPanel() -> BasePanel* { return m_perlPanel; }
+
     auto GetPythonPanel() -> BasePanel* { return m_pythonPanel; }
+
+    auto GetFortranPanel() -> BasePanel* { return m_fortranPanel; }
+    auto GetGoPanel() -> BasePanel* { return m_goPanel; }
+    auto GetJuliaPanel() -> BasePanel* { return m_juliaPanel; }
+    auto GetLuaJITPanel() -> BasePanel* { return m_luajitPanel; }
+    auto GetPerlPanel() -> BasePanel* { return m_perlPanel; }
     auto GetRubyPanel() -> BasePanel* { return m_rubyPanel; }
+    auto GetRustPanel() -> BasePanel* { return m_rustPanel; }
+
     auto GetXrcPanel() -> BasePanel* { return m_xrcPanel; }
 
     auto UpdateLanguagePanels() -> void;
@@ -274,7 +282,7 @@ public:
 
     void OnCodeCompare(wxCommandEvent& event) override;
     void OnGenSingleCpp(wxCommandEvent& event);
-    void OnGenSinglePerl(wxCommandEvent& event);
+
     void OnGenSinglePython(wxCommandEvent& event);
     void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
@@ -382,11 +390,18 @@ private:
 
     BasePanel* m_cppPanel { nullptr };
 
-    // Language panels -- whether they are actually created is dependent on definitions in pch.h as
-    // well as user preferences.
-    BasePanel* m_perlPanel { nullptr };
+    // Language panels -- whether they are actually created is dependent on project preferences.
+
     BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_rubyPanel { nullptr };
+
+    BasePanel* m_fortranPanel { nullptr };
+    BasePanel* m_goPanel { nullptr };
+    BasePanel* m_juliaPanel { nullptr };
+    BasePanel* m_luajitPanel { nullptr };
+    BasePanel* m_perlPanel { nullptr };
+    BasePanel* m_rustPanel { nullptr };
+
     BasePanel* m_xrcPanel { nullptr };
 
     ImportPanel* m_importPanel { nullptr };

@@ -248,6 +248,7 @@ wxColour Prefs::GetColour(wxSystemColour index)
         case wxSYS_COLOUR_GRAYTEXT:
         case wxSYS_COLOUR_INACTIVEBORDER:
         case wxSYS_COLOUR_WINDOWFRAME:
+        case wxSYS_COLOUR_GRIDLINES:
             return wxColour();
 
         case wxSYS_COLOUR_MAX:

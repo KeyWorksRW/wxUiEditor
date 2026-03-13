@@ -114,18 +114,11 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_hint))
     {
-        if (code.is_perl())
-        {
-            code.Eol(eol_if_needed).Str("# wxPerl does not support SetHint()");
-        }
-        else
-        {
-            code.Eol(eol_if_needed)
-                .NodeName()
-                .Function("SetHint(")
-                .QuotedString(prop_hint)
-                .EndFunction();
-        }
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetHint(")
+            .QuotedString(prop_hint)
+            .EndFunction();
     }
 
     if (code.IsTrue(prop_focus))
@@ -155,17 +148,7 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
                     .Eol();
                 code.GetCode() += "#endif";
             }
-            else if (code.is_perl())
-            {
-                code.Str("if (Wx::wxVERSION_STRING() !~ /GTK/)").OpenBrace();
-                code.Eol(eol_if_needed)
-                    .NodeName()
-                    .Function("SetMaxLength(")
-                    .as_string(prop_maxlength)
-                    .EndFunction()
-                    .Eol();
-                code.CloseBrace();
-            }
+
             else if (code.is_python())
             {
                 code.Add("if wx.Platform != \'__WXGTK__\':");
@@ -227,10 +210,6 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
                 code << ".GrammarCheck()";
             }
             code.EndFunction();
-        }
-        else if (code.is_perl())
-        {
-            code.Eol(eol_if_needed).Str("# wxPerl does not support wxTextProofOptions").Eol();
         }
         else if (code.is_python())
         {
@@ -362,15 +341,4 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 void TextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxActivityIndicatorXmlHandler");
-}
-
-bool TextCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                   GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:textctrl];");
-    }
-
-    return false;
 }

@@ -7,11 +7,23 @@
   },
   "configurePresets": [
         {
-            "name": "ninja-multi",
+            "name": "ninja-msvc",
             "displayName": "Ninja Multi-Config",
             "description": "Default build using Ninja Multi-Config generator",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build"
+        },
+        {
+            "name": "ninja-clang",
+            "displayName": "Ninja Multi-Config (Clang)",
+            "description": "Build using Clang toolchain with Ninja Multi-Config generator",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_RC_COMPILER": "llvm-rc"
+            }
         }
     ]
 }

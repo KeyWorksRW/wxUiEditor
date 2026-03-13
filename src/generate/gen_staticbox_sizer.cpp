@@ -49,7 +49,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();
 
-    wxue::string parent_name(code.is_cpp() ? "this" : code.is_perl() ? "$self" : "self");
+    wxue::string parent_name(code.is_cpp() ? "this" : "self");
     if (!node->get_Parent()->is_Form())
     {
         auto* parent = node->get_Parent();
@@ -97,22 +97,10 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
         }
     }
     code.AddAuto().NodeName().CreateClass();
-    if (code.is_perl())
+    code.Add(prop_orientation).Comma().Str(parent_name);
+    if (const auto& label = node->as_string(prop_label); label.size())
     {
-        code.Str("Wx::StaticBox->new(").Str(parent_name).Str(", wxID_ANY");
-        if (const auto& label = node->as_string(prop_label); label.size())
-        {
-            code.Comma().QuotedString(label);
-        }
-        code.Str(")").Comma().Add(prop_orientation);
-    }
-    else
-    {
-        code.Add(prop_orientation).Comma().Str(parent_name);
-        if (const auto& label = node->as_string(prop_label); label.size())
-        {
-            code.Comma().QuotedString(label);
-        }
+        code.Comma().QuotedString(label);
     }
 
     code.EndFunction();

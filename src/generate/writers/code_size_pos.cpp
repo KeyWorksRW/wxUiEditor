@@ -48,10 +48,7 @@ auto Code::WxSize(wxSize size, int enable_dpi_scaling) -> Code&
     {
         return WxSize_Ruby(size, cur_pos, size_scaling);
     }
-    if (is_perl())
-    {
-        return WxSize_Perl(size, cur_pos, size_scaling);
-    }
+
     return WxSize_Other(size, cur_pos, size_scaling);
 }
 
@@ -83,47 +80,12 @@ auto Code::WxSize_Ruby(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
     return *this;
 }
 
-auto Code::WxSize_Perl(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
-{
-    if (size == wxDefaultSize)
-    {
-        CheckLineLength((sizeof("wxDefaultSize") - 1));
-        *this += "wxDefaultSize";
-        return *this;
-    }
-
-    if (size_scaling)
-    {
-        CheckLineLength(sizeof(", $self->FromDIP->new(Wx::Size->new(999, 999))"));
-        AddScaledSizePerl(size);
-    }
-    else
-    {
-        CheckLineLength(sizeof("Wx::Size->new(999, 999)"));
-        AddUnscaledSizePerl(size);
-    }
-
-    if (m_auto_break && this->size() > m_break_at)
-    {
-        InsertLineBreak(cur_pos);
-    }
-
-    return *this;
-}
-
 auto Code::WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
 {
     if (size == wxDefaultSize)
     {
         CheckLineLength((sizeof("DefaultSize") - 1) + m_language_wxPrefix.size());
-        if (is_perl())
-        {
-            *this << "wxDefaultSize";
-        }
-        else
-        {
-            *this << m_language_wxPrefix << "DefaultSize";
-        }
+        *this << m_language_wxPrefix << "DefaultSize";
         return *this;
     }
 
@@ -195,15 +157,7 @@ auto Code::WxPoint(wxPoint position, int enable_dpi_scaling) -> Code&
     if (position == wxDefaultPosition)
     {
         CheckLineLength((sizeof("DefaultPosition") - 1) + m_language_wxPrefix.size());
-        if (is_perl())
-        {
-            // Perl uses wxDefaultPosition
-            *this << "wxDefaultPosition";
-        }
-        else
-        {
-            *this << m_language_wxPrefix << "DefaultPosition";
-        }
+        *this << m_language_wxPrefix << "DefaultPosition";
         return *this;
     }
 

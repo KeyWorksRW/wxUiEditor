@@ -198,24 +198,7 @@ bool StatusBarGenerator::SettingsCode(Code& code)
             .Str(widths)
             .Str("]")
             .EndFunction();
-        // REVIEW: [Randalphwa - 03-02-2025] Currently, wxPerl 3.2 doesn't support wxSB_SUNKEN, so
-        // we add it as a variable
-        if (code.is_perl())
-        {
-            bool sunken_style = false;
-            for (auto& iter: fields)
-            {
-                if (iter.style == "wxSB_SUNKEN")
-                {
-                    sunken_style = true;
-                    break;
-                }
-            }
-            if (sunken_style)
-            {
-                code.Eol(eol_if_needed).Str("my $statusBarSunkenStyle = 3;  # wxSB_SUNKEN");
-            }
-        }
+
         code.Eol(eol_if_empty).NodeName().Function("SetStatusStyles([");
         bool is_first_style_set = false;
         for (auto& iter: fields)
@@ -228,21 +211,7 @@ bool StatusBarGenerator::SettingsCode(Code& code)
             {
                 is_first_style_set = true;
             }
-            if (code.is_perl())
-            {
-                if (iter.style == "wxSB_SUNKEN")
-                {
-                    code.Str("$statusBarSunkenStyle");
-                }
-                else
-                {
-                    code.Str(iter.style);
-                }
-            }
-            else
-            {
-                code.Add(iter.style);
-            }
+            code.Str(iter.style);
         }
         code.Str("]").EndFunction();
     }
@@ -320,16 +289,4 @@ int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 void StatusBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxStatusBarXmlHandler");
-}
-
-bool StatusBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                    GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:statusbar];");
-        return true;
-    }
-
-    return false;
 }

@@ -202,17 +202,6 @@ void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxHyperlinkCtrlXmlHandler");
 }
 
-bool HyperlinkGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
-                                    GenLang language)
-{
-    if (language == GEN_LANG_PERL && !node->as_bool(prop_underlined) && !node->HasValue(prop_font))
-    {
-        set_imports.emplace("use Wx qw[:systemsettings];");
-    }
-
-    return false;
-}
-
 bool HyperlinkGenerator::IsGeneric(Node* node)
 {
     return (!node->as_bool(prop_underlined) ||

@@ -37,31 +37,31 @@ namespace wxue_data
     std::string get_widgets();     // ../xml/widgets.xml
 
     // ../xml/bars.xml
-    extern const unsigned char bars[6183]; // Original size: 39,004 bytes
+    extern const unsigned char bars[6185]; // Original size: 39,004 bytes
     // ../xml/boxes.xml
     extern const unsigned char boxes[2429]; // Original size: 14,336 bytes
     // ../xml/buttons.xml
     extern const unsigned char buttons[2721]; // Original size: 15,325 bytes
     // ../xml/containers.xml
-    extern const unsigned char containers[5006]; // Original size: 27,442 bytes
+    extern const unsigned char containers[5004]; // Original size: 27,443 bytes
     // ../xml/data_ctrls.xml
-    extern const unsigned char data_ctrls[8341]; // Original size: 47,180 bytes
+    extern const unsigned char data_ctrls[8341]; // Original size: 47,178 bytes
     // ../xml/forms.xml
-    extern const unsigned char forms[6633]; // Original size: 55,980 bytes
+    extern const unsigned char forms[6635]; // Original size: 55,979 bytes
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[10847]; // Original size: 51,496 bytes
+    extern const unsigned char interfaces[11346]; // Original size: 57,911 bytes
     // ../xml/mdi.xml
     extern const unsigned char mdi[1995]; // Original size: 17,170 bytes
     // ../xml/pickers.xml
-    extern const unsigned char pickers[2481]; // Original size: 10,219 bytes
+    extern const unsigned char pickers[2480]; // Original size: 10,219 bytes
     // ../xml/project.xml
-    extern const unsigned char project[1599]; // Original size: 5,721 bytes
+    extern const unsigned char project[1672]; // Original size: 6,203 bytes
     // ../xml/sizers.xml
-    extern const unsigned char sizers[2269]; // Original size: 12,870 bytes
+    extern const unsigned char sizers[2268]; // Original size: 12,871 bytes
     // ../xml/text_ctrls.xml
-    extern const unsigned char text_ctrls[7107]; // Original size: 30,396 bytes
+    extern const unsigned char text_ctrls[7105]; // Original size: 30,396 bytes
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6698]; // Original size: 28,540 bytes
+    extern const unsigned char widgets[6696]; // Original size: 28,538 bytes
 }
 
 // ************* End of generated code ***********

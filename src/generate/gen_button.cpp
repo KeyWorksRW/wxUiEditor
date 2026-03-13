@@ -184,7 +184,7 @@ bool ButtonGenerator::ConstructionCode(Code& code)
 
     // If prop_markup is set, then the label will be set in SettingsCode() -- with the exception of
     // wxPerl which doesn't support SetLabelMarkup
-    if (code.HasValue(prop_label) && (!code.IsTrue(prop_markup) || code.is_perl()))
+    if (code.HasValue(prop_label) && !code.IsTrue(prop_markup))
     {
         code.QuotedString(prop_label);
     }
@@ -202,18 +202,11 @@ bool ButtonGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_markup) && code.HasValue(prop_label))
     {
-        if (!code.is_perl())
-        {
-            code.Eol(eol_if_needed)
-                .NodeName()
-                .Function("SetLabelMarkup(")
-                .QuotedString(prop_label)
-                .EndFunction();
-        }
-        else
-        {
-            code.AddComment("wxPerl does not support SetLabelMarkup", true);
-        }
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetLabelMarkup(")
+            .QuotedString(prop_label)
+            .EndFunction();
     }
 
     if (code.IsTrue(prop_default))
@@ -323,15 +316,4 @@ bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
         set_src.insert("#include <wx/valgen.h>");
     }
     return true;
-}
-
-bool ButtonGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                 GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:button];");
-        return true;
-    }
-    return false;
 }

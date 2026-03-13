@@ -41,17 +41,37 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn_CPP->SetValidator(wxGenericValidator(&m_gen_cpp_code));
     grid_sizer->Add(m_radioBtn_CPP, wxSizerFlags().Border(wxALL));
 
-    m_radioBtn_Python = new wxRadioButton(this, wxID_ANY, "&Python");
-    m_radioBtn_Python->SetValidator(wxGenericValidator(&m_gen_python_code));
-    grid_sizer->Add(m_radioBtn_Python, wxSizerFlags().Border(wxALL));
+    m_radioBtn_Fortran = new wxRadioButton(this, wxID_ANY, "&Fortran");
+    m_radioBtn_Fortran->SetValidator(wxGenericValidator(&m_gen_fortran_code));
+    grid_sizer->Add(m_radioBtn_Fortran, wxSizerFlags().Border(wxALL));
 
-    auto* m_radioBtn_Ruby = new wxRadioButton(this, wxID_ANY, "&Ruby");
-    m_radioBtn_Ruby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
-    grid_sizer->Add(m_radioBtn_Ruby, wxSizerFlags().Border(wxALL));
+    m_radioBtn_Go = new wxRadioButton(this, wxID_ANY, "&Go");
+    m_radioBtn_Go->SetValidator(wxGenericValidator(&m_gen_go_code));
+    grid_sizer->Add(m_radioBtn_Go, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_Julia = new wxRadioButton(this, wxID_ANY, "&Julia");
+    m_radioBtn_Julia->SetValidator(wxGenericValidator(&m_gen_jullia_code));
+    grid_sizer->Add(m_radioBtn_Julia, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_LuaJIT = new wxRadioButton(this, wxID_ANY, "&LuaJIT");
+    m_radioBtn_LuaJIT->SetValidator(wxGenericValidator(&m_gen_luajit_code));
+    grid_sizer->Add(m_radioBtn_LuaJIT, wxSizerFlags().Border(wxALL));
 
     m_radioBtn_Perl = new wxRadioButton(this, wxID_ANY, "P&erl");
     m_radioBtn_Perl->SetValidator(wxGenericValidator(&m_gen_perl_code));
     grid_sizer->Add(m_radioBtn_Perl, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_Python = new wxRadioButton(this, wxID_ANY, "&Python");
+    m_radioBtn_Python->SetValidator(wxGenericValidator(&m_gen_python_code));
+    grid_sizer->Add(m_radioBtn_Python, wxSizerFlags().Border(wxALL));
+
+    auto* m_radioBtn_Ruby = new wxRadioButton(this, wxID_ANY, "R&uby");
+    m_radioBtn_Ruby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
+    grid_sizer->Add(m_radioBtn_Ruby, wxSizerFlags().Border(wxALL));
+
+    auto* m_radioBtn_Rusy = new wxRadioButton(this, wxID_ANY, "&Rust");
+    m_radioBtn_Rusy->SetValidator(wxGenericValidator(&m_gen_rust_code));
+    grid_sizer->Add(m_radioBtn_Rusy, wxSizerFlags().Border(wxALL));
 
     m_radioBtn_XRC = new wxRadioButton(this, wxID_ANY, "&XRC");
     m_radioBtn_XRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
@@ -114,7 +134,6 @@ void CodePreferenceDlg::OnInit(wxInitDialogEvent& event)
 {
     if (!wxGetApp().isTestingSwitch())
     {
-        m_radioBtn_Perl->Hide();
         m_radioBtn_XRC->Hide();
 
         Layout();

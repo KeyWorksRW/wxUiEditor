@@ -67,16 +67,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support
-        // wxFileSelectorPromptStr
-        if (code.is_perl())
-        {
-            code.QuotedString(wxue::string_view("Select a file"));
-        }
-        else
-        {
-            code.AddType("wxFileSelectorPromptStr");
-        }
+        code.AddType("wxFileSelectorPromptStr");
     }
 
     code.Comma();
@@ -86,16 +77,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        // REVIEW: [Randalphwa - 04-27-2025] As far as I can tell, wxPerl does not support
-        // wxFileSelectorDefaultWildcardStr
-        if (code.is_perl())
-        {
-            code.Str("wxFileSelectorDefaultWildcardStr->new()");
-        }
-        else
-        {
-            code.AddType("wxFileSelectorDefaultWildcardStr");
-        }
+        code.AddType("wxFileSelectorDefaultWildcardStr");
     }
 
     code.PosSizeFlags(code::allow_scaling, true, "wxFLP_DEFAULT_STYLE");
@@ -164,19 +146,4 @@ int FilePickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 void FilePickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxFilePickerCtrlXmlHandler");
-}
-
-bool FilePickerGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                     GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace(
-            "use Wx qw(wxFLP_DEFAULT_STYLE wxFLP_USE_TEXTCTRL wxFLP_OPEN wxFLP_SAVE\n"
-            "          wxFLP_OVERWRITE_PROMPT wxFLP_FILE_MUST_EXIST wxFLP_CHANGE_DIR\n"
-            "          wxFLP_SMALL);");
-
-        return true;
-    }
-    return false;
 }

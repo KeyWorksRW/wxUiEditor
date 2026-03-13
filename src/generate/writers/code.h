@@ -24,7 +24,8 @@
 
 #pragma once
 
-#include "gen_enums.h"  // Enumerations for generators
+#include "gen_enums.h"        // Enumerations for generators
+#include "language_traits.h"  // LanguageTraits struct, LanguageStrategy base class
 
 #include "node.h"                               // Node class
 #include "wxue_namespace/wxue_string.h"         // wxue::string and wxue::string_view
@@ -119,9 +120,15 @@ public:
     }
 
     [[nodiscard]] auto is_cpp() const -> bool { return m_language == GEN_LANG_CPLUSPLUS; }
-    [[nodiscard]] auto is_perl() const -> bool { return m_language == GEN_LANG_PERL; }
     [[nodiscard]] auto is_python() const -> bool { return m_language == GEN_LANG_PYTHON; }
     [[nodiscard]] auto is_ruby() const -> bool { return m_language == GEN_LANG_RUBY; }
+
+    // Returns true if the language is an FFI-based language (Fortran, Go, Julia, LuaJIT, Perl,
+    // Rust)
+    [[nodiscard]] auto is_ffi() const -> bool
+    {
+        return m_traits && m_traits->family == LanguageTraits::Family::ffi;
+    }
 
     [[nodiscard]] auto is_local_var() const -> bool;
 
@@ -132,6 +139,13 @@ public:
     void set_node(Node* node) { m_node = node; }
 
     [[nodiscard]] auto get_language() const -> GenLang { return m_language; }
+
+    // Returns true if language traits are available (false for XRC/XML)
+    [[nodiscard]] auto has_traits() const -> bool { return m_traits != nullptr; }
+
+    // Returns the language traits for the current language.
+    // Only valid when has_traits() returns true.
+    [[nodiscard]] auto get_traits() const -> const LanguageTraits& { return *m_traits; }
 
     [[nodiscard]] auto HasValue(GenEnum::PropName prop_name) const -> bool;
 
@@ -290,14 +304,7 @@ public:
         return *this;
     }
 
-    auto AddIfPerl(wxue::string_view text) -> Code&
-    {
-        if (is_perl())
-        {
-            Add(text);
-        }
-        return *this;
-    }
+    // Placeholder removed when wxPerl support was eliminated
 
     auto AddIfPython(wxue::string_view text) -> Code&
     {
@@ -487,7 +494,8 @@ public:
 
     auto EmptyString() -> Code&
     {
-        *this += is_cpp() ? "wxEmptyString" : "\"\"";
+        ASSERT(m_traits);
+        *this += m_traits->empty_string;
         return *this;
     }
 
@@ -674,11 +682,8 @@ protected:
     auto WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling) -> Code&;
 
 private:
-    // Helper methods for initialization (static as they don't need instance data)
+    // Helper method for initialization (static as it doesn't need instance data)
     [[nodiscard]] static auto GetLineBreakLength(GenLang language) -> size_t;
-    [[nodiscard]] static auto GetLanguagePrefixForInit(GenLang language) -> std::string_view;
-    [[nodiscard]] static auto GetIndentSize(GenLang language) -> int;
-    [[nodiscard]] static auto GetLineOffset(GenLang language) -> size_t;
 
     // Helper methods for Function()
     void AddFunctionNoOperatorWithWx(wxue::string_view text);
@@ -706,6 +711,7 @@ private:
 
     Node* m_node;
     GenLang m_language;
+    const LanguageTraits* m_traits { nullptr };
 
     // This is changed on a per-language basis in Code::Init()
     wxue::string m_language_wxPrefix { "wx" };

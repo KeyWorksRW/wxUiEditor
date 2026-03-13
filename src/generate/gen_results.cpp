@@ -29,11 +29,16 @@
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_cpp.h"
-#include "gen_perl.h"    // PerlCodeGenerator class
-#include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
-#include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
-#include "gen_xrc.h"     // XrcCodeGenerator -- Generate XRC code
-#include "write_code.h"  // WriteCode -- Write code to a string
+#include "gen_fortran.h"  // FortranCodeGenerator -- Generate Fortran code
+#include "gen_go.h"       // GoCodeGenerator -- Generate Go code
+#include "gen_julia.h"    // JuliaCodeGenerator -- Generate Julia code
+#include "gen_luajit.h"   // LuaJITCodeGenerator -- Generate LuaJIT code
+#include "gen_perl.h"     // PerlCodeGenerator -- Generate Perl code
+#include "gen_python.h"   // PythonCodeGenerator -- Generate wxPython code
+#include "gen_ruby.h"     // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_rust.h"     // RustCodeGenerator -- Generate Rust code
+#include "gen_xrc.h"      // XrcCodeGenerator -- Generate XRC code
+#include "write_code.h"   // WriteCode -- Write code to a string
 
 void GenResults::SetNodes(Node* startNode)
 {
@@ -319,8 +324,28 @@ auto GenResults::GenerateForDisplay() -> bool
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
+        case GEN_LANG_FORTRAN:
+            code_generator = std::make_unique<FortranCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_GO:
+            code_generator = std::make_unique<GoCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_JULIA:
+            code_generator = std::make_unique<JuliaCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_LUAJIT:
+            code_generator = std::make_unique<LuaJITCodeGenerator>(form);
+            break;
+
         case GEN_LANG_PERL:
             code_generator = std::make_unique<PerlCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_RUST:
+            code_generator = std::make_unique<RustCodeGenerator>(form);
             break;
 
         case GEN_LANG_XRC:
@@ -585,8 +610,28 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
+        case GEN_LANG_FORTRAN:
+            code_generator = std::make_unique<FortranCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_GO:
+            code_generator = std::make_unique<GoCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_JULIA:
+            code_generator = std::make_unique<JuliaCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_LUAJIT:
+            code_generator = std::make_unique<LuaJITCodeGenerator>(form);
+            break;
+
         case GEN_LANG_PERL:
             code_generator = std::make_unique<PerlCodeGenerator>(form);
+            break;
+
+        case GEN_LANG_RUST:
+            code_generator = std::make_unique<RustCodeGenerator>(form);
             break;
 
         case GEN_LANG_XRC:
@@ -609,8 +654,23 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
         case GEN_LANG_RUBY:
             file_ext = ".rb";
             break;
+        case GEN_LANG_FORTRAN:
+            file_ext = ".f90";
+            break;
+        case GEN_LANG_GO:
+            file_ext = ".go";
+            break;
+        case GEN_LANG_JULIA:
+            file_ext = ".jl";
+            break;
+        case GEN_LANG_LUAJIT:
+            file_ext = ".lua";
+            break;
         case GEN_LANG_PERL:
-            file_ext = ".pm";
+            file_ext = ".pl";
+            break;
+        case GEN_LANG_RUST:
+            file_ext = ".rs";
             break;
         case GEN_LANG_XRC:
             file_ext = ".xrc";
@@ -635,9 +695,8 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
 
     // Generate code into the FileCodeWriter buffer
     // m_languages should be a single language at this point (set in Generate() loop)
-    ASSERT_MSG(m_languages == GEN_LANG_PYTHON || m_languages == GEN_LANG_RUBY ||
-                   m_languages == GEN_LANG_PERL || m_languages == GEN_LANG_XRC,
-               "GenerateLanguageForm expects m_languages to be a single language");
+    ASSERT_MSG(m_languages != GEN_LANG_CPLUSPLUS && m_languages != GEN_LANG_NONE,
+               "GenerateLanguageForm expects a single non-C++ language");
     code_generator->GenerateClass(m_languages);
 
     int write_flags = comparison_only ? (code::flag_test_only | code::flag_no_ui) : code::flag_none;

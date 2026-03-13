@@ -20,7 +20,6 @@
 #include "project_handler.h"  // ProjectHandler class
 
 #include "gen_cpp.h"      // CppCodeGenerator -- Generate C++ code
-#include "gen_perl.h"     // PerlCodeGenerator class
 #include "gen_python.h"   // PythonCodeGenerator -- Generate wxPython code
 #include "gen_results.h"  // GenResults -- Code generation orchestrator
 #include "gen_ruby.h"     // RubyCodeGenerator -- Generate wxRuby code
@@ -51,6 +50,38 @@ const char* g_ruby_keywords =
     "ENCODING LINE FILE BEGIN END alias and begin break case class def defined do else"
     " elsif end ensure false for if in module next nil not or redo require rescue retry"
     " return self super then true undef unless until when while yield";
+
+const char* g_fortran_keywords =
+    "abstract allocatable assign assignment associate asynchronous backspace bind block blockdata"
+    " call case class close common complex contains continue contiguous critical cycle data"
+    " deallocate default deferred dimension do double doubleprecision else elseif elsewhere"
+    " end endblock endblockdata endcritical enddo endfile endforall endfunction endif endinterface"
+    " endmodule endprocedure endprogram endselect endsubmodule endsubroutine endteam endtype"
+    " endwhere entry equivalence error exit extends external final flush forall format function"
+    " generic goto if images implicit import include inquire integer intent interface intrinsic"
+    " lock logical module namelist non_overridable nopass nullify only open operator optional"
+    " parameter pass pause pointer print private procedure program protected public pure read"
+    " real recursive result return rewind save select sequence stop submodule subroutine sync"
+    " target then type unlock use value volatile where write";
+
+const char* g_go_keywords =
+    "break case chan const continue default defer else fallthrough for func go goto if import"
+    " interface map package range return select struct switch type var";
+
+const char* g_julia_keywords =
+    "abstract baremodule begin break catch ccall const continue do else elseif end export"
+    " false finally for function global if import importall in isa let local macro module"
+    " mutable new primitive quote return struct true try type using where while";
+
+const char* g_luajit_keywords =
+    "and break do else elseif end false for function goto if in local nil not or repeat"
+    " return then true until while";
+
+const char* g_rust_keywords =
+    "abstract as async await become box break const continue crate do dyn else enum extern"
+    " false final fn for if impl in let loop macro match mod move mut override priv pub"
+    " ref return self Self static struct super trait true try type typeof union unsafe"
+    " unsized use virtual where while yield";
 
 const char* g_perl_keywords =
     "do if else elsif unless while until for foreach last next pod cut redo continue "
@@ -83,13 +114,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_derived_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_derived_hdr_panel, "derived_hdr", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_PERL)
-    {
-        m_source_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
-        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
-    }
     else if (m_panel_type == GEN_LANG_PYTHON)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
@@ -98,6 +122,48 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == GEN_LANG_RUBY)
+    {
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_FORTRAN)
+    {
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_GO)
+    {
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_JULIA)
+    {
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_LUAJIT)
+    {
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_PERL)
+    {
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+    }
+    else if (m_panel_type == GEN_LANG_RUST)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);

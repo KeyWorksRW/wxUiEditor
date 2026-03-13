@@ -30,7 +30,6 @@
 #include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
 #include "gen_cpp.h"     // CppCodeGenerator -- Generate C++ code
-#include "gen_perl.h"    // PerlCodeGenerator class
 #include "gen_python.h"  // PythonCodeGenerator -- Generate wxPython code
 #include "gen_ruby.h"    // RubyCodeGenerator -- Generate wxRuby code
 #include "gen_xrc.h"     // XrcGenerator -- Generate XRC code
@@ -1576,71 +1575,4 @@ void OnGenerateLanguage(GenLang language)
 
     wxMessageBox(msg, wxue::string() << GenLangToString(language) << " Code Generation",
                  wxOK | wxICON_INFORMATION);
-}
-
-wxue::string GatherPerlNodeEvents(Node* node)
-{
-    std::set<std::string_view> event_set;
-
-    auto append_perl_events = [&](Node* node)
-    {
-        for (const auto& iter: node->get_MapEvents())
-        {
-            // Only add the event if a handler was specified
-            if (iter.second.get_value().size())
-            {
-                std::string_view event_name = iter.first;
-                if (node->is_Gen(GenEnum::gen_wxStdDialogButtonSizer))
-                {
-                    event_name = "EVT_BUTTON";
-                }
-                else
-                {
-                    // remove "wx" prefix
-                    event_name.remove_prefix(2);
-                    if (event_name == "EVT_CLOSE_WINDOW")
-                    {
-                        event_name = "EVT_CLOSE";
-                    }
-                }
-                event_set.insert(event_name);
-            }
-        }
-    };
-
-    auto rlambda = [&](Node* node, auto&& rlambda) -> void
-    {
-        append_perl_events(node);
-        if (auto& children = node->get_ChildNodePtrs(); children.size())
-        {
-            for (const auto& child: children)
-            {
-                rlambda(child.get(), rlambda);
-            }
-        }
-    };
-
-    if (node->is_Form())
-    {
-        rlambda(node, rlambda);
-    }
-    else
-    {
-        append_perl_events(node);
-    }
-
-    wxue::string qw_events;
-    if (event_set.size())
-    {
-        qw_events.RightTrim();
-        qw_events.insert(0, "use Wx::Event qw(");
-        for (const auto& event: event_set)
-        {
-            qw_events << event << ' ';
-        }
-        qw_events.RightTrim();
-        qw_events << ");";
-    }
-
-    return qw_events;
 }

@@ -48,11 +48,6 @@ void SimplebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 
 bool SimplebookGenerator::ConstructionCode(Code& code)
 {
-    if (code.is_perl())
-    {
-        code += "# wxSimplebook is not supported in Perl";
-        return true;
-    }
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).PosSizeFlags();
 

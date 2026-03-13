@@ -171,7 +171,6 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
 std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
 
     { GEN_LANG_CPLUSPLUS, prop_cpp_line_length },
-    { GEN_LANG_PERL, prop_perl_line_length },
     { GEN_LANG_PYTHON, prop_python_line_length },
     { GEN_LANG_RUBY, prop_ruby_line_length  },
 };
@@ -416,11 +415,6 @@ auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -
     {
         ClassMethod("GetBitmap(");
     }
-    else if (is_perl())
-    {
-        // Perl doesn't support wxArtProvider.GetBitmapBundle()
-        Str("::GetBitmap(");
-    }
     else
     {
         ClassMethod("GetBitmapBundle(");
@@ -434,9 +428,8 @@ auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -
         art_id.erase(pos);
     }
 
-    if (is_cpp() || is_perl())
+    if (is_cpp())
     {
-        // No need to change it for C++ or wxPerl
         Str(art_id);
     }
     else
@@ -449,9 +442,8 @@ auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -
     if (art_client.size())
     {
         Comma();
-        if (is_cpp() || is_perl())
+        if (is_cpp())
         {
-            // No need to change it for C++ or wxPerl
             Str(art_client);
         }
         else
@@ -544,40 +536,6 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
             // isn't practical.
         }
         return;
-    }
-
-    if (is_perl())
-    {
-        Str("wxue_get_bundle(").Str("$").Str(embed->base_image().array_name);
-        if (bundle->lst_filenames.size() > 1)
-        {
-            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
-                embed2)
-            {
-                Comma().Str("$").Str(embed2->base_image().array_name);
-            }
-            if (bundle->lst_filenames.size() > 2)
-            {
-                if (EmbeddedImage* embed3 =
-                        ProjectImages.GetEmbeddedImage(bundle->lst_filenames[2]);
-                    embed3)
-                {
-                    Comma().Str("$").Str(embed3->base_image().array_name);
-                }
-            }
-        }
-        *this += ')';
-
-        if (get_bitmap)
-        {
-            Str(".get_bitmap(").Eol().Tab(2).Str("wxSize.new(");
-            *this << ("from_dip(") << embed->get_wxSize().x << "), from_dip("
-                  << embed->get_wxSize().y << ")))";
-            // TODO: [Randalphwa - 09-19-2023] If it's a single image, then it may need to be
-            // rescaled using wxIMAGE_QUALITY_BILINEAR rather than letting the wxBitmapBundle do
-            // it. However, the only embedded images we support are bundles, so this probably
-            // isn't practical.
-        }
     }
 
     wxue::string path;
@@ -779,23 +737,6 @@ void Code::GenerateXpmBitmap(const wxue::StringVector& parts, bool /* get_bitmap
         Str("wxBitmap(");
         name.remove_extension();
         *this << name << "_xpm)";
-    }
-    else if (is_perl())
-    {
-        auto path = MakePerlPath(node());
-        name.make_absolute();
-        if (!name.file_exists())
-        {
-            name = Project.ArtDirectory();
-            name.append_filename(parts[IndexImage].filename());
-        }
-        name.make_relative(path);
-        name.backslashestoforward();
-
-        Str("Wx::Bitmap->new(");
-        CheckLineLength(name.size() + 3);
-        QuotedString(name);
-        Comma().Str("wxBITMAP_TYPE_XPM)");
     }
     else if (is_python())
     {

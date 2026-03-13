@@ -23,7 +23,4 @@ public:
     auto GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */)
         -> int override;
     void RequiredHandlers(Node* node, std::set<std::string>& /* handlers */) override;
-
-    auto GetImports(Node* node, std::set<std::string>& set_imports, GenLang language)
-        -> bool override;
 };

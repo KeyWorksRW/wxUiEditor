@@ -188,9 +188,5 @@ auto HtmlWindowGenerator::GetImports(Node* /*unused*/, std::set<std::string>& se
         set_imports.insert("require 'wx/html'");
         return true;
     }
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use base qw[Wx::Html];");
-    }
     return false;
 }

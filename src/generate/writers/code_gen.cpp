@@ -21,22 +21,7 @@ auto Code::GenFont(GenEnum::PropName prop_name, wxue::string_view font_function)
     }
     else  // not isDefGuiFont()
     {
-        if (is_perl())
-        {
-            OpenFontBrace();
-            Str("my $font = ");
-            Class("wxFont").Function("new(");
-            itoa(fontprop.GetPointSize()).Comma();
-            Str(font_family_pairs.GetValue(fontprop.GetFamily())).Comma();
-            Str(font_style_pairs.GetValue(fontprop.GetStyle())).Comma();
-            Str(font_weight_pairs.GetValue(fontprop.GetWeight())).Comma();
-            Str(fontprop.IsUnderlined() ? "1" : "0").Comma();
-            QuotedString(fontprop.GetFaceName().utf8_string()).Str(");");
-        }
-        else
-        {
-            GenFontInfoCode(fontprop);
-        }
+        GenFontInfoCode(fontprop);
         Eol(eol_if_needed);
         ApplyFontToControl(font_function);
         CloseFontBrace();
@@ -53,15 +38,7 @@ void Code::GenColourValue(wxue::string_view colour_str, GenEnum::PropName prop_n
     }
     else if (colour_str.starts_with('#'))
     {
-        if (is_perl() && prop_name == prop_background_colour &&
-            m_node->is_Gen(gen_wxPropertySheetDialog))
-        {
-            Class("wxColour->new(").QuotedString(colour_str) += ")";
-        }
-        else
-        {
-            Object("wxColour").QuotedString(colour_str) += ')';
-        }
+        Object("wxColour").QuotedString(colour_str) += ')';
     }
     else
     {
@@ -126,45 +103,6 @@ void Code::GenFontColourSettings()
 
 auto Code::GenSizerFlags() -> Code&
 {
-    if (is_perl())
-    {
-        // Perl doesn't have a wxSizerFlags() function, so we have to use the old wxSizer::Add()
-        // function.
-        Add(m_node->as_string(prop_proportion)).Comma();
-
-        wxue::string prop_combined_flags;
-        auto lambda = [&](GenEnum::PropName prop_name) -> void
-        {
-            if (const auto& prop = m_node->as_string(prop_name); prop.size())
-            {
-                wxue::StringVector vector(prop, "|", wxue::TRIM::both);
-                for (auto& iter: vector)
-                {
-                    if (prop_combined_flags.size())
-                    {
-                        prop_combined_flags << '|';
-                    }
-                    prop_combined_flags << iter;
-                }
-            }
-        };
-        lambda(prop_alignment);
-        lambda(prop_flags);
-        lambda(prop_borders);
-
-        if (prop_combined_flags.size())
-        {
-            Add(prop_combined_flags);
-        }
-        else
-        {
-            Add("0");
-        }
-        Comma().as_string(prop_border_size);
-
-        return *this;
-    }
-
     // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
     // shut off auto_break and then restore it when we are done, after which we can check whether
     // or note the entire wxSizerFlags() statement needs to be broken.
@@ -174,9 +112,9 @@ auto Code::GenSizerFlags() -> Code&
     auto cur_pos = size();
 
     Add("wxSizerFlags");
-    if (is_ruby())
+    if (m_traits && m_traits->construction_suffix.size())
     {
-        Add(".new");
+        Add(m_traits->construction_suffix);
     }
 
     if (const auto& prop = m_node->as_string(prop_proportion); prop != "0")
@@ -501,7 +439,7 @@ void Code::CallNodeOrFormFunction(wxue::string_view function_name)
 
 void Code::GenDefGuiFont(const FontProperty& fontprop, wxue::string_view font_function)
 {
-    const auto* const font_var_name = is_perl() ? "$font" : "font";
+    const auto* const font_var_name = "font";
 
     OpenFontBrace();
     if (is_cpp())
@@ -510,7 +448,7 @@ void Code::GenDefGuiFont(const FontProperty& fontprop, wxue::string_view font_fu
     }
     else
     {
-        AddIfPerl("my ").Str(font_var_name).CreateClass(false, "wxFont");
+        Add("font").CreateClass(false, "wxFont");
     }
     Class("wxSystemSettings").ClassMethod("GetFont(").Add("wxSYS_DEFAULT_GUI_FONT").Str(")");
     EndFunction();
@@ -617,10 +555,6 @@ void Code::GenFontInfoInit(const FontProperty& fontprop, double point_size,
     else
     {
         Eol(eol_if_needed);
-        if (is_perl())
-        {
-            *this += "my $";
-        }
         Add("font_info").CreateClass(false, "wxFontInfo");
     }
 
@@ -668,28 +602,9 @@ void Code::GenFontInfoInit(const FontProperty& fontprop, double point_size,
 void Code::GenFontInfoProperties(const FontProperty& fontprop)
 {
 #if defined(_WIN32)
-    // REVIEW: [Randalphwa - 04-18-2025] Currently, wxPerl does support wxFontInfo, but
-    // leave this code in case it is added later.
-    if (is_perl())
-    {
-        if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-        {
-            Eol().Str("$font_info->").Str("FaceName = ");
-            QuotedString(wxue::string() << fontprop.GetFaceName().utf8_string()) += ";";
-        }
-        if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
-        {
-            Eol().Str("$font_info->").Str("Family = ");
-            Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ";";
-        }
-        if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-        {
-            Eol().Str("$font_info->").Str("Style = ");
-            Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ";";
-        }
-    }
-    else
+    // Windows-specific handling (non-Perl)
 #endif
+
     {
         if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
         {
@@ -721,49 +636,27 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
 
 void Code::ApplyFontToControl(wxue::string_view font_function)
 {
-    const char* font_var = is_perl() ? "$font" : "font_info";
+    const char* font_var = "font_info";
 
     if (m_node->is_Form())
     {
         if (m_node->is_Gen(gen_wxPropertySheetDialog))
         {
             FormFunction("GetBookCtrl()").Function(font_function);
-            if (!is_perl())
-            {
-                Object("wxFont").Str(font_var).Str(")");
-            }
-            else
-            {
-                Str(font_var);
-            }
+            Object("wxFont").Str(font_var).Str(")");
             EndFunction();
         }
         else
         {
             FormFunction(font_function);
-            if (!is_perl())
-            {
-                Object("wxFont").VarName(font_var, false).Str(")");
-            }
-            else
-            {
-                Str(font_var);
-            }
+            Object("wxFont").VarName(font_var, false).Str(")");
             EndFunction();
         }
     }
     else
     {
         NodeName().Function(font_function);
-        if (!is_perl())
-        {
-            Object("wxFont").VarName(font_var, false).Str(")");
-        }
-        else
-        {
-            // wxPerl doesn't support wxFontInfo, so use the font creation generated above
-            Str(font_var);
-        }
+        Object("wxFont").VarName(font_var, false).Str(")");
         EndFunction();
     }
 }

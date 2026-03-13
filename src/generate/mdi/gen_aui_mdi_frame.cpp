@@ -59,16 +59,6 @@ bool AuiMdiFrameGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
     return FrameCommon::AllowPropertyChange(event, prop, node);
 }
 
-bool AuiMdiFrameGenerator::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
-                                      GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-    }
-
-    return false;
-}
-
 /////////////////////////////// AuiMDIChildFrame //////////////////////////////////////
 
 bool AuiMDIChildFrame::ConstructionCode(Code& code)
@@ -108,14 +98,4 @@ bool AuiMDIChildFrame::AllowPropertyChange(wxPropertyGridEvent* event, NodePrope
                                            Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
-}
-
-bool AuiMDIChildFrame::GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
-                                  GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-    }
-
-    return false;
 }

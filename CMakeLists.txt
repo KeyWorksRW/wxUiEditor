@@ -143,7 +143,18 @@ if( MSVC )
 
     # Increase stack size for large projects with many object files
     string( APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608" ) # 8MB stack
-elseif( UNIX AND NOT APPLE )
+else()
+    # For GCC/Clang/Xcode, optimize for size in Release builds
+    string( REPLACE "-O3" "-Os" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}" )
+    set( CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE )
+
+    if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE STREQUAL "Debug" )
+        # -g3 includes macro definitions (vs -g/-g2); enables backtraces and variable inspection
+        add_compile_options( -g3 )
+    endif()
+endif()
+
+if( UNIX AND NOT APPLE )
     # Use the package PkgConfig to detect GTK+ headers/library files
     find_package( PkgConfig REQUIRED )
 
@@ -156,13 +167,6 @@ elseif( UNIX AND NOT APPLE )
     include_directories( ${X11_INCLUDE_DIRS} )
     link_directories( ${X11_LIBRARY_DIRS} )
     add_definitions( ${X11_CFLAGS_OTHER} )
-endif()
-
-if( NOT MSVC )
-    # This should work for gcc and clang (including xcode which is based on clang)
-    # -O2 can result in faster code than -O3 due to CPU caching.
-    string( REPLACE "-O3" "-O2" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}" )
-    set( CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE )
 endif()
 
 if( INTERNAL_BLD_TESTING )
@@ -337,9 +341,11 @@ if( MSVC )
     )
 elseif( APPLE )
     target_compile_definitions( wxUiEditor PRIVATE __WXOSX_COCOA__ )
+    target_compile_options( wxUiEditor PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8 )
     target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} )
 elseif( UNIX )
     target_compile_definitions( wxUiEditor PRIVATE __WXGTK__ )
+    target_compile_options( wxUiEditor PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8 )
     target_link_directories( wxUiEditor PRIVATE ${WX_LIB_DIR} ${GTK3_LIBRARY_DIRS} )
 endif()
 

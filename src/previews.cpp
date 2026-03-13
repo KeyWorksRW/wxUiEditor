@@ -89,7 +89,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
             return;
     }
 
-    if (dynamic_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_xrcPanel)
+    if (m_xrcPanel && dynamic_cast<BasePanel*>(m_notebook->GetCurrentPage()) == m_xrcPanel)
     {
         PreviewXrc(form_node);
         return;

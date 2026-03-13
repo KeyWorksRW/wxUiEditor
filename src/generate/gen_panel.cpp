@@ -69,13 +69,3 @@ void PanelGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& h
 {
     handlers.emplace("wxPanelXmlHandler");
 }
-
-bool PanelGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx qw[:panel];");
-    }
-    return false;
-}

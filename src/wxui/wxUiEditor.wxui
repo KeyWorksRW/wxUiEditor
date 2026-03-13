@@ -884,8 +884,8 @@
               help="Save current project"
               id="wxID_SAVE"
               label="&amp;Save&#09;Ctrl+S"
-              wxEVT_MENU="OnSaveProject"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().isModified());@@}[python:OnUpdateUI]" />
+              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().isModified());@@}[python:OnUpdateUI]"
+              wxEVT_MENU="OnSaveProject" />
             <node
               class="wxMenuItem"
               bitmap="SVG;saveas.svg;[16,16]"
@@ -986,16 +986,16 @@
               id="wxID_UNDO"
               label=""
               var_name="menu_undo"
-              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().Undo();@@}"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanUndo());@@}" />
+              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanUndo());@@}"
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().Undo();@@}" />
             <node
               class="wxMenuItem"
               bitmap="SVG;redo.svg;[16,16]"
               id="wxID_REDO"
               label=""
               var_name="menu_redo"
-              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().Redo();@@}"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanRedo());@@}" />
+              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanRedo());@@}"
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().Redo();@@}" />
             <node
               class="separator"
               var_name="separator5" />
@@ -1005,8 +1005,8 @@
               id="wxID_CUT"
               label=""
               var_name="menu_cut"
-              wxEVT_MENU="OnCut"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
+              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}"
+              wxEVT_MENU="OnCut" />
             <node
               class="wxMenuItem"
               bitmap="Art;wxART_COPY|wxART_MENU"
@@ -1020,8 +1020,8 @@
               id="wxID_PASTE"
               label=""
               var_name="menu_paste"
-              wxEVT_MENU="OnPaste"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanPasteNode());@@}" />
+              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanPasteNode());@@}"
+              wxEVT_MENU="OnPaste" />
             <node
               class="wxMenuItem"
               bitmap="Art;wxART_DELETE|wxART_MENU"
@@ -1029,8 +1029,8 @@
               id="wxID_DELETE"
               label=""
               var_name="menu_delete"
-              wxEVT_MENU="OnDelete"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
+              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}"
+              wxEVT_MENU="OnDelete" />
             <node
               class="separator"
               var_name="separator9" />
@@ -1040,8 +1040,8 @@
               help="Delete selected object without using clipboard."
               label="Duplicate"
               var_name="menu_duplicate"
-              wxEVT_MENU="OnDuplicate"
-              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
+              wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}"
+              wxEVT_MENU="OnDuplicate" />
             <node
               class="wxMenuItem"
               bitmap="Art;wxART_EDIT|wxART_MENU"
@@ -2373,24 +2373,24 @@
               help="Open wxWidgets documentation in your default browser."
               label="wxWidgets Documentation"
               var_name="menu_item_6"
-              wxEVT_MENU="OnBrowseDocs"
-              wxEVT_UPDATE_UI="OnUpdateBrowseDocs" />
+              wxEVT_UPDATE_UI="OnUpdateBrowseDocs"
+              wxEVT_MENU="OnBrowseDocs" />
             <node
               class="wxMenuItem"
               bitmap="SVG;python-logo-only.svg;[20,20]"
               help="Open wxPython documentation in your default browser."
               label="wxPython Documentation"
               var_name="menu_item_9"
-              wxEVT_MENU="OnBrowsePython"
-              wxEVT_UPDATE_UI="OnUpdateBrowsePython" />
+              wxEVT_UPDATE_UI="OnUpdateBrowsePython"
+              wxEVT_MENU="OnBrowsePython" />
             <node
               class="wxMenuItem"
               bitmap="SVG;ruby_logo.svg;[20,20]"
               help="Open wxRuby documentation in your default browser."
               label="wxRuby Documentation"
               var_name="menu_item_10"
-              wxEVT_MENU="OnBrowseRuby"
-              wxEVT_UPDATE_UI="OnUpdateBrowseRuby" />
+              wxEVT_UPDATE_UI="OnUpdateBrowseRuby"
+              wxEVT_MENU="OnBrowseRuby" />
           </node>
         </node>
       </node>
@@ -2656,8 +2656,8 @@
                 <node
                   class="wxRibbonToolBar"
                   var_name="sizer_bar_basic"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
-                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
                     bitmap="SVG;sizer_horizontal.svg;[24,24]"
@@ -2744,8 +2744,8 @@
                 <node
                   class="wxRibbonToolBar"
                   var_name="common_bar_controls"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
-                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
                     bitmap="SVG;wxStaticText.svg;[24,24]"
@@ -2789,8 +2789,8 @@
                 <node
                   class="wxRibbonToolBar"
                   var_name="common_bar_choices"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
-                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
                     bitmap="SVG;wxComboBox.svg;[24,24]"
@@ -2894,8 +2894,8 @@
                 <node
                   class="wxRibbonToolBar"
                   var_name="container_bar_windows"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
-                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
                     bitmap="SVG;wxPanel.svg;[24,24]"
@@ -3071,8 +3071,8 @@
                 <node
                   class="wxRibbonToolBar"
                   var_name="data_bar_dataview"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
-                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
                     bitmap="SVG;dataview_ctrl.svg;[24,24]"
@@ -3139,8 +3139,8 @@
                 <node
                   class="wxRibbonToolBar"
                   var_name="bars_bar_tool"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
-                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
                     bitmap="SVG;wxToolBar.svg;[24,24]"
@@ -3172,8 +3172,8 @@
                 <node
                   class="wxRibbonToolBar"
                   var_name="bars_bar_ribbon"
-                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
-                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                  wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown"
+                  wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                   <node
                     class="ribbonTool"
                     bitmap="SVG;ribbon_bar.svg;[24,24]"
@@ -3380,16 +3380,16 @@
               id="wxID_BACKWARD"
               label="Back"
               var_name="tool_3"
-              wxEVT_TOOL="OnBack"
-              wxEVT_UPDATE_UI="OnUpdateBack" />
+              wxEVT_UPDATE_UI="OnUpdateBack"
+              wxEVT_TOOL="OnBack" />
             <node
               class="tool"
               bitmap="Art;wxART_GO_FORWARD|wxART_TOOLBAR"
               id="wxID_FORWARD"
               label="Forward"
               var_name="tool_4"
-              wxEVT_TOOL="OnForward"
-              wxEVT_UPDATE_UI="OnUpdateForward" />
+              wxEVT_UPDATE_UI="OnUpdateForward"
+              wxEVT_TOOL="OnForward" />
             <node
               class="toolSeparator" />
             <node
@@ -3640,8 +3640,8 @@
                     var_name="m_combo_prefixes"
                     minimum_size="-1,-1"
                     flags="wxEXPAND"
-                    wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
-                    wxEVT_TEXT_ENTER="OnUpdate" />
+                    wxEVT_TEXT_ENTER="OnUpdate"
+                    wxEVT_COMBOBOX_CLOSEUP="OnUpdate" />
                 </node>
                 <node
                   class="wxBoxSizer"
@@ -3672,8 +3672,8 @@
                     var_name="m_combo_suffixes"
                     minimum_size="-1,-1"
                     flags="wxEXPAND"
-                    wxEVT_COMBOBOX_CLOSEUP="OnUpdate"
-                    wxEVT_TEXT_ENTER="OnUpdate" />
+                    wxEVT_TEXT_ENTER="OnUpdate"
+                    wxEVT_COMBOBOX_CLOSEUP="OnUpdate" />
                 </node>
               </node>
               <node
@@ -3961,9 +3961,10 @@
               var_name="m_static_bind_text"
               wrap="400" />
             <node
-              class="wxNotebook"
+              class="wxChoicebook"
+              var_name="m_notebook"
               flags="wxEXPAND"
-              wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
+              wxEVT_CHOICEBOOK_PAGE_CHANGED="OnPageChanged">
               <node
                 class="BookPage"
                 bitmap="SVG;cpp_logo.svg;[24,24]"
@@ -4063,6 +4064,305 @@
                 class="BookPage"
                 bitmap="SVG;perl-logo.svg;[24,24]"
                 class_access="protected:"
+                label="Fortran"
+                var_name="m_fortran_bookpage"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer2">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_perl_radio_use_function2"
+                    var_name="m_perl_function_box2"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxBoxSizer"
+                      var_name="box_sizer2"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_perl_text_function2"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn5"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn6"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;perl-logo.svg;[24,24]"
+                class_access="protected:"
+                label="Go"
+                var_name="m_go_bookpage"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer5">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_perl_radio_use_function4"
+                    var_name="m_perl_function_box4"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxBoxSizer"
+                      var_name="box_sizer6"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_perl_text_function4"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn9"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn10"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Anonymous function"
+                      radiobtn_var_name="m_perl_radio_use_anon_func3"
+                      var_name="m_perl_lambda_box3"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUsePerlLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer9" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="staticText3" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="PERL"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_perl_stc_lambda3"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;perl-logo.svg;[24,24]"
+                class_access="protected:"
+                label="Julia"
+                var_name="m_julia_bookpage"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer3">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_perl_radio_use_function3"
+                    var_name="m_perl_function_box3"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxBoxSizer"
+                      var_name="box_sizer3"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_perl_text_function3"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn7"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn8"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Anonymous function"
+                      radiobtn_var_name="m_perl_radio_use_anon_func2"
+                      var_name="m_perl_lambda_box2"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUsePerlLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer5" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="staticText2" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="PERL"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_perl_stc_lambda2"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;perl-logo.svg;[24,24]"
+                class_access="protected:"
+                label="LuaJIT"
+                var_name="m_lua_bookpage"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer6">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_perl_radio_use_function5"
+                    var_name="m_perl_function_box5"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxBoxSizer"
+                      var_name="box_sizer10"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_perl_text_function5"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn13"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn14"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Anonymous function"
+                      radiobtn_var_name="m_perl_radio_use_anon_func4"
+                      var_name="m_perl_lambda_box4"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUsePerlLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer11" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="staticText5" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="PERL"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_perl_stc_lambda4"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;perl-logo.svg;[24,24]"
+                class_access="protected:"
                 label="Perl"
                 var_name="m_perl_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
@@ -4107,7 +4407,7 @@
                       class="StaticRadioBtnBoxSizer"
                       checked="0"
                       class_access="protected:"
-                      label="Anonymous function"
+                      label="Anonymous sub"
                       radiobtn_var_name="m_perl_radio_use_anon_func"
                       var_name="m_perl_lambda_box"
                       flags="wxEXPAND"
@@ -4284,6 +4584,90 @@
                         symbol_margin="0"
                         use_tabs="0"
                         var_name="m_ruby_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;perl-logo.svg;[24,24]"
+                class_access="protected:"
+                label="Rust"
+                var_name="m_rust_bookpage"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer7">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_perl_radio_use_function6"
+                    var_name="m_perl_function_box6"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxBoxSizer"
+                      var_name="box_sizer13"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_perl_text_function6"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn17"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn18"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Closure"
+                      radiobtn_var_name="m_perl_radio_use_anon_func5"
+                      var_name="m_perl_lambda_box5"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUsePerlLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer15" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="staticText6" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="PERL"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_perl_stc_lambda5"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
@@ -4602,8 +4986,8 @@
                   max="72"
                   min="-1"
                   var_name="m_spinCustomPointSize"
-                  wxEVT_SPINCTRLDOUBLE="OnPointSize"
-                  wxEVT_TEXT="OnEditPointSize" />
+                  wxEVT_TEXT="OnEditPointSize"
+                  wxEVT_SPINCTRLDOUBLE="OnPointSize" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -4661,8 +5045,8 @@
         derived_class_name="GridPropertyDlg"
         derived_file="gridpropertydlg_derived"
         pure_virtual_functions="1"
-        wxEVT_INIT_DIALOG="OnInit"
-        wxEVT_UPDATE_UI="OnUpdateUI">
+        wxEVT_UPDATE_UI="OnUpdateUI"
+        wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"
@@ -4806,8 +5190,8 @@
                 var_name="m_textID"
                 flags="wxEXPAND"
                 proportion="1"
-                wxEVT_TEXT="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextID]"
-                wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextID]" />
+                wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextID]"
+                wxEVT_TEXT="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextID]" />
               <node
                 class="wxStaticText"
                 class_access="none"
@@ -4820,8 +5204,8 @@
                 style="wxTE_PROCESS_ENTER"
                 var_name="m_textValue"
                 proportion="1"
-                wxEVT_TEXT="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextValue]"
-                wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextEnter]" />
+                wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextEnter]"
+                wxEVT_TEXT="[this](wxCommandEvent&amp; event)@@{@@OnComboSelect(event);@@}[python:OnTextValue]" />
             </node>
             <node
               class="wxGridBagSizer"
@@ -6482,6 +6866,36 @@
             validator_variable="m_gen_cpp_code" />
           <node
             class="wxRadioButton"
+            label="&amp;Fortran"
+            var_name="m_radioBtn_Fortran"
+            get_function="is_gen_fortran"
+            validator_variable="m_gen_fortran_code" />
+          <node
+            class="wxRadioButton"
+            label="&amp;Go"
+            var_name="m_radioBtn_Go"
+            get_function="is_gen_go"
+            validator_variable="m_gen_go_code" />
+          <node
+            class="wxRadioButton"
+            label="&amp;Julia"
+            var_name="m_radioBtn_Julia"
+            get_function="is_gen_julia"
+            validator_variable="m_gen_jullia_code" />
+          <node
+            class="wxRadioButton"
+            label="&amp;LuaJIT"
+            var_name="m_radioBtn_LuaJIT"
+            get_function="is_gen_luajit"
+            validator_variable="m_gen_luajit_code" />
+          <node
+            class="wxRadioButton"
+            label="P&amp;erl"
+            var_name="m_radioBtn_Perl"
+            get_function="is_gen_perl"
+            validator_variable="m_gen_perl_code" />
+          <node
+            class="wxRadioButton"
             label="&amp;Python"
             var_name="m_radioBtn_Python"
             get_function="is_gen_python"
@@ -6489,16 +6903,17 @@
           <node
             class="wxRadioButton"
             class_access="none"
-            label="&amp;Ruby"
+            label="R&amp;uby"
             var_name="m_radioBtn_Ruby"
             get_function="is_gen_ruby"
             validator_variable="m_gen_ruby_code" />
           <node
             class="wxRadioButton"
-            label="P&amp;erl"
-            var_name="m_radioBtn_Perl"
-            get_function="is_gen_perl"
-            validator_variable="m_gen_perl_code" />
+            class_access="none"
+            label="&amp;Rust"
+            var_name="m_radioBtn_Rusy"
+            get_function="is_gen_rust"
+            validator_variable="m_gen_rust_code" />
           <node
             class="wxRadioButton"
             label="&amp;XRC"
@@ -6953,8 +7368,8 @@
             var_name="m_text_name"
             tooltip="Use Up/Down arrows to change list selection"
             proportion="1"
-            wxEVT_TEXT="OnNameText"
-            wxEVT_KEY_DOWN="OnKeyDown" />
+            wxEVT_KEY_DOWN="OnKeyDown"
+            wxEVT_TEXT="OnNameText" />
         </node>
         <node
           class="wxBoxSizer"
@@ -6978,8 +7393,8 @@
             size="-1,300"
             flags="wxEXPAND"
             proportion="1"
-            wxEVT_LISTBOX="[this](wxCommandEvent&amp;)@@{@@m_stdBtn->GetAffirmativeButton()->Enable();@@}"
-            wxEVT_LISTBOX_DCLICK="OnListBoxDblClick" />
+            wxEVT_LISTBOX_DCLICK="OnListBoxDblClick"
+            wxEVT_LISTBOX="[this](wxCommandEvent&amp;)@@{@@m_stdBtn->GetAffirmativeButton()->Enable();@@}" />
         </node>
         <node
           class="wxStdDialogButtonSizer"

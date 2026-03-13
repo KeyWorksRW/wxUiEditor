@@ -34,10 +34,7 @@ bool TimePickerCtrlGenerator::ConstructionCode(Code& code)
     {
         code.Str("DateTime.now");
     }
-    else if (code.is_perl())
-    {
-        code.Str("Wx::DateTime->new()");
-    }
+
     else
     {
         code.Add("wxDefaultDateTime");
@@ -80,15 +77,4 @@ int TimePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
 void TimePickerCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxTimeCtrlXmlHandler");
-}
-
-bool TimePickerCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
-                                         GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use Wx::DateTime;");
-        return true;
-    }
-    return false;
 }

@@ -62,9 +62,6 @@ namespace ScriptCommon
             // Add appropriate extension based on language
             switch (language)
             {
-                case GEN_LANG_PERL:
-                    path += ".pl";
-                    break;
                 case GEN_LANG_PYTHON:
                     path += ".py";
                     break;
@@ -87,9 +84,6 @@ namespace ScriptCommon
         std::string_view end_comment_line;
         switch (language)
         {
-            case GEN_LANG_PERL:
-                end_comment_line = GetPerlEndCommentLine();
-                break;
             case GEN_LANG_PYTHON:
                 end_comment_line = GetPythonEndCommentLine();
                 break;
@@ -154,9 +148,6 @@ namespace ScriptCommon
         {
             switch (language)
             {
-                case GEN_LANG_PERL:
-                    code.Tab().Str("$self->EndModal(wxID_CLOSE);");
-                    break;
                 case GEN_LANG_PYTHON:
                     code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
                     return;  // Python adds extra newline
@@ -171,9 +162,6 @@ namespace ScriptCommon
         {
             switch (language)
             {
-                case GEN_LANG_PERL:
-                    code.Tab().Str("$self->EndModal(wxID_YES);");
-                    break;
                 case GEN_LANG_PYTHON:
                     code.Tab().Str("self.EndModal(wx.ID_YES)").Eol().Eol();
                     return;  // Python adds extra newline
@@ -188,9 +176,6 @@ namespace ScriptCommon
         {
             switch (language)
             {
-                case GEN_LANG_PERL:
-                    code.Tab().Str("$self->EndModal(wxID_NO);");
-                    break;
                 case GEN_LANG_PYTHON:
                     code.Tab().Str("self.EndModal(wx.ID_NO)").Eol().Eol();
                     return;  // Python adds extra newline
@@ -206,9 +191,6 @@ namespace ScriptCommon
             // Default event handler - call Skip/skip
             switch (language)
             {
-                case GEN_LANG_PERL:
-                    code.Tab().Str("$event->Skip();");
-                    break;
                 case GEN_LANG_PYTHON:
                     code.Tab().Str("event.Skip()").Eol().Eol();
                     return;  // Python adds extra newline

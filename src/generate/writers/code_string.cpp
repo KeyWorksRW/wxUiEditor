@@ -24,7 +24,7 @@ auto Code::as_string(PropName prop_name) -> Code&
             *this << '$' << result;
             return *this;
         }
-        if (!is_cpp() && !is_perl())
+        if (!is_cpp())
         {
             result.Replace("wx", m_language_wxPrefix);
         }
@@ -107,23 +107,12 @@ void Code::ProcessEscapedChar(char chr, bool& has_escape)
                                });
 }
 
-void Code::AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_char)
+void Code::AddQuoteClosing([[maybe_unused]] bool has_escape, [[maybe_unused]] size_t begin_quote,
+                           bool has_utf_char)
 {
     if (is_ruby())
     {
         *this += '\'';
-    }
-    else if (is_perl())
-    {
-        if (has_escape)
-        {
-            *this += '"';
-            at(begin_quote) = '"';
-        }
-        else
-        {
-            *this += '\'';
-        }
     }
     else
     {
@@ -161,7 +150,7 @@ auto Code::QuotedString(wxue::string_view text) -> Code&
     auto begin_quote = this->size();
     bool has_escape = false;
 
-    if (is_ruby() || is_perl())
+    if (is_ruby())
     {
         *this += '\'';
     }

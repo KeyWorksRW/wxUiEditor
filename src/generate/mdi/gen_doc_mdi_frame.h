@@ -29,8 +29,6 @@ public:
 
     wxue::string GetPythonHelpText(Node*) override { return "wx.docview.DocParentFrame"; }
     wxue::string GetPythonURL(Node*) override { return "wx.lib.docview.DocParentFrame.html"; }
-
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };
 
 class DocMDIChildFrame : public BaseGenerator
@@ -51,6 +49,4 @@ public:
 
     wxue::string GetPythonHelpText(Node*) override { return "wx.docview.DocParentFrame"; }
     wxue::string GetPythonURL(Node*) override { return "wx.lib.docview.DocParentFrame.html"; }
-
-    bool GetImports(Node*, std::set<std::string>& set_imports, GenLang language) override;
 };

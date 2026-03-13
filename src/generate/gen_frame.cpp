@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFrame generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -142,24 +142,4 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
                                              Node* node)
 {
     return FrameCommon::AllowPropertyChange(event, prop, node);
-}
-
-bool FrameFormGenerator::GetImports(Node* node, std::set<std::string>& set_imports,
-                                    GenLang language)
-{
-    if (language == GEN_LANG_PERL)
-    {
-        set_imports.emplace("use base qw[Wx::Frame];");
-        set_imports.emplace("use Wx qw[:frame];");
-        set_imports.emplace("use Wx qw[:misc];");  // for wxDefaultPosition and wxDefaultSize
-
-        if (auto qw_events = GatherPerlNodeEvents(node); qw_events.size())
-        {
-            set_imports.emplace(qw_events);
-        }
-
-        return true;
-    }
-
-    return false;
 }

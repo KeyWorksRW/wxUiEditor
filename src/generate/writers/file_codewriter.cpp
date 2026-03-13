@@ -246,10 +246,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     {
         return GetRubyEndCommentLine();
     }
-    if (language == GEN_LANG_PERL)
-    {
-        return GetPerlEndCommentLine();
-    }
+
     return {};
 }
 
@@ -267,10 +264,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     {
         return GetPythonEndBlockLength();
     }
-    if (language == GEN_LANG_PERL)
-    {
-        return GetPerlEndBlockLength();
-    }
+
     return 0;
 }
 
@@ -414,20 +408,6 @@ void FileCodeWriter::AppendCppEndBlock()
     }
 }
 
-void FileCodeWriter::AppendPerlEndBlock()
-{
-    m_buffer += end_perl_block;
-    // Record position where fake content would start
-    m_fake_content_pos = m_buffer.size();
-
-    // Always add the module return value here - it will be removed later if the original
-    // file has content after the comment block that should be preserved instead.
-    if (m_node)
-    {
-        m_buffer << "\n1;  # " << m_node->get_NodeName();
-    }
-}
-
 void FileCodeWriter::AppendPythonEndBlock()
 {
     m_buffer += end_python_block;
@@ -460,9 +440,6 @@ void FileCodeWriter::AppendEndOfFileBlock()
     {
         case GEN_LANG_CPLUSPLUS:
             AppendCppEndBlock();
-            break;
-        case GEN_LANG_PERL:
-            AppendPerlEndBlock();
             break;
         case GEN_LANG_PYTHON:
             AppendPythonEndBlock();

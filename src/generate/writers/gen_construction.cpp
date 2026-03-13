@@ -8,6 +8,7 @@
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
+#include "language_traits.h"  // LanguageTraits, LanguageStrategy
 #include "node.h"             // Node class
 #include "node_decl.h"        // NodeDeclaration class
 #include "project_handler.h"  // ProjectHandler class
@@ -41,10 +42,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         {
             return;
         }
-        if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
-        {
-            return;
-        }
+
         if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
         {
             return;
@@ -326,177 +324,29 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 
 auto BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platforms) -> void
 {
-    if (platforms.contains("Windows"))
+    if (m_strategy)
     {
-        switch (m_language)
-        {
-            case GEN_LANG_CPLUSPLUS:
-                code.Eol() << "#if defined(__WINDOWS__)";
-                break;
-
-            case GEN_LANG_PERL:
-                code.Eol() << "if $^O eq 'MSWin32'";
-                break;
-
-            case GEN_LANG_PYTHON:
-                code.Eol() << "if wx.Platform == \"msw\"";
-                break;
-
-            case GEN_LANG_RUBY:
-                code.Eol() << "if Wx::PLATFORM == 'WXMSW'";
-                break;
-
-            default:
-                FAIL_MSG(wxue::string() << "Unsupported language: " << m_language);
-                break;
-        }
+        m_strategy->EmitPlatformBegin(code, std::string_view(platforms));
+        return;
     }
-    if (platforms.contains("Unix"))
-    {
-        switch (m_language)
-        {
-            case GEN_LANG_CPLUSPLUS:
-                if (code.size())
-                {
-                    code << " || ";
-                }
-                else
-                {
-                    code.Eol() << "#if ";
-                }
-                code << "defined(__UNIX__)";
-                break;
 
-            case GEN_LANG_PERL:
-                if (code.size())
-                {
-                    code << " or ";
-                }
-                else
-                {
-                    code.Eol() << "if ";
-                }
-                code << "$^O eq 'linux' or $^O eq 'darwin'";
-                break;
-
-            case GEN_LANG_PYTHON:
-                if (code.size())
-                {
-                    code << " or ";
-                }
-                else
-                {
-                    code.Eol() << "if ";
-                }
-                code << "wx.Platform == \"unix\"";
-                break;
-
-            case GEN_LANG_RUBY:
-                if (code.size())
-                {
-                    code << " || ";
-                }
-                else
-                {
-                    code.Eol() << "if ";
-                }
-                code << "Wx::PLATFORM == 'WXUNIX'";
-                break;
-
-            default:
-                break;
-        }
-    }
-    if (platforms.contains("Mac"))
-    {
-        switch (m_language)
-        {
-            case GEN_LANG_CPLUSPLUS:
-                if (code.size())
-                {
-                    code << " || ";
-                }
-                else
-                {
-                    code.Eol() << "#if ";
-                }
-                code << "defined(__WXOSX__)";
-                break;
-
-            case GEN_LANG_PERL:
-                if (code.size())
-                {
-                    code << " or ";
-                }
-                else
-                {
-                    code.Eol() << "if ";
-                }
-                code << "$^O eq 'darwin'";
-                break;
-
-            case GEN_LANG_PYTHON:
-                if (code.size())
-                {
-                    code << " or ";
-                }
-                else
-                {
-                    code.Eol() << "if ";
-                }
-                code << "wx.Platform == \"mac\"";
-                break;
-
-            case GEN_LANG_RUBY:
-                if (code.size())
-                {
-                    code << " || ";
-                }
-                else
-                {
-                    code.Eol() << "if ";
-                }
-                code << "Wx::PLATFORM == 'WXOSX'";
-                break;
-
-            default:
-                break;
-        }
-    }
-    if (m_language == GEN_LANG_PYTHON)
-    {
-        code << ':';
-    }
+    FAIL_MSG("No language strategy available for BeginPlatformCode");
 }
 
 auto BaseCodeGenerator::EndPlatformCode() -> void
 {
-    switch (m_language)
+    if (m_strategy)
     {
-        case GEN_LANG_CPLUSPLUS:
-            m_source->writeLine("#endif  // limited to specific platforms");
-            break;
-
-        case GEN_LANG_PERL:
-            break;
-
-        case GEN_LANG_PYTHON:
-            m_source->Unindent();
-            break;
-
-        case GEN_LANG_RUBY:
-            m_source->Unindent();
-            m_source->writeLine("end");
-            break;
-
-        default:
-            break;
+        m_strategy->EmitPlatformEnd(m_source);
+        return;
     }
+
+    FAIL_MSG("No language strategy available for EndPlatformCode");
 }
 
 auto BaseCodeGenerator::BeginBrace() -> void
 {
-    if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
+    if (m_language == GEN_LANG_CPLUSPLUS)
     {
         m_source->writeLine("{");
         m_source->Indent();
@@ -505,7 +355,7 @@ auto BaseCodeGenerator::BeginBrace() -> void
 
 auto BaseCodeGenerator::EndBrace() -> void
 {
-    if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
+    if (m_language == GEN_LANG_CPLUSPLUS)
     {
         m_source->Unindent();
         m_source->writeLine("}");
@@ -521,7 +371,7 @@ auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
     {
         if (code.size())
         {
-            if ((m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL) && within_brace)
+            if ((m_language == GEN_LANG_CPLUSPLUS) && within_brace)
             {
                 m_source->Indent();
                 m_source->writeLine(code);
@@ -563,10 +413,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
         {
             return false;
         }
-        if (m_language == GEN_LANG_PERL && disable_langs.contains("wxPerl"))
-        {
-            return false;
-        }
+
         if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
         {
             return false;
@@ -690,20 +537,7 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
                     code.ParentName().Function("Add(").Str("self.CreateSeparatedSizer(").NodeName()
                         << "), ";
                 }
-                else if (code.is_perl())
-                {
-                    // wxPerl doesn't support CreateSeparatedSizer() so we have to add the line
-                    // ourselves
-                    code << "unless (Wx::wxMAC())";
-                    code.OpenBrace();
-                    code.Str("my $stdBtn_line = Wx::StaticLine->new($self, wxID_ANY, "
-                             "wxDefaultPosition, Wx::Size->new(20, -1));");
-                    code.Eol().ParentName().Function("Add(").Str("$stdBtn_line").Comma();
-                    code.Str("0, wxEXPAND|wxALL").Comma().as_string(prop_border_size) << ");";
-                    code.CloseBrace();
 
-                    code.Eol().ParentName().Function("Add(").NodeName() << ", ";
-                }
                 else
                 {
                     code.ParentName().Function("Add(").NodeName() << ", ";
@@ -763,7 +597,7 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
     if (need_closing_brace)
     {
         m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
-        if (m_language == GEN_LANG_CPLUSPLUS || m_language == GEN_LANG_PERL)
+        if (m_language == GEN_LANG_CPLUSPLUS)
         {
             m_source->writeLine("}");
         }

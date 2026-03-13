@@ -455,7 +455,7 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         m_header->Clear();
     }
     m_source->Clear();
-    m_source->SetTabToSpaces(2);
+    m_source->SetTabToSpaces(GetLanguageTraits(m_language)->indent_size);
     m_source->SetLastLineBlank();
 
     WriteSourceHeader();

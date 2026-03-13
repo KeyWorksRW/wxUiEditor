@@ -117,19 +117,6 @@ void GenToolCode(Code& code);
 // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
 auto BitmapList(Code& code, GenEnum::PropName prop) -> bool;
 
-/////////////////////////////////////// wxPerl Functions ///////////////////////////////////////
-
-// Returns true if a list was created. List name will be called "bitmaps".
-auto PerlBitmapList(Code& code, GenEnum::PropName prop) -> bool;
-
-// Deterimes where the perl code will be written to, and returns an absolute path to that
-// location.
-auto MakePerlPath(Node* node) -> wxue::string;
-
-// If returned string is non-empty, it will contain
-// use "Wx::Event qw(events);"
-auto GatherPerlNodeEvents(Node* node) -> wxue::string;
-
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 
 // Returns true if a list was created. List name will be called "bitmaps".

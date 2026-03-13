@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -489,6 +489,56 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_folder_xrc_directory, "folder_xrc_directory" },
     { prop_folder_combined_xrc_file, "folder_combined_xrc_file" },
 
+    { prop_folder_fortran_combined_file, "folder_fortran_combined_file" },
+    { prop_folder_fortran_output_folder, "folder_fortran_output_folder" },
+    { prop_fortran_file, "fortran_file" },
+    { prop_fortran_inherit_name, "fortran_inherit_name" },
+    { prop_fortran_insert, "insert_fortran_code" },
+    { prop_fortran_line_length, "fortran_line_length" },
+    { prop_fortran_output_folder, "fortran_output_folder" },
+    { prop_fortran_project_preamble, "fortran_project_preamble" },
+    { prop_kwxFortran_version, "kwxFortran_version" },
+
+    { prop_folder_go_combined_file, "folder_go_combined_file" },
+    { prop_folder_go_output_folder, "folder_go_output_folder" },
+    { prop_go_file, "go_file" },
+    { prop_go_inherit_name, "go_inherit_name" },
+    { prop_go_insert, "insert_go_code" },
+    { prop_go_line_length, "go_line_length" },
+    { prop_go_output_folder, "go_output_folder" },
+    { prop_go_project_preamble, "go_project_preamble" },
+    { prop_kwxGO_version, "kwxGO_version" },
+
+    { prop_folder_julia_combined_file, "folder_julia_combined_file" },
+    { prop_folder_julia_output_folder, "folder_julia_output_folder" },
+    { prop_julia_file, "julia_file" },
+    { prop_julia_inherit_name, "julia_inherit_name" },
+    { prop_julia_insert, "insert_julia_code" },
+    { prop_julia_line_length, "julia_line_length" },
+    { prop_julia_output_folder, "julia_output_folder" },
+    { prop_julia_project_preamble, "julia_project_preamble" },
+    { prop_kwxJulia_version, "kwxJulia_version" },
+
+    { prop_folder_lua_combined_file, "folder_lua_combined_file" },
+    { prop_folder_lua_output_folder, "folder_lua_output_folder" },
+    { prop_lua_file, "lua_file" },
+    { prop_lua_inherit_name, "lua_inherit_name" },
+    { prop_lua_insert, "insert_lua_code" },
+    { prop_lua_line_length, "lua_line_length" },
+    { prop_lua_output_folder, "lua_output_folder" },
+    { prop_lua_project_preamble, "lua_project_preamble" },
+    { prop_kwxLuaJIT_version, "kwxLuaJIT_version" },
+
+    { prop_folder_perl_combined_file, "folder_perl_combined_file" },
+    { prop_folder_perl_output_folder, "folder_perl_output_folder" },
+    { prop_perl_file, "perl_file" },
+    { prop_perl_inherit_name, "perl_inherit_name" },
+    { prop_perl_insert, "insert_perl_code" },
+    { prop_perl_line_length, "perl_line_length" },
+    { prop_perl_output_folder, "perl_output_folder" },
+    { prop_perl_project_preamble, "perl_project_preamble" },
+    { prop_kwxPerl_version, "kwxPerl_version" },
+
     { prop_folder_python_combined_file, "folder_python_combined_file" },
     { prop_folder_python_output_folder, "folder_python_output_folder" },
     { prop_python_combine_forms, "python_combine_forms" },
@@ -517,15 +567,15 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_ruby_project_preamble, "ruby_project_preamble" },
     { prop_wxRuby_version, "wxRuby_version" },
 
-    { prop_folder_perl_combined_file, "folder_perl_combined_file" },
-    { prop_folder_perl_output_folder, "folder_perl_output_folder" },
-    { prop_perl_file, "perl_file" },
-    { prop_perl_inherit_name, "perl_inherit_name" },
-    { prop_perl_insert, "insert_perl_code" },
-    { prop_perl_line_length, "perl_line_length" },
-    { prop_perl_output_folder, "perl_output_folder" },
-    { prop_perl_project_preamble, "perl_project_preamble" },
-    { prop_wxPerl_version, "wxPerl_version" },
+    { prop_folder_rust_combined_file, "folder_rust_combined_file" },
+    { prop_folder_rust_output_folder, "folder_rust_output_folder" },
+    { prop_rust_file, "rust_file" },
+    { prop_rust_inherit_name, "rust_inherit_name" },
+    { prop_rust_insert, "insert_rust_code" },
+    { prop_rust_line_length, "rust_line_length" },
+    { prop_rust_output_folder, "rust_output_folder" },
+    { prop_rust_project_preamble, "rust_project_preamble" },
+    { prop_kwxRust_version, "kwxRust_version" },
 
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames {};
@@ -645,6 +695,11 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_folder_wxPerl, "Folder wxPerl Overrides" },
     { gen_folder_wxPython, "Folder wxPython Overrides" },
     { gen_folder_wxRuby, "Folder wxRuby Overrides" },
+    { gen_folder_wxFortran, "Folder wxFortran Overrides" },
+    { gen_folder_wxGo, "Folder wxGo Overrides" },
+    { gen_folder_wxJulia, "Folder wxJulia Overrides" },
+    { gen_folder_wxLua, "Folder wxLua Overrides" },
+    { gen_folder_wxRust, "Folder wxRust Overrides" },
     { gen_sizer_child, "sizer_child" },
     { gen_sizeritem_settings, "sizeritem_settings" },
     { gen_wxMdiWindow, "wxMdiWindow" },
@@ -655,19 +710,29 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     // Language categories
 
     { gen_Code, "C++" },
+    { gen_kwxFortran, "kwxFortran" },
+    { gen_kwxGo, "kwxGO" },
+    { gen_kwxJulia, "kwxJulia" },
+    { gen_kwxLua, "kwxLuaJIT" },
+    { gen_kwxPerl, "kwxPerl" },
     { gen_wxPython, "wxPython" },
     { gen_wxRuby, "wxRuby" },
+    { gen_kwxRust, "kwxRust" },
     { gen_XRC, "XRC" },
-    { gen_wxPerl, "wxPerl" },
 
     { gen_LanguageSettings, "Language Settings" },
 
     { gen_CPlusSettings, "C++ Settings" },
     { gen_DerivedCPlusSettings, "C++ Derived Class Settings" },
     { gen_CPlusHeaderSettings, "C++ Header Settings" },
-    { gen_PerlSettings, "wxPerl Settings" },
+    { gen_FortranSettings, "kwxFortran Settings" },
+    { gen_GoSettings, "kwxGO Settings" },
+    { gen_JuliaSettings, "kwxJulia Settings" },
+    { gen_LuaSettings, "kwxLuaJIT Settings" },
+    { gen_PerlSettings, "kwxPerl Settings" },
     { gen_PythonSettings, "wxPython Settings" },
     { gen_RubySettings, "wxRuby Settings" },
+    { gen_RustSettings, "kwxRust Settings" },
 
     // These are special purpose generators. gen_Images is used for code, but gen_folder is
     // just for organtizing forms in the Navigation panel.

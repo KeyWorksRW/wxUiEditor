@@ -308,32 +308,6 @@
 			help="The filename to use if generating XRC. This will be ignored if the project specifies combined XRC files."/>
 	</gen>
 
-	<!--
-	<gen class="wxFortran Settings" type="interface">
-		<property name="fortran_file" type="file"
-			help="The filename to use if generating code for wxFortran."/>
-		<property name="insert_fortran_code" type="code_edit"
-			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid
-	fortran code for use before the class definition."/>
-	</gen>
-
-	<gen class="wxHaskell Settings" type="interface">
-		<property name="fortran_file" type="file"
-			help="The filename to use if generating code for wxHaskell."/>
-		<property name="insert_fortran_code" type="code_edit"
-			help="Specify the code to insert into the fortran file after the generated import statements. This can be any valid
-	fortran code for use before the class definition."/>
-	</gen>
-
-	<gen class="wxLua Settings" type="interface">
-		<property name="lua_file" type="file"
-			help="The filename to use if generating code for wxLua or wxLuaJIT."/>
-		<property name="insert_lua_code" type="code_edit"
-			help="Specify the code to insert into the lua file after the generated import statements. This can be any valid lua
-	code for use before the class definition."/>
-	</gen>
--->
-
 	<!-- This is only used in the Project class -->
 	<gen class="C++" type="interface">
 		<property name="wxWidgets_version" type="option"

@@ -55,7 +55,7 @@ namespace wxue_data
     // ../xml/pickers.xml
     extern const unsigned char pickers[2480]; // Original size: 10,219 bytes
     // ../xml/project.xml
-    extern const unsigned char project[1658]; // Original size: 6,067 bytes
+    extern const unsigned char project[1672]; // Original size: 6,203 bytes
     // ../xml/sizers.xml
     extern const unsigned char sizers[2268]; // Original size: 12,871 bytes
     // ../xml/text_ctrls.xml

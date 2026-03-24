@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxCalendarCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,10 +18,19 @@
 
 #include "gen_calendar_ctrl.h"
 
+namespace
+{
+    [[nodiscard]] auto IsGenericVersion(Node* node) -> bool
+    {
+        return node->as_view(prop_subclass).starts_with("wxGeneric") ||
+               node->as_bool(prop_use_generic);
+    }
+}  // namespace
+
 auto CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObject*
 {
     wxCalendarCtrlBase* widget = nullptr;
-    if (node->as_view(prop_subclass).starts_with("wxGeneric"))
+    if (IsGenericVersion(node))
     {
         widget = new wxGenericCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
                                            wxDefaultDateTime, DlgPoint(node, prop_pos),
@@ -41,8 +50,7 @@ auto CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObje
 
 auto CalendarCtrlGenerator::ConstructionCode(Code& code) -> bool
 {
-    bool use_generic_version =
-        code.is_cpp() && code.node()->as_string(prop_subclass).starts_with("wxGeneric");
+    bool const use_generic_version = IsGenericVersion(code.node());
     code.AddAuto().NodeName().CreateClass(use_generic_version);
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.is_ruby())
@@ -77,7 +85,7 @@ auto CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
                                         std::set<std::string>& set_hdr,
                                         GenLang /* language unused */) -> bool
 {
-    if (node->as_view(prop_subclass).starts_with("wxGeneric"))
+    if (IsGenericVersion(node))
     {
         InsertGeneratorInclude(node, "#include <wx/calctrl.h>\n#include <wx/generic/calctrlg.h>",
                                set_src, set_hdr);
@@ -103,6 +111,8 @@ auto CalendarCtrlGenerator::GetPythonImports(Node* /*unused*/, std::set<std::str
 auto CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
     -> int
 {
+    // REVIEW: [Randalphwa - 03-24-2026] I don't think XRC supports this, but need to check to be
+    // sure.
     auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
                                                    BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);

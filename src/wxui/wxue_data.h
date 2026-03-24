@@ -61,7 +61,7 @@ namespace wxue_data
     // ../xml/text_ctrls.xml
     extern const unsigned char text_ctrls[7105]; // Original size: 30,396 bytes
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6696]; // Original size: 28,538 bytes
+    extern const unsigned char widgets[6714]; // Original size: 28,672 bytes
 }
 
 // ************* End of generated code ***********

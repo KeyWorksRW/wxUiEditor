@@ -492,6 +492,9 @@
         <property name="focus" type="bool"
             help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
             0</property>
+        <property name="use_generic" type="bool"
+            help="If checked, wxGenericCalendarCtrl will be used instead of wxCalendarCtrl.">
+            0</property>
         <event name="wxEVT_CALENDAR_DOUBLECLICKED" class="wxCalendarEvent"
             help="A day was double clicked in the calendar."/>
         <event name="wxEVT_CALENDAR_SEL_CHANGED" class="wxCalendarEvent"

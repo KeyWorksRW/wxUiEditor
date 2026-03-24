@@ -22,9 +22,10 @@ namespace
 {
     [[nodiscard]] auto IsGenericVersion(Node* node) -> bool
     {
-        return node->as_view(prop_subclass).starts_with("wxGeneric") || node->as_bool(prop_use_generic);
+        return node->as_view(prop_subclass).starts_with("wxGeneric") ||
+               node->as_bool(prop_use_generic);
     }
-}
+}  // namespace
 
 auto CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObject*
 {
@@ -110,7 +111,8 @@ auto CalendarCtrlGenerator::GetPythonImports(Node* /*unused*/, std::set<std::str
 auto CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
     -> int
 {
-    // REVIEW: [Randalphwa - 03-24-2026] I don't think XRC supports this, but need to check to be sure.
+    // REVIEW: [Randalphwa - 03-24-2026] I don't think XRC supports this, but need to check to be
+    // sure.
     auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
                                                    BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);

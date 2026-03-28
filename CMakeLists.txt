@@ -269,14 +269,13 @@ if( APPLE )
     set( wxUSE_REGEX OFF CACHE BOOL "Don't use pcre (problems compiling on Mac" )
 endif()
 
-message( STATUS "Fetching wxWidgets (this may take awhile) ..." )
+message( STATUS "Fetching wxWidgets ..." )
 
 FetchContent_Declare(
     wxWidgets
-    GIT_REPOSITORY https://github.com/KeyWorksRW/kwxFetch.git
-    GIT_TAG origin/dev
-    GIT_SHALLOW TRUE
+    URL https://github.com/KeyWorksRW/kwxFetch/releases/download/wx-dev-latest/kwxFetch-source.tar.xz
     UPDATE_DISCONNECTED FALSE  # Explicitly enable updates
+    DOWNLOAD_NO_PROGRESS TRUE
 )
 
 message( NOTICE "Configuring wxWidgets..." )

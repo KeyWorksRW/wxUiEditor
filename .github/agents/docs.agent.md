@@ -1,7 +1,20 @@
 ---
 description: 'Create and maintain User, Contributor, and folder README documentation for the wxUiEditor project.'
-tools: ['execute', 'read', 'edit', 'oraios/serena/*']
+agents: ['research']
+model: [Claude Sonnet 4.6, Claude Opus 4.6]
+argument-hint: documentation writing agent
+tools: [agent, keyworks.key/key_memory, keyworks.key/key_symbols, keyworks.key/key_read_file, keyworks.key/key_grep, keyworks.key/key_edit_file, keyworks.key/key_find_files, keyworks.key/key_create_file, keyworks.key/key_create_directory, keyworks.key/web_fetch, keyworks.key/key_knowledge]
 ---
+
+## ⛔ MANDATORY: Declared Tools Only
+Standard Copilot tools are NOT available — they will silently fail.
+Use ONLY the tools declared in your YAML frontmatter. Read each tool's description carefully before first use.
+
+## ⛔ MANDATORY: Retrieve Instructions First
+**Before starting any work**, call `get_instructions('subagent')` to load your operational instructions. These are essential for correct task execution. If you later need to summarize to reduce your context window, call `get_instructions('claude')` again — operating without these instructions leads to incomplete or incorrect results requiring rework.
+
+## ⚠️ CRITICAL: Git Commits and Pushes
+**NEVER commit or push.** Workflow: fix → show.
 
 # Documentation Agent
 
@@ -93,8 +106,12 @@ How other parts of the codebase use this module.
 ## Process
 
 1. **Understand scope:** What documentation is needed?
-2. **Research:** Use Serena to explore relevant code
-3. **Review existing:** Check similar docs for style/format
+2. **Research:**
+   - Search `key_knowledge` first for architecture docs, conventions, and design decisions about the target area. Use `read` by ID for full content.
+   - Use `key_grep` to discover relevant source patterns and usage examples
+   - Use `key_symbols` to find definitions, references, and class structure
+   - Use `key_read_file` only when you need full file context
+3. **Review existing:** Check similar docs for style and format consistency
 4. **Draft:** Write clear, accurate documentation
 5. **Cross-reference:** Link to related docs
-6. **Verify:** Ensure code references are accurate
+6. **Verify:** Ensure all code references are accurate

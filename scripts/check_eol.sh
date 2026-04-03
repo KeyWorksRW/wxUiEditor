@@ -10,7 +10,6 @@ rc=0
 # Find all text files in src/, excluding third-party code
 find src \( \
     -path 'src/pugixml' -prune -o \
-    -path 'src/frozen' -prune \) \
     -o -type f \( -name '*.cpp' -o -name '*.h' -o -name '*.cmake' -o -name '*.xml' \) -print0 |
 while IFS= read -r -d '' file; do
     # Get line ending counts: DOS UNIX MAC

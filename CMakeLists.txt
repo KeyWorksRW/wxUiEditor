@@ -285,6 +285,15 @@ FetchContent_MakeAvailable( wxWidgets )
 message( NOTICE "wxWidgets has been fetched and configured." )
 message( STATUS "wxWidgets sources: " ${wxWidgets_SOURCE_DIR} )
 
+# Frozen is a header-only library for constexpr containers (frozen::map, frozen::set, etc.)
+FetchContent_Declare(
+    kwsFrozen
+    GIT_REPOSITORY https://github.com/KeyWorksRW/kwsFrozen.git
+    GIT_TAG origin/main
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(kwsFrozen)
+
 # ###################### Libraries and Executables #######################
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates.
 # Specifying the full path and extension means ninja sees this as a normal dependency that
@@ -382,7 +391,7 @@ target_include_directories( wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
 
-    ${CMAKE_CURRENT_LIST_DIR}/frozen/include
+    ${kwsfrozen_SOURCE_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
 )
 

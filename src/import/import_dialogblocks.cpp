@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a DialogBlocks project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +36,7 @@
 #include "mainapp.h"           // App -- Main application class
 #include "node.h"              // Node class
 #include "node_creator.h"      // NodeCreator class
+#include "version.h"           // Version information for wxUiEditor and wxWidgets
 #include "wxue_view_vector.h"  // ViewVector -- wxue::ViewVector class
 
 DialogBlocks::DialogBlocks() = default;
@@ -77,7 +78,7 @@ auto DialogBlocks::Import(const std::string& filename, bool write_doc) -> bool
         {
             // [Randalphwa - 04-04-2026] DialogBlocks generated wxWidgets 3.1 and older code, but
             // the current wxUiEditor requires wxWidgets 3.2 as it's minimum.
-            m_project->set_value(prop_wxWidgets_version, "3.2.0");
+            m_project->set_value(prop_wxWidgets_version, MINIMUM_SUPPORTED_WXWIDGETS_VERSION);
         }
 
         option = header.find_child_by_attribute("bool", "name", "translate_strings");

@@ -22,6 +22,8 @@ on:
 jobs:
   buildUnix:
     runs-on: ${{ inputs.runner-type == 'self-hosted' && fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
+    env:
+      SCCACHE_DIR: ${{github.workspace}}/.sccache
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

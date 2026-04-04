@@ -81,45 +81,22 @@ configure_file(
     @ONLY
 )
 
-# ###################### ccache support #######################
-find_program(CCACHE_PROGRAM ccache)
-
-if(CCACHE_PROGRAM)
-    message(STATUS "Using ccache: ${CCACHE_PROGRAM}")
-    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-
-    message(NOTICE "ccache detected. Configure ccache globally for your development environment:")
-    message(NOTICE "  Recommended for all platforms:")
-    message(NOTICE "    ccache --set-config=compression=true")
-    message(NOTICE "    ccache --set-config=max_size=<appropriate for your projects>")
-    message(NOTICE "    ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime")
-
-    if(MSVC)
-        message(NOTICE "  Required for MSVC:")
-
-        message(NOTICE "    ccache --set-config=pch_external_checksum=true")
-        message(NOTICE "    ccache --set-config=depend_mode=true")
-        message(NOTICE "    ccache --set-config=\"ignore_options=/Zi /Z7 /ZI /FS /Fd*\"")
-    endif()
-
-    message(NOTICE "  Run 'ccache --show-config' to verify current settings")
-    message(NOTICE "  Run 'ccache -s' to monitor cache usage")
+# ###################### sccache #######################
+find_program(SCCACHE_PROGRAM sccache)
+if(SCCACHE_PROGRAM)
+    message(STATUS "sccache found: ${SCCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER "${SCCACHE_PROGRAM}")
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${SCCACHE_PROGRAM}")
+else()
+    message(STATUS "sccache not found; building without a compiler cache")
 endif()
 
 if(MSVC)
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
+
     # /O1 often results in faster code than /O2 due to CPU caching
     string(REPLACE "/O2" "/O1" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
-
-    # Use /Z7 instead of /Zi to embed debug info in object files. Benefits:
-    # 1. Avoids blocking when parallel compilers write to PDB files (faster multi-core builds)
-    # 2. Required for ccache to cache compilation results
-    # Trade-off: Larger object files, but build speed improvement is significant
-    string(REPLACE "/Zi" "/Z7" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-    string(REPLACE "/Zi" "/Z7" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
-    set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG} CACHE STRING "C++ Debug flags" FORCE)
-    set(CMAKE_C_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG} CACHE STRING "C Debug flags" FORCE)
 
     # Use dynamic runtime (/MD for Release, /MDd for Debug)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")

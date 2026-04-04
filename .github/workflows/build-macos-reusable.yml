@@ -22,9 +22,6 @@ on:
 jobs:
   buildMacOS:
     runs-on: ${{ inputs.runner-type }}
-    env:
-      CCACHE_DIR: ${{github.workspace}}/.ccache
-      CCACHE_CONFIGPATH: ${{github.workspace}}/.ccache/ccache.conf
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -46,32 +43,11 @@ jobs:
     - name: Install dependencies
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
       run: |
-        brew install ccache
         clang++ --version
         cmake --version
-        ccache --version
 
-    - name: Setup ccache
-      run: |
-        mkdir -p ${{github.workspace}}/.ccache
-        ccache --set-config=cache_dir=${{github.workspace}}/.ccache
-        ccache --set-config=compression=true
-        ccache --set-config=max_size=15G
-        ccache --set-config=sloppiness=pch_defines,time_macros,include_file_mtime,include_file_ctime
-        ccache --set-config=hard_link=true
-        ccache --zero-stats
-        ccache --show-config
-
-    - name: Restore ccache
-      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
-      id: cache-ccache-restore
-      uses: actions/cache/restore@v4
-      with:
-        path: ${{github.workspace}}/.ccache
-        key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-ccache-
-        enableCrossOsArchive: false
+    - name: Setup sccache
+      uses: mozilla-actions/sccache-action@v0.0.9
 
     # Note: FetchContent is intentionally NOT cached. The kwxFetch repo updates
     # weekly from wxWidgets master, and stale cache can cause build failures
@@ -92,13 +68,6 @@ jobs:
     - name: Build wxUiEditor
       run: |
         cmake --build ${{github.workspace}}/build -j$(nproc 2>/dev/null || sysctl -n hw.ncpu) --config ${{inputs.build-type}} --target wxUiEditor
-
-    - name: Save ccache
-      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && always() && steps.cache-ccache-restore.outputs.cache-hit != 'true' }}
-      uses: actions/cache/save@v4
-      with:
-        path: ${{github.workspace}}/.ccache
-        key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
 
     - name: Build DMG
       if: ${{ inputs.create-setup }}

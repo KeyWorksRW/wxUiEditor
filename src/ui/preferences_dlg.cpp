@@ -162,7 +162,6 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer_5->Add(static_text, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_cpp_version = new wxChoice(page_cpp, wxID_ANY);
-    m_choice_cpp_version->Append("3.1.0");
     m_choice_cpp_version->Append("3.2.0");
     m_choice_cpp_version->Append("3.3.0");
     m_choice_cpp_version->SetStringSelection("3.2");

@@ -22,7 +22,6 @@
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto bmp = node->HasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
-    // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
     auto* widget = new wxRibbonPage(wxStaticCast(parent, wxRibbonBar), wxID_ANY,
                                     node->as_wxString(prop_label), bmp, 0);
 
@@ -153,8 +152,6 @@ int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
     ADD_ITEM_PROP(prop_label, "label")
     GenXrcBitmap(node, item, xrc_flags, "icon");
 
-    // Up through wxWidgets 3.1.7, no styles are accepted
-    // GenXrcStylePosSize(node, item);
     GenXrcPreStylePosSize(node, item, {});
 
     GenXrcWindowSettings(node, item);

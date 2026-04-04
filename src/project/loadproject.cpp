@@ -1736,7 +1736,7 @@ void ProjectHandler::FinalImportCheck(Node* parent, bool set_line_length)
         parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
         if (!parent->HasValue(prop_wxWidgets_version))
         {
-            parent->set_value(prop_wxWidgets_version, "3.1.0");
+            parent->set_value(prop_wxWidgets_version, "3.2.0");
         }
     }
 

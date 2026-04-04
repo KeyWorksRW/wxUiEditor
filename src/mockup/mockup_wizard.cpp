@@ -282,7 +282,7 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
         return false;
     }
 
-    // GetScaledWidth() and GetScaledHeight() are new to wxWidgets 3.1.5 and are not currently
+    // GetScaledWidth() and GetScaledHeight() are new to wxWidgets 3.2.x and are not currently
     // documented, though they use GetScaleFactor() which is documented. E.g., GetScaledWidth() {
     // return GetWidth() / GetScaleFactor(); }
 

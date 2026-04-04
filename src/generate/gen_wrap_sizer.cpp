@@ -143,7 +143,7 @@ int WrapSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     }
     else if (node->get_Parent()->is_Form() && node->get_Parent()->HasValue(prop_minimum_size))
     {
-        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's
+        // In wxWidgets 3.2.x, minsize can only be used for sizers, and wxSplitterWindow. That's
         // a problem for forms which often can specify their own minimum size. The workaround is to
         // set the minimum size of the parent sizer that we create for most forms.
 

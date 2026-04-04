@@ -8904,7 +8904,7 @@
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;3.1.0&quot; &quot;3.2.0&quot; &quot;3.3.0&quot;"
+                  contents="&quot;3.2.0&quot; &quot;3.3.0&quot;"
                   selection_string="3.2"
                   var_name="m_choice_cpp_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />

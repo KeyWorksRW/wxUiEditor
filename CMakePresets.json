@@ -1,11 +1,11 @@
 {
-  "version": 3,
-  "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 30,
-    "patch": 0
-  },
-  "configurePresets": [
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 30,
+        "patch": 0
+    },
+    "configurePresets": [
         {
             "name": "ninja-msvc",
             "displayName": "Ninja Multi-Config",
@@ -23,6 +23,35 @@
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_RC_COMPILER": "llvm-rc"
+            }
+        },
+        {
+            "name": "ninja-clang-debug",
+            "displayName": "Ninja Clang Debug (Shared wxWidgets)",
+            "description": "Single-config Clang Debug with shared wxWidgets for fast lldb-dap startup",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build-dbg",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_RC_COMPILER": "llvm-rc",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_SHARED_LIBS": "ON"
+            }
+        },
+        {
+            "name": "ninja-clang-fork",
+            "displayName": "Ninja Clang Debug (Local wxWidgets Fork)",
+            "description": "Single-config Clang Debug using local wxWidgets fork for PR testing",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build-fork",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_RC_COMPILER": "llvm-rc",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_SHARED_LIBS": "ON",
+                "USE_FORK_WIDGETS": "ON"
             }
         }
     ]

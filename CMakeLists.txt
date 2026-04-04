@@ -57,6 +57,12 @@ else()
     message(NOTICE "Building with wxWidgets static libraries")
 endif()
 
+# USE_FORK_WIDGETS: use a local wxWidgets fork instead of fetching the release tarball.
+# The fork is expected at ${CMAKE_CURRENT_LIST_DIR}/../../forks/wxWidgets (relative to this file).
+# This is only meaningful for Debug builds via the ninja-clang-fork preset.
+# Defaults to OFF so all standard/CI builds are unaffected.
+option(USE_FORK_WIDGETS "Build with local wxWidgets fork (../../forks/wxWidgets)" OFF)
+
 option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 
 # Setting these will add a matching compiler definition. What that will enable in the code is
@@ -120,8 +126,8 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-        # -g3 includes macro definitions (vs -g/-g2); enables backtraces and variable inspection
-        add_compile_options(-g3)
+        add_compile_options(-g)
+        add_compile_options(-flimit-debug-info)
     endif()
 endif()
 
@@ -183,7 +189,12 @@ add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 # Output binary to root ./bin directory to avoid deletion when build directory is cleaned
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+    if(isMultiConfig)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+    else()
+        # Match multi-config layout: bin/Debug/, bin/Release/
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+    endif()
 endif()
 
 # ###################### Set wxWidgets location macros #######################
@@ -199,7 +210,11 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET ON)
 
 # Set wxWidgets build options BEFORE FetchContent_MakeAvailable
-set(wxBUILD_SHARED OFF CACHE BOOL "Build static wx libraries")
+if(BUILD_SHARED_LIBS)
+    set(wxBUILD_SHARED ON CACHE BOOL "Build shared wx libraries" FORCE)
+else()
+    set(wxBUILD_SHARED OFF CACHE BOOL "Build static wx libraries")
+endif()
 set(wxBUILD_USE_STATIC_RUNTIME OFF CACHE BOOL "Use dynamic runtime library")
 set(wxUSE_UNICODE_UTF8 1 CACHE BOOL "Use UTF-8 internally in wxWidgets")
 set(wxUSE_UTF8_LOCALE_ONLY 1 CACHE BOOL "Use UTF-8 locale only in wxWidgets")
@@ -248,12 +263,20 @@ endif()
 
 message(STATUS "Fetching wxWidgets ...")
 
-FetchContent_Declare(
-    wxWidgets
-    URL https://github.com/KeyWorksRW/kwxFetch/releases/download/wx-dev-latest/kwxFetch-source.tar.xz
-    UPDATE_DISCONNECTED FALSE  # Explicitly enable updates
-    DOWNLOAD_NO_PROGRESS TRUE
-)
+if(USE_FORK_WIDGETS)
+    message(NOTICE "Using local wxWidgets fork: ${CMAKE_CURRENT_LIST_DIR}/../../forks/wxWidgets")
+    FetchContent_Declare(
+        wxWidgets
+        SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../forks/wxWidgets"
+    )
+else()
+    FetchContent_Declare(
+        wxWidgets
+        URL https://github.com/KeyWorksRW/kwxFetch/releases/download/wx-dev-latest/kwxFetch-source.tar.xz
+        UPDATE_DISCONNECTED FALSE  # Explicitly enable updates
+        DOWNLOAD_NO_PROGRESS TRUE
+    )
+endif()
 
 message(NOTICE "Configuring wxWidgets...")
 

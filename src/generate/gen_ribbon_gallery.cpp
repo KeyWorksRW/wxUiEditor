@@ -44,7 +44,6 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
                 bmp = GetInternalImage("default");
             }
 
-            // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
             gallery->Append(bmp, wxID_ANY);
         }
     }

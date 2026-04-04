@@ -397,7 +397,7 @@ auto GenerateBitmapCode(const wxue::string& description) -> wxue::string
 
     if (parts[IndexType].starts_with("SVG"))
     {
-        code << "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
+        code << "wxNullBitmap /* SVG images require wxWidgets 3.2.0 or higher */";
         return code;
     }
     if (parts[IndexImage].empty())
@@ -594,8 +594,7 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
     else
     {
         // Code generation differs for 1, 2 or 3+ images, and each of those differ depending on
-        // if there is an Images List function to load the image, and it further differs
-        // depending on if the Project specifies wxWidgets 3.1 as the minimum.
+        // if there is an Images List function to load the image
 
         ASSERT_MSG(description.starts_with("Embed"), "Unknown image type!");
         if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
@@ -1481,9 +1480,6 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
         code.pop_back();  // remove the linefeed
         code.Str(";").Eol();
     }
-
-    // Caller should add the function that uses the bitmaps, add the closing brace, and if
-    // prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
 
     return true;
 }

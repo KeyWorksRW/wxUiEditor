@@ -610,7 +610,6 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
         }
         else
         {
-            // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
             item.append_child("icon").text().set(parts[IndexImage]);
         }
     }

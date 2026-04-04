@@ -69,8 +69,7 @@ auto GenerateBitmapCode(const wxue::string& description) -> wxue::string;
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
-// Returns true if the returned string contains a wxVector. For 3.1 code, this will start
-// with "#if wxCHECK_VERSION(3, 1, 6)" and caller must supply #else and #endif.
+// Returns true if the returned string contains a wxVector.
 auto GenerateBundleCode(const wxue::string& description, wxue::string& code) -> bool;
 
 // Returns the integer value of all style properties for the node. Includes style,
@@ -113,8 +112,7 @@ void GenToolCode(Code& code);
 
 // Returns true if a bitmaps vector was created (C++ or Python)
 //
-// C++ Caller should add the function that uses the bitmaps, add the closing brace, and if
-// prop_wxWidgets_version == 3.1, follow this with a #else and the alternate code.
+// C++ Caller should add the function that uses the bitmaps, add the closing brace
 auto BitmapList(Code& code, GenEnum::PropName prop) -> bool;
 
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////

@@ -44,6 +44,7 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
+#include "version.h"          // Version information for wxUiEditor and wxWidgets
 
 #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
@@ -577,7 +578,7 @@ void MainFrame::ProjectLoaded()
     }
     else if (Project.as_string(prop_wxWidgets_version) == "3.2")
     {
-        Project.set_value(prop_wxWidgets_version, "3.2.0");
+        Project.set_value(prop_wxWidgets_version, WXWIDGETS_VERSION_3_2_0);
     }
 
     m_selected_node = Project.get_ProjectNode()->get_SharedPtr();

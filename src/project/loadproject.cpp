@@ -24,6 +24,7 @@
 #include "node_creator.h"     // NodeCreator class
 #include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
+#include "version.h"          // Version information for wxUiEditor and wxWidgets
 
 #include "../pugixml/pugixml.hpp"  // pugixml parser
 
@@ -1736,7 +1737,7 @@ void ProjectHandler::FinalImportCheck(Node* parent, bool set_line_length)
         parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
         if (!parent->HasValue(prop_wxWidgets_version))
         {
-            parent->set_value(prop_wxWidgets_version, "3.1.0");
+            parent->set_value(prop_wxWidgets_version, MINIMUM_SUPPORTED_WXWIDGETS_VERSION);
         }
     }
 

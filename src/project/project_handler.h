@@ -168,7 +168,6 @@ public:
 
     // Assume major, minor, and patch have 99 possible values.
     // Returns major * 10000 + minor * 100 + patch
-    // E.g., wxWidgets 3.1.6 returns 30106, 3.2.0 returns 30200
     [[nodiscard]] auto get_LangVersion(GenLang language) const -> int;
 
     // const wxue::string& value(GenEnum::PropName name) const { return

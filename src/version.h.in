@@ -2,15 +2,25 @@
 
 // Version numbers are generated in ../CMakeLists.txt
 
+// clang-format off
 #define PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
 #define PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
 #define PROJECT_VERSION_PATCH @PROJECT_VERSION_PATCH@
 #define PROJECT_VERSION_BUILD @PROJECT_VERSION_BUILD@
-#define PROJECT_VERSION_YEAR @PROJECT_VERSION_YEAR@
+#define PROJECT_VERSION_YEAR  @PROJECT_VERSION_YEAR@
+// clang-format on
 
 #define STRINGIFY2(x) #x
 #define STRINGIFY(x)  STRINGIFY2(x)
 
-inline constexpr const char* txtVersion = "wxUiEditor " STRINGIFY(PROJECT_VERSION_MAJOR) "." STRINGIFY(
-    PROJECT_VERSION_MINOR) "." STRINGIFY(PROJECT_VERSION_PATCH) "." STRINGIFY(PROJECT_VERSION_BUILD);
-inline constexpr const char* txtCopyRight = "Copyright (c) 2019-" STRINGIFY(PROJECT_VERSION_YEAR) " KeyWorks Software";
+inline constexpr const char* txtVersion =
+    "wxUiEditor " STRINGIFY(PROJECT_VERSION_MAJOR) "." STRINGIFY(PROJECT_VERSION_MINOR) "." STRINGIFY(
+        PROJECT_VERSION_PATCH) "." STRINGIFY(PROJECT_VERSION_BUILD);
+inline constexpr const char* txtCopyRight =
+    "Copyright (c) 2019-" STRINGIFY(PROJECT_VERSION_YEAR) " KeyWorks Software";
+
+inline constexpr std::string_view WXWIDGETS_VERSION_3_2_0 = "3.2.0";
+inline constexpr std::string_view WXWIDGETS_VERSION_3_3_0 = "3.3.0";
+inline constexpr std::string_view WXWIDGETS_VERSION_3_4_0 = "3.4.0";
+inline constexpr std::string_view WXWIDGETS_VERSION_3_5_0 = "3.5.0";
+inline constexpr std::string_view MINIMUM_SUPPORTED_WXWIDGETS_VERSION = WXWIDGETS_VERSION_3_2_0;

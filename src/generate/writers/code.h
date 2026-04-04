@@ -603,9 +603,9 @@ public:
     // Ruby doesn't need anything to end a conditional statement.
     auto EndConditional() -> Code&;
 
-    // Returns false if enable_dpi_scaling is set to no_dpi_scaling, or property contains a
-    // 'n', or language is C++ and wxWidgets 3.1 is being used, or enable_dpi_scaling is set
-    // to conditional_scaling and the node is a form.
+    // Returns false if enable_dpi_scaling is set to no_dpi_scaling, or property
+    // contains a 'n', or enable_dpi_scaling is set to conditional_scaling and
+    // the node is a form.
     [[nodiscard]] auto is_ScalingEnabled(GenEnum::PropName prop_name,
                                          int enable_dpi_scaling = code::allow_scaling) const
         -> bool;

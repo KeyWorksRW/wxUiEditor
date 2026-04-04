@@ -387,6 +387,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 // REVIEW: [Randalphwa - 06-26-2023] This will only work if we use quotes to
                 // separate items.
                 wxue::string newValue = property->GetValueAsString().utf8_string();
+                // REVIEW: [Randalphwa - 04-04-2026] Is this still true in wxWidgets 3.2.9
+                // and/or 3.3.x?
+
                 // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is
                 // partially clipped. Adding a trailing space prevents this clipping.
 

@@ -162,9 +162,10 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer_5->Add(static_text, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_cpp_version = new wxChoice(page_cpp, wxID_ANY);
-    m_choice_cpp_version->Append("3.1.0");
     m_choice_cpp_version->Append("3.2.0");
     m_choice_cpp_version->Append("3.3.0");
+    m_choice_cpp_version->Append("3.4.0");
+    m_choice_cpp_version->Append("3.5.0");
     m_choice_cpp_version->SetStringSelection("3.2");
     m_choice_cpp_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
     box_sizer_5->Add(m_choice_cpp_version, wxSizerFlags().Border(wxALL));

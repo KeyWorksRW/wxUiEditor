@@ -56,16 +56,6 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             widget->SetBitmapCurrent(node->as_wxBitmapBundle(prop_current));
         }
-
-#if 0
-        // REVIEW: [KeyWorks - 05-30-2022] As of 3.1.7, these don't work property on Windows 10.
-
-        if (node->HasValue(prop_position))
-            widget->SetBitmapPosition(static_cast<wxDirection>(node->as_int(prop_position)));
-
-        if (node->HasValue(prop_margins))
-            widget->SetBitmapMargins(node->as_wxSize(prop_margins));
-#endif
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

@@ -32,19 +32,19 @@ wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                            bool /* is_preview */)
 {
-    auto* gallery = wxStaticCast(wxobject, wxRibbonGallery);
+    wxRibbonGallery* gallery = wxStaticCast(wxobject, wxRibbonGallery);
 
     for (const auto& child: node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_ribbonGalleryItem))
         {
-            auto bmp = child->as_wxBitmap(prop_bitmap);
-            if (!bmp.IsOk())
+            wxBitmap bitmap = child->as_wxBitmap(prop_bitmap);
+            if (!bitmap.IsOk())
             {
-                bmp = GetInternalImage("default");
+                bitmap = GetInternalImage("default");
             }
 
-            gallery->Append(bmp, wxID_ANY);
+            gallery->Append(bitmap, wxID_ANY);
         }
     }
 }
@@ -67,7 +67,7 @@ bool RibbonGalleryGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 
 int RibbonGalleryGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "wxRibbonGallery");
 
     return BaseGenerator::xrc_updated;
@@ -79,8 +79,8 @@ bool RibbonGalleryItemGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("Append(");
 
-    wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                             wxue::TRIM::both);
+    const wxue::StringVector parts(code.node()->as_view(prop_bitmap), BMP_PROP_SEPARATOR,
+                                   wxue::TRIM::both);
     code.GenerateBundleParameter(parts, true);
 
     code.Comma().Add("wxID_ANY").EndFunction();
@@ -90,14 +90,14 @@ bool RibbonGalleryItemGenerator::ConstructionCode(Code& code)
 
 int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "item");
 
     if (!node->HasValue(prop_bitmap))
     {
-        auto bmp = item.append_child("bitmap");
-        bmp.append_attribute("stock_id").set_value("wxART_QUESTION");
-        bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
+        pugi::xml_node bitmap_node = item.append_child("bitmap");
+        bitmap_node.append_attribute("stock_id").set_value("wxART_QUESTION");
+        bitmap_node.append_attribute("stock_client").set_value("wxART_TOOLBAR");
     }
 
     GenXrcBitmap(node, item, xrc_flags);

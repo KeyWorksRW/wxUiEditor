@@ -1,9 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonButtonBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#pragma once
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
@@ -15,21 +17,21 @@ class RibbonButtonBarGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                        bool /* is_preview */) override;
 
-    bool ConstructionCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonButtonGenerator : public BaseGenerator
 {
 public:
-    bool ConstructionCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };

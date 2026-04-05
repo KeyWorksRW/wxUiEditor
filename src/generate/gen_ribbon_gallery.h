@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
 class wxRibbonBarEvent;
@@ -18,18 +20,20 @@ public:
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
                        bool /* is_preview */) override;
 
-    bool ConstructionCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GenXrcObject(Node* /* node */, pugi::xml_node& /* object */,
+                     size_t /* xrc_flags */) override;
 };
 
 class RibbonGalleryItemGenerator : public BaseGenerator
 {
 public:
-    bool ConstructionCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GenXrcObject(Node* /* node */, pugi::xml_node& /* object */,
+                     size_t /* xrc_flags */) override;
 };

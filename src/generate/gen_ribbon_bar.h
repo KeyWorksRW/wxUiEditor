@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
 class wxRibbonBarEvent;
@@ -18,18 +20,19 @@ public:
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
                        bool /* is_preview */) override;
 
-    bool ConstructionCode(Code&) override;
-    bool SettingsCode(Code&) override;
-    bool AfterChildrenCode(Code&) override;
-    bool HeaderCode(Code&) override;
-    bool BaseClassNameCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
+    bool SettingsCode(Code& code) override;
+    bool AfterChildrenCode(Code& code) override;
+    bool HeaderCode(Code& code) override;
+    bool BaseClassNameCode(Code& code) override;
 
-    void GenEvent(Code&, NodeEvent*, const std::string&) override;
+    void GenEvent(Code& code, NodeEvent* event, const std::string& class_name) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    bool GetImports(Node*, std::set<std::string>& /* set_imports */, GenLang language) override;
+    bool GetImports(Node* node, std::set<std::string>& /* set_imports */,
+                    GenLang language) override;
 
 protected:
     void OnPageChanged(wxRibbonBarEvent& event);
@@ -42,16 +45,17 @@ public:
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
                        bool /* is_preview */) override;
 
-    bool ConstructionCode(Code&) override;
-    bool SettingsCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
+    bool SettingsCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    void RequiredHandlers(Node* node, std::set<std::string>& /* handlers */) override;
 
-    bool GetImports(Node*, std::set<std::string>& /* set_imports */, GenLang language) override;
+    bool GetImports(Node* node, std::set<std::string>& /* set_imports */,
+                    GenLang language) override;
 
 protected:
     void OnPageChanged(wxRibbonBarEvent& event);

@@ -24,6 +24,7 @@ jobs:
     runs-on: ${{ inputs.runner-type == 'self-hosted' && fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     env:
       SCCACHE_DIR: ${{github.workspace}}/.sccache
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

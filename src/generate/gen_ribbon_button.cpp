@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonBar -- form and regular
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,24 +32,24 @@ wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                              bool /* is_preview */)
 {
-    auto* btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
+    wxRibbonButtonBar* btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
 
     for (const auto& child: node->get_ChildNodePtrs())
     {
-        auto bundle = child->as_wxBitmapBundle(prop_bitmap);
-        wxBitmap bmp;
+        const wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
+        wxBitmap bitmap;
         if (bundle.IsOk())
         {
-            bmp = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
+            bitmap = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
         }
         else
         {
-            bmp = GetInternalImage("default");
+            bitmap = GetInternalImage("default");
         }
 
-        btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bmp,
-                           child->as_wxString(prop_help),
-                           (wxRibbonButtonKind) child->as_int(prop_kind));
+        std::ignore = btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bitmap,
+                                         child->as_wxString(prop_help),
+                                         static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
     }
 }
 
@@ -72,22 +72,21 @@ bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& se
 int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
                                            size_t /* xrc_flags */)
 {
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "wxRibbonButtonBar");
 
     return BaseGenerator::xrc_updated;
 }
 
-//////////////////////////////////////////  RibbonButtonGenerator
-/////////////////////////////////////////////
+//////////////////////////////////////////  RibbonButtonGenerator ////////////////////////////////
 
 bool RibbonButtonGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("AddButton(").as_string(prop_id).Comma().QuotedString(prop_label);
     code.Comma();
 
-    wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                             wxue::TRIM::both);
+    const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                   wxue::TRIM::both);
     code.GenerateBundleParameter(parts, true);
 
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
@@ -97,15 +96,15 @@ bool RibbonButtonGenerator::ConstructionCode(Code& code)
 
 int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "button");
     ADD_ITEM_PROP(prop_label, "label")
 
     if (!node->HasValue(prop_bitmap))
     {
-        auto bmp = item.append_child("bitmap");
-        bmp.append_attribute("stock_id").set_value("wxART_QUESTION");
-        bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
+        pugi::xml_node bitmap_node = item.append_child("bitmap");
+        bitmap_node.append_attribute("stock_id").set_value("wxART_QUESTION");
+        bitmap_node.append_attribute("stock_client").set_value("wxART_TOOLBAR");
     }
 
     GenXrcBitmap(node, item, xrc_flags);

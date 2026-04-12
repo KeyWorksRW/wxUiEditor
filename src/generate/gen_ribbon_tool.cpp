@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonToolBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,42 +22,45 @@ wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto* widget = new wxRibbonToolBar(wxStaticCast(parent, wxRibbonPanel), wxID_ANY,
                                        DlgPoint(node, prop_pos), DlgSize(node, prop_size));
-    if (node->as_int(prop_min_rows) != 1 || node->as_string(prop_max_rows) != "-1")
+    const int min_rows = node->as_int(prop_min_rows);
+    const int max_rows = node->as_int(prop_max_rows);
+    if (min_rows != 1 || max_rows != -1)
     {
-        auto min_rows = node->as_int(prop_min_rows);
-        auto max_rows = std::max(node->as_int(prop_max_rows), min_rows);
-        widget->SetRows(min_rows, max_rows);
+        const int clamped_max = std::max(max_rows, min_rows);
+        widget->SetRows(min_rows, clamped_max);
     }
 
     return widget;
 }
 
+// Part of Mockup, called after children have been created.
 void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                            bool /* is_preview */)
 {
-    auto* btn_bar = wxStaticCast(wxobject, wxRibbonToolBar);
+    wxRibbonToolBar* btn_bar = wxStaticCast(wxobject, wxRibbonToolBar);
 
     for (const auto& child: node->get_ChildNodePtrs())
     {
         if (child->is_Gen(gen_ribbonSeparator))
         {
-            btn_bar->AddSeparator();
+            std::ignore = btn_bar->AddSeparator();
         }
         else
         {
-            auto bundle = child->as_wxBitmapBundle(prop_bitmap);
-            wxBitmap bmp;
+            const wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
+            wxBitmap bitmap;
             if (bundle.IsOk())
             {
-                bmp = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
+                bitmap = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
             }
             else
             {
-                bmp = GetInternalImage("default");
+                bitmap = GetInternalImage("default");
             }
 
-            btn_bar->AddTool(wxID_ANY, bmp, child->as_wxString(prop_help),
-                             (wxRibbonButtonKind) child->as_int(prop_kind));
+            std::ignore =
+                btn_bar->AddTool(wxID_ANY, bitmap, child->as_wxString(prop_help),
+                                 static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
         }
     }
     btn_bar->Realize();
@@ -73,8 +76,8 @@ bool RibbonToolBarGenerator::ConstructionCode(Code& code)
 
 bool RibbonToolBarGenerator::SettingsCode(Code& code)
 {
-    auto min_rows = code.node()->as_int(prop_min_rows);
-    auto max_rows = code.node()->as_int(prop_max_rows);
+    const int min_rows = code.node()->as_int(prop_min_rows);
+    int max_rows = code.node()->as_int(prop_max_rows);
     if (min_rows != 1 || max_rows != -1)
     {
         max_rows = std::max(max_rows, min_rows);
@@ -109,29 +112,28 @@ std::optional<wxue::string> RibbonToolBarGenerator::GetWarning(Node* node, GenLa
     {
         case GEN_LANG_XRC:
             {
-                wxue::string msg;
-                if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
+                wxue::string message;
+                if (const Node* form = node->get_Form(); form && form->HasValue(prop_class_name))
                 {
-                    msg << form->as_string(prop_class_name) << ": ";
+                    message << form->as_string(prop_class_name) << ": ";
                 }
-                msg << " XRC currently does not support wxRibbonToolBar ";
-                return msg;
+                message << "XRC currently does not support wxRibbonToolBar";
+                return message;
             }
         default:
             return {};
     }
 }
 
-//////////////////////////////////////////  RibbonToolGenerator
-/////////////////////////////////////////////
+//////////////////////////////////////////  RibbonToolGenerator //////////////////////////////////
 
 bool RibbonToolGenerator::ConstructionCode(Code& code)
 {
     code.ParentName().Function("AddTool(").as_string(prop_id);
     code.Comma();
 
-    wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                             wxue::TRIM::both);
+    const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                   wxue::TRIM::both);
     code.GenerateBundleParameter(parts, true);
 
     code.Comma()

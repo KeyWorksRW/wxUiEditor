@@ -303,7 +303,7 @@ namespace
     // Helper constants for bundle generation
 }  // end anonymous namespace
 
-auto Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap) -> void
+void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap)
 {
     wxSize svg_size { -1, -1 };
     if (parts[IndexSize].size())

@@ -21,9 +21,10 @@
 
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto bmp = node->HasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
-    auto* widget = new wxRibbonPage(wxStaticCast(parent, wxRibbonBar), wxID_ANY,
-                                    node->as_wxString(prop_label), bmp, 0);
+    const wxBitmap bitmap =
+        node->HasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
+    wxRibbonPage* widget = new wxRibbonPage(wxStaticCast(parent, wxRibbonBar), wxID_ANY,
+                                            node->as_wxString(prop_label), bitmap, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -39,8 +40,8 @@ bool RibbonPageGenerator::ConstructionCode(Code& code)
     {
         code.Comma();
 
-        wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                                 wxue::TRIM::both);
+        const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                       wxue::TRIM::both);
         code.GenerateBundleParameter(parts, true);
     }
     code.EndFunction();
@@ -66,15 +67,15 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-// ../../wxSnapShot/src/xrc/xh_wizrd.cpp
+// TODO: [Randalphwa - 04-04-2026] wrong path to xrc file
 // ../../../wxWidgets/src/xrc/xh_wizrd.cpp
 // See Handle_page()
 
 int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonPage");
 
@@ -96,7 +97,7 @@ int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 
 wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto* widget =
+    wxRibbonPanel* widget =
         new wxRibbonPanel(wxStaticCast(parent, wxRibbonPage), wxID_ANY,
                           node->as_wxString(prop_label), node->as_wxBitmap(prop_bitmap),
                           DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
@@ -120,8 +121,8 @@ bool RibbonPanelGenerator::ConstructionCode(Code& code)
     {
         code.Comma();
 
-        wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
-                                 wxue::TRIM::both);
+        const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                       wxue::TRIM::both);
         code.GenerateBundleParameter(parts, true);
     }
     code.EndFunction();
@@ -143,9 +144,9 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxRibbonPanel");
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonToolBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +33,7 @@ wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
+// Part of Mockup, called after children have been created.
 void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
                                            bool /* is_preview */)
 {
@@ -42,7 +43,7 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     {
         if (child->is_Gen(gen_ribbonSeparator))
         {
-            btn_bar->AddSeparator();
+            std::ignore = btn_bar->AddSeparator();
         }
         else
         {
@@ -57,8 +58,9 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
                 bitmap = GetInternalImage("default");
             }
 
-            btn_bar->AddTool(wxID_ANY, bitmap, child->as_wxString(prop_help),
-                             static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
+            std::ignore =
+                btn_bar->AddTool(wxID_ANY, bitmap, child->as_wxString(prop_help),
+                                 static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
         }
     }
     btn_bar->Realize();
@@ -123,8 +125,7 @@ std::optional<wxue::string> RibbonToolBarGenerator::GetWarning(Node* node, GenLa
     }
 }
 
-//////////////////////////////////////////  RibbonToolGenerator
-/////////////////////////////////////////////
+//////////////////////////////////////////  RibbonToolGenerator //////////////////////////////////
 
 bool RibbonToolGenerator::ConstructionCode(Code& code)
 {

@@ -47,9 +47,9 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
             bitmap = GetInternalImage("default");
         }
 
-        btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bitmap,
-                           child->as_wxString(prop_help),
-                           static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
+        std::ignore = btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bitmap,
+                                         child->as_wxString(prop_help),
+                                         static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
     }
 }
 

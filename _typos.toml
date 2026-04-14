@@ -7,7 +7,6 @@ extend-exclude = [
     "scripts",
     "src/pugixml/",
     "frozen/",
-    "src/import/rapidjson/",
     "**/*.wxui"
 ]
 

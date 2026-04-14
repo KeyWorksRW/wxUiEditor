@@ -35,8 +35,8 @@ For Unix builds, you currently need a minimum of gcc 15.1 or clang 20 to be able
 
 - All KeyWorks Software code uses the Apache License 2.0 [LICENSE](LICENSE).
 - The frozen code uses the Apache License 2.0 [LICENSE](frozen/LICENSE).
+- The glaze
 - The pugixml code uses the MIT [LICENSE](pugixml/LICENSE.md).
-- The rapidjson code uses the MIT [LICENSE](src/import/rapidjson/license.txt).
 - The wxWidgets code uses the wxWindows [LICENSE](wxWidgets/License.txt).
 
 ## Screen shots

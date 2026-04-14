@@ -294,6 +294,17 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(kwsFrozen)
 
+# glaze is a high speed JSON library
+FetchContent_Declare(
+    glaze
+    GIT_REPOSITORY https://github.com/stephenberry/glaze.git
+    GIT_TAG origin/main
+    GIT_SHALLOW TRUE
+    DOWNLOAD_NO_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(glaze)
+
 # ###################### Libraries and Executables #######################
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates.
 # Specifying the full path and extension means ninja sees this as a normal dependency that
@@ -399,7 +410,7 @@ foreach(component ${wxWidgets_REQUIRED_COMPONENTS})
     list(APPEND wxWidgets_LIBRARIES wx${component})
 endforeach()
 
-target_link_libraries(wxUiEditor PRIVATE ${wxWidgets_LIBRARIES} ${SYSTEM_LIBS})
+target_link_libraries(wxUiEditor PRIVATE ${wxWidgets_LIBRARIES} ${SYSTEM_LIBS} glaze::glaze)
 
 # ###################### Packaging Instructions #######################
 if(UNIX AND NOT APPLE)

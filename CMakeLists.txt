@@ -57,12 +57,6 @@ else()
     message(NOTICE "Building with wxWidgets static libraries")
 endif()
 
-# USE_FORK_WIDGETS: use a local wxWidgets fork instead of fetching the release tarball.
-# The fork is expected at ${CMAKE_CURRENT_LIST_DIR}/../../forks/wxWidgets (relative to this file).
-# This is only meaningful for Debug builds via the ninja-clang-fork preset.
-# Defaults to OFF so all standard/CI builds are unaffected.
-option(USE_FORK_WIDGETS "Build with local wxWidgets fork (../../forks/wxWidgets)" OFF)
-
 option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 
 # Setting these will add a matching compiler definition. What that will enable in the code is
@@ -263,20 +257,12 @@ endif()
 
 message(STATUS "Fetching wxWidgets ...")
 
-if(USE_FORK_WIDGETS)
-    message(NOTICE "Using local wxWidgets fork: ${CMAKE_CURRENT_LIST_DIR}/../../forks/wxWidgets")
-    FetchContent_Declare(
-        wxWidgets
-        SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../forks/wxWidgets"
-    )
-else()
-    FetchContent_Declare(
-        wxWidgets
-        URL https://github.com/KeyWorksRW/kwxFetch/releases/download/wx-dev-latest/kwxFetch-source.tar.xz
-        UPDATE_DISCONNECTED FALSE  # Explicitly enable updates
-        DOWNLOAD_NO_PROGRESS TRUE
-    )
-endif()
+FetchContent_Declare(
+    wxWidgets
+    URL https://github.com/KeyWorksRW/kwxFetch/releases/download/wx-dev-latest/kwxFetch-source.tar.xz
+    UPDATE_DISCONNECTED FALSE  # Explicitly enable updates
+    DOWNLOAD_NO_PROGRESS TRUE
+)
 
 message(NOTICE "Configuring wxWidgets...")
 

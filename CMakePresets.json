@@ -7,13 +7,6 @@
     },
     "configurePresets": [
         {
-            "name": "ninja-msvc",
-            "displayName": "Ninja Multi-Config",
-            "description": "Default build using Ninja Multi-Config generator",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build"
-        },
-        {
             "name": "ninja-clang",
             "displayName": "Ninja Multi-Config (Clang)",
             "description": "Build using Clang toolchain with Ninja Multi-Config generator",
@@ -40,19 +33,11 @@
             }
         },
         {
-            "name": "ninja-clang-fork",
-            "displayName": "Ninja Clang Debug (Local wxWidgets Fork)",
-            "description": "Single-config Clang Debug using local wxWidgets fork for PR testing",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build-fork",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_RC_COMPILER": "llvm-rc",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "BUILD_SHARED_LIBS": "ON",
-                "USE_FORK_WIDGETS": "ON"
-            }
+            "name": "ninja-msvc",
+            "displayName": "Ninja Multi-Config",
+            "description": "Default build using Ninja Multi-Config generator",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build"
         }
     ]
 }

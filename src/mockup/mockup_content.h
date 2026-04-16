@@ -45,10 +45,14 @@ protected:
     // wxWINDOW_VARIANT_NORMAL
     void ResetWindowVariant();
     void MockupSetWindowVariant(wxWindowVariant variant);
-    void CreateChildren(Node*, wxWindow* parent, wxObject* parentNode,
+    void CreateChildren(Node* node, wxWindow* parent, wxObject* parent_object,
                         wxBoxSizer* parent_sizer = nullptr);
 
 private:
+    void SelectBookPage(Node* node);
+    void SelectRibbonNode(Node* node);
+    void ActivateRibbonPage(Node* ribbon_page_node);
+
     MockupParent* m_mockupParent;
     wxBoxSizer* m_parent_sizer { nullptr };
 

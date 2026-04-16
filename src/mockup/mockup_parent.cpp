@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Top-level MockUp Parent window
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,7 @@
 */
 
 #include "gen_enums.h"
+
 #if defined(_WIN32)
     #include <wx/msw/uxtheme.h>
 #endif  // _WIN32
@@ -49,6 +50,10 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
 
     // Make the background around the window darker to enhance the contrast with the form
+
+    // BUG: [Randalphwa - 04-16-2026] ChangeLightness(100) is a no-op. In addition, this is changing
+    // the alpha of the pixel. An alternative would be to convert to HSL, set the luminance to 100,
+    // and convert back to RGB.
     SetOwnBackgroundColour(
         wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE).ChangeLightness(100));
 
@@ -59,29 +64,29 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
 
     m_panelTitleBar = new wxPanel(m_MockupWindow);
     m_panelTitleBar->SetMinSize(wxSize(46, 26));
-    m_panelTitleBar->SetBackgroundColour(wxColour(127, 188, 248));
+    std::ignore = m_panelTitleBar->SetBackgroundColour(wxColour(127, 188, 248));
 
     auto* title_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_text_title = new wxStaticText(m_panelTitleBar, wxID_ANY, wxEmptyString);
-    title_sizer->Add(m_text_title, wxSizerFlags(1).Center().Border());
-    auto* bmp =
+    std::ignore = title_sizer->Add(m_text_title, wxSizerFlags(1).Center().Border());
+    auto* close_bmp =
         new wxStaticBitmap(m_panelTitleBar, wxID_ANY,
                            wxBitmap(LoadHeaderImage(title_close_png, sizeof(title_close_png))));
-    title_sizer->Add(bmp, wxSizerFlags());
+    std::ignore = title_sizer->Add(close_bmp, wxSizerFlags());
 
     m_panelTitleBar->SetSizerAndFit(title_sizer);
 
     m_panelContent = new MockupContent(m_MockupWindow, this);
 
-    form_sizer->Add(m_panelTitleBar, wxSizerFlags().Expand());
-    form_sizer->Add(m_panelContent, wxSizerFlags(1).Expand());
+    std::ignore = form_sizer->Add(m_panelTitleBar, wxSizerFlags().Expand());
+    std::ignore = form_sizer->Add(m_panelContent, wxSizerFlags(1).Expand());
 
     m_MockupWindow->Hide();
 
     m_MockupWindow->SetSizer(form_sizer);
     m_MockupWindow->Layout();
-    mockup_sizer->Add(m_MockupWindow,
-                      wxSizerFlags().Border(wxALL, wxSizerFlags::GetDefaultBorder()));
+    std::ignore = mockup_sizer->Add(m_MockupWindow,
+                                    wxSizerFlags().Border(wxALL, wxSizerFlags::GetDefaultBorder()));
 
     SetSizerAndFit(mockup_sizer);
 
@@ -134,7 +139,7 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
 // and/or deleted, etc.
 void MockupParent::CreateContent()
 {
-    wxWindowUpdateLocker freeze(this);
+    const wxWindowUpdateLocker freeze(this);
 
     // Just in case this gets called when we aren't being shown, only clear the panel if we haven't
     // cleared it already.
@@ -157,7 +162,7 @@ void MockupParent::CreateContent()
     }
 
 #if defined(_DEBUG)
-    if (wxGetApp().isFireCreationMsgs())
+    if (App::isFireCreationMsgs())
     {
         MSG_INFO("Mockup window recreated.");
     }
@@ -168,9 +173,10 @@ void MockupParent::CreateContent()
 
     if (m_form->HasValue(prop_background_colour))
     {
-        m_panelContent->SetBackgroundColour(m_form->as_wxColour(prop_background_colour));
+        std::ignore =
+            m_panelContent->SetBackgroundColour(m_form->as_wxColour(prop_background_colour));
     }
-    else if (m_form->is_Type(GenEnum::type_frame_form))
+    else if (m_form->is_Type(type_frame_form))
     {
         m_panelContent->SetOwnBackgroundColour(
             wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
@@ -181,7 +187,7 @@ void MockupParent::CreateContent()
     }
     else
     {
-#ifdef __WXGTK__
+#if defined(__WXGTK__)
         wxVisualAttributes attribs = wxToolBar::GetClassDefaultAttributes();
         m_panelContent->SetOwnBackgroundColour(attribs.colBg);
 #else
@@ -200,13 +206,13 @@ void MockupParent::CreateContent()
         m_panelTitleBar->Hide();
     }
 
-    auto maxSize = m_form->as_wxSize(prop_maximum_size);
+    const wxSize maxSize = m_form->as_wxSize(prop_maximum_size);
     m_MockupWindow->SetMaxSize(maxSize);
 
     m_panelContent->CreateAllGenerators();
     m_AreNodesCreated = true;
 
-    auto min_size = m_form->as_wxSize(prop_minimum_size);
+    wxSize min_size = m_form->as_wxSize(prop_minimum_size);
     min_size.IncTo(m_panelContent->GetSize());
 
     if (m_form->HasValue(prop_size))
@@ -221,7 +227,7 @@ void MockupParent::CreateContent()
     if (m_panelTitleBar->IsShown())
     {
         // The title bar should be no wider than the content window.
-        auto size = m_panelTitleBar->GetSize();
+        wxSize size = m_panelTitleBar->GetSize();
         size.SetWidth(min_size.GetWidth());
         m_panelTitleBar->SetSize(size);
         // Until Fit() is called, the height won't be correct.
@@ -237,8 +243,8 @@ void MockupParent::CreateContent()
     {
         if (m_form->HasValue(prop_title))
         {
-            wxClientDC dc(m_MockupWindow);
-            auto text_size = dc.GetTextExtent(m_form->as_string(prop_title));
+            const wxClientDC client_dc(m_MockupWindow);
+            const wxSize text_size = client_dc.GetTextExtent(m_form->as_string(prop_title));
             min_size.x = text_size.x;
         }
         else
@@ -262,7 +268,7 @@ void MockupParent::CreateContent()
 void MockupParent::OnNodeDeleted(CustomEvent& /* event */)
 {
     // Don't redraw while the node is being deleted.
-    wxWindowUpdateLocker freeze(this);
+    const wxWindowUpdateLocker freeze(this);
 
     // When we get the deleted event, the node being deleted is still selected, which can cause
     // a crash if we try to process it. After the node is deleted, a new node will be selected
@@ -296,17 +302,12 @@ void MockupParent::OnNodeSelected(CustomEvent& event)
     if (wxGetFrame().getSelectedForm() != m_form)
     {
         m_isIgnoreSelection = false;
+        CreateContent();
     }
-
-    if (m_isIgnoreSelection)
+    else if (m_isIgnoreSelection)
     {
         m_isIgnoreSelection = false;
         return;
-    }
-
-    if (wxGetFrame().getSelectedForm() != m_form)
-    {
-        CreateContent();
     }
 
     m_panelContent->OnNodeSelected(event.getNode());
@@ -355,7 +356,7 @@ wxObject* MockupParent::Get_wxObject(Node* node)
 
 wxObject* MockupParent::get_Child(wxObject* wxobject, size_t childIndex)
 {
-    if (auto* node = getNode(wxobject); node)
+    if (const Node* node = getNode(wxobject); node)
     {
         if (childIndex >= node->get_ChildCount())
         {
@@ -373,7 +374,7 @@ wxObject* MockupParent::get_ParentNode(wxObject* wxobject)
 {
     ASSERT(wxobject);
 
-    if (auto* node = getNode(wxobject); node)
+    if (const Node* node = getNode(wxobject); node)
     {
         return Get_wxObject(node->get_Parent());
     }
@@ -387,7 +388,7 @@ wxObject* MockupParent::get_ParentNode(wxObject* wxobject)
 
 // These properties do not affect the component's display in the Mockup window, so changes to them are ignored.
 
-static const PropName NonUiProps[] = {
+static const auto NonUiProps = std::to_array<PropName>({
 
     prop_base_file,
     prop_checkbox_var_name,
@@ -429,7 +430,7 @@ static const PropName NonUiProps[] = {
     prop_visited_color,
     prop_window_name,
 
-};
+});
 
 // clang-format on
 
@@ -440,16 +441,16 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         return;
     }
 
-    auto* prop = event.GetNodeProperty();
+    NodeProperty* prop = event.GetNodeProperty();
     if (prop->isProp(prop_tooltip))
     {
-        if (auto* node = wxGetFrame().getSelectedNode(); node)
+        if (Node* node = wxGetFrame().getSelectedNode(); node)
         {
             if (node->is_StaticBoxSizer())
             {
                 node->get_Generator()->OnPropertyChange(Get_wxObject(node), node, prop);
             }
-            else if (auto* window = wxDynamicCast(Get_wxObject(node), wxWindow); window)
+            else if (wxWindow* window = wxDynamicCast(Get_wxObject(node), wxWindow); window)
             {
                 window->SetToolTip(prop->as_wxString());
             }
@@ -459,14 +460,14 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     if (prop->isProp(prop_initial) || prop->isProp(prop_min) || prop->isProp(prop_max))
     {
-        if (auto* node = wxGetFrame().getSelectedNode(); node)
+        if (Node* node = wxGetFrame().getSelectedNode(); node)
         {
             node->get_Generator()->OnPropertyChange(Get_wxObject(node), node, prop);
         }
         return;
     }
 
-    for (auto iter: NonUiProps)
+    for (const auto iter: NonUiProps)
     {
         if (prop->isProp(iter))
         {
@@ -491,11 +492,11 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     bool is_updated = false;
 
-    if (auto* node = wxGetFrame().getSelectedNode(); node)
+    if (Node* node = wxGetFrame().getSelectedNode(); node)
     {
         if (prop->isProp(prop_disabled))
         {
-            auto* window = Get_wxObject(node);
+            const wxObject* window = Get_wxObject(node);
             if (!window)
             {
                 // For some content such as FormPanel, the selected node doesn't have a window that
@@ -514,24 +515,27 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             return;
         }
 
-        auto* generator = node->get_Generator();
+        BaseGenerator* generator = node->get_Generator();
         if (generator && generator->OnPropertyChange(Get_wxObject(node), node, prop))
         {
-            wxWindowUpdateLocker freeze(this);
+            const wxWindowUpdateLocker freeze(this);
             // You have to reset minimum size to allow the window to shrink
             m_panelContent->SetMinSize(wxSize(-1, -1));
             m_panelContent->Fit();
 
-            auto new_size = m_panelContent->GetSize();
+            wxSize new_size = m_panelContent->GetSize();
+            // REVIEW: [Randalphwa - 04-16-2026] Currently, this is always true. It's only here in
+            // case we want to mockup a form without a title bar.
             if (m_panelTitleBar)
             {
-                auto size_title = m_panelTitleBar->GetSize();
+                const wxSize size_title = m_panelTitleBar->GetSize();
                 new_size.y += size_title.y;
             }
 
             if (m_IsMagnifyWindow && !(m_form->is_Gen(gen_RibbonBar) ||
                                        m_form->is_Gen(gen_ToolBar) || m_form->is_Gen(gen_MenuBar)))
             {
+                // BUG: [Randalphwa - 04-16-2026] m_size_magnified is never used
                 new_size.IncTo(m_size_magnified);
             }
 

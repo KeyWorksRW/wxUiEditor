@@ -21,9 +21,9 @@ class MockupParent : public wxScrolled<wxPanel>
 public:
     MockupParent(wxWindow* parent, MainFrame* frame);
 
-    Node* getSelectedForm() { return m_form; }
-    bool IsShowingHidden() { return m_ShowHiddenControls; }
-    bool IsMagnified() { return m_IsMagnifyWindow; }
+    Node* getSelectedForm() const { return m_form; }
+    bool IsShowingHidden() const { return m_ShowHiddenControls; }
+    bool IsMagnified() const { return m_IsMagnifyWindow; }
     void ShowHiddenControls(bool show);
     void MagnifyWindow(bool show);
     void CreateContent();
@@ -35,7 +35,7 @@ public:
     Node* getNode(wxObject* wxobject);
     wxObject* Get_wxObject(Node* node);
 
-    MockupContent* GetMockupContent() { return m_panelContent; }
+    MockupContent* GetMockupContent() const { return m_panelContent; }
 
     wxObject* get_Child(wxObject* wxobject, size_t childIndex);
     wxObject* get_ParentNode(wxObject* wxobject);
@@ -43,8 +43,7 @@ public:
 protected:
     void OnNodeSelected(CustomEvent& event);
     void OnNodeDeleted(CustomEvent& event);
-    void OnReCreateContent(CustomEvent&);
-    void OnNodePropModified(CustomEvent&);
+    void OnNodePropModified(CustomEvent& event);
 
 private:
     wxPanel* m_panelTitleBar;
@@ -52,7 +51,7 @@ private:
 
     wxStaticText* m_text_title;
 
-    Node* m_form;
+    Node* m_form { nullptr };
 
     // This is the panel that emulates the form, and hosts the title bar and content panels.
     wxPanel* m_MockupWindow;

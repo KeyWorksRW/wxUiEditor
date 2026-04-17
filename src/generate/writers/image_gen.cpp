@@ -9,6 +9,8 @@
 
 #include <array>
 #include <format>
+#include <span>
+#include <tuple>
 #include <vector>
 
 #include "image_gen.h"
@@ -25,8 +27,21 @@
 #include "wxue_namespace/wxue_string.h"         // wxue::string
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
+// Mask to extract the actual array size from the low 32 bits (high 32 bits store SVG dimensions)
+constexpr size_t ARRAY_SIZE_MASK = 0xFFFFFFFF;
+constexpr int SVG_SIZE_SHIFT = 32;
+
+// Prefix sizes for base64-encoded lines (tab + quote characters)
+constexpr size_t PYTHON_PREFIX_SIZE = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
+constexpr size_t RUBY_PREFIX_SIZE = 6;    // 2 for tab, 2 for quotes, 2 for " \" suffix
+constexpr size_t RESERVE_PADDING = 4;
+
+// Base64 encoding: 3 input bytes produce 4 output characters
+constexpr size_t BASE64_INPUT_GROUP = 3;
+constexpr size_t BASE64_OUTPUT_GROUP = 4;
+
 // Generate code after the constructor for embedded images not defined in the gen_Images node.
-auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
+void BaseCodeGenerator::WriteImageConstruction(Code& code)
 {
     code.clear();
 
@@ -52,9 +67,9 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
             }
 
             // SVG images store the original size in the high 32 bits
-            const size_t max_pos = (iter_array->base_image().array_size & 0xFFFFFFFF);
+            const size_t max_pos = (iter_array->base_image().array_size & ARRAY_SIZE_MASK);
 
-            if (iter_array->base_image().filename.size())
+            if (!iter_array->base_image().filename.empty())
             {
                 code.Eol(eol_if_needed).Str("// ").Str(iter_array->base_image().filename);
             }
@@ -94,7 +109,7 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
             {
                 continue;
             }
-            if (iter_array->base_image().filename.size())
+            if (!iter_array->base_image().filename.empty())
             {
                 code.Eol().Str("# ").Str(iter_array->base_image().filename);
             }
@@ -109,10 +124,10 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
             }
             m_source->writeLine(code);
             code.clear();
-            auto encoded =
-                base64_encode(iter_array->base_image().array_data.data(),
-                              iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_PYTHON);
-            if (encoded.size())
+            std::vector<std::string> encoded = base64_encode(
+                iter_array->base_image().array_data.data(),
+                iter_array->base_image().array_size & ARRAY_SIZE_MASK, GEN_LANG_PYTHON);
+            if (!encoded.empty())
             {
                 encoded.back() += ")";
                 m_source->writeLine(encoded);
@@ -124,7 +139,7 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
             {
                 continue;
             }
-            if (iter_array->base_image().filename.size())
+            if (!iter_array->base_image().filename.empty())
             {
                 code.Eol().Str("# ").Str(iter_array->base_image().filename);
             }
@@ -139,15 +154,17 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
             }
             m_source->writeLine(code);
             code.clear();
-            auto encoded =
+            std::vector<std::string> encoded =
                 base64_encode(iter_array->base_image().array_data.data(),
-                              iter_array->base_image().array_size & 0xFFFFFFFF, GEN_LANG_RUBY);
-            if (encoded.size())
+                              iter_array->base_image().array_size & ARRAY_SIZE_MASK, GEN_LANG_RUBY);
+            if (!encoded.empty())
             {
-                // Remove the trailing '\' character
-                encoded.back().pop_back();
-                // and the now trailing space
-                encoded.back().pop_back();
+                // Remove the trailing " \" suffix
+                if (encoded.back().size() >= 2)
+                {
+                    encoded.back().pop_back();
+                    encoded.back().pop_back();
+                }
                 encoded.back() += ")";
                 m_source->writeLine(encoded);
             }
@@ -160,7 +177,7 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
         code.Eol() += "}";
     }
 
-    if (code.size())
+    if (!code.empty())
     {
         m_source->writeLine(code);
     }
@@ -168,7 +185,7 @@ auto BaseCodeGenerator::WriteImageConstruction(Code& code) -> void
 
 // clang-format off
 
-std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
+const std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
 
     { GEN_LANG_CPLUSPLUS, prop_cpp_line_length },
     { GEN_LANG_PYTHON, prop_python_line_length },
@@ -177,21 +194,23 @@ std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
 
 // clang-format on
 
-auto base64_encode(unsigned char const* data, size_t data_size, GenLang language)
-    -> std::vector<std::string>
+std::vector<std::string> base64_encode(unsigned char const* data, size_t data_size,
+                                       GenLang language)
 {
-    size_t tab_quote_prefix = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
+    size_t tab_quote_prefix = PYTHON_PREFIX_SIZE;
     if (language == GEN_LANG_RUBY)
     {
-        tab_quote_prefix = 6;  // 2 for tab, 2 for quotes, 2 for " \" suffix
+        tab_quote_prefix = RUBY_PREFIX_SIZE;
     }
     GenEnum::PropName prop = prop_python_line_length;
-    if (auto result = map_lang_to_prop.find(language); result != map_lang_to_prop.end())
+    if (const std::map<GenLang, GenEnum::PropName>::const_iterator result =
+            map_lang_to_prop.find(language);
+        result != map_lang_to_prop.end())
     {
         prop = result->second;
     }
 
-    size_t line_length = Project.as_size_t(prop) - tab_quote_prefix;
+    const size_t line_length = Project.as_size_t(prop) - tab_quote_prefix;
 
     constexpr auto base64_chars = std::to_array(
         { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -202,7 +221,7 @@ auto base64_encode(unsigned char const* data, size_t data_size, GenLang language
     std::vector<std::string> result;
 
     std::string line;
-    line.reserve(line_length + 4);
+    line.reserve(line_length + RESERVE_PADDING);
     std::array<unsigned char, 3> char_array_3 {};
     std::array<unsigned char, 4> char_array_4 {};
 
@@ -226,8 +245,8 @@ auto base64_encode(unsigned char const* data, size_t data_size, GenLang language
         char_array_4[3] = char_array_3[2] & MASK_3F;
     };
 
-    std::string line_begin = "\tb\"";
-    std::string line_end = "\"";
+    std::string_view line_begin;
+    std::string_view line_end;
     if (language == GEN_LANG_PYTHON)
     {
         line_begin = "\tb\"";
@@ -242,11 +261,11 @@ auto base64_encode(unsigned char const* data, size_t data_size, GenLang language
     line = line_begin;
     size_t line_pos = line_begin.size();
     size_t a3_pos = 0;
-    for (size_t idx = 0; idx < data_size; ++idx)
+    for (const unsigned char byte: std::span<const unsigned char>(data, data_size))
     {
-        char_array_3.at(a3_pos) = data[idx];
+        char_array_3.at(a3_pos) = byte;
         ++a3_pos;
-        if (a3_pos == 3)
+        if (a3_pos == BASE64_INPUT_GROUP)
         {
             a3_to_a4();
 
@@ -256,7 +275,7 @@ auto base64_encode(unsigned char const* data, size_t data_size, GenLang language
             line += base64_chars.at(char_array_4.at(3));
 
             a3_pos = 0;
-            line_pos += 4;
+            line_pos += BASE64_OUTPUT_GROUP;
             if (line_pos >= line_length)
             {
                 line += line_end;
@@ -269,7 +288,7 @@ auto base64_encode(unsigned char const* data, size_t data_size, GenLang language
 
     if (a3_pos)
     {
-        for (size_t index = a3_pos; index < 3; index++)
+        for (size_t index = a3_pos; index < BASE64_INPUT_GROUP; ++index)
         {
             char_array_3.at(index) = '\0';
         }
@@ -280,7 +299,7 @@ auto base64_encode(unsigned char const* data, size_t data_size, GenLang language
         {
             line += base64_chars.at(char_array_4.at(a4_pos));
         }
-        while (a3_pos++ < 3)
+        while (a3_pos++ < BASE64_INPUT_GROUP)
         {
             line += '=';
         }
@@ -298,22 +317,18 @@ auto base64_encode(unsigned char const* data, size_t data_size, GenLang language
 //
 // **************************************************************************************
 
-namespace
-{
-    // Helper constants for bundle generation
-}  // end anonymous namespace
-
 void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap)
 {
     wxSize svg_size { -1, -1 };
-    if (parts[IndexSize].size())
+    if (!parts[IndexSize].empty())
     {
         svg_size = GetSizeInfo(parts[IndexSize]);
     }
 
     if (is_cpp())
     {
-        if (auto function_name = ProjectImages.GetBundleFuncName(&parts); function_name.size())
+        if (wxue::string function_name = ProjectImages.GetBundleFuncName(&parts);
+            !function_name.empty())
         {
             // The function name includes the size, but we need to replace the size with a DIP
             // version.
@@ -332,7 +347,7 @@ void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap)
         }
     }
 
-    auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+    EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
     if (!embed)
     {
         MSG_WARNING(wxue::string() << parts[IndexImage] << " not embedded!");
@@ -342,10 +357,10 @@ void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap)
 
     if (is_cpp())
     {
-        wxue::string name = "wxue_img::" + embed->base_image().array_name;
+        const wxue::string name = "wxue_img::" + embed->base_image().array_name;
         Eol() << "\twxueBundleSVG(" << name << ", "
-              << (to_size_t) (embed->base_image().array_size & 0xFFFFFFFF) << ", ";
-        itoa((to_size_t) (embed->base_image().array_size >> 32)).Comma();
+              << (to_size_t) (embed->base_image().array_size & ARRAY_SIZE_MASK) << ", ";
+        itoa((to_size_t) (embed->base_image().array_size >> SVG_SIZE_SHIFT)).Comma();
         if (get_bitmap)
         {
             FormFunction("FromDIP(").Add("wxSize(").itoa(svg_size.x).Comma().itoa(svg_size.y) +=
@@ -408,7 +423,7 @@ void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap)
     }
 }
 
-auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -> void
+void Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap)
 {
     Class("wxArtProvider");
     if (get_bitmap)
@@ -422,7 +437,7 @@ auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -
 
     wxue::string art_id(parts[IndexArtID]);
     wxue::string art_client;
-    if (const auto pos = art_id.find('|'); wxue::is_found(pos))
+    if (const size_t pos = art_id.find('|'); wxue::is_found(pos))
     {
         art_client = art_id.subview(pos + 1);
         art_id.erase(pos);
@@ -439,7 +454,7 @@ auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -
 
     // Note that current documentation states that the client is required, but the header file
     // says otherwise
-    if (art_client.size())
+    if (!art_client.empty())
     {
         Comma();
         if (is_cpp())
@@ -455,17 +470,18 @@ auto Code::GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap) -
     {
         Comma();
         CheckLineLength(sizeof("wxSize(999, 999)))"));
-        auto size = GetSizeInfo(parts[IndexSize]);
+        const wxSize size = GetSizeInfo(parts[IndexSize]);
         WxSize(size, code::no_scaling);
     }
     *this << ')';
 }
 
-auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap) -> void
+void Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
 {
     if (is_cpp())
     {
-        if (auto function_name = ProjectImages.GetBundleFuncName(&parts); function_name.size())
+        if (const wxue::string function_name = ProjectImages.GetBundleFuncName(&parts);
+            !function_name.empty())
         {
             Str(function_name);
             if (get_bitmap)
@@ -479,11 +495,11 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
         }
     }
 
-    const auto* bundle = ProjectImages.GetPropertyImageBundle(&parts);
+    const ImageBundle* bundle = ProjectImages.GetPropertyImageBundle(&parts);
     if (!bundle || bundle->lst_filenames.empty())
     {
 #if defined(_DEBUG)
-        auto msg =
+        const std::string msg =
             std::format("Missing bundle for {} in {}:{} ({})", std::string_view(parts[IndexImage]),
                         m_node->get_Form()->as_view(prop_class_name),
                         m_node->as_view(prop_var_name), GenLangToString(m_language));
@@ -494,7 +510,7 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
         return;
     }
 
-    auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+    EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
     if (!embed)
     {
         FAIL_MSG(wxue::string("Missing embed for ") << bundle->lst_filenames[0]);
@@ -542,10 +558,6 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
     if (is_python())
     {
         path = MakePythonPath(node());
-    }
-    else if (is_ruby())
-    {
-        path = MakeRubyPath(node());
     }
 
     wxue::string name(bundle->lst_filenames[0]);
@@ -602,9 +614,13 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
             name = "wxue_img::" + embed->base_image().array_name;
             *this << name << ", sizeof(" << name << ")), wxueImage(";
 
-            if (auto* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
+                embed2)
             {
                 name = "wxue_img::" + embed2->base_image().array_name;
+                // REVIEW: [Randalphwa - 04-17-2026] Code review flagged this as a suspicious call
+                // given that it isn't used in similar code elsewhere. Need to verify that this is
+                // the correct thing to do here, and if so, document why.
                 name.remove_extension();
                 *this << name << ", sizeof(" << name << ")))";
             }
@@ -618,7 +634,8 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
             CheckLineLength(embed->base_image().array_name.size() + sizeof(".Bitmap)"));
             AddPythonImageName(embed);
             *this += ".Bitmap";
-            if (auto* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed2)
+            if (EmbeddedImage* embed2 = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]);
+                embed2)
             {
                 Comma().CheckLineLength(embed2->base_image().array_name.size() +
                                         sizeof(".Bitmap)"));
@@ -656,10 +673,10 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
             {
                 wxue::string name_img(iter.filename());
                 name_img.remove_extension();
-                name_img.Replace(".", "_", true);
+                std::ignore = name_img.Replace(".", "_", true);
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto* embed_img = ProjectImages.GetEmbeddedImage(iter);
+                    EmbeddedImage* embed_img = ProjectImages.GetEmbeddedImage(iter);
                     if (embed_img)
                     {
                         name_img = "wxue_img::" + embed_img->base_image().array_name;
@@ -674,7 +691,7 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
         }
         else if (is_python())
         {
-            bool is_xpm = (parts[IndexType].is_sameas("XPM"));
+            const bool is_xpm = (parts[IndexType].is_sameas("XPM"));
 
             *this += "wx.BitmapBundle.FromBitmaps([ ";
             bool needs_comma = false;
@@ -687,7 +704,8 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
                 }
 
                 bool is_embed_success = false;
-                if (auto* embed_img = ProjectImages.GetEmbeddedImage(iter); embed_img)
+                if (const EmbeddedImage* embed_img = ProjectImages.GetEmbeddedImage(iter);
+                    embed_img)
                 {
                     AddPythonImageName(embed_img);
                     *this += ".Bitmap";
@@ -697,7 +715,6 @@ auto Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
 
                 if (!is_embed_success)
                 {
-                    wxue::string name_img(iter);
                     name.make_absolute();
                     name.make_relative(path);
                     name.backslashestoforward();
@@ -740,7 +757,7 @@ void Code::GenerateXpmBitmap(const wxue::StringVector& parts, bool /* get_bitmap
     }
     else if (is_python())
     {
-        auto path = MakePythonPath(node());
+        const wxue::string path = MakePythonPath(node());
         name.make_absolute();
         if (!name.file_exists())
         {
@@ -757,7 +774,7 @@ void Code::GenerateXpmBitmap(const wxue::StringVector& parts, bool /* get_bitmap
     }
     else if (is_ruby())
     {
-        auto path = MakeRubyPath(node());
+        const wxue::string path = MakeRubyPath(node());
         name.make_absolute();
         if (!name.file_exists())
         {

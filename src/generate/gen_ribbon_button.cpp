@@ -36,20 +36,15 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
 
     for (const auto& child: node->get_ChildNodePtrs())
     {
-        const wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
-        wxBitmap bitmap;
-        if (bundle.IsOk())
+        wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
+        if (!bundle.IsOk())
         {
-            bitmap = bundle.GetBitmapFor(wxGetMainFrame()->getWindow());
-        }
-        else
-        {
-            bitmap = GetInternalImage("default");
+            bundle = GetSvgImage("unknown");
         }
 
-        std::ignore = btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bitmap,
-                                         child->as_wxString(prop_help),
-                                         static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
+        btn_bar->AddButton(wxID_ANY, child->as_wxString(prop_label), bundle,
+                           child->as_wxString(prop_help),
+                           static_cast<wxRibbonButtonKind>(child->as_int(prop_kind)));
     }
 }
 

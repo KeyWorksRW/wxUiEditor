@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <algorithm>              // std::clamp
 #include <wx/image.h>             // wxImage
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 #include <wx/ribbon/gallery.h>    // Ribbon control which displays a gallery of items to choose from
@@ -21,6 +22,11 @@
 
 #include "gen_ribbon_gallery.h"
 
+// Standard Windows Ribbon gallery images range from 16x16 (96 dpi) to 64x64 (192 dpi).
+// 128 provides generous headroom for very high DPI displays.
+static constexpr int MAX_GALLERY_IMAGE_DIM = 128;
+static constexpr int MIN_GALLERY_IMAGE_DIM = 8;
+
 wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto* widget = new wxRibbonGallery(wxStaticCast(parent, wxRibbonPanel), wxID_ANY,
@@ -36,7 +42,16 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpa
                                            bool /* is_preview */)
 {
     wxRibbonGallery* gallery = wxStaticCast(wxobject, wxRibbonGallery);
-    wxSize common_size = wxDefaultSize;
+    wxSize common_size = node->as_wxSize(prop_gallery_size);
+
+    // Sanitize: disallow negative values, and cap each dimension to a reasonable maximum.
+    if (common_size != wxDefaultSize)
+    {
+        common_size.SetWidth(
+            std::clamp(common_size.GetWidth(), MIN_GALLERY_IMAGE_DIM, MAX_GALLERY_IMAGE_DIM));
+        common_size.SetHeight(
+            std::clamp(common_size.GetHeight(), MIN_GALLERY_IMAGE_DIM, MAX_GALLERY_IMAGE_DIM));
+    }
 
     auto scale_to_common = [&](const wxBitmap& bmp) -> wxBitmap
     {
@@ -49,34 +64,22 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpa
     {
         if (child->is_Gen(gen_ribbonGalleryItem))
         {
-            // REVIEW: [Randalphwa - 04-07-2026] We've got a big problem if the very first gallery
-            // bitmap in invalid -- we are then going to set *all* the gallery items to that default
-            // bitmap's size which is clearly wrong...
-
-            wxBitmap bitmap = child->as_wxBitmap(prop_bitmap);
-            if (!bitmap.IsOk())
+            wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
+            if (!bundle.IsOk())
             {
-                bitmap = GetInternalImage("default");
-                const wxSize bitmap_size = bitmap.GetSize();
-                if (bitmap_size != common_size)
-                {
-                    bitmap = scale_to_common(bitmap);
-                }
+                bundle = GetSvgImage("unknown", common_size);
+                const wxSize bitmap_size = bundle.GetBitmap(wxDefaultSize).GetSize();
             }
 
             // Gallery items all need to be the same size.
 
-            const wxSize bitmap_size = bitmap.GetSize();
-            if (common_size == wxDefaultSize && bitmap.IsOk())
+            const wxSize bitmap_size = bundle.GetBitmap(wxDefaultSize).GetSize();
+            if (bitmap_size != common_size)
             {
-                common_size = bitmap_size;
-            }
-            else if (bitmap_size != common_size)
-            {
-                bitmap = scale_to_common(bitmap);
+                bundle = wxBitmapBundle(scale_to_common(bundle.GetBitmap(wxDefaultSize)));
             }
 
-            gallery->Append(bitmap, wxID_ANY);
+            gallery->Append(bundle, wxID_ANY);
         }
     }
 }

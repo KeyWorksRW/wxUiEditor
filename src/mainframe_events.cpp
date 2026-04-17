@@ -189,7 +189,7 @@ auto MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
 auto MainFrame::OnBrowseDocs(wxCommandEvent& /* event unused */) -> void
 {
     wxString url;
-    url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
+    url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < CPP_WIDGETS_VERSION_3_3_0) ?
               "https://docs.wxwidgets.org/3.2.8" :
               "https://docs.wxwidgets.org/latest";
 

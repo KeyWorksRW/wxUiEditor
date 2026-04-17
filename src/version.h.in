@@ -24,3 +24,17 @@ inline constexpr std::string_view WXWIDGETS_VERSION_3_3_0 = "3.3.0";
 inline constexpr std::string_view WXWIDGETS_VERSION_3_4_0 = "3.4.0";
 inline constexpr std::string_view WXWIDGETS_VERSION_3_5_0 = "3.5.0";
 inline constexpr std::string_view MINIMUM_SUPPORTED_WXWIDGETS_VERSION = WXWIDGETS_VERSION_3_2_0;
+
+// Version encoding constants for get_LangVersion()
+// Assumes major, minor, and patch each have 99 possible values
+inline constexpr int VERSION_MAJOR_MULTIPLIER = 10000;
+inline constexpr int VERSION_MINOR_MULTIPLIER = 100;
+
+inline constexpr int CPP_WIDGETS_VERSION_3_2_0 =
+    (3 * VERSION_MAJOR_MULTIPLIER) + (2 * VERSION_MINOR_MULTIPLIER) + 0;
+inline constexpr int CPP_WIDGETS_VERSION_3_3_0 =
+    (3 * VERSION_MAJOR_MULTIPLIER) + (3 * VERSION_MINOR_MULTIPLIER) + 0;
+inline constexpr int CPP_WIDGETS_VERSION_3_4_0 =
+    (3 * VERSION_MAJOR_MULTIPLIER) + (4 * VERSION_MINOR_MULTIPLIER) + 0;
+inline constexpr int CPP_WIDGETS_VERSION_3_5_0 =
+    (3 * VERSION_MAJOR_MULTIPLIER) + (5 * VERSION_MINOR_MULTIPLIER) + 0;

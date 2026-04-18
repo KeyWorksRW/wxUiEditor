@@ -3352,6 +3352,7 @@
         window_style="0"
         base_file="..\panels\doc_view.cpp"
         initial_enum_string="START_DOCVIEW_IDS"
+        local_src_includes="version.h"
         header_preamble="class CustomEvent;@@class wxWebView;@@class MainFrame;"
         no_closing_brace="1"
         derived_class_name="DocView"

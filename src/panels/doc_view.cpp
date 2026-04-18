@@ -16,9 +16,10 @@
 #include <wx/image.h>
 
 #include "../wxui/ui_images.h"
-#include "version.h"
 
 #include "doc_view.h"
+
+#include "version.h"
 
 bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
     const wxString& name)

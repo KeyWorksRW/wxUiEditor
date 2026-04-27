@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -46,16 +46,16 @@ public:
     void ExpandCollapse(Node* node);
 
     void InsertNode(Node* node);
-    void DeleteNode(Node* item);
+    void DeleteNode(Node* node);
 
-    [[nodiscard]] auto GetToolbar() -> NavToolbar* { return m_toolbar; }
+    NavToolbar* GetToolbar() { return m_toolbar; }
 
 protected:
-    [[nodiscard]] auto getNode(wxTreeItemId item) -> Node*;
+    [[nodiscard]] Node* GetNode(wxTreeItemId item);
 
-    [[nodiscard]] auto GetImageIndex(Node* node) -> int;
-    [[nodiscard]] auto GetDisplayName(Node* node) const -> wxue::string;
-    void UpdateDisplayName(wxTreeItemId id, Node* node);
+    int GetImageIndex(Node* node);
+    wxue::string GetDisplayName(Node* node) const;
+    void UpdateDisplayName(wxTreeItemId tree_item, Node* node);
 
     // Event handlers without parameters are called by lambda's, which means the function can also
     // be called directly without needing an event.
@@ -83,22 +83,26 @@ protected:
     void OnPositionChange(CustomEvent& event);
 
 private:
-    MainFrame* m_pMainFrame;
+    using NodeTreeMap = std::map<Node*, wxTreeItemId>;
+    using TreeNodeMap = std::map<wxTreeItemId, Node*>;
+    using IconIndexMap = std::map<GenName, int>;
+
+    MainFrame* m_pMainFrame { nullptr };
 
     // wxTreeItemId is a class, so you can't use it as a key in a std::unordered map because you
     // can't use the built-in hash algorithm. We don't need to sort the Node pointers using std::map
     // but it avoids the overhead of hashing the pointer, so a std::unordered_map isn't likely to be
     // significantly faster.
 
-    std::map<Node*, wxTreeItemId> m_node_tree_map;
-    std::map<wxTreeItemId, Node*> m_tree_node_map;
+    NodeTreeMap m_node_tree_map;
+    TreeNodeMap m_tree_node_map;
 
-    std::map<GenName, int> m_iconIdx;
+    IconIndexMap m_icon_index;
 
-    wxTreeCtrl* m_tree_ctrl;
+    wxTreeCtrl* m_tree_ctrl { nullptr };
 
-    wxTreeItemId m_drag_node;
-    NavToolbar* m_toolbar;
+    wxTreeItemId m_drag_node {};
+    NavToolbar* m_toolbar { nullptr };
 
     bool m_isSelChangeSuspended { false };
 };

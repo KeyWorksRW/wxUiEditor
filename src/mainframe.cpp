@@ -995,25 +995,41 @@ void MainFrame::PasteNode(Node* parent)
 void MainFrame::DuplicateNode(Node* node)
 {
     ASSERT(node);
-    ASSERT(node->get_Parent());
+    if (!node)
+    {
+        return;
+    }
 
-    auto new_node = NodeCreation.MakeCopy(node);
+    ASSERT(node->get_Parent());
+    if (!node->get_Parent())
+    {
+        return;
+    }
+    Node* parent = node->get_Parent();
+
+    std::shared_ptr<Node> const new_node = NodeCreation.MakeCopy(node);
+    if (!new_node)
+    {
+        wxMessageBox("Failed to duplicate node.");
+        return;
+    }
+
     if (new_node->is_Form())
     {
         Project.FixupDuplicatedNode(new_node.get());
     }
-    auto* parent = node->get_Parent();
+
     if (parent->is_Gen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(parent);
-        [[maybe_unused]] auto result = grid_bag.InsertNode(parent, new_node.get());
+        [[maybe_unused]] bool result = grid_bag.InsertNode(parent, new_node.get());
         // GridBag::InsertNode() will have already fired events
     }
     else
     {
         wxue::string undo_str("duplicate ");
         undo_str << node->get_DeclName();
-        auto pos = parent->FindInsertionPos(m_selected_node);
+        ptrdiff_t pos = parent->FindInsertionPos(m_selected_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
         m_selected_node = new_node;
         FireCreatedEvent(new_node);

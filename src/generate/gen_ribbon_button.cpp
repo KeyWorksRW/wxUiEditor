@@ -12,9 +12,10 @@
 #include "gen_common.h"                         // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"                      // Common XRC generating functions
 #include "image_gen.h"                          // Functions for generating embedded images
-#include "mainframe.h"                          // MainFrame -- Main window frame
 #include "node.h"                               // Node class
+#include "project_handler.h"                    // ProjectHandler class
 #include "utils.h"                              // Utility functions that work with properties
+#include "version.h"                            // Version numbers and other constants
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_ribbon_button.h"
@@ -82,7 +83,14 @@ bool RibbonButtonGenerator::ConstructionCode(Code& code)
 
     const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
                                    wxue::TRIM::both);
-    code.GenerateBundleParameter(parts, true);
+    if (code.is_cpp() && Project.get_LangVersion(GEN_LANG_CPLUSPLUS) >= CPP_WIDGETS_VERSION_3_3_0)
+    {
+        code.GenerateBundleParameter(parts, false);
+    }
+    else
+    {
+        code.GenerateBundleParameter(parts, true);
+    }
 
     code.Comma().QuotedString(prop_help).Comma().Add(prop_kind).EndFunction();
 

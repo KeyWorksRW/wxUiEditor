@@ -5,15 +5,16 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"       // Common component functions
-#include "language_traits.h"  // LanguageTraits, LanguageStrategy
-#include "node.h"             // Node class
-#include "node_decl.h"        // NodeDeclaration class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Miscellaneous utilities
-#include "write_code.h"       // Write code to Scintilla or file
+#include "code.h"                // Code -- Helper class for generating code
+#include "gen_base.h"            // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"          // Common component functions
+#include "gen_ribbon_gallery.h"  // RibbonGalleryGenerator
+#include "language_traits.h"     // LanguageTraits, LanguageStrategy
+#include "node.h"                // Node class
+#include "node_decl.h"           // NodeDeclaration class
+#include "project_handler.h"     // ProjectHandler class
+#include "utils.h"               // Miscellaneous utilities
+#include "write_code.h"          // Write code to Scintilla or file
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
@@ -112,7 +113,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 
     GenSettings(node, need_closing_brace);
 
-    if (type == type_ribbontoolbar || type == type_ribbonbuttonbar || type == type_ribbongallery)
+    if (type == type_ribbontoolbar || type == type_ribbonbuttonbar)
     {
         BeginBrace();
         // A wxRibbonToolBar can only have abstract children that consist of the tools.
@@ -130,6 +131,16 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         m_source->writeLine(gen_code);
         return;
     }
+
+    if (type == type_ribbongallery)
+    {
+        RibbonGalleryGenerator::GenerateGalleryItems(node, m_source, m_language);
+        gen_code.clear();
+        gen_code.NodeName().Function("Realize(").EndFunction();
+        m_source->writeLine(gen_code);
+        return;
+    }
+
     if (type == type_tool_dropdown)
     {
         return;

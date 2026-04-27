@@ -406,8 +406,22 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
 
     if (node_dst->is_Gen(gen_wxSplitterWindow) && node_dst->get_ChildCount() > 1)
     {
-        wxMessageBox("A wxSplitterWindow can't have more than two windows.");
-        return;
+        // If the user drags and drops windows within a wxSplitterWindow, then just swap places
+        if (node_dst->get_Child(1) == node_src)
+        {
+            m_pMainFrame->MoveNode(node_src, MoveDirection::Up);
+            return;
+        }
+        if (node_dst->get_Child(0) == node_src)
+        {
+            m_pMainFrame->MoveNode(node_src, MoveDirection::Down);
+            return;
+        }
+        if (node_dst->get_ChildCount() == 2)
+        {
+            wxMessageBox("A wxSplitterWindow can't have more than two windows.");
+            return;
+        }
     }
 
     Node* dst_parent = node_dst;
@@ -849,7 +863,6 @@ void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
             break;
 
         default:
-            FAIL_MSG(wxue::string() << "Unknown event ID: " << event.GetId());
             break;
     }
 }
@@ -858,7 +871,7 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
 {
     const wxWindowUpdateLocker freeze(this);
 
-    auto* undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
+    auto* undo_cmd = dynamic_cast<ChangeParentAction*>(event.GetUndoCmd());
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();
@@ -878,7 +891,7 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
 {
     const wxWindowUpdateLocker freeze(this);
 
-    auto* undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
+    auto* undo_cmd = dynamic_cast<ChangePositionAction*>(event.GetUndoCmd());
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();

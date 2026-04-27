@@ -791,7 +791,7 @@
         <inherits class="Window Events"/>
         <property name="var_name" type="string">rbnGallery</property>
         <property name="gallery_size" type="wxSize"
-            help="Specifies the common size of every image in the gallery. Images that are not this size will be scaled to match the common size."> 16,16 </property>
+            help="Specifies the common size of every image in the gallery. Images that are not this size will be scaled to match the common size."/>
         <event name="wxEVT_RIBBONGALLERY_SELECTED" class="wxRibbonGalleryEvent"
             help="Triggered when the user selects an item from the gallery."/>
         <event name="wxEVT_RIBBONGALLERY_CLICKED" class="wxRibbonGalleryEvent"

@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Add WEBP support if using wxWidgets 3.3.x
 - Validators added for wxDatePickerCtrl, wxColourPickerCtrl (wxWidgets 3.3 required) and wxCheckBox (wxCheckBoxState, requires wxWidgets 3.3)
 - New Compare Code Generation command under the Tools menu that shows any differences between what would be generated versus what is currently on disk. Select the project, a folder, or a form and then choose this command to see the differences.
+- Ribbon gallery has a new `gallery_size` property
 
 ### Changed
 

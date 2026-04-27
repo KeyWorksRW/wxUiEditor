@@ -21,7 +21,8 @@
 #include "data_handler.h"   // DataHandler class
 #include "image_handler.h"  // ProjectImage class
 #include "node.h"           // Node class
-#include "utils.h"
+#include "utils.h"          // Miscellaneous utility functions
+#include "version.h"        // Version numbers and other constants
 
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 #include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
@@ -978,11 +979,6 @@ namespace
     }
 
 }  // namespace
-
-// Version encoding constants for get_LangVersion()
-// Assumes major, minor, and patch each have 99 possible values
-constexpr int VERSION_MAJOR_MULTIPLIER = 10000;
-constexpr int VERSION_MINOR_MULTIPLIER = 100;
 
 auto ProjectHandler::get_LangVersion(GenLang language) const -> int
 {

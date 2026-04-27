@@ -1,10 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRibbonPage and wxRibbonPanel generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/bmpbndl.h>           // wxBitmapBundle
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 
 #include "code.h"                               // Code -- Helper class for generating code
@@ -12,7 +13,9 @@
 #include "gen_xrc_utils.h"                      // Common XRC generating functions
 #include "image_gen.h"                          // Functions for generating embedded images
 #include "node.h"                               // Node class
+#include "project_handler.h"                    // ProjectHandler class
 #include "utils.h"                              // Utility functions that work with properties
+#include "version.h"                            // Version numbers and other constants
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 #include "gen_ribbon_page.h"
@@ -21,10 +24,10 @@
 
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    const wxBitmap bitmap =
-        node->HasValue(prop_bitmap) ? node->as_wxBitmap(prop_bitmap) : wxNullBitmap;
+    const wxBitmapBundle bundle =
+        node->HasValue(prop_bitmap) ? node->as_wxBitmapBundle(prop_bitmap) : wxBitmapBundle();
     wxRibbonPage* widget = new wxRibbonPage(wxStaticCast(parent, wxRibbonBar), wxID_ANY,
-                                            node->as_wxString(prop_label), bitmap, 0);
+                                            node->as_wxString(prop_label), bundle, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -42,7 +45,15 @@ bool RibbonPageGenerator::ConstructionCode(Code& code)
 
         const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
                                        wxue::TRIM::both);
-        code.GenerateBundleParameter(parts, true);
+        if (code.is_cpp() &&
+            Project.get_LangVersion(GEN_LANG_CPLUSPLUS) >= CPP_WIDGETS_VERSION_3_3_0)
+        {
+            code.GenerateBundleParameter(parts, false);
+        }
+        else
+        {
+            code.GenerateBundleParameter(parts, true);
+        }
     }
     code.EndFunction();
 
@@ -123,7 +134,15 @@ bool RibbonPanelGenerator::ConstructionCode(Code& code)
 
         const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
                                        wxue::TRIM::both);
-        code.GenerateBundleParameter(parts, true);
+        if (code.is_cpp() &&
+            Project.get_LangVersion(GEN_LANG_CPLUSPLUS) >= CPP_WIDGETS_VERSION_3_3_0)
+        {
+            code.GenerateBundleParameter(parts, false);
+        }
+        else
+        {
+            code.GenerateBundleParameter(parts, true);
+        }
     }
     code.EndFunction();
 

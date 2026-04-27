@@ -246,6 +246,7 @@ namespace GenEnum
         prop_fold_width,
         prop_font,
         prop_foreground_colour,
+        prop_gallery_size,
         prop_generate_cmake,
         prop_generate_ids,
         prop_generate_languages,

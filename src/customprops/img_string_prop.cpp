@@ -13,6 +13,7 @@
 
 #include "art_prop_dlg.h"     // ArtBrowserDialog -- Art Property Dialog for image property
 #include "project_handler.h"  // ProjectHandler class
+#include "version.h"          // Version numbers and other constants
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
 
 [[nodiscard]] auto ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
@@ -61,7 +62,8 @@
             if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
             {
                 // WEBP was added to wxWidgets 3.3.0 -- earlier versions don't support it.
-                remove_webp = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < 30300);
+                remove_webp =
+                    (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < CPP_WIDGETS_VERSION_3_3_0);
             }
             else if (Project.get_CodePreference() == GEN_LANG_PYTHON)
             {

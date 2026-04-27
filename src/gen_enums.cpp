@@ -226,6 +226,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_fold_width, "fold_width" },
     { prop_font, "font" },
     { prop_foreground_colour, "foreground_colour" },
+    { prop_gallery_size, "gallery_size" },
     { prop_generate_cmake, "generate_cmake" },
     { prop_generate_ids, "generate_ids" },
     { prop_generate_languages, "generate_languages" },

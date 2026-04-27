@@ -19,6 +19,8 @@
 
 #include "doc_view.h"
 
+#include "version.h"
+
 bool DocViewPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
     const wxString& name)
 {
@@ -164,7 +166,7 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
             if (auto file = gen->GetHelpURL(cur_sel); file.size())
             {
                 wxString url;
-                url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < 30300) ?
+                url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < CPP_WIDGETS_VERSION_3_3_0) ?
                           "https://docs.wxwidgets.org/3.2.8" :
                           "https://docs.wxwidgets.org/latest";
 

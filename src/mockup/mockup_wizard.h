@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <expected>
 #include <vector>
 
 #include <wx/bitmap.h>  // wxBitmap class interface
@@ -36,7 +37,7 @@ public:
 
     void AddPage(MockupWizardPage* page);
     size_t GetPageCount() { return m_pages.size(); }
-    void SetSelection(size_t pageIndex);
+    void SetSelection(size_t page_index);
     wxSize& GetLargestPageSize() { return m_largest_page; }
 
     // MockupContent needs to call this after all children have been created in order to calculate
@@ -45,20 +46,21 @@ public:
     void AllChildrenAdded();
 
 protected:
+    void extracted();
     void OnBackOrNext(wxCommandEvent& event);
     void CreateBmpPageRow();
     void CreateButtonRow();
 
-    bool ResizeBitmap(wxBitmap& bmp);
+    std::expected<void, std::string_view> ResizeBitmap(wxBitmap& source_bmp);
 
 private:
     wxBoxSizer* m_window_sizer;  // Top level sizer for entire window
     wxBoxSizer* m_column_sizer;  // Contains bitmap row, static line, and buttons
-    wxBoxSizer* m_bmp_page_sizer;
-    wxBoxSizer* m_sizerPage { nullptr };
+    wxBoxSizer* m_bmp_page_sizer { nullptr };
+    wxBoxSizer* m_sizer_page { nullptr };
 
-    wxButton* m_btnPrev { nullptr };
-    wxButton* m_btnNext { nullptr };
+    wxButton* m_btn_prev { nullptr };
+    wxButton* m_btn_next { nullptr };
 
     size_t m_cur_page_index { wxue::npos };
 
@@ -74,6 +76,5 @@ private:
 
     std::vector<MockupWizardPage*> m_pages;
 
-    int m_bmp_placement;
-    int m_border;  // set in constructor
+    int m_bmp_placement { 0 };  // set in ResizeBitmap
 };

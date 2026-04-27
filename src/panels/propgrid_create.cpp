@@ -14,6 +14,7 @@
 #include "preferences.h"      // Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
+#include "version.h"          // Version numbers and other constants
 
 // Various customized wxPGProperty classes
 
@@ -682,7 +683,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         // These two validators were added to wxWidgets 3.3
         auto preferred_language = Project.get_CodePreference();
         if (preferred_language == GEN_LANG_CPLUSPLUS &&
-            Project.get_LangVersion(preferred_language) < 30300)
+            Project.get_LangVersion(preferred_language) < CPP_WIDGETS_VERSION_3_3_0)
         {
             return;
         }

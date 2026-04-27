@@ -12,6 +12,7 @@
 class wxRibbonBarEvent;
 class Code;
 class Node;
+class WriteCode;
 
 class RibbonGalleryGenerator : public BaseGenerator
 {
@@ -21,6 +22,10 @@ public:
                        bool /* is_preview */) override;
 
     bool ConstructionCode(Code& code) override;
+
+    // Generate construction code for all gallery items, including size checking
+    // against prop_gallery_size and rescaling when needed.
+    static void GenerateGalleryItems(Node* gallery_node, WriteCode* source, GenLang language);
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;

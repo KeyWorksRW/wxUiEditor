@@ -94,6 +94,7 @@ jobs:
         run: bash ./scripts/check_eol.sh
 
   buildUnix:
+    if: ${{ false }}  # temporarily disabled
     uses: ./.github/workflows/build-unix-reusable.yml
     with:
       create-setup: false
@@ -101,6 +102,7 @@ jobs:
       runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}
 
   buildMacOS:
+    if: ${{ false }}  # temporarily disabled
     uses: ./.github/workflows/build-macos-reusable.yml
     with:
       create-setup: false

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 // Purpose:   Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -601,7 +601,7 @@ wxue::string NavigationPanel::GetDisplayName(Node* node) const
     }
     else if (node->HasValue(prop_class_name))
     {
-        display_name = node->as_view(prop_class_name);
+        display_name = node->as_string(prop_class_name);
     }
     else if (node->HasValue(prop_id) && node->is_Gen(gen_ribbonTool))
     {
@@ -630,7 +630,7 @@ wxue::string NavigationPanel::GetDisplayName(Node* node) const
         }
     }
 
-    if (display_name.size())
+    if (!display_name.empty())
     {
         // Accelerators make the text hard to read, so remove them
         std::ignore = display_name.Replace("&", "", true);
@@ -756,7 +756,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
 void NavigationPanel::OnMultiPropChange(CustomEvent& event)
 {
     const std::vector<ModifyProperties::MULTI_PROP>& properties =
-        static_cast<ModifyProperties*>(event.GetUndoCmd())->GetVector();
+        dynamic_cast<ModifyProperties*>(event.GetUndoCmd())->GetVector();
     for (const ModifyProperties::MULTI_PROP& property: properties)
     {
         CustomEvent prop_event(EVT_NodePropChange, property.property);

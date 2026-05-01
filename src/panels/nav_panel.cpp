@@ -599,6 +599,10 @@ wxue::string NavigationPanel::GetDisplayName(Node* node) const
     {
         display_name = node->as_string(prop_var_name);
     }
+    else if (node->HasValue(prop_class_name))
+    {
+        display_name = node->as_view(prop_class_name);
+    }
     else if (node->HasValue(prop_id) && node->is_Gen(gen_ribbonTool))
     {
         display_name = node->as_string(prop_id);

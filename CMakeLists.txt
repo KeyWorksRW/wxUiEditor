@@ -13,7 +13,7 @@ set(PROJECT_VERSION_BUILD ${BUILD_NUM})
 set(PROJECT_VERSION_YEAR ${PROJECT_YEAR})
 
 project(wxUiEditor
-    LANGUAGES CXX
+    LANGUAGES CXX C
     VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_BUILD}
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
@@ -91,6 +91,7 @@ else()
     message(STATUS "sccache not found; building without a compiler cache")
 endif()
 
+# ###################### Compiler/Link options #######################
 if(MSVC)
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
 
@@ -191,17 +192,62 @@ if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     endif()
 endif()
 
-# ###################### Set wxWidgets location macros #######################
+include(FetchContent)
+
+# Suppress verbose FetchContent git output (CMake 3.30+)
+set(FETCHCONTENT_QUIET ON)
+
+# ###################### Snowball stemmer #######################
+# Snowball C stemming library — word normalization for full-text search
+FetchContent_Declare(
+    snowball
+    URL https://snowballstem.org/dist/libstemmer_c-2.2.0.tar.gz
+)
+FetchContent_MakeAvailable(snowball)
+
+file(GLOB SNOWBALL_RUNTIME_SOURCES "${snowball_SOURCE_DIR}/runtime/*.c")
+file(GLOB SNOWBALL_LIBSTEMMER_SOURCES "${snowball_SOURCE_DIR}/libstemmer/libstemmer.c")
+file(GLOB SNOWBALL_SRC_C_SOURCES "${snowball_SOURCE_DIR}/src_c/*.c")
+
+add_library(snowball_stemmer STATIC
+    ${SNOWBALL_RUNTIME_SOURCES}
+    ${SNOWBALL_LIBSTEMMER_SOURCES}
+    ${SNOWBALL_SRC_C_SOURCES}
+)
+
+target_include_directories(snowball_stemmer PUBLIC "${snowball_SOURCE_DIR}/include")
+
+if(MSVC)
+    target_compile_options(snowball_stemmer PRIVATE /W0)
+else()
+    target_compile_options(snowball_stemmer PRIVATE -w)
+endif()
+
+# ###################### uni-algo #######################
+# Unicode algorithms (header-only) — UTF-8 word segmentation for the tokenizer
+FetchContent_Declare(
+    uni-algo
+    GIT_REPOSITORY https://github.com/uni-algo/uni-algo.git
+    GIT_TAG v1.2.0
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(uni-algo)
+
+# ###################### Library subdirectories #######################
+# ftsrch and cppmark are built as separate static libraries with their own
+# precompiled headers.  Neither depends on wxWidgets, so building them here
+# (before wxWidgets config) avoids pulling wx headers into their translation
+# units, speeding up rebuilds when only wxWidgets changes and vice versa.
+
+add_subdirectory(src/doc_viewer/ftsrch)
+add_subdirectory(src/doc_viewer/cppmark)
+
+# ###################### wxWidgets #######################
 if(WIN32)
     set(wxWidgets_REQUIRED_COMPONENTS base core lunasvg aui html ribbon richtext propgrid webview stc xml xrc)
 else()
     set(wxWidgets_REQUIRED_COMPONENTS base core lunasvg aui html ribbon richtext propgrid stc xml xrc)
 endif()
-
-include(FetchContent)
-
-# Suppress verbose FetchContent git output (CMake 3.30+)
-set(FETCHCONTENT_QUIET ON)
 
 # Set wxWidgets build options BEFORE FetchContent_MakeAvailable
 if(BUILD_SHARED_LIBS)
@@ -280,6 +326,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(kwsFrozen)
 
+# ##################### glaze ######################
 # glaze is a high speed JSON library
 FetchContent_Declare(
     glaze
@@ -396,7 +443,14 @@ foreach(component ${wxWidgets_REQUIRED_COMPONENTS})
     list(APPEND wxWidgets_LIBRARIES wx${component})
 endforeach()
 
-target_link_libraries(wxUiEditor PRIVATE ${wxWidgets_LIBRARIES} ${SYSTEM_LIBS} glaze::glaze)
+target_link_libraries(wxUiEditor PRIVATE
+    ${wxWidgets_LIBRARIES}
+    ${SYSTEM_LIBS}
+    glaze::glaze
+    snowball_stemmer
+    cppmark
+    ftsrch
+)
 
 # ###################### Packaging Instructions #######################
 if(UNIX AND NOT APPLE)

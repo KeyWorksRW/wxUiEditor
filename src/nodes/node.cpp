@@ -1141,7 +1141,7 @@ auto Node::FixDuplicateName() -> bool
                     org_name.erase(org_name.size() - 1, 1);
                 }
 
-                std::string new_name;
+                std::string new_name(org_name);
                 for (int i = 2; name_set.contains(new_name); ++i)
                 {
                     new_name.clear();

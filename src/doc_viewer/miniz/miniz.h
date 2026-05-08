@@ -498,7 +498,7 @@ extern "C"
 #define z_stream mz_stream
 
 #ifndef MINIZ_NO_DEFLATE_APIS
-    /* Compatiblity with zlib API. See called functions for documentation */
+    /* Compatibility with zlib API. See called functions for documentation */
     static MZ_FORCEINLINE int deflateInit(mz_streamp pStream, int level)
     {
         return mz_deflateInit(pStream, level);
@@ -538,7 +538,7 @@ extern "C"
 #endif /*#ifndef MINIZ_NO_DEFLATE_APIS*/
 
 #ifndef MINIZ_NO_INFLATE_APIS
-    /* Compatiblity with zlib API. See called functions for documentation */
+    /* Compatibility with zlib API. See called functions for documentation */
     static MZ_FORCEINLINE int inflateInit(mz_streamp pStream)
     {
         return mz_inflateInit(pStream);
@@ -564,12 +564,12 @@ extern "C"
         return mz_inflateEnd(pStream);
     }
 
-    static MZ_FORCEINLINE int uncompress(unsigned char* pDest, mz_ulong* pDest_len, const unsigned char* pSource, mz_ulong source_len)
+    static MZ_FORCEINLINE int uncompress(unsigned char *pDest, mz_ulong *pDest_len, const unsigned char *pSource, mz_ulong source_len)
     {
         return mz_uncompress(pDest, pDest_len, pSource, source_len);
     }
 
-    static MZ_FORCEINLINE int uncompress2(unsigned char* pDest, mz_ulong* pDest_len, const unsigned char* pSource, mz_ulong* pSource_len)
+    static MZ_FORCEINLINE int uncompress2(unsigned char *pDest, mz_ulong *pDest_len, const unsigned char *pSource, mz_ulong *pSource_len)
     {
         return mz_uncompress2(pDest, pDest_len, pSource, pSource_len);
     }
@@ -584,11 +584,11 @@ extern "C"
     {
         return mz_adler32(adler, ptr, buf_len);
     }
-    
+
 #define MAX_WBITS 15
 #define MAX_MEM_LEVEL 9
 
-    static MZ_FORCEINLINE const char* zError(int err)
+    static MZ_FORCEINLINE const char *zError(int err)
     {
         return mz_error(err);
     }

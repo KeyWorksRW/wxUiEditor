@@ -88,16 +88,6 @@ int houdini_escape_href(CMarkStringBuffer* output_buffer, const uint8_t* source_
                 output_buffer->Puts("&#x27;");
                 break;
 
-/* the space can be escaped to %20 or a plus
- * sign. we're going with the generic escape
- * for now. the plus thing is more commonly seen
- * when building GET strings */
-#if 0
-		case ' ':
-			output_buffer->Putc('+');
-			break;
-#endif
-
             /* every other character goes with a %XX escaping */
             default:
                 hex_buffer[1] = HEX_CHARS[(source_text[current_index] >> 4) & 0xF];

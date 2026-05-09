@@ -3,5 +3,6 @@
 ./src/art_src
 ./src/generate/archived
 ./src/.vscode
+./src/doc_viewer/miniz
 
 ./src/version.h

@@ -407,6 +407,9 @@ set( file_list
     $<$<CONFIG:Debug>:internal/convert_img.cpp> # Convert image
     $<$<CONFIG:Debug>:tests/test_xrc_import.cpp> # XRC Import tests
 )
+set(parser_sources
+    doc_viweer/zip_reader.cpp
+)
 
 set( debug_files
 

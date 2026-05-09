@@ -1,18 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Maintain a undo and redo stack
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-// AI Context: This file implements a command pattern-based undo/redo system for wxUiEditor.
-// UndoAction is an abstract base class requiring derived classes to implement Change()
-// (apply/redo), Revert() (undo), and GetMemorySize(). GroupUndoActions allows multiple actions to
-// be treated as a single undoable operation. UndoStack manages two vectors (undo/redo stacks) where
-// Push() executes Change() and adds to undo stack, Undo() calls Revert() and moves to redo stack,
-// and Redo() calls Change() and moves back to undo stack. The stack can be locked to execute
-// actions without affecting undo/redo history. Actions may optionally store Node pointers and
-// control UI selection events.
 
 #pragma once
 
@@ -27,7 +18,7 @@ class UndoAction
 public:
     UndoAction(std::string_view undo_string = {})
     {
-        if (undo_string.size())
+        if (!undo_string.empty())
         {
             m_undo_string = undo_string;
         }
@@ -36,34 +27,34 @@ public:
     virtual ~UndoAction() = default;
 
     // Called when pushed to the Undo stack and when Redo is called
-    virtual auto Change() -> void = 0;
+    virtual void Change() = 0;
 
     // Called when Undo is requested
-    virtual auto Revert() -> void = 0;
+    virtual void Revert() = 0;
 
     // Size of the UndoAction object itself, plus any additional memory it allocates.
-    [[nodiscard]] virtual auto GetMemorySize() -> size_t = 0;
-    [[nodiscard]] virtual auto GetOldNode() -> NodeSharedPtr { return nullptr; }
+    virtual size_t GetMemorySize() = 0;
+    [[nodiscard]] virtual NodeSharedPtr GetOldNode() { return nullptr; }
 
-    [[nodiscard]] auto GetUndoString() const -> const wxue::string& { return m_undo_string; }
-    auto SetUndoString(std::string_view str) -> void { m_undo_string = str; }
+    const wxue::string& GetUndoString() const { return m_undo_string; }
+    void SetUndoString(std::string_view str) { m_undo_string = str; }
 
-    [[nodiscard]] auto wasUndoEventGenerated() -> bool { return m_UndoEventGenerated; }
-    [[nodiscard]] auto wasRedoEventGenerated() -> bool { return m_RedoEventGenerated; }
-    [[nodiscard]] auto wasUndoSelectEventGenerated() -> bool { return m_UndoSelectEventGenerated; }
-    [[nodiscard]] auto wasRedoSelectEventGenerated() -> bool { return m_RedoSelectEventGenerated; }
+    bool wasUndoEventGenerated() const { return m_UndoEventGenerated; }
+    bool wasRedoEventGenerated() const { return m_RedoEventGenerated; }
+    bool wasUndoSelectEventGenerated() const { return m_UndoSelectEventGenerated; }
+    bool wasRedoSelectEventGenerated() const { return m_RedoSelectEventGenerated; }
 
     // Note that these will affect individual UndoActions added to GroupUndoActions, but will
     // not affect the GroupUndoActions class itself.
 
-    auto AllowSelectEvent(bool allow) -> void { m_AllowSelectEvent = allow; }
-    [[nodiscard]] auto isAllowedSelectEvent() -> bool { return m_AllowSelectEvent; }
+    void AllowSelectEvent(bool allow) { m_AllowSelectEvent = allow; }
+    [[nodiscard]] bool isAllowedSelectEvent() const { return m_AllowSelectEvent; }
 
     // This will only be valid if the action actually stored a node.
-    [[nodiscard]] auto getNode() -> NodeSharedPtr { return m_node; }
+    [[nodiscard]] NodeSharedPtr getNode() { return m_node; }
 
     // This will only be valid if the action actually stored a property.
-    [[nodiscard]] virtual auto GetProperty() -> NodeProperty* { return nullptr; }
+    [[nodiscard]] virtual NodeProperty* GetProperty() { return nullptr; }
 
 protected:
     NodeSharedPtr m_node;
@@ -78,12 +69,11 @@ protected:
     bool m_AllowSelectEvent { true };
 };
 
-class Node;
 using UndoActionPtr = std::shared_ptr<UndoAction>;
-using NodeSharedPtr = std::shared_ptr<Node>;
 
 // This class can be used when you want to group multiple UndoActions into a single UndoAction
-// with a single undo string.
+// with a single undo string. For each action, create an UndoAction and call Add() to add it to the
+// group.
 class GroupUndoActions : public UndoAction
 {
 public:
@@ -92,14 +82,14 @@ public:
     GroupUndoActions(std::string_view undo_str, Node* sel_node = nullptr);
 
     // Called when pushed to the Undo stack and when Redo is called
-    auto Change() -> void override;
+    void Change() override;
 
     // Called when Undo is requested
-    auto Revert() -> void override;
+    void Revert() override;
 
-    auto Add(UndoActionPtr ptr) -> void { m_actions.push_back(ptr); }
+    void Add(const UndoActionPtr& ptr) { m_actions.push_back(ptr); }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override;
+    size_t GetMemorySize() override;
 
 private:
     std::vector<UndoActionPtr> m_actions;
@@ -112,34 +102,34 @@ class UndoStack
 public:
     // This will first call UndoAction->Change(), then clear the redo stack and push the
     // UndoAction onto the undo stack
-    auto Push(UndoActionPtr ptr) -> void;
+    void Push(const UndoActionPtr& ptr);
 
     // This will pop the last UndoAction, call UndoAction->Revert() and then push the
     // command on the redo stack
-    auto Undo() -> void;
+    void Undo();
 
     // This will pop the last UndoAction from the redo stack, call UndoAction->Change()
     // and then push the command on the undo stack
-    auto Redo() -> void;
+    void Redo();
 
     // When the stack is locked, Push() will call UndoAction->Change(), but will not change
     // the undo or redo stacks
-    auto Lock() -> void { m_locked = true; }
-    auto Unlock() -> void { m_locked = false; }
-    [[nodiscard]] auto IsLocked() -> bool { return m_locked; }
+    void Lock() { m_locked = true; }
+    void Unlock() { m_locked = false; }
+    [[nodiscard]] bool IsLocked() const { return m_locked; }
 
-    [[nodiscard]] auto IsUndoAvailable() -> bool { return m_undo.size(); }
-    [[nodiscard]] auto IsRedoAvailable() -> bool { return m_redo.size(); }
+    [[nodiscard]] bool IsUndoAvailable() { return !m_undo.empty(); }
+    [[nodiscard]] bool IsRedoAvailable() { return !m_redo.empty(); }
 
-    [[nodiscard]] auto GetUndoString() -> wxString;
-    [[nodiscard]] auto GetRedoString() -> wxString;
+    [[nodiscard]] wxString GetUndoString();
+    [[nodiscard]] wxString GetRedoString();
 
-    [[nodiscard]] auto size() -> size_t { return m_undo.size(); }
+    [[nodiscard]] size_t size() { return m_undo.size(); }
 
-    [[nodiscard]] auto GetUndoVector() const -> const std::vector<UndoActionPtr>& { return m_undo; }
-    [[nodiscard]] auto GetRedoVector() const -> const std::vector<UndoActionPtr>& { return m_redo; }
+    [[nodiscard]] const std::vector<UndoActionPtr>& GetUndoVector() const { return m_undo; }
+    [[nodiscard]] const std::vector<UndoActionPtr>& GetRedoVector() const { return m_redo; }
 
-    auto clear() -> void
+    void clear()
     {
         m_redo.clear();
         m_undo.clear();
@@ -149,19 +139,13 @@ public:
     // last undo command, you have to get the last item in the redo stack. Redo works just the
     // opposite, pushing it's command to the last of the undo stack.
 
-    [[nodiscard]] auto wasUndoEventGenerated() -> bool
-    {
-        return m_redo.back()->wasUndoEventGenerated();
-    }
-    [[nodiscard]] auto wasRedoEventGenerated() -> bool
-    {
-        return m_undo.back()->wasRedoEventGenerated();
-    }
-    [[nodiscard]] auto wasUndoSelectEventGenerated() -> bool
+    [[nodiscard]] bool wasUndoEventGenerated() { return m_redo.back()->wasUndoEventGenerated(); }
+    [[nodiscard]] bool wasRedoEventGenerated() { return m_undo.back()->wasRedoEventGenerated(); }
+    [[nodiscard]] bool wasUndoSelectEventGenerated()
     {
         return m_redo.back()->wasUndoSelectEventGenerated();
     }
-    [[nodiscard]] auto wasRedoSelectEventGenerated() -> bool
+    [[nodiscard]] bool wasRedoSelectEventGenerated()
     {
         return m_undo.back()->wasRedoSelectEventGenerated();
     }

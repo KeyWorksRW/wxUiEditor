@@ -888,7 +888,7 @@ void MainFrame::PasteNode(Node* parent)
             // type
             auto new_child = NodeCreation.MakeCopy(child_node.get(), parent);
             auto insert_action =
-                std::make_shared<InsertNodeAction>(new_child, parent->get_SharedPtr(), "paste");
+                std::make_shared<InsertNodeAction>(new_child.get(), parent, "paste");
             insert_action->SetFireCreatedEvent(true);
             group->Add(insert_action);
         }

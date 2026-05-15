@@ -111,7 +111,7 @@ public:
     }
     void RemoveCustomEventHandler(wxEvtHandler* handler);
 
-    void FireChangeEventHandler(NodeEvent* event);
+    void FireChangeEventHandler(NodeEvent* evt_node);
     void FireCreatedEvent(Node* node);
     void FireDeletedEvent(Node* node);
     void FireGridBagActionEvent(GridBagAction* undo_cmd);

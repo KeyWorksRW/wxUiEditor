@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <expected>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
@@ -502,7 +503,7 @@ public:
     // This is the preferred way to create a new node when requested by the user (tool, menu,
     // or dialog). Besides creating the node, some nodes will get special processing to
     // automatically create additional child nodes.
-    auto CreateToolNode(GenName name, int pos = -1) -> bool;
+    auto CreateToolNode(GenName name, int pos = -1) -> std::expected<bool, std::string>;
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed

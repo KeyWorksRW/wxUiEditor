@@ -37,7 +37,7 @@ void MainFrame::FireProjectLoadedEvent()
     // potential redraw issue is simply to freeze the entire main window frame until all event
     // handlers have been processed.
 
-    wxWindowUpdateLocker freeze(this);
+    wxWindowUpdateLocker const freeze(this);
 
     ProjectLoaded();
 
@@ -176,8 +176,6 @@ Node* CustomEvent::getNode()
     {
         return m_event->getNode();
     }
-    else
-    {
-        return nullptr;
-    }
+
+    return nullptr;
 }

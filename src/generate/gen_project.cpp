@@ -24,12 +24,12 @@
 
 bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
 {
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_DIALOG, "Add new dialog...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WINDOW, "Add new window...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WIZARD, "Add new wizard...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_FOLDER, "Add folder");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddDialog), "Add new dialog...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWindow), "Add new window...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWizard), "Add new wizard...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddFolder), "Add folder");
     menu->AppendSeparator();
-    menu->Append(NavPopupMenu::MenuPROJECT_SORT_FORMS, "Sort Forms");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectSortForms), "Sort Forms");
 
     menu->Bind(
         wxEVT_MENU,
@@ -45,7 +45,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         {
             wxGetFrame().PushUndoAction(std::make_shared<SortProjectAction>());
         },
-        NavPopupMenu::MenuPROJECT_SORT_FORMS);
+        static_cast<int>(NavPopupMenu::Menu::ProjectSortForms));
 
     menu->Bind(
         wxEVT_MENU,
@@ -57,7 +57,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_DIALOG);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddDialog));
 
     menu->Bind(
         wxEVT_MENU,
@@ -65,7 +65,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         {
             wxGetFrame().CreateToolNode(gen_folder);
         },
-        NavPopupMenu::MenuPROJECT_ADD_FOLDER);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddFolder));
 
     menu->Bind(
         wxEVT_MENU,
@@ -77,7 +77,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_WINDOW);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddWindow));
 
     menu->Bind(
         wxEVT_MENU,
@@ -89,7 +89,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_WIZARD);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddWizard));
 
     // Return false to indicate no sizer sub commands should be added
     return false;
@@ -115,10 +115,10 @@ bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePrope
 
 bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
 {
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_DIALOG, "Add new dialog...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WINDOW, "Add new window...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WIZARD, "Add new wizard...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_FOLDER, "Add folder");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddDialog), "Add new dialog...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWindow), "Add new window...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWizard), "Add new wizard...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddFolder), "Add folder");
 
     menu->Bind(
         wxEVT_MENU,
@@ -138,7 +138,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_DIALOG);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddDialog));
 
     menu->Bind(
         wxEVT_MENU,
@@ -146,7 +146,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
         {
             wxGetFrame().CreateToolNode(gen_sub_folder);
         },
-        NavPopupMenu::MenuPROJECT_ADD_FOLDER);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddFolder));
 
     menu->Bind(
         wxEVT_MENU,
@@ -158,7 +158,7 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_WINDOW);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddWindow));
 
     menu->Bind(
         wxEVT_MENU,
@@ -170,17 +170,17 @@ bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_WIZARD);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddWizard));
 
     return false;
 }
 
 bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
 {
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_DIALOG, "Add new dialog...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WINDOW, "Add new window...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WIZARD, "Add new wizard...");
-    menu->Append(NavPopupMenu::MenuPROJECT_ADD_FOLDER, "Add folder");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddDialog), "Add new dialog...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWindow), "Add new window...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWizard), "Add new wizard...");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddFolder), "Add folder");
 
     menu->Bind(
         wxEVT_MENU,
@@ -200,7 +200,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_DIALOG);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddDialog));
 
     menu->Bind(
         wxEVT_MENU,
@@ -208,7 +208,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
         {
             wxGetFrame().CreateToolNode(gen_sub_folder);
         },
-        NavPopupMenu::MenuPROJECT_ADD_FOLDER);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddFolder));
 
     menu->Bind(
         wxEVT_MENU,
@@ -220,7 +220,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_WINDOW);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddWindow));
 
     menu->Bind(
         wxEVT_MENU,
@@ -232,7 +232,7 @@ bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node 
                 dlg.CreateNode();
             }
         },
-        NavPopupMenu::MenuPROJECT_ADD_WIZARD);
+        static_cast<int>(NavPopupMenu::Menu::ProjectAddWizard));
 
     return false;
 }

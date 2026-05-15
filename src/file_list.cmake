@@ -362,7 +362,6 @@ set( file_list
     internal/msgframe.cpp              # Stores messages
     internal/msg_logging.cpp           # Message logging class
     internal/import_panel.cpp          # Panel to display original imported file
-    internal/import_panel.cpp          # Panel to display original imported file
     tests/test_xrc_import.cpp          # XRC Import tests
 
     internal/xrcpreview.cpp            # Generated XrcPreview Dialog code

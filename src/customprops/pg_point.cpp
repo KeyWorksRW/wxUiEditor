@@ -178,6 +178,10 @@ auto CustomPointProperty::InitValues(wxue::string_view value) -> void
         // If mainframe window was created before the project was loaded, then any values with 'd'
         // should already have been converted to pixels. This just ensures it still works in case we
         // missed something.
+
+        // REVIEW: [Randalphwa - 05-11-2026] This assert is also firing sometimes when creating a
+        // new control where it might have a width specified, but the height is '-1d' -- it doesn't
+        // appear to be a problem, but should be investigated further.
         ASSERT_MSG(!wxue::contains(value, 'd', wxue::CASE::either),
                    "'d' in size/point not converted when project loaded.");
         if (wxue::contains(value, 'd', wxue::CASE::either))

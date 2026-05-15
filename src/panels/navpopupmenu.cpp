@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <utility>  // std::ignore
+#include <utility>  // std::ignore. std::tp_underlying
 
 #include <wx/artprov.h>   // wxArtProvider class
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
@@ -191,7 +191,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case wxID_COPY:
-            wxGetFrame().CopyNode(m_node);
+            m_node->CopyNode();
             break;
 
         case wxID_PASTE:
@@ -199,7 +199,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case static_cast<int>(Menu::Duplicate):
-            wxGetFrame().DuplicateNode(m_node);
+            m_node->DuplicateNode();
             break;
 
         case wxID_DELETE:
@@ -207,26 +207,26 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case static_cast<int>(Menu::MoveUp):
-            wxGetFrame().MoveNode(m_node, MoveDirection::Up);
+            m_node->MoveNode(MoveDirection::Up);
             break;
 
         case static_cast<int>(Menu::MoveDown):
-            wxGetFrame().MoveNode(m_node, MoveDirection::Down);
+            m_node->MoveNode(MoveDirection::Down);
             break;
 
         case static_cast<int>(Menu::MoveRight):
-            wxGetFrame().MoveNode(m_node, MoveDirection::Right);
+            m_node->MoveNode(MoveDirection::Right);
             break;
 
         case static_cast<int>(Menu::MoveLeft):
-            wxGetFrame().MoveNode(m_node, MoveDirection::Left);
+            m_node->MoveNode(MoveDirection::Left);
             break;
 
         case static_cast<int>(Menu::NewParentBoxSizer):
             CreateSizerParent("wxBoxSizer");
             break;
 
-        case static_cast<int>(Menu::NewParentStaticSizer):
+        case std::to_underlying(Menu::NewParentStaticSizer):
             CreateSizerParent("wxStaticBoxSizer");
             break;
 
@@ -383,23 +383,19 @@ void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
             break;
 
         case static_cast<int>(Menu::MoveUp):
-            Enable(static_cast<int>(Menu::MoveUp),
-                   wxGetFrame().MoveNode(m_node, MoveDirection::Up, true));
+            Enable(static_cast<int>(Menu::MoveUp), m_node->MoveNode(MoveDirection::Up, true));
             break;
 
         case static_cast<int>(Menu::MoveDown):
-            Enable(static_cast<int>(Menu::MoveDown),
-                   wxGetFrame().MoveNode(m_node, MoveDirection::Down, true));
+            Enable(static_cast<int>(Menu::MoveDown), m_node->MoveNode(MoveDirection::Down, true));
             break;
 
         case static_cast<int>(Menu::MoveLeft):
-            Enable(static_cast<int>(Menu::MoveLeft),
-                   wxGetFrame().MoveNode(m_node, MoveDirection::Left, true));
+            Enable(static_cast<int>(Menu::MoveLeft), m_node->MoveNode(MoveDirection::Left, true));
             break;
 
         case static_cast<int>(Menu::MoveRight):
-            Enable(static_cast<int>(Menu::MoveRight),
-                   wxGetFrame().MoveNode(m_node, MoveDirection::Right, true));
+            Enable(static_cast<int>(Menu::MoveRight), m_node->MoveNode(MoveDirection::Right, true));
             break;
     }
 }

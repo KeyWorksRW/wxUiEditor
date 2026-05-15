@@ -84,47 +84,44 @@ public:
     auto get_DeclName() const noexcept { return m_declaration->get_DeclName(); }
 
     // Given a Node*, you can call this to get the std::shared_ptr<Node> for it.
-    auto get_SharedPtr() -> NodeSharedPtr { return shared_from_this(); }
+    NodeSharedPtr get_SharedPtr() { return shared_from_this(); }
 
-    auto get_ParentPtr() const noexcept -> NodeSharedPtr { return m_parent; }
-    auto get_Parent() const noexcept -> Node* { return m_parent.get(); }
+    NodeSharedPtr get_ParentPtr() const noexcept { return m_parent; }
+    Node* get_Parent() const noexcept { return m_parent.get(); }
 
-    auto get_ChildPtr(size_t index) -> NodeSharedPtr { return m_children.at(index); }
-    auto get_Child(size_t index) const noexcept -> Node* { return m_children.at(index).get(); }
-    auto get_ChildNodePtrs() -> auto& { return m_children; }
-    auto get_ChildNodePtrs() const -> const auto& { return m_children; }
+    NodeSharedPtr get_ChildPtr(size_t index) { return m_children.at(index); }
+    Node* get_Child(size_t index) const noexcept { return m_children.at(index).get(); }
+    std::vector<NodeSharedPtr>& get_ChildNodePtrs() { return m_children; }
+    const std::vector<NodeSharedPtr>& get_ChildNodePtrs() const { return m_children; }
 
     void set_Parent(NodeSharedPtr parent) { m_parent = std::move(parent); }
     void set_Parent(Node* parent) { m_parent = parent->get_SharedPtr(); }
 
-    auto get_PropPtr(PropName name) -> NodeProperty*;
+    NodeProperty* get_PropPtr(PropName name);
 
-    auto get_Event(std::string_view name) -> NodeEvent*;
-    auto get_MapEvents() -> NodeMapEvents& { return m_map_events; }
+    NodeEvent* get_Event(std::string_view name);
+    NodeMapEvents& get_MapEvents() { return m_map_events; }
 
     // Walk up the node tree looking for a container with a limited set of platforms. If
     // found, the container's node will be returned -- otherwise nullptr is returned.
-    auto get_PlatformContainer() -> Node*;
+    Node* get_PlatformContainer();
 
     auto get_PropertyCount() const { return m_properties.size(); }
-    auto get_InUseEventCount() const -> size_t;
+    size_t get_InUseEventCount() const;
 
     // Equivalent to AddChild(child); child->set_Parent(this);
     // Returns false if child is not allowed for this node.
-    auto AdoptChild(const NodeSharedPtr& child) -> bool;
+    bool AdoptChild(const NodeSharedPtr& child);
 
-    auto AddChild(const NodeSharedPtr& node) -> bool;
-    auto AddChild(Node* node) -> bool;
-    auto AddChild(size_t idx, const NodeSharedPtr& node) -> bool;
-    auto AddChild(size_t idx, Node* node) -> bool;
+    bool AddChild(const NodeSharedPtr& node);
+    bool AddChild(Node* node);
+    bool AddChild(size_t idx, const NodeSharedPtr& node);
+    bool AddChild(size_t idx, Node* node);
 
     // Returns the child's position or get_ChildCount() in case of not finding it
-    auto get_ChildPosition(Node* node) -> size_t;
-    auto get_ChildPosition(const NodeSharedPtr& node) -> size_t
-    {
-        return get_ChildPosition(node.get());
-    }
-    auto ChangeChildPosition(const NodeSharedPtr& node, size_t pos) -> bool;
+    size_t get_ChildPosition(Node* node);
+    size_t get_ChildPosition(const NodeSharedPtr& node) { return get_ChildPosition(node.get()); }
+    bool ChangeChildPosition(const NodeSharedPtr& node, size_t pos);
 
     void RemoveChild(Node* node);
     void RemoveChild(const NodeSharedPtr& node) { RemoveChild(node.get()); }
@@ -133,9 +130,9 @@ public:
 
     auto get_ChildCount() const { return m_children.size(); }
 
-    auto is_ChildAllowed(Node* child) -> bool;
-    auto is_ChildAllowed(NodeDeclaration* child) -> bool;
-    auto is_ChildAllowed(const NodeSharedPtr& child) -> bool
+    bool is_ChildAllowed(Node* child);
+    bool is_ChildAllowed(NodeDeclaration* child);
+    bool is_ChildAllowed(const NodeSharedPtr& child)
     {
         return is_ChildAllowed(child->get_NodeDeclaration());
     }
@@ -143,68 +140,59 @@ public:
     auto get_GenType() const { return m_declaration->get_GenType(); }
 
     // Returns the enum value for the name. Use get_DeclName() to get a char pointer.
-    auto get_GenName() const -> GenName { return m_declaration->get_GenName(); }
+    GenName get_GenName() const { return m_declaration->get_GenName(); }
 
-    auto is_Type(GenType type) const noexcept -> bool
-    {
-        return (type == m_declaration->get_GenType());
-    }
-    auto is_Gen(GenName name) const noexcept -> bool
-    {
-        return (name == m_declaration->get_GenName());
-    }
-    auto is_Parent(GenName name) const noexcept -> bool
+    bool is_Type(GenType type) const noexcept { return (type == m_declaration->get_GenType()); }
+    bool is_Gen(GenName name) const noexcept { return (name == m_declaration->get_GenName()); }
+    bool is_Parent(GenName name) const noexcept
     {
         return (get_Parent() ? name == get_Parent()->m_declaration->get_GenName() : false);
     }
 
     // Returns true if this node is a folder, subfolder, Images List or Data List
-    auto is_NonWidget() const noexcept -> bool
+    bool is_NonWidget() const noexcept
     {
         return (is_Gen(gen_folder) || is_Gen(gen_sub_folder) || is_Gen(gen_Images) ||
                 is_Gen(gen_Data));
     }
 
     // Returns true if the node is either a folder or subfolder
-    auto is_Folder() const noexcept -> bool
+    bool is_Folder() const noexcept
     {
         return (is_Gen(gen_folder) || is_Gen(gen_sub_folder) || is_Gen(gen_data_folder));
     }
 
-    auto is_Widget() const noexcept -> bool { return is_Type(type_widget); }
-    auto is_Wizard() const noexcept -> bool { return is_Type(type_wizard); }
-    auto is_MenuBar() const noexcept -> bool
+    bool is_Widget() const noexcept { return is_Type(type_widget); }
+    bool is_Wizard() const noexcept { return is_Type(type_wizard); }
+    bool is_MenuBar() const noexcept
     {
         return (is_Type(type_menubar_form) || is_Type(type_menubar));
     }
     // Returns true if node is a menu or submenu
-    auto is_Menu() const noexcept -> bool { return (is_Type(type_menu) || is_Type(type_submenu)); }
-    auto is_ToolBar() const noexcept -> bool
+    bool is_Menu() const noexcept { return (is_Type(type_menu) || is_Type(type_submenu)); }
+    bool is_ToolBar() const noexcept
     {
         return (is_Type(type_toolbar) || is_Type(type_toolbar_form) ||
                 is_Type(type_aui_toolbar_form) || is_Type(type_aui_toolbar));
     }
-    auto is_StatusBar() const noexcept -> bool { return is_Type(type_statusbar); }
-    auto is_RibbonBar() const noexcept -> bool { return is_Type(type_ribbonbar); }
+    bool is_StatusBar() const noexcept { return is_Type(type_statusbar); }
+    bool is_RibbonBar() const noexcept { return is_Type(type_ribbonbar); }
 
-    auto is_Form() const noexcept -> bool;
-    auto is_FormParent() const noexcept -> bool
+    bool is_Form() const noexcept;
+    bool is_FormParent() const noexcept
     {
         return (is_Gen(gen_Project) || is_Gen(gen_folder) || is_Gen(gen_sub_folder));
     };
 
-    auto is_StaticBoxSizer() const noexcept -> bool
+    bool is_StaticBoxSizer() const noexcept
     {
         return (is_Gen(gen_wxStaticBoxSizer) || is_Gen(gen_StaticCheckboxBoxSizer) ||
                 is_Gen(gen_StaticRadioBtnBoxSizer));
     }
-    auto is_Spacer() const noexcept -> bool { return is_Gen(gen_spacer); }
+    bool is_Spacer() const noexcept { return is_Gen(gen_spacer); }
 
-    auto is_Sizer() const noexcept -> bool
-    {
-        return (is_Type(type_sizer) || is_Type(type_gbsizer));
-    }
-    auto is_Container() const noexcept -> bool
+    bool is_Sizer() const noexcept { return (is_Type(type_sizer) || is_Type(type_gbsizer)); }
+    bool is_Container() const noexcept
     {
         if (is_Type(type_container) || is_Type(type_propsheetform) || is_Type(type_panel))
         {
@@ -218,84 +206,84 @@ public:
     }
 
     // Returns true if access property == none or there is no access property
-    auto is_Local() const noexcept -> bool;
+    bool is_Local() const noexcept;
 
     auto get_NodeType() { return m_declaration->get_NodeType(); }
     auto get_Generator() const { return m_declaration->get_Generator(); }
 
     // Returns the value of the property "var_name" or "class_name"
-    auto get_NodeName() const -> std::string_view;
+    std::string_view get_NodeName() const;
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
     // is GEN_LANG_RUBY
-    auto get_NodeName(GenLang lang) const -> std::string_view;
+    std::string_view get_NodeName(GenLang lang) const;
 
     // Returns the value of the parent property "var_name" or "class_name"
-    auto get_ParentName() const -> std::string_view;
+    std::string_view get_ParentName() const;
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
     // is GEN_LANG_RUBY
-    auto get_ParentName(GenLang lang, bool ignore_sizers = false) const -> std::string_view;
+    std::string_view get_ParentName(GenLang lang, bool ignore_sizers = false) const;
 
     // Returns this if the node is a form, else walks up node tree to find the parent form.
-    auto get_Form() noexcept -> Node*;
+    Node* get_Form() noexcept;
 
     // Finds the parent form and returns the value of the it's property "class_name"
-    auto get_FormName() -> std::string_view;
+    std::string_view get_FormName();
 
     // Returns the folder node if there is one, nullptr otherwise.
-    auto get_Folder() noexcept -> Node*;
+    Node* get_Folder() noexcept;
 
     // This will walk up the parent tree until it finds a sub-folder, folder, or project
     // node. Use this to find a parent for a new form.
-    auto get_ValidFormParent() noexcept -> Node*;
+    Node* get_ValidFormParent() noexcept;
 
-    auto get_NodeDeclaration() const -> NodeDeclaration* { return m_declaration; }
+    NodeDeclaration* get_NodeDeclaration() const { return m_declaration; }
 
     // Retrieves prop_validator_data_type if it has one, or correct data type for use with
     // wxGenericValidator if it doesn't.
-    auto get_ValidatorDataType() const -> std::string;
+    std::string get_ValidatorDataType() const;
 
     // This will return wxGenericValidator, wxTextValidator, wxIntValidator or
     // wxFloatValidator
-    auto get_ValidatorType() const -> std::string_view;
+    std::string_view get_ValidatorType() const;
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-specified bitmap)
-    auto HasValue(PropName name) const -> bool;
+    bool HasValue(PropName name) const;
 
     // Returns true if the property exists
-    auto HasProp(PropName name) const -> bool { return (m_prop_indices.contains(name)); }
+    bool HasProp(PropName name) const { return (m_prop_indices.contains(name)); }
 
     // Avoid the temptation to use wxue::string_view instead of const char* -- the MSVC compiler
     // will assume value is a bool if you call  is_PropValue(propm, "string")
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
-    auto is_PropValue(PropName name, const char* value) const noexcept -> bool;
+    bool is_PropValue(PropName name, const char* value) const noexcept;
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
-    auto is_PropValue(PropName name, bool value) const noexcept -> bool;
+    bool is_PropValue(PropName name, bool value) const noexcept;
 
-    auto is_PropValue(PropName name, int value) const noexcept -> bool;
+    bool is_PropValue(PropName name, int value) const noexcept;
 
     // Converts friendly name to wxWidgets constant, and then returns the integer value of
     // that constant.
-    auto as_mockup(PropName name, std::string_view prefix) const -> int;
+    int as_mockup(PropName name, std::string_view prefix) const;
 
     // Use with caution! This allows you to modify the property string directly.
     //
     // Returns nullptr if the property doesn't exist.
-    auto get_PropValuePtr(PropName name) -> wxue::string*;
+    wxue::string* get_PropValuePtr(PropName name);
 
-    auto get_PropDefaultValue(PropName name) -> std::string_view;
+    std::string_view get_PropDefaultValue(PropName name);
 
     // Sets value only if the property exists, returns false if it doesn't exist.
     template <typename T>
-    auto set_value(PropName name, T value) -> bool
+    bool set_value(PropName name, T value)
     {
-        if (auto* prop = get_PropPtr(name); prop)
+        if (NodeProperty* prop = get_PropPtr(name); prop)
         {
             prop->set_value(value);
             return true;
@@ -305,11 +293,11 @@ public:
     }
 
     // Returns string containing the property ID without any assignment if it is a custom id.
-    auto get_PropId() const -> wxue::string;
+    wxue::string get_PropId() const;
 
-    auto view(PropName name) const -> wxue::string_view { return as_view(name); }
+    wxue::string_view view(PropName name) const { return as_view(name); }
 
-    auto as_bool(PropName name) const -> bool
+    bool as_bool(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -320,7 +308,7 @@ public:
 
     // If type is option, id, or bitlist, this will convert that constant name to it's value
     // (see NodeCreation.get_ConstantAsInt()). Otherwise, it calls atoi().
-    auto as_int(PropName name) const -> int
+    int as_int(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -329,7 +317,7 @@ public:
         return 0;
     }
 
-    auto as_constant(PropName name, std::string_view prefix) -> const wxue::string&
+    const wxue::string& as_constant(PropName name, std::string_view prefix)
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -341,7 +329,7 @@ public:
     // Looks up wx constant, returns it's numerical value.
     //
     // Returns wxID_ANY if constant is not found
-    auto as_id(PropName name) const -> int
+    int as_id(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -351,7 +339,7 @@ public:
         return wxID_ANY;
     }
 
-    auto as_double(PropName name) const -> double
+    double as_double(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -360,7 +348,7 @@ public:
         return 0;
     }
 
-    auto as_string(PropName name) const -> const wxue::string&
+    const wxue::string& as_string(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -369,7 +357,7 @@ public:
         return wxue::wxue_empty_string;
     }
 
-    auto as_view(PropName name) const -> std::string_view
+    std::string_view as_view(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -378,7 +366,7 @@ public:
         return {};
     }
 
-    auto as_std(PropName name) const -> const std::string&
+    const std::string& as_std(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -390,7 +378,7 @@ public:
     // On Windows this will first convert to UTF-16 unless wxUSE_UNICODE_UTF8 is set.
     //
     // The string will be empty if the property doesn't exist.
-    auto as_wxString(PropName name) const -> wxString
+    wxString as_wxString(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -399,7 +387,7 @@ public:
         return {};
     }
 
-    auto as_wxBitmapBundle(PropName name) const -> wxBitmapBundle
+    wxBitmapBundle as_wxBitmapBundle(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -408,7 +396,7 @@ public:
         return wxNullBitmap;
     }
 
-    auto as_wxBitmap(PropName name) const -> wxBitmap
+    wxBitmap as_wxBitmap(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -417,7 +405,7 @@ public:
         return wxNullBitmap;
     }
 
-    auto as_wxColour(PropName name) const -> wxColour
+    wxColour as_wxColour(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -426,7 +414,7 @@ public:
         return {};
     }
 
-    auto as_wxFont(PropName name) const -> wxFont
+    wxFont as_wxFont(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -435,7 +423,7 @@ public:
         return *wxNORMAL_FONT;
     }
 
-    auto as_font_prop(PropName name) const -> FontProperty
+    FontProperty as_font_prop(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -444,7 +432,7 @@ public:
         return FontProperty(wxNORMAL_FONT);
     }
 
-    auto as_wxPoint(PropName name) const -> wxPoint
+    wxPoint as_wxPoint(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -453,7 +441,7 @@ public:
         return wxDefaultPosition;
     }
 
-    auto as_wxSize(PropName name) const -> wxSize
+    wxSize as_wxSize(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -462,7 +450,7 @@ public:
         return wxDefaultSize;
     }
 
-    auto as_wxArrayString(PropName name) const -> wxArrayString
+    wxArrayString as_wxArrayString(PropName name) const
     {
         if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         {
@@ -472,38 +460,38 @@ public:
     }
 
     // Assumes all values are within quotes
-    auto as_ArrayString(PropName name) const -> std::vector<wxue::string>;
+    std::vector<wxue::string> as_ArrayString(PropName name) const;
 
     // If the following vector properties don't exist, they will return an empty vector
 
-    auto as_statusbar_fields(PropName name) -> std::vector<NODEPROP_STATUSBAR_FIELD>;
-    auto as_checklist_items(PropName name) -> std::vector<NODEPROP_CHECKLIST_ITEM>;
-    auto as_radiobox_items(PropName name) -> std::vector<NODEPROP_RADIOBOX_ITEM>;
-    auto as_bmp_combo_items(PropName name) -> std::vector<NODEPROP_BMP_COMBO_ITEM>;
+    std::vector<NODEPROP_STATUSBAR_FIELD> as_statusbar_fields(PropName name);
+    std::vector<NODEPROP_CHECKLIST_ITEM> as_checklist_items(PropName name);
+    std::vector<NODEPROP_RADIOBOX_ITEM> as_radiobox_items(PropName name);
+    std::vector<NODEPROP_BMP_COMBO_ITEM> as_bmp_combo_items(PropName name);
 
-    auto getSizerFlags() const -> wxSizerFlags;
+    wxSizerFlags getSizerFlags() const;
 
-    auto get_PropsVector() -> std::vector<NodeProperty>& { return m_properties; }
+    std::vector<NodeProperty>& get_PropsVector() { return m_properties; }
 
-    auto AddNodeProperty(PropDeclaration* declaration) -> NodeProperty*;
+    NodeProperty* AddNodeProperty(PropDeclaration* declaration);
     void AddNodeEvent(const NodeEventInfo* info);
-    void CreateDoc(pugi::xml_document& doc);
+    void CreateDoc(pugi::xml_document& xml_doc);
 
     // This creates an orphaned node -- it is the caller's responsibility to hook it up with
     // a parent. Returns the node and an error code.
     //
     // If verify_language_support is true, then the node will only be created if the
     // preferred language supports it (unless the user agrees to create it anyway)
-    auto CreateChildNode(GenName name, bool verify_language_support = false, int pos = -1)
-        -> std::pair<NodeSharedPtr, Node::Validity>;
+    std::pair<NodeSharedPtr, Node::Validity>
+        CreateChildNode(GenName name, bool verify_language_support = false, int pos = -1);
 
     // Gets the current selected node and uses that to call CreateChildNode().
-    auto CreateNode(GenName name) -> Node*;
+    Node* CreateNode(GenName name);
 
     // This is the preferred way to create a new node when requested by the user (tool, menu,
     // or dialog). Besides creating the node, some nodes will get special processing to
     // automatically create additional child nodes.
-    auto CreateToolNode(GenName name, int pos = -1) -> std::expected<bool, std::string>;
+    std::expected<bool, std::string> CreateToolNode(GenName name, int pos = -1);
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed
@@ -522,13 +510,13 @@ public:
     static void ModifyProperty(NodeProperty* prop, int value);
 
     // Both var_name and validator_variable properties are checked
-    auto get_UniqueName(const std::string& proposed_name, PropName prop_name = prop_var_name)
-        -> std::string;
+    std::string get_UniqueName(const std::string& proposed_name,
+                               PropName prop_name = prop_var_name);
 
     // Fix duplicate names in the current node and all of it's children
     void FixDuplicateNodeNames(Node* form = nullptr);
 
-    auto FixDuplicateName() -> bool;
+    bool FixDuplicateName();
 
     // Collects all unique var_name, checkbox_var_name, radiobtn_var_name and
     // validator_variable properties in the current form
@@ -537,69 +525,77 @@ public:
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
                             PropName prop_name = prop_var_name);
 
-    auto FindInsertionPos(Node* child) const -> ptrdiff_t;
-    auto FindInsertionPos(const NodeSharedPtr& child) const -> ptrdiff_t
+    ptrdiff_t FindInsertionPos(Node* child) const;
+    ptrdiff_t FindInsertionPos(const NodeSharedPtr& child) const
     {
         return FindInsertionPos(child.get());
     }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    auto get_NodeSize() const -> size_t;
+    size_t get_NodeSize() const;
 
     // This writes XML files in the 1.1 layout using attributes for properties
     void AddNodeToDoc(pugi::xml_node& object, int& project_version);
 
     void CalcNodeHash(size_t& hash) const;
 
-    auto get_AllowableChildren(GenType child_gen_type) const -> ptrdiff_t
+    ptrdiff_t get_AllowableChildren(GenType child_gen_type) const
     {
         return m_declaration->get_AllowableChildren(child_gen_type);
     }
 
     // Collect a vector of pointers to all children having the specified property with a
     // non-empty value.
-    auto FindAllChildProperties(PropName name) -> std::vector<NodeProperty*>;
+    std::vector<NodeProperty*> FindAllChildProperties(PropName name);
 
     void CopyEventsFrom(Node*);
     void CopyEventsFrom(const NodeSharedPtr& node) { CopyEventsFrom(node.get()); }
 
     void set_MockupObject(wxObject* object) { m_mockup_object = object; }
-    auto get_MockupObject() const -> const wxObject* { return m_mockup_object; }
+    const wxObject* get_MockupObject() const { return m_mockup_object; }
+
+    void RemoveNode(bool isCutMode);
+    void CopyNode();
+    void DuplicateNode();
+    void ToggleBorderFlag(int border);
+    void ChangeAlignment(int align, bool vertical);
+    bool MoveNode(MoveDirection where, bool check_only = false);
 
 protected:
     void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
 
 private:
-    static auto GetBorderDirection(std::string_view border_settings) -> int;
-    static auto ApplyAlignment(wxSizerFlags& flags, const wxue::string& alignment) -> void;
-    static auto ApplyAdditionalFlags(wxSizerFlags& flags, const wxue::string& prop) -> void;
+    static int GetBorderDirection(std::string_view border_settings);
+    static void ApplyAlignment(wxSizerFlags& flags, const wxue::string& alignment);
+    static void ApplyAdditionalFlags(wxSizerFlags& flags, const wxue::string& prop);
 
     // Helper methods for CreateChildNode to reduce complexity
-    auto TryCreateInSizerChild(GenName name, bool verify_language_support, Node*& parent,
-                               NodeSharedPtr& new_node) -> std::pair<NodeSharedPtr, Node::Validity>;
-    static auto HandleGridBagInsertion(Node* parent, Node* new_node)
-        -> std::pair<NodeSharedPtr, Node::Validity>;
-    auto AdjustMemberNameForLanguage(Node* new_node) -> void;
-    auto HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
-        -> std::pair<NodeSharedPtr, Node::Validity>;
-    auto TryCreateInParent(GenName name, [[maybe_unused]] int pos)
-        -> std::pair<NodeSharedPtr, Node::Validity>;
+    std::pair<NodeSharedPtr, Node::Validity> TryCreateInSizerChild(GenName name,
+                                                                   bool verify_language_support,
+                                                                   Node*& parent,
+                                                                   NodeSharedPtr& new_node);
+    static std::pair<NodeSharedPtr, Node::Validity> HandleGridBagInsertion(Node* parent,
+                                                                           Node* new_node);
+    void AdjustMemberNameForLanguage(Node* new_node);
+    std::pair<NodeSharedPtr, Node::Validity>
+        HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos);
+    std::pair<NodeSharedPtr, Node::Validity> TryCreateInParent(GenName name,
+                                                               [[maybe_unused]] int pos);
 
     // Helper methods for CreateToolNode to reduce complexity
-    auto AdjustNameForFrameForm(GenName& name) -> void;
-    auto CreateFolderNode(GenName& name) -> bool;
-    auto CreateImagesListNode() -> bool;
-    auto CreateDataListNode() -> bool;
-    auto PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void;
+    void AdjustNameForFrameForm(GenName& name);
+    bool CreateFolderNode(GenName& name);
+    bool CreateImagesListNode();
+    bool CreateDataListNode();
+    void PostProcessNewNode(NodeSharedPtr& new_node, GenName name);
 
     // Helper methods for FixDuplicateNodeNames to reduce complexity
-    static auto InitializeNameSet(std::unordered_set<std::string>& name_set) -> void;
-    static auto GenerateUniqueNameFromBase(const std::string& base_name,
-                                           const std::unordered_set<std::string>& name_set)
-        -> std::string;
-    auto FixDuplicateVariableNames(const std::unordered_set<std::string>& name_set) -> void;
-    auto FixChildrenNodeNames(Node* form) -> void;
-    auto FixPropGridLabelIfNeeded() -> void;
+    static void InitializeNameSet(std::unordered_set<std::string>& name_set);
+    static std::string GenerateUniqueNameFromBase(const std::string& base_name,
+                                                  const std::unordered_set<std::string>& name_set);
+    void FixDuplicateVariableNames(const std::unordered_set<std::string>& name_set);
+    void FixChildrenNodeNames(Node* form);
+    void FixPropGridLabelIfNeeded();
 
     NodeSharedPtr m_parent;
 

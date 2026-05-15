@@ -113,7 +113,7 @@ void RemoveNodeAction::Change()
 {
     if (m_AddToClipboard)
     {
-        wxGetFrame().CopyNode(m_node.get());
+        m_node->CopyNode();
     }
 
     m_parent->RemoveChild(m_node);

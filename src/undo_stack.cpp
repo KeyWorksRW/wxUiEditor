@@ -92,9 +92,9 @@ void GroupUndoActions::Change()
 
 void GroupUndoActions::Revert()
 {
-    for (const auto& iter: m_actions)
+    for (auto iter = m_actions.rbegin(); iter != m_actions.rend(); ++iter)
     {
-        iter->Revert();
+        (*iter)->Revert();
     }
 
     if (m_old_selected)

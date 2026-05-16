@@ -111,7 +111,7 @@ public:
     }
     void RemoveCustomEventHandler(wxEvtHandler* handler);
 
-    void FireChangeEventHandler(NodeEvent* event);
+    void FireChangeEventHandler(NodeEvent* evt_node);
     void FireCreatedEvent(Node* node);
     void FireDeletedEvent(Node* node);
     void FireGridBagActionEvent(GridBagAction* undo_cmd);
@@ -154,6 +154,12 @@ public:
     auto getClipboard() -> Node* { return (m_clipboard ? m_clipboard.get() : nullptr); }
     auto getClipHash() -> size_t { return (m_clipboard ? m_clip_hash : 0); }
 
+    void setClipboardData(NodeSharedPtr node, size_t hash)
+    {
+        m_clipboard = std::move(node);
+        m_clip_hash = hash;
+    }
+
     // No event will be fired if the node is already selected, unless evt_flags::force_selection
     // is set.
     //
@@ -166,25 +172,23 @@ public:
         return SelectNode(node.get(), flags);
     }
 
-    auto MoveNode(Node* node, MoveDirection where, bool check_only = false) -> bool;
     auto MoveNode(MoveDirection where, bool check_only = false) -> bool
     {
-        return MoveNode(m_selected_node.get(), where, check_only);
+        if (!m_selected_node)
+        {
+            return false;
+        }
+        return m_selected_node->MoveNode(where, check_only);
     }
 
     // Removes the node and places it in the internal clipboard
-    void CutNode(Node* node) { RemoveNode(node, true); };
+    void CutNode(Node* node) { node->RemoveNode(true); };
 
     // Erase the node without placing it in the clipboard
-    void DeleteNode(Node* node) { RemoveNode(node, false); };
-
-    // Cut or Delete a node.
-    void RemoveNode(Node* node, bool isCutMode);
+    void DeleteNode(Node* node) { node->RemoveNode(false); };
 
     // Call this MainFrame version if you don't have access to a node.
     void ModifyProperty(NodeProperty* prop, std::string_view value);
-
-    void ChangeAlignment(Node* node, int align, bool vertical);
 
     bool GetLayoutSettings(int* flag, int* option, int* border, int* orient);
 
@@ -212,7 +216,6 @@ public:
     [[nodiscard]] auto getDebugStatusField() const -> int { return m_posRightStatusField; }
     void UpdateStatusWidths();
 
-    void CopyNode(Node* node);
     void PasteNode(Node* parent);
 
     auto CanCopyNode() -> bool;
@@ -225,7 +228,6 @@ public:
     auto isPasteAvailable() -> bool { return (m_clipboard.get() || isClipboardDataAvailable()); }
 
     // This does not use the internal clipboard
-    void DuplicateNode(Node* node);
 
     auto setStatusText(const wxString& txt, int pane = 1) -> void;
     auto OnCreateStatusBar(int number, long style, wxWindowID win_id, const wxString& name)
@@ -257,8 +259,6 @@ public:
 
     void ProjectLoaded();
     void ProjectSaved();
-
-    void ToggleBorderFlag(Node* node, int border);
 
     auto PreviewCpp(Node* form_node) -> void;
 

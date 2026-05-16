@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Maintain a undo and redo stack
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +12,7 @@
 
 ///////////////////////////////// UndoStack ////////////////////////////////////
 
-auto UndoStack::Push(UndoActionPtr ptr) -> void
+void UndoStack::Push(const UndoActionPtr& ptr)
 {
     if (!m_locked)
     {
@@ -22,11 +22,11 @@ auto UndoStack::Push(UndoActionPtr ptr) -> void
     ptr->Change();
 }
 
-auto UndoStack::Undo() -> void
+void UndoStack::Undo()
 {
-    if (m_undo.size())
+    if (!m_undo.empty())
     {
-        const auto command =
+        const UndoActionPtr command =
             m_undo.back();  // make a copy of the share_ptr to increase the reference count
         m_undo.pop_back();
         m_redo.push_back(command);
@@ -34,11 +34,11 @@ auto UndoStack::Undo() -> void
     }
 }
 
-auto UndoStack::Redo() -> void
+void UndoStack::Redo()
 {
-    if (m_redo.size())
+    if (!m_redo.empty())
     {
-        const auto command =
+        const UndoActionPtr command =
             m_redo.back();  // make a copy of the share_ptr to increase the reference count
         m_redo.pop_back();
         m_undo.push_back(command);
@@ -46,20 +46,20 @@ auto UndoStack::Redo() -> void
     }
 }
 
-auto UndoStack::GetUndoString() -> wxString
+wxString UndoStack::GetUndoString()
 {
     wxString str;
-    if (m_undo.size())
+    if (!m_undo.empty())
     {
         str = m_undo.back()->GetUndoString().wx();
     }
     return str;
 }
 
-auto UndoStack::GetRedoString() -> wxString
+wxString UndoStack::GetRedoString()
 {
     wxString str;
-    if (m_redo.size())
+    if (!m_redo.empty())
     {
         str = m_redo.back()->GetUndoString().wx();
     }
@@ -77,7 +77,7 @@ GroupUndoActions::GroupUndoActions(std::string_view undo_str, Node* sel_node) : 
     }
 }
 
-auto GroupUndoActions::Change() -> void
+void GroupUndoActions::Change()
 {
     for (const auto& iter: m_actions)
     {
@@ -90,11 +90,11 @@ auto GroupUndoActions::Change() -> void
     }
 }
 
-auto GroupUndoActions::Revert() -> void
+void GroupUndoActions::Revert()
 {
-    for (const auto& iter: m_actions)
+    for (auto iter = m_actions.rbegin(); iter != m_actions.rend(); ++iter)
     {
-        iter->Revert();
+        (*iter)->Revert();
     }
 
     if (m_old_selected)
@@ -103,7 +103,7 @@ auto GroupUndoActions::Revert() -> void
     }
 }
 
-auto GroupUndoActions::GetMemorySize() -> size_t
+size_t GroupUndoActions::GetMemorySize()
 {
     size_t total = sizeof(*this);
     for (const auto& iter: m_actions)

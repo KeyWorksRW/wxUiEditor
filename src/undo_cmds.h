@@ -1,22 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-// AI Context: This file implements concrete UndoAction-derived classes for all undoable operations
-// in wxUiEditor. Each class encapsulates a specific operation: InsertNodeAction/RemoveNodeAction
-// (node tree modifications), ModifyPropertyAction/ModifyProperties (property changes),
-// ModifyEventAction (event handler changes), ChangePositionAction/ChangeParentAction (node
-// repositioning), ChangeSizerType/ChangeNodeType (component type changes),
-// AppendGridBagAction/GridBagAction (wxGridBagSizer operations), and SortProjectAction (project
-// sorting). Classes store both change and revert states (m_change_value/m_revert_value,
-// m_change_parent/m_revert_parent, m_new_gen_sizer/m_old_node) enabling bidirectional execution.
-// Change() applies the operation (called on push and redo), Revert() undoes it (called on undo).
-// State tracking includes m_old_selected (restore selection), m_fire_created_event (event control),
-// m_pos (insertion position). GetMemorySize() reports memory usage for history limits.
-// GroupUndoActions (via ModifyProperties) batches operations into atomic undo units.
 
 #pragma once
 
@@ -34,28 +21,22 @@ class InsertNodeAction : public UndoAction
 {
 public:
     InsertNodeAction(Node* node, Node* parent, std::string_view undo_str, int pos = -1);
-    InsertNodeAction(const NodeSharedPtr node, const NodeSharedPtr parent,
-                     std::string_view undo_str, int pos = -1);
 
     // Called when pushed to the Undo stack and when Redo is called
-    auto Change() -> void override;
+    void Change() override;
 
     // Called when Undo is requested
-    auto Revert() -> void override;
+    void Revert() override;
 
     // Set this to true if you created the node without firing a created event.
-    auto SetFireCreatedEvent(bool fire) -> void { m_fire_created_event = fire; }
+    void SetFireCreatedEvent(bool fire) { m_fire_created_event = fire; }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
-
-protected:
-    auto Init(const NodeSharedPtr node, const NodeSharedPtr parent, std::string_view undo_str,
-              int pos = -1) -> void;
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_old_selected;
-    int m_pos;
+    int m_pos { -1 };
     bool m_fix_duplicate_names { true };
     bool m_fire_created_event { false };
 };
@@ -65,20 +46,14 @@ class RemoveNodeAction : public UndoAction
 {
 public:
     RemoveNodeAction(Node* node, std::string_view undo_str, bool AddToClipboard = false);
-    RemoveNodeAction(const NodeSharedPtr node, std::string_view undo_str,
-                     bool AddToClipboard = false);
 
     // Called when pushed to the Undo stack and when Redo is called
-    auto Change() -> void override;
+    void Change() override;
 
     // Called when Undo is requested
-    auto Revert() -> void override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
-
-protected:
-    auto Init(const NodeSharedPtr node, std::string_view undo_str, bool AddToClipboard = false)
-        -> void;
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_parent;
@@ -93,13 +68,13 @@ class ModifyPropertyAction : public UndoAction
 public:
     ModifyPropertyAction(NodeProperty* prop, std::string_view value);
     ModifyPropertyAction(NodeProperty* prop, int value);
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetProperty() -> NodeProperty* override { return m_property; }
+    [[nodiscard]] NodeProperty* GetProperty() override { return m_property; }
 
     // The +2 is to account for the trailing zero in each std::string value.
-    [[nodiscard]] auto GetMemorySize() -> size_t override
+    size_t GetMemorySize() override
     {
         return sizeof(*this) + m_revert_value.size() + m_change_value.size() + 2;
     }
@@ -118,11 +93,11 @@ class ModifyProperties : public UndoAction
 public:
     ModifyProperties(std::string_view undo_string, bool fire_events = true);
 
-    auto addProperty(NodeProperty* prop, std::string_view value) -> void;
-    auto addProperty(NodeProperty* prop, int value) -> void;
+    void addProperty(NodeProperty* prop, std::string_view value);
+    void addProperty(NodeProperty* prop, int value);
 
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
     struct MULTI_PROP
     {
@@ -133,7 +108,7 @@ public:
     };
     [[nodiscard]] auto& GetVector() { return m_properties; }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override;
+    size_t GetMemorySize() override;
 
 private:
     std::vector<MULTI_PROP> m_properties;
@@ -145,10 +120,10 @@ class ModifyEventAction : public UndoAction
 {
 public:
     ModifyEventAction(NodeEvent* event, std::string_view value);
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override
+    size_t GetMemorySize() override
     {
         return sizeof(*this) + m_revert_value.size() + m_change_value.size();
     }
@@ -164,18 +139,14 @@ class ChangePositionAction : public UndoAction
 {
 public:
     ChangePositionAction(Node* node, size_t position);
-    ChangePositionAction(const NodeSharedPtr node, size_t position);
 
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto get_Parent() -> Node* { return m_parent.get(); }
-    [[nodiscard]] auto getNode() -> Node* { return m_node.get(); }
+    [[nodiscard]] Node* get_Parent() { return m_parent.get(); }
+    [[nodiscard]] Node* getNode() { return m_node.get(); }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
-
-protected:
-    auto Init(const NodeSharedPtr node, size_t position) -> void;
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_parent;
@@ -188,19 +159,15 @@ class ChangeParentAction : public UndoAction
 {
 public:
     ChangeParentAction(Node* node, Node* parent, int pos = -1);
-    ChangeParentAction(const NodeSharedPtr node, const NodeSharedPtr parent, int pos = -1);
 
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetOldParent() -> Node* { return m_revert_parent.get(); }
-    [[nodiscard]] auto GetNewParent() -> Node* { return m_change_parent.get(); }
-    [[nodiscard]] auto getNode() -> Node* { return m_node.get(); }
+    [[nodiscard]] Node* GetOldParent() { return m_revert_parent.get(); }
+    [[nodiscard]] Node* GetNewParent() { return m_change_parent.get(); }
+    [[nodiscard]] Node* getNode() { return m_node.get(); }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
-
-protected:
-    auto Init(const NodeSharedPtr node, const NodeSharedPtr parent, int pos) -> void;
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_change_parent;
@@ -217,13 +184,13 @@ class ChangeSizerType : public UndoAction
 {
 public:
     ChangeSizerType(Node* node, GenEnum::GenName new_sizer);
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetOldNode() -> NodeSharedPtr override { return m_old_node; }
-    [[nodiscard]] auto getNode() -> Node* { return m_node.get(); }
+    [[nodiscard]] NodeSharedPtr GetOldNode() override { return m_old_node; }
+    [[nodiscard]] Node* getNode() { return m_node.get(); }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_old_node;
@@ -236,13 +203,13 @@ class ChangeNodeType : public UndoAction
 {
 public:
     ChangeNodeType(Node* node, GenEnum::GenName new_node);
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetOldNode() -> NodeSharedPtr override { return m_old_node; }
-    [[nodiscard]] auto getNode() -> Node* { return m_node.get(); }
+    [[nodiscard]] NodeSharedPtr GetOldNode() override { return m_old_node; }
+    [[nodiscard]] Node* getNode() { return m_node.get(); }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_old_node;
@@ -255,10 +222,10 @@ class AppendGridBagAction : public UndoAction
 {
 public:
     AppendGridBagAction(Node* node, Node* parent, int pos = -1);
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_parent;
@@ -280,15 +247,15 @@ class GridBagAction : public UndoAction
 {
 public:
     GridBagAction(Node* cur_gbsizer, std::string_view undo_str);
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
     // Call this after making all changes to the gbsizer children
-    auto Update() -> void;
-    [[nodiscard]] auto GetOldSizerNode() const -> Node* { return m_old_gbsizer.get(); }
-    [[nodiscard]] auto GetCurSizerNode() const -> Node* { return m_cur_gbsizer.get(); }
+    void Update();
+    [[nodiscard]] Node* GetOldSizerNode() const { return m_old_gbsizer.get(); }
+    [[nodiscard]] Node* GetCurSizerNode() const { return m_cur_gbsizer.get(); }
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
+    size_t GetMemorySize() override { return sizeof(*this); }
 
 private:
     NodeSharedPtr m_cur_gbsizer;
@@ -302,14 +269,14 @@ class SortProjectAction : public UndoAction
 {
 public:
     SortProjectAction();
-    auto Change() -> void override;
-    auto Revert() -> void override;
+    void Change() override;
+    void Revert() override;
 
-    [[nodiscard]] auto GetMemorySize() -> size_t override { return sizeof(*this); }
-    [[nodiscard]] auto GetOldNode() -> NodeSharedPtr override { return m_old_project; }
+    size_t GetMemorySize() override { return sizeof(*this); }
+    [[nodiscard]] NodeSharedPtr GetOldNode() override { return m_old_project; }
 
 protected:
-    auto SortFolder(Node* folder) -> void;
+    void SortFolder(Node* folder);
 
 private:
     NodeSharedPtr m_old_project;

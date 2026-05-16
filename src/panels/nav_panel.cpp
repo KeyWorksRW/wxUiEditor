@@ -382,7 +382,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
             if (wxMessageBox("Do you want to duplicate this item?", "Drop item onto itself",
                              wxYES_NO) == wxYES)
             {
-                wxGetFrame().DuplicateNode(GetNode(item_src));
+                GetNode(item_src)->DuplicateNode();
                 ExpandAllNodes(wxGetFrame().getSelectedNode());
             }
             return;
@@ -409,12 +409,12 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         // If the user drags and drops windows within a wxSplitterWindow, then just swap places
         if (node_dst->get_Child(1) == node_src)
         {
-            m_pMainFrame->MoveNode(node_src, MoveDirection::Up);
+            node_src->MoveNode(MoveDirection::Up);
             return;
         }
         if (node_dst->get_Child(0) == node_src)
         {
-            m_pMainFrame->MoveNode(node_src, MoveDirection::Down);
+            node_src->MoveNode(MoveDirection::Down);
             return;
         }
         if (node_dst->get_ChildCount() == 2)
@@ -838,19 +838,19 @@ void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
     switch (event.GetId())
     {
         case NavToolbar::id_NavMoveUp:
-            event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Up, true));
+            event.Enable(node->MoveNode(MoveDirection::Up, true));
             break;
 
         case NavToolbar::id_NavMoveDown:
-            event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Down, true));
+            event.Enable(node->MoveNode(MoveDirection::Down, true));
             break;
 
         case NavToolbar::id_NavMoveLeft:
-            event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Left, true));
+            event.Enable(node->MoveNode(MoveDirection::Left, true));
             break;
 
         case NavToolbar::id_NavMoveRight:
-            event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Right, true));
+            event.Enable(node->MoveNode(MoveDirection::Right, true));
             break;
 
         case NavToolbar::id_NavExpand:

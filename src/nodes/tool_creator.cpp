@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for creating new nodes from Ribbon Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -23,56 +23,57 @@
 
 using namespace GenEnum;
 
-namespace
+static void PostProcessBook(Node* book_node)
 {
-    auto PostProcessBook(Node* book_node) -> void
+    const NodeSharedPtr page_node = book_node->CreateChildNode(gen_BookPage).first;
+    if (!page_node)
     {
-        auto page_node = book_node->CreateChildNode(gen_BookPage).first;
-        if (page_node->FixDuplicateName())
-        {
-            wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
-        }
-
-        if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
-        {
-            sizer->set_value(prop_var_name, "page_sizer");
-            sizer->FixDuplicateName();
-            wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
-        }
+        return;
+    }
+    if (page_node->FixDuplicateName())
+    {
+        wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
     }
 
-    auto PostProcessPage(Node* page_node) -> void
+    if (const NodeSharedPtr sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
     {
-        if (page_node->FixDuplicateName())
-        {
-            wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
-        }
+        sizer->set_value(prop_var_name, "page_sizer");
+        sizer->FixDuplicateName();
+        wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+    }
+}
 
-        if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
-        {
-            sizer->set_value(prop_var_name, "page_sizer");
-            sizer->FixDuplicateName();
-            wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
-        }
+static void PostProcessPage(Node* page_node)
+{
+    if (page_node->FixDuplicateName())
+    {
+        wxGetFrame().FirePropChangeEvent(page_node->get_PropPtr(prop_var_name));
     }
 
-    auto PostProcessPanel(Node* panel_node) -> void
+    if (const NodeSharedPtr sizer = page_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
     {
-        if (panel_node->FixDuplicateName())
-        {
-            wxGetFrame().FirePropChangeEvent(panel_node->get_PropPtr(prop_var_name));
-        }
-
-        if (auto sizer = panel_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
-        {
-            sizer->set_value(prop_var_name, "panel_sizer");
-            sizer->FixDuplicateName();
-            wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
-        }
+        sizer->set_value(prop_var_name, "page_sizer");
+        sizer->FixDuplicateName();
+        wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
     }
-}  // anonymous namespace
+}
 
-auto Node::AdjustNameForFrameForm(GenName& name) -> void
+static void PostProcessPanel(Node* panel_node)
+{
+    if (panel_node->FixDuplicateName())
+    {
+        wxGetFrame().FirePropChangeEvent(panel_node->get_PropPtr(prop_var_name));
+    }
+
+    if (const NodeSharedPtr sizer = panel_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+    {
+        sizer->set_value(prop_var_name, "panel_sizer");
+        sizer->FixDuplicateName();
+        wxGetFrame().FirePropChangeEvent(sizer->get_PropPtr(prop_var_name));
+    }
+}
+
+void Node::AdjustNameForFrameForm(GenName& name)
 {
     if (!is_Type(type_frame_form))
     {
@@ -81,7 +82,7 @@ auto Node::AdjustNameForFrameForm(GenName& name) -> void
 
     if (name == gen_MenuBar)
     {
-        const auto has_menubar = std::ranges::any_of(get_ChildNodePtrs(),
+        const bool has_menubar = std::ranges::any_of(get_ChildNodePtrs(),
                                                      [](const auto& iter)
                                                      {
                                                          return iter->is_Gen(gen_MenuBar);
@@ -93,7 +94,7 @@ auto Node::AdjustNameForFrameForm(GenName& name) -> void
     }
     else if (name == gen_ToolBar)
     {
-        const auto has_toolbar = std::ranges::any_of(get_ChildNodePtrs(),
+        const bool has_toolbar = std::ranges::any_of(get_ChildNodePtrs(),
                                                      [](const auto& iter)
                                                      {
                                                          return iter->is_Gen(gen_ToolBar);
@@ -105,7 +106,7 @@ auto Node::AdjustNameForFrameForm(GenName& name) -> void
     }
 }
 
-auto Node::CreateFolderNode(GenName& name) -> bool
+bool Node::CreateFolderNode(GenName& name)
 {
     if (!is_FormParent() && !is_Form())
     {
@@ -115,22 +116,22 @@ auto Node::CreateFolderNode(GenName& name) -> bool
         return true;
     }
 
-    auto* parent = is_Form() ? get_Parent() : this;
+    Node* parent = is_Form() ? get_Parent() : this;
     if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
     {
         name = gen_sub_folder;
     }
 
-    if (auto new_node = NodeCreation.CreateNode(name, parent).first; new_node)
+    if (const NodeSharedPtr new_node = NodeCreation.CreateNode(name, parent).first; new_node)
     {
         if (new_node->is_Gen(gen_folder))
         {
             new_node->set_value(prop_code_preference, Project.as_string(prop_code_preference));
         }
         wxGetFrame().Freeze();
-        auto childPos = is_Form() ? parent->get_ChildPosition(this) : 0;
+        const size_t childPos = is_Form() ? parent->get_ChildPosition(this) : 0;
         wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(
-            new_node.get(), parent, "Insert new folder", childPos));
+            new_node.get(), parent, "Insert new folder", static_cast<int>(childPos)));
 
         wxGetFrame().getNavigationPanel()->InsertNode(new_node.get());
 
@@ -145,7 +146,7 @@ auto Node::CreateFolderNode(GenName& name) -> bool
     return false;
 }
 
-auto Node::CreateImagesListNode() -> bool
+bool Node::CreateImagesListNode()
 {
     if (std::ranges::any_of(Project.get_ChildNodePtrs(),
                             [](const auto& iter)
@@ -158,21 +159,22 @@ auto Node::CreateImagesListNode() -> bool
         return true;
     }
 
-    auto new_node = NodeCreation.CreateNode(gen_Images, Project.get_ProjectNode()).first;
+    const NodeSharedPtr new_node =
+        NodeCreation.CreateNode(gen_Images, Project.get_ProjectNode()).first;
     if (!new_node)
     {
         return false;
     }
 
-    auto insert_node = std::make_shared<InsertNodeAction>(new_node.get(), Project.get_ProjectNode(),
-                                                          "insert Images list", 0);
+    const std::shared_ptr<InsertNodeAction> insert_node = std::make_shared<InsertNodeAction>(
+        new_node.get(), Project.get_ProjectNode(), "insert Images list", 0);
     insert_node->SetFireCreatedEvent(true);
     wxGetFrame().PushUndoAction(insert_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     return true;
 }
 
-auto Node::CreateDataListNode() -> bool
+bool Node::CreateDataListNode()
 {
     size_t insert_pos = 0;
     for (const auto& iter: Project.get_ChildNodePtrs())
@@ -189,28 +191,30 @@ auto Node::CreateDataListNode() -> bool
         }
     }
 
-    auto new_node = NodeCreation.CreateNode(gen_Data, Project.get_ProjectNode()).first;
+    const NodeSharedPtr new_node =
+        NodeCreation.CreateNode(gen_Data, Project.get_ProjectNode()).first;
     if (!new_node)
     {
         return false;
     }
 
-    auto insert_node = std::make_shared<InsertNodeAction>(new_node.get(), Project.get_ProjectNode(),
-                                                          "insert Data list", insert_pos);
+    const std::shared_ptr<InsertNodeAction> insert_node = std::make_shared<InsertNodeAction>(
+        new_node.get(), Project.get_ProjectNode(), "insert Data list", insert_pos);
     insert_node->SetFireCreatedEvent(true);
     wxGetFrame().PushUndoAction(insert_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     return true;
 }
 
-auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
+void Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name)
 {
     switch (name)
     {
         case gen_wxDialog:
         case gen_PanelForm:
         case gen_wxPopupTransientWindow:
-            if (auto sizer = new_node->CreateChildNode(gen_VerticalBoxSizer).first; sizer)
+            if (const NodeSharedPtr sizer = new_node->CreateChildNode(gen_VerticalBoxSizer).first;
+                sizer)
             {
                 sizer->set_value(prop_var_name, "parent_sizer");
                 sizer->FixDuplicateName();
@@ -238,12 +242,17 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
 
         case gen_wxWizard:
             new_node = new_node->CreateChildNode(gen_wxWizardPageSimple).first;
+            if (!new_node)
+            {
+                break;
+            }
             PostProcessPage(new_node.get());
             break;
 
         case gen_wxMenuBar:
         case gen_MenuBar:
-            if (auto node_menu = new_node->CreateChildNode(gen_wxMenu).first; node_menu)
+            if (const NodeSharedPtr node_menu = new_node->CreateChildNode(gen_wxMenu).first;
+                node_menu)
             {
                 node_menu->CreateChildNode(gen_wxMenuItem);
             }
@@ -272,9 +281,9 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
         case gen_wxStaticBoxSizer:
         case gen_StaticCheckboxBoxSizer:
         case gen_StaticRadioBtnBoxSizer:
-            if (auto* node = new_node->get_Parent(); node)
+            if (Node* node = new_node->get_Parent(); node)
             {
-                if (auto* prop = node->get_PropPtr(prop_borders); prop)
+                if (NodeProperty* prop = node->get_PropPtr(prop_borders); prop)
                 {
                     if (UserPrefs.is_SizersAllBorders())
                     {
@@ -282,7 +291,7 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
                     }
                 }
 
-                if (auto* prop = node->get_PropPtr(prop_flags); prop)
+                if (NodeProperty* prop = node->get_PropPtr(prop_flags); prop)
                 {
                     if (UserPrefs.is_SizersExpand())
                     {
@@ -293,12 +302,12 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
             break;
 
         case gen_wxStaticLine:
-            if (auto* sizer = new_node->get_Parent(); sizer->is_Sizer())
+            if (const Node* sizer = new_node->get_Parent(); sizer && sizer->is_Sizer())
             {
                 new_node->set_value(prop_size, "20,-1d");
                 wxGetFrame().FirePropChangeEvent(new_node->get_PropPtr(prop_size));
             }
-            if (auto* prop = new_node->get_PropPtr(prop_flags); prop)
+            if (NodeProperty* prop = new_node->get_PropPtr(prop_flags); prop)
             {
                 prop->set_value("wxEXPAND");
                 wxGetFrame().FirePropChangeEvent(prop);
@@ -306,7 +315,7 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
             break;
 
         case gen_wxStdDialogButtonSizer:
-            if (auto* prop = new_node->get_PropPtr(prop_flags); prop)
+            if (NodeProperty* prop = new_node->get_PropPtr(prop_flags); prop)
             {
                 prop->set_value("wxEXPAND");
                 wxGetFrame().FirePropChangeEvent(prop);
@@ -314,7 +323,7 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
             break;
 
         case gen_wxContextMenuEvent:
-            if (auto* event = new_node->get_Parent()->get_Event("wxEVT_CONTEXT_MENU"); event)
+            if (NodeEvent* event = new_node->get_Parent()->get_Event("wxEVT_CONTEXT_MENU"); event)
             {
                 event->set_value(new_node->as_string(prop_handler_name));
             }
@@ -335,7 +344,7 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
             break;
 
         case gen_wxSplitterWindow:
-            if (auto* sizer = new_node->get_Parent(); sizer->is_Sizer())
+            if (const Node* sizer = new_node->get_Parent(); sizer && sizer->is_Sizer())
             {
                 new_node->set_value(prop_size, "200,-1d");
                 wxGetFrame().FirePropChangeEvent(new_node->get_PropPtr(prop_size));
@@ -351,9 +360,9 @@ auto Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name) -> void
     }
 }
 
-auto SetUniqueRibbonToolID(Node* node) -> void
+void SetUniqueRibbonToolID(Node* node)
 {
-    auto* bar_parent = node->get_Parent();
+    Node* bar_parent = node->get_Parent();
     while (bar_parent &&
            (!bar_parent->is_Gen(gen_wxRibbonBar) && !bar_parent->is_Gen(GenEnum::gen_RibbonBar)))
     {
@@ -390,7 +399,8 @@ auto SetUniqueRibbonToolID(Node* node) -> void
 
     std::string new_name("tool1");
 
-    if (auto iter = name_set.find(new_name); iter != name_set.end())
+    if (std::unordered_set<std::string>::iterator iter = name_set.find(new_name);
+        iter != name_set.end())
     {
         // Keep adding higher and higher numbers until we get a unique one.
         for (int i = 2; iter != name_set.end(); iter = name_set.find(new_name), ++i)
@@ -399,16 +409,16 @@ auto SetUniqueRibbonToolID(Node* node) -> void
         }
     }
 
-    node->set_value(prop_id, new_name);
+    std::ignore = node->set_value(prop_id, new_name);
 }
 
-auto Node::CreateToolNode(GenName name, int pos) -> bool
+std::expected<bool, std::string> Node::CreateToolNode(GenName name, int pos)
 {
     AdjustNameForFrameForm(name);
 
     if (is_Gen(gen_Project))
     {
-        // If needed, change the names to the Form version version the normal child version
+        // If needed, change the names to the Form version rather than the normal child version
         if (name == gen_wxMenuBar)
         {
             name = gen_MenuBar;
@@ -420,20 +430,32 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
     }
     else if (name == gen_folder)
     {
-        return CreateFolderNode(name);
+        if (CreateFolderNode(name))
+        {
+            return true;
+        }
+        return std::unexpected(std::string {});
     }
 
     if (name == gen_Images)
     {
-        return CreateImagesListNode();
+        if (CreateImagesListNode())
+        {
+            return true;
+        }
+        return std::unexpected(std::string {});
     }
     if (name == gen_Data)
     {
-        return CreateDataListNode();
+        if (CreateDataListNode())
+        {
+            return true;
+        }
+        return std::unexpected(std::string {});
     }
     if (name == gen_embedded_image)
     {
-        auto* image_node = Project.get_ImagesForm();
+        const Node* image_node = Project.get_ImagesForm();
         if (!image_node)
         {
             wxMessageBox("An Images List must be created before you can add an embedded image.",
@@ -444,7 +466,7 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
     }
     if (name == gen_data_string)
     {
-        auto* data_node = data_list::FindDataList();
+        Node* data_node = data_list::FindDataList();
         if (!data_node)
         {
             wxMessageBox("A Data List must be created before you can add a data string.",
@@ -455,30 +477,30 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
         data_node->CreateChildNode(name);
         return true;
     }
-    if (name == gen_ribbonButton &&
-        (is_Gen(gen_wxRibbonToolBar) || get_Parent()->is_Gen(gen_wxRibbonToolBar)))
+    if (name == gen_ribbonButton && (is_Gen(gen_wxRibbonToolBar) ||
+                                     (get_Parent() && get_Parent()->is_Gen(gen_wxRibbonToolBar))))
     {
         name = gen_ribbonTool;
     }
 
-    if (auto* valid_parent = NodeCreation.is_ValidCreateParent(name, this);
+    if (Node* valid_parent = NodeCreation.is_ValidCreateParent(name, this);
         valid_parent && valid_parent != this)
     {
         if (valid_parent && valid_parent == get_Parent() &&
             !valid_parent->is_Gen(gen_wxGridBagSizer))
         {
-            auto new_pos = valid_parent->get_ChildPosition(this) + 1;
+            const size_t new_pos = valid_parent->get_ChildPosition(this) + 1;
             return valid_parent->CreateToolNode(name, static_cast<int>(new_pos));
         }
         return valid_parent->CreateToolNode(name, pos);
     }
 
-    auto result = CreateChildNode(name, true, pos);
+    const std::pair<NodeSharedPtr, Node::Validity> result = CreateChildNode(name, true, pos);
     if (result.second == Node::Validity::unsupported_language)
     {
         return true;
     }
-    auto new_node = result.first;
+    NodeSharedPtr new_node = result.first;
     if (!new_node)
     {
         switch (name)
@@ -488,45 +510,64 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
                 {
                     // Note that neither the wxRibbonBar or wxRibbonPage are added to the undo
                     // stack
-                    if (auto parent = CreateChildNode(gen_wxRibbonBar).first; parent)
+                    if (const NodeSharedPtr parent = CreateChildNode(gen_wxRibbonBar).first; parent)
                     {
-                        auto page = parent->CreateChildNode(gen_wxRibbonPage).first;
-                        new_node = page->CreateChildNode(name).first;
-                        return new_node != nullptr;
+                        const NodeSharedPtr page = parent->CreateChildNode(gen_wxRibbonPage).first;
+                        if (page)
+                        {
+                            new_node = page->CreateChildNode(name).first;
+                            if (new_node)
+                            {
+                                return true;
+                            }
+                            return std::unexpected(std::string {});
+                        }
                     }
                 }
-                return false;
+                return std::unexpected(std::string {});
 
             case gen_wxRibbonPage:
                 if (is_Sizer())
                 {
-                    // Note that neither the wxRibbonBar is not added to the undo stack
-                    if (auto parent = CreateChildNode(gen_wxRibbonBar).first; parent)
+                    // Note that wxRibbonBar is not added to the undo stack
+                    if (const NodeSharedPtr parent = CreateChildNode(gen_wxRibbonBar).first; parent)
                     {
                         new_node = parent->CreateChildNode(name).first;
-                        return new_node != nullptr;
+                        if (new_node)
+                        {
+                            return true;
+                        }
+                        return std::unexpected(std::string {});
                     }
                 }
-                return false;
+                return std::unexpected(std::string {});
 
             case gen_ribbonTool:
-                if (get_Parent()->is_Gen(gen_wxRibbonToolBar))
+                if (Node* parent = get_Parent(); parent && parent->is_Gen(gen_wxRibbonToolBar))
                 {
-                    new_node = get_Parent()->CreateChildNode(name).first;
-                    return new_node != nullptr;
+                    new_node = parent->CreateChildNode(name).first;
+                    if (new_node)
+                    {
+                        return true;
+                    }
+                    return std::unexpected(std::string {});
                 }
-                return false;
+                return std::unexpected(std::string {});
 
             case gen_ribbonButton:
-                if (get_Parent()->is_Gen(gen_wxRibbonButtonBar))
+                if (Node* parent = get_Parent(); parent && parent->is_Gen(gen_wxRibbonButtonBar))
                 {
-                    new_node = get_Parent()->CreateChildNode(name).first;
-                    return new_node != nullptr;
+                    new_node = parent->CreateChildNode(name).first;
+                    if (new_node)
+                    {
+                        return true;
+                    }
+                    return std::unexpected(std::string {});
                 }
-                return false;
+                return std::unexpected(std::string {});
 
             default:
-                return false;
+                return std::unexpected(std::string {});
         }
     }
 
@@ -535,7 +576,7 @@ auto Node::CreateToolNode(GenName name, int pos) -> bool
     return true;
 }
 
-auto MainFrame::CreateToolNode(GenName name) -> void
+void MainFrame::CreateToolNode(GenName name)
 {
     if (!m_selected_node)
     {
@@ -549,39 +590,54 @@ auto MainFrame::CreateToolNode(GenName name) -> void
         name = gen_auitool;
     }
 
-    if (!m_selected_node->CreateToolNode(name))
+    std::expected<bool, std::string> result = m_selected_node->CreateToolNode(name);
+    if (!result)
     {
         if (m_selected_node->is_Gen(gen_wxSplitterWindow))
         {
             return;  // The user has already been notified of the problem
         }
 
-        switch (name)
+        // If the error message provides details, use it instead of a generic message
+        if (const std::string& error_message = result.error(); !error_message.empty())
         {
-            case gen_wxRibbonToolBar:
-                wxMessageBox("A wxRibbonToolBar can only be created as a child of a wxRibbonPanel.",
-                             "Cannot create wxRibbonToolBar", wxOK | wxICON_ERROR);
-                break;
+            wxMessageBox(error_message, "Cannot create node", wxOK | wxICON_ERROR);
+        }
+        else
+        {
+            switch (name)
+            {
+                case gen_wxRibbonToolBar:
+                    wxMessageBox(
+                        "A wxRibbonToolBar can only be created as a child of a wxRibbonPanel.",
+                        "Cannot create wxRibbonToolBar", wxOK | wxICON_ERROR);
+                    break;
 
-            case gen_wxRibbonGallery:
-                wxMessageBox("A wxRibbonGallery can only be created as a child of a wxRibbonPanel.",
-                             "Cannot create wxRibbonGallery", wxOK | wxICON_ERROR);
-                break;
+                case gen_wxRibbonGallery:
+                    wxMessageBox(
+                        "A wxRibbonGallery can only be created as a child of a wxRibbonPanel.",
+                        "Cannot create wxRibbonGallery", wxOK | wxICON_ERROR);
+                    break;
 
-            case gen_wxRibbonButtonBar:
-                wxMessageBox(
-                    "A wxRibbonButtonBar can only be created as a child of a wxRibbonPanel.",
-                    "Cannot create wxRibbonButtonBar", wxOK | wxICON_ERROR);
-                break;
+                case gen_wxRibbonButtonBar:
+                    wxMessageBox(
+                        "A wxRibbonButtonBar can only be created as a child of a wxRibbonPanel.",
+                        "Cannot create wxRibbonButtonBar", wxOK | wxICON_ERROR);
+                    break;
 
-            case gen_wxRibbonPanel:
-                wxMessageBox("A wxRibbonPanel can only be created as a child of a wxRibbonPage.",
-                             "Cannot create wxRibbonPanel", wxOK | wxICON_ERROR);
-                break;
+                case gen_wxRibbonPanel:
+                    wxMessageBox(
+                        "A wxRibbonPanel can only be created as a child of a wxRibbonPage.",
+                        "Cannot create wxRibbonPanel", wxOK | wxICON_ERROR);
+                    break;
 
-            default:
-                wxMessageBox(std::format("Unable to create {} as a child of {}",
-                                         map_GenNames.at(name), m_selected_node->get_DeclName()));
+                default:
+                    wxMessageBox(std::format("Unable to create {} as a child of {}",
+                                             map_GenNames.contains(name) ?
+                                                 map_GenNames.at(name) :
+                                                 std::string_view { "(unknown)" },
+                                             m_selected_node->get_DeclName()));
+            }
         }
     }
 }

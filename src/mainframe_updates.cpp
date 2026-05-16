@@ -255,10 +255,10 @@ auto MainFrame::UpdateMoveMenu() -> void
         return;
     }
 
-    m_menuEdit->Enable(id_MoveUp, MoveNode(node, MoveDirection::Up, true));
-    m_menuEdit->Enable(id_MoveDown, MoveNode(node, MoveDirection::Down, true));
-    m_menuEdit->Enable(id_MoveLeft, MoveNode(node, MoveDirection::Left, true));
-    m_menuEdit->Enable(id_MoveRight, MoveNode(node, MoveDirection::Right, true));
+    m_menuEdit->Enable(id_MoveUp, node->MoveNode(MoveDirection::Up, true));
+    m_menuEdit->Enable(id_MoveDown, node->MoveNode(MoveDirection::Down, true));
+    m_menuEdit->Enable(id_MoveLeft, node->MoveNode(MoveDirection::Left, true));
+    m_menuEdit->Enable(id_MoveRight, node->MoveNode(MoveDirection::Right, true));
 }
 
 auto MainFrame::UpdateStatusWidths() -> void

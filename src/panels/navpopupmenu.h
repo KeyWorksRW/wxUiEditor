@@ -1,11 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Context-menu for Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+#include <cstdint>  // std::int32_t
 
 #include <wx/event.h>  // Event classes
 #include <wx/menu.h>   // wxMenu and wxMenuBar classes
@@ -25,151 +27,154 @@ public:
     // The child parameter is the node that child sizers should be added to.
     void MenuAddChildSizerCommands(Node* child);
 
-    enum
+    enum class Menu : std::int32_t
     {
-        MenuDUPLICATE = START_NAV_CTX_MENU_IDS,
+        Duplicate = START_NAV_CTX_MENU_IDS,
 
-        MenuMOVE_UP,
-        MenuMOVE_DOWN,
-        MenuMOVE_RIGHT,
-        MenuMOVE_LEFT,
+        MoveUp,
+        MoveDown,
+        MoveRight,
+        MoveLeft,
 
-        MenuInsertWidget,
+        MergeSizerChildren,  // merge all children of a sizer into the parent sizer
 
-        MenuNEW_PARENT_BOX_SIZER,
-        MenuNEW_PARENT_STATIC_SIZER,
-        MenuNEW_PARENT_WRAP_SIZER,
-        MenuNEW_PARENT_GRID_SIZER,
-        MenuNEW_PARENT_FLEX_GRID_SIZER,
-        MenuNEW_PARENT_GRIDBAG_SIZER,
+        InsertWidget,
 
-        MenuNEW_PARENT_FOLDER,
+        NewParentBoxSizer,
+        NewParentStaticSizer,
+        NewParentWrapSizer,
+        NewParentGridSizer,
+        NewParentFlexGridSizer,
+        NewParentGridbagSizer,
 
-        MenuNEW_CHILD_BOX_SIZER,
-        MenuNEW_CHILD_STATIC_SIZER,
-        MenuNEW_CHILD_WRAP_SIZER,
-        MenuNEW_CHILD_GRID_SIZER,
-        MenuNEW_CHILD_FLEX_GRID_SIZER,
-        MenuNEW_CHILD_GRIDBAG_SIZER,
-        MenuNEW_CHILD_STD_DIALG_BTNS,
+        NewParentFolder,
 
-        MenuNEW_SIBLING_BOX_SIZER,
-        MenuNEW_SIBLING_STATIC_SIZER,
-        MenuNEW_SIBLING_WRAP_SIZER,
-        MenuNEW_SIBLING_GRID_SIZER,
-        MenuNEW_SIBLING_FLEX_GRID_SIZER,
-        MenuNEW_SIBLING_GRIDBAG_SIZER,
-        MenuNEW_SIBLING_STD_DIALG_BTNS,
+        NewChildBoxSizer,
+        NewChildStaticSizer,
+        NewChildWrapSizer,
+        NewChildGridSizer,
+        NewChildFlexGridSizer,
+        NewChildGridbagSizer,
+        NewChildStdDialgBtns,
 
-        MenuChangeTo_FLEX_GRID_SIZER,
-        MenuChangeTo_GRID_SIZER,
-        MenuChangeTo_STATIC_SIZER,
-        MenuChangeTo_WRAP_SIZER,
+        NewSiblingBoxSizer,
+        NewSiblingStaticSizer,
+        NewSiblingWrapSizer,
+        NewSiblingGridSizer,
+        NewSiblingFlexGridSizer,
+        NewSiblingGridbagSizer,
+        NewSiblingStdDialgBtns,
+
+        ChangeToBoxSizer,
+        ChangeToFlexGridSizer,
+        ChangeToGridSizer,
+        ChangeToStaticSizer,
+        ChangeToWrapSizer,
 
         // This can only be used if there is just one possibility
-        MenuChangeTo_NEW_NODE,
+        ChangeToNewNode,
 
         // 2-state wxCheckBox, 3-state wxCheckBox, wxRadioBox
 
-        MenuChangeTo_2STATE_CHECKBOX,
-        MenuChangeTo_3STATE_CHECKBOX,
-        MenuChangeTo_RADIO_BUTTON,
+        ChangeTo2StateCheckbox,
+        ChangeTo3StateCheckbox,
+        ChangeToRadioButton,
 
         // wxChoice, wxComboBox, wxListBox
 
-        MenuChangeTo_CHOICE_BOX,
-        MenuChangeTo_COMBO_BOX,
-        MenuChangeTo_LIST_BOX,
+        ChangeToChoiceBox,
+        ChangeToComboBox,
+        ChangeToListBox,
 
         // wxAuiNotebook, wxChoicebook
-        MenuChangeTo_AUI_BOOK,
-        MenuChangeTo_CHOICE_BOOK,
-        MenuChangeTo_LIST_BOOK,
-        MenuChangeTo_NOTE_BOOK,
-        MenuChangeTo_SIMPLE_BOOK,
+        ChangeToAuiBook,
+        ChangeToChoiceBook,
+        ChangeToListBook,
+        ChangeToNoteBook,
+        ChangeToSimpleBook,
 
         // REVIEW: [Randalphwa - 11-16-2022] Because the children are so different, I don't think
         // switching these is going to work.
 
-        // MenuChangeTo_TOOL_BOOK,
-        // MenuChangeTo_TREE_BOOK,
+        // ChangeTo_TOOL_BOOK,
+        // ChangeTo_TREE_BOOK,
 
-        MenuADD_IMAGE,
+        AddImage,
 
-        MenuNEW_CHILD_SPACER,
-        MenuNEW_SIBLING_SPACER,
+        NewChildSpacer,
+        NewSiblingSpacer,
 
-        MenuNEW_COLUMN,
-        MenuNEW_ITEM,
+        NewColumn,
+        NewItem,
 
-        MenuNEW_NOTEBOOK,
-        MenuNEW_TOOLBAR,
-        MenuNEW_INFOBAR,
+        NewNotebook,
+        NewToolbar,
+        NewInfobar,
 
-        MenuBORDERS_ALL,
-        MenuBORDERS_NONE,
-        MenuBORDERS_HORIZONTAL,
-        MenuBORDERS_VERTICAL,
+        BordersAll,
+        BordersNone,
+        BordersHorizontal,
+        BordersVertical,
 
-        MenuADD_PAGE,
-        MenuADD_RIBBON_PAGE,
-        MenuADD_RIBBON_PANEL,
-        MenuADD_RIBBON_BUTTONBAR,
-        MenuADD_RIBBON_TOOLBAR,
-        MenuADD_RIBBON_GALLERY,
-        MenuADD_RIBBON_BUTTON,
-        MenuADD_RIBBON_GALLERY_ITEM,
+        AddPage,
+        AddRibbonPage,
+        AddRibbonPanel,
+        AddRibbonButtonbar,
+        AddRibbonToolbar,
+        AddRibbonGallery,
+        AddRibbonButton,
+        AddRibbonGalleryItem,
 
-        MenuADD_PROPGRID_PAGE,
-        MenuADD_PROPGRID_ITEM,
-        MenuADD_PROPGRID_CATEGORY,
+        AddPropgridPage,
+        AddPropgridItem,
+        AddPropgridCategory,
 
-        MenuADD_MENU,
-        MenuADD_MENUITEM,
-        MenuADD_SUBMENU,
-        MenuADD_MENU_SEPARATOR,
+        AddMenu,
+        AddMenuitem,
+        AddSubmenu,
+        AddMenuSeparator,
 
-        MenuADD_TOOL,
-        MenuADD_TOOL_COMBOBOX,
-        MenuADD_TOOL_DROPDOWN,
-        MenuADD_TOOL_SLIDER,
-        MenuADD_TOOL_SPINCTRL,
-        MenuADD_TOOL_STATICTEXT,
-        MenuADD_TOOL_SEPARATOR,
+        AddTool,
+        AddToolCombobox,
+        AddToolDropdown,
+        AddToolSlider,
+        AddToolSpinctrl,
+        AddToolStatictext,
+        AddToolSeparator,
 
         // These are only used for wxToolBar
 
-        MenuADD_TOOL_STRETCHABLE_SPACE,
+        AddToolStretchableSpace,
 
         // These are only used for wxAuiToolBar
-        MenuADD_TOOL_LABEL,
-        MenuADD_TOOL_SPACER,
-        MenuADD_TOOL_STRETCHABLE_SPACER,
+        AddToolLabel,
+        AddToolSpacer,
+        AddToolStretchableSpacer,
 
-        MenuADD_WIZARD_PAGE,
+        AddWizardPage,
 
-        MenuPROJECT_ADD_DIALOG,
-        MenuPROJECT_ADD_WINDOW,
-        MenuPROJECT_ADD_WIZARD,
-        MenuPROJECT_ADD_FOLDER,
-        MenuPROJECT_SORT_FORMS,
+        ProjectAddDialog,
+        ProjectAddWindow,
+        ProjectAddWizard,
+        ProjectAddFolder,
+        ProjectSortForms,
 
-        MenuEXPAND_ALL,
+        ExpandAll,
 
         // Data List commands
-        MenuADD_DATA_STRING,
-        MenuADD_DATA_XML,
+        AddDataString,
+        AddDataXml,
 
         // These are for Internal builds only
-        MenuSingleGenCpp,
-        MenuSingleGenPython,
-        MenuSingleGenRuby,
-        MenuSingleGenXRC,
-        MenuSingleGenPerl,
-        MenuCompareCode,
+        SingleGenCpp,
+        SingleGenPython,
+        SingleGenRuby,
+        SingleGenXRC,
+        SingleGenPerl,
+        CompareCode,
 
-        MenuTESTING_INFO,
-        MenuDEBUG_KEYHH,
+        TestingInfo,
+        DebugKeyhh,
     };
 
 protected:

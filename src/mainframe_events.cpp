@@ -281,7 +281,7 @@ auto MainFrame::OnChangeAlignment(wxCommandEvent& event) -> void
             break;
     }
 
-    ChangeAlignment(m_selected_node.get(), align, vertical);
+    m_selected_node->ChangeAlignment(align, vertical);
 
     UpdateLayoutTools();
 }
@@ -313,7 +313,7 @@ auto MainFrame::OnChangeBorder(wxCommandEvent& event) -> void
             break;
     }
 
-    ToggleBorderFlag(m_selected_node.get(), border);
+    m_selected_node->ToggleBorderFlag(border);
 
     UpdateLayoutTools();
 }
@@ -375,7 +375,7 @@ auto MainFrame::OnCopy(wxCommandEvent& /* event unused */) -> void
     }
     if (m_selected_node)
     {
-        CopyNode(m_selected_node.get());
+        m_selected_node->CopyNode();
         UpdateFrame();
     }
 }
@@ -387,14 +387,14 @@ auto MainFrame::OnCut(wxCommandEvent& /* event unused */) -> void
         // This is a read-only control, so we don't allow Cut
         return;
     }
-    RemoveNode(m_selected_node.get(), true);
+    m_selected_node->RemoveNode(true);
     UpdateFrame();
 }
 
 auto MainFrame::OnDelete(wxCommandEvent& /* event unused */) -> void
 {
     ASSERT(m_selected_node);
-    RemoveNode(m_selected_node.get(), false);
+    m_selected_node->RemoveNode(false);
     UpdateFrame();
 }
 
@@ -411,7 +411,7 @@ auto MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */) -> void
 auto MainFrame::OnDuplicate(wxCommandEvent& /* event unused */) -> void
 {
     ASSERT(m_selected_node);
-    DuplicateNode(m_selected_node.get());
+    m_selected_node->DuplicateNode();
 }
 
 auto MainFrame::OnFind(wxFindDialogEvent& event) -> void

@@ -5,12 +5,18 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/animate.h>  // wxAnimation and wxAnimationCtrl
-#include <wx/sizer.h>    // provide wxSizer class for layout
+#include <sstream>
+
+#include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
+#include <wx/clipbrd.h>   // wxTheClipboard, wxUtf8DataObject, wxDataObjectComposite
+#include <wx/sizer.h>     // provide wxSizer class for layout
+#include <wx/wupdlock.h>  // wxWindowUpdateLocker
 
 #include <frozen/set.h>
 
 #include "node.h"
+
+#include "clipboard.h"  // SmartClipboard, wxUEDataObject -- Handles clipboard data
 
 #include "gridbag_item.h"     // Dialog for inserting an item into a wxGridBagSizer node
 #include "mainframe.h"        // Main window frame
@@ -94,7 +100,7 @@ const std::vector<std::string> reserved_names = {
 
 // clang-format on
 
-auto Node::is_Form() const noexcept -> bool
+bool Node::is_Form() const noexcept
 {
     return std::ranges::any_of(lst_form_types,
                                [this](GenType type)
@@ -105,7 +111,7 @@ auto Node::is_Form() const noexcept -> bool
 
 Node::Node(NodeDeclaration* declaration) : m_declaration(declaration) {}
 
-auto Node::get_PropPtr(PropName name) -> NodeProperty*
+NodeProperty* Node::get_PropPtr(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -114,7 +120,7 @@ auto Node::get_PropPtr(PropName name) -> NodeProperty*
     return nullptr;
 }
 
-auto Node::get_Event(std::string_view name) -> NodeEvent*
+NodeEvent* Node::get_Event(std::string_view name)
 {
     if (auto iter = m_map_events.find(name); iter != m_map_events.end())
     {
@@ -124,13 +130,13 @@ auto Node::get_Event(std::string_view name) -> NodeEvent*
     return nullptr;
 }
 
-auto Node::get_InUseEventCount() const -> size_t
+size_t Node::get_InUseEventCount() const
 {
     size_t count = 0;
 
     for (const auto& iter: m_map_events)
     {
-        if (iter.second.get_value().size())
+        if (!iter.second.get_value().empty())
         {
             ++count;
         }
@@ -139,24 +145,24 @@ auto Node::get_InUseEventCount() const -> size_t
     return count;
 }
 
-auto Node::AddNodeProperty(PropDeclaration* declaration) -> NodeProperty*
+NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
 {
     auto& prop = m_properties.emplace_back(declaration, this);
     m_prop_indices[prop.get_name()] = (m_properties.size() - 1);
     return &m_properties[m_properties.size() - 1];
 }
 
-auto Node::AddNodeEvent(const NodeEventInfo* info) -> void
+void Node::AddNodeEvent(const NodeEventInfo* info)
 {
     m_map_events.emplace(info->get_name(), NodeEvent(info, this));
 }
 
-auto Node::CopyEventsFrom(Node* from) -> void
+void Node::CopyEventsFrom(Node* from)
 {
     ASSERT(from);
     for (auto& iter: from->m_map_events)
     {
-        if (iter.second.get_value().size())
+        if (!iter.second.get_value().empty())
         {
             if (auto* event = get_Event(iter.second.get_name()); event)
             {
@@ -166,7 +172,7 @@ auto Node::CopyEventsFrom(Node* from) -> void
     }
 }
 
-auto Node::get_Form() noexcept -> Node*
+Node* Node::get_Form() noexcept
 {
     if (is_Form())
     {
@@ -197,7 +203,7 @@ auto Node::get_Folder() noexcept -> Node*  // NOLINT (cppcheck-suppress)
     return nullptr;
 }
 
-auto Node::get_ValidFormParent() noexcept -> Node*
+Node* Node::get_ValidFormParent() noexcept
 {
     auto* parent = this;
     while (parent)
@@ -212,7 +218,7 @@ auto Node::get_ValidFormParent() noexcept -> Node*
     return nullptr;
 }
 
-auto Node::AdoptChild(const NodeSharedPtr& child) -> bool
+bool Node::AdoptChild(const NodeSharedPtr& child)
 {
     ASSERT_MSG(child != get_SharedPtr(), "A node can't adopt itself!");
     if (is_ChildAllowed(child))
@@ -225,7 +231,7 @@ auto Node::AdoptChild(const NodeSharedPtr& child) -> bool
     return false;
 }
 
-auto Node::AddChild(const NodeSharedPtr& node) -> bool
+bool Node::AddChild(const NodeSharedPtr& node)
 {
     if (is_ChildAllowed(node))
     {
@@ -236,7 +242,7 @@ auto Node::AddChild(const NodeSharedPtr& node) -> bool
     return false;
 }
 
-auto Node::AddChild(Node* node) -> bool
+bool Node::AddChild(Node* node)
 {
     if (is_ChildAllowed(node))
     {
@@ -247,7 +253,7 @@ auto Node::AddChild(Node* node) -> bool
     return false;
 }
 
-auto Node::AddChild(size_t idx, const NodeSharedPtr& node) -> bool
+bool Node::AddChild(size_t idx, const NodeSharedPtr& node)
 {
     if (is_ChildAllowed(node) && idx <= m_children.size())
     {
@@ -258,7 +264,7 @@ auto Node::AddChild(size_t idx, const NodeSharedPtr& node) -> bool
     return false;
 }
 
-auto Node::AddChild(size_t idx, Node* node) -> bool
+bool Node::AddChild(size_t idx, Node* node)
 {
     if (is_ChildAllowed(node) && idx <= m_children.size())
     {
@@ -269,7 +275,7 @@ auto Node::AddChild(size_t idx, Node* node) -> bool
     return false;
 }
 
-auto Node::is_ChildAllowed(NodeDeclaration* child) -> bool
+bool Node::is_ChildAllowed(NodeDeclaration* child)
 {
     ASSERT(child);
 
@@ -310,14 +316,14 @@ auto Node::is_ChildAllowed(NodeDeclaration* child) -> bool
     return children < max_children;
 }
 
-auto Node::is_ChildAllowed(Node* child) -> bool
+bool Node::is_ChildAllowed(Node* child)
 {
     ASSERT(child);
 
     return is_ChildAllowed(child->get_NodeDeclaration());
 }
 
-auto Node::RemoveChild(Node* node) -> void
+void Node::RemoveChild(Node* node)
 {
     for (size_t pos = 0; const auto& child: m_children)
     {
@@ -331,7 +337,7 @@ auto Node::RemoveChild(Node* node) -> void
     }
 }
 
-auto Node::RemoveChild(size_t index) -> void
+void Node::RemoveChild(size_t index)
 {
     ASSERT(index < m_children.size());
 
@@ -339,7 +345,7 @@ auto Node::RemoveChild(size_t index) -> void
     m_children.erase(iter);
 }
 
-auto Node::get_ChildPosition(Node* node) -> size_t
+size_t Node::get_ChildPosition(Node* node)
 {
     for (size_t pos = 0; const auto& child: m_children)
     {
@@ -357,9 +363,9 @@ auto Node::get_ChildPosition(Node* node) -> size_t
     return (m_children.size() - 1);
 }
 
-auto Node::ChangeChildPosition(const NodeSharedPtr& node, size_t pos) -> bool
+bool Node::ChangeChildPosition(const NodeSharedPtr& node, size_t pos)
 {
-    size_t cur_pos = get_ChildPosition(node.get());
+    const size_t cur_pos = get_ChildPosition(node.get());
 
     if (cur_pos == get_ChildCount() || pos >= get_ChildCount())
     {
@@ -376,12 +382,12 @@ auto Node::ChangeChildPosition(const NodeSharedPtr& node, size_t pos) -> bool
     return true;
 }
 
-auto Node::is_Local() const noexcept -> bool
+bool Node::is_Local() const noexcept
 {
     return is_PropValue(prop_class_access, "none");
 }
 
-auto Node::HasValue(PropName name) const -> bool
+bool Node::HasValue(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -390,7 +396,7 @@ auto Node::HasValue(PropName name) const -> bool
     return false;
 }
 
-auto Node::is_PropValue(PropName name, const char* value) const noexcept -> bool
+bool Node::is_PropValue(PropName name, const char* value) const noexcept
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -400,7 +406,7 @@ auto Node::is_PropValue(PropName name, const char* value) const noexcept -> bool
     return false;
 }
 
-auto Node::is_PropValue(PropName name, bool value) const noexcept -> bool
+bool Node::is_PropValue(PropName name, bool value) const noexcept
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -410,7 +416,7 @@ auto Node::is_PropValue(PropName name, bool value) const noexcept -> bool
     return false;
 }
 
-auto Node::is_PropValue(PropName name, int value) const noexcept -> bool
+bool Node::is_PropValue(PropName name, int value) const noexcept
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -420,7 +426,7 @@ auto Node::is_PropValue(PropName name, int value) const noexcept -> bool
     return false;
 }
 
-auto Node::as_mockup(PropName name, std::string_view prefix) const -> int
+int Node::as_mockup(PropName name, std::string_view prefix) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -429,7 +435,7 @@ auto Node::as_mockup(PropName name, std::string_view prefix) const -> int
     return 0;
 }
 
-auto Node::as_ArrayString(PropName name) const -> std::vector<wxue::string>
+std::vector<wxue::string> Node::as_ArrayString(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -438,7 +444,7 @@ auto Node::as_ArrayString(PropName name) const -> std::vector<wxue::string>
     return std::vector<wxue::string>();
 }
 
-auto Node::get_PropValuePtr(PropName name) -> wxue::string*
+wxue::string* Node::get_PropValuePtr(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -447,7 +453,7 @@ auto Node::get_PropValuePtr(PropName name) -> wxue::string*
     return nullptr;
 }
 
-auto Node::get_PropId() const -> wxue::string
+wxue::string Node::get_PropId() const
 {
     wxue::string id_prop;
     if (auto result = m_prop_indices.find(prop_id); result != m_prop_indices.end())
@@ -457,7 +463,7 @@ auto Node::get_PropId() const -> wxue::string
     return id_prop;
 }
 
-auto Node::as_statusbar_fields(PropName name) -> std::vector<NODEPROP_STATUSBAR_FIELD>
+std::vector<NODEPROP_STATUSBAR_FIELD> Node::as_statusbar_fields(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -466,7 +472,7 @@ auto Node::as_statusbar_fields(PropName name) -> std::vector<NODEPROP_STATUSBAR_
     return {};
 }
 
-auto Node::as_checklist_items(PropName name) -> std::vector<NODEPROP_CHECKLIST_ITEM>
+std::vector<NODEPROP_CHECKLIST_ITEM> Node::as_checklist_items(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -475,7 +481,7 @@ auto Node::as_checklist_items(PropName name) -> std::vector<NODEPROP_CHECKLIST_I
     return {};
 }
 
-auto Node::as_radiobox_items(PropName name) -> std::vector<NODEPROP_RADIOBOX_ITEM>
+std::vector<NODEPROP_RADIOBOX_ITEM> Node::as_radiobox_items(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -484,7 +490,7 @@ auto Node::as_radiobox_items(PropName name) -> std::vector<NODEPROP_RADIOBOX_ITE
     return {};
 }
 
-auto Node::as_bmp_combo_items(PropName name) -> std::vector<NODEPROP_BMP_COMBO_ITEM>
+std::vector<NODEPROP_BMP_COMBO_ITEM> Node::as_bmp_combo_items(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -493,7 +499,7 @@ auto Node::as_bmp_combo_items(PropName name) -> std::vector<NODEPROP_BMP_COMBO_I
     return {};
 }
 
-auto Node::get_PropDefaultValue(PropName name) -> std::string_view
+std::string_view Node::get_PropDefaultValue(PropName name)
 {
     auto* prop = get_PropPtr(name);
 
@@ -507,7 +513,7 @@ auto Node::get_PropDefaultValue(PropName name) -> std::string_view
     return {};
 }
 
-auto Node::get_NodeName() const -> std::string_view
+std::string_view Node::get_NodeName() const
 {
     auto iter = m_prop_indices.find(prop_var_name);
     if (iter != m_prop_indices.end())
@@ -521,7 +527,7 @@ auto Node::get_NodeName() const -> std::string_view
     return {};
 }
 
-auto Node::get_NodeName(GenLang lang) const -> std::string_view
+std::string_view Node::get_NodeName(GenLang lang) const
 {
     std::string_view name = get_NodeName();
     if (name.empty())
@@ -564,7 +570,7 @@ auto Node::get_NodeName(GenLang lang) const -> std::string_view
     return name;
 }
 
-auto Node::get_ParentName() const -> std::string_view
+std::string_view Node::get_ParentName() const
 {
     if (m_parent)
     {
@@ -574,7 +580,7 @@ auto Node::get_ParentName() const -> std::string_view
     return std::string_view("");
 }
 
-auto Node::get_ParentName(GenLang lang, bool ignore_sizers) const -> std::string_view
+std::string_view Node::get_ParentName(GenLang lang, bool ignore_sizers) const
 {
     if (ignore_sizers)
     {
@@ -598,7 +604,7 @@ auto Node::get_ParentName(GenLang lang, bool ignore_sizers) const -> std::string
     return wxue::wxue_empty_string;
 }
 
-auto Node::get_FormName() -> std::string_view
+std::string_view Node::get_FormName()
 {
     if (auto* form = get_Form(); form)
     {
@@ -607,7 +613,7 @@ auto Node::get_FormName() -> std::string_view
     return std::string_view("");
 }
 
-auto Node::GetBorderDirection(std::string_view border_settings) -> int
+int Node::GetBorderDirection(std::string_view border_settings)
 {
     if (border_settings.contains("wxALL"))
     {
@@ -634,7 +640,7 @@ auto Node::GetBorderDirection(std::string_view border_settings) -> int
     return direction;
 }
 
-auto Node::ApplyAlignment(wxSizerFlags& flags, const wxue::string& alignment) -> void
+void Node::ApplyAlignment(wxSizerFlags& flags, const wxue::string& alignment)
 {
     if (alignment.empty())
     {
@@ -682,7 +688,7 @@ auto Node::ApplyAlignment(wxSizerFlags& flags, const wxue::string& alignment) ->
     }
 }
 
-auto Node::ApplyAdditionalFlags(wxSizerFlags& flags, const wxue::string& prop) -> void
+void Node::ApplyAdditionalFlags(wxSizerFlags& flags, const wxue::string& prop)
 {
     if (prop.empty())
     {
@@ -707,13 +713,13 @@ auto Node::ApplyAdditionalFlags(wxSizerFlags& flags, const wxue::string& prop) -
     }
 }
 
-auto Node::getSizerFlags() const -> wxSizerFlags
+wxSizerFlags Node::getSizerFlags() const
 {
     wxSizerFlags flags;
     flags.Proportion(as_int(prop_proportion));
 
     auto border_size = as_int(prop_border_size);
-    int direction = GetBorderDirection(as_view(prop_borders));
+    const int direction = GetBorderDirection(as_view(prop_borders));
     flags.Border(direction, border_size);
 
     ApplyAlignment(flags, as_string(prop_alignment));
@@ -722,9 +728,10 @@ auto Node::getSizerFlags() const -> wxSizerFlags
     return flags;
 }
 
-auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Node*& parent,
-                                 NodeSharedPtr& new_node)
-    -> std::pair<NodeSharedPtr, Node::Validity>
+std::pair<NodeSharedPtr, Node::Validity> Node::TryCreateInSizerChild(GenName name,
+                                                                     bool verify_language_support,
+                                                                     Node*& parent,
+                                                                     NodeSharedPtr& new_node)
 {
     if ((is_Form() || is_Container()) && get_ChildCount())
     {
@@ -748,8 +755,7 @@ auto Node::TryCreateInSizerChild(GenName name, bool verify_language_support, Nod
     return { new_node, valid_node };
 }
 
-auto Node::HandleGridBagInsertion(Node* parent, Node* new_node)
-    -> std::pair<NodeSharedPtr, Node::Validity>
+std::pair<NodeSharedPtr, Node::Validity> Node::HandleGridBagInsertion(Node* parent, Node* new_node)
 {
     GridBag grid_bag(parent);
     if (grid_bag.InsertNode(parent, new_node))
@@ -759,7 +765,7 @@ auto Node::HandleGridBagInsertion(Node* parent, Node* new_node)
     return { nullptr, gridbag_insert_error };
 }
 
-auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
+void Node::AdjustMemberNameForLanguage(Node* new_node)
 {
     if (!new_node->HasProp(prop_var_name))
     {
@@ -813,8 +819,9 @@ auto Node::AdjustMemberNameForLanguage(Node* new_node) -> void
     }
 }
 
-auto Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
-    -> std::pair<NodeSharedPtr, Node::Validity>
+std::pair<NodeSharedPtr, Node::Validity>
+    Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
+
 {
     auto result = NodeCreation.CreateNode(gen_ribbonTool, this);
     if (!result.first || result.second != valid_node)
@@ -822,14 +829,14 @@ auto Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
         return { nullptr, result.second };
     }
     auto new_node = result.first;
-    wxue::string undo_str = "insert ribbon tool";
+    const wxue::string undo_str = "insert ribbon tool";
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
     return { new_node, valid_node };
 }
 
-auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
-    -> std::pair<NodeSharedPtr, Node::Validity>
+std::pair<NodeSharedPtr, Node::Validity> Node::TryCreateInParent(GenName name,
+                                                                 [[maybe_unused]] int pos)
 {
     auto* parent = get_Parent();
     if (!parent)
@@ -876,8 +883,9 @@ auto Node::TryCreateInParent(GenName name, [[maybe_unused]] int pos)
     return { new_node, valid_node };
 }
 
-auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
-    -> std::pair<NodeSharedPtr, Node::Validity>
+std::pair<NodeSharedPtr, Node::Validity>
+    Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
+
 {
     auto& frame = wxGetFrame();
 
@@ -908,7 +916,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
             return HandleGridBagInsertion(this, new_node.get());
         }
 
-#ifdef _WIN32
+#if defined(_WIN32)
         // In a Windows build, the default background colour of white doesn't match the normal
         // background color of the parent so we set it to the more normal Windows colour.
         if (name == gen_BookPage)
@@ -952,7 +960,7 @@ auto Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
     return { new_node, valid_node };
 }
 
-auto Node::CreateNode(GenName name) -> Node*
+Node* Node::CreateNode(GenName name)
 {
     auto& frame = wxGetFrame();
     auto* cur_selection = frame.getSelectedNode();
@@ -964,7 +972,7 @@ auto Node::CreateNode(GenName name) -> Node*
     return cur_selection->CreateChildNode(name).first.get();
 }
 
-auto Node::ModifyProperty(PropName name, wxue::string_view value) -> void
+void Node::ModifyProperty(PropName name, wxue::string_view value)
 {
     auto* prop = get_PropPtr(name);
     if (prop && value != prop->as_view())
@@ -973,7 +981,7 @@ auto Node::ModifyProperty(PropName name, wxue::string_view value) -> void
     }
 }
 
-auto Node::ModifyProperty(wxue::string_view name, int value) -> void
+void Node::ModifyProperty(wxue::string_view name, int value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -987,7 +995,7 @@ auto Node::ModifyProperty(wxue::string_view name, int value) -> void
     }
 }
 
-auto Node::ModifyProperty(wxue::string_view name, wxue::string_view value) -> void
+void Node::ModifyProperty(wxue::string_view name, wxue::string_view value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -1001,7 +1009,7 @@ auto Node::ModifyProperty(wxue::string_view name, wxue::string_view value) -> vo
     }
 }
 
-auto Node::ModifyProperty(NodeProperty* prop, int value) -> void
+void Node::ModifyProperty(NodeProperty* prop, int value)
 {
     if (prop && value != prop->as_int())
     {
@@ -1009,7 +1017,7 @@ auto Node::ModifyProperty(NodeProperty* prop, int value) -> void
     }
 }
 
-auto Node::ModifyProperty(NodeProperty* prop, wxue::string_view value) -> void
+void Node::ModifyProperty(NodeProperty* prop, wxue::string_view value)
 {
     if (prop && value != prop->as_view())
     {
@@ -1017,7 +1025,7 @@ auto Node::ModifyProperty(NodeProperty* prop, wxue::string_view value) -> void
     }
 }
 
-auto Node::get_UniqueName(const std::string& proposed_name, PropName prop_name) -> std::string
+std::string Node::get_UniqueName(const std::string& proposed_name, PropName prop_name)
 {
     std::string new_name(proposed_name);
     if (is_Form())
@@ -1025,7 +1033,7 @@ auto Node::get_UniqueName(const std::string& proposed_name, PropName prop_name) 
         return {};
     }
 
-    auto* form = get_Form();
+    Node* form = get_Form();
     if (!form)
     {
         return {};
@@ -1044,7 +1052,7 @@ auto Node::get_UniqueName(const std::string& proposed_name, PropName prop_name) 
     }
     else if (is_Gen(gen_propGridItem) || is_Gen(gen_propGridCategory))
     {
-        if (auto* parent = get_Parent(); parent)
+        if (Node* parent = get_Parent(); parent)
         {
             if (parent->is_Gen(gen_propGridPage))
             {
@@ -1096,7 +1104,7 @@ static constexpr auto s_var_names = std::to_array<PropName>({
 
 });
 
-auto Node::FixDuplicateName() -> bool
+bool Node::FixDuplicateName()
 {
     if (is_Type(type_form) || is_Type(type_frame_form) || is_Type(type_menubar_form) ||
         is_Type(type_ribbonbar_form) || is_Type(type_toolbar_form) ||
@@ -1106,7 +1114,7 @@ auto Node::FixDuplicateName() -> bool
         return false;
     }
 
-    auto* form = get_Form();
+    Node* form = get_Form();
     ASSERT(form || is_Folder());
     if (!form)
     {
@@ -1124,7 +1132,7 @@ auto Node::FixDuplicateName() -> bool
     bool replaced = false;
     for (const auto& iter: s_var_names)
     {
-        if (const auto& name = as_string(iter); name.size())
+        if (const auto& name = as_string(iter); !name.empty())
         {
             if (name_set.contains(name))
             {
@@ -1148,7 +1156,7 @@ auto Node::FixDuplicateName() -> bool
                     new_name = org_name + std::to_string(i);
                 }
 
-                auto* fix_name = get_PropPtr(iter);
+                NodeProperty* fix_name = get_PropPtr(iter);
                 fix_name->set_value(new_name);
                 replaced = true;
             }
@@ -1160,11 +1168,11 @@ auto Node::FixDuplicateName() -> bool
         name_set.clear();
         form->CollectUniqueNames(name_set, this, prop_label);
 
-        std::string org_name(as_string(prop_label));
-        auto result = get_UniqueName(org_name, prop_label);
+        const std::string org_name(as_string(prop_label));
+        std::string result = get_UniqueName(org_name, prop_label);
         if (result != as_string(prop_label))
         {
-            auto* fix_name = get_PropPtr(prop_label);
+            NodeProperty* fix_name = get_PropPtr(prop_label);
             fix_name->set_value(result);
         }
     }
@@ -1172,7 +1180,7 @@ auto Node::FixDuplicateName() -> bool
     return replaced;
 }
 
-auto Node::FixDuplicateNodeNames(Node* form) -> void
+void Node::FixDuplicateNodeNames(Node* form)
 {
     if (!form)
     {
@@ -1211,7 +1219,7 @@ auto Node::FixDuplicateNodeNames(Node* form) -> void
     FixPropGridLabelIfNeeded();
 }
 
-auto Node::InitializeNameSet(std::unordered_set<std::string>& name_set) -> void
+void Node::InitializeNameSet(std::unordered_set<std::string>& name_set)
 {
     for (const auto& iter: reserved_names)
     {
@@ -1219,9 +1227,8 @@ auto Node::InitializeNameSet(std::unordered_set<std::string>& name_set) -> void
     }
 }
 
-auto Node::GenerateUniqueNameFromBase(const std::string& base_name,
-                                      const std::unordered_set<std::string>& name_set)
-    -> std::string
+std::string Node::GenerateUniqueNameFromBase(const std::string& base_name,
+                                             const std::unordered_set<std::string>& name_set)
 {
     std::string org_name(base_name);
     while (wxue::is_digit(org_name.back()))
@@ -1244,24 +1251,24 @@ auto Node::GenerateUniqueNameFromBase(const std::string& base_name,
     return new_name;
 }
 
-auto Node::FixDuplicateVariableNames(const std::unordered_set<std::string>& name_set) -> void
+void Node::FixDuplicateVariableNames(const std::unordered_set<std::string>& name_set)
 {
     for (const auto& iter: s_var_names)
     {
-        if (const auto& name = as_string(iter); name.size())
+        if (const wxue::string& name = as_string(iter); !name.empty())
         {
             if (name_set.contains(name))
             {
                 // We get here if the name has already been used.
-                auto new_name = GenerateUniqueNameFromBase(name, name_set);
-                auto* fix_name = get_PropPtr(iter);
+                std::string new_name = GenerateUniqueNameFromBase(name, name_set);
+                NodeProperty* fix_name = get_PropPtr(iter);
                 fix_name->set_value(new_name);
             }
         }
     }
 }
 
-auto Node::FixChildrenNodeNames(Node* form) -> void
+void Node::FixChildrenNodeNames(Node* form)
 {
     for (const auto& child: get_ChildNodePtrs())
     {
@@ -1269,12 +1276,12 @@ auto Node::FixChildrenNodeNames(Node* form) -> void
     }
 }
 
-auto Node::FixPropGridLabelIfNeeded() -> void
+void Node::FixPropGridLabelIfNeeded()
 {
     if (is_Gen(gen_propGridItem) || is_Gen(gen_propGridCategory))
     {
         std::unordered_set<std::string> name_set;
-        if (auto* parent = get_Parent(); parent)
+        if (Node* parent = get_Parent(); parent)
         {
             if (parent && parent->is_Gen(gen_propGridPage))
             {
@@ -1287,8 +1294,8 @@ auto Node::FixPropGridLabelIfNeeded() -> void
             }
         }
 
-        std::string org_name(as_string(prop_label));
-        auto result = get_UniqueName(org_name, prop_label);
+        const std::string org_name(as_string(prop_label));
+        std::string result = get_UniqueName(org_name, prop_label);
         if (result != as_string(prop_label))
         {
             auto* fix_name = get_PropPtr(prop_label);
@@ -1297,8 +1304,8 @@ auto Node::FixPropGridLabelIfNeeded() -> void
     }
 }
 
-auto Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
-                              PropName prop_name) -> void
+void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
+                              PropName prop_name)
 {
     if (!is_Form() && cur_node != this && !is_Gen(gen_wxPropertyGrid) &&
         !is_Gen(gen_wxPropertyGridManager))
@@ -1308,7 +1315,7 @@ auto Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
             for (const auto& iter: s_var_names)
             {
                 // First check the parent node
-                if (const auto& name = as_string(iter); name.size())
+                if (const wxue::string& name = as_string(iter); !name.empty())
                 {
                     name_set.emplace(name);
                 }
@@ -1317,7 +1324,7 @@ auto Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
                 // pick up validator names.
                 if (iter != prop_var_name)
                 {
-                    if (const auto& name = cur_node->as_string(iter); name.size())
+                    if (const wxue::string& name = cur_node->as_string(iter); !name.empty())
                     {
                         name_set.emplace(name);
                     }
@@ -1326,7 +1333,7 @@ auto Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         }
         else
         {
-            if (const auto& name = as_string(prop_name); name.size())
+            if (const wxue::string& name = as_string(prop_name); !name.empty())
             {
                 name_set.emplace(name);
             }
@@ -1339,7 +1346,7 @@ auto Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
     }
 }
 
-auto Node::FindInsertionPos(Node* child) const -> ptrdiff_t
+ptrdiff_t Node::FindInsertionPos(Node* child) const
 {
     if (child)
     {
@@ -1354,9 +1361,9 @@ auto Node::FindInsertionPos(Node* child) const -> ptrdiff_t
     return -1;
 }
 
-auto Node::get_NodeSize() const -> size_t
+size_t Node::get_NodeSize() const
 {
-    auto size = sizeof(*this);
+    size_t size = sizeof(*this);
     // Add the size of all the node pointers, but not the size of the individual children
     size += (m_children.size() * sizeof(void*));
 
@@ -1377,7 +1384,7 @@ auto Node::get_NodeSize() const -> size_t
 
 // Create a hash of the node name and all property values of the node, and recursively call all
 // children
-auto Node::CalcNodeHash(size_t& hash) const -> void
+void Node::CalcNodeHash(size_t& hash) const
 {
     // djb2 hash algorithm
 
@@ -1405,7 +1412,7 @@ auto Node::CalcNodeHash(size_t& hash) const -> void
     }
 }
 
-auto Node::FindAllChildProperties(PropName name) -> std::vector<NodeProperty*>
+std::vector<NodeProperty*> Node::FindAllChildProperties(PropName name)
 {
     std::vector<NodeProperty*> result;
 
@@ -1414,7 +1421,7 @@ auto Node::FindAllChildProperties(PropName name) -> std::vector<NodeProperty*>
     return result;
 }
 
-auto Node::FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name) -> void
+void Node::FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name)
 {
     for (const auto& child: m_children)
     {
@@ -1482,7 +1489,7 @@ static constexpr frozen::set<GenEnum::GenName, 1> s_date_picker_validators = {
 
 // clang-format on
 
-auto Node::get_ValidatorDataType() const -> std::string
+std::string Node::get_ValidatorDataType() const
 {
     std::string data_type;
     if (HasProp(prop_validator_data_type))
@@ -1516,14 +1523,14 @@ auto Node::get_ValidatorDataType() const -> std::string
     return data_type;
 }
 
-auto Node::get_ValidatorType() const -> std::string_view
+std::string_view Node::get_ValidatorType() const
 {
     if (!is_Gen(gen_wxTextCtrl))
     {
         return "wxGenericValidator";
     }
 
-    auto data_type = as_view(prop_validator_data_type);
+    const std::string_view data_type = as_view(prop_validator_data_type);
     if (data_type == "wxString")
     {
         return "wxTextValidator";
@@ -1541,9 +1548,9 @@ auto Node::get_ValidatorType() const -> std::string_view
     return "wxGenericValidator";
 }
 
-auto Node::get_PlatformContainer() -> Node*  // NOLINT (cppcheck-suppress)
+Node* Node::get_PlatformContainer()  // NOLINT (cppcheck-suppress)
 {
-    if (auto* parent = get_Parent(); parent)
+    if (Node* parent = get_Parent(); parent)
     {
         while (parent && !parent->is_Gen(gen_Project))
         {
@@ -1556,4 +1563,427 @@ auto Node::get_PlatformContainer() -> Node*  // NOLINT (cppcheck-suppress)
         }
     }
     return nullptr;
+}
+
+void Node::CopyNode()
+{
+    const NodeSharedPtr clipboard_ptr = NodeCreation.MakeCopy(this);
+    if (!clipboard_ptr)
+    {
+        return;
+    }
+
+    SmartClipboard clip;
+    if (!clip.IsOpened())
+    {
+        return;
+    }
+
+    pugi::xml_document xml_doc;
+    pugi::xml_node clip_node = xml_doc.append_child("node");
+    int project_version = minRequiredVer;
+    clipboard_ptr->AddNodeToDoc(clip_node, project_version);
+
+    auto* u8_data = new wxUtf8DataObject();
+    std::stringstream strm;
+    xml_doc.save(strm, "", pugi::format_raw);
+
+    // Skip over the XML header
+    const size_t begin = strm.str().find("<node");
+    if (!wxue::is_found(begin))
+    {
+        // If it wasn't passed to wxDataObjectComposite, then we need to delete it
+        // ourselves.
+        delete u8_data;
+        return;
+    }
+
+    u8_data->GetText() = strm.str().c_str() + begin;
+    auto* hash_data = new wxUEDataObject();
+
+    size_t clip_hash = 0;
+    clipboard_ptr->CalcNodeHash(clip_hash);
+    hash_data->GetHash() = clip_hash;
+
+    wxDataObjectComposite* data = new wxDataObjectComposite();
+    data->Add(u8_data, true);
+    data->Add(hash_data, false);
+    wxTheClipboard->SetData(data);
+
+    wxGetFrame().setClipboardData(clipboard_ptr, clip_hash);
+}
+
+void Node::DuplicateNode()
+{
+    ASSERT(get_Parent());
+    if (!get_Parent())
+    {
+        return;
+    }
+    Node* parent = get_Parent();
+
+    std::shared_ptr<Node> const new_node = NodeCreation.MakeCopy(this);
+    if (!new_node)
+    {
+        wxMessageBox("Failed to duplicate node.");
+        return;
+    }
+
+    if (new_node->is_Form())
+    {
+        Project.FixupDuplicatedNode(new_node.get());
+    }
+
+    if (parent->is_Gen(gen_wxGridBagSizer))
+    {
+        GridBag grid_bag(parent);
+        [[maybe_unused]] const bool result = grid_bag.InsertNode(parent, new_node.get());
+        // GridBag::InsertNode() will have already fired events
+    }
+    else
+    {
+        wxue::string undo_str("duplicate ");
+        undo_str << get_DeclName();
+        const ptrdiff_t pos = parent->FindInsertionPos(wxGetFrame().getSelectedNode());
+        wxGetFrame().PushUndoAction(
+            std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
+        wxGetFrame().FireCreatedEvent(new_node);
+        wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
+    }
+}
+
+void Node::ToggleBorderFlag(int border)
+{
+    NodeProperty* propFlag = get_PropPtr(prop_borders);
+
+    if (!propFlag)
+    {
+        return;
+    }
+
+    wxue::string value =
+        ClearMultiplePropFlags("wxALL|wxTOP|wxBOTTOM|wxRIGHT|wxLEFT", propFlag->as_string());
+
+    int intVal = propFlag->as_int();
+    intVal ^= border;
+
+    if ((intVal & wxALL) == wxALL)
+    {
+        value = value << "|wxALL";
+    }
+    else
+    {
+        if ((intVal & wxTOP))
+        {
+            value << "|wxTOP";
+        }
+
+        if ((intVal & wxBOTTOM))
+        {
+            value << "|wxBOTTOM";
+        }
+
+        if ((intVal & wxRIGHT))
+        {
+            value << "|wxRIGHT";
+        }
+
+        if ((intVal & wxLEFT))
+        {
+            value << "|wxLEFT";
+        }
+    }
+
+    if (value[0] == '|')
+    {
+        value.erase(0, 1);
+    }
+
+    ModifyProperty(propFlag, value);
+}
+
+void Node::ChangeAlignment(int align, bool vertical)
+{
+    NodeProperty* propFlag = get_PropPtr(prop_alignment);
+
+    if (!propFlag)
+    {
+        return;
+    }
+
+    wxue::string value;
+
+    // First we delete the flags from the previous configuration, in order to avoid alignment
+    // conflicts.
+
+    if (vertical)
+    {
+        value = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL",
+                                       propFlag->as_string());
+    }
+    else
+    {
+        value = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL",
+                                       propFlag->as_string());
+    }
+
+    const char* alignStr = "";
+    switch (align)
+    {
+        case wxALIGN_RIGHT:
+            alignStr = "wxALIGN_RIGHT";
+            break;
+
+        case wxALIGN_CENTER_HORIZONTAL:
+            alignStr = "wxALIGN_CENTER_HORIZONTAL";
+            break;
+
+        case wxALIGN_BOTTOM:
+            alignStr = "wxALIGN_BOTTOM";
+            break;
+
+        case wxALIGN_CENTER_VERTICAL:
+            alignStr = "wxALIGN_CENTER_VERTICAL";
+            break;
+
+        default:
+            alignStr = "";
+            break;
+    }
+
+    ModifyProperty(propFlag, SetPropFlag(alignStr, value));
+}
+
+bool Node::MoveNode(MoveDirection where, bool check_only)
+{
+    auto* parent = get_Parent();
+
+    ASSERT(parent || is_Gen(gen_Project));
+    if (!parent)
+    {
+        return false;
+    }
+
+    if (is_Gen(gen_Images) || parent->is_Gen(gen_Images))
+    {
+        if (!check_only)
+        {
+            wxMessageBox("You can't move images within Images List", "Error", wxICON_ERROR);
+        }
+        return false;
+    }
+    if (is_Gen(gen_Data) || (parent->is_Gen(gen_Data) && !is_Gen(gen_data_folder)))
+    {
+        if (!check_only)
+        {
+            wxMessageBox("You can't move data strings within Data List", "Error", wxICON_ERROR);
+        }
+        return false;
+    }
+
+    if (parent->is_Gen(gen_wxGridBagSizer))
+    {
+        return GridBag::MoveNode(this, where, check_only);
+    }
+
+    switch (where)
+    {
+        case MoveDirection::Left:
+            if (is_Gen(gen_folder) || is_Gen(gen_data_folder))
+            {
+                return false;
+            }
+            if (is_Gen(gen_sub_folder) && parent->is_Gen(gen_folder))
+            {
+                return false;  // You can't have Project as the parent of a sub_folder
+            }
+
+            if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
+            {
+                if (!check_only)
+                {
+                    const wxWindowUpdateLocker freeze(wxGetApp().getMainFrame());
+                    Node* grandparent = parent->get_Parent();
+                    const int pos = (to_int) grandparent->get_ChildPosition(parent) + 1;
+                    wxGetFrame().PushUndoAction(
+                        std::make_shared<ChangeParentAction>(this, parent->get_Parent(), pos));
+                }
+                return true;
+            }
+
+            if (Node* grandparent = parent->get_Parent(); grandparent)
+            {
+                if (auto* valid_parent =
+                        NodeCreation.is_ValidCreateParent(get_GenName(), grandparent);
+                    valid_parent)
+                {
+                    if (!check_only)
+                    {
+                        const wxWindowUpdateLocker freeze(wxGetApp().getMainFrame());
+                        int pos = -1;
+                        if (grandparent == valid_parent)
+                        {
+                            pos = (to_int) grandparent->get_ChildPosition(parent) + 1;
+                        }
+                        wxGetFrame().PushUndoAction(
+                            std::make_shared<ChangeParentAction>(this, grandparent, pos));
+                    }
+                    return true;
+                }
+            }
+            return false;
+
+        case MoveDirection::Right:
+            if (is_Gen(gen_folder) || is_Gen(gen_sub_folder) || is_Gen(gen_data_folder) ||
+                is_Gen(gen_Images) || is_Gen(gen_Data))
+            {
+                return false;
+            }
+
+            if (auto pos = parent->get_ChildPosition(this) - 1; pos < parent->get_ChildCount())
+            {
+                if (is_Form() && pos >= 0)
+                {
+                    Node* new_parent = parent->get_Child(pos);
+                    if (new_parent->is_Form())
+                    {
+                        ASSERT_MSG(check_only, wxue::string() << "MoveDirection::Right called even "
+                                                                 "though check would have failed.");
+                        return false;
+                    }
+                    if (new_parent->is_Gen(gen_folder) || new_parent->is_Gen(gen_sub_folder))
+                    {
+                        if (!check_only)
+                        {
+                            const wxWindowUpdateLocker freeze(wxGetApp().getMainFrame());
+                            wxGetFrame().PushUndoAction(
+                                std::make_shared<ChangeParentAction>(this, new_parent));
+                        }
+                        return true;
+                    }
+                }
+                else if (is_Gen(gen_sub_folder) && pos >= 0)
+                {
+                    Node* new_parent = parent->get_Child(pos);
+                    while (new_parent->is_Form())
+                    {
+                        if (pos == 0)
+                        {
+                            ASSERT_MSG(check_only, wxue::string()
+                                                       << "MoveDirection::Right called even though "
+                                                          "check would have failed.");
+                            return false;
+                        }
+                    }
+                    if (new_parent->is_Gen(gen_folder) || new_parent->is_Gen(gen_sub_folder))
+                    {
+                        if (!check_only)
+                        {
+                            const wxWindowUpdateLocker freeze(wxGetApp().getMainFrame());
+                            wxGetFrame().PushUndoAction(
+                                std::make_shared<ChangeParentAction>(this, new_parent));
+                        }
+                        return true;
+                    }
+                }
+
+                Node* possible_parent = parent->get_Child(pos);
+                if (auto* valid_parent =
+                        NodeCreation.is_ValidCreateParent(get_GenName(), possible_parent, false);
+                    valid_parent)
+                {
+                    if (!check_only)
+                    {
+                        const wxWindowUpdateLocker freeze(wxGetApp().getMainFrame());
+                        wxGetFrame().PushUndoAction(
+                            std::make_shared<ChangeParentAction>(this, valid_parent));
+                    }
+                    return true;
+                }
+            }
+            return false;
+
+        case MoveDirection::Up:
+            if (auto pos = parent->get_ChildPosition(this); pos > 0)
+            {
+                if (!check_only)
+                {
+                    const wxWindowUpdateLocker freeze(wxGetApp().getMainFrame());
+                    wxGetFrame().PushUndoAction(
+                        std::make_shared<ChangePositionAction>(this, pos - 1));
+                }
+                return true;
+            }
+            return false;
+
+        case MoveDirection::Down:
+            if (auto pos = parent->get_ChildPosition(this) + 1; pos < parent->get_ChildCount())
+            {
+                if (!check_only)
+                {
+                    const wxWindowUpdateLocker freeze(wxGetApp().getMainFrame());
+                    wxGetFrame().PushUndoAction(std::make_shared<ChangePositionAction>(this, pos));
+                }
+                return true;
+            }
+            return false;
+    }
+
+    return false;
+}
+
+void Node::RemoveNode(bool isCutMode)
+{
+    ASSERT_MSG(!is_Type(type_project), "Don't call RemoveNode to remove the entire project.");
+    ASSERT_MSG(get_Parent(), "The node being removed has no parent -- that should be impossible.");
+
+    Node* parent = get_Parent();
+    if (!parent)
+    {
+        return;
+    }
+
+    if (isCutMode)
+    {
+        wxue::string undo_str;
+        undo_str << "cut " << get_DeclName();
+        wxGetFrame().PushUndoAction(std::make_shared<RemoveNodeAction>(this, undo_str, true));
+    }
+    else
+    {
+        wxue::string undo_str;
+        undo_str << "delete " << get_DeclName();
+        wxGetFrame().PushUndoAction(std::make_shared<RemoveNodeAction>(this, undo_str, false));
+    }
+    wxGetFrame().UpdateWakaTime();
+}
+
+bool Node::MoveSizerChildrenToParent()
+{
+    Node* parent = get_Parent();
+    if (!parent || !parent->is_Sizer() || !is_Sizer())
+    {
+        wxMessageBox("Both the current node and its parent must be sizers.", "Move Sizer Children",
+                     wxOK | wxICON_ERROR);
+        return false;
+    }
+
+    auto group = std::make_shared<GroupUndoActions>("Move sizer children", parent);
+
+    for (auto& child: get_ChildNodePtrs())
+    {
+        auto action = std::make_shared<ChangeParentAction>(child.get(), parent);
+        group->Add(action);
+    }
+
+    wxGetFrame().PushUndoAction(group);
+
+    // Avoid the tempatation to include this in the group action. First, it allows the user to undo
+    // just the size in case they still want it. More importantly, trying to do this as part of the
+    // group action causes the NavPanel to fail -- I spent a lot of time trying to fix it to no
+    // avail -- remove the sizer as a second action works fine.
+
+    RemoveNode(false);
+
+    return true;
 }

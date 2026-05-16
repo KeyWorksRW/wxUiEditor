@@ -381,14 +381,14 @@ std::optional<wxue::string> WizardFormGenerator::GetHint(NodeProperty* prop)
 
 bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 {
-    menu->Append(NavPopupMenu::MenuADD_WIZARD_PAGE, "Add Page");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::AddWizardPage), "Add Page");
     menu->Bind(
         wxEVT_MENU,
         [=](wxCommandEvent&)
         {
             node->CreateToolNode(gen_wxWizardPageSimple);
         },
-        NavPopupMenu::MenuADD_WIZARD_PAGE);
+        static_cast<int>(NavPopupMenu::Menu::AddWizardPage));
 
     return false;
 }
@@ -582,14 +582,14 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
 
 bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 {
-    menu->Append(NavPopupMenu::MenuADD_WIZARD_PAGE, "Add Page");
+    menu->Append(static_cast<int>(NavPopupMenu::Menu::AddWizardPage), "Add Page");
     menu->Bind(
         wxEVT_MENU,
         [=](wxCommandEvent&)
         {
             node->CreateToolNode(gen_wxWizardPageSimple);
         },
-        NavPopupMenu::MenuADD_WIZARD_PAGE);
+        static_cast<int>(NavPopupMenu::Menu::AddWizardPage));
 
     if (node->get_ChildCount() && node->get_Child(0)->is_Sizer())
     {

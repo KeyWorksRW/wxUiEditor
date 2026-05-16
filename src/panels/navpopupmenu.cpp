@@ -58,7 +58,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 {
     switch (event.GetId())
     {
-        case static_cast<int>(Menu::NewItem):
+        case std::to_underlying(Menu::NewItem):
             if (m_tool_name < gen_name_array_size)
             {
                 if (m_node->is_Type(type_bookpage) || m_node->is_Type(type_wizardpagesimple))
@@ -80,7 +80,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case static_cast<int>(Menu::NewColumn):
+        case std::to_underlying(Menu::NewColumn):
             if (m_tool_name == gen_wxTreeListCtrl)
             {
                 if (m_child)
@@ -94,83 +94,83 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case static_cast<int>(Menu::NewSiblingBoxSizer):
+        case std::to_underlying(Menu::NewSiblingBoxSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxBoxSizer);
             break;
 
-        case static_cast<int>(Menu::NewSiblingStaticSizer):
+        case std::to_underlying(Menu::NewSiblingStaticSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxStaticBoxSizer);
             break;
 
-        case static_cast<int>(Menu::NewSiblingWrapSizer):
+        case std::to_underlying(Menu::NewSiblingWrapSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxWrapSizer);
             break;
 
-        case static_cast<int>(Menu::NewSiblingGridSizer):
+        case std::to_underlying(Menu::NewSiblingGridSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxGridSizer);
             break;
 
-        case static_cast<int>(Menu::NewSiblingFlexGridSizer):
+        case std::to_underlying(Menu::NewSiblingFlexGridSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxFlexGridSizer);
             break;
 
-        case static_cast<int>(Menu::NewSiblingGridbagSizer):
+        case std::to_underlying(Menu::NewSiblingGridbagSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxGridBagSizer);
             break;
 
-        case static_cast<int>(Menu::NewSiblingStdDialgBtns):
+        case std::to_underlying(Menu::NewSiblingStdDialgBtns):
             std::ignore = m_parent->CreateToolNode(gen_wxStdDialogButtonSizer);
             break;
 
-        case static_cast<int>(Menu::NewSiblingSpacer):
+        case std::to_underlying(Menu::NewSiblingSpacer):
             std::ignore = m_parent->CreateToolNode(gen_spacer);
             break;
 
-        case static_cast<int>(Menu::NewChildBoxSizer):
+        case std::to_underlying(Menu::NewChildBoxSizer):
             std::ignore = m_sizer_node->CreateToolNode(gen_wxBoxSizer);
             break;
 
-        case static_cast<int>(Menu::NewChildStaticSizer):
+        case std::to_underlying(Menu::NewChildStaticSizer):
             std::ignore = m_sizer_node->CreateToolNode(gen_wxStaticBoxSizer);
             break;
 
-        case static_cast<int>(Menu::NewChildWrapSizer):
+        case std::to_underlying(Menu::NewChildWrapSizer):
             std::ignore = m_sizer_node->CreateToolNode(gen_wxWrapSizer);
             break;
 
-        case static_cast<int>(Menu::NewChildGridSizer):
+        case std::to_underlying(Menu::NewChildGridSizer):
             std::ignore = m_sizer_node->CreateToolNode(gen_wxGridSizer);
             break;
 
-        case static_cast<int>(Menu::NewChildFlexGridSizer):
+        case std::to_underlying(Menu::NewChildFlexGridSizer):
             std::ignore = m_sizer_node->CreateToolNode(gen_wxFlexGridSizer);
             break;
 
-        case static_cast<int>(Menu::NewChildGridbagSizer):
+        case std::to_underlying(Menu::NewChildGridbagSizer):
             std::ignore = m_sizer_node->CreateToolNode(gen_wxGridBagSizer);
             break;
 
-        case static_cast<int>(Menu::NewChildStdDialgBtns):
+        case std::to_underlying(Menu::NewChildStdDialgBtns):
             wxGetFrame().CreateToolNode(gen_wxStdDialogButtonSizer);
             break;
 
-        case static_cast<int>(Menu::NewChildSpacer):
+        case std::to_underlying(Menu::NewChildSpacer):
             wxGetFrame().CreateToolNode(gen_spacer);
             break;
 
-        case static_cast<int>(Menu::NewToolbar):
+        case std::to_underlying(Menu::NewToolbar):
             wxGetFrame().CreateToolNode(gen_wxToolBar);
             break;
 
-        case static_cast<int>(Menu::NewInfobar):
+        case std::to_underlying(Menu::NewInfobar):
             wxGetFrame().CreateToolNode(gen_wxInfoBar);
             break;
 
-        case static_cast<int>(Menu::AddMenu):
+        case std::to_underlying(Menu::AddMenu):
             wxGetFrame().CreateToolNode(gen_wxMenu);
             break;
 
-        case static_cast<int>(Menu::AddToolSeparator):
+        case std::to_underlying(Menu::AddToolSeparator):
             if (m_child)
             {
                 std::ignore = m_child->CreateToolNode(gen_toolSeparator);
@@ -181,7 +181,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case static_cast<int>(Menu::ExpandAll):
+        case std::to_underlying(Menu::ExpandAll):
             wxGetFrame().getNavigationPanel()->ExpandCollapse(m_node);
             wxGetFrame().SelectNode(m_node);
             break;
@@ -198,7 +198,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             wxGetFrame().PasteNode(m_node);
             break;
 
-        case static_cast<int>(Menu::Duplicate):
+        case std::to_underlying(Menu::Duplicate):
             m_node->DuplicateNode();
             break;
 
@@ -206,23 +206,27 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             wxGetFrame().DeleteNode(m_node);
             break;
 
-        case static_cast<int>(Menu::MoveUp):
+        case std::to_underlying(Menu::MoveUp):
             m_node->MoveNode(MoveDirection::Up);
             break;
 
-        case static_cast<int>(Menu::MoveDown):
+        case std::to_underlying(Menu::MoveDown):
             m_node->MoveNode(MoveDirection::Down);
             break;
 
-        case static_cast<int>(Menu::MoveRight):
+        case std::to_underlying(Menu::MoveRight):
             m_node->MoveNode(MoveDirection::Right);
             break;
 
-        case static_cast<int>(Menu::MoveLeft):
+        case std::to_underlying(Menu::MoveLeft):
             m_node->MoveNode(MoveDirection::Left);
             break;
 
-        case static_cast<int>(Menu::NewParentBoxSizer):
+        case std::to_underlying(Menu::MergeSizerChildren):
+            m_node->MoveSizerChildrenToParent();
+            break;
+
+        case std::to_underlying(Menu::NewParentBoxSizer):
             CreateSizerParent("wxBoxSizer");
             break;
 
@@ -230,87 +234,87 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             CreateSizerParent("wxStaticBoxSizer");
             break;
 
-        case static_cast<int>(Menu::NewParentWrapSizer):
+        case std::to_underlying(Menu::NewParentWrapSizer):
             CreateSizerParent("wxWrapSizer");
             break;
 
-        case static_cast<int>(Menu::NewParentGridSizer):
+        case std::to_underlying(Menu::NewParentGridSizer):
             CreateSizerParent("wxGridSizer");
             break;
 
-        case static_cast<int>(Menu::NewParentFlexGridSizer):
+        case std::to_underlying(Menu::NewParentFlexGridSizer):
             CreateSizerParent("wxFlexGridSizer");
             break;
 
-        case static_cast<int>(Menu::NewParentGridbagSizer):
+        case std::to_underlying(Menu::NewParentGridbagSizer):
             CreateSizerParent("wxGridBagSizer");
             break;
 
-        case static_cast<int>(Menu::NewParentFolder):
+        case std::to_underlying(Menu::NewParentFolder):
             CreateSizerParent("folder");
             break;
 
-        case static_cast<int>(Menu::ChangeToFlexGridSizer):
+        case std::to_underlying(Menu::ChangeToFlexGridSizer):
             ChangeSizer(gen_wxFlexGridSizer);
             break;
 
-        case static_cast<int>(Menu::ChangeToAuiBook):
+        case std::to_underlying(Menu::ChangeToAuiBook):
             ChangeNode(gen_wxAuiNotebook);
             break;
 
-        case static_cast<int>(Menu::ChangeToChoiceBook):
+        case std::to_underlying(Menu::ChangeToChoiceBook):
             ChangeNode(gen_wxChoicebook);
             break;
 
-        case static_cast<int>(Menu::ChangeToListBook):
+        case std::to_underlying(Menu::ChangeToListBook):
             ChangeNode(gen_wxListbook);
             break;
 
-        case static_cast<int>(Menu::ChangeToNoteBook):
+        case std::to_underlying(Menu::ChangeToNoteBook):
             ChangeNode(gen_wxNotebook);
             break;
 
-        case static_cast<int>(Menu::ChangeToSimpleBook):
+        case std::to_underlying(Menu::ChangeToSimpleBook):
             ChangeNode(gen_wxSimplebook);
             break;
 
-        case static_cast<int>(Menu::ChangeTo2StateCheckbox):
+        case std::to_underlying(Menu::ChangeTo2StateCheckbox):
             ChangeNode(gen_wxCheckBox);
             break;
 
-        case static_cast<int>(Menu::ChangeTo3StateCheckbox):
+        case std::to_underlying(Menu::ChangeTo3StateCheckbox):
             ChangeNode(gen_Check3State);
             break;
 
-        case static_cast<int>(Menu::ChangeToRadioButton):
+        case std::to_underlying(Menu::ChangeToRadioButton):
             ChangeNode(gen_wxRadioButton);
             break;
 
-        case static_cast<int>(Menu::ChangeToChoiceBox):
+        case std::to_underlying(Menu::ChangeToChoiceBox):
             ChangeNode(gen_wxChoice);
             break;
 
-        case static_cast<int>(Menu::ChangeToComboBox):
+        case std::to_underlying(Menu::ChangeToComboBox):
             ChangeNode(gen_wxComboBox);
             break;
 
-        case static_cast<int>(Menu::ChangeToListBox):
+        case std::to_underlying(Menu::ChangeToListBox):
             ChangeNode(gen_wxListBox);
             break;
 
-        case static_cast<int>(Menu::ChangeToGridSizer):
+        case std::to_underlying(Menu::ChangeToGridSizer):
             ChangeSizer(gen_wxGridSizer);
             break;
 
-        case static_cast<int>(Menu::ChangeToStaticSizer):
+        case std::to_underlying(Menu::ChangeToStaticSizer):
             ChangeSizer(gen_wxStaticBoxSizer);
             break;
 
-        case static_cast<int>(Menu::ChangeToWrapSizer):
+        case std::to_underlying(Menu::ChangeToWrapSizer):
             ChangeSizer(gen_wxWrapSizer);
             break;
 
-        case static_cast<int>(Menu::CompareCode):
+        case std::to_underlying(Menu::CompareCode):
             {
                 // Because this immediately creates a dialog, we need to be sure that MainFrame
                 // has the correct node selected first before the dialog queries it.
@@ -320,33 +324,33 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
-        case static_cast<int>(Menu::SingleGenCpp):
+        case std::to_underlying(Menu::SingleGenCpp):
             {
                 wxCommandEvent dummy;
                 wxGetMainFrame()->OnGenSingleCpp(dummy);
             }
             break;
 
-        case static_cast<int>(Menu::SingleGenPython):
+        case std::to_underlying(Menu::SingleGenPython):
             {
                 OnGenerateSingleLanguage(GEN_LANG_PYTHON);
             }
             break;
 
-        case static_cast<int>(Menu::SingleGenRuby):
+        case std::to_underlying(Menu::SingleGenRuby):
             {
                 OnGenerateSingleLanguage(GEN_LANG_RUBY);
             }
             break;
 
-        case static_cast<int>(Menu::SingleGenXRC):
+        case std::to_underlying(Menu::SingleGenXRC):
             {
                 wxCommandEvent dummy;
                 wxGetMainFrame()->OnGenSingleXRC(dummy);
             }
             break;
 
-        case static_cast<int>(Menu::AddPage):
+        case std::to_underlying(Menu::AddPage):
             if (m_node->is_Gen(gen_BookPage))
             {
                 m_node->get_Parent()->CreateToolNode(gen_BookPage);
@@ -382,20 +386,21 @@ void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
             }
             break;
 
-        case static_cast<int>(Menu::MoveUp):
-            Enable(static_cast<int>(Menu::MoveUp), m_node->MoveNode(MoveDirection::Up, true));
+        case std::to_underlying(Menu::MoveUp):
+            Enable(std::to_underlying(Menu::MoveUp), m_node->MoveNode(MoveDirection::Up, true));
             break;
 
-        case static_cast<int>(Menu::MoveDown):
-            Enable(static_cast<int>(Menu::MoveDown), m_node->MoveNode(MoveDirection::Down, true));
+        case std::to_underlying(Menu::MoveDown):
+            Enable(std::to_underlying(Menu::MoveDown), m_node->MoveNode(MoveDirection::Down, true));
             break;
 
-        case static_cast<int>(Menu::MoveLeft):
-            Enable(static_cast<int>(Menu::MoveLeft), m_node->MoveNode(MoveDirection::Left, true));
+        case std::to_underlying(Menu::MoveLeft):
+            Enable(std::to_underlying(Menu::MoveLeft), m_node->MoveNode(MoveDirection::Left, true));
             break;
 
-        case static_cast<int>(Menu::MoveRight):
-            Enable(static_cast<int>(Menu::MoveRight), m_node->MoveNode(MoveDirection::Right, true));
+        case std::to_underlying(Menu::MoveRight):
+            Enable(std::to_underlying(Menu::MoveRight),
+                   m_node->MoveNode(MoveDirection::Right, true));
             break;
     }
 }
@@ -414,17 +419,18 @@ void NavPopupMenu::CreateSizerMenu()
     const bool isTopSizer = (m_parent->is_Form() || m_parent->is_Container());
 
     sub_menu = new wxMenu;
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildBoxSizer), "wxBoxSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildBoxSizer), "wxBoxSizer");
     menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildStaticSizer), "wxStaticBoxSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildStaticSizer), "wxStaticBoxSizer");
     menu_item->SetBitmap(GetSvgImage("wxStaticBoxSizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildWrapSizer), "wxWrapSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildWrapSizer), "wxWrapSizer");
     menu_item->SetBitmap(GetSvgImage("wrap_sizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildGridSizer), "wxGridSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildGridSizer), "wxGridSizer");
     menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildFlexGridSizer), "wxFlexGridSizer");
+    menu_item =
+        sub_menu->Append(std::to_underlying(Menu::NewChildFlexGridSizer), "wxFlexGridSizer");
     menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildGridbagSizer), "wxGridBagSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildGridbagSizer), "wxGridBagSizer");
     menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
 
     AppendSubMenu(sub_menu, "Add child sizer");
@@ -432,20 +438,20 @@ void NavPopupMenu::CreateSizerMenu()
     if (!isTopSizer)
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::NewSiblingBoxSizer), "wxBoxSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::NewSiblingBoxSizer), "wxBoxSizer");
         menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::NewSiblingStaticSizer), "wxStaticBoxSizer");
+            sub_menu->Append(std::to_underlying(Menu::NewSiblingStaticSizer), "wxStaticBoxSizer");
         menu_item->SetBitmap(GetSvgImage("wxStaticBoxSizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::NewSiblingWrapSizer), "wxWrapSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::NewSiblingWrapSizer), "wxWrapSizer");
         menu_item->SetBitmap(GetSvgImage("wrap_sizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::NewSiblingGridSizer), "wxGridSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::NewSiblingGridSizer), "wxGridSizer");
         menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::NewSiblingFlexGridSizer), "wxFlexGridSizer");
+            sub_menu->Append(std::to_underlying(Menu::NewSiblingFlexGridSizer), "wxFlexGridSizer");
         menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::NewSiblingGridbagSizer), "wxGridBagSizer");
+            sub_menu->Append(std::to_underlying(Menu::NewSiblingGridbagSizer), "wxGridBagSizer");
         menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
         AppendSubMenu(sub_menu, "Add sibling sizer");
 
@@ -457,14 +463,14 @@ void NavPopupMenu::CreateSizerMenu()
     {
         sub_menu = new wxMenu;
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeToFlexGridSizer), "wxFlexGridSizer");
+            sub_menu->Append(std::to_underlying(Menu::ChangeToFlexGridSizer), "wxFlexGridSizer");
         menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToGridSizer), "wxGridSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToGridSizer), "wxGridSizer");
         menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeToStaticSizer), "wxStaticBoxSizer");
+            sub_menu->Append(std::to_underlying(Menu::ChangeToStaticSizer), "wxStaticBoxSizer");
         menu_item->SetBitmap(GetSvgImage("wxStaticBoxSizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToWrapSizer), "wxWrapSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToWrapSizer), "wxWrapSizer");
         menu_item->SetBitmap(GetSvgImage("wrap_sizer", dpi_size));
 
         AppendSubMenu(sub_menu, "Change Sizer To");
@@ -473,9 +479,9 @@ void NavPopupMenu::CreateSizerMenu()
     {
         sub_menu = new wxMenu;
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeToFlexGridSizer), "wxFlexGridSizer");
+            sub_menu->Append(std::to_underlying(Menu::ChangeToFlexGridSizer), "wxFlexGridSizer");
         menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToWrapSizer), "wxWrapSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToWrapSizer), "wxWrapSizer");
         menu_item->SetBitmap(GetSvgImage("wrap_sizer", dpi_size));
 
         AppendSubMenu(sub_menu, "Change Sizer To");
@@ -483,9 +489,9 @@ void NavPopupMenu::CreateSizerMenu()
     if (m_node->is_Gen(gen_wxFlexGridSizer))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToGridSizer), "wxGridSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToGridSizer), "wxGridSizer");
         menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToWrapSizer), "wxWrapSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToWrapSizer), "wxWrapSizer");
         menu_item->SetBitmap(GetSvgImage("wrap_sizer", dpi_size));
 
         AppendSubMenu(sub_menu, "Change Sizer To");
@@ -494,9 +500,9 @@ void NavPopupMenu::CreateSizerMenu()
     {
         sub_menu = new wxMenu;
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeToFlexGridSizer), "wxFlexGridSizer");
+            sub_menu->Append(std::to_underlying(Menu::ChangeToFlexGridSizer), "wxFlexGridSizer");
         menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToGridSizer), "wxGridSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToGridSizer), "wxGridSizer");
         menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
 
         AppendSubMenu(sub_menu, "Change Sizer To");
@@ -504,7 +510,7 @@ void NavPopupMenu::CreateSizerMenu()
 
     if (m_parent && m_parent->is_Sizer())
     {
-        Append(static_cast<int>(Menu::MergeSizerChildren), "Merge sizer children into parent");
+        Append(std::to_underlying(Menu::MergeSizerChildren), "Merge sizer children into parent");
     }
 
     AddSeparatorIfNeeded();
@@ -534,33 +540,33 @@ void NavPopupMenu::MenuAddCommands()
             int count = 0;
             if (m_node->HasValue(prop_base_file))
             {
-                Append(static_cast<int>(Menu::SingleGenCpp), "Generate C++ for this form");
+                Append(std::to_underlying(Menu::SingleGenCpp), "Generate C++ for this form");
                 ++count;
             }
             if (m_node->HasValue(prop_python_file))
             {
-                Append(static_cast<int>(Menu::SingleGenPython), "Generate Python for this form");
+                Append(std::to_underlying(Menu::SingleGenPython), "Generate Python for this form");
                 ++count;
             }
             if (m_node->HasValue(prop_ruby_file))
             {
-                Append(static_cast<int>(Menu::SingleGenRuby), "Generate Ruby for this form");
+                Append(std::to_underlying(Menu::SingleGenRuby), "Generate Ruby for this form");
                 ++count;
             }
             if (m_node->HasValue(prop_xrc_file))
             {
-                Append(static_cast<int>(Menu::SingleGenXRC), "Generate XRC for this form");
+                Append(std::to_underlying(Menu::SingleGenXRC), "Generate XRC for this form");
                 ++count;
             }
             if (m_node->HasValue(prop_perl_file))
             {
-                Append(static_cast<int>(Menu::SingleGenPerl), "Generate Perl for this form");
+                Append(std::to_underlying(Menu::SingleGenPerl), "Generate Perl for this form");
                 ++count;
             }
 
             if (count)
             {
-                Append(static_cast<int>(Menu::CompareCode), "Compare Code for this form");
+                Append(std::to_underlying(Menu::CompareCode), "Compare Code for this form");
                 AppendSeparator();
             }
         }
@@ -570,7 +576,7 @@ void NavPopupMenu::MenuAddCommands()
     {
         if (m_node->is_Gen(gen_wxPropertySheetDialog))
         {
-            menu_item = Append(static_cast<int>(Menu::AddPage), "Add Page");
+            menu_item = Append(std::to_underlying(Menu::AddPage), "Add Page");
             menu_item->SetBitmap(GetSvgImage("book_page", dpi_size));
             Bind(
                 wxEVT_MENU,
@@ -578,14 +584,14 @@ void NavPopupMenu::MenuAddCommands()
                 {
                     wxGetFrame().CreateToolNode(gen_BookPage);
                 },
-                static_cast<int>(Menu::AddPage));
+                std::to_underlying(Menu::AddPage));
             return;
         }
         if (m_node->is_Gen(gen_Data))
         {
-            menu_item = Append(static_cast<int>(Menu::AddDataString), "Add File");
+            menu_item = Append(std::to_underlying(Menu::AddDataString), "Add File");
             menu_item->SetBitmap(GetSvgImage("text_file", dpi_size));
-            menu_item = Append(static_cast<int>(Menu::AddDataXml), "Add XML File");
+            menu_item = Append(std::to_underlying(Menu::AddDataXml), "Add XML File");
             menu_item->SetBitmap(GetSvgImage("xml_file", dpi_size));
             Bind(
                 wxEVT_MENU,
@@ -593,19 +599,19 @@ void NavPopupMenu::MenuAddCommands()
                 {
                     wxGetFrame().CreateToolNode(gen_data_string);
                 },
-                static_cast<int>(Menu::AddDataString));
+                std::to_underlying(Menu::AddDataString));
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_data_xml);
                 },
-                static_cast<int>(Menu::AddDataXml));
+                std::to_underlying(Menu::AddDataXml));
             return;
         }
         if (m_node->is_Gen(gen_Images))
         {
-            menu_item = Append(static_cast<int>(Menu::AddImage), "Add Image");
+            menu_item = Append(std::to_underlying(Menu::AddImage), "Add Image");
             menu_item->SetBitmap(GetSvgImage("bitmap", dpi_size));
             Bind(
                 wxEVT_MENU,
@@ -613,14 +619,14 @@ void NavPopupMenu::MenuAddCommands()
                 {
                     wxGetFrame().CreateToolNode(gen_embedded_image);
                 },
-                static_cast<int>(Menu::AddImage));
+                std::to_underlying(Menu::AddImage));
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_data_xml);
                 },
-                static_cast<int>(Menu::AddDataXml));
+                std::to_underlying(Menu::AddDataXml));
             return;
         }
         if (!m_node->is_Gen(gen_wxWizard) && !m_node->is_ToolBar())
@@ -655,87 +661,87 @@ void NavPopupMenu::MenuAddCommands()
         case gen_wxToolbook:
         case gen_wxTreebook:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddPage), "Add Page");
+            Append(std::to_underlying(Menu::AddPage), "Add Page");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_BookPage);
                 },
-                static_cast<int>(Menu::AddPage));
+                std::to_underlying(Menu::AddPage));
             break;
 
         case gen_BookPage:
             add_sizer = true;
-            Append(static_cast<int>(Menu::AddPage), "Add Page");
+            Append(std::to_underlying(Menu::AddPage), "Add Page");
             break;
 
         case gen_wxRibbonBar:
         case gen_RibbonBar:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddRibbonPage), "Add Page");
+            Append(std::to_underlying(Menu::AddRibbonPage), "Add Page");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_wxRibbonPage);
                 },
-                static_cast<int>(Menu::AddRibbonPage));
+                std::to_underlying(Menu::AddRibbonPage));
             break;
 
         case gen_wxRibbonPage:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddRibbonPanel), "Add Panel");
+            Append(std::to_underlying(Menu::AddRibbonPanel), "Add Panel");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_wxRibbonPanel);
                 },
-                static_cast<int>(Menu::AddRibbonPanel));
+                std::to_underlying(Menu::AddRibbonPanel));
             break;
 
         case gen_wxRibbonPanel:
             add_sizer = false;
             if (m_node->get_ChildCount())
             {
-                Append(static_cast<int>(Menu::AddRibbonPanel), "Add Panel");
+                Append(std::to_underlying(Menu::AddRibbonPanel), "Add Panel");
                 Bind(
                     wxEVT_MENU,
                     [](wxCommandEvent&)
                     {
                         wxGetFrame().CreateToolNode(gen_wxRibbonPanel);
                     },
-                    static_cast<int>(Menu::AddRibbonPanel));
+                    std::to_underlying(Menu::AddRibbonPanel));
                 break;
             }
 
-            Append(static_cast<int>(Menu::AddRibbonButtonbar), "Add Button Bar");
+            Append(std::to_underlying(Menu::AddRibbonButtonbar), "Add Button Bar");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_wxRibbonButtonBar);
                 },
-                static_cast<int>(Menu::AddRibbonButtonbar));
+                std::to_underlying(Menu::AddRibbonButtonbar));
 
-            Append(static_cast<int>(Menu::AddRibbonToolbar), "Add Tool Bar");
+            Append(std::to_underlying(Menu::AddRibbonToolbar), "Add Tool Bar");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_wxRibbonToolBar);
                 },
-                static_cast<int>(Menu::AddRibbonToolbar));
+                std::to_underlying(Menu::AddRibbonToolbar));
 
-            Append(static_cast<int>(Menu::AddRibbonGallery), "Add Gallery");
+            Append(std::to_underlying(Menu::AddRibbonGallery), "Add Gallery");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_wxRibbonGallery);
                 },
-                static_cast<int>(Menu::AddRibbonGallery));
+                std::to_underlying(Menu::AddRibbonGallery));
             break;
 
         case gen_wxRibbonButtonBar:
@@ -743,27 +749,27 @@ void NavPopupMenu::MenuAddCommands()
         case gen_ribbonButton:
         case gen_ribbonTool:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddRibbonButton), "Add Button");
+            Append(std::to_underlying(Menu::AddRibbonButton), "Add Button");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_ribbonButton);
                 },
-                static_cast<int>(Menu::AddRibbonButton));
+                std::to_underlying(Menu::AddRibbonButton));
             break;
 
         case gen_wxRibbonGallery:
         case gen_ribbonGalleryItem:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddRibbonGalleryItem), "Add Gallery Item");
+            Append(std::to_underlying(Menu::AddRibbonGalleryItem), "Add Gallery Item");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_ribbonGalleryItem);
                 },
-                static_cast<int>(Menu::AddRibbonGalleryItem));
+                std::to_underlying(Menu::AddRibbonGalleryItem));
             break;
 
         case gen_AuiToolBar:
@@ -785,14 +791,14 @@ void NavPopupMenu::MenuAddCommands()
         case gen_wxMenuBar:
         case gen_MenuBar:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddMenu), "Add Menu");
+            Append(std::to_underlying(Menu::AddMenu), "Add Menu");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_wxMenu);
                 },
-                static_cast<int>(Menu::AddMenu));
+                std::to_underlying(Menu::AddMenu));
             break;
 
         case gen_wxMenu:
@@ -801,45 +807,45 @@ void NavPopupMenu::MenuAddCommands()
         case gen_separator:
         case gen_tool_dropdown:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddMenuitem), "Add Menu Item");
+            Append(std::to_underlying(Menu::AddMenuitem), "Add Menu Item");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_wxMenuItem);
                 },
-                static_cast<int>(Menu::AddMenuitem));
+                std::to_underlying(Menu::AddMenuitem));
 
-            Append(static_cast<int>(Menu::AddSubmenu), "Add Submenu");
+            Append(std::to_underlying(Menu::AddSubmenu), "Add Submenu");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_submenu);
                 },
-                static_cast<int>(Menu::AddSubmenu));
+                std::to_underlying(Menu::AddSubmenu));
 
-            Append(static_cast<int>(Menu::AddMenuSeparator), "Add Separator");
+            Append(std::to_underlying(Menu::AddMenuSeparator), "Add Separator");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_separator);
                 },
-                static_cast<int>(Menu::AddMenuSeparator));
+                std::to_underlying(Menu::AddMenuSeparator));
 
             break;
 
         case gen_wxPropertyGridManager:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddPropgridPage), "Add Page");
+            Append(std::to_underlying(Menu::AddPropgridPage), "Add Page");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_propGridPage);
                 },
-                static_cast<int>(Menu::AddPropgridPage));
+                std::to_underlying(Menu::AddPropgridPage));
             break;
 
         case gen_wxPropertyGrid:
@@ -849,45 +855,45 @@ void NavPopupMenu::MenuAddCommands()
             add_sizer = false;
             if (!m_node->is_Gen(gen_propGridCategory) && !m_node->is_Gen(gen_propGridItem))
             {
-                Append(static_cast<int>(Menu::AddPropgridCategory), "Add Category");
+                Append(std::to_underlying(Menu::AddPropgridCategory), "Add Category");
                 Bind(
                     wxEVT_MENU,
                     [](wxCommandEvent&)
                     {
                         wxGetFrame().CreateToolNode(gen_propGridCategory);
                     },
-                    static_cast<int>(Menu::AddPropgridCategory));
+                    std::to_underlying(Menu::AddPropgridCategory));
             }
-            Append(static_cast<int>(Menu::AddPropgridItem), "Add Item");
+            Append(std::to_underlying(Menu::AddPropgridItem), "Add Item");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_propGridItem);
                 },
-                static_cast<int>(Menu::AddPropgridItem));
+                std::to_underlying(Menu::AddPropgridItem));
             break;
 
         case gen_data_string:
         case gen_data_xml:
         case gen_data_folder:
             add_sizer = false;
-            Append(static_cast<int>(Menu::AddDataString), "Add File");
-            Append(static_cast<int>(Menu::AddDataXml), "Add XML File");
+            Append(std::to_underlying(Menu::AddDataString), "Add File");
+            Append(std::to_underlying(Menu::AddDataXml), "Add XML File");
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_data_string);
                 },
-                static_cast<int>(Menu::AddDataString));
+                std::to_underlying(Menu::AddDataString));
             Bind(
                 wxEVT_MENU,
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().CreateToolNode(gen_data_xml);
                 },
-                static_cast<int>(Menu::AddDataXml));
+                std::to_underlying(Menu::AddDataXml));
             break;
 
         default:
@@ -898,7 +904,7 @@ void NavPopupMenu::MenuAddCommands()
             }
             else
             {
-                Append(static_cast<int>(Menu::NewChildSpacer), "Add spacer");
+                Append(std::to_underlying(Menu::NewChildSpacer), "Add spacer");
             }
             break;
     }
@@ -921,23 +927,24 @@ void NavPopupMenu::MenuAddChildSizerCommands(Node* child)
 
     auto* sub_menu = new wxMenu;
     wxMenuItem* menu_item =
-        sub_menu->Append(static_cast<int>(Menu::NewChildBoxSizer), "wxBoxSizer");
+        sub_menu->Append(std::to_underlying(Menu::NewChildBoxSizer), "wxBoxSizer");
     menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildStaticSizer), "wxStaticBoxSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildStaticSizer), "wxStaticBoxSizer");
     menu_item->SetBitmap(GetSvgImage("wxStaticBoxSizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildWrapSizer), "wxWrapSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildWrapSizer), "wxWrapSizer");
     menu_item->SetBitmap(GetSvgImage("wrap_sizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildGridSizer), "wxGridSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildGridSizer), "wxGridSizer");
     menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildFlexGridSizer), "wxFlexGridSizer");
+    menu_item =
+        sub_menu->Append(std::to_underlying(Menu::NewChildFlexGridSizer), "wxFlexGridSizer");
     menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildGridbagSizer), "wxGridBagSizer");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildGridbagSizer), "wxGridBagSizer");
     menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
 
     if (child->is_Parent(gen_wxDialog))
     {
         sub_menu->AppendSeparator();
-        menu_item = sub_menu->Append(static_cast<int>(Menu::NewChildStdDialgBtns),
+        menu_item = sub_menu->Append(std::to_underlying(Menu::NewChildStdDialgBtns),
                                      "wxStdDialogButtonSizer");
         menu_item->SetBitmap(GetInternalImage("stddialogbuttonsizer"));
     }
@@ -962,36 +969,37 @@ void NavPopupMenu::MenuAddMoveCommands()
     sub_menu = new wxMenu;
     if (m_parent && m_parent->is_Gen(GenEnum::gen_wxGridBagSizer))
     {
-        menu_item = sub_menu->Append(static_cast<int>(Menu::MoveUp), "Decrease Row\tAlt+Up",
+        menu_item = sub_menu->Append(std::to_underlying(Menu::MoveUp), "Decrease Row\tAlt+Up",
                                      "Decreases row containing selected item");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_UP, wxART_MENU));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::MoveDown), "Increase Row\tAlt+Down",
+        menu_item = sub_menu->Append(std::to_underlying(Menu::MoveDown), "Increase Row\tAlt+Down",
                                      "Increases row containing selected item");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_DOWN, wxART_MENU));
 
-        menu_item = sub_menu->Append(static_cast<int>(Menu::MoveLeft), "Decrease Column\tAlt+Left",
-                                     "Decreases column containing selected item");
+        menu_item =
+            sub_menu->Append(std::to_underlying(Menu::MoveLeft), "Decrease Column\tAlt+Left",
+                             "Decreases column containing selected item");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::MoveRight), "Increase Column\tAlt+Right",
+            sub_menu->Append(std::to_underlying(Menu::MoveRight), "Increase Column\tAlt+Right",
                              "Increases column containing selected item");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_MENU));
     }
     else
     {
-        menu_item = sub_menu->Append(static_cast<int>(Menu::MoveUp), "Up\tAlt+Up",
+        menu_item = sub_menu->Append(std::to_underlying(Menu::MoveUp), "Up\tAlt+Up",
                                      "Moves selected item up");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_UP, wxART_MENU));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::MoveDown), "Down\tAlt+Down",
+        menu_item = sub_menu->Append(std::to_underlying(Menu::MoveDown), "Down\tAlt+Down",
                                      "Moves selected item down");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_DOWN, wxART_MENU));
 
         if (!m_is_parent_toolbar && generator && generator->CanChangeParent(m_node))
         {
-            menu_item = sub_menu->Append(static_cast<int>(Menu::MoveLeft), "Left\tAlt+Left",
+            menu_item = sub_menu->Append(std::to_underlying(Menu::MoveLeft), "Left\tAlt+Left",
                                          "Moves selected item left");
             menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU));
-            menu_item = sub_menu->Append(static_cast<int>(Menu::MoveRight), "Right\tAlt+Right",
+            menu_item = sub_menu->Append(std::to_underlying(Menu::MoveRight), "Right\tAlt+Right",
                                          "Moves selected item right");
             menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD, wxART_MENU));
         }
@@ -1009,20 +1017,20 @@ void NavPopupMenu::MenuAddMoveCommands()
     if (!m_is_parent_toolbar && generator && generator->CanChangeParent(m_node))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::NewParentBoxSizer), "wxBoxSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::NewParentBoxSizer), "wxBoxSizer");
         menu_item->SetBitmap(GetSvgImage("sizer_horizontal", dpi_size));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::NewParentStaticSizer), "wxStaticBoxSizer");
+            sub_menu->Append(std::to_underlying(Menu::NewParentStaticSizer), "wxStaticBoxSizer");
         menu_item->SetBitmap(GetSvgImage("wxStaticBoxSizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::NewParentWrapSizer), "wxWrapSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::NewParentWrapSizer), "wxWrapSizer");
         menu_item->SetBitmap(GetSvgImage("wrap_sizer", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::NewParentGridSizer), "wxGridSizer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::NewParentGridSizer), "wxGridSizer");
         menu_item->SetBitmap(GetSvgImage("grid_sizer", dpi_size));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::NewParentFlexGridSizer), "wxFlexGridSizer");
+            sub_menu->Append(std::to_underlying(Menu::NewParentFlexGridSizer), "wxFlexGridSizer");
         menu_item->SetBitmap(GetSvgImage("flex_grid_sizer", dpi_size));
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::NewParentGridbagSizer), "wxGridBagSizer");
+            sub_menu->Append(std::to_underlying(Menu::NewParentGridbagSizer), "wxGridBagSizer");
         menu_item->SetBitmap(GetSvgImage("grid_bag_sizer", dpi_size));
 
         AppendSubMenu(sub_menu, "&Move into new sizer");
@@ -1030,130 +1038,132 @@ void NavPopupMenu::MenuAddMoveCommands()
     if (m_node->is_Form())
     {
         menu_item =
-            sub_menu->Append(static_cast<int>(Menu::NewParentFolder), "Move into new folder");
+            sub_menu->Append(std::to_underlying(Menu::NewParentFolder), "Move into new folder");
         menu_item->SetBitmap(GetInternalImage("folder"));
     }
 
     if (m_node->is_Gen(gen_wxRadioButton))
     {
         sub_menu = new wxMenu;
-        menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeTo2StateCheckbox), "2-state wxCheckBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeTo2StateCheckbox),
+                                     "2-state wxCheckBox");
         menu_item->SetBitmap(GetInternalImage("wxCheckBox"));
-        menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeTo3StateCheckbox), "3-state wxCheckBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeTo3StateCheckbox),
+                                     "3-state wxCheckBox");
         menu_item->SetBitmap(GetInternalImage("check3state"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxCheckBox))
     {
         sub_menu = new wxMenu;
-        menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeTo3StateCheckbox), "3-state wxCheckBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeTo3StateCheckbox),
+                                     "3-state wxCheckBox");
         menu_item->SetBitmap(GetInternalImage("check3state"));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToRadioButton), "wxRadioButton");
+        menu_item =
+            sub_menu->Append(std::to_underlying(Menu::ChangeToRadioButton), "wxRadioButton");
         menu_item->SetBitmap(GetInternalImage("wxRadioButton"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_Check3State))
     {
         sub_menu = new wxMenu;
-        menu_item =
-            sub_menu->Append(static_cast<int>(Menu::ChangeTo2StateCheckbox), "2-state wxCheckBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeTo2StateCheckbox),
+                                     "2-state wxCheckBox");
         menu_item->SetBitmap(GetInternalImage("wxCheckBox"));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToRadioButton), "wxRadioButton");
+        menu_item =
+            sub_menu->Append(std::to_underlying(Menu::ChangeToRadioButton), "wxRadioButton");
         menu_item->SetBitmap(GetInternalImage("wxRadioButton"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxChoice))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToComboBox), "wxComboBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToComboBox), "wxComboBox");
         menu_item->SetBitmap(GetSvgImage("wxComboBox", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToListBox), "wxListBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToListBox), "wxListBox");
         menu_item->SetBitmap(GetInternalImage("wxListBox"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxComboBox))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToChoiceBox), "wxChoice");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToChoiceBox), "wxChoice");
         menu_item->SetBitmap(GetSvgImage("wxChoice", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToListBox), "wxListBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToListBox), "wxListBox");
         menu_item->SetBitmap(GetInternalImage("wxListBox"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxListBox))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToChoiceBox), "wxChoice");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToChoiceBox), "wxChoice");
         menu_item->SetBitmap(GetSvgImage("wxChoice", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToComboBox), "wxComboBox");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToComboBox), "wxComboBox");
         menu_item->SetBitmap(GetSvgImage("wxComboBox", dpi_size));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxAuiNotebook))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToChoiceBook), "wxChoicebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToChoiceBook), "wxChoicebook");
         menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToListBook), "wxListbook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToListBook), "wxListbook");
         menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToNoteBook), "wxNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToNoteBook), "wxNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToSimpleBook), "wxSimplebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToSimpleBook), "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxChoicebook))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToAuiBook), "wxAuiNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToAuiBook), "wxAuiNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToListBook), "wxListbook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToListBook), "wxListbook");
         menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToNoteBook), "wxNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToNoteBook), "wxNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToSimpleBook), "wxSimplebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToSimpleBook), "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxListbook))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToAuiBook), "wxAuiNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToAuiBook), "wxAuiNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToChoiceBook), "wxChoicebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToChoiceBook), "wxChoicebook");
         menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToNoteBook), "wxNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToNoteBook), "wxNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToSimpleBook), "wxSimplebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToSimpleBook), "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxNotebook))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToAuiBook), "wxAuiNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToAuiBook), "wxAuiNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToChoiceBook), "wxChoicebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToChoiceBook), "wxChoicebook");
         menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToListBook), "wxListbook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToListBook), "wxListbook");
         menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToSimpleBook), "wxSimplebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToSimpleBook), "wxSimplebook");
         menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
     if (m_node->is_Gen(gen_wxSimplebook))
     {
         sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToAuiBook), "wxAuiNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToAuiBook), "wxAuiNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook_aui", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToChoiceBook), "wxChoicebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToChoiceBook), "wxChoicebook");
         menu_item->SetBitmap(GetSvgImage("notebook_choice", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToListBook), "wxListbook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToListBook), "wxListbook");
         menu_item->SetBitmap(GetSvgImage("notebook_list", dpi_size));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::ChangeToNoteBook), "wxNotebook");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::ChangeToNoteBook), "wxNotebook");
         menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
@@ -1223,11 +1233,11 @@ void NavPopupMenu::MenuAddStandardCommands()
     AddSeparatorIfNeeded();
     if (!m_node->is_Gen(gen_Images) && !m_node->is_Gen(gen_Data))
     {
-        menu_item = Append(static_cast<int>(Menu::Duplicate), "Duplicate");
+        menu_item = Append(std::to_underlying(Menu::Duplicate), "Duplicate");
         menu_item->SetBitmap(GetSvgImage("duplicate", dpi_size));
     }
 
-    menu_item = Append(static_cast<int>(Menu::InsertWidget), "Insert Widget...");
+    menu_item = Append(std::to_underlying(Menu::InsertWidget), "Insert Widget...");
     menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU));
     Bind(
         wxEVT_MENU,
@@ -1235,7 +1245,7 @@ void NavPopupMenu::MenuAddStandardCommands()
         {
             wxGetFrame().OnInsertWidget(event);
         },
-        static_cast<int>(Menu::InsertWidget));
+        std::to_underlying(Menu::InsertWidget));
 }
 
 void NavPopupMenu::CreateSizerParent(std::string_view widget)
@@ -1351,42 +1361,42 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
          node->get_Parent()->get_GenName() == gen_wxAuiToolBar ||
          node->get_Parent()->get_GenName() == gen_AuiToolBar);
 
-    menu_item = sub_menu->Append(static_cast<int>(Menu::AddTool), "Tool (normal, check, radio)");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::AddTool), "Tool (normal, check, radio)");
     menu_item->SetBitmap(GetInternalImage("tool"));
     if (!is_aui_toolbar)
     {
-        menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolDropdown), "Dropdown");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolDropdown), "Dropdown");
         menu_item->SetBitmap(GetInternalImage("tool_dropdown"));
     }
 
     if (is_aui_toolbar)
     {
-        menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolLabel), "Label");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolLabel), "Label");
         menu_item->SetBitmap(GetSvgImage("wxStaticText", dpi_size));
     }
 
     sub_menu->AppendSeparator();
-    menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolCombobox), "Combobox");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolCombobox), "Combobox");
     menu_item->SetBitmap(GetSvgImage("wxComboBox", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolSlider), "Slider");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolSlider), "Slider");
     menu_item->SetBitmap(GetSvgImage("slider", dpi_size));
-    menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolSpinctrl), "Spin control");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolSpinctrl), "Spin control");
     menu_item->SetBitmap(GetInternalImage("spin_ctrl"));
     sub_menu->AppendSeparator();
 
-    menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolSeparator), "Separator");
+    menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolSeparator), "Separator");
     menu_item->SetBitmap(GetInternalImage("toolseparator"));
     if (!is_aui_toolbar)
     {
-        menu_item =
-            sub_menu->Append(static_cast<int>(Menu::AddToolStretchableSpace), "Stretchable space");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolStretchableSpace),
+                                     "Stretchable space");
         menu_item->SetBitmap(GetInternalImage("toolStretchable"));
     }
     else
     {
-        menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolSpacer), "Spacer");
+        menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolSpacer), "Spacer");
         menu_item->SetBitmap(GetInternalImage("toolspacer"));
-        menu_item = sub_menu->Append(static_cast<int>(Menu::AddToolStretchableSpacer),
+        menu_item = sub_menu->Append(std::to_underlying(Menu::AddToolStretchableSpacer),
                                      "Stretchable spacer");
         menu_item->SetBitmap(GetInternalImage("toolStretchable"));
     }
@@ -1397,28 +1407,28 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
         {
             wxGetFrame().CreateToolNode(gen_wxComboBox);
         },
-        static_cast<int>(Menu::AddToolCombobox));
+        std::to_underlying(Menu::AddToolCombobox));
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
             wxGetFrame().CreateToolNode(gen_wxSlider);
         },
-        static_cast<int>(Menu::AddToolSlider));
+        std::to_underlying(Menu::AddToolSlider));
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
             wxGetFrame().CreateToolNode(gen_wxSpinCtrl);
         },
-        static_cast<int>(Menu::AddToolSpinctrl));
+        std::to_underlying(Menu::AddToolSpinctrl));
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
             wxGetFrame().CreateToolNode(gen_toolSeparator);
         },
-        static_cast<int>(Menu::AddToolSeparator));
+        std::to_underlying(Menu::AddToolSeparator));
 
     if (!is_aui_toolbar)
     {
@@ -1428,21 +1438,21 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
             {
                 wxGetFrame().CreateToolNode(gen_tool);
             },
-            static_cast<int>(Menu::AddTool));
+            std::to_underlying(Menu::AddTool));
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
                 wxGetFrame().CreateToolNode(gen_tool_dropdown);
             },
-            static_cast<int>(Menu::AddToolDropdown));
+            std::to_underlying(Menu::AddToolDropdown));
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
                 wxGetFrame().CreateToolNode(gen_toolStretchable);
             },
-            static_cast<int>(Menu::AddToolStretchableSpace));
+            std::to_underlying(Menu::AddToolStretchableSpace));
     }
     else
     {
@@ -1452,28 +1462,28 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
             {
                 wxGetFrame().CreateToolNode(gen_auitool);
             },
-            static_cast<int>(Menu::AddTool));
+            std::to_underlying(Menu::AddTool));
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
                 wxGetFrame().CreateToolNode(gen_auitool_label);
             },
-            static_cast<int>(Menu::AddToolLabel));
+            std::to_underlying(Menu::AddToolLabel));
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
                 wxGetFrame().CreateToolNode(gen_auitool_spacer);
             },
-            static_cast<int>(Menu::AddToolSpacer));
+            std::to_underlying(Menu::AddToolSpacer));
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
                 wxGetFrame().CreateToolNode(gen_auitool_stretchable);
             },
-            static_cast<int>(Menu::AddToolStretchableSpacer));
+            std::to_underlying(Menu::AddToolStretchableSpacer));
     }
 }
 

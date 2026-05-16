@@ -1,21 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Node class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-// AI Context: This file implements Node, the core class representing a single UI component in
-// wxUiEditor's project tree. Node uses shared_ptr semantics (NodeSharedPtr,
-// enable_shared_from_this) for safe parent-child relationships stored in m_parent and m_children
-// vectors. Each node references immutable metadata via m_declaration (NodeDeclaration*), stores
-// user-configured properties in m_properties (vector<NodeProperty>) indexed by m_prop_indices map,
-// and tracks events in m_map_events (unordered_map). Property access uses as_string/as_int/as_bool
-// methods that delegate to NodeProperty, while HasValue/HasProp check existence. Node type queries
-// (is_Form, is_Sizer, is_Gen) delegate to NodeDeclaration, and tree navigation uses
-// get_Parent/get_Child/get_Form/get_Folder. Child management (AdoptChild, AddChild, RemoveChild)
-// validates parent-child compatibility via NodeType rules and maintains tree consistency for
-// undo/redo operations.
 
 #pragma once
 
@@ -62,6 +50,8 @@ struct NodesParentChild
 class Node : public std::enable_shared_from_this<Node>
 {
 public:
+    // --- Lifecycle & Construction ---
+
     // node creation error codes
     enum class Validity : std::int8_t
     {
@@ -83,6 +73,8 @@ public:
     // Use get_name() if you want the enum value.
     auto get_DeclName() const noexcept { return m_declaration->get_DeclName(); }
 
+    // --- Parent-Child Hierarchy ---
+
     // Given a Node*, you can call this to get the std::shared_ptr<Node> for it.
     NodeSharedPtr get_SharedPtr() { return shared_from_this(); }
 
@@ -97,14 +89,14 @@ public:
     void set_Parent(NodeSharedPtr parent) { m_parent = std::move(parent); }
     void set_Parent(Node* parent) { m_parent = parent->get_SharedPtr(); }
 
+    // --- Property Access ---
+
     NodeProperty* get_PropPtr(PropName name);
+
+    // --- Event Access ---
 
     NodeEvent* get_Event(std::string_view name);
     NodeMapEvents& get_MapEvents() { return m_map_events; }
-
-    // Walk up the node tree looking for a container with a limited set of platforms. If
-    // found, the container's node will be returned -- otherwise nullptr is returned.
-    Node* get_PlatformContainer();
 
     auto get_PropertyCount() const { return m_properties.size(); }
     size_t get_InUseEventCount() const;
@@ -136,6 +128,8 @@ public:
     {
         return is_ChildAllowed(child->get_NodeDeclaration());
     }
+
+    // --- Type Introspection ---
 
     auto get_GenType() const { return m_declaration->get_GenType(); }
 
@@ -211,6 +205,8 @@ public:
     auto get_NodeType() { return m_declaration->get_NodeType(); }
     auto get_Generator() const { return m_declaration->get_Generator(); }
 
+    // --- Node Naming & Navigation ---
+
     // Returns the value of the property "var_name" or "class_name"
     std::string_view get_NodeName() const;
 
@@ -240,6 +236,12 @@ public:
 
     NodeDeclaration* get_NodeDeclaration() const { return m_declaration; }
 
+    // Walk up the node tree looking for a container with a limited set of platforms. If
+    // found, the container's node will be returned -- otherwise nullptr is returned.
+    Node* get_PlatformContainer();
+
+    // --- Validator Support ---
+
     // Retrieves prop_validator_data_type if it has one, or correct data type for use with
     // wxGenericValidator if it doesn't.
     std::string get_ValidatorDataType() const;
@@ -254,6 +256,8 @@ public:
 
     // Returns true if the property exists
     bool HasProp(PropName name) const { return (m_prop_indices.contains(name)); }
+
+    // --- Property Checks & Modification ---
 
     // Avoid the temptation to use wxue::string_view instead of const char* -- the MSVC compiler
     // will assume value is a bool if you call  is_PropValue(propm, "string")
@@ -294,6 +298,8 @@ public:
 
     // Returns string containing the property ID without any assignment if it is a custom id.
     wxue::string get_PropId() const;
+
+    // --- Property Value Queries ---
 
     wxue::string_view view(PropName name) const { return as_view(name); }
 
@@ -469,7 +475,11 @@ public:
     std::vector<NODEPROP_RADIOBOX_ITEM> as_radiobox_items(PropName name);
     std::vector<NODEPROP_BMP_COMBO_ITEM> as_bmp_combo_items(PropName name);
 
+    // --- Sizer Support ---
+
     wxSizerFlags getSizerFlags() const;
+
+    // --- Node Construction ---
 
     std::vector<NodeProperty>& get_PropsVector() { return m_properties; }
 
@@ -509,6 +519,8 @@ public:
     // This will modify the property and fire a EVT_NodePropChange event
     static void ModifyProperty(NodeProperty* prop, int value);
 
+    // --- Name Uniqueness ---
+
     // Both var_name and validator_variable properties are checked
     std::string get_UniqueName(const std::string& proposed_name,
                                PropName prop_name = prop_var_name);
@@ -525,11 +537,15 @@ public:
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
                             PropName prop_name = prop_var_name);
 
+    // --- Insertion & Position ---
+
     ptrdiff_t FindInsertionPos(Node* child) const;
     ptrdiff_t FindInsertionPos(const NodeSharedPtr& child) const
     {
         return FindInsertionPos(child.get());
     }
+
+    // --- Serialization & Hashing ---
 
     // Currently only called in debug builds, but available for release builds should we need it
     size_t get_NodeSize() const;
@@ -548,8 +564,12 @@ public:
     // non-empty value.
     std::vector<NodeProperty*> FindAllChildProperties(PropName name);
 
+    // --- Event Access ---
+
     void CopyEventsFrom(Node*);
     void CopyEventsFrom(const NodeSharedPtr& node) { CopyEventsFrom(node.get()); }
+
+    // --- Mockup & Editing Operations ---
 
     void set_MockupObject(wxObject* object) { m_mockup_object = object; }
     const wxObject* get_MockupObject() const { return m_mockup_object; }

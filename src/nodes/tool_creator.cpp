@@ -543,9 +543,9 @@ std::expected<bool, std::string> Node::CreateToolNode(GenName name, int pos)
                 return std::unexpected(std::string {});
 
             case gen_ribbonTool:
-                if (Node* p = get_Parent(); p && p->is_Gen(gen_wxRibbonToolBar))
+                if (Node* parent = get_Parent(); parent && parent->is_Gen(gen_wxRibbonToolBar))
                 {
-                    new_node = p->CreateChildNode(name).first;
+                    new_node = parent->CreateChildNode(name).first;
                     if (new_node)
                     {
                         return true;
@@ -555,9 +555,9 @@ std::expected<bool, std::string> Node::CreateToolNode(GenName name, int pos)
                 return std::unexpected(std::string {});
 
             case gen_ribbonButton:
-                if (Node* p = get_Parent(); p && p->is_Gen(gen_wxRibbonButtonBar))
+                if (Node* parent = get_Parent(); parent && parent->is_Gen(gen_wxRibbonButtonBar))
                 {
-                    new_node = p->CreateChildNode(name).first;
+                    new_node = parent->CreateChildNode(name).first;
                     if (new_node)
                     {
                         return true;

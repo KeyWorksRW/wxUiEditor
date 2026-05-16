@@ -1957,3 +1957,33 @@ void Node::RemoveNode(bool isCutMode)
     }
     wxGetFrame().UpdateWakaTime();
 }
+
+bool Node::MoveSizerChildrenToParent()
+{
+    Node* parent = get_Parent();
+    if (!parent || !parent->is_Sizer() || !is_Sizer())
+    {
+        wxMessageBox("Both the current node and its parent must be sizers.", "Move Sizer Children",
+                     wxOK | wxICON_ERROR);
+        return false;
+    }
+
+    auto group = std::make_shared<GroupUndoActions>("Move sizer children", parent);
+
+    for (auto& child: get_ChildNodePtrs())
+    {
+        auto action = std::make_shared<ChangeParentAction>(child.get(), parent);
+        group->Add(action);
+    }
+
+    wxGetFrame().PushUndoAction(group);
+
+    // Avoid the tempatation to include this in the group action. First, it allows the user to undo
+    // just the size in case they still want it. More importantly, trying to do this as part of the
+    // group action causes the NavPanel to fail -- I spent a lot of time trying to fix it to no
+    // avail -- remove the sizer as a second action works fine.
+
+    RemoveNode(false);
+
+    return true;
+}

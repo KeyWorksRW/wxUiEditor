@@ -559,7 +559,11 @@ public:
     void DuplicateNode();
     void ToggleBorderFlag(int border);
     void ChangeAlignment(int align, bool vertical);
+
     bool MoveNode(MoveDirection where, bool check_only = false);
+
+    // parent must be a sizer and the current node must be a sizer
+    bool MoveSizerChildrenToParent();
 
 protected:
     void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);

@@ -65,6 +65,7 @@ public:
         NewSiblingGridbagSizer,
         NewSiblingStdDialgBtns,
 
+        ChangeToBoxSizer,
         ChangeToFlexGridSizer,
         ChangeToGridSizer,
         ChangeToStaticSizer,

@@ -7,11 +7,12 @@ on:
 
 env:
   BUILD_TYPE: Release
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     permissions:
       actions: read
       contents: read
@@ -26,10 +27,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup CMake 3.30+
+    - name: Setup CMake 4.2+
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: '~3.30.0'
+        cmakeVersion: '~4.2.0'
 
     - run: mkdir ${{github.workspace}}/build
 
@@ -39,12 +40,13 @@ jobs:
     # CodeQL runs daily, so fresh fetches are acceptable.
 
     - name: Configure CMake
-      run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -G "Visual Studio 18 2026" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
+        build-mode: none
 
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target wxUiEditor

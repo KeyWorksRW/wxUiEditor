@@ -5,7 +5,6 @@
 // (emphasis) Algorithm: Delimiter stack for nested emphasis, bracket stack for links/images Status:
 // Legacy code - uses manual anners for pattern matching
 
-#include <bit>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -101,7 +100,7 @@ static int count_newlines(subject* subj, size_t from, size_t len, int* since_new
 static void adjust_subj_node_newlines(subject* subj, cmark_node* node, int matchlen, int extra,
                                       int options);
 static size_t scan_to_closing_backticks(subject* subj, size_t opening_tick_length);
-static void S_normalize_code(cmark_strbuf* strbuf);
+static void S_normalize_code(CMarkStringBuffer* strbuf);
 static cmark_node* handle_backticks(subject* subj, int options);
 static int scan_delims(subject* subj, unsigned char ch, bool* can_open, bool* can_close);
 static void remove_delimiter(subject* subj, delimiter* delim);
@@ -158,7 +157,7 @@ static cmark_node* make_simple(cmark_node_type type)
 static cmark_node* make_str_with_entities(subject* subj, int start_column, int end_column,
                                           cmark_chunk* content)
 {
-    cmark_strbuf unescaped = cmark_strbuf();
+    CMarkStringBuffer unescaped = CMarkStringBuffer();
 
     if (houdini_unescape_html(&unescaped, content->data, content->len))
     {
@@ -267,7 +266,7 @@ static cmark_chunk chunk_clone(cmark_chunk* src)
 
 static cmark_chunk cmark_clean_autolink(cmark_chunk* url, int is_email)
 {
-    cmark_strbuf buf = cmark_strbuf();
+    CMarkStringBuffer buf = CMarkStringBuffer();
 
     cmark_chunk_trim(url);
 
@@ -504,7 +503,7 @@ static size_t scan_to_closing_backticks(subject* subj, size_t opening_tick_lengt
 // Destructively modify string, converting newlines to
 // spaces, then removing a single leading + trailing space,
 // unless the code span consists entirely of space characters.
-static void S_normalize_code(cmark_strbuf* strbuf)
+static void S_normalize_code(CMarkStringBuffer* strbuf)
 {
     size_t read_pos = 0;
     size_t write_pos = 0;
@@ -558,7 +557,7 @@ static cmark_node* handle_backticks(subject* subj, int options)
         return make_str(subj, subj->pos, subj->pos, openticks);
     }
 
-    cmark_strbuf buf = cmark_strbuf();
+    CMarkStringBuffer buf = CMarkStringBuffer();
 
     buf.Set(reinterpret_cast<const char*>(subj->input.data + startpos),
             endpos - startpos - openticks.len);
@@ -822,7 +821,7 @@ static cmark_node* handle_hyphen(subject* subj, bool smart)
     int en_count = 0;
     int em_count = 0;
     int i = 0;
-    cmark_strbuf buf = cmark_strbuf();
+    CMarkStringBuffer buf = CMarkStringBuffer();
 
     if (numhyphens % 3 == 0)
     {  // if divisible by 3, use all em dashes
@@ -1123,7 +1122,7 @@ static cmark_node* handle_backslash(cmark_parser* parser, subject* subj)
 // Assumes the subject has an '&' character at the current position.
 static cmark_node* handle_entity(subject* subj)
 {
-    cmark_strbuf entity_buf = cmark_strbuf();
+    CMarkStringBuffer entity_buf = CMarkStringBuffer();
     size_t len = 0;
 
     advance(subj);
@@ -1144,7 +1143,7 @@ static cmark_node* handle_entity(subject* subj)
 // punctuation.
 cmark_chunk cmark_clean_url(cmark_chunk* url)
 {
-    cmark_strbuf buf = cmark_strbuf();
+    CMarkStringBuffer buf = CMarkStringBuffer();
 
     cmark_chunk_trim(url);
 
@@ -1162,7 +1161,7 @@ cmark_chunk cmark_clean_url(cmark_chunk* url)
 
 cmark_chunk cmark_clean_title(cmark_chunk* title)
 {
-    cmark_strbuf buf = cmark_strbuf();
+    CMarkStringBuffer buf = CMarkStringBuffer();
     unsigned char first = 0;
     unsigned char last = 0;
 
@@ -1594,7 +1593,8 @@ static cmark_node* handle_close_bracket(cmark_parser* parser, subject* subj)
 
         if (found_label)
         {
-            ref = std::bit_cast<cmark_reference*>(cmark_map_lookup(subj->refmap, &raw_label));
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+            ref = reinterpret_cast<cmark_reference*>(cmark_map_lookup(subj->refmap, &raw_label));
             cmark_chunk_free(&raw_label);
         }
 

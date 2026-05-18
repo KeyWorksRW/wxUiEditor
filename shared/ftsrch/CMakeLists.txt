@@ -1,6 +1,16 @@
 # ftsrch — Full-text search library
 # Builds independently of wxWidgets, only depends on snowball + uni-algo.
 
+# ###################### uni-algo #######################
+# Unicode algorithms (header-only) — UTF-8 word segmentation for the tokenizer
+FetchContent_Declare(
+    uni-algo
+    GIT_REPOSITORY https://github.com/uni-algo/uni-algo.git
+    GIT_TAG v1.2.0
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(uni-algo)
+
 add_library(ftsrch STATIC
     collection.cpp
     compressor.cpp

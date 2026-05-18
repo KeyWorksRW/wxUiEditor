@@ -5,6 +5,7 @@
 // (emphasis) Algorithm: Delimiter stack for nested emphasis, bracket stack for links/images Status:
 // Legacy code - uses manual anners for pattern matching
 
+#include <bit>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

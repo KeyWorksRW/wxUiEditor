@@ -132,7 +132,7 @@ void cmark_consolidate_text_nodes(cmark_node* root)
         return;
     }
     cmark_iter* iter = cmark_iter_new(root);
-    cmark_strbuf buf = cmark_strbuf();
+    CMarkStringBuffer buf = CMarkStringBuffer();
     cmark_event_type event_type = CMARK_EVENT_NONE;
     cmark_node* current_node = nullptr;
     cmark_node* text_node = nullptr;

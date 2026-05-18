@@ -69,7 +69,7 @@ static const unsigned char* LookupEntity(const unsigned char* entity_name, int e
                   entity_length);
 }
 
-size_t houdini_unescape_ent(cmark_strbuf* output_buffer, const uint8_t* src, size_t size)
+size_t houdini_unescape_ent(CMarkStringBuffer* output_buffer, const uint8_t* src, size_t size)
 {
     size_t i = 0;
 
@@ -152,7 +152,7 @@ size_t houdini_unescape_ent(cmark_strbuf* output_buffer, const uint8_t* src, siz
     return 0;
 }
 
-int houdini_unescape_html(cmark_strbuf* output_buffer, const uint8_t* src, size_t size)
+int houdini_unescape_html(CMarkStringBuffer* output_buffer, const uint8_t* src, size_t size)
 {
     size_t current_index = 0;
     size_t original_index = 0;
@@ -203,7 +203,7 @@ int houdini_unescape_html(cmark_strbuf* output_buffer, const uint8_t* src, size_
     return 1;
 }
 
-void houdini_unescape_html_f(cmark_strbuf* output_buffer, const uint8_t* src, size_t size)
+void houdini_unescape_html_f(CMarkStringBuffer* output_buffer, const uint8_t* src, size_t size)
 {
     if (!houdini_unescape_html(output_buffer, src, size))
     {

@@ -741,7 +741,7 @@ static void opaque_free(cmark_syntax_extension* /*self*/, cmark_node* node)
 static void html_render(cmark_syntax_extension* /*self*/, cmark_html_renderer* renderer,
                         cmark_node* node, cmark_event_type ev_type, int options)
 {
-    cmark_strbuf* html = renderer->html;
+    CMarkStringBuffer* html = renderer->html;
     const cmark_node_type node_type = static_cast<cmark_node_type>(node->type);
     const bool entering = (ev_type == CMARK_EVENT_ENTER);
 

@@ -24,7 +24,7 @@ static const int8_t utf8proc_utf8class[256] = {
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static void encode_unknown(cmark_strbuf* buffer)
+static void encode_unknown(CMarkStringBuffer* buffer)
 {
     static const uint8_t repl[] = { 239, 191, 189 };
     buffer->Put(repl, 3);
@@ -154,7 +154,7 @@ static int utf8proc_valid(const uint8_t* input, size_t input_length)
     return length;
 }
 
-void cmark_utf8proc_check(cmark_strbuf* output_buffer, const uint8_t* line, size_t size)
+void cmark_utf8proc_check(CMarkStringBuffer* output_buffer, const uint8_t* line, size_t size)
 {
     size_t index = 0;
 
@@ -254,7 +254,7 @@ int cmark_utf8proc_iterate(const uint8_t* input, size_t input_length, int32_t* d
     return length;
 }
 
-void cmark_utf8proc_encode_char(int32_t code_point, cmark_strbuf* buffer)
+void cmark_utf8proc_encode_char(int32_t code_point, CMarkStringBuffer* buffer)
 {
     uint8_t encoded_bytes[4];
     size_t encoded_length = 0;
@@ -306,7 +306,7 @@ void cmark_utf8proc_encode_char(int32_t code_point, cmark_strbuf* buffer)
     buffer->Put(encoded_bytes, encoded_length);
 }
 
-void cmark_utf8proc_case_fold(cmark_strbuf* dest, const uint8_t* input, size_t length)
+void cmark_utf8proc_case_fold(CMarkStringBuffer* dest, const uint8_t* input, size_t length)
 {
     int32_t code_point = 0;
 

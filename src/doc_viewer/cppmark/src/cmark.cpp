@@ -30,7 +30,7 @@ std::string cmark_markdown_to_html(std::string_view text, int options)
     {
         extensions = cmark_llist_append(nullptr, table_ext);
     }
-    const std::string result = cmark_render_html(document, options, extensions);
+    const std::string result = cmark_render_html(document, options, extensions, text.size());
     cmark_llist_free(extensions);
 
     cmark_node_free(document);

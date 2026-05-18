@@ -44,14 +44,14 @@ static void cmark_html_render_sourcepos(cmark_node* node, CMarkStringBuffer* htm
     }
 }
 
-static void escape_html(cmark_strbuf* dest, const unsigned char* source, size_t length)
+static void escape_html(CMarkStringBuffer* dest, const unsigned char* source, size_t length)
 {
     houdini_escape_html0(dest, source, length, 0);
 }
 
 static void filter_html_block(cmark_html_renderer* renderer, uint8_t* data, size_t len)
 {
-    cmark_strbuf* html = renderer->html;
+    CMarkStringBuffer* html = renderer->html;
     const cmark_llist* extension_item = nullptr;
     cmark_syntax_extension* extension = nullptr;
     bool filtered = false;
@@ -103,7 +103,7 @@ static void filter_html_block(cmark_html_renderer* renderer, uint8_t* data, size
     }
 }
 
-static bool S_put_footnote_backref(cmark_html_renderer* renderer, cmark_strbuf* html,
+static bool S_put_footnote_backref(cmark_html_renderer* renderer, CMarkStringBuffer* html,
                                    cmark_node* node)
 {
     if (renderer->written_footnote_ix >= renderer->footnote_ix)
@@ -158,7 +158,7 @@ static int S_render_node(cmark_html_renderer* renderer, cmark_node* node, cmark_
 {
     cmark_node* parent = nullptr;
     const cmark_node* grandparent = nullptr;
-    cmark_strbuf* html = renderer->html;
+    CMarkStringBuffer* html = renderer->html;
     const cmark_llist* it = nullptr;
     cmark_syntax_extension* syntax_extension = nullptr;
     char start_heading[] = "<h0";
@@ -605,9 +605,11 @@ static int S_render_node(cmark_html_renderer* renderer, cmark_node* node, cmark_
     return 1;
 }
 
-std::string cmark_render_html(cmark_node* root, int options, cmark_llist* extensions)
+std::string cmark_render_html(cmark_node* root, int options, cmark_llist* extensions,
+                              size_t initial_buffer_size)
 {
-    cmark_strbuf html = cmark_strbuf();
+    CMarkStringBuffer html = CMarkStringBuffer();
+    html.Init(initial_buffer_size);
     cmark_event_type ev_type = CMARK_EVENT_DONE;
     cmark_node* cur = nullptr;
     cmark_html_renderer renderer = { .html = &html,

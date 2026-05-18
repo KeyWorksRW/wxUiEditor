@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cstring>
 
 #include <cassert>
 #include <cstdint>
@@ -113,25 +112,6 @@ void CMarkStringBuffer::Puts(const char* string)
     }
 }
 
-void CMarkStringBuffer::CopyCStr(char* data, size_t data_size) const
-{
-    if (data == nullptr || data_size == 0)
-    {
-        return;
-    }
-
-    data[0] = '\0';
-
-    if (m_buffer.empty())
-    {
-        return;
-    }
-
-    const size_t copy_length = std::min(m_buffer.size(), data_size - 1);
-    std::memmove(data, m_buffer.data(), copy_length);
-    data[copy_length] = '\0';
-}
-
 void CMarkStringBuffer::Swap(CMarkStringBuffer& other)
 {
     m_buffer.swap(other.m_buffer);
@@ -146,21 +126,7 @@ std::string CMarkStringBuffer::Detach()
 
 int CMarkStringBuffer::Cmp(const CMarkStringBuffer& other) const
 {
-    const int result = std::memcmp(m_buffer.data(), other.m_buffer.data(),
-                                   std::min(m_buffer.size(), other.m_buffer.size()));
-    if (result != 0)
-    {
-        return result;
-    }
-    if (m_buffer.size() < other.m_buffer.size())
-    {
-        return -1;
-    }
-    if (m_buffer.size() > other.m_buffer.size())
-    {
-        return 1;
-    }
-    return 0;
+    return m_buffer.compare(other.m_buffer);
 }
 
 size_t CMarkStringBuffer::Strchr(int character, size_t position) const
@@ -170,14 +136,13 @@ size_t CMarkStringBuffer::Strchr(int character, size_t position) const
         return static_cast<size_t>(-1);
     }
 
-    const char* found_ptr = static_cast<const char*>(
-        std::memchr(m_buffer.data() + position, character, m_buffer.size() - position));
-    if (found_ptr == nullptr)
+    const size_t result = m_buffer.find(static_cast<char>(character), position);
+    if (result == std::string::npos)
     {
         return static_cast<size_t>(-1);
     }
 
-    return static_cast<size_t>(found_ptr - m_buffer.data());
+    return result;
 }
 
 size_t CMarkStringBuffer::Strrchr(int character, size_t position) const

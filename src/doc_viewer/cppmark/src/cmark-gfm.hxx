@@ -434,7 +434,8 @@ char* cmark_render_xml(cmark_node* root, int options);
 
 // Render a 'node' tree as an HTML fragment. It is up to the user
 // to add an appropriate header and footer.
-std::string cmark_render_html(cmark_node* root, int options, cmark_llist* extensions);
+std::string cmark_render_html(cmark_node* root, int options, cmark_llist* extensions,
+                              size_t initial_buffer_size = 0);
 
 // Render a 'node' tree as a groff man page, without the header. It is the caller's responsibility
 // to free the returned buffer.

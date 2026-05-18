@@ -206,7 +206,7 @@ void cmark_parser_free(cmark_parser* parser)
 static cmark_node* finalize(cmark_parser* parser, cmark_node* block);
 
 // Returns true if line has only space characters, else false.
-static bool is_blank(cmark_strbuf* text_buffer, size_t offset)
+static bool is_blank(CMarkStringBuffer* text_buffer, size_t offset)
 {
     while (offset < text_buffer->get_size())
     {
@@ -263,7 +263,7 @@ static void add_line(cmark_node* node, cmark_chunk* input_chunk, cmark_parser* p
     node->content.Put(input_chunk->data + parser->offset, input_chunk->len - parser->offset);
 }
 
-static void remove_trailing_blank_lines(cmark_strbuf* line_buffer)
+static void remove_trailing_blank_lines(CMarkStringBuffer* line_buffer)
 {
     size_t scan_index = 0;
     unsigned char current_char = '\0';
@@ -320,7 +320,7 @@ static bool S_ends_with_blank_line(cmark_node* node)
 static bool resolve_reference_link_definitions(cmark_parser* parser, cmark_node* block)
 {
     size_t parsed_bytes = 0;
-    cmark_strbuf* node_content = &block->content;
+    CMarkStringBuffer* node_content = &block->content;
     cmark_chunk chunk = { .data = node_content->get_ptr(),
                           .len = static_cast<size_t>(node_content->get_size()),
                           .alloc = 0 };
@@ -376,7 +376,7 @@ static cmark_node* finalize(cmark_parser* parser, cmark_node* block)
         block->end_column = parser->last_line_length;
     }
 
-    cmark_strbuf* node_content = &block->content;
+    CMarkStringBuffer* node_content = &block->content;
 
     switch (S_type(block))
     {
@@ -411,7 +411,7 @@ static cmark_node* finalize(cmark_parser* parser, cmark_node* block)
                 }
                 assert(static_cast<size_t>(content_offset) < node_content->get_size());
 
-                cmark_strbuf info_buffer = cmark_strbuf();
+                CMarkStringBuffer info_buffer = CMarkStringBuffer();
                 houdini_unescape_html_f(&info_buffer, node_content->get_ptr(), content_offset);
                 info_buffer.Trim();
                 info_buffer.Unescape();
@@ -614,7 +614,7 @@ static void process_footnotes(cmark_parser* parser)
                 std::array<char, 32> format_buffer = {};
                 snprintf(format_buffer.data(), format_buffer.size(), "%d", footnote->ix);
                 cmark_chunk_free(&current_node->as.literal);
-                cmark_strbuf replacement_text = cmark_strbuf();
+                CMarkStringBuffer replacement_text = CMarkStringBuffer();
                 replacement_text.Puts(format_buffer.data());
 
                 current_node->as.literal = cmark_chunk_buf_detach(&replacement_text);
@@ -626,7 +626,7 @@ static void process_footnotes(cmark_parser* parser)
                 text_node->content.Init(0);
                 text_node->type = (uint16_t) CMARK_NODE_TEXT;
 
-                cmark_strbuf replacement_text = cmark_strbuf();
+                CMarkStringBuffer replacement_text = CMarkStringBuffer();
                 replacement_text.Puts("[^");
                 replacement_text.Put(current_node->as.literal.data, current_node->as.literal.len);
                 replacement_text.Putc(']');
@@ -851,7 +851,7 @@ void cmark_parser_feed(cmark_parser* parser, const char* buffer, size_t len)
 
 void cmark_parser_feed_reentrant(cmark_parser* parser, const char* buffer, size_t len)
 {
-    cmark_strbuf saved_linebuf;
+    CMarkStringBuffer saved_linebuf;
 
     saved_linebuf.Init(0);
     saved_linebuf.Puts(parser->linebuf.CStr());

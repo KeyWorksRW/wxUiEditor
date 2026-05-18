@@ -26,7 +26,7 @@ std::string normalize_map_label(cmark_chunk* reference_chunk)
         return {};
     }
 
-    cmark_strbuf normalized;
+    CMarkStringBuffer normalized;
     cmark_utf8proc_case_fold(&normalized, reference_chunk->data, reference_chunk->len);
     normalized.Trim();
     normalized.NormalizeWhitespace();

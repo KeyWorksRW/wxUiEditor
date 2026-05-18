@@ -200,8 +200,8 @@ std::string cmark_render(cmark_node* root, int options, int width,
                          int (*render_node)(cmark_renderer* renderer, cmark_node* node,
                                             cmark_event_type event_type, int options))
 {
-    cmark_strbuf prefix_buffer = cmark_strbuf();
-    cmark_strbuf output_buffer = cmark_strbuf();
+    CMarkStringBuffer prefix_buffer = CMarkStringBuffer();
+    CMarkStringBuffer output_buffer = CMarkStringBuffer();
     cmark_node* current_node = nullptr;
     cmark_event_type event_type = CMARK_EVENT_NONE;
     cmark_iter* node_iterator = cmark_iter_new(root);

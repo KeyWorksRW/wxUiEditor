@@ -127,7 +127,7 @@ cmark_chunk cmark_chunk_dup(const cmark_chunk* chunk_source, size_t offset, size
     return result;
 }
 
-cmark_chunk cmark_chunk_buf_detach(cmark_strbuf* buffer)
+cmark_chunk cmark_chunk_buf_detach(CMarkStringBuffer* buffer)
 {
     cmark_chunk result = {};
     std::string detached = buffer->Detach();

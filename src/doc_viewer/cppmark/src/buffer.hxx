@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <span>
 #include <string>
 #include <string_view>
 
@@ -47,7 +48,7 @@ public:
     [[nodiscard]] std::string Detach();
 
     // Copy buffer to C-string
-    void CopyCStr(char* data, size_t data_size) const;
+    void CopyCStr(std::span<char> data) const;
 
     // Get C-string pointer (const)
     const char* CStr() const { return m_buffer.c_str(); }
@@ -91,6 +92,3 @@ public:
 private:
     std::string m_buffer;
 };
-
-// Type alias for backward compatibility during migration
-using cmark_strbuf = CMarkStringBuffer;

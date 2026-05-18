@@ -33,7 +33,8 @@ static const char HTML_ESCAPE_TABLE[] = {
 
 static const char* HTML_ESCAPES[] = { "", "&quot;", "&amp;", "&#39;", "&#47;", "&lt;", "&gt;" };
 
-int houdini_escape_html0(cmark_strbuf* output_buffer, const uint8_t* src, size_t size, int secure)
+int houdini_escape_html0(CMarkStringBuffer* output_buffer, const uint8_t* src, size_t size,
+                         int secure)
 {
     size_t i = 0;
     size_t original_index = 0;
@@ -74,7 +75,7 @@ int houdini_escape_html0(cmark_strbuf* output_buffer, const uint8_t* src, size_t
     return 1;
 }
 
-int houdini_escape_html(cmark_strbuf* output_buffer, const uint8_t* src, size_t size)
+int houdini_escape_html(CMarkStringBuffer* output_buffer, const uint8_t* src, size_t size)
 {
     return houdini_escape_html0(output_buffer, src, size, 1);
 }

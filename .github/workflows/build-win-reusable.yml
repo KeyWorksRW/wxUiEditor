@@ -16,15 +16,15 @@ on:
 
 jobs:
   buildWindows:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup CMake 3.30+
+    - name: Setup CMake 4.2+
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: '~3.30.0'
+        cmakeVersion: '~4.2.0'
 
     - run: mkdir ${{github.workspace}}/build
 
@@ -32,7 +32,7 @@ jobs:
       uses: mozilla-actions/sccache-action@v0.0.9
 
     - name: Configure CMake
-      run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}}
+      run: cmake -G "Visual Studio 18 2026" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}}
 
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build --config ${{inputs.build-type}} --target wxUiEditor

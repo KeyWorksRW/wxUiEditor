@@ -1,5 +1,5 @@
-# CMake 3.30 required for FetchContent performance improvements (CMP0168)
-cmake_minimum_required(VERSION 3.30)
+# CMake 4.2 required
+cmake_minimum_required(VERSION 4.2...4.3)
 
 string(TIMESTAMP YEAR "%y") # e.g., "25"
 string(TIMESTAMP DOY "%j") # e.g., "192"
@@ -19,26 +19,28 @@ project(wxUiEditor
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
 # ###################### Check for Multi-Config Generator #######################
-get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
-if(NOT isMultiConfig)
+if(NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
     message("\nBecause you are using a single target generator, you MUST specify")
     message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
 
     set(allowedBuildTypes Debug Release)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
 
     if(NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
     elseif(NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
         message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
     endif()
+
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
+
 endif()
 
 # ###################### General Settings #######################
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CMAKE_INTERMEDIATE_DIR_STRATEGY RELATIVE)
 
 # ###################### macOS Settings #######################
 if(APPLE)
@@ -95,8 +97,6 @@ endif()
 if(MSVC)
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
 
-    # /O1 often results in faster code than /O2 due to CPU caching
-    string(REPLACE "/O2" "/O1" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 
     # Use dynamic runtime (/MD for Release, /MDd for Debug)
@@ -116,8 +116,6 @@ if(MSVC)
     # Increase stack size for large projects with many object files
     string(APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608") # 8MB stack
 else()
-    # For GCC/Clang/Xcode, optimize for size in Release builds
-    string(REPLACE "-O3" "-Os" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -184,7 +182,7 @@ add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 # Output binary to root ./bin directory to avoid deletion when build directory is cleaned
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    if(isMultiConfig)
+    if(CMAKE_GENERATOR_IS_MULTI_CONFIG)
         set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
     else()
         # Match multi-config layout: bin/Debug/, bin/Release/
@@ -223,24 +221,14 @@ else()
     target_compile_options(snowball_stemmer PRIVATE -w)
 endif()
 
-# ###################### uni-algo #######################
-# Unicode algorithms (header-only) — UTF-8 word segmentation for the tokenizer
-FetchContent_Declare(
-    uni-algo
-    GIT_REPOSITORY https://github.com/uni-algo/uni-algo.git
-    GIT_TAG v1.2.0
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(uni-algo)
-
 # ###################### Library subdirectories #######################
 # ftsrch and cppmark are built as separate static libraries with their own
 # precompiled headers.  Neither depends on wxWidgets, so building them here
 # (before wxWidgets config) avoids pulling wx headers into their translation
 # units, speeding up rebuilds when only wxWidgets changes and vice versa.
 
-add_subdirectory(src/doc_viewer/ftsrch)
-add_subdirectory(src/doc_viewer/cppmark)
+add_subdirectory(shared/ftsrch)
+add_subdirectory(shared/cppmark)
 
 # ###################### wxWidgets #######################
 if(WIN32)
@@ -343,8 +331,7 @@ FetchContent_MakeAvailable(glaze)
 # Specifying the full path and extension means ninja sees this as a normal dependency that
 # didn't change any time one of the files it specifies changes.
 include(src/wxui/wxui_code.cmake) # This will set ${wxue_generated_code} with list of generated files
-include(src/file_list.cmake) # This will set ${file_list} with a list of source files
-list(TRANSFORM file_list PREPEND "${file_list_dir}/")
+include(file_list.cmake) # This will set ${file_list} with a list of source files
 
 # Note the requirement that --config Debug is used to get the additional debug files
 add_executable(wxUiEditor WIN32
@@ -384,6 +371,7 @@ if(MSVC)
 
     set_target_properties(wxUiEditor PROPERTIES
         VS_DEBUGGER_NATIVE_VISUALIZER "${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis"
+        DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     )
 elseif(APPLE)
     target_compile_definitions(wxUiEditor PRIVATE __WXOSX_COCOA__)

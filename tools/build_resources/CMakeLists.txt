@@ -9,13 +9,10 @@ project(build_resources
 ####################### Check for Multi-Config Generator #######################
 
 if(NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
-    message("\nBecause you are using a single target generator, you MUST specify")
-    message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
-
     set(allowedBuildTypes Debug Release)
 
     if(NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+        set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)  # Default to Debug configuration if not specified
     elseif(NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
         message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
     endif()
@@ -33,19 +30,24 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(FetchContent)
 set(FETCHCONTENT_QUIET ON)
 
+# Use CACHE FORCE variables instead of normal variables so libdeflate's
+# option() honors them regardless of CMP0077. This is needed because
+# libdeflate's own cmake_minimum_required(VERSION 3.10) implicitly resets
+# CMP0077 to OLD (introduced in 3.13), making option() ignore normal vars.
+
 FetchContent_Declare(
     libdeflate
     URL https://github.com/ebiggers/libdeflate/releases/download/v1.25/libdeflate-1.25.tar.gz
     DOWNLOAD_NO_PROGRESS TRUE
 )
 
-set(LIBDEFLATE_BUILD_SHARED_LIB OFF)
-set(LIBDEFLATE_BUILD_TESTS OFF)
-set(LIBDEFLATE_BUILD_GZIP OFF)
-set(LIBDEFLATE_COMPRESSION_SUPPORT ON)
-set(LIBDEFLATE_DECOMPRESSION_SUPPORT ON)
-set(LIBDEFLATE_ZLIB_SUPPORT OFF)
-set(LIBDEFLATE_GZIP_SUPPORT ON)
+set(LIBDEFLATE_BUILD_SHARED_LIB OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_BUILD_GZIP OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_COMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
+set(LIBDEFLATE_DECOMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
+set(LIBDEFLATE_ZLIB_SUPPORT OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_GZIP_SUPPORT ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(libdeflate)
 
@@ -119,15 +121,27 @@ else()
     target_compile_options(snowball_stemmer PRIVATE -w)
 endif()
 
+# ###################### wxWidgets interface #######################
+# These are the wxWidgets header files that parser will convert into markdown
+# files while creating a zip archive of the wxWidgets API reference.
+
+FetchContent_Declare(
+    interface
+    URL https://github.com/KeyWorksRW/kwxFetch/releases/download/latest-interface/kwxFetch-source.tar.xz
+    DOWNLOAD_NO_PROGRESS TRUE
+    FETCHCONTENT_UPDATES_DISCONNECTED TRUE
+)
+FetchContent_MakeAvailable(interface)
+
 # ###################### Library subdirectories #######################
 # ftsrch and cppmark are built as separate static libraries with their own
 # precompiled headers.  Neither depends on wxWidgets, so building them here
 # (before wxWidgets config) avoids pulling wx headers into their translation
 # units, speeding up rebuilds when only wxWidgets changes and vice versa.
 
-add_subdirectory(../../shared/ftsrch  ${CMAKE_BINARY_DIR}/libs/ftsrch)
+add_subdirectory(../../shared/ftsrch ${CMAKE_BINARY_DIR}/libs/ftsrch)
 add_subdirectory(../../shared/cppmark ${CMAKE_BINARY_DIR}/libs/cppmark)
-add_subdirectory(../../shared/parser  ${CMAKE_BINARY_DIR}/libs/docparser)
+add_subdirectory(../../shared/parser ${CMAKE_BINARY_DIR}/libs/docparser)
 
 ####################### Resource Builder Executable ######################
 

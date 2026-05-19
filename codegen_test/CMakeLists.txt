@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 4.2...4.3)
 
 project(codegen_test
     LANGUAGES CXX
@@ -8,19 +8,19 @@ project(codegen_test
 
 ####################### Check for Multi-Config Generator #######################
 
-get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if (NOT isMultiConfig)
+if (NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
     message("\nBecause you are using a single target generator, you MUST specify")
     message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
 
     set(allowedBuildTypes Debug Release)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
 
     if (NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
     elseif (NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
         message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
     endif()
+
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
 endif()
 
 set(CMAKE_CXX_STANDARD 14)

@@ -8,20 +8,19 @@ project(build_resources
 
 ####################### Check for Multi-Config Generator #######################
 
-get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
-if(NOT isMultiConfig)
+if(NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
     message("\nBecause you are using a single target generator, you MUST specify")
     message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
 
     set(allowedBuildTypes Debug Release)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
 
     if(NOT CMAKE_BUILD_TYPE)
-        set(CACHE{CMAKE_BUILD_TYPE} Debug)
+        set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
     elseif(NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
         message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
     endif()
+
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
 endif()
 
 set(CMAKE_CXX_STANDARD 23)
@@ -128,6 +127,7 @@ endif()
 
 add_subdirectory(../../shared/ftsrch  ${CMAKE_BINARY_DIR}/libs/ftsrch)
 add_subdirectory(../../shared/cppmark ${CMAKE_BINARY_DIR}/libs/cppmark)
+add_subdirectory(../../shared/parser  ${CMAKE_BINARY_DIR}/libs/docparser)
 
 ####################### Resource Builder Executable ######################
 
@@ -145,6 +145,7 @@ target_include_directories(build_resources PRIVATE
 )
 
 target_link_libraries(build_resources PRIVATE
+    docparser
     ftsrch
     cppmark
     snowball_stemmer

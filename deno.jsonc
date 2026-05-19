@@ -1,0 +1,11 @@
+{
+  // Deno project configuration for wxUiEditor2 test scripts
+  "lock": false,
+  "imports": {
+    "@std/path": "jsr:@std/path@1"
+  },
+  "tasks": {
+    "test:run": "deno run --allow-read --allow-write --allow-run tests/scripts/test_run.ts",
+    "full:run": "deno run --allow-read --allow-write --allow-run tests/scripts/full_run.ts"
+  }
+}

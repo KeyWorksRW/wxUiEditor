@@ -9,7 +9,8 @@ build-fork/
 build-fedora/
 build-ubuntu/
 
-tests/
+tests/*
+!tests/scripts/
 
 # Ignore clangd cache
 .cache/

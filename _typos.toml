@@ -8,8 +8,7 @@ extend-exclude = [
     "src/pugixml/",
     "frozen/",
     "**/*.wxui",
-    "src/doc_viewer/cppmark/src/entities.inc"
-
+    "shared/cppmark/src/entities.inc"
 ]
 
 [default]

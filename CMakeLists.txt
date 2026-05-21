@@ -182,12 +182,9 @@ add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 # Output binary to root ./bin directory to avoid deletion when build directory is cleaned
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    if(CMAKE_GENERATOR_IS_MULTI_CONFIG)
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-    else()
-        # Match multi-config layout: bin/Debug/, bin/Release/
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-    endif()
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
+
 endif()
 
 include(FetchContent)
@@ -339,6 +336,9 @@ add_executable(wxUiEditor WIN32
     ${wxue_generated_code}
     ${wxui_internal_files} # This will be empty unless INTERNAL_BLD_TESTING is set
 )
+
+# This will get passed to the resource compiler as well
+target_compile_definitions(wxUiEditor PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
 
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(wxUiEditor PRIVATE WXUSINGDLL)

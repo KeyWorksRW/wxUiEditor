@@ -232,40 +232,13 @@ namespace
         code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")");
     }
 
-    void ConstructionCodePerl(Code& code, int /* frame_type */)
+    void ConstructionCodeTypeScript(Code& code, int /* frame_type */)
     {
-        // package MyFrame;
-        // use strict;
-        // use warnings;
-        //
-        // sub new {
-        //     my ($class, $parent) = @_;
-        //     my $self = bless {}, $class;
+        // export class MyFrame {
+        //     constructor(parent: any) {
 
-        code.Str("package ").NodeName().Str(";").Eol();
-        code.Str("use strict;").Eol();
-        code.Str("use warnings;").Eol();
-        code.Eol();
-        code.Str("sub new {").Eol();
-        code.Tab().Str("my ($class, $parent) = @_;").Eol();
-        code.Tab().Str("my $self = bless {}, $class;");
-    }
-
-    void ConstructionCodeRust(Code& code, int /* frame_type */)
-    {
-        // pub struct MyFrame {
-        //     frame: wx::Frame,
-        // }
-        //
-        // impl MyFrame {
-        //     pub fn new(parent: Option<*mut std::ffi::c_void>) -> Self {
-
-        code.Str("pub struct ").NodeName().Str(" {").Eol();
-        code.Tab().Str("frame: wx::Frame,").Eol();
-        code.Str("}").Eol();
-        code.Eol();
-        code.Str("impl ").NodeName().Str(" {").Eol();
-        code.Tab().Str("pub fn new(parent: Option<*mut std::ffi::c_void>) -> Self {");
+        code.Str("export class ").NodeName().Str(" {").Eol();
+        code.Tab().Str("constructor(parent: any) {");
     }
 }  // namespace
 
@@ -299,11 +272,8 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
             case GEN_LANG_LUAJIT:
                 ConstructionCodeLuaJIT(code, frame_type);
                 break;
-            case GEN_LANG_PERL:
-                ConstructionCodePerl(code, frame_type);
-                break;
-            case GEN_LANG_RUST:
-                ConstructionCodeRust(code, frame_type);
+            case GEN_LANG_TYPESCRIPT:
+                ConstructionCodeTypeScript(code, frame_type);
                 break;
             default:
                 code.AddComment("Unsupported FFI language", true);

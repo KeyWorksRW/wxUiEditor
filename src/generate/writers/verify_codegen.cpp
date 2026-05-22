@@ -44,11 +44,10 @@ namespace
             { "verify_go", GEN_LANG_GO },
             { "verify_julia", GEN_LANG_JULIA },
             { "verify_luajit", GEN_LANG_LUAJIT },
-            { "verify_perl", GEN_LANG_PERL },
-            { "verify_rust", GEN_LANG_RUST },
+            { "verify_typescript", GEN_LANG_TYPESCRIPT },
             { "verify_all", GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
                                 GEN_LANG_FORTRAN | GEN_LANG_GO | GEN_LANG_JULIA | GEN_LANG_LUAJIT |
-                                GEN_LANG_PERL | GEN_LANG_RUST },
+                                GEN_LANG_TYPESCRIPT },
         });
 
         for (const auto& [switch_name, lang]: switches)
@@ -262,8 +261,7 @@ namespace
         GEN_LANG_GO,
         GEN_LANG_JULIA,
         GEN_LANG_LUAJIT,
-        GEN_LANG_PERL,
-        GEN_LANG_RUST,
+        GEN_LANG_TYPESCRIPT,
     });
 
     // Testing menu is disabled here so that VerifyLanguageGeneration() does not start/end a timer.

@@ -435,7 +435,6 @@ auto ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) const ->
     {
         static const std::map<GenLang, PropName> folderLangPropMap = {
             { GEN_LANG_CPLUSPLUS, prop_folder_derived_directory },
-            { GEN_LANG_PERL, prop_folder_perl_output_folder },
             { GEN_LANG_PYTHON, prop_folder_python_output_folder },
             { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
             { GEN_LANG_XRC, prop_folder_xrc_directory }
@@ -463,7 +462,6 @@ auto ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) const ->
     {
         static const std::map<GenLang, PropName> projectLangPropMap = {
             { GEN_LANG_CPLUSPLUS, prop_derived_directory },
-            { GEN_LANG_PERL, prop_perl_output_folder },
             { GEN_LANG_PYTHON, prop_python_output_folder },
             { GEN_LANG_RUBY, prop_ruby_output_folder },
             { GEN_LANG_XRC, prop_xrc_directory }
@@ -547,8 +545,7 @@ auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
         { "Fortran", GEN_LANG_FORTRAN },
         { "Julia", GEN_LANG_JULIA },
         { "LuaJIT", GEN_LANG_LUAJIT },
-        { "Perl", GEN_LANG_PERL },
-        { "Rust", GEN_LANG_RUST },
+        { "TypeScript", GEN_LANG_TYPESCRIPT },
         { "XRC", GEN_LANG_XRC }
     };
     // clang-format on
@@ -575,10 +572,9 @@ auto ProjectHandler::get_GenerateLanguages() const -> size_t
         { "GO", GEN_LANG_GO },
         { "Julia", GEN_LANG_JULIA },
         { "LuaJIT", GEN_LANG_LUAJIT },
-        { "Perl", GEN_LANG_PERL },
         { "Python", GEN_LANG_PYTHON },
         { "Ruby", GEN_LANG_RUBY },
-        { "Rust", GEN_LANG_RUST },
+        { "TypeScript", GEN_LANG_TYPESCRIPT },
         { "XRC", GEN_LANG_XRC }
     };
     // clang-format on

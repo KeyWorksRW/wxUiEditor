@@ -113,8 +113,7 @@ auto MainFrame::UpdateLanguagePanels() -> void
     manage_panel(GEN_LANG_GO, m_goPanel, "Go");
     manage_panel(GEN_LANG_JULIA, m_juliaPanel, "Julia");
     manage_panel(GEN_LANG_LUAJIT, m_luajitPanel, "LuaJIT");
-    manage_panel(GEN_LANG_PERL, m_perlPanel, "Perl");
-    manage_panel(GEN_LANG_RUST, m_rustPanel, "Rust");
+    manage_panel(GEN_LANG_TYPESCRIPT, m_typescriptPanel, "TypeScript");
     manage_panel(GEN_LANG_XRC, m_xrcPanel, "XRC");
 
     // Ensure the preferred language panel sits at notebook position 1.
@@ -126,16 +125,15 @@ auto MainFrame::UpdateLanguagePanels() -> void
     };
     const auto preferred = Project.get_CodePreference();
     const std::array lang_info = {
-        LangInfo { GEN_LANG_CPLUSPLUS, m_cppPanel, "C++" },
-        LangInfo { GEN_LANG_PYTHON, m_pythonPanel, "Python" },
-        LangInfo { GEN_LANG_RUBY, m_rubyPanel, "Ruby" },
-        LangInfo { GEN_LANG_FORTRAN, m_fortranPanel, "Fortran" },
-        LangInfo { GEN_LANG_GO, m_goPanel, "GO" },
-        LangInfo { GEN_LANG_JULIA, m_juliaPanel, "Julia" },
-        LangInfo { GEN_LANG_LUAJIT, m_luajitPanel, "LuaJIT" },
-        LangInfo { GEN_LANG_PERL, m_perlPanel, "Perl" },
-        LangInfo { GEN_LANG_RUST, m_rustPanel, "Rust" },
-        LangInfo { GEN_LANG_XRC, m_xrcPanel, "XRC" },
+        LangInfo { .flag = GEN_LANG_CPLUSPLUS, .panel = m_cppPanel, .label = "C++" },
+        LangInfo { .flag = GEN_LANG_PYTHON, .panel = m_pythonPanel, .label = "Python" },
+        LangInfo { .flag = GEN_LANG_RUBY, .panel = m_rubyPanel, .label = "Ruby" },
+        LangInfo { .flag = GEN_LANG_FORTRAN, .panel = m_fortranPanel, .label = "Fortran" },
+        LangInfo { .flag = GEN_LANG_GO, .panel = m_goPanel, .label = "GO" },
+        LangInfo { .flag = GEN_LANG_JULIA, .panel = m_juliaPanel, .label = "Julia" },
+        LangInfo { .flag = GEN_LANG_LUAJIT, .panel = m_luajitPanel, .label = "LuaJIT" },
+        LangInfo { .flag = GEN_LANG_TYPESCRIPT, .panel = m_typescriptPanel, .label = "TypeScript" },
+        LangInfo { .flag = GEN_LANG_XRC, .panel = m_xrcPanel, .label = "XRC" },
     };
     for (const auto& [flag, panel, label]: lang_info)
     {

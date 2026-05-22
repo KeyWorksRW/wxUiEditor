@@ -15,6 +15,7 @@
 #include <wx/infobar.h>      // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/stc/stc.h>      // Scintilla
 
+#include "wx/msw/toplevel.h"
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "mainframe.h"
@@ -73,10 +74,13 @@ auto MainFrame::OnAbout([[maybe_unused]] wxCommandEvent& event) -> void
     // aboutInfo.AddDeveloper("Randalphwa");
 
 #if defined(_DEBUG)
-    aboutInfo.SetIcon(wxue_img::bundle_debug_logo_svg(64, 64).GetIconFor(this));
-#else
-    aboutInfo.SetIcon(wxue_img::bundle_wxUiEditor_svg(64, 64).GetIconFor(this));
-#endif  // _DEBUG
+    #if defined(_DEBUG)
+    aboutInfo.SetIcon(
+        wxue_img::bundle_debug_logo_svg(64, 64).GetIconFor(static_cast<const wxWindow*>(this)));
+    #else
+    aboutInfo.SetIcon(
+        wxue_img::bundle_wxUiEditor_svg(64, 64).GetIconFor(static_cast<wxWindow*>(this)));
+    #endif  // _DEBUG
 
     wxAboutBox(aboutInfo);
 }
@@ -173,12 +177,12 @@ auto MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
         {
             m_mockupPanel->CreateContent();
         }
-#if wxUSE_WEBVIEW
+    #if wxUSE_WEBVIEW
         else if (page == m_docviewPanel)
         {
             m_docviewPanel->ActivatePage();
         }
-#endif
+    #endif
         else if (page != m_importPanel)
         {
             dynamic_cast<BasePanel*>(page)->GenerateBaseClass();
@@ -328,11 +332,11 @@ auto MainFrame::OnClose(wxCloseEvent& event) -> void
     wxGetApp().setMainFrameClosing();
 
     auto* config = wxConfig::Get();
-#if defined(_DEBUG)
+    #if defined(_DEBUG)
     config->SetPath("/debug_mainframe");
-#else
+    #else
     config->SetPath("/mainframe");
-#endif
+    #endif
 
     bool isIconized = IsIconized();
     bool isMaximized = IsMaximized();

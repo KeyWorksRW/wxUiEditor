@@ -12,10 +12,9 @@
 #include "strategy_go.h"
 #include "strategy_julia.h"
 #include "strategy_luajit.h"
-#include "strategy_perl.h"
 #include "strategy_python.h"
 #include "strategy_ruby.h"
-#include "strategy_rust.h"
+#include "strategy_typescript.h"
 
 // clang-format off
 namespace
@@ -281,18 +280,18 @@ constexpr LanguageTraits luajit_traits
     .supports_classes = true,
 };
 
-constexpr LanguageTraits perl_traits
+constexpr LanguageTraits typescript_traits
 {
-    .language = GEN_LANG_PERL,
-    .true_literal = "1",
-    .false_literal = "0",
-    .null_literal = "undef",
+    .language = GEN_LANG_TYPESCRIPT,
+    .true_literal = "true",
+    .false_literal = "false",
+    .null_literal = "null",
     .empty_string = "\"\"",
-    .self_reference = "$self",
-    .member_operator = "->",
-    .scope_operator = "::",
-    .local_var_keyword = "my ",
-    .line_comment = "# ",
+    .self_reference = "this",
+    .member_operator = ".",
+    .scope_operator = ".",
+    .local_var_keyword = "let ",
+    .line_comment = "// ",
     .indent_size = 4,
     .line_offset = 1,
     .stmt_end = ";",
@@ -308,49 +307,13 @@ constexpr LanguageTraits perl_traits
     .feature_parity = LanguageTraits::FeatureParity::full,
     .construction_style = LanguageTraits::ConstructionStyle::ffi_function,
     .supports_markup = true,
-    .supports_lambda_events = false,
-    .needs_explicit_types = false,
-    .has_header_files = false,
-    .uses_snake_case_methods = true,
-    .removes_empty_parens = false,
-    .supports_namespaces = true,
-    .supports_classes = true,
-};
-
-constexpr LanguageTraits rust_traits
-{
-    .language = GEN_LANG_RUST,
-    .true_literal = "true",
-    .false_literal = "false",
-    .null_literal = "std::ptr::null_mut()",
-    .empty_string = "\"\"",
-    .self_reference = "self",
-    .member_operator = ".",
-    .scope_operator = "::",
-    .local_var_keyword = "let ",
-    .line_comment = "// ",
-    .indent_size = 4,
-    .line_offset = 1,
-    .stmt_end = ";",
-    .construction_suffix = "",
-    .wx_prefix = "wx_",
-    .logical_and = " && ",
-    .logical_or = " || ",
-    .block_begin = "{",
-    .block_end = "}",
-    .conditional_begin = "if ",
-    .conditional_end = "",
-    .family = LanguageTraits::Family::ffi,
-    .feature_parity = LanguageTraits::FeatureParity::full,
-    .construction_style = LanguageTraits::ConstructionStyle::ffi_function,
-    .supports_markup = true,
     .supports_lambda_events = true,
     .needs_explicit_types = true,
     .has_header_files = false,
-    .uses_snake_case_methods = true,
+    .uses_snake_case_methods = false,
     .removes_empty_parens = false,
     .supports_namespaces = true,
-    .supports_classes = false,
+    .supports_classes = true,
 };
 
     // clang-format on
@@ -377,10 +340,8 @@ auto GetLanguageTraits(GenLang language) -> const LanguageTraits*
             return &julia_traits;
         case GEN_LANG_LUAJIT:
             return &luajit_traits;
-        case GEN_LANG_PERL:
-            return &perl_traits;
-        case GEN_LANG_RUST:
-            return &rust_traits;
+        case GEN_LANG_TYPESCRIPT:
+            return &typescript_traits;
 
         default:
             return nullptr;
@@ -412,11 +373,8 @@ auto CreateLanguageStrategy(GenLang language) -> std::unique_ptr<LanguageStrateg
         case GEN_LANG_LUAJIT:
             return std::make_unique<LuaJITStrategy>(luajit_traits);
 
-        case GEN_LANG_PERL:
-            return std::make_unique<PerlStrategy>(perl_traits);
-
-        case GEN_LANG_RUST:
-            return std::make_unique<RustStrategy>(rust_traits);
+        case GEN_LANG_TYPESCRIPT:
+            return std::make_unique<TypeScriptStrategy>(typescript_traits);
 
         default:
             return nullptr;

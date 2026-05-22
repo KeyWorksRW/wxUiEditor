@@ -395,6 +395,8 @@ set( file_list
     src/ui/gridbag_item.cpp             # Dialog for inserting an item into a wxGridBagSizer node
     src/ui/import_dlg.cpp               # Dialog to import one or more projects
     src/ui/xrccompare.cpp               # C++/XRC UI Comparison dialog
+    src/ui/wxdocview_dlg.cpp            # Dialog to display wxDocView documentation in a wxWebView
+    src/ui/viewdetails_dlg.cpp          # Dialog to display details about a node in the Mockup
 
     # (generated) ui/preferences_dlg.cpp  # Preferences dialog
     $<$<CONFIG:Debug>:src/internal/convert_img.cpp> # Convert image

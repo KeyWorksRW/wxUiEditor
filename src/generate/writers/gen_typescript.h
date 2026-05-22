@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate Rust code via kwxFFI
+// Purpose:   Generate TypeScript code via kwxFFI
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -9,12 +9,12 @@
 
 #include "gen_base.h"  // BaseCodeGenerator
 
-class RustCodeGenerator : public BaseCodeGenerator
+class TypeScriptCodeGenerator : public BaseCodeGenerator
 {
 public:
-    RustCodeGenerator(Node* form_node);
+    TypeScriptCodeGenerator(Node* form_node);
 
-    void GenerateClass(GenLang language = GEN_LANG_RUST,
+    void GenerateClass(GenLang language = GEN_LANG_TYPESCRIPT,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

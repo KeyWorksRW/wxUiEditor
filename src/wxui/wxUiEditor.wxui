@@ -8706,6 +8706,54 @@
       </node>
       <node
         class="wxDialog"
+        class_name="ViewDetails_base"
+        persist="1"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Markdown + HTML comparison"
+        minimum_size="1200,1200"
+        base_file="viewdetails_base"
+        derived_class_name="ViewDetails"
+        derived_file="../ui/viewdetails_dlg.cpp"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxSplitterWindow"
+            min_pane_size="600"
+            persist_name="info"
+            sashpos="600"
+            size="400,-1"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxStyledTextCtrl"
+              lexer="MARKDOWN"
+              var_name="m_markdown"
+              view_whitespace="visible after indent"
+              flags="wxEXPAND"
+              proportion="1" />
+            <node
+              class="wxStyledTextCtrl"
+              lexer="HTML"
+              var_name="m_html"
+              view_whitespace="visible after indent"
+              flags="wxEXPAND"
+              proportion="1" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            Cancel="0"
+            Close="1"
+            OK="0"
+            default_button="Close"
+            static_line="0"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
         class_name="XrcListDlg"
         title="XRC Preview forms"
         base_file="..\internal\xrc_list_dlg"
@@ -9302,6 +9350,239 @@
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND"
           OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="wxDocView_base"
+      title="wxWidgets Documentation"
+      base_file="wxdocview_base"
+      derived_class_name="wxDocView"
+      derived_file="../ui/wxdocview_dlg.cpp"
+      pure_virtual_functions="1">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxSplitterWindow"
+          persist_name="rtf_html_sash"
+          sashpos="75"
+          var_name="m_splitter2">
+          <node
+            class="wxPanel"
+            minimum_size="175,-1"
+            window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="panel_sizer"
+              minimum_size="-1,-1"
+              flags="wxEXPAND">
+              <node
+                class="wxChoicebook"
+                flags="wxEXPAND"
+                proportion="1"
+                wxEVT_CHOICEBOOK_PAGE_CHANGED="OnPageChanged">
+                <node
+                  class="BookPage"
+                  class_access="protected:"
+                  label="Search"
+                  var_name="m_search_page"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="box_sizer4">
+                    <node
+                      class="wxSearchCtrl"
+                      cancel_button="1"
+                      hint="Search documentation..."
+                      style="wxTE_PROCESS_ENTER"
+                      var_name="m_search_ctrl"
+                      minimum_size="-1,-1"
+                      flags="wxEXPAND"
+                      wxEVT_SEARCHCTRL_CANCEL_BTN="OnSearchCancel"
+                      wxEVT_TEXT="OnSearchTextChanged" />
+                    <node
+                      class="wxListBox"
+                      var_name="m_search_listbox"
+                      window_style="0"
+                      borders="wxLEFT|wxRIGHT|wxBOTTOM"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_LISTBOX_DCLICK="OnDisplaySearchListItem" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  class_access="protected:"
+                  label="Classes"
+                  var_name="m_classes_page"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="page_sizer">
+                    <node
+                      class="wxTextCtrl"
+                      style="wxTE_PROCESS_ENTER"
+                      var_name="m_classes_textctrl"
+                      flags="wxEXPAND"
+                      wxEVT_KEY_DOWN="OnTextKeyDown"
+                      wxEVT_TEXT_ENTER="OnIndexTextEnter"
+                      wxEVT_TEXT="OnIndexTextChange" />
+                    <node
+                      class="wxListBox"
+                      var_name="m_classes_listbox"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_LISTBOX_DCLICK="OnDblClickListBox" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  class_access="protected:"
+                  label="Events"
+                  var_name="m_events_page"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="page_sizer2">
+                    <node
+                      class="wxTextCtrl"
+                      style="wxTE_PROCESS_ENTER"
+                      var_name="m_events_textctrl"
+                      flags="wxEXPAND"
+                      wxEVT_KEY_DOWN="OnTextKeyDown"
+                      wxEVT_TEXT_ENTER="OnIndexTextEnter"
+                      wxEVT_TEXT="OnIndexTextChange" />
+                    <node
+                      class="wxListBox"
+                      var_name="m_events_listbox"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_LISTBOX_DCLICK="OnDblClickListBox" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  class_access="protected:"
+                  label="Functions"
+                  var_name="m_functions_page"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="page_sizer4">
+                    <node
+                      class="wxTextCtrl"
+                      style="wxTE_PROCESS_ENTER"
+                      var_name="m_functions_textctrl"
+                      flags="wxEXPAND"
+                      wxEVT_KEY_DOWN="OnTextKeyDown"
+                      wxEVT_TEXT_ENTER="OnIndexTextEnter"
+                      wxEVT_TEXT="OnIndexTextChange" />
+                    <node
+                      class="wxListBox"
+                      var_name="m_functions_listbox"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_LISTBOX_DCLICK="OnDblClickListBox" />
+                  </node>
+                </node>
+                <node
+                  class="BookPage"
+                  class_access="protected:"
+                  label="Overviews"
+                  var_name="m_overviews_page"
+                  background_colour="wxSYS_COLOUR_BTNFACE"
+                  window_style="wxTAB_TRAVERSAL">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="page_sizer3">
+                    <node
+                      class="wxTextCtrl"
+                      style="wxTE_PROCESS_ENTER"
+                      var_name="m_overviews_textctrl"
+                      flags="wxEXPAND"
+                      wxEVT_KEY_DOWN="OnTextKeyDown"
+                      wxEVT_TEXT_ENTER="OnIndexTextEnter"
+                      wxEVT_TEXT="OnIndexTextChange" />
+                    <node
+                      class="wxListBox"
+                      var_name="m_overviews_listbox"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_LISTBOX_DCLICK="OnDblClickListBox" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="wxPanel"
+            var_name="panel2"
+            window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer3">
+              <node
+                class="wxAuiToolBar"
+                var_name="m_aui_tool_bar"
+                flags="wxEXPAND">
+                <node
+                  class="auitool"
+                  bitmap="Art;wxART_GO_HOME|wxART_TOOLBAR;[24,24]"
+                  class_access="protected:"
+                  label=""
+                  var_name="m_home"
+                  wxEVT_TOOL="OnHome" />
+                <node
+                  class="auitool"
+                  bitmap="Art;wxART_GO_BACK|wxART_TOOLBAR;[24,24]"
+                  class_access="protected:"
+                  label=""
+                  var_name="m_back" />
+                <node
+                  class="auitool"
+                  bitmap="Art;wxART_GO_FORWARD|wxART_TOOLBAR;[24,24]"
+                  class_access="protected:"
+                  label=""
+                  var_name="m_forward" />
+                <node
+                  class="auitool"
+                  bitmap="Art;wxART_FIND|wxART_TOOLBAR;[30,30]"
+                  label=""
+                  var_name="find" />
+              </node>
+              <node
+                class="wxHtmlWindow"
+                var_name="m_html_win"
+                minimum_size="300,450"
+                window_style="wxBORDER_SUNKEN"
+                flags="wxEXPAND"
+                proportion="1"
+                wxEVT_HTML_LINK_CLICKED="OnHtmlLink" />
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="0"
+          Close="1"
+          OK="0"
+          default_button="Close"
+          static_line="0"
+          flags="wxEXPAND" />
       </node>
     </node>
   </node>

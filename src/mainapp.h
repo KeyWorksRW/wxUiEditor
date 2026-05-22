@@ -33,96 +33,87 @@ class EmbeddedImage;
 
 struct ImageBundle;
 
-[[maybe_unused]] constexpr const auto ImportProjectVersion = 13;
+[[maybe_unused]] constexpr const int ImportProjectVersion = 13;
 
 class App : public wxApp
 {
 public:
     App();
 
-    [[nodiscard]] auto getMainFrame() -> MainFrame* { return m_frame; }
+    [[nodiscard]] MainFrame* getMainFrame() { return m_frame; }
 
-    auto static isFireCreationMsgs() -> bool;
+    static bool isFireCreationMsgs();
 
-    auto static isPjtMemberPrefix() -> bool;
+    static bool isPjtMemberPrefix();
 
     // Returns true if command line option --gen_coverage is specified. The assumption is
     // that after code generation, syntax checks will be performed on all languages, and some
     // warning messages need not be generated (such as language not supporting a widget
     // type).
-    auto isCoverageTesting() const noexcept -> bool { return m_is_coverage_testing; }
+    bool isCoverageTesting() const noexcept { return m_is_coverage_testing; }
 
-    auto static ShowMsgWindow() -> void;
-    [[nodiscard]] auto static AutoMsgWindow() -> bool;
+    static void ShowMsgWindow();
+    [[nodiscard]] static bool AutoMsgWindow();
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Don't make this static or Bind() will not work
-    auto DbgCurrentTest(wxCommandEvent& event) -> void;
+    void DbgCurrentTest(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)
     // Writes to stderr even when running as a GUI application
-    auto DebugOutput(const wxString& str) -> void;
+    void DebugOutput(const wxString& str);
 #endif
 
-    auto setMainFrameClosing() -> void { m_isMainFrameClosing = true; }
-    [[nodiscard]] auto isMainFrameClosing() const -> bool { return m_isMainFrameClosing; }
+    void setMainFrameClosing() { m_isMainFrameClosing = true; }
+    [[nodiscard]] bool isMainFrameClosing() const { return m_isMainFrameClosing; }
 
     [[nodiscard]] auto get_ProjectVersion() const { return m_ProjectVersion; }
 
-    auto AskedAboutMissingDir(const wxString& path) -> bool
-    {
-        return (m_missing_dirs.contains(path));
-    }
-    auto AddMissingDir(const wxString& path) -> void { m_missing_dirs.insert(path); }
+    bool AskedAboutMissingDir(const wxString& path) { return (m_missing_dirs.contains(path)); }
+    void AddMissingDir(const wxString& path) { m_missing_dirs.insert(path); }
 
-    auto isDarkMode() const noexcept -> bool { return m_isDarkMode; }
-    auto isDarkHighContrast() const noexcept -> bool { return m_isDarkHighContrast; }
+    bool isDarkMode() const noexcept { return m_isDarkMode; }
+    bool isDarkHighContrast() const noexcept { return m_isDarkHighContrast; }
 
     // Determines whether the testing menu is enabled
-    [[nodiscard]] auto isTestingMenuEnabled() const noexcept -> bool
-    {
-        return m_TestingMenuEnabled;
-    }
-    auto set_TestingMenuEnabled(bool value) noexcept -> void { m_TestingMenuEnabled = value; }
+    [[nodiscard]] bool isTestingMenuEnabled() const noexcept { return m_TestingMenuEnabled; }
+    void set_TestingMenuEnabled(bool value) noexcept { m_TestingMenuEnabled = value; }
 
     // Determines whether the testing switch is enabled
-    [[nodiscard]] auto isTestingSwitch() const noexcept -> bool { return m_is_testing_switch; }
-    auto setTestingSwitch(bool value) noexcept -> void { m_is_testing_switch = value; }
+    [[nodiscard]] bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
+    void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
 
     // TODO: [Randalphwa - 12-09-2025] Verify() sets this, but no code generation functions check
     // it. This might be a good candidate for using wxMessageOutputDebug(), or just expanded
     // messages for the log file if we are creating one.
 
     // Returns true if --verbose is specified on the command line.
-    [[nodiscard]] auto isVerboseCodeGen() const noexcept -> bool { return m_is_verbose_codegen; }
-    auto set_VerboseCodeGen(bool value) noexcept -> void { m_is_verbose_codegen = value; }
+    [[nodiscard]] bool isVerboseCodeGen() const noexcept { return m_is_verbose_codegen; }
+    void set_VerboseCodeGen(bool value) noexcept { m_is_verbose_codegen = value; }
 
     // Returns true if code is being generated from the command line.
-    [[nodiscard]] auto is_Generating() const noexcept -> bool { return m_is_generating; }
-    auto set_Generating(bool value) noexcept -> void { m_is_generating = value; }
+    [[nodiscard]] bool is_Generating() const noexcept { return m_is_generating; }
+    void set_Generating(bool value) noexcept { m_is_generating = value; }
 
     // Returns the form class name to filter code generation to a single form.
     // Empty string means generate all forms.
-    [[nodiscard]] auto get_FormFilter() const noexcept -> const std::string&
-    {
-        return m_form_filter;
-    }
-    auto set_FormFilter(std::string_view value) noexcept -> void { m_form_filter = value; }
+    [[nodiscard]] const std::string& get_FormFilter() const noexcept { return m_form_filter; }
+    void set_FormFilter(std::string_view value) noexcept { m_form_filter = value; }
 
     // Add warning or error messages to this if is_Generating() is true (which means code is
     // being generated from the command line).
-    auto get_CmdLineLog() -> wxue::StringVector& { return m_cmdline_log; }
+    wxue::StringVector& get_CmdLineLog() { return m_cmdline_log; }
 
 protected:
-    auto OnInit() -> bool override;
+    bool OnInit() override;
 
 #if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
-    auto OnFatalException() -> void override;
+    void OnFatalException() override;
 #endif
 
-    auto OnRun() -> int override;
-    auto OnExit() -> int override;
+    int OnRun() override;
+    int OnExit() override;
 
 private:
     enum : int
@@ -136,21 +127,21 @@ private:
     };
 
     // Returns a positive value if command-line only code generation was requested and handled.
-    auto Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int;
+    int Generate(wxCmdLineParser& parser, bool& is_project_loaded);
 
     // Helper methods for Generate()
-    static auto ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool>;
+    static std::pair<size_t, bool> ParseGenerationType(wxCmdLineParser& parser);
 
-    [[nodiscard]] static auto FindProjectFile(wxString& filename) -> bool;
+    [[nodiscard]] static bool FindProjectFile(wxString& filename);
 
-    static auto LoadProjectFile(const wxue::string& filename, size_t generate_type,
-                                bool& is_project_loaded) -> bool;
+    static bool LoadProjectFile(const wxue::string& filename, size_t generate_type,
+                                bool& is_project_loaded);
 
-    static auto LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
-                                     bool test_only, std::string_view language_type) -> void;
+    static void LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
+                                     bool test_only, std::string_view language_type);
 
-    static auto GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                                     std::vector<std::string>& class_list) -> void;
+    static void GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                                     std::vector<std::string>& class_list);
     // Every time we try to write to a directory that doesn't exist, we ask the user if they
     // want to create it. If they choose No then we store the path here and never ask again
     // for the current session.
@@ -211,9 +202,9 @@ public:
 
     // Delete copy and move constructors
     DisableTestingMenuScope(const DisableTestingMenuScope&) = delete;
-    auto operator=(const DisableTestingMenuScope&) -> DisableTestingMenuScope& = delete;
+    DisableTestingMenuScope& operator=(const DisableTestingMenuScope&) = delete;
     DisableTestingMenuScope(DisableTestingMenuScope&&) = delete;
-    auto operator=(DisableTestingMenuScope&&) -> DisableTestingMenuScope& = delete;
+    DisableTestingMenuScope& operator=(DisableTestingMenuScope&&) = delete;
 
 private:
     bool m_was_enabled;

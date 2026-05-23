@@ -358,7 +358,7 @@ namespace docparser
             InEventTable,
             InTable,
             InDefList,
-            InSkipBlock,  // Perl/Python only blocks
+            InSkipBlock,  // Python only blocks
         };
 
         State state = State::Normal;

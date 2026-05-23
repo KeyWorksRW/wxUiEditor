@@ -15,15 +15,20 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     bool ConstructionCode(Code& code) override;
-    bool SettingsCode(Code&) override;
+    bool SettingsCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
+    void ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    void RequiredHandlers(Node* /* node */, std::set<std::string>& /* handlers */) override;
 
-    bool GetImports(Node*, std::set<std::string>& /* set_imports */, GenLang language) override;
+    bool GetImports(Node* /* node */, std::set<std::string>& /* set_imports */,
+                    GenLang language) override;
+
+private:
+    void UpdateCustomTypeState(wxPropertyGridManager* prop_grid, std::string_view custom_type_value,
+                               bool margin_enabled);
 };

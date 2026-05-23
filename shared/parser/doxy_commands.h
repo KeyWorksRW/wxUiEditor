@@ -109,7 +109,7 @@ namespace docparser
     std::string ExpandAlias(DoxyCmd command);
 
     // Check if a command starts a block that should be skipped entirely
-    // (e.g., Perl/Python-only blocks).
+    // (e.g., Python-only blocks).
     [[nodiscard]] bool IsSkipBlockStart(DoxyCmd command);
 
     [[nodiscard]] bool IsSkipBlockEnd(DoxyCmd command);

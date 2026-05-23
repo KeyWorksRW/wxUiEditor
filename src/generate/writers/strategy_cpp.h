@@ -5,12 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: CppStrategy implements the LanguageStrategy interface for native C++ code
-// generation. C++ is the only language that directly calls wxWidgets C++ APIs without going
-// through a C wrapper. This means: direct `new` construction, `->` member access, `#ifdef`
-// platform conditionals, raw byte arrays for images, and full feature parity with wxWidgets.
-// No prefix mapping is needed—wx class names pass through unmodified.
-
 #pragma once
 
 #include "language_traits.h"

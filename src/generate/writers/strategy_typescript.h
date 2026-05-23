@@ -5,12 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: TypeScriptStrategy implements the LanguageStrategy interface for
-// TypeScript code generation via kwxFFI. TypeScript uses: `import` for imports,
-// `let`/`const` for variables, `function` for functions, `// ` comments,
-// `null` for null, `.` member access, `{`/`}` blocks, optional `;` terminators,
-// and `this.` for self-reference. Arrow functions provide lambda-like event handlers.
-
 #pragma once
 
 #include "strategy_ffi.h"

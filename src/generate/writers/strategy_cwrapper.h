@@ -5,17 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: CWrapperStrategy is the abstract base for all non-C++ languages. All non-C++
-// languages go through a C-level wrapper to call wxWidgets (Python via CPython C API, Ruby
-// via Ruby C API, FFI languages via kwxFFI). This base class captures shared behavior:
-// no header files, no `new` keyword, opaque handle model, single output file per form.
-//
-// WxBindingStrategy extends CWrapperStrategy for Python and Ruby specifically. These use
-// existing wxPython/wxRuby3 bindings with near-full parity (not 100%). They share
-// wx-prefix mapping logic (wxButton → wx.Button or Wx::Button) and similar feature-gap
-// handling. FFI languages (Phase 5) will instead inherit CWrapperStrategy directly via
-// FFIStrategy, since they use a different prefix mapping (wx_ prefix) and have full parity.
-
 #pragma once
 
 #include "language_traits.h"

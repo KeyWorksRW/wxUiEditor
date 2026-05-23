@@ -5,17 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: PropGridPanel is the central property editing panel in wxUiEditor's main window.
-// It manages two wxPropertyGridManager instances: one for node properties and one for event
-// handlers. The class dynamically creates property editors based on Node and NodeProperty
-// definitions from the node system, organizing them into categories by functionality. It handles
-// property validation, change notifications via CustomEvent (EVT_NodePropChange), and maintains
-// property state including expansion states and enabled/disabled conditions. The implementation is
-// split across multiple files: propgrid_panel.cpp (construction/creation), propgrid_events.cpp
-// (event handlers), propgrid_modify.cpp (property modification), and propgrid_create.cpp (property
-// creation). Custom property editors in src/customprops/ are instantiated by CreatePGProperty() for
-// specialized editing of fonts, images, code, colors, and other complex property types.
-
 #pragma once
 
 #include <map>

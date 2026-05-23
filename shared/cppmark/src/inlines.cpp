@@ -1,10 +1,3 @@
-// AI Context: Inline markdown parsing (Phase 2 of two-phase parse)
-// Purpose: Parses inline content - emphasis (**bold**, *italic*), links, images, code spans, etc.
-// Parse flow: After blocks parsed -> walk AST -> parse TEXT node content into inline nodes
-// Key functions: cmark_parse_inlines() (entry point), parse_inline() (main loop), handle_delim()
-// (emphasis) Algorithm: Delimiter stack for nested emphasis, bracket stack for links/images Status:
-// Legacy code - uses manual anners for pattern matching
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

@@ -5,16 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: This file defines the LanguageTraits struct and LanguageStrategy base class,
-// forming the foundation for scaling code generation from 4 to 9+ languages. LanguageTraits
-// provides declarative data about each language's syntax and characteristics (literals,
-// operators, formatting, feature flags), replacing direct language identity checks (is_cpp(),
-// is_python()) with trait queries (get_traits().true_literal). LanguageStrategy is an abstract
-// base for language-specific behavioral logic (construction, event binding, imports) that
-// can't be reduced to simple data lookups. Together they implement a two-tier system:
-// traits (data-driven) for "what does this language use?" and strategies (polymorphic) for
-// "how does this language do X?".
-
 #pragma once
 
 #include <memory>
@@ -138,7 +128,7 @@ struct LanguageTraits
 
 // Returns traits for the specified language. Returns nullptr for non-code-generation
 // languages (XRC, XML) or unrecognized values.
-[[nodiscard]] auto GetLanguageTraits(GenLang language) -> const LanguageTraits*;
+[[nodiscard]] const LanguageTraits* GetLanguageTraits(GenLang language);
 
 // Abstract base class for language-specific code generation strategies.
 // Concrete implementations are created per-language (CppStrategy, PythonStrategy, etc.)
@@ -166,7 +156,7 @@ public:
     explicit LanguageStrategy(const LanguageTraits& traits) : m_traits(traits) {}
     virtual ~LanguageStrategy() = default;
 
-    [[nodiscard]] auto get_traits() const -> const LanguageTraits& { return m_traits; }
+    [[nodiscard]] const LanguageTraits& get_traits() const { return m_traits; }
 
     // ---- Core code generation (Phase 4 stubs, migrated incrementally) ----
 
@@ -183,7 +173,7 @@ public:
     virtual void EmitVarDecl(Code& code, std::string_view type, std::string_view name) = 0;
 
     // Query whether a specific feature/property is supported in this language
-    [[nodiscard]] virtual auto IsFeatureSupported(Node* node, GenEnum::PropName prop) -> bool = 0;
+    [[nodiscard]] virtual bool IsFeatureSupported(Node* node, GenEnum::PropName prop) = 0;
 
     // ---- Platform conditionals ----
 
@@ -197,7 +187,7 @@ public:
 
     // Map a wxWidgets class name to language-appropriate form.
     // e.g., "wxButton" → "wxButton" (C++), "wx.Button" (Python), "Wx::Button" (Ruby)
-    [[nodiscard]] virtual auto MapClassName(std::string_view wx_class_name) -> std::string = 0;
+    [[nodiscard]] virtual std::string MapClassName(std::string_view wx_class_name) = 0;
 
     // ---- Image data emission ----
 
@@ -208,11 +198,11 @@ protected:
     const LanguageTraits& m_traits;
 
     LanguageStrategy(const LanguageStrategy&) = default;
-    auto operator=(const LanguageStrategy&) -> LanguageStrategy& = delete;
+    LanguageStrategy& operator=(const LanguageStrategy&) = delete;
     LanguageStrategy(LanguageStrategy&&) = default;
-    auto operator=(LanguageStrategy&&) -> LanguageStrategy& = delete;
+    LanguageStrategy& operator=(LanguageStrategy&&) = delete;
 };
 
 // Factory: create the appropriate LanguageStrategy for the given language.
 // Returns nullptr for non-code-generation languages (XRC, XML).
-[[nodiscard]] auto CreateLanguageStrategy(GenLang language) -> std::unique_ptr<LanguageStrategy>;
+[[nodiscard]] std::unique_ptr<LanguageStrategy> CreateLanguageStrategy(GenLang language);

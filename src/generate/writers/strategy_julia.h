@@ -5,11 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: JuliaStrategy implements the LanguageStrategy interface for Julia code
-// generation via kwxFFI. Julia uses: `using`/`import` for modules, `local` for variables,
-// `function`/`end` blocks, `# ` comments, `nothing` for null, multiple dispatch instead of
-// classes, and dynamic typing with optional type annotations.
-
 #pragma once
 
 #include "strategy_ffi.h"

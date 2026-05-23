@@ -5,12 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: PythonStrategy implements the LanguageStrategy interface for wxPython code
-// generation. Python accesses wxWidgets through CPython C extensions (wxPython). The strategy
-// handles: wx. prefix mapping (wxButton → wx.Button, with module-specific prefixes like
-// wx.adv., wx.grid.), Python-style platform conditionals (wx.Platform == "msw"),
-// and feature-gap workarounds for wxPython limitations.
-
 #pragma once
 
 #include "strategy_cwrapper.h"

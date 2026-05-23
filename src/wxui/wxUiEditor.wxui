@@ -4054,7 +4054,7 @@
                       wrap_indent_mode="indent"
                       wrap_mode="word"
                       wrap_visual_flag="end"
-                      minimum_size="400,-1"
+                      minimum_size="400,200"
                       border_size="10"
                       flags="wxEXPAND"
                       proportion="1" />
@@ -4088,7 +4088,7 @@
                       flags="wxEXPAND">
                       <node
                         class="wxTextCtrl"
-                        var_name="m_perl_text_function2"
+                        var_name="m_fortran_text_function"
                         flags="wxEXPAND"
                         proportion="1"
                         wxEVT_TEXT="OnChange" />
@@ -4135,7 +4135,7 @@
                       flags="wxEXPAND">
                       <node
                         class="wxTextCtrl"
-                        var_name="m_perl_text_function4"
+                        var_name="m_go_text_function"
                         flags="wxEXPAND"
                         proportion="1"
                         wxEVT_TEXT="OnChange" />
@@ -4174,17 +4174,16 @@
                         class="wxStyledTextCtrl"
                         additional_carets_blink="1"
                         indentation_guides="forward"
-                        lexer="PERL"
                         multiple_selection_typing="1"
                         multiple_selections="1"
                         paste_multiple="1"
                         symbol_margin="0"
                         use_tabs="0"
-                        var_name="m_perl_stc_lambda3"
+                        var_name="m_go_stc_lambda"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
-                        minimum_size="400,-1"
+                        minimum_size="400,200"
                         border_size="10"
                         flags="wxEXPAND"
                         proportion="1" />
@@ -4219,7 +4218,7 @@
                       flags="wxEXPAND">
                       <node
                         class="wxTextCtrl"
-                        var_name="m_perl_text_function3"
+                        var_name="m_julia_text_function"
                         flags="wxEXPAND"
                         proportion="1"
                         wxEVT_TEXT="OnChange" />
@@ -4258,13 +4257,13 @@
                         class="wxStyledTextCtrl"
                         additional_carets_blink="1"
                         indentation_guides="forward"
-                        lexer="PERL"
+                        lexer="JSON"
                         multiple_selection_typing="1"
                         multiple_selections="1"
                         paste_multiple="1"
                         symbol_margin="0"
                         use_tabs="0"
-                        var_name="m_perl_stc_lambda2"
+                        var_name="m_julia_stc_lambda"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
@@ -4303,7 +4302,7 @@
                       flags="wxEXPAND">
                       <node
                         class="wxTextCtrl"
-                        var_name="m_perl_text_function5"
+                        var_name="m_lua_text_function"
                         flags="wxEXPAND"
                         proportion="1"
                         wxEVT_TEXT="OnChange" />
@@ -4342,97 +4341,13 @@
                         class="wxStyledTextCtrl"
                         additional_carets_blink="1"
                         indentation_guides="forward"
-                        lexer="PERL"
+                        lexer="LUA"
                         multiple_selection_typing="1"
                         multiple_selections="1"
                         paste_multiple="1"
                         symbol_margin="0"
                         use_tabs="0"
-                        var_name="m_perl_stc_lambda4"
-                        wrap_indent_mode="indent"
-                        wrap_mode="word"
-                        wrap_visual_flag="end"
-                        minimum_size="400,-1"
-                        border_size="10"
-                        flags="wxEXPAND"
-                        proportion="1" />
-                    </node>
-                  </node>
-                </node>
-              </node>
-              <node
-                class="BookPage"
-                bitmap="SVG;perl-logo.svg;[24,24]"
-                class_access="protected:"
-                label="Perl"
-                var_name="m_perl_bookpage"
-                background_colour="wxSYS_COLOUR_BTNFACE"
-                window_style="wxTAB_TRAVERSAL">
-                <node
-                  class="wxBoxSizer"
-                  orientation="wxVERTICAL"
-                  var_name="page_sizer4">
-                  <node
-                    class="StaticRadioBtnBoxSizer"
-                    checked="0"
-                    class_access="protected:"
-                    label="Use function"
-                    radiobtn_var_name="m_perl_radio_use_function"
-                    var_name="m_perl_function_box"
-                    flags="wxEXPAND"
-                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
-                    <node
-                      class="wxBoxSizer"
-                      var_name="box_sizer12"
-                      flags="wxEXPAND">
-                      <node
-                        class="wxTextCtrl"
-                        var_name="m_perl_text_function"
-                        flags="wxEXPAND"
-                        proportion="1"
-                        wxEVT_TEXT="OnChange" />
-                      <node
-                        class="wxButton"
-                        class_access="none"
-                        label="Default"
-                        var_name="btn11"
-                        wxEVT_BUTTON="OnDefault" />
-                      <node
-                        class="wxButton"
-                        class_access="none"
-                        label="None"
-                        var_name="btn12"
-                        wxEVT_BUTTON="OnNone" />
-                    </node>
-                    <node
-                      class="StaticRadioBtnBoxSizer"
-                      checked="0"
-                      class_access="protected:"
-                      label="Anonymous sub"
-                      radiobtn_var_name="m_perl_radio_use_anon_func"
-                      var_name="m_perl_lambda_box"
-                      flags="wxEXPAND"
-                      proportion="1"
-                      wxEVT_RADIOBUTTON="OnUsePerlLambda">
-                      <node
-                        class="wxBoxSizer"
-                        var_name="box_sizer4" />
-                      <node
-                        class="wxStaticText"
-                        class_access="none"
-                        label="Function:"
-                        var_name="staticText4" />
-                      <node
-                        class="wxStyledTextCtrl"
-                        additional_carets_blink="1"
-                        indentation_guides="forward"
-                        lexer="PERL"
-                        multiple_selection_typing="1"
-                        multiple_selections="1"
-                        paste_multiple="1"
-                        symbol_margin="0"
-                        use_tabs="0"
-                        var_name="m_perl_stc_lambda"
+                        var_name="m_luajit_stc_lambda"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
@@ -4506,7 +4421,7 @@
                       var_name="staticText_2" />
                     <node
                       class="wxTextCtrl"
-                      var_name="m_py_text_lambda"
+                      var_name="m_python_stc_lambda"
                       flags="wxEXPAND"
                       wxEVT_TEXT="OnChange" />
                   </node>
@@ -4600,8 +4515,8 @@
                 class="BookPage"
                 bitmap="SVG;perl-logo.svg;[24,24]"
                 class_access="protected:"
-                label="Rust"
-                var_name="m_rust_bookpage"
+                label="TypeScript"
+                var_name="m_typescript_bookpage"
                 background_colour="wxSYS_COLOUR_BTNFACE"
                 window_style="wxTAB_TRAVERSAL">
                 <node
@@ -4623,7 +4538,7 @@
                       flags="wxEXPAND">
                       <node
                         class="wxTextCtrl"
-                        var_name="m_perl_text_function6"
+                        var_name="m_typescript_text_function"
                         flags="wxEXPAND"
                         proportion="1"
                         wxEVT_TEXT="OnChange" />
@@ -4662,13 +4577,13 @@
                         class="wxStyledTextCtrl"
                         additional_carets_blink="1"
                         indentation_guides="forward"
-                        lexer="PERL"
+                        lexer="ESCRIPT"
                         multiple_selection_typing="1"
                         multiple_selections="1"
                         paste_multiple="1"
                         symbol_margin="0"
                         use_tabs="0"
-                        var_name="m_perl_stc_lambda5"
+                        var_name="m_typescript_stc_lambda"
                         wrap_indent_mode="indent"
                         wrap_mode="word"
                         wrap_visual_flag="end"
@@ -4685,9 +4600,11 @@
           <node
             class="spacer"
             add_default_border="1"
-            height="10" />
+            height="10"
+            borders="wxBOTTOM|wxRIGHT|wxLEFT" />
           <node
             class="wxStdDialogButtonSizer"
+            borders="wxBOTTOM|wxRIGHT|wxLEFT"
             flags="wxEXPAND"
             OKButtonClicked="OnOK" />
         </node>
@@ -6891,12 +6808,6 @@
             validator_variable="m_gen_luajit_code" />
           <node
             class="wxRadioButton"
-            label="P&amp;erl"
-            var_name="m_radioBtn_Perl"
-            get_function="is_gen_perl"
-            validator_variable="m_gen_perl_code" />
-          <node
-            class="wxRadioButton"
             label="&amp;Python"
             var_name="m_radioBtn_Python"
             get_function="is_gen_python"
@@ -6912,9 +6823,9 @@
             class="wxRadioButton"
             class_access="none"
             label="&amp;Rust"
-            var_name="m_radioBtn_Rusy"
-            get_function="is_gen_rust"
-            validator_variable="m_gen_rust_code" />
+            var_name="m_radioBtn_TypeScript"
+            get_function="is_gen_typescript"
+            validator_variable="m_gen_typescript_code" />
           <node
             class="wxRadioButton"
             label="&amp;XRC"
@@ -9363,7 +9274,8 @@
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
-        var_name="dlg_sizer">
+        var_name="dlg_sizer"
+        minimum_size="800,1024">
         <node
           class="wxSplitterWindow"
           persist_name="rtf_html_sash"

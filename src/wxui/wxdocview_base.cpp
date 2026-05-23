@@ -28,6 +28,7 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     }
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    dlg_sizer->SetMinSize(800, 1024);
 
     m_splitter2 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
     m_splitter2->SetSashGravity(0.0);

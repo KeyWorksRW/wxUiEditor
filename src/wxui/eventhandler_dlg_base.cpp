@@ -119,7 +119,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_cpp_stc_lambda->SetUseTabs(false);
         m_cpp_stc_lambda->SetBackSpaceUnIndents(true);
     }
-    m_cpp_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_cpp_stc_lambda->SetMinSize(FromDIP(wxSize(400, 200)));
     m_cpp_lambda_box->Add(m_cpp_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     page_sizer->Add(m_cpp_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
@@ -142,8 +142,8 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_perl_text_function2 = new wxTextCtrl(m_perl_function_box2->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer2->Add(m_perl_text_function2, wxSizerFlags(1).Expand().Border(wxALL));
+    m_fortran_text_function = new wxTextCtrl(m_perl_function_box2->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer2->Add(m_fortran_text_function, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* btn5 = new wxButton(m_perl_function_box2->GetStaticBox(), wxID_ANY, "Default");
     box_sizer2->Add(btn5, wxSizerFlags().Border(wxALL));
@@ -173,8 +173,8 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     auto* box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_perl_text_function4 = new wxTextCtrl(m_perl_function_box4->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer6->Add(m_perl_text_function4, wxSizerFlags(1).Expand().Border(wxALL));
+    m_go_text_function = new wxTextCtrl(m_perl_function_box4->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer6->Add(m_go_text_function, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* btn9 = new wxButton(m_perl_function_box4->GetStaticBox(), wxID_ANY, "Default");
     box_sizer6->Add(btn9, wxSizerFlags().Border(wxALL));
@@ -200,35 +200,35 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* staticText3 = new wxStaticText(m_perl_lambda_box3->GetStaticBox(), wxID_ANY, "Function:");
     m_perl_lambda_box3->Add(staticText3, wxSizerFlags().Border(wxALL));
 
-    m_perl_stc_lambda3 = new wxStyledTextCtrl(m_perl_lambda_box3->GetStaticBox());
+    m_go_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box3->GetStaticBox());
     {
-        m_perl_stc_lambda3->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda3->SetEOLMode(wxSTC_EOL_LF);
-        m_perl_stc_lambda3->SetWrapMode(wxSTC_WRAP_WORD);
-        m_perl_stc_lambda3->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_perl_stc_lambda3->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_perl_stc_lambda3->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda3->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda3->SetAdditionalSelectionTyping(true);
-        m_perl_stc_lambda3->SetAdditionalCaretsBlink(true);
+        m_go_stc_lambda->SetLexer(wxSTC_LEX_CPP);
+        m_go_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_go_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_go_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_go_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_go_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_go_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_go_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_go_stc_lambda->SetAdditionalCaretsBlink(true);
         // Sets text margin scaled appropriately for the current DPI on Windows,
         // 5 on wxGTK or wxOSX
 
-        m_perl_stc_lambda3->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda3->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda3->SetMarginWidth(1, 0);
+        m_go_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_go_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_go_stc_lambda->SetMarginWidth(1, 0);
         // Remove default margin
 
-        m_perl_stc_lambda3->SetMarginWidth(0, 16);
-        m_perl_stc_lambda3->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_perl_stc_lambda3->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_perl_stc_lambda3->SetMarginSensitive(0, false);
-        m_perl_stc_lambda3->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_perl_stc_lambda3->SetUseTabs(false);
-        m_perl_stc_lambda3->SetBackSpaceUnIndents(true);
+        m_go_stc_lambda->SetMarginWidth(0, 16);
+        m_go_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_go_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_go_stc_lambda->SetMarginSensitive(0, false);
+        m_go_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_go_stc_lambda->SetUseTabs(false);
+        m_go_stc_lambda->SetBackSpaceUnIndents(true);
     }
-    m_perl_stc_lambda3->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_perl_lambda_box3->Add(m_perl_stc_lambda3, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+    m_go_stc_lambda->SetMinSize(FromDIP(wxSize(400, 200)));
+    m_perl_lambda_box3->Add(m_go_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     m_perl_function_box4->Add(m_perl_lambda_box3, wxSizerFlags(1).Expand().Border(wxALL));
 
@@ -252,8 +252,8 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     auto* box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_perl_text_function3 = new wxTextCtrl(m_perl_function_box3->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer3->Add(m_perl_text_function3, wxSizerFlags(1).Expand().Border(wxALL));
+    m_julia_text_function = new wxTextCtrl(m_perl_function_box3->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer3->Add(m_julia_text_function, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* btn7 = new wxButton(m_perl_function_box3->GetStaticBox(), wxID_ANY, "Default");
     box_sizer3->Add(btn7, wxSizerFlags().Border(wxALL));
@@ -279,35 +279,35 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* staticText2 = new wxStaticText(m_perl_lambda_box2->GetStaticBox(), wxID_ANY, "Function:");
     m_perl_lambda_box2->Add(staticText2, wxSizerFlags().Border(wxALL));
 
-    m_perl_stc_lambda2 = new wxStyledTextCtrl(m_perl_lambda_box2->GetStaticBox());
+    m_julia_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box2->GetStaticBox());
     {
-        m_perl_stc_lambda2->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda2->SetEOLMode(wxSTC_EOL_LF);
-        m_perl_stc_lambda2->SetWrapMode(wxSTC_WRAP_WORD);
-        m_perl_stc_lambda2->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_perl_stc_lambda2->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_perl_stc_lambda2->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda2->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda2->SetAdditionalSelectionTyping(true);
-        m_perl_stc_lambda2->SetAdditionalCaretsBlink(true);
+        m_julia_stc_lambda->SetLexer(wxSTC_LEX_JSON);
+        m_julia_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_julia_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_julia_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_julia_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_julia_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_julia_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_julia_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_julia_stc_lambda->SetAdditionalCaretsBlink(true);
         // Sets text margin scaled appropriately for the current DPI on Windows,
         // 5 on wxGTK or wxOSX
 
-        m_perl_stc_lambda2->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda2->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda2->SetMarginWidth(1, 0);
+        m_julia_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_julia_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_julia_stc_lambda->SetMarginWidth(1, 0);
         // Remove default margin
 
-        m_perl_stc_lambda2->SetMarginWidth(0, 16);
-        m_perl_stc_lambda2->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_perl_stc_lambda2->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_perl_stc_lambda2->SetMarginSensitive(0, false);
-        m_perl_stc_lambda2->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_perl_stc_lambda2->SetUseTabs(false);
-        m_perl_stc_lambda2->SetBackSpaceUnIndents(true);
+        m_julia_stc_lambda->SetMarginWidth(0, 16);
+        m_julia_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_julia_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_julia_stc_lambda->SetMarginSensitive(0, false);
+        m_julia_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_julia_stc_lambda->SetUseTabs(false);
+        m_julia_stc_lambda->SetBackSpaceUnIndents(true);
     }
-    m_perl_stc_lambda2->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_perl_lambda_box2->Add(m_perl_stc_lambda2, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+    m_julia_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_perl_lambda_box2->Add(m_julia_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     m_perl_function_box3->Add(m_perl_lambda_box2, wxSizerFlags(1).Expand().Border(wxALL));
 
@@ -331,8 +331,8 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     auto* box_sizer10 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_perl_text_function5 = new wxTextCtrl(m_perl_function_box5->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer10->Add(m_perl_text_function5, wxSizerFlags(1).Expand().Border(wxALL));
+    m_lua_text_function = new wxTextCtrl(m_perl_function_box5->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer10->Add(m_lua_text_function, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* btn13 = new wxButton(m_perl_function_box5->GetStaticBox(), wxID_ANY, "Default");
     box_sizer10->Add(btn13, wxSizerFlags().Border(wxALL));
@@ -358,119 +358,40 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* staticText5 = new wxStaticText(m_perl_lambda_box4->GetStaticBox(), wxID_ANY, "Function:");
     m_perl_lambda_box4->Add(staticText5, wxSizerFlags().Border(wxALL));
 
-    m_perl_stc_lambda4 = new wxStyledTextCtrl(m_perl_lambda_box4->GetStaticBox());
+    m_luajit_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box4->GetStaticBox());
     {
-        m_perl_stc_lambda4->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda4->SetEOLMode(wxSTC_EOL_LF);
-        m_perl_stc_lambda4->SetWrapMode(wxSTC_WRAP_WORD);
-        m_perl_stc_lambda4->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_perl_stc_lambda4->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_perl_stc_lambda4->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda4->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda4->SetAdditionalSelectionTyping(true);
-        m_perl_stc_lambda4->SetAdditionalCaretsBlink(true);
+        m_luajit_stc_lambda->SetLexer(wxSTC_LEX_LUA);
+        m_luajit_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_luajit_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_luajit_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_luajit_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_luajit_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_luajit_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_luajit_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_luajit_stc_lambda->SetAdditionalCaretsBlink(true);
         // Sets text margin scaled appropriately for the current DPI on Windows,
         // 5 on wxGTK or wxOSX
 
-        m_perl_stc_lambda4->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda4->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda4->SetMarginWidth(1, 0);
+        m_luajit_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_luajit_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_luajit_stc_lambda->SetMarginWidth(1, 0);
         // Remove default margin
 
-        m_perl_stc_lambda4->SetMarginWidth(0, 16);
-        m_perl_stc_lambda4->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_perl_stc_lambda4->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_perl_stc_lambda4->SetMarginSensitive(0, false);
-        m_perl_stc_lambda4->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_perl_stc_lambda4->SetUseTabs(false);
-        m_perl_stc_lambda4->SetBackSpaceUnIndents(true);
+        m_luajit_stc_lambda->SetMarginWidth(0, 16);
+        m_luajit_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_luajit_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_luajit_stc_lambda->SetMarginSensitive(0, false);
+        m_luajit_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_luajit_stc_lambda->SetUseTabs(false);
+        m_luajit_stc_lambda->SetBackSpaceUnIndents(true);
     }
-    m_perl_stc_lambda4->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_perl_lambda_box4->Add(m_perl_stc_lambda4, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+    m_luajit_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_perl_lambda_box4->Add(m_luajit_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     m_perl_function_box5->Add(m_perl_lambda_box4, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer6->Add(m_perl_function_box5, wxSizerFlags().Expand().Border(wxALL));
     m_lua_bookpage->SetSizerAndFit(page_sizer6);
-
-    m_perl_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_perl_bookpage, "Perl");
-    m_perl_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-
-    auto* page_sizer4 = new wxBoxSizer(wxVERTICAL);
-
-    m_perl_radio_use_function = new wxRadioButton(m_perl_bookpage, wxID_ANY, "Use function", wxDefaultPosition, wxDefaultSize,
-        wxRB_SINGLE);
-    m_perl_function_box = new wxStaticBoxSizer(
-#if defined(__WXOSX__)
-        wxVERTICAL, m_perl_bookpage, "Use function");
-#else
-        new wxStaticBox(m_perl_bookpage, wxID_ANY, m_perl_radio_use_function), wxVERTICAL);
-#endif
-
-    auto* box_sizer12 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_perl_text_function = new wxTextCtrl(m_perl_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer12->Add(m_perl_text_function, wxSizerFlags(1).Expand().Border(wxALL));
-
-    auto* btn11 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Default");
-    box_sizer12->Add(btn11, wxSizerFlags().Border(wxALL));
-
-    auto* btn12 = new wxButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "None");
-    box_sizer12->Add(btn12, wxSizerFlags().Border(wxALL));
-
-    m_perl_function_box->Add(box_sizer12, wxSizerFlags().Expand().Border(wxALL));
-
-    m_perl_radio_use_anon_func = new wxRadioButton(m_perl_function_box->GetStaticBox(), wxID_ANY, "Anonymous sub",
-        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
-    m_perl_lambda_box = new wxStaticBoxSizer(
-#if defined(__WXOSX__)
-        wxVERTICAL, m_perl_function_box->GetStaticBox(), "Anonymous sub");
-#else
-        new wxStaticBox(m_perl_function_box->GetStaticBox(), wxID_ANY, m_perl_radio_use_anon_func), wxVERTICAL);
-#endif
-
-    auto* box_sizer4 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_perl_lambda_box->Add(box_sizer4, wxSizerFlags().Border(wxALL));
-
-    auto* staticText4 = new wxStaticText(m_perl_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
-    m_perl_lambda_box->Add(staticText4, wxSizerFlags().Border(wxALL));
-
-    m_perl_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box->GetStaticBox());
-    {
-        m_perl_stc_lambda->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
-        m_perl_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
-        m_perl_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_perl_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_perl_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda->SetAdditionalSelectionTyping(true);
-        m_perl_stc_lambda->SetAdditionalCaretsBlink(true);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
-
-        m_perl_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda->SetMarginWidth(1, 0);
-        // Remove default margin
-
-        m_perl_stc_lambda->SetMarginWidth(0, 16);
-        m_perl_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_perl_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_perl_stc_lambda->SetMarginSensitive(0, false);
-        m_perl_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_perl_stc_lambda->SetUseTabs(false);
-        m_perl_stc_lambda->SetBackSpaceUnIndents(true);
-    }
-    m_perl_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_perl_lambda_box->Add(m_perl_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
-
-    m_perl_function_box->Add(m_perl_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
-
-    page_sizer4->Add(m_perl_function_box, wxSizerFlags().Expand().Border(wxALL));
-    m_perl_bookpage->SetSizerAndFit(page_sizer4);
 
     m_python_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_python_bookpage, "Python");
@@ -514,8 +435,8 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* staticText_2 = new wxStaticText(m_py_lambda_box->GetStaticBox(), wxID_ANY, "Function:");
     m_py_lambda_box->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
-    m_py_text_lambda = new wxTextCtrl(m_py_lambda_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_py_lambda_box->Add(m_py_text_lambda, wxSizerFlags().Expand().Border(wxALL));
+    m_python_stc_lambda = new wxTextCtrl(m_py_lambda_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_py_lambda_box->Add(m_python_stc_lambda, wxSizerFlags().Expand().Border(wxALL));
 
     page_sizer_2->Add(m_py_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
     m_python_bookpage->SetSizerAndFit(page_sizer_2);
@@ -599,25 +520,25 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     page_sizer_3->Add(m_ruby_function_box, wxSizerFlags().Expand().Border(wxALL));
     m_ruby_bookpage->SetSizerAndFit(page_sizer_3);
 
-    m_rust_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_rust_bookpage, "Rust");
-    m_rust_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_typescript_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_typescript_bookpage, "TypeScript");
+    m_typescript_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* page_sizer7 = new wxBoxSizer(wxVERTICAL);
 
-    m_perl_radio_use_function6 = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition,
+    m_perl_radio_use_function6 = new wxRadioButton(m_typescript_bookpage, wxID_ANY, "Use function", wxDefaultPosition,
         wxDefaultSize, wxRB_SINGLE);
     m_perl_function_box6 = new wxStaticBoxSizer(
 #if defined(__WXOSX__)
-        wxVERTICAL, m_rust_bookpage, "Use function");
+        wxVERTICAL, m_typescript_bookpage, "Use function");
 #else
-        new wxStaticBox(m_rust_bookpage, wxID_ANY, m_perl_radio_use_function6), wxVERTICAL);
+        new wxStaticBox(m_typescript_bookpage, wxID_ANY, m_perl_radio_use_function6), wxVERTICAL);
 #endif
 
     auto* box_sizer13 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_perl_text_function6 = new wxTextCtrl(m_perl_function_box6->GetStaticBox(), wxID_ANY, wxEmptyString);
-    box_sizer13->Add(m_perl_text_function6, wxSizerFlags(1).Expand().Border(wxALL));
+    m_typescript_text_function = new wxTextCtrl(m_perl_function_box6->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer13->Add(m_typescript_text_function, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* btn17 = new wxButton(m_perl_function_box6->GetStaticBox(), wxID_ANY, "Default");
     box_sizer13->Add(btn17, wxSizerFlags().Border(wxALL));
@@ -643,47 +564,48 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     auto* staticText6 = new wxStaticText(m_perl_lambda_box5->GetStaticBox(), wxID_ANY, "Function:");
     m_perl_lambda_box5->Add(staticText6, wxSizerFlags().Border(wxALL));
 
-    m_perl_stc_lambda5 = new wxStyledTextCtrl(m_perl_lambda_box5->GetStaticBox());
+    m_typescript_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box5->GetStaticBox());
     {
-        m_perl_stc_lambda5->SetLexer(wxSTC_LEX_PERL);
-        m_perl_stc_lambda5->SetEOLMode(wxSTC_EOL_LF);
-        m_perl_stc_lambda5->SetWrapMode(wxSTC_WRAP_WORD);
-        m_perl_stc_lambda5->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-        m_perl_stc_lambda5->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-        m_perl_stc_lambda5->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda5->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
-        m_perl_stc_lambda5->SetAdditionalSelectionTyping(true);
-        m_perl_stc_lambda5->SetAdditionalCaretsBlink(true);
+        m_typescript_stc_lambda->SetLexer(wxSTC_LEX_ESCRIPT);
+        m_typescript_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_typescript_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_typescript_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_typescript_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_typescript_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_typescript_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_typescript_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_typescript_stc_lambda->SetAdditionalCaretsBlink(true);
         // Sets text margin scaled appropriately for the current DPI on Windows,
         // 5 on wxGTK or wxOSX
 
-        m_perl_stc_lambda5->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda5->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_perl_stc_lambda5->SetMarginWidth(1, 0);
+        m_typescript_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_typescript_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_typescript_stc_lambda->SetMarginWidth(1, 0);
         // Remove default margin
 
-        m_perl_stc_lambda5->SetMarginWidth(0, 16);
-        m_perl_stc_lambda5->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
-        m_perl_stc_lambda5->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
-        m_perl_stc_lambda5->SetMarginSensitive(0, false);
-        m_perl_stc_lambda5->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
-        m_perl_stc_lambda5->SetUseTabs(false);
-        m_perl_stc_lambda5->SetBackSpaceUnIndents(true);
+        m_typescript_stc_lambda->SetMarginWidth(0, 16);
+        m_typescript_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_typescript_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_typescript_stc_lambda->SetMarginSensitive(0, false);
+        m_typescript_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_typescript_stc_lambda->SetUseTabs(false);
+        m_typescript_stc_lambda->SetBackSpaceUnIndents(true);
     }
-    m_perl_stc_lambda5->SetMinSize(FromDIP(wxSize(400, -1)));
-    m_perl_lambda_box5->Add(m_perl_stc_lambda5, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+    m_typescript_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_perl_lambda_box5->Add(m_typescript_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     m_perl_function_box6->Add(m_perl_lambda_box5, wxSizerFlags(1).Expand().Border(wxALL));
 
     page_sizer7->Add(m_perl_function_box6, wxSizerFlags().Expand().Border(wxALL));
-    m_rust_bookpage->SetSizerAndFit(page_sizer7);
+    m_typescript_bookpage->SetSizerAndFit(page_sizer7);
 
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
-    parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
+    parent_sizer->Add(CreateSeparatedSizer(stdBtn),
+        wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     if (pos != wxDefaultPosition)
     {
@@ -714,7 +636,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     // Event handlers
     Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
     btn->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
-    btn11->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn13->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn15->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn17->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
@@ -723,7 +644,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     btn7->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn9->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn10->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
-    btn12->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn14->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn16->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn18->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
@@ -737,14 +657,12 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     Bind(wxEVT_INIT_DIALOG, &EventHandlerDlgBase::OnInit, this);
     m_cpp_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseCppFunction, this);
     m_cpp_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseCppLambda, this);
-    m_perl_radio_use_anon_func->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_perl_radio_use_anon_func2->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_perl_radio_use_anon_func3->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_perl_radio_use_anon_func4->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_perl_radio_use_anon_func5->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_py_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonFunction, this);
     m_py_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonLambda, this);
-    m_perl_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_perl_radio_use_function2->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_perl_radio_use_function3->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_perl_radio_use_function4->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
@@ -753,15 +671,14 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_ruby_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_cpp_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_perl_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_perl_text_function2->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_perl_text_function3->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_perl_text_function4->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_perl_text_function5->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_perl_text_function6->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_fortran_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_go_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_julia_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_lua_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_py_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
-    m_py_text_lambda->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_python_stc_lambda->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_ruby_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_typescript_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
 
     return true;
 }

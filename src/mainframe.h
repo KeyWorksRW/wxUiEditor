@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -48,12 +48,12 @@ class ModifyProperties;
 // Declared in clipboard.h. Returns true if the external clipboard condtains data that we can
 // paste. This will either be from a different instance of wxUiEditor, or from wxFormBuilder
 // or wxSmith.
-auto isClipboardDataAvailable() -> bool;
+bool isClipboardDataAvailable();
 
 // Warning! This MUST be at least 3!
 inline constexpr int STATUS_PANELS = 3;
 
-inline constexpr auto txt_main_window_config = "/main_window";
+inline constexpr const char* txt_main_window_config = "/main_window";
 
 namespace evt_flags
 {
@@ -72,38 +72,36 @@ public:
     MainFrame();
     ~MainFrame() override;
     MainFrame(const MainFrame&) = delete;
-    auto operator=(const MainFrame&) -> MainFrame& = delete;
+    MainFrame& operator=(const MainFrame&) = delete;
     MainFrame(MainFrame&&) = delete;
-    auto operator=(MainFrame&&) -> MainFrame& = delete;
+    MainFrame& operator=(MainFrame&&) = delete;
 
     wxWindow* getWindow() { return wxDynamicCast(this, wxWindow); }
 
-    auto getMockup() -> MockupParent* { return m_mockupPanel; }
-    auto get_PropPanel() -> PropGridPanel* { return m_property_panel; }
-    auto getNavigationPanel() -> NavigationPanel* { return m_nav_panel; }
-    auto getRibbonPanel() -> RibbonPanel* { return m_ribbon_panel; }
+    MockupParent* getMockup() { return m_mockupPanel; }
+    PropGridPanel* get_PropPanel() { return m_property_panel; }
+    NavigationPanel* getNavigationPanel() { return m_nav_panel; }
+    RibbonPanel* getRibbonPanel() { return m_ribbon_panel; }
 
-    auto GetFirstCodePanel() -> BasePanel*;
-    auto GetCppPanel() -> BasePanel* { return m_cppPanel; }
+    BasePanel* GetFirstCodePanel();
 
-    auto GetPythonPanel() -> BasePanel* { return m_pythonPanel; }
+    BasePanel* GetCppPanel() { return m_cppPanel; }
+    BasePanel* GetFortranPanel() { return m_fortranPanel; }
+    BasePanel* GetGoPanel() { return m_goPanel; }
+    BasePanel* GetJuliaPanel() { return m_juliaPanel; }
+    BasePanel* GetLuaJITPanel() { return m_luajitPanel; }
+    BasePanel* GetPythonPanel() { return m_pythonPanel; }
+    BasePanel* GetRubyPanel() { return m_rubyPanel; }
+    BasePanel* GetTypeScriptPanel() { return m_typescriptPanel; }
 
-    auto GetFortranPanel() -> BasePanel* { return m_fortranPanel; }
-    auto GetGoPanel() -> BasePanel* { return m_goPanel; }
-    auto GetJuliaPanel() -> BasePanel* { return m_juliaPanel; }
-    auto GetLuaJITPanel() -> BasePanel* { return m_luajitPanel; }
-    auto GetPerlPanel() -> BasePanel* { return m_perlPanel; }
-    auto GetRubyPanel() -> BasePanel* { return m_rubyPanel; }
-    auto GetRustPanel() -> BasePanel* { return m_rustPanel; }
+    BasePanel* GetXrcPanel() { return m_xrcPanel; }
 
-    auto GetXrcPanel() -> BasePanel* { return m_xrcPanel; }
+    void UpdateLanguagePanels();
 
-    auto UpdateLanguagePanels() -> void;
+    wxAuiNotebook* getTopNotebook() { return m_notebook; }
+    DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
 
-    auto getTopNotebook() -> wxAuiNotebook* { return m_notebook; }
-    auto getDocViewPanel() -> DocViewPanel* { return m_docviewPanel; }
-
-    auto getImportPanel() -> ImportPanel* { return m_importPanel; }
+    ImportPanel* getImportPanel() { return m_importPanel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler)
     {
@@ -146,13 +144,13 @@ public:
 
     UndoStack& getUndoStack() { return m_undo_stack; }
 
-    auto getSelectedNodePtr() -> const NodeSharedPtr& { return m_selected_node; };
-    auto getSelectedNode() -> Node* { return (m_selected_node ? m_selected_node.get() : nullptr); };
-    auto getSelectedForm() -> Node*;
+    const NodeSharedPtr& getSelectedNodePtr() { return m_selected_node; };
+    Node* getSelectedNode() { return (m_selected_node ? m_selected_node.get() : nullptr); };
+    Node* getSelectedForm();
 
-    auto getClipboardPtr() -> NodeSharedPtr { return (m_clipboard ? m_clipboard : nullptr); }
-    auto getClipboard() -> Node* { return (m_clipboard ? m_clipboard.get() : nullptr); }
-    auto getClipHash() -> size_t { return (m_clipboard ? m_clip_hash : 0); }
+    NodeSharedPtr getClipboardPtr() { return (m_clipboard ? m_clipboard : nullptr); }
+    Node* getClipboard() { return (m_clipboard ? m_clipboard.get() : nullptr); }
+    size_t getClipHash() { return (m_clipboard ? m_clip_hash : 0); }
 
     void setClipboardData(NodeSharedPtr node, size_t hash)
     {
@@ -165,14 +163,14 @@ public:
     //
     // Returns true if selection changed, false if already selected or selection
     // removed.
-    auto SelectNode(Node* node, size_t flags = evt_flags::fire_event) -> bool;
+    bool SelectNode(Node* node, size_t flags = evt_flags::fire_event);
 
     bool SelectNode(const NodeSharedPtr& node, size_t flags = evt_flags::fire_event)
     {
         return SelectNode(node.get(), flags);
     }
 
-    auto MoveNode(MoveDirection where, bool check_only = false) -> bool
+    bool MoveNode(MoveDirection where, bool check_only = false)
     {
         if (!m_selected_node)
         {
@@ -194,9 +192,9 @@ public:
 
     // If there is a selection, this will create a new child node with special handling for
     // specific components.
-    auto CreateToolNode(GenEnum::GenName name) -> void;
+    void CreateToolNode(GenEnum::GenName name);
 
-    auto getFileHistory() -> wxFileHistory& { return m_FileHistory; }
+    wxFileHistory& getFileHistory() { return m_FileHistory; }
 
     // This does an exact comparison, so file needs to be identical to what was added to the
     // history.
@@ -206,38 +204,38 @@ public:
     // that aligns with the PropertyGrid panel.
     void setStatusField(const wxString& text, int position = -1);
 
-    auto GetMenuDpiSize() -> const wxSize& { return m_dpi_menu_size; }
-    auto GetRibbonDpiSize() -> const wxSize& { return m_dpi_ribbon_size; }
-    auto GetToolbarDpiSize() -> const wxSize& { return m_dpi_toolbar_size; }
+    const wxSize& GetMenuDpiSize() { return m_dpi_menu_size; }
+    const wxSize& GetRibbonDpiSize() { return m_dpi_ribbon_size; }
+    const wxSize& GetToolbarDpiSize() { return m_dpi_toolbar_size; }
 
     // This is the only variable length field, and therefore can hold the most text
     void setRightStatusField(const wxString& text) { setStatusField(text, m_posRightStatusField); }
 
-    [[nodiscard]] auto getDebugStatusField() const -> int { return m_posRightStatusField; }
+    [[nodiscard]] int getDebugStatusField() const { return m_posRightStatusField; }
     void UpdateStatusWidths();
 
     void PasteNode(Node* parent);
 
-    auto CanCopyNode() -> bool;
+    bool CanCopyNode();
 
     // Returns true if there is a selected node, and there is data in either the internal or
     // external clipboard.
-    auto CanPasteNode() -> bool;
+    bool CanPasteNode();
 
     // Returns true if there is data in either the internal or external clipboard.
-    auto isPasteAvailable() -> bool { return (m_clipboard.get() || isClipboardDataAvailable()); }
+    bool isPasteAvailable() { return (m_clipboard.get() || isClipboardDataAvailable()); }
 
     // This does not use the internal clipboard
 
-    auto setStatusText(const wxString& txt, int pane = 1) -> void;
-    auto OnCreateStatusBar(int number, long style, wxWindowID win_id, const wxString& name)
-        -> wxStatusBar* override;
+    void setStatusText(const wxString& text, int pane = 1);
+    wxStatusBar* OnCreateStatusBar(int number, long style, wxWindowID win_id,
+                                   const wxString& name) override;
 
-    [[nodiscard]] auto SaveWarning() -> bool;
-    auto UpdateFrame() -> void;
-    auto OnProjectLoaded() -> void;
+    [[nodiscard]] bool SaveWarning();
+    void UpdateFrame();
+    void OnProjectLoaded();
 
-    [[nodiscard]] auto isModified() const -> bool { return m_isProject_modified; }
+    [[nodiscard]] bool isModified() const { return m_isProject_modified; }
 
     // Used by LoadProject when an old version was converted
     void setModified()
@@ -248,30 +246,30 @@ public:
 
     void setImportedFlag(bool imported = true) { m_isImported = imported; }
 
-    auto GetPropInfoBar() -> wxInfoBar* { return m_info_bar; }
+    wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
     // Shows info bar message above code display panels
     // icon is one of wxICON_INFORMATION, wxICON_WARNING, wxICON_ERROR, or wxICON_QUESTION
     void ShowInfoBarMsg(std::string_view msg, int icon = wxICON_WARNING);
     void DismissInfoBar();
 
-    auto GetAppendImportHistory() -> wxFileHistory* { return &m_ImportHistory; }
+    wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
 
     void ProjectLoaded();
     void ProjectSaved();
 
-    auto PreviewCpp(Node* form_node) -> void;
+    void PreviewCpp(Node* form_node);
 
     // The following event handlers are used when previewing an XRC form
 
-    auto OnXrcKeyUp(wxKeyEvent& event) -> void;
-    auto OnPreviewWinClose(wxCloseEvent& event) -> void;
+    void OnXrcKeyUp(wxKeyEvent& event);
+    void OnPreviewWinClose(wxCloseEvent& event);
 
     // If the Window is deactivated (switching to another window will do this), this will
     // destroy the preview window.
-    auto OnPreviewWinActivate(wxActivateEvent& event) -> void;
+    void OnPreviewWinActivate(wxActivateEvent& event);
 
-    void setPreviewDlgPtr(wxDialog* dlg) { m_pxrc_dlg = dlg; }
+    void setPreviewDlgPtr(wxDialog* dialog) { m_pxrc_dlg = dialog; }
     void setPreviewWinPtr(wxFrame* frame) { m_pxrc_win = frame; }
 
     void OnPreviewXrc(wxCommandEvent& event) override;
@@ -305,7 +303,7 @@ public:
 
     */
 
-    auto UpdateWakaTime(bool FileSavedEvent = false) -> void;
+    void UpdateWakaTime(bool FileSavedEvent = false);
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
@@ -364,15 +362,15 @@ protected:
 
     wxWindow* CreateNoteBook(wxWindow* parent);
 
-    auto CreateSplitters() -> void;
+    void CreateSplitters();
 
-    auto UpdateLayoutTools() -> void;
-    auto UpdateMoveMenu() -> void;
+    void UpdateLayoutTools();
+    void UpdateMoveMenu();
 
 private:
     // Helper methods for OnGenerateCode
-    static auto GenerateFromOutputType(GenResults& results) -> bool;
-    auto GenerateFromDialog(GenResults& results) -> bool;
+    static bool GenerateFromOutputType(GenResults& results);
+    bool GenerateFromDialog(GenResults& results);
     static void SaveGenerationPreferences();
     void ShowGenerationResults(const GenResults& results);
     void UpdateGenerationStatus();
@@ -399,8 +397,7 @@ private:
     BasePanel* m_goPanel { nullptr };
     BasePanel* m_juliaPanel { nullptr };
     BasePanel* m_luajitPanel { nullptr };
-    BasePanel* m_perlPanel { nullptr };
-    BasePanel* m_rustPanel { nullptr };
+    BasePanel* m_typescriptPanel { nullptr };
 
     BasePanel* m_xrcPanel { nullptr };
 
@@ -465,14 +462,14 @@ private:
 };
 
 // Returns a reference to the mainframe window
-inline auto wxGetFrame() -> MainFrame&
+inline MainFrame& wxGetFrame()
 {
     ASSERT_MSG(wxGetApp().getMainFrame(), "MainFrame hasn't been created yet.");
     return *wxGetApp().getMainFrame();
 }
 
 // Returns a pointer to the mainframe window or nullptr if it hasn't been created yet
-inline auto wxGetMainFrame() -> MainFrame*
+inline MainFrame* wxGetMainFrame()
 {
     return wxGetApp().getMainFrame();
 }

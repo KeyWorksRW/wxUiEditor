@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog to display if wxUiEditor is launched with no arguments
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -33,8 +33,8 @@ public:
         start_empty,
     };
 
-    [[nodiscard]] auto GetCommand() const -> Command { return m_command; }
-    [[nodiscard]] auto GetProjectFile() -> wxFileName& { return m_value; }
+    [[nodiscard]] Command GetCommand() const { return m_command; }
+    [[nodiscard]] wxFileName& GetProjectFile() { return m_value; }
 
 protected:
     // Event handlers
@@ -56,4 +56,4 @@ private:
                           const wxFileName& project_file, bool use_standard_colors);
 };
 
-auto DsisplayStartupDlg(wxWindow* parent) -> bool;
+bool DisplayStartupDlg(wxWindow* parent);

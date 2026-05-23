@@ -362,12 +362,11 @@ auto isConvertibleMime(const wxue::string& suffix) -> bool
 extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
 extern const char* g_python_keywords;
 extern const char* g_ruby_keywords;
-extern const char* g_perl_keywords;
+extern const char* g_typescript_keywords;
 extern const char* g_fortran_keywords;
 extern const char* g_go_keywords;
 extern const char* g_julia_keywords;
 extern const char* g_luajit_keywords;
-extern const char* g_rust_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;
@@ -376,8 +375,7 @@ std::set<std::string> g_set_fortran_keywords;
 std::set<std::string> g_set_go_keywords;
 std::set<std::string> g_set_julia_keywords;
 std::set<std::string> g_set_luajit_keywords;
-std::set<std::string> g_set_perl_keywords;
-std::set<std::string> g_set_rust_keywords;
+std::set<std::string> g_set_typescript_keywords;
 
 auto isValidVarName(const std::string& str, GenLang language) -> bool
 {
@@ -430,13 +428,9 @@ auto isValidVarName(const std::string& str, GenLang language) -> bool
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
     }
-    if (language == GEN_LANG_PERL)
+    if (language == GEN_LANG_TYPESCRIPT)
     {
-        return lambda(g_set_perl_keywords, g_perl_keywords);
-    }
-    if (language == GEN_LANG_RUST)
-    {
-        return lambda(g_set_rust_keywords, g_rust_keywords);
+        return lambda(g_set_typescript_keywords, g_typescript_keywords);
     }
 
     return true;
@@ -627,10 +621,8 @@ auto GenLangToString(GenLang language) -> std::string_view
             return "Julia";
         case GEN_LANG_LUAJIT:
             return "LuaJIT";
-        case GEN_LANG_PERL:
-            return "Perl";
-        case GEN_LANG_RUST:
-            return "Rust";
+        case GEN_LANG_TYPESCRIPT:
+            return "TypeScript";
         case GEN_LANG_XRC:
             return "XRC";
         default:
@@ -674,15 +666,10 @@ auto ConvertToGenLang(wxue::string_view language) -> GenLang
     {
         return GEN_LANG_LUAJIT;
     }
-    if (language == "Perl" || language.starts_with("kwxPerl") ||
-        language.starts_with("Folder kwxPerl"))
+    if (language == "TypeScript" || language.starts_with("kwxTypeScript") ||
+        language.starts_with("Folder kwxTypeScript"))
     {
-        return GEN_LANG_PERL;
-    }
-    if (language == "Rust" || language.starts_with("kwxRust") ||
-        language.starts_with("Folder kwxRust"))
-    {
-        return GEN_LANG_RUST;
+        return GEN_LANG_TYPESCRIPT;
     }
     if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
     {
@@ -712,10 +699,8 @@ auto GetLanguageExtension(GenLang language) -> std::string
             return ".jl";
         case GEN_LANG_LUAJIT:
             return ".lua";
-        case GEN_LANG_PERL:
-            return ".pl";
-        case GEN_LANG_RUST:
-            return ".rs";
+        case GEN_LANG_TYPESCRIPT:
+            return ".ts";
         case GEN_LANG_XRC:
             return ".xrc";
 

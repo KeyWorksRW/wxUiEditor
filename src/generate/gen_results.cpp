@@ -29,16 +29,15 @@
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_cpp.h"
-#include "gen_fortran.h"  // FortranCodeGenerator -- Generate Fortran code
-#include "gen_go.h"       // GoCodeGenerator -- Generate Go code
-#include "gen_julia.h"    // JuliaCodeGenerator -- Generate Julia code
-#include "gen_luajit.h"   // LuaJITCodeGenerator -- Generate LuaJIT code
-#include "gen_perl.h"     // PerlCodeGenerator -- Generate Perl code
-#include "gen_python.h"   // PythonCodeGenerator -- Generate wxPython code
-#include "gen_ruby.h"     // RubyCodeGenerator -- Generate wxRuby code
-#include "gen_rust.h"     // RustCodeGenerator -- Generate Rust code
-#include "gen_xrc.h"      // XrcCodeGenerator -- Generate XRC code
-#include "write_code.h"   // WriteCode -- Write code to a string
+#include "gen_fortran.h"     // FortranCodeGenerator -- Generate Fortran code
+#include "gen_go.h"          // GoCodeGenerator -- Generate Go code
+#include "gen_julia.h"       // JuliaCodeGenerator -- Generate Julia code
+#include "gen_luajit.h"      // LuaJITCodeGenerator -- Generate LuaJIT code
+#include "gen_python.h"      // PythonCodeGenerator -- Generate wxPython code
+#include "gen_ruby.h"        // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_typescript.h"  // TypeScriptCodeGenerator -- Generate TypeScript code
+#include "gen_xrc.h"         // XrcCodeGenerator -- Generate XRC code
+#include "write_code.h"      // WriteCode -- Write code to a string
 
 void GenResults::SetNodes(Node* startNode)
 {
@@ -340,12 +339,8 @@ auto GenResults::GenerateForDisplay() -> bool
             code_generator = std::make_unique<LuaJITCodeGenerator>(form);
             break;
 
-        case GEN_LANG_PERL:
-            code_generator = std::make_unique<PerlCodeGenerator>(form);
-            break;
-
-        case GEN_LANG_RUST:
-            code_generator = std::make_unique<RustCodeGenerator>(form);
+        case GEN_LANG_TYPESCRIPT:
+            code_generator = std::make_unique<TypeScriptCodeGenerator>(form);
             break;
 
         case GEN_LANG_XRC:
@@ -626,12 +621,8 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             code_generator = std::make_unique<LuaJITCodeGenerator>(form);
             break;
 
-        case GEN_LANG_PERL:
-            code_generator = std::make_unique<PerlCodeGenerator>(form);
-            break;
-
-        case GEN_LANG_RUST:
-            code_generator = std::make_unique<RustCodeGenerator>(form);
+        case GEN_LANG_TYPESCRIPT:
+            code_generator = std::make_unique<TypeScriptCodeGenerator>(form);
             break;
 
         case GEN_LANG_XRC:
@@ -666,11 +657,8 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
         case GEN_LANG_LUAJIT:
             file_ext = ".lua";
             break;
-        case GEN_LANG_PERL:
-            file_ext = ".pl";
-            break;
-        case GEN_LANG_RUST:
-            file_ext = ".rs";
+        case GEN_LANG_TYPESCRIPT:
+            file_ext = ".ts";
             break;
         case GEN_LANG_XRC:
             file_ext = ".xrc";

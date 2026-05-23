@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStyledText (scintilla) generate
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,8 @@
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 #include <wx/sizer.h>              // provide wxSizer class for layout
 #include <wx/stc/stc.h>            // A wxWidgets implementation of Scintilla.
+
+#include <array>
 
 #include "gen_styled_text.h"
 
@@ -33,6 +35,7 @@ std::map<std::string, int> g_stc_lexers = {
     { "ADA", 20 },
     { "APDL", 61 },
     { "AS", 113 },
+    { "ASCIIDOC", 134 },
     { "ASM", 34 },
     { "ASN1", 63 },
     { "ASYMPTOTE", 85 },
@@ -46,18 +49,20 @@ std::map<std::string, int> g_stc_lexers = {
     { "BLITZBASIC", 66 },
     { "BULLANT", 27 },
     { "CAML", 65 },
+    { "CIL", 127 },
     { "CLW", 45 },
     { "CLWNOCASE", 46 },
     { "CMAKE", 80 },
     { "COBOL", 92 },
     { "COFFEESCRIPT", 102 },
     { "CONF", 17 },
-    { "CONTAINER", 0 },
     { "CPP", 3 },
     { "CPPNOCASE", 35 },
     { "CSOUND", 74 },
     { "CSS", 38 },
     { "D", 79 },
+    { "DART", 138 },
+    { "DATAFLEX", 129 },
     { "DIFF", 16 },
     { "DMAP", 112 },
     { "DMIS", 114 },
@@ -73,13 +78,18 @@ std::map<std::string, int> g_stc_lexers = {
     { "FORTH", 52 },
     { "FORTRAN", 36 },
     { "FREEBASIC", 75 },
+    { "FSHARP", 132 },
     { "GAP", 81 },
+    { "GDSCRIPT", 135 },
     { "GUI4CLI", 58 },
     { "HASKELL", 68 },
+    { "HOLLYWOOD", 130 },
     { "HTML", 4 },
     { "IHEX", 118 },
+    { "INDENT", 122 },
     { "INNOSETUP", 76 },
     { "JSON", 120 },
+    { "JULIA", 133 },
     { "KIX", 57 },
     { "KVIRC", 110 },
     { "LATEX", 14 },
@@ -92,15 +102,17 @@ std::map<std::string, int> g_stc_lexers = {
     { "MAKEFILE", 11 },
     { "MARKDOWN", 98 },
     { "MATLAB", 32 },
+    { "MAXIMA", 123 },
     { "METAPOST", 50 },
     { "MMIXAL", 44 },
     { "MODULA", 101 },
     { "MSSQL", 55 },
     { "MYSQL", 89 },
+    { "NIM", 126 },
     { "NIMROD", 96 },
+    { "NIX", 140 },
     { "NNCRONTAB", 26 },
     { "NSIS", 43 },
-    { "NULL", 1 },
     { "OCTAVE", 54 },
     { "OPAL", 77 },
     { "OSCRIPT", 106 },
@@ -119,11 +131,14 @@ std::map<std::string, int> g_stc_lexers = {
     { "PUREBASIC", 67 },
     { "PYTHON", 2 },
     { "R", 86 },
+    { "RAKU", 131 },
     { "REBOL", 71 },
     { "REGISTRY", 115 },
     { "RUBY", 22 },
     { "RUST", 111 },
+    { "SAS", 125 },
     { "SCRIPTOL", 33 },
+    { "SINEX", 141 },
     { "SMALLTALK", 72 },
     { "SML", 97 },
     { "SORCUS", 94 },
@@ -131,6 +146,7 @@ std::map<std::string, int> g_stc_lexers = {
     { "SPICE", 78 },
     { "SQL", 7 },
     { "SREC", 117 },
+    { "STATA", 124 },
     { "STTXT", 109 },
     { "TACL", 93 },
     { "TADS3", 70 },
@@ -139,21 +155,25 @@ std::map<std::string, int> g_stc_lexers = {
     { "TCMD", 103 },
     { "TEHEX", 119 },
     { "TEX", 49 },
+    { "TOML", 136 },
+    { "TROFF", 137 },
     { "TXT2TAGS", 99 },
     { "VB", 8 },
     { "VBSCRIPT", 28 },
     { "VERILOG", 56 },
     { "VHDL", 64 },
     { "VISUALPROLOG", 107 },
+    { "X12", 128 },
     { "XCODE", 13 },
     { "XML", 5 },
     { "YAML", 48 },
+    { "ZIG", 139 }
 
 };
 
 // clang-format off
 
-inline constexpr const auto txt_styled_sample = R"===(
+constexpr const char* txt_styled_sample = R"===(
 // Sample text so that you can view effects of various settings
 
 inline wxImage wxueImage(const unsigned char* long_parameter_name,size_t another_long_parameter_size_data)
@@ -181,7 +201,10 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_stc_lexer) && node->as_string(prop_stc_lexer) != "NULL")
     {
-        scintilla->SetLexer(g_stc_lexers.at(node->as_string(prop_stc_lexer)));
+        if (auto it = g_stc_lexers.find(node->as_string(prop_stc_lexer)); it != g_stc_lexers.end())
+        {
+            scintilla->SetLexer(it->second);
+        }
     }
 
     //////////// Wrap category settings ////////////
@@ -217,7 +240,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->as_string(prop_line_margin) != "none")
     {
-        auto margin = node->as_string(prop_line_margin).atoi();
+        const int margin = node->as_string(prop_line_margin).atoi();
 
         scintilla->SetMarginType(margin, wxSTC_MARGIN_NUMBER);
 
@@ -234,15 +257,15 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->as_string(prop_fold_margin) != "none" && node->as_int(prop_fold_width))
     {
-        auto margin = node->as_string(prop_fold_margin).atoi();
+        const int margin = node->as_string(prop_fold_margin).atoi();
 
         scintilla->SetProperty("fold", "1");
 
         if (node->as_string(prop_fold_marker_style) == "arrow" ||
             node->as_string(prop_fold_marker_style) == "plus/minus")
         {
-            int symbol_folder;
-            int symbol_open;
+            int symbol_folder {};
+            int symbol_open {};
 
             if (node->as_string(prop_fold_marker_style) == "plus/minus")
             {
@@ -284,7 +307,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
             // plus/minus symbols. Note that the joining lines won't show up at all unless we set
             // their background to the default style foreground color.
 
-            auto clr_foreground = scintilla->StyleGetForeground(wxSTC_STYLE_DEFAULT);
+            const wxColour clr_foreground = scintilla->StyleGetForeground(wxSTC_STYLE_DEFAULT);
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDER, clr_foreground);
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPEN, clr_foreground);
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPENMID, clr_foreground);
@@ -294,9 +317,9 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDERSUB, clr_foreground);
             scintilla->MarkerSetBackground(wxSTC_MARKNUM_FOLDERTAIL, clr_foreground);
 
-            auto clr_background = node->HasValue(prop_fold_marker_colour) ?
-                                      node->as_wxColour(prop_fold_marker_colour) :
-                                      scintilla->StyleGetBackground(wxSTC_STYLE_DEFAULT);
+            const wxColour clr_background = node->HasValue(prop_fold_marker_colour) ?
+                                                node->as_wxColour(prop_fold_marker_colour) :
+                                                scintilla->StyleGetBackground(wxSTC_STYLE_DEFAULT);
             scintilla->MarkerSetForeground(wxSTC_MARKNUM_FOLDER, clr_background);
             scintilla->MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPEN, clr_background);
             scintilla->MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPENMID, clr_background);
@@ -343,7 +366,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->as_string(prop_symbol_margin) != "none")
     {
-        auto margin = node->as_string(prop_symbol_margin).atoi();
+        const int margin = node->as_string(prop_symbol_margin).atoi();
 
         scintilla->SetMarginWidth(margin, 16);
         scintilla->SetMarginType(margin, wxSTC_MARGIN_SYMBOL);
@@ -352,7 +375,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     if (node->as_string(prop_separator_margin) != "none")
     {
-        auto margin = node->as_string(prop_separator_margin).atoi();
+        const int margin = node->as_string(prop_separator_margin).atoi();
 
         scintilla->SetMarginWidth(margin, 1);
         scintilla->SetMarginType(margin, wxSTC_MARGIN_FORE);
@@ -360,7 +383,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->as_string(prop_custom_margin) != "none")
     {
-        auto margin = node->as_string(prop_custom_margin).atoi();
+        const int margin = node->as_string(prop_custom_margin).atoi();
         scintilla->SetMarginWidth(margin, node->as_int(prop_custom_width));
 
         scintilla->SetMarginType(margin, node->as_mockup(prop_custom_type, "stc_"));
@@ -401,7 +424,6 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     scintilla->SetTabWidth(node->as_int(prop_tab_width));
     scintilla->SetTabIndents((node->as_int(prop_tab_indents)));
     scintilla->SetBackSpaceUnIndents((node->as_int(prop_backspace_unindents)));
-    scintilla->SetIndent(node->as_int(prop_tab_width));
 
     //////////// General settings ////////////
 
@@ -457,27 +479,27 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     else if (node->as_string(prop_stc_lexer) == "PYTHON" ||
              node->as_string(prop_stc_lexer) == "CMAKE")
     {
-        sample.Replace("//", "#");
+        std::ignore = sample.Replace("//", "#");
         scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
     }
     else if (node->as_string(prop_stc_lexer) == "RUBY")
     {
-        sample.Replace("//", "#");
+        std::ignore = sample.Replace("//", "#");
         scintilla->StyleSetForeground(wxSTC_RB_COMMENTLINE, wxColour(0, 128, 0));
     }
     else if (node->as_string(prop_stc_lexer) == "LUA")
     {
-        sample.Replace("//", "--");
+        std::ignore = sample.Replace("//", "--");
         scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
     }
     else if (node->as_string(prop_stc_lexer) == "BATCH")
     {
-        sample.Replace("//", "REM");
+        std::ignore = sample.Replace("//", "REM");
         scintilla->StyleSetForeground(wxSTC_BAT_COMMENT, wxColour(0, 128, 0));
     }
     else if (node->as_string(prop_stc_lexer) == "HTML" || node->as_string(prop_stc_lexer) == "XML")
     {
-        sample.Replace("//", "<!--");
+        std::ignore = sample.Replace("//", "<!--");
         sample << " -->";
         scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
     }
@@ -497,77 +519,15 @@ bool StyledTextGenerator::ConstructionCode(Code& code)
 
     // If the last parameter is wxID_ANY, then remove it. This is the default value, so it's
     // not needed.
-    code.Replace(", wxID_ANY)", ")");
+    std::ignore = code.Replace(", wxID_ANY)", ")");
 
     return true;
 }
 
-bool StyledTextGenerator::SettingsCode(Code& code)
+// Helper for generating wrap category settings
+// Called by: SettingsCode
+static void GenerateWrapSettings(Code& code)
 {
-    Node* node = code.node();
-
-    // There are potentially a LOT of settings, so we put them all in a bracket pair to make them
-    // easier to identify. This is only done for C++ as Python syntax checkers don't like
-    code.OpenBrace();
-
-    if (code.HasValue(prop_stc_lexer) && !code.is_PropValue(prop_stc_lexer, "NULL"))
-    {
-        code.Eol(eol_if_needed)
-            .NodeName()
-            .Function("SetLexer(")
-            .Add("wxSTC_LEX_")
-            .as_string(prop_stc_lexer)
-            .EndFunction();
-    }
-
-    // Default is false, so only set if true
-    if (code.IsTrue(prop_read_only))
-    {
-        code.Eol(eol_if_needed).NodeName().Function("SetReadOnly(").True().EndFunction();
-    }
-
-    if (code.HasValue(prop_eol_mode))
-    {
-        code.Eol(eol_if_needed).NodeName();
-        if (code.is_ruby())
-        {
-            // code.Function() would convert EOL to e_o_l
-            code.Str(".set_eol_mode(");
-        }
-        else
-        {
-            code.Function("SetEOLMode(");
-        }
-        code.AddConstant(prop_eol_mode, "stc_").EndFunction();
-    }
-
-    // Default is false, so only set if true
-    if (code.IsTrue(prop_view_eol))
-    {
-        // REVIEW wxPython 3.2.0 does not support SetViewEol
-        if (!code.is_python())
-        {
-            code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").True().EndFunction();
-        }
-    }
-
-    if (!code.is_PropValue(prop_view_whitespace, "invisible"))
-    {
-        code.Eol(eol_if_needed)
-            .NodeName()
-            .Function("SetViewWhiteSpace(")
-            .AddConstant(prop_view_whitespace, "stc_")
-            .EndFunction();
-        if (code.IsTrue(prop_view_tab_strikeout))
-        {
-            code.Eol()
-                .NodeName()
-                .Function("SetTabDrawMode(")
-                .Add("wxSTC_TD_STRIKEOUT")
-                .EndFunction();
-        }
-    }
-
     //////////// Wrap category settings ////////////
 
     if (!code.is_PropValue(prop_stc_wrap_mode, "no wrapping"))
@@ -582,7 +542,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     if (code.HasValue(prop_stc_wrap_visual_flag))
     {
         if (auto result = code.node()->as_constant(prop_stc_wrap_visual_flag, "stc_");
-            result.size())
+            !result.empty())
         {
             code.Eol(eol_if_needed)
                 .NodeName()
@@ -595,7 +555,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     if (code.HasValue(prop_stc_wrap_visual_location))
     {
         if (auto result = code.node()->as_constant(prop_stc_wrap_visual_location, "stc_");
-            result.size())
+            !result.empty())
         {
             code.Eol(eol_if_needed)
                 .NodeName()
@@ -622,153 +582,13 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             .as_string(prop_stc_wrap_start_indent)
             .EndFunction();
     }
+}
 
-    //////////// Selection category settings ////////////
-    if (code.IsTrue(prop_multiple_selections))
-    {
-        code.Eol(eol_if_needed)
-            .NodeName()
-            .Function("SetMultipleSelection(")
-            .Add("wxSTC_MULTIPASTE_EACH")
-            .EndFunction();
-        if (code.IsTrue(prop_paste_multiple))
-        {
-            code.Eol()
-                .NodeName()
-                .Function("SetMultiPaste(")
-                .Add("wxSTC_MULTIPASTE_EACH")
-                .EndFunction();
-        }
-        code.Eol().NodeName().Function("SetAdditionalSelectionTyping(");
-        code.TrueFalseIf(prop_additional_carets_blink).EndFunction();
-
-        if (!code.IsTrue(prop_additional_carets_visible))
-        {
-            code.Eol().NodeName().Function("SetAdditionalCaretsVisible(").False().EndFunction();
-        }
-        else
-        {
-            code.Eol().NodeName().Function("SetAdditionalCaretsBlink(");
-            code.TrueFalseIf(prop_additional_carets_blink).EndFunction();
-        }
-    }
-    //////////// Margin category settings ////////////
-
-    // The default margin is 1, so if that's what it is set to, then don't output any code
-    if (!code.is_PropValue(prop_stc_left_margin_width, 1))
-    {
-        if (code.is_PropValue(prop_stc_left_margin_width, 5))
-        {
-            code.AddComment(
-                "Sets text margin scaled appropriately for the current DPI on Windows,");
-            code.AddComment("5 on wxGTK or wxOSX");
-            code.Eol()
-                .NodeName()
-                .Function("SetMarginLeft(")
-                .Add("wxSizerFlags")
-                .ClassMethod("GetDefaultBorder()")
-                .EndFunction();
-        }
-        else
-        {
-            code.Eol(eol_if_needed)
-                .NodeName()
-                .Function("SetMarginLeft(")
-                .as_string(prop_stc_left_margin_width)
-                .EndFunction();
-        }
-    }
-
-    if (!code.is_PropValue(prop_stc_right_margin_width, 1))
-    {
-        if (!code.is_PropValue(prop_stc_left_margin_width, 5) &&
-            code.is_PropValue(prop_stc_right_margin_width, 5))
-        {
-            code.AddComment("Sets text margin scaled appropriately for the current DPI on Windows");
-            code.AddComment("5 on wxGTK or wxOSX");
-        }
-        code.Eol(eol_if_needed).NodeName().Function("SetMarginRight(");
-        if (code.is_PropValue(prop_stc_right_margin_width, 5))
-        {
-            code.Add("wxSizerFlags").ClassMethod("GetDefaultBorder()").EndFunction();
-        }
-        else
-        {
-            code.as_string(prop_stc_right_margin_width).EndFunction();
-        }
-    }
-
-    if (code.IsFalse(prop_stc_select_wrapped_line))
-    {
-        code.Eol(eol_if_needed)
-            .NodeName()
-            .Function("SetMarginOptions(")
-            .Add("wxSTC_MARGINOPTION_SUBLINESELECT")
-            .EndFunction();
-    }
-
-    // By default, scintilla sets margin one to a width to 16. We want to shut off all margins
-    // unless the user specifically uses it.
-    bool is_margin_1_set { false };
-
-    // These values can be set to "none" so you have to do a string comparison
-
-    {
-        auto lambda = [&](PropName name)
-        {
-            if (code.is_PropValue(name, "1"))
-            {
-                is_margin_1_set = true;
-            }
-        };
-        lambda(prop_fold_margin);
-        lambda(prop_line_margin);
-        lambda(prop_separator_margin);
-        lambda(prop_symbol_margin);
-        lambda(prop_custom_width);
-    }
-
-    if (!is_margin_1_set)
-    {
-        code.Eol(eol_if_needed)
-            .NodeName()
-            .Function("SetMarginWidth(1, 0")
-            .EndFunction()
-            .AddComment("Remove default margin");
-    }
-
-    wxue::string margin = node->as_string(prop_fold_margin);
-    if (margin.is_sameas("none"))
-    {
-        margin = "0";
-    }
-
-    if (!code.is_PropValue(prop_line_margin, "none"))
-    {
-        int width = node->as_string(prop_line_digits).atoi();
-
-        wxue::string numbers("_");
-        while (width > 0)
-        {
-            numbers << '9';
-            --width;
-        }
-
-        code.Eol(eol_if_needed).NodeName().Function("SetMarginWidth(").Str(margin).Comma();
-        code.NodeName()
-            .Function("TextWidth(")
-            .Add("wxSTC_STYLE_LINENUMBER, ")
-            .QuotedString(numbers)
-            .Str(")")
-            .EndFunction();
-        code.Eol()
-            .NodeName()
-            .Function("SetMarginType(")
-            .Str(margin)
-            .Comma()
-            .Add("wxSTC_MARGIN_NUMBER")
-            .EndFunction();
-    }
+// Helper for generating fold margin code for a styled text control
+// Called by: SettingsCode
+static void GenerateFoldMarginCode(Code& code, const wxue::string& margin)
+{
+    const Node* node = code.node();
 
     if (!code.is_PropValue(prop_fold_margin, "none") && code.IntValue(prop_fold_width) > 0)
     {
@@ -956,6 +776,224 @@ bool StyledTextGenerator::SettingsCode(Code& code)
             }
         }
     }
+}
+
+bool StyledTextGenerator::SettingsCode(Code& code)
+{
+    const Node* node = code.node();
+
+    // There are potentially a LOT of settings, so we put them all in a bracket pair to make them
+    // easier to identify. This is only done for C++ as Python syntax checkers don't like
+    code.OpenBrace();
+
+    if (code.HasValue(prop_stc_lexer) && !code.is_PropValue(prop_stc_lexer, "NULL"))
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetLexer(")
+            .Add("wxSTC_LEX_")
+            .as_string(prop_stc_lexer)
+            .EndFunction();
+    }
+
+    // Default is false, so only set if true
+    if (code.IsTrue(prop_read_only))
+    {
+        code.Eol(eol_if_needed).NodeName().Function("SetReadOnly(").True().EndFunction();
+    }
+
+    if (code.HasValue(prop_eol_mode))
+    {
+        code.Eol(eol_if_needed).NodeName();
+        if (code.is_ruby())
+        {
+            // code.Function() would convert EOL to e_o_l
+            code.Str(".set_eol_mode(");
+        }
+        else
+        {
+            code.Function("SetEOLMode(");
+        }
+        code.AddConstant(prop_eol_mode, "stc_").EndFunction();
+    }
+
+    // Default is false, so only set if true
+    if (code.IsTrue(prop_view_eol))
+    {
+        // REVIEW wxPython 3.2.0 does not support SetViewEol
+        if (!code.is_python())
+        {
+            code.Eol(eol_if_needed).NodeName().Function("SetViewEol(").True().EndFunction();
+        }
+    }
+
+    if (!code.is_PropValue(prop_view_whitespace, "invisible"))
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetViewWhiteSpace(")
+            .AddConstant(prop_view_whitespace, "stc_")
+            .EndFunction();
+        if (code.IsTrue(prop_view_tab_strikeout))
+        {
+            code.Eol()
+                .NodeName()
+                .Function("SetTabDrawMode(")
+                .Add("wxSTC_TD_STRIKEOUT")
+                .EndFunction();
+        }
+    }
+
+    GenerateWrapSettings(code);
+
+    //////////// Selection category settings ////////////
+    if (code.IsTrue(prop_multiple_selections))
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetMultipleSelection(")
+            .Add("wxSTC_MULTIPASTE_EACH")
+            .EndFunction();
+        if (code.IsTrue(prop_paste_multiple))
+        {
+            code.Eol()
+                .NodeName()
+                .Function("SetMultiPaste(")
+                .Add("wxSTC_MULTIPASTE_EACH")
+                .EndFunction();
+        }
+        code.Eol().NodeName().Function("SetAdditionalSelectionTyping(");
+        code.TrueFalseIf(prop_additional_carets_blink).EndFunction();
+
+        if (!code.IsTrue(prop_additional_carets_visible))
+        {
+            code.Eol().NodeName().Function("SetAdditionalCaretsVisible(").False().EndFunction();
+        }
+        else
+        {
+            code.Eol().NodeName().Function("SetAdditionalCaretsBlink(");
+            code.TrueFalseIf(prop_additional_carets_blink).EndFunction();
+        }
+    }
+    //////////// Margin category settings ////////////
+
+    // The default margin is 1, so if that's what it is set to, then don't output any code
+    if (!code.is_PropValue(prop_stc_left_margin_width, 1))
+    {
+        if (code.is_PropValue(prop_stc_left_margin_width, 5))
+        {
+            code.AddComment(
+                "Sets text margin scaled appropriately for the current DPI on Windows,");
+            code.AddComment("5 on wxGTK or wxOSX");
+            code.Eol()
+                .NodeName()
+                .Function("SetMarginLeft(")
+                .Add("wxSizerFlags")
+                .ClassMethod("GetDefaultBorder()")
+                .EndFunction();
+        }
+        else
+        {
+            code.Eol(eol_if_needed)
+                .NodeName()
+                .Function("SetMarginLeft(")
+                .as_string(prop_stc_left_margin_width)
+                .EndFunction();
+        }
+    }
+
+    if (!code.is_PropValue(prop_stc_right_margin_width, 1))
+    {
+        if (!code.is_PropValue(prop_stc_left_margin_width, 5) &&
+            code.is_PropValue(prop_stc_right_margin_width, 5))
+        {
+            code.AddComment("Sets text margin scaled appropriately for the current DPI on Windows");
+            code.AddComment("5 on wxGTK or wxOSX");
+        }
+        code.Eol(eol_if_needed).NodeName().Function("SetMarginRight(");
+        if (code.is_PropValue(prop_stc_right_margin_width, 5))
+        {
+            code.Add("wxSizerFlags").ClassMethod("GetDefaultBorder()").EndFunction();
+        }
+        else
+        {
+            code.as_string(prop_stc_right_margin_width).EndFunction();
+        }
+    }
+
+    if (code.IsFalse(prop_stc_select_wrapped_line))
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetMarginOptions(")
+            .Add("wxSTC_MARGINOPTION_SUBLINESELECT")
+            .EndFunction();
+    }
+
+    // By default, scintilla sets margin one to a width to 16. We want to shut off all margins
+    // unless the user specifically uses it.
+    bool is_margin_1_set { false };
+
+    // These values can be set to "none" so you have to do a string comparison
+
+    {
+        auto lambda = [&](PropName name)
+        {
+            if (code.is_PropValue(name, "1"))
+            {
+                is_margin_1_set = true;
+            }
+        };
+        lambda(prop_fold_margin);
+        lambda(prop_line_margin);
+        lambda(prop_separator_margin);
+        lambda(prop_symbol_margin);
+        lambda(prop_custom_width);
+    }
+
+    if (!is_margin_1_set)
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetMarginWidth(1, 0")
+            .EndFunction()
+            .AddComment("Remove default margin");
+    }
+
+    wxue::string margin = node->as_string(prop_fold_margin);
+    if (margin.is_sameas("none"))
+    {
+        margin = "0";
+    }
+
+    if (!code.is_PropValue(prop_line_margin, "none"))
+    {
+        int width = node->as_string(prop_line_digits).atoi();
+
+        wxue::string numbers("_");
+        while (width > 0)
+        {
+            numbers << '9';
+            --width;
+        }
+
+        code.Eol(eol_if_needed).NodeName().Function("SetMarginWidth(").Str(margin).Comma();
+        code.NodeName()
+            .Function("TextWidth(")
+            .Add("wxSTC_STYLE_LINENUMBER, ")
+            .QuotedString(numbers)
+            .Str(")")
+            .EndFunction();
+        code.Eol()
+            .NodeName()
+            .Function("SetMarginType(")
+            .Str(margin)
+            .Comma()
+            .Add("wxSTC_MARGIN_NUMBER")
+            .EndFunction();
+    }
+
+    GenerateFoldMarginCode(code, margin);
 
     if (node->as_string(prop_symbol_margin) != "none")
     {
@@ -1088,7 +1126,7 @@ bool StyledTextGenerator::SettingsCode(Code& code)
 
     if (code.IsTrue(prop_focus))
     {
-        auto* form = code.node()->get_Form();
+        const Node* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -1111,7 +1149,7 @@ bool StyledTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-static const char* lst_margins[] = {
+static constexpr std::array lst_margins = {
 
     "custom_width", "custom_type", "custom_colour", "custom_mask_folders", "custom_mouse_sensitive",
 
@@ -1121,11 +1159,11 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
                                             NodeProperty* changed_prop)
 {
     BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
-    auto* changed_node = changed_prop->getNode();
+    const Node* changed_node = changed_prop->getNode();
 
     if (changed_prop->isProp(prop_stc_wrap_mode))
     {
-        bool is_wrapped = (changed_prop->as_string() != "no wrapping");
+        const bool is_wrapped = (changed_prop->as_string() != "no wrapping");
 
         if (auto* pg_wrap_setting = prop_grid->GetProperty("wrap_visual_flag"); pg_wrap_setting)
         {
@@ -1154,7 +1192,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
     else if (changed_prop->isProp(prop_stc_wrap_indent_mode))
     {
-        bool is_wrapped = (changed_node->as_string(prop_stc_wrap_mode) != "no wrapping");
+        const bool is_wrapped = (changed_node->as_string(prop_stc_wrap_mode) != "no wrapping");
         if (auto* pg_wrap_setting = prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
         {
             if (is_wrapped)
@@ -1169,7 +1207,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
     else if (changed_prop->isProp(prop_multiple_selections))
     {
-        bool is_multiple = changed_prop->as_bool();
+        const bool is_multiple = changed_prop->as_bool();
         if (auto* pg_property = prop_grid->GetProperty("multiple_selection_typing"); pg_property)
         {
             pg_property->Enable(is_multiple);
@@ -1189,7 +1227,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
     else if (changed_prop->isProp(prop_additional_carets_visible))
     {
-        bool is_multiple = changed_node->as_bool(prop_multiple_selections);
+        const bool is_multiple = changed_node->as_bool(prop_multiple_selections);
         if (is_multiple)
         {
             if (auto* pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)
@@ -1237,8 +1275,8 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
     }
     else if (changed_prop->isProp(prop_custom_margin))
     {
-        bool is_enabled = (changed_prop->as_string() != "none");
-        for (auto& iter: lst_margins)
+        const bool is_enabled = (changed_prop->as_string() != "none");
+        for (const auto& iter: lst_margins)
         {
             if (auto* pg_margin_setting = prop_grid->GetProperty(iter); pg_margin_setting)
             {
@@ -1246,38 +1284,43 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
             }
         }
 
-        // Hack alert! To prevent duplicating the code below, we change the changed_prop pointer.
         if (is_enabled)
         {
-            changed_prop = changed_node->get_PropPtr(prop_custom_type);
+            UpdateCustomTypeState(prop_grid, changed_node->as_string(prop_custom_type), is_enabled);
         }
     }
 
-    if (changed_prop->isProp(prop_custom_type))
+    else if (changed_prop->isProp(prop_custom_type))
     {
-        bool is_enabled = (changed_node->as_string(prop_custom_margin) != "none");
-        if (auto* pg_margin_setting = prop_grid->GetProperty("custom_colour"); pg_margin_setting)
+        const bool margin_enabled = (changed_node->as_string(prop_custom_margin) != "none");
+        UpdateCustomTypeState(prop_grid, changed_prop->as_string(), margin_enabled);
+    }
+}
+
+void StyledTextGenerator::UpdateCustomTypeState(wxPropertyGridManager* prop_grid,
+                                                std::string_view custom_type_value,
+                                                bool margin_enabled)
+{
+    if (auto* pg_margin_setting = prop_grid->GetProperty("custom_colour"); pg_margin_setting)
+    {
+        if (custom_type_value != "colour")
         {
-            if (changed_prop->as_string() != "colour")
-            {
-                pg_margin_setting->Enable(false);
-            }
-            else
-            {
-                pg_margin_setting->Enable(is_enabled);
-            }
+            pg_margin_setting->Enable(false);
         }
-        if (auto* pg_margin_setting = prop_grid->GetProperty("custom_mask_folders");
-            pg_margin_setting)
+        else
         {
-            if (changed_prop->as_string() != "symbol" && changed_prop->as_string() != "number")
-            {
-                pg_margin_setting->Enable(false);
-            }
-            else
-            {
-                pg_margin_setting->Enable(is_enabled);
-            }
+            pg_margin_setting->Enable(margin_enabled);
+        }
+    }
+    if (auto* pg_margin_setting = prop_grid->GetProperty("custom_mask_folders"); pg_margin_setting)
+    {
+        if (custom_type_value != "symbol" && custom_type_value != "number")
+        {
+            pg_margin_setting->Enable(false);
+        }
+        else
+        {
+            pg_margin_setting->Enable(margin_enabled);
         }
     }
 }
@@ -1287,9 +1330,9 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
 
 int StyledTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStyledTextCtrl");
 

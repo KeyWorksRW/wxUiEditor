@@ -77,16 +77,12 @@ const char* g_luajit_keywords =
     "and break do else elseif end false for function goto if in local nil not or repeat"
     " return then true until while";
 
-const char* g_rust_keywords =
-    "abstract as async await become box break const continue crate do dyn else enum extern"
-    " false final fn for if impl in let loop macro match mod move mut override priv pub"
-    " ref return self Self static struct super trait true try type typeof union unsafe"
-    " unsized use virtual where while yield";
-
-const char* g_perl_keywords =
-    "do if else elsif unless while until for foreach last next pod cut redo continue "
-    "qw sub return goto and or not xor "
-    "unless use no package require my our local state ";
+const char* g_typescript_keywords =
+    "abstract any as async await boolean break case catch class const continue debugger"
+    " declare default delete do else enum export extends false finally for function if"
+    " implements import in instanceof interface let module new null number package private"
+    " protected public readonly return static string super switch symbol this throw true"
+    " try type typeof undefined var void while with yield";
 
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : wxPanel(parent)
 {
@@ -156,14 +152,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_PERL)
-    {
-        m_source_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
-        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
-        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
-    }
-    else if (m_panel_type == GEN_LANG_RUST)
+    else if (m_panel_type == GEN_LANG_TYPESCRIPT)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);

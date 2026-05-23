@@ -57,10 +57,6 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn_LuaJIT->SetValidator(wxGenericValidator(&m_gen_luajit_code));
     grid_sizer->Add(m_radioBtn_LuaJIT, wxSizerFlags().Border(wxALL));
 
-    m_radioBtn_Perl = new wxRadioButton(this, wxID_ANY, "P&erl");
-    m_radioBtn_Perl->SetValidator(wxGenericValidator(&m_gen_perl_code));
-    grid_sizer->Add(m_radioBtn_Perl, wxSizerFlags().Border(wxALL));
-
     m_radioBtn_Python = new wxRadioButton(this, wxID_ANY, "&Python");
     m_radioBtn_Python->SetValidator(wxGenericValidator(&m_gen_python_code));
     grid_sizer->Add(m_radioBtn_Python, wxSizerFlags().Border(wxALL));
@@ -69,9 +65,9 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn_Ruby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
     grid_sizer->Add(m_radioBtn_Ruby, wxSizerFlags().Border(wxALL));
 
-    auto* m_radioBtn_Rusy = new wxRadioButton(this, wxID_ANY, "&Rust");
-    m_radioBtn_Rusy->SetValidator(wxGenericValidator(&m_gen_rust_code));
-    grid_sizer->Add(m_radioBtn_Rusy, wxSizerFlags().Border(wxALL));
+    auto* m_radioBtn_TypeScript = new wxRadioButton(this, wxID_ANY, "&Rust");
+    m_radioBtn_TypeScript->SetValidator(wxGenericValidator(&m_gen_typescript_code));
+    grid_sizer->Add(m_radioBtn_TypeScript, wxSizerFlags().Border(wxALL));
 
     m_radioBtn_XRC = new wxRadioButton(this, wxID_ANY, "&XRC");
     m_radioBtn_XRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
@@ -122,6 +118,7 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
 // cppcheck-suppress-end *
 // ***********************************************
 // </auto-generated>
+
 /////////////////// Non-generated Copyright/License Info ////////////////////
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2024 KeyWorks Software (Ralph Walden)

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +55,7 @@ public:
     // This will return a string as if C++ was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // C++ is not enabled and another language specified a value.
-    static auto GetCppValue(std::string_view value) -> std::string;
+    static std::string GetCppValue(std::string_view value);
 
     // This will return a string as if Perl was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
@@ -64,12 +64,12 @@ public:
     // This will return a string as if Python was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Python is not enabled and another language specified a value.
-    static auto GetPythonValue(wxue::string_view value) -> wxue::string;
+    static wxue::string GetPythonValue(wxue::string_view value);
 
     // This will return a string as if Ruby was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Ruby is not enabled and another language specified a value.
-    static auto GetRubyValue(wxue::string_view value) -> wxue::string;
+    static wxue::string GetRubyValue(wxue::string_view value);
 
 protected:
     // This is used to colorize member variables in the C++ lambda
@@ -113,17 +113,13 @@ private:
     bool m_is_fortran_enabled { false };
     bool m_is_julia_enabled { false };
     bool m_is_luajit_enabled { false };
-    bool m_is_perl_enabled { false };
-    bool m_is_rust_enabled { false };
+    bool m_is_typescript_enabled { false };
 
     bool m_is_cpp_lambda { false };
-    // bool m_is_perl_lambda { false };
     bool m_is_python_lambda { false };
     bool m_is_ruby_lambda { false };
     bool m_is_go_lambda { false };
     bool m_is_fortran_lambda { false };
     bool m_is_julia_lambda { false };
     bool m_is_luajit_lambda { false };
-    bool m_is_perl_lambda { false };
-    bool m_is_rust_lambda { false };
 };

@@ -46,7 +46,7 @@ extern std::map<GenLang, std::string> s_lang_category_prefix;
 namespace
 {
     constexpr auto supported_languages = frozen::make_set<std::string_view>(
-        { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Perl", "Python", "Ruby", "Rust", "XRC" });
+        { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Python", "Ruby", "TypeScript", "XRC" });
 }  // namespace
 
 void PropGridPanel::Create()
@@ -854,23 +854,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->Collapse(category_id);
         }
     }
-    else if (name.contains("kwxPerl"))
-    {
-        if (UserPrefs.is_DarkMode())
-        {
-            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#805500"));
-        }
-        else
-        {
-            m_prop_grid->SetPropertyBackgroundColour(category_id,
-                                                     wxColour("#ffeecc"));  // Light amber
-        }
-        if (Project.get_CodePreference(node) != GEN_LANG_PERL)
-        {
-            m_prop_grid->Collapse(category_id);
-        }
-    }
-    else if (name.contains("kwxRust"))
+    else if (name.contains("kwxTypeScript"))
     {
         if (UserPrefs.is_DarkMode())
         {
@@ -881,7 +865,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ffd9b3"));  // Light rust
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_RUST)
+        if (Project.get_CodePreference(node) != GEN_LANG_TYPESCRIPT)
         {
             m_prop_grid->Collapse(category_id);
         }

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +32,6 @@
 #include "version.h"         // Version numbers and other constants
 
 #include "frozen/map.h"  // frozen::map
-#include "frozen/set.h"  // frozen::set
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
@@ -72,75 +71,72 @@ wxIMPLEMENT_APP(App);  // NOLINT (cppcheck-suppress)
 
 #endif  // _WIN32 && defined(_DEBUG)
 
-namespace
+// Static storage for command-line filename (populated by ParseGenerationType or
+// GetCommandLineFilename)
+static wxString s_filename;  // NOLINT (cppcheck-suppress)
+
+// Helper to process and normalize a filename (add extension, handle wildcards)
+static void ProcessFilename(wxString& filename)
 {
-    // Static storage for command-line filename (populated by ParseGenerationType or
-    // GetCommandLineFilename)
-    wxString s_filename;  // NOLINT (cppcheck-suppress)
-
-    // Helper to process and normalize a filename (add extension, handle wildcards)
-    auto ProcessFilename(wxString& filename) -> void
+    if (filename.empty())
     {
-        if (filename.empty())
-        {
-            return;
-        }
+        return;
+    }
 
-        // Handle missing extension before wildcard expansion
-        // Check if filename contains wildcards - if so, only add extension if no dot present
-        bool has_wildcards = filename.Contains('*') || filename.Contains('?');
+    // Handle missing extension before wildcard expansion
+    // Check if filename contains wildcards - if so, only add extension if no dot present
+    const bool has_wildcards = filename.Contains('*') || filename.Contains('?');
 
-        if (has_wildcards)
+    if (has_wildcards)
+    {
+        // For wildcards, only add extension if there's no dot at all
+        if (!filename.Contains('.'))
         {
-            // For wildcards, only add extension if there's no dot at all
-            if (!filename.Contains('.'))
-            {
-                filename += ".wxui";
-            }
+            filename += ".wxui";
         }
-        else
+    }
+    else
+    {
+        // For non-wildcards, use wxFileName to properly check for extension
+        wxFileName wxfn(filename);
+        if (!wxfn.HasExt())
         {
-            // For non-wildcards, use wxFileName to properly check for extension
-            wxFileName wxfn(filename);
-            if (!wxfn.HasExt())
-            {
-                wxfn.SetExt("wxui");
-                filename = wxfn.GetFullPath();
-            }
-        }
-
-        // Handle wildcards after extension is added
-        if (has_wildcards)
-        {
-            wxDir dir;
-            dir.Open("./");
-            if (!dir.GetFirst(&filename, filename, wxDIR_FILES))
-            {
-                // No match found
-                filename.clear();
-            }
+            wxfn.SetExt("wxui");
+            filename = wxfn.GetFullPath();
         }
     }
 
-    // Helper to retrieve and process filename from command line
-    auto GetCommandLineFilename(wxCmdLineParser& parser) -> wxString&
+    // Handle wildcards after extension is added
+    if (has_wildcards)
     {
-        if (!s_filename.empty())
+        wxDir dir;
+        dir.Open("./");
+        if (!dir.GetFirst(&filename, filename, wxDIR_FILES))
         {
-            return s_filename;
+            // No match found
+            filename.clear();
         }
+    }
+}
 
-        // Try to get filename from parameter
-        if (parser.GetParamCount() > 0)
-        {
-            s_filename = parser.GetParam(0);
-            ProcessFilename(s_filename);
-        }
-        // Otherwise s_filename may have been set by ParseGenerationType
-
+// Helper to retrieve and process filename from command line
+static wxString& GetCommandLineFilename(wxCmdLineParser& parser)
+{
+    if (!s_filename.empty())
+    {
         return s_filename;
     }
-}  // anonymous namespace
+
+    // Try to get filename from parameter
+    if (parser.GetParamCount() > 0)
+    {
+        s_filename = parser.GetParam(0);
+        ProcessFilename(s_filename);
+    }
+    // Otherwise s_filename may have been set by ParseGenerationType
+
+    return s_filename;
+}
 
 #if defined(_WIN32)
     #include <wx/msw/darkmode.h>
@@ -148,17 +144,14 @@ namespace
 class DarkSettings : public wxDarkModeSettings
 {
 public:
-    [[nodiscard]] auto GetColour(wxSystemColour index) -> wxColour
-    {
-        return UserPrefs.GetColour(index);
-    }
+    [[nodiscard]] wxColour GetColour(wxSystemColour index) { return UserPrefs.GetColour(index); }
 };
 
 #endif
 
 App::App() = default;
 
-auto App::OnInit() -> bool
+bool App::OnInit()
 {
     wxInitAllImageHandlers();
 
@@ -166,7 +159,7 @@ auto App::OnInit() -> bool
     // bitmaps for toolbar images.
     wxTheColourDatabase->AddColour("Grey94", wxColour(240, 240, 240));
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
     #if defined(wxUSE_ON_FATAL_EXCEPTION)
     ::wxHandleFatalExceptions(true);
     #endif
@@ -204,7 +197,7 @@ auto App::OnInit() -> bool
     return true;
 }
 
-auto App::OnRun() -> int
+int App::OnRun()
 {
 #if defined(_DEBUG)
     #if defined(_WIN32)
@@ -212,7 +205,7 @@ auto App::OnRun() -> int
     // This must be done early, before any output attempts
     if (AttachConsole(ATTACH_PARENT_PROCESS))
     {
-        FILE* file_ptr;  // NOLINT (cppcheck-suppress)
+        FILE* file_ptr {};  // NOLINT (cppcheck-suppress)
         freopen_s(&file_ptr, "CONOUT$", "w", stdout);
         freopen_s(&file_ptr, "CONOUT$", "w", stderr);
     }
@@ -242,9 +235,8 @@ auto App::OnRun() -> int
     parser.AddLongOption("gen_go", "generate Go files and exit");
     parser.AddLongOption("gen_julia", "generate Julia files and exit");
     parser.AddLongOption("gen_luajit", "generate LuaJIT files and exit");
-    parser.AddLongOption("gen_perl", "generate Perl files and exit");
     parser.AddLongOption("gen_ruby", "generate ruby files and exit");
-    parser.AddLongOption("gen_rust", "generate Rust files and exit");
+    parser.AddLongOption("gen_typescript", "generate TypeScript files and exit");
 
     parser.AddLongOption("gen_xrc", "generate XRC files and exit");
 
@@ -285,17 +277,15 @@ auto App::OnRun() -> int
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_luajit", "verify generating LuaJIT files did not change",
                          wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("verify_perl", "verify generating Perl files did not change",
-                         wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_ruby", "verify generating Ruby files did not change",
                          wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("verify_rust", "verify generating Rust files did not change",
+    parser.AddLongSwitch("verify_typescript", "verify generating TypeScript files did not change",
                          wxCMD_LINE_HIDDEN);
 
     parser.AddLongSwitch("verify_all", "verify generating all language files did not change",
                          wxCMD_LINE_HIDDEN);
 
-    // Just a quick way to generate perl, python, and ruby
+    // Just a quick way to python, and ruby
     parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING,
                          wxCMD_LINE_HIDDEN);
 
@@ -337,13 +327,12 @@ auto App::OnRun() -> int
     parser.AddLongSwitch("test_cpp", "generate C++ code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_python", "generate Python code and exit", wxCMD_LINE_HIDDEN);
 
-    parser.AddLongSwitch("test_perl", "generate Perl code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_fortran", "generate Fortran code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_go", "generate Go code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_julia", "generate Julia code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_luajit", "generate LuaJIT code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_ruby", "generate Ruby code and exit", wxCMD_LINE_HIDDEN);
-    parser.AddLongSwitch("test_rust", "generate Rust code and exit", wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("test_typescript", "generate TypeScript code and exit", wxCMD_LINE_HIDDEN);
 
     parser.AddLongSwitch("test_xrc", "generate XRC code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_all", "generate all code and exit", wxCMD_LINE_HIDDEN);
@@ -367,7 +356,8 @@ auto App::OnRun() -> int
 #if defined(INTERNAL_TESTING)
     m_TestingMenuEnabled = true;
 #endif
-    if (auto result = parser.FoundSwitch("test_menu"); result != wxCMD_SWITCH_NOT_FOUND)
+    if (const wxCmdLineSwitchState result = parser.FoundSwitch("test_menu");
+        result != wxCMD_SWITCH_NOT_FOUND)
     {
         m_TestingMenuEnabled = (result == wxCMD_SWITCH_ON);
     }
@@ -400,10 +390,9 @@ auto App::OnRun() -> int
     */
 
     bool is_verify_mode = false;
-    constexpr frozen::set<std::string_view, 10> verify_options = {
-        "verify_cpp",    "verify_python", "verify_fortran", "verify_go",   "verify_julia",
-        "verify_luajit", "verify_perl",   "verify_ruby",    "verify_rust", "verify_all"
-    };
+    constexpr auto verify_options = std::to_array(
+        { "verify_cpp", "verify_python", "verify_fortran", "verify_go", "verify_julia",
+          "verify_luajit", "verify_ruby", "verify_typescript", "verify_all" });
 
     for (const auto& opt: verify_options)
     {
@@ -422,7 +411,7 @@ auto App::OnRun() -> int
     }
 
     // A positive return value means code generation was for command-line only
-    auto result = Generate(parser, is_project_loaded);
+    const int result = Generate(parser, is_project_loaded);
     if (result == cmd_gen_project_not_loaded)
     {
         return 1;
@@ -447,7 +436,7 @@ auto App::OnRun() -> int
 
     if (result == cmd_project_file_only)
     {
-        const auto& filename = GetCommandLineFilename(parser);
+        const wxString& filename = GetCommandLineFilename(parser);
         if (!Project.LoadProject(filename, true))
         {
             wxMessageBox(wxString("Unable to load project file: ") << filename,
@@ -461,17 +450,17 @@ auto App::OnRun() -> int
     }
     else if (result == cmd_no_params || result == cmd_gen_project_not_found)
     {
-        if (auto switch_result = parser.FoundSwitch("load_last");
+        if (const wxCmdLineSwitchState switch_result = parser.FoundSwitch("load_last");
             switch_result != wxCMD_SWITCH_NOT_FOUND || UserPrefs.is_LoadLastProject())
         {
-            auto& file_history = m_frame->getFileHistory();
+            wxFileHistory& file_history = m_frame->getFileHistory();
             if (file_history.GetCount() == 0)
             {
                 is_project_loaded = false;
             }
             else
             {
-                wxue::string file = file_history.GetHistoryFile(0).utf8_string();
+                const wxue::string file = file_history.GetHistoryFile(0).utf8_string();
                 if (!file.file_exists())
                 {
                     file_history.RemoveFileFromHistory(0);
@@ -488,7 +477,7 @@ auto App::OnRun() -> int
 
     if (!is_project_loaded)
     {
-        is_project_loaded = DsisplayStartupDlg(nullptr);
+        is_project_loaded = DisplayStartupDlg(nullptr);
     }
 
     if (is_project_loaded)
@@ -512,13 +501,13 @@ auto App::OnRun() -> int
     return 1;
 }
 
-auto App::OnExit() -> int
+int App::OnExit()
 {
     return wxApp::OnExit();
 }
 
 #if defined(_DEBUG)
-auto App::DebugOutput(const wxString& str) -> void
+void App::DebugOutput(const wxString& str)
 {
     if (m_stderr_output)
     {
@@ -528,17 +517,17 @@ auto App::DebugOutput(const wxString& str) -> void
 }
 #endif
 
-auto App::isFireCreationMsgs() -> bool
+bool App::isFireCreationMsgs()
 {
     return (UserPrefs.GetDebugFlags() & Prefs::PREFS_CREATION_MSG);
 }
 
-auto App::isPjtMemberPrefix() -> bool
+bool App::isPjtMemberPrefix()
 {
     return (UserPrefs.GetProjectFlags() & Prefs::PREFS_PJT_MEMBER_PREFIX);
 }
 
-auto App::AutoMsgWindow() -> bool
+bool App::AutoMsgWindow()
 {
     return (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW);
 }
@@ -551,10 +540,10 @@ auto App::AutoMsgWindow() -> bool
 class StackLogger : public wxStackWalker
 {
 public:
-    [[nodiscard]] auto GetCalls() -> auto& { return m_calls; }
+    [[nodiscard]] auto& GetCalls() { return m_calls; }
 
 protected:
-    auto OnStackFrame(const wxStackFrame& frame) -> void override
+    void OnStackFrame(const wxStackFrame& frame) override
     {
         if (frame.HasSourceLocation())
         {
@@ -562,7 +551,7 @@ protected:
             source << frame.GetFileName().utf8_string() << ':' << (to_int) frame.GetLine();
 
             wxString params;
-            if (auto paramCount = frame.GetParamCount(); paramCount > 0)
+            if (const size_t paramCount = frame.GetParamCount(); paramCount > 0)
             {
                 params << "(";
 
@@ -604,7 +593,7 @@ private:
 
 #if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-auto App::OnFatalException() -> void
+void App::OnFatalException()
 {
     #if defined(_DEBUG) && defined(wxUSE_STACKWALKER)
 
@@ -632,7 +621,7 @@ auto App::OnFatalException() -> void
 
 #endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-auto App::ShowMsgWindow() -> void
+void App::ShowMsgWindow()
 {
     g_pMsgLogging->ShowLogger();
 }
@@ -642,33 +631,32 @@ auto App::ShowMsgWindow() -> void
     #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
 // Don't make this static or Bind() will not work
-auto App::DbgCurrentTest(wxCommandEvent& /* event unused */) -> void  // NOLINT (cppcheck-suppress)
+void App::DbgCurrentTest(wxCommandEvent& /* event unused */)  // NOLINT (cppcheck-suppress)
 {
     wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
 
-    NewMdiForm dlg(wxGetFrame().getWindow());
-    if (dlg.ShowModal() == wxID_OK)
+    NewMdiForm mdi_dlg(wxGetFrame().getWindow());
+    if (mdi_dlg.ShowModal() == wxID_OK)
     {
-        dlg.CreateNode();
+        mdi_dlg.CreateNode();
     }
 }
 
 #endif
 
 // Helper: Parse command-line options to determine generation type
-auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool>
+std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
 {
     // Map option names to their corresponding generation type values
-    constexpr frozen::map<std::string_view, size_t, 13> gen_options = {
+    constexpr frozen::map<std::string_view, size_t, 12> gen_options = {
         { "gen_cpp", GEN_LANG_CPLUSPLUS },
         { "gen_python", GEN_LANG_PYTHON },
         { "gen_fortran", GEN_LANG_FORTRAN },
         { "gen_go", GEN_LANG_GO },
         { "gen_julia", GEN_LANG_JULIA },
         { "gen_luajit", GEN_LANG_LUAJIT },
-        { "gen_perl", GEN_LANG_PERL },
         { "gen_ruby", GEN_LANG_RUBY },
-        { "gen_rust", GEN_LANG_RUST },
+        { "gen_typescript", GEN_LANG_TYPESCRIPT },
         { "gen_xrc", GEN_LANG_XRC },
         { "gen_all", (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
         { "gen_quick", (GEN_LANG_PYTHON | GEN_LANG_RUBY) },
@@ -731,7 +719,7 @@ auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool
 }
 
 // Helper: Find project file if filename is empty
-[[nodiscard]] auto App::FindProjectFile(wxString& filename) -> bool
+[[nodiscard]] bool App::FindProjectFile(wxString& filename)
 {
     wxDir dir;
     dir.Open("./");
@@ -746,8 +734,8 @@ auto App::ParseGenerationType(wxCmdLineParser& parser) -> std::pair<size_t, bool
 }
 
 // Helper: Load or import the project file
-auto App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
-                          bool& is_project_loaded) -> bool
+bool App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
+                          bool& is_project_loaded)
 {
     if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
         !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
@@ -762,16 +750,17 @@ auto App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
 }
 
 // Helper: Log results for each language generation
-auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
-                               bool test_only, std::string_view language_type) -> void
+void App::LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
+                               bool test_only, std::string_view language_type)
 {
-    if (results.GetUpdatedFiles().size() || results.GetCreatedFiles().size() || class_list.size())
+    if (!results.GetUpdatedFiles().empty() || !results.GetCreatedFiles().empty() ||
+        !class_list.empty())
     {
         if (test_only)
         {
             for (auto& iter: class_list)
             {
-                auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+                wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
                 log_msg << "Needs updating: " << iter;
             }
         }
@@ -779,19 +768,19 @@ auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
         {
             for (auto& iter: results.GetUpdatedFiles())
             {
-                auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+                wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
                 log_msg << "Updated: " << iter;
             }
             for (auto& iter: results.GetCreatedFiles())
             {
-                auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+                wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
                 log_msg << "Created: " << iter;
             }
         }
     }
     else
     {
-        auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+        wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
         log_msg << "All " << results.GetFileCount() << " generated " << language_type
                 << " files are current";
     }
@@ -802,24 +791,24 @@ auto App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
         {
             continue;
         }
-        auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+        wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
         log_msg << iter;
     }
 }
 
 // Helper: Generate code for all requested languages
-auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                               std::vector<std::string>& class_list) -> void
+void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                               std::vector<std::string>& class_list)
 {
     // If a form filter is specified, find that form
     Node* form_node = nullptr;
-    const auto& form_filter = wxGetApp().get_FormFilter();
+    const std::string& form_filter = wxGetApp().get_FormFilter();
     if (!form_filter.empty())
     {
         form_node = FindNodeByClassName(Project.get_ProjectNode(), form_filter);
         if (!form_node)
         {
-            auto& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+            wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
             log_msg << "Error: Form '" << form_filter << "' not found in project";
             return;
         }
@@ -872,14 +861,13 @@ auto App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
     GenCode(GEN_LANG_GO);
     GenCode(GEN_LANG_JULIA);
     GenCode(GEN_LANG_LUAJIT);
-    GenCode(GEN_LANG_PERL);
+    GenCode(GEN_LANG_TYPESCRIPT);
     GenCode(GEN_LANG_RUBY);
-    GenCode(GEN_LANG_RUST);
 
     GenCode(GEN_LANG_XRC);
 }
 
-auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
+int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 {
     if (!parser.GetParamCount() && !parser.GetArguments().size())
     {
@@ -900,7 +888,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
 
     auto [generate_type, test_only] = ParseGenerationType(parser);
 
-    const auto& filename_str = GetCommandLineFilename(parser);
+    const wxString& filename_str = GetCommandLineFilename(parser);
 
     if (generate_type == GEN_LANG_NONE)
     {
@@ -923,7 +911,7 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     {
         m_cmdline_log.clear();
         m_cmdline_log.emplace_back(wxue::string("Unable to find project file: ") += filename);
-        m_cmdline_log.WriteFile(log_file);
+        std::ignore = m_cmdline_log.WriteFile(log_file);
         return 1;
     }
 
@@ -939,23 +927,23 @@ auto App::Generate(wxCmdLineParser& parser, bool& is_project_loaded) -> int
     {
         m_cmdline_log.clear();
         m_cmdline_log.emplace_back(wxue::string("Unable to load project file: ") += filename);
-        m_cmdline_log.WriteFile(log_file);
+        std::ignore = m_cmdline_log.WriteFile(log_file);
         return cmd_gen_project_not_loaded;
     }
 
     m_cmdline_log.clear();
     std::vector<std::string> class_list;
-    auto start_time = std::chrono::steady_clock::now();
+    const std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
     GenerateAllLanguages(generate_type, test_only, results, class_list);
 
-    auto& log_msg = m_cmdline_log.emplace_back();
-    auto end_time = std::chrono::steady_clock::now();
-    size_t total_elapsed_time =
+    wxue::string& log_msg = m_cmdline_log.emplace_back();
+    const std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
+    const size_t total_elapsed_time =
         std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
 
     log_msg << "Total elapsed time: " << total_elapsed_time << " milliseconds";
-    m_cmdline_log.WriteFile(log_file);
+    std::ignore = m_cmdline_log.WriteFile(log_file);
 
     return cmd_gen_success;
 }

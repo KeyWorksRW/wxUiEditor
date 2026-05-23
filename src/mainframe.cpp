@@ -1,14 +1,12 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 // mainframe_events.cpp contains the event handlers for the MainFrame class.
 // mainframe_updates.cpp contains the MainFrame::Update...() functions
-
-#include <sstream>
 
 #include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
 #include <wx/config.h>            // wxConfig base header
@@ -149,7 +147,7 @@ MainFrame::MainFrame() :
         m_wakatime = std::make_unique<WakaTime>();
     }
 
-    auto* config = wxConfig::Get();
+    wxConfigBase* config = wxConfig::Get();
 
     // Normally, wxPersistentRegisterAndRestore(this, "MainFrame"); could be called to save/restore
     // the size and position. That works fine on Windows 10, but on Windows 11, a user can maximize
@@ -165,13 +163,13 @@ MainFrame::MainFrame() :
     config->SetPath("/mainframe");
 #endif
 
-    if (auto isMaximixed = config->ReadBool("IsMaximized", false); isMaximixed)
+    if (const bool isMaximixed = config->ReadBool("IsMaximized", false); isMaximixed)
     {
         Maximize();
     }
     else
     {
-        if (auto isIconized = config->ReadBool("IsIconized", false); isIconized)
+        if (const bool isIconized = config->ReadBool("IsIconized", false); isIconized)
         {
             Iconize();
         }
@@ -229,8 +227,8 @@ MainFrame::MainFrame() :
         menuTesting->AppendSeparator();
         menuTesting->Append(id_ShowLogger, "Show &Log Window",
                             "Show window containing debug messages");
-        auto* menuItem = menuTesting->Append(id_TestSwitch, "Testing Switch", "Toggle test switch",
-                                             wxITEM_CHECK);
+        wxMenuItem* menuItem = menuTesting->Append(id_TestSwitch, "Testing Switch",
+                                                   "Toggle test switch", wxITEM_CHECK);
         menuItem->Check(wxGetApp().isTestingSwitch());
         Bind(
             wxEVT_MENU,
@@ -382,7 +380,7 @@ MainFrame::MainFrame() :
         wxEVT_MENU,
         [](wxCommandEvent& event)
         {
-            CreateViaNewDlg(static_cast<GenName>(event.GetId()));
+            std::ignore = CreateViaNewDlg(static_cast<GenName>(event.GetId()));
         },
         CreateNewDialog, MdiMenuBar - 1);
 
@@ -426,10 +424,10 @@ MainFrame::MainFrame() :
             [this](wxCommandEvent&)
             {
                 wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
-                NewMdiForm dlg(this);
-                if (dlg.ShowModal() == wxID_OK)
+                NewMdiForm dialog(this);
+                if (dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dialog.CreateNode();
                 }
             },
             ID_EXPERIMENTAL_MDI_APP);
@@ -438,8 +436,8 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [this](wxCommandEvent&)
             {
-                NodeInfo dlg(this);
-                dlg.ShowModal();
+                NodeInfo dialog(this);
+                dialog.ShowModal();
             },
             id_NodeMemory);
 
@@ -447,8 +445,8 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [this](wxCommandEvent&)
             {
-                UndoInfo dlg(this);
-                dlg.ShowModal();
+                UndoInfo dialog(this);
+                dialog.ShowModal();
             },
             id_UndoInfo);
         Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
@@ -518,8 +516,8 @@ MainFrame::MainFrame() :
         wxEVT_MENU,
         [this](wxCommandEvent&)
         {
-            DebugSettings dlg(this);
-            dlg.ShowModal();
+            DebugSettings dialog(this);
+            dialog.ShowModal();
         },
         id_DebugPreferences);
 
@@ -536,8 +534,8 @@ MainFrame::~MainFrame()
     delete m_findDialog;
 }
 
-auto wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg, wxSize def_size)
-    -> wxBitmapBundle;
+wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg,
+                             wxSize def_size);
 
 #if defined(_DEBUG)
     #include "internal/debugsettings.h"
@@ -574,11 +572,11 @@ void MainFrame::ProjectLoaded()
 
     if (!Project.HasValue(prop_wxWidgets_version))
     {
-        Project.set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
+        std::ignore = Project.set_value(prop_wxWidgets_version, UserPrefs.get_CppWidgetsVersion());
     }
     else if (Project.as_string(prop_wxWidgets_version) == "3.2")
     {
-        Project.set_value(prop_wxWidgets_version, WXWIDGETS_VERSION_3_2_0);
+        std::ignore = Project.set_value(prop_wxWidgets_version, WXWIDGETS_VERSION_3_2_0);
     }
 
     m_selected_node = Project.get_ProjectNode()->get_SharedPtr();
@@ -670,7 +668,7 @@ void MainFrame::CreateSplitters()
     m_right_panel_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());
 
     m_property_panel = new PropGridPanel(m_SecondarySplitter, this);
-    auto* notebook = CreateNoteBook(m_SecondarySplitter);
+    wxWindow* notebook = CreateNoteBook(m_SecondarySplitter);
 
     if (UserPrefs.is_RightPropGrid())
     {
@@ -744,7 +742,7 @@ bool MainFrame::SelectNode(Node* node, size_t flags)
 
     if (flags & evt_flags::queue_event)
     {
-        CustomEvent node_event(EVT_NodeSelected, m_selected_node.get());
+        const CustomEvent node_event(EVT_NodeSelected, m_selected_node.get());
         for (auto* handler: m_custom_event_handlers)
         {
             handler->QueueEvent(node_event.Clone());
@@ -760,9 +758,9 @@ bool MainFrame::SelectNode(Node* node, size_t flags)
 
 void MainFrame::PasteNode(Node* parent)
 {
-    if (auto result = isClipboardDataAvailable(); result)
+    if (const bool result = isClipboardDataAvailable(); result)
     {
-        auto new_node = GetClipboardNode();
+        const NodeSharedPtr new_node = GetClipboardNode();
         if (new_node)
         {
             m_clipboard = new_node;
@@ -800,14 +798,14 @@ void MainFrame::PasteNode(Node* parent)
         wxue::string undo_str("Paste ");
         undo_str << m_clipboard->get_DeclName();
 
-        auto pos = parent->FindInsertionPos(m_selected_node);
+        const ptrdiff_t pos = parent->FindInsertionPos(m_selected_node);
         PushUndoAction(
             std::make_shared<InsertNodeAction>(created_node.get(), parent, undo_str, pos));
         FireCreatedEvent(created_node);
         SelectNode(created_node, evt_flags::fire_event | evt_flags::force_selection);
     };
 
-    auto new_node = NodeCreation.MakeCopy(m_clipboard.get(), parent);
+    const NodeSharedPtr new_node = NodeCreation.MakeCopy(m_clipboard.get(), parent);
 
     // This makes it possible to switch from a normal child toolbar to a form toolbar and vice
     // versa. Both wxToolBar and wxAuiToolbar are supported
@@ -841,7 +839,7 @@ void MainFrame::PasteNode(Node* parent)
         {
             // We are changing from a wxToolBar to a wxAuiToolBar, so we need to change the node
             // type
-            auto new_child = NodeCreation.MakeCopy(child_node.get(), parent);
+            const NodeSharedPtr new_child = NodeCreation.MakeCopy(child_node.get(), parent);
             auto insert_action =
                 std::make_shared<InsertNodeAction>(new_child.get(), parent, "paste");
             insert_action->SetFireCreatedEvent(true);
@@ -858,7 +856,7 @@ void MainFrame::PasteNode(Node* parent)
 
     if (!parent->is_ChildAllowed(new_node))
     {
-        auto* grandparent = parent->get_Parent();
+        Node* grandparent = parent->get_Parent();
 
         if (new_node->is_Gen(gen_wxMenuItem))
         {
@@ -868,11 +866,12 @@ void MainFrame::PasteNode(Node* parent)
                 {
                     parent = grandparent;
                 }
-                auto tool_generator =
+                const GenName tool_generator =
                     (parent->is_Type(type_toolbar) || parent->is_Type(type_toolbar_form)) ?
                         gen_tool :
                         gen_auitool;
-                auto tool_node = NodeCreation.CreateNode(tool_generator, parent);
+                const std::pair<NodeSharedPtr, Node::Validity> tool_node =
+                    NodeCreation.CreateNode(tool_generator, parent);
                 ASSERT(tool_node.second == Node::Validity::valid_node);
                 // REVIEW: [Randalphwa - 04-28-2025] Not being able to create a tool node with a
                 // valid toolbar parent is extremely unlikely. Simply returning prevents a crash,
@@ -905,7 +904,8 @@ void MainFrame::PasteNode(Node* parent)
                 {
                     parent = grandparent;
                 }
-                auto menu_node = NodeCreation.CreateNode(gen_wxMenuItem, parent);
+                const std::pair<NodeSharedPtr, Node::Validity> menu_node =
+                    NodeCreation.CreateNode(gen_wxMenuItem, parent);
                 ASSERT(menu_node.second == Node::Validity::valid_node);
                 if (menu_node.second != Node::Validity::valid_node)
                 {
@@ -940,7 +940,7 @@ void MainFrame::PasteNode(Node* parent)
     if (parent->is_Gen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(parent);
-        [[maybe_unused]] auto result = grid_bag.InsertNode(parent, new_node.get());
+        [[maybe_unused]] const bool result = grid_bag.InsertNode(parent, new_node.get());
         return;
     }
 
@@ -959,7 +959,7 @@ bool MainFrame::CanPasteNode()
 
 void MainFrame::Undo()
 {
-    wxWindowUpdateLocker freeze(this);
+    const wxWindowUpdateLocker freeze(this);
 
     m_undo_stack.Undo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
@@ -975,7 +975,7 @@ void MainFrame::Undo()
 
 void MainFrame::Redo()
 {
-    wxWindowUpdateLocker freeze(this);
+    const wxWindowUpdateLocker freeze(this);
 
     m_undo_stack.Redo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
@@ -993,7 +993,8 @@ void MainFrame::ModifyProperty(NodeProperty* prop, std::string_view value)
 {
     if (prop && value != prop->as_string())
     {
-        if (auto* gen = prop->getNode()->get_Generator(); !gen || !gen->ModifyProperty(prop, value))
+        if (BaseGenerator* generator = prop->getNode()->get_Generator();
+            !generator || !generator->ModifyProperty(prop, value))
         {
             PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
         }
@@ -1008,9 +1009,9 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
         return false;
     }
 
-    auto prop_flags = m_selected_node->getSizerFlags();
+    const wxSizerFlags prop_flags = m_selected_node->getSizerFlags();
 
-    auto* propOption = m_selected_node->get_PropPtr(prop_proportion);
+    const NodeProperty* propOption = m_selected_node->get_PropPtr(prop_proportion);
     if (propOption)
     {
         *option = prop_flags.GetProportion();
@@ -1019,12 +1020,12 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
     *flag = prop_flags.GetFlags();
     *border = prop_flags.GetBorderInPixels();
 
-    auto* sizer = m_selected_node->get_Parent();
+    Node* sizer = m_selected_node->get_Parent();
     if (sizer)
     {
         if (sizer->is_Gen(gen_wxBoxSizer) || m_selected_node->is_StaticBoxSizer())
         {
-            auto* propOrient = sizer->get_PropPtr(prop_orientation);
+            const NodeProperty* propOrient = sizer->get_PropPtr(prop_orientation);
             if (propOrient)
             {
                 *orient = propOrient->as_int();
@@ -1090,13 +1091,14 @@ void MainFrame::DismissInfoBar()
 
 BasePanel* MainFrame::GetFirstCodePanel()
 {
-    auto* page = m_notebook->GetPage(1);
+    wxWindow* page = m_notebook->GetPage(1);
     return static_cast<BasePanel*>(page);
 }
 
 void MainFrame::RemoveCustomEventHandler(wxEvtHandler* handler)
 {
-    for (auto iter = m_custom_event_handlers.begin(); iter != m_custom_event_handlers.end(); ++iter)
+    for (std::vector<wxEvtHandler*>::iterator iter = m_custom_event_handlers.begin();
+         iter != m_custom_event_handlers.end(); ++iter)
     {
         if (*iter == handler)
         {

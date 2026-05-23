@@ -69,10 +69,9 @@ protected:
     wxPanel* m_go_bookpage;
     wxPanel* m_julia_bookpage;
     wxPanel* m_lua_bookpage;
-    wxPanel* m_perl_bookpage;
     wxPanel* m_python_bookpage;
     wxPanel* m_ruby_bookpage;
-    wxPanel* m_rust_bookpage;
+    wxPanel* m_typescript_bookpage;
     wxRadioButton* m_cpp_radio_use_function;
     wxStaticBoxSizer* m_cpp_function_box;
     wxRadioButton* m_cpp_radio_use_lambda;
@@ -85,8 +84,6 @@ protected:
     wxStaticBoxSizer* m_perl_lambda_box4;
     wxRadioButton* m_perl_radio_use_anon_func5;
     wxStaticBoxSizer* m_perl_lambda_box5;
-    wxRadioButton* m_perl_radio_use_anon_func;
-    wxStaticBoxSizer* m_perl_lambda_box;
     wxRadioButton* m_perl_radio_use_function2;
     wxStaticBoxSizer* m_perl_function_box2;
     wxRadioButton* m_perl_radio_use_function3;
@@ -97,8 +94,6 @@ protected:
     wxStaticBoxSizer* m_perl_function_box5;
     wxRadioButton* m_perl_radio_use_function6;
     wxStaticBoxSizer* m_perl_function_box6;
-    wxRadioButton* m_perl_radio_use_function;
-    wxStaticBoxSizer* m_perl_function_box;
     wxRadioButton* m_py_radio_use_function;
     wxStaticBoxSizer* m_py_function_box;
     wxRadioButton* m_py_radio_use_lambda;
@@ -109,22 +104,20 @@ protected:
     wxStaticBoxSizer* m_ruby_lambda_box;
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_cpp_stc_lambda;
-    wxStyledTextCtrl* m_perl_stc_lambda2;
-    wxStyledTextCtrl* m_perl_stc_lambda3;
-    wxStyledTextCtrl* m_perl_stc_lambda4;
-    wxStyledTextCtrl* m_perl_stc_lambda5;
-    wxStyledTextCtrl* m_perl_stc_lambda;
+    wxStyledTextCtrl* m_go_stc_lambda;
+    wxStyledTextCtrl* m_julia_stc_lambda;
+    wxStyledTextCtrl* m_luajit_stc_lambda;
     wxStyledTextCtrl* m_ruby_stc_lambda;
+    wxStyledTextCtrl* m_typescript_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
-    wxTextCtrl* m_perl_text_function2;
-    wxTextCtrl* m_perl_text_function3;
-    wxTextCtrl* m_perl_text_function4;
-    wxTextCtrl* m_perl_text_function5;
-    wxTextCtrl* m_perl_text_function6;
-    wxTextCtrl* m_perl_text_function;
+    wxTextCtrl* m_fortran_text_function;
+    wxTextCtrl* m_go_text_function;
+    wxTextCtrl* m_julia_text_function;
+    wxTextCtrl* m_lua_text_function;
     wxTextCtrl* m_py_text_function;
-    wxTextCtrl* m_py_text_lambda;
+    wxTextCtrl* m_python_stc_lambda;
     wxTextCtrl* m_ruby_text_function;
+    wxTextCtrl* m_typescript_text_function;
 };
 
 // ************* End of generated code ***********

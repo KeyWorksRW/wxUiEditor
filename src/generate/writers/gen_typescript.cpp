@@ -1,11 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate Rust code via kwxFFI
+// Purpose:   Generate TypeScript code via kwxFFI
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "gen_rust.h"
+#include "gen_typescript.h"
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
@@ -19,16 +19,17 @@
 using namespace code;
 using namespace GenEnum;
 
-RustCodeGenerator::RustCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUST, form_node)
+TypeScriptCodeGenerator::TypeScriptCodeGenerator(Node* form_node) :
+    BaseCodeGenerator(GEN_LANG_TYPESCRIPT, form_node)
 {
 }
 
-void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
-                                      wxProgressDialog* /* progress */)
+void TypeScriptCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
+                                            wxProgressDialog* /* progress */)
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_RUST);
+    ASSERT(m_language == GEN_LANG_TYPESCRIPT);
     Code code(m_form_node, m_language);
 
     if (m_header)
@@ -48,30 +49,24 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         return;
     }
 
-    // Rust module imports
-    m_source->writeLine("use kwx::prelude::*;");
+    // TypeScript module imports
+    m_source->writeLine("import * as kwx from './kwx';");
     m_source->writeLine();
 
     wxue::string class_name(m_form_node->as_string(prop_class_name));
 
-    // Struct definition
-    m_source->writeLine(wxue::string("pub struct ") << class_name << " {");
+    // Class definition
+    m_source->writeLine(wxue::string("export class ") << class_name << " {");
     m_source->Indent();
     m_source->writeLine("// Widget fields will be added as construction code is generated");
-    m_source->Unindent();
-    m_source->writeLine("}");
     m_source->writeLine();
 
-    // Implementation block with constructor
-    m_source->writeLine(wxue::string("impl ") << class_name << " {");
-    m_source->Indent();
-    m_source->writeLine(wxue::string("pub fn new(parent: &dyn WxWindow) -> Self {"));
+    // Constructor
+    m_source->writeLine(wxue::string("constructor(parent: any) {"));
     m_source->Indent();
 
     GenerateConstructionCode(code);
 
-    m_source->writeLine();
-    m_source->writeLine(wxue::string(class_name) << " {}");
     m_source->Unindent();
     m_source->writeLine("}");
     m_source->Unindent();
@@ -81,7 +76,7 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_source->ResetIndent();
 }
 
-auto RustCodeGenerator::GenerateConstructionCode(Code& code) -> void
+auto TypeScriptCodeGenerator::GenerateConstructionCode(Code& code) -> void
 {
     auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     code.clear();

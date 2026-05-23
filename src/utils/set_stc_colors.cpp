@@ -27,8 +27,7 @@ extern const char* g_fortran_keywords;
 extern const char* g_go_keywords;
 extern const char* g_julia_keywords;
 extern const char* g_luajit_keywords;
-extern const char* g_perl_keywords;
-extern const char* g_rust_keywords;
+extern const char* g_typescript_keywords;
 
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
 // generators support more XRC controls.
@@ -485,73 +484,30 @@ namespace
         stc->StyleSetForeground(wxSTC_LUA_WORD2, theme.clr_functions);
     }
 
-    void SetPerlColors(wxStyledTextCtrl* stc, bool set_lexer, bool add_keywords,
-                       const StcColorTheme& theme)
+    void SetTypeScriptColors(wxStyledTextCtrl* stc, bool set_lexer, bool add_keywords,
+                             const StcColorTheme& theme)
     {
+        // TypeScript has no dedicated Scintilla lexer; use JavaScript lexer.
         if (set_lexer)
         {
-            stc->SetLexer(wxSTC_LEX_PERL);
+            stc->SetLexer(wxSTC_LEX_ESCRIPT);
         }
         if (add_keywords)
         {
-            stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_perl_keywords);
+            stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_typescript_keywords);
         }
-        stc->StyleSetBold(wxSTC_PL_WORD, true);
+        stc->StyleSetBold(wxSTC_ESCRIPT_WORD, true);
 
         if (UserPrefs.is_DarkMode())
         {
             SetDarkModeBase(stc, theme);
         }
-        stc->StyleSetForeground(wxSTC_PL_COMMENTLINE, theme.clr_comments);
-        stc->StyleSetForeground(wxSTC_PL_POD, theme.clr_comments);
-        stc->StyleSetForeground(wxSTC_PL_NUMBER, theme.clr_numbers);
-        stc->StyleSetForeground(wxSTC_PL_WORD, theme.clr_keywords);
-        stc->StyleSetForeground(wxSTC_PL_STRING, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_PL_CHARACTER, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_PL_STRING_Q, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_PL_STRING_QQ, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_PL_STRING_QX, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_PL_STRING_QR, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_PL_STRING_QW, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_PL_SCALAR, theme.clr_variables);
-        stc->StyleSetForeground(wxSTC_PL_ARRAY, theme.clr_variables);
-        stc->StyleSetForeground(wxSTC_PL_HASH, theme.clr_variables);
-        stc->StyleSetForeground(wxSTC_PL_OPERATOR, theme.clr_functions);
-        stc->StyleSetForeground(wxSTC_PL_REGEX, theme.clr_types);
-    }
-
-    void SetRustColors(wxStyledTextCtrl* stc, bool set_lexer, bool add_keywords,
-                       const StcColorTheme& theme)
-    {
-        if (set_lexer)
-        {
-            stc->SetLexer(wxSTC_LEX_RUST);
-        }
-        if (add_keywords)
-        {
-            stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
-        }
-        stc->StyleSetBold(wxSTC_RUST_WORD, true);
-
-        if (UserPrefs.is_DarkMode())
-        {
-            SetDarkModeBase(stc, theme);
-        }
-        stc->StyleSetForeground(wxSTC_RUST_COMMENTBLOCK, theme.clr_comments);
-        stc->StyleSetForeground(wxSTC_RUST_COMMENTLINE, theme.clr_comments);
-        stc->StyleSetForeground(wxSTC_RUST_COMMENTBLOCKDOC, theme.clr_comments);
-        stc->StyleSetForeground(wxSTC_RUST_COMMENTLINEDOC, theme.clr_comments);
-        stc->StyleSetForeground(wxSTC_RUST_NUMBER, theme.clr_numbers);
-        stc->StyleSetForeground(wxSTC_RUST_STRING, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_RUST_STRINGR, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_RUST_CHARACTER, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_RUST_BYTESTRING, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_RUST_BYTESTRINGR, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_RUST_BYTECHARACTER, theme.clr_strings);
-        stc->StyleSetForeground(wxSTC_RUST_WORD, theme.clr_keywords);
-        stc->StyleSetForeground(wxSTC_RUST_WORD2, theme.clr_functions);
-        stc->StyleSetForeground(wxSTC_RUST_MACRO, theme.clr_types);
-        stc->StyleSetForeground(wxSTC_RUST_LIFETIME, theme.clr_types);
+        stc->StyleSetForeground(wxSTC_ESCRIPT_COMMENT, theme.clr_comments);
+        stc->StyleSetForeground(wxSTC_ESCRIPT_COMMENTLINE, theme.clr_comments);
+        stc->StyleSetForeground(wxSTC_ESCRIPT_COMMENTDOC, theme.clr_comments);
+        stc->StyleSetForeground(wxSTC_ESCRIPT_NUMBER, theme.clr_numbers);
+        stc->StyleSetForeground(wxSTC_ESCRIPT_WORD, theme.clr_keywords);
+        stc->StyleSetForeground(wxSTC_ESCRIPT_WORD2, theme.clr_functions);
     }
 
     void SetXrcColors(wxStyledTextCtrl* stc, bool set_lexer, bool add_keywords,
@@ -704,11 +660,8 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
         case GEN_LANG_LUAJIT:
             SetLuaJitColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_PERL:
-            SetPerlColors(stc, set_lexer, add_keywords, theme);
-            break;
-        case GEN_LANG_RUST:
-            SetRustColors(stc, set_lexer, add_keywords, theme);
+        case GEN_LANG_TYPESCRIPT:
+            SetTypeScriptColors(stc, set_lexer, add_keywords, theme);
             break;
         case GEN_LANG_XRC:
             SetXrcColors(stc, set_lexer, add_keywords, theme);

@@ -1,11 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-#include <format>
 
 #include <wx/aboutdlg.h>     // declaration of wxAboutDialog class
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
@@ -15,6 +13,7 @@
 #include <wx/infobar.h>      // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/stc/stc.h>      // Scintilla
 
+#include "wx/msw/toplevel.h"
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "mainframe.h"
@@ -73,9 +72,11 @@ auto MainFrame::OnAbout([[maybe_unused]] wxCommandEvent& event) -> void
     // aboutInfo.AddDeveloper("Randalphwa");
 
 #if defined(_DEBUG)
-    aboutInfo.SetIcon(wxue_img::bundle_debug_logo_svg(64, 64).GetIconFor(this));
+    aboutInfo.SetIcon(
+        wxue_img::bundle_debug_logo_svg(64, 64).GetIconFor(static_cast<const wxWindow*>(this)));
 #else
-    aboutInfo.SetIcon(wxue_img::bundle_wxUiEditor_svg(64, 64).GetIconFor(this));
+    aboutInfo.SetIcon(
+        wxue_img::bundle_wxUiEditor_svg(64, 64).GetIconFor(static_cast<wxWindow*>(this)));
 #endif  // _DEBUG
 
     wxAboutBox(aboutInfo);
@@ -405,7 +406,7 @@ auto MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */) -> void
         return;
     }
 
-    (void) DsisplayStartupDlg(m_nav_panel);
+    (void) DisplayStartupDlg(m_nav_panel);
 }
 
 auto MainFrame::OnDuplicate(wxCommandEvent& /* event unused */) -> void

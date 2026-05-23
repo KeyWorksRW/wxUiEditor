@@ -5,15 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: FFIStrategy is the abstract base for all 6 kwxFFI-based languages (Fortran,
-// Go, Julia, LuaJIT, Perl, Rust). These languages access wxWidgets through the kwxFFI C
-// API, which provides complete wxWidgets coverage. All 6 share identical constant names and
-// function names (one shared convention), full C++ feature parity, and an opaque handle
-// model. The only per-language differences are pure syntax: variable declarations, callbacks,
-// imports, string handling. FFIStrategy inherits from CWrapperStrategy, capturing shared
-// non-C++ patterns (no headers, single output file), and adds FFI-specific behaviors:
-// wx_<classname> construction, wx_ prefix mapping, and full feature support.
-
 #pragma once
 
 #include "strategy_cwrapper.h"

@@ -1,11 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
-#include <format>
 
 #include <wx/aboutdlg.h>     // declaration of wxAboutDialog class
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
@@ -74,13 +72,12 @@ auto MainFrame::OnAbout([[maybe_unused]] wxCommandEvent& event) -> void
     // aboutInfo.AddDeveloper("Randalphwa");
 
 #if defined(_DEBUG)
-    #if defined(_DEBUG)
     aboutInfo.SetIcon(
         wxue_img::bundle_debug_logo_svg(64, 64).GetIconFor(static_cast<const wxWindow*>(this)));
-    #else
+#else
     aboutInfo.SetIcon(
         wxue_img::bundle_wxUiEditor_svg(64, 64).GetIconFor(static_cast<wxWindow*>(this)));
-    #endif  // _DEBUG
+#endif  // _DEBUG
 
     wxAboutBox(aboutInfo);
 }
@@ -177,12 +174,12 @@ auto MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
         {
             m_mockupPanel->CreateContent();
         }
-    #if wxUSE_WEBVIEW
+#if wxUSE_WEBVIEW
         else if (page == m_docviewPanel)
         {
             m_docviewPanel->ActivatePage();
         }
-    #endif
+#endif
         else if (page != m_importPanel)
         {
             dynamic_cast<BasePanel*>(page)->GenerateBaseClass();
@@ -332,11 +329,11 @@ auto MainFrame::OnClose(wxCloseEvent& event) -> void
     wxGetApp().setMainFrameClosing();
 
     auto* config = wxConfig::Get();
-    #if defined(_DEBUG)
+#if defined(_DEBUG)
     config->SetPath("/debug_mainframe");
-    #else
+#else
     config->SetPath("/mainframe");
-    #endif
+#endif
 
     bool isIconized = IsIconized();
     bool isMaximized = IsMaximized();
@@ -409,7 +406,7 @@ auto MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */) -> void
         return;
     }
 
-    (void) DsisplayStartupDlg(m_nav_panel);
+    (void) DisplayStartupDlg(m_nav_panel);
 }
 
 auto MainFrame::OnDuplicate(wxCommandEvent& /* event unused */) -> void

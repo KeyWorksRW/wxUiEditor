@@ -46,7 +46,7 @@ extern std::map<GenLang, std::string> s_lang_category_prefix;
 namespace
 {
     constexpr auto supported_languages = frozen::make_set<std::string_view>(
-        { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Perl", "Python", "Ruby", "Rust", "XRC" });
+        { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Python", "Ruby", "TypeScript", "XRC" });
 }  // namespace
 
 void PropGridPanel::Create()

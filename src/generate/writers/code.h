@@ -123,8 +123,8 @@ public:
     [[nodiscard]] auto is_python() const -> bool { return m_language == GEN_LANG_PYTHON; }
     [[nodiscard]] auto is_ruby() const -> bool { return m_language == GEN_LANG_RUBY; }
 
-    // Returns true if the language is an FFI-based language (Fortran, Go, Julia, LuaJIT, Perl,
-    // Rust)
+    // Returns true if the language is an FFI-based language (Fortran, Go, Julia, LuaJIT,
+    // TypeScript)
     [[nodiscard]] auto is_ffi() const -> bool
     {
         return m_traits && m_traits->family == LanguageTraits::Family::ffi;

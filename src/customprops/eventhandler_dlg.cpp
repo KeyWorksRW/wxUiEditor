@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for editing event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -25,48 +25,32 @@ extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 extern const char* g_u8_cpp_keywords;
 extern const char* g_ruby_keywords;
 
-#ifndef SCI_SETKEYWORDS
-    #define SCI_SETKEYWORDS 4005
-#endif
+constexpr int SCI_SETKEYWORDS = 4005;
 
 constexpr int EVENT_PAGE_CPP = 0;
-constexpr int EVENT_PAGE_PYTHON = 1;
-constexpr int EVENT_PAGE_RUBY = 2;
+constexpr int EVENT_PAGE_FORTRAN = 1;
+constexpr int EVENT_PAGE_GO = 2;
+constexpr int EVENT_PAGE_JULIA = 3;
+constexpr int EVENT_PAGE_LUA = 4;
+constexpr int EVENT_PAGE_PYTHON = 5;
+constexpr int EVENT_PAGE_RUBY = 6;
+constexpr int EVENT_PAGE_TYPESCRIPT = 7;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     EventHandlerDlgBase(parent), m_event(event), m_python_page(EVENT_PAGE_PYTHON),
     m_ruby_page(EVENT_PAGE_RUBY), m_gen_languages(Project.get_GenerateLanguages()),
-    m_code_preference(Project.get_CodePreference(event->getNode())),
-    m_is_cpp_enabled(m_gen_languages & GEN_LANG_CPLUSPLUS),
-    m_is_python_enabled(m_gen_languages & GEN_LANG_PYTHON),
-    m_is_ruby_enabled(m_gen_languages & GEN_LANG_RUBY)
+    m_code_preference(Project.get_CodePreference(event->getNode()))
 {
-    // Now that we've determined which languages are enabled, we can remove any pages
-    // for languages that are not used in this project.
+    m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
+    m_is_python_enabled = (m_gen_languages & GEN_LANG_PYTHON);
+    m_is_ruby_enabled = (m_gen_languages & GEN_LANG_RUBY);
+    m_is_fortran_enabled = (m_gen_languages & GEN_LANG_FORTRAN);
+    m_is_go_enabled = (m_gen_languages & GEN_LANG_GO);
+    m_is_julia_enabled = (m_gen_languages & GEN_LANG_JULIA);
+    m_is_luajit_enabled = (m_gen_languages & GEN_LANG_LUAJIT);
+    m_is_typescript_enabled = (m_gen_languages & GEN_LANG_TYPESCRIPT);
 
-    if (!m_is_cpp_enabled)
-    {
-        m_notebook->RemovePage(EVENT_PAGE_CPP);
-        m_python_page--;
-        m_ruby_page--;
-    }
-
-    // Always remove the Perl page (legacy wxPerl generation has been removed)
-    m_notebook->RemovePage(m_is_cpp_enabled ? 1 : 0);
-    m_python_page--;
-    m_ruby_page--;
-
-    if (!m_is_python_enabled)
-    {
-        m_notebook->RemovePage(m_python_page);
-        m_ruby_page--;
-    }
-    if (!m_is_ruby_enabled)
-    {
-        m_notebook->RemovePage(m_ruby_page);
-    }
     m_value = event->get_value().wx();
-
     if (m_is_cpp_enabled)
     {
         SetStcColors(m_cpp_stc_lambda, GEN_LANG_CPLUSPLUS);
@@ -77,7 +61,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         SetStcColors(m_ruby_stc_lambda, GEN_LANG_RUBY);
     }
 
-    auto* form = event->getNode()->get_Form();
+    Node* form = event->getNode()->get_Form();
     if (form)
     {
         // For the panels that support lambdas, set the keywords for the scintilla control that
@@ -93,7 +77,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
                 keywords << iter << ' ';
             }
             // Remove any trailing space, if there are any keywords
-            if (keywords.size() && keywords.back() == ' ')
+            if (!keywords.empty() && keywords.back() == ' ')
             {
                 keywords.pop_back();
             }
@@ -152,6 +136,27 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     {
         m_notebook->SetSelection(m_ruby_page);
     }
+
+    else if (m_code_preference == GEN_LANG_FORTRAN)
+    {
+        m_notebook->SetSelection(EVENT_PAGE_FORTRAN);
+    }
+    else if (m_code_preference == GEN_LANG_GO)
+    {
+        m_notebook->SetSelection(EVENT_PAGE_GO);
+    }
+    else if (m_code_preference == GEN_LANG_JULIA)
+    {
+        m_notebook->SetSelection(EVENT_PAGE_JULIA);
+    }
+    else if (m_code_preference == GEN_LANG_LUAJIT)
+    {
+        m_notebook->SetSelection(EVENT_PAGE_LUA);
+    }
+    else if (m_code_preference == GEN_LANG_TYPESCRIPT)
+    {
+        m_notebook->SetSelection(EVENT_PAGE_TYPESCRIPT);
+    }
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
@@ -201,7 +206,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
         if (m_is_cpp_enabled)
         {
             value = GetCppValue(m_value.utf8_string());
-            if (value.size())
+            if (!value.empty())
             {
                 if (value.contains("["))
                 {
@@ -242,7 +247,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
         if (m_is_python_enabled)
         {
             value = GetPythonValue(m_value.utf8_string());
-            if (value.size())
+            if (!value.empty())
             {
                 if (auto pos_lambda = value.find('['); pos_lambda != wxue::npos)
                 {
@@ -254,7 +259,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
                     // remove leading and trailing brackets
                     value.erase(pos_lambda, sizeof("[python:lambda]") - 1);
 
-                    m_py_text_lambda->SetValue(value.wx());
+                    m_python_stc_lambda->SetValue(value.wx());
                     m_is_python_lambda = true;
                 }
                 else
@@ -281,7 +286,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
         if (m_is_ruby_enabled)
         {
             value = GetRubyValue(m_value.utf8_string());
-            if (value.size())
+            if (!value.empty())
             {
                 if (auto pos_lambda = value.find('['); pos_lambda != wxue::npos)
                 {
@@ -317,7 +322,7 @@ void EventHandlerDlg::OnUseCppFunction(wxCommandEvent& /* event unused */)
         m_cpp_lambda_box->GetStaticBox()->Enable(false);
         m_cpp_function_box->GetStaticBox()->Enable(true);
 
-        auto value = GetCppValue(m_value.utf8_string());
+        wxue::string value = GetCppValue(m_value.utf8_string());
 
         if (value.empty() || value.find('[') != std::string::npos)
         {
@@ -345,7 +350,7 @@ void EventHandlerDlg::OnUsePythonFunction(wxCommandEvent& /* event unused */)
         m_py_lambda_box->GetStaticBox()->Enable(false);
         m_py_function_box->GetStaticBox()->Enable(true);
 
-        auto value = GetPythonValue(m_value.utf8_string());
+        wxue::string value = GetPythonValue(m_value.utf8_string());
 
         if (value.empty() || value.contains("["))
         {
@@ -372,7 +377,7 @@ void EventHandlerDlg::OnUseRubyFunction(wxCommandEvent& /* event unused */)
         m_ruby_lambda_box->GetStaticBox()->Enable(false);
         m_ruby_function_box->GetStaticBox()->Enable(true);
 
-        auto value = GetPythonValue(m_value.utf8_string());
+        wxue::string value = GetPythonValue(m_value.utf8_string());
 
         if (value.empty() || value.contains("["))
         {
@@ -534,7 +539,7 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
 
 void EventHandlerDlg::FormatBindText()
 {
-    auto page = m_notebook->GetSelection();
+    const int page = m_notebook->GetSelection();
     GenLang language = GEN_LANG_CPLUSPLUS;
     if (m_is_cpp_enabled && page == EVENT_PAGE_CPP)
     {
@@ -559,7 +564,7 @@ void EventHandlerDlg::FormatBindText()
     {
         if (m_cpp_radio_use_function->GetValue())
         {
-            auto value = m_cpp_text_function->GetValue().utf8_string();
+            const std::string value = m_cpp_text_function->GetValue().utf8_string();
             handler << m_event->get_name() << ", &" << m_event->getNode()->get_FormName()
                     << "::" << value += ", this";
         }
@@ -593,7 +598,7 @@ void EventHandlerDlg::FormatBindText()
     {
         if (m_py_radio_use_function->GetValue())
         {
-            auto value = m_py_text_function->GetValue().utf8_string();
+            const std::string value = m_py_text_function->GetValue().utf8_string();
             handler.Add(m_event->get_name()) << ", &self." += value;
         }
         else
@@ -609,14 +614,14 @@ void EventHandlerDlg::FormatBindText()
         // remove "wx" prefix, make the rest of the name lower case
         event_name.erase(0, 2);
         std::transform(event_name.begin(), event_name.end(), event_name.begin(),
-                       [](unsigned char chr)
+                       [](unsigned char ch_val)
                        {
-                           return std::tolower(chr);
+                           return std::tolower(ch_val);
                        });
 
         if (m_ruby_radio_use_function->GetValue())
         {
-            auto value = m_ruby_text_function->GetValue().utf8_string();
+            const std::string value = m_ruby_text_function->GetValue().utf8_string();
             if (m_event->getNode()->is_Form())
             {
                 handler.Str(event_name).Str("(:") << value << ')';
@@ -777,7 +782,7 @@ void EventHandlerDlg::Update_m_value()
         }
         else
         {
-            py_value << "[python:lambda]" << m_py_text_lambda->GetValue().utf8_string();
+            py_value << "[python:lambda]" << m_python_stc_lambda->GetValue().utf8_string();
         }
 
         if (!m_is_cpp_enabled && !m_is_ruby_enabled)
@@ -846,7 +851,7 @@ void EventHandlerDlg::Update_m_value()
 
 // This is a static function
 
-auto EventHandlerDlg::GetCppValue(std::string_view value) -> std::string
+std::string EventHandlerDlg::GetCppValue(std::string_view value)
 {
     if (auto pos = value.find("[python:"); pos != wxue::npos)
     {
@@ -862,10 +867,10 @@ auto EventHandlerDlg::GetCppValue(std::string_view value) -> std::string
 
 // This is a static function
 
-auto EventHandlerDlg::GetPythonValue(wxue::string_view value) -> wxue::string
+wxue::string EventHandlerDlg::GetPythonValue(wxue::string_view value)
 {
     wxue::string result;
-    auto pos_python = value.find("[python:");
+    const size_t pos_python = value.find("[python:");
     if (pos_python == wxue::npos)
     {
         if (value.front() == '[')
@@ -902,10 +907,10 @@ auto EventHandlerDlg::GetPythonValue(wxue::string_view value) -> wxue::string
 
 // This is a static function
 
-auto EventHandlerDlg::GetRubyValue(wxue::string_view value) -> wxue::string
+wxue::string EventHandlerDlg::GetRubyValue(wxue::string_view value)
 {
     wxue::string result;
-    auto pos_ruby = value.find("[ruby:");
+    const size_t pos_ruby = value.find("[ruby:");
     if (pos_ruby == wxue::npos)
     {
         if (value.front() == '[')

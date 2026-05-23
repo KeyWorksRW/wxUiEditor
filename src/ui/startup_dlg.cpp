@@ -10,8 +10,6 @@
 #include <wx/filename.h>  // wxFileName class
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
-#include <format>
-
 #include "startup_dlg.h"  // #include "../wxui/startup_dlg_base.h"
 
 #include "mainframe.h"                   // Main frame
@@ -35,7 +33,7 @@ public:
     }
 
 protected:
-    auto RemoveProjectFilename(wxCommandEvent& event) -> void
+    void RemoveProjectFilename(wxCommandEvent& event)
     {
         event.SetString(GetURL());
         if (GetParent())
@@ -44,7 +42,7 @@ protected:
         }
     }
 
-    auto DoContextMenu(const wxPoint& pos) -> void override
+    void DoContextMenu(const wxPoint& pos) override
     {
         auto menu_popup = std::make_unique<wxMenu>(wxEmptyString, wxMENU_TEAROFF);
         menu_popup->Append(wxID_REMOVE, "Remove Project from List");
@@ -56,8 +54,8 @@ protected:
 // use_standard_colors: true for main history (uses RemovableProjectHyperlinkCtrl with remove
 // option),
 //                      false for testing imports (uses wxGenericHyperlinkCtrl with inverted colors)
-auto StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& url,
-                                  const wxFileName& project_file, bool use_standard_colors) -> void
+void StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& url,
+                                  const wxFileName& project_file, bool use_standard_colors)
 {
     wxGenericHyperlinkCtrl* hyperlink = nullptr;
     if (use_standard_colors)
@@ -96,12 +94,12 @@ auto StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& 
     m_recent_flex_grid->Add(path, wxSizerFlags().Border(wxALL));
 }
 
-auto StartupDlg::OnInit(wxInitDialogEvent& event) -> void
+void StartupDlg::OnInit(wxInitDialogEvent& event)
 {
     if (!GetParent())
     {
-        wxDisplay desktop(this);
-        wxRect rect_parent(desktop.GetClientArea());
+        const wxDisplay desktop(this);
+        wxRect const rect_parent(desktop.GetClientArea());
         wxRect rect_this(GetSize());
         rect_this.x = rect_parent.x + ((rect_parent.width - rect_this.width) / 2);
         rect_this.y = rect_parent.y + ((rect_parent.height - rect_this.height) / 3);
@@ -114,12 +112,12 @@ auto StartupDlg::OnInit(wxInitDialogEvent& event) -> void
 
     m_name_version->SetLabel(txtVersion);
 
-    auto& history = wxGetMainFrame()->getFileHistory();
+    wxFileHistory& history = wxGetMainFrame()->getFileHistory();
     bool file_added = false;
     for (size_t idx = 0; idx < history.GetCount(); ++idx)
     {
-        wxString history_file = history.GetHistoryFile(idx);
-        wxFileName project_file(history_file);
+        wxString const history_file = history.GetHistoryFile(idx);
+        wxFileName const project_file(history_file);
         if (project_file.FileExists())
         {
             wxFileName shortname = project_file;
@@ -140,11 +138,11 @@ auto StartupDlg::OnInit(wxInitDialogEvent& event) -> void
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        auto* append_history_ptr = wxGetFrame().GetAppendImportHistory();
+        wxFileHistory const* append_history_ptr = wxGetFrame().GetAppendImportHistory();
         for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
         {
-            wxString history_file = append_history_ptr->GetHistoryFile(idx);
-            wxFileName project_file(history_file);
+            wxString const history_file = append_history_ptr->GetHistoryFile(idx);
+            wxFileName const project_file(history_file);
             if (project_file.FileExists())
             {
                 // We do *not* use RemovableProjectHyperlinkCtrl here since that will remove the
@@ -172,19 +170,19 @@ void StartupDlg::OnHyperlink(wxHyperlinkEvent& event)
     EndModal(wxID_OK);
 }
 
-void StartupDlg::OnImport(wxHyperlinkEvent& /* event unused */)
+void StartupDlg::OnImport([[maybe_unused]] wxHyperlinkEvent& event)
 {
     m_command = Command::start_convert;
     EndModal(wxID_OK);
 }
 
-void StartupDlg::OnOpen(wxHyperlinkEvent& /* event unused */)
+void StartupDlg::OnOpen([[maybe_unused]] wxHyperlinkEvent& event)
 {
     m_command = Command::start_open;
     EndModal(wxID_OK);
 }
 
-void StartupDlg::OnNew(wxHyperlinkEvent& /* event unused */)
+void StartupDlg::OnNew([[maybe_unused]] wxHyperlinkEvent& event)
 {
     m_command = Command::start_empty;
     EndModal(wxID_OK);
@@ -192,8 +190,8 @@ void StartupDlg::OnNew(wxHyperlinkEvent& /* event unused */)
 
 void StartupDlg::RemoveProjectFilename(wxCommandEvent& event)
 {
-    auto url = event.GetString();
-    auto& history = wxGetMainFrame()->getFileHistory();
+    wxString const url = event.GetString();
+    wxFileHistory& history = wxGetMainFrame()->getFileHistory();
     for (size_t idx = 0; idx < history.GetCount(); ++idx)
     {
         if (history.GetHistoryFile(idx) == url)
@@ -204,14 +202,14 @@ void StartupDlg::RemoveProjectFilename(wxCommandEvent& event)
     }
 
     // Freeze the UI to prevent flicker during updates
-    wxWindowUpdateLocker freeze(this);
+    wxWindowUpdateLocker const freeze(this);
 
     // Remove all children from the recent projects grid
     m_recent_flex_grid->Clear(true);
     for (size_t idx = 0; idx < history.GetCount(); ++idx)
     {
-        wxString history_file = history.GetHistoryFile(idx);
-        wxFileName project_file(history_file);
+        wxString const history_file = history.GetHistoryFile(idx);
+        wxFileName const project_file(history_file);
         if (project_file.FileExists())
         {
             wxFileName shortname = project_file;
@@ -223,11 +221,11 @@ void StartupDlg::RemoveProjectFilename(wxCommandEvent& event)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        auto* append_history_ptr = wxGetFrame().GetAppendImportHistory();
+        wxFileHistory const* append_history_ptr = wxGetFrame().GetAppendImportHistory();
         for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
         {
-            wxString history_file = append_history_ptr->GetHistoryFile(idx);
-            wxFileName project_file(history_file);
+            wxString const history_file = append_history_ptr->GetHistoryFile(idx);
+            wxFileName const project_file(history_file);
             if (project_file.FileExists())
             {
                 // We do *not* use RemovableProjectHyperlinkCtrl here since that will remove the
@@ -241,17 +239,17 @@ void StartupDlg::RemoveProjectFilename(wxCommandEvent& event)
     Refresh();
 }
 
-auto DsisplayStartupDlg(wxWindow* parent) -> bool
+bool DisplayStartupDlg(wxWindow* parent)
 {
     StartupDlg start_dlg(parent);
-    if (auto result = start_dlg.ShowModal(); result == wxID_OK)
+    if (int const result = start_dlg.ShowModal(); result == wxID_OK)
     {
         switch (start_dlg.GetCommand())
         {
             case StartupDlg::Command::start_mru:
                 {
-                    auto& project_file = start_dlg.GetProjectFile();
-                    auto ext = project_file.GetExt().Lower().ToStdString();
+                    wxFileName const& project_file = start_dlg.GetProjectFile();
+                    std::string ext = project_file.GetExt().Lower().ToStdString();
                     ext.insert(ext.begin(), '.');
 
                     if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
@@ -260,15 +258,12 @@ auto DsisplayStartupDlg(wxWindow* parent) -> bool
                     }
                     return Project.LoadProject(project_file.GetFullPath().ToStdString());
                 }
-                break;
 
             case StartupDlg::Command::start_empty:
                 return Project.NewProject(true);
-                break;
 
             case StartupDlg::Command::start_convert:
                 return Project.NewProject(false);
-                break;
 
             case StartupDlg::Command::start_open:
                 {
@@ -276,10 +271,10 @@ auto DsisplayStartupDlg(wxWindow* parent) -> bool
                     // wxSmith resources -- so it would actually make sense to process it since
                     // we can combine all of those resources into our single project file.
 
-                    auto path = ShowOpenProjectDialog(nullptr);
+                    wxString const path = ShowOpenProjectDialog(nullptr);
                     if (!path.IsEmpty())
                     {
-                        wxue::string filename = path.utf8_string();
+                        wxue::string const filename = path.utf8_string();
                         if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION,
                                                             wxue::CASE::either) &&
                             !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION,

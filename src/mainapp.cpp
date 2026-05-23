@@ -477,7 +477,7 @@ int App::OnRun()
 
     if (!is_project_loaded)
     {
-        is_project_loaded = DsisplayStartupDlg(nullptr);
+        is_project_loaded = DisplayStartupDlg(nullptr);
     }
 
     if (is_project_loaded)

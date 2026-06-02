@@ -50,6 +50,10 @@ public:
     [[nodiscard]] std::expected<void, std::string> AddFile(std::string_view archive_name,
                                                            std::string_view content);
 
+    // Add arbitrary binary data to the archive with DEFLATE compression.
+    [[nodiscard]] std::expected<void, std::string>
+        AddBinaryFile(std::string_view archive_name, const void* data, std::size_t size);
+
     // Add a binary file to the archive with no compression (STORE method).
     // Useful for pre-compressed or binary index files like .kfts.
     [[nodiscard]] std::expected<void, std::string>

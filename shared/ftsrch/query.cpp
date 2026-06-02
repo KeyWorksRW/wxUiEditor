@@ -11,8 +11,8 @@
 #include "ftsrch.h"
 
 #include <algorithm>
-#include <cstdint>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 
 namespace ftsrch
@@ -35,50 +35,149 @@ namespace ftsrch
         m_prefix_groups.push_back(std::move(group));
     }
 
+    void Query::AddRequiredTerm(ConceptId concept_id, float boost)
+    {
+        m_required_terms.push_back({ concept_id, boost });
+    }
+
+    void Query::AddProhibitedTerm(ConceptId concept_id)
+    {
+        m_prohibited_concepts.push_back(concept_id);
+    }
+
     std::vector<QueryResult> Query::Execute(const Collection& collection,
                                             [[maybe_unused]] const Dictionary& dictionary,
                                             std::uint32_t max_results)
     {
-        // Accumulate scores per document
-        std::unordered_map<DocId, float> doc_scores;
-
         const std::uint32_t doc_count = collection.DocCount();
 
-        // Helper: accumulate score from a concept's doc list
-        auto accumulate_concept =
-            [&](ConceptId concept_id, float boost, const Collection& source_collection)
+        // Phase A+B: Collect required term doc sets and intersect into candidate_set
+        std::unordered_set<DocId> candidate_set;
+        const bool has_required = !m_required_terms.empty();
+
+        if (has_required)
+        {
+            bool first = true;
+            for (const auto& term: m_required_terms)
+            {
+                const std::span<const std::uint32_t> packed =
+                    collection.GetCompressedDocList(term.concept_id);
+                if (packed.empty())
+                {
+                    // Required term has no matching docs — intersection is empty
+                    return {};
+                }
+
+                const std::uint32_t header_word = packed[0];
+                const std::vector<std::uint32_t> doc_ids =
+                    DecompressSortedIds(packed, 0, doc_count);
+
+                if (first)
+                {
+                    candidate_set.insert(doc_ids.begin(), doc_ids.end());
+                    first = false;
+                }
+                else
+                {
+                    // Intersect with existing set
+                    for (std::unordered_set<DocId>::iterator it = candidate_set.begin();
+                         it != candidate_set.end();)
+                    {
+                        if (!std::ranges::binary_search(doc_ids, *it))
+                        {
+                            it = candidate_set.erase(it);
+                        }
+                        else
+                        {
+                            ++it;
+                        }
+                    }
+                    if (candidate_set.empty())
+                    {
+                        return {};
+                    }
+                }
+            }
+        }
+
+        // Phase C: Collect prohibited docs for subtraction
+        std::unordered_set<DocId> prohibited_set;
+        const bool has_prohibited = !m_prohibited_concepts.empty();
+
+        if (has_prohibited)
+        {
+            for (const ConceptId concept_id: m_prohibited_concepts)
+            {
+                const std::span<const std::uint32_t> packed =
+                    collection.GetCompressedDocList(concept_id);
+                if (packed.empty())
+                {
+                    continue;
+                }
+
+                const std::uint32_t header_word = packed[0];
+                const std::vector<std::uint32_t> doc_ids =
+                    DecompressSortedIds(packed, 0, doc_count);
+
+                for (const DocId doc_id: doc_ids)
+                {
+                    prohibited_set.insert(doc_id);
+                    if (has_required)
+                    {
+                        candidate_set.erase(doc_id);
+                    }
+                }
+            }
+        }
+
+        // Phase D: Score only candidates
+        std::unordered_map<DocId, float> doc_scores;
+
+        // Helper: accumulate score from a concept's doc list,
+        // skipping documents outside the candidate set.
+        auto accumulate_concept = [&](ConceptId concept_id, float boost)
         {
             const std::span<const std::uint32_t> packed_doc_list =
-                source_collection.GetCompressedDocList(concept_id);
+                collection.GetCompressedDocList(concept_id);
             if (packed_doc_list.empty())
             {
                 return;
             }
 
-            // Get doc count for this concept from compressed header
-            // DecompressSortedIds needs count + universe
-            // The compressed header stores count in the first word
-            // (lower 27 bits)
             const std::uint32_t header_word = packed_doc_list[0];
-            const std::uint32_t count = (header_word & 0x07FF'FFFFU);
 
             const std::vector<std::uint32_t> doc_ids =
-                DecompressSortedIds(packed_doc_list, count, doc_count);
+                DecompressSortedIds(packed_doc_list, 0, doc_count);
 
             const double weight_scale = static_cast<double>(WT_ONE);
             for (const DocId doc_id: doc_ids)
             {
-                const Weight doc_weight = source_collection.GetDocWeight(concept_id, doc_id);
+                if (has_required && !candidate_set.contains(doc_id))
+                {
+                    continue;
+                }
+                if (has_prohibited && prohibited_set.contains(doc_id))
+                {
+                    continue;
+                }
+
+                const Weight doc_weight = collection.GetDocWeight(concept_id, doc_id);
                 const float score =
                     (static_cast<float>(doc_weight) / static_cast<float>(weight_scale)) * boost;
                 doc_scores[doc_id] += score;
             }
         };
 
-        // Process exact terms
+        // Process exact terms (optional / OR)
         for (const auto& term: m_terms)
         {
-            accumulate_concept(term.concept_id, term.boost, collection);
+            accumulate_concept(term.concept_id, term.boost);
+        }
+
+        // Process required terms (AND) — also scored for ranking
+        for (const auto& term: m_required_terms)
+        {
+            accumulate_concept(term.concept_id, term.boost);
         }
 
         // Process prefix groups (OR semantics — any matching
@@ -87,11 +186,11 @@ namespace ftsrch
         {
             for (const ConceptId concept_id: group.concepts)
             {
-                accumulate_concept(concept_id, group.boost, collection);
+                accumulate_concept(concept_id, group.boost);
             }
         }
 
-        // Sort by score descending
+        // Phase E: Sort by score descending
         std::vector<QueryResult> results;
         results.reserve(doc_scores.size());
         for (const auto& [doc_id, score]: doc_scores)

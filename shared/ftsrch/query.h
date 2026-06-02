@@ -25,6 +25,8 @@ namespace ftsrch
     public:
         void AddTerm(ConceptId concept_id, float boost = 1.0F);
         void AddPrefixTerms(std::span<const ConceptId> concepts, float boost = 1.0F);
+        void AddRequiredTerm(ConceptId concept_id, float boost = 1.0F);
+        void AddProhibitedTerm(ConceptId concept_id);
         std::vector<QueryResult> Execute(const Collection& collection, const Dictionary& dictionary,
                                          std::uint32_t max_results = 100);
 
@@ -42,6 +44,8 @@ namespace ftsrch
         };
 
         std::vector<TermEntry> m_terms;
+        std::vector<TermEntry> m_required_terms;
+        std::vector<ConceptId> m_prohibited_concepts;
         std::vector<PrefixGroup> m_prefix_groups;
     };
 

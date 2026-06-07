@@ -24,7 +24,7 @@ struct ZipArchiveImpl;
 //   ZipWriter zip;
 //   if (!zip.Open("output.zip")) { /* error */ }
 //   zip.AddFile("docs/wxButton.md", markdown_text);
-//   zip.AddFileUncompressed("search_index.kfts", binary_data, binary_size);
+//   zip.AddBinaryFile("data/search_index.kfts", binary_data, binary_size);
 //   if (!zip.Finalize()) { /* error */ }
 //   // destructor cleans up
 class ZipWriter

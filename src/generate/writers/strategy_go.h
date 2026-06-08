@@ -5,11 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: GoStrategy implements the LanguageStrategy interface for Go code generation
-// via kwxFFI. Go uses: `import` for packages, `:=` short variable declaration, `func` for
-// functions, `// ` comments, `nil` for null, no classes (struct + methods), `{`/`}` blocks,
-// and tab indentation (generated as 4 spaces). Go has no inheritance — composition is used.
-
 #pragma once
 
 #include "strategy_ffi.h"

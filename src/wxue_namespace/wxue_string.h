@@ -28,16 +28,6 @@ namespace wxue
     // string_view - std::string_view with additional methods
     //////////////////////////////////////////////////////////////////////////
 
-    // AI Context: This file provides wxue::string and wxue::string_view as modern replacements for
-    // legacy wxue::string types. Both classes extend std::string/std::string_view with utility
-    // methods for string manipulation (locate, contains, trim, find_space/nonspace, stepover),
-    // case-insensitive comparisons, and file path operations (extension, filename,
-    // replace_extension, make_relative). string_view includes moveto_* methods that modify the view
-    // in-place for parsing. string adds mutation methods (erase_from, Replace, MakeLower/Upper) and
-    // file system operations (file_exists, dir_exists, last_write_time). Requires
-    // wxUSE_UNICODE_UTF8 for efficient wxString interop via wx() method. string_view methods are
-    // delegated from string to avoid code duplication.
-
     class string_view : public std::basic_string_view<char, std::char_traits<char>>
     {
         using bsv = std::basic_string_view<char, std::char_traits<char>>;

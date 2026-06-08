@@ -87,6 +87,25 @@ std::expected<void, std::string> ZipWriter::AddFile(std::string_view archive_nam
     return AddPreCompressed(archive_name, compressed, content.size(), crc32);
 }
 
+std::expected<void, std::string> ZipWriter::AddBinaryFile(std::string_view archive_name,
+                                                          const void* data, std::size_t size)
+{
+    if (!is_open_ || is_finalized_)
+    {
+        return std::unexpected(std::string("Archive is not open for writing"));
+    }
+
+    const std::span<const char> src(reinterpret_cast<const char*>(data), size);
+    std::vector<uint8_t> compressed = CompressForArchive(src, MAX_DEFLATE_LEVEL);
+    if (compressed.empty())
+    {
+        return std::unexpected(std::string("Compression failed for: ") + std::string(archive_name));
+    }
+
+    const uint32_t crc32 = libdeflate_crc32(0, data, size);
+    return AddPreCompressed(archive_name, compressed, size, crc32);
+}
+
 std::expected<void, std::string> ZipWriter::AddFileUncompressed(std::string_view archive_name,
                                                                 const void* data, std::size_t size)
 {

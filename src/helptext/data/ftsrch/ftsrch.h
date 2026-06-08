@@ -83,8 +83,8 @@ namespace ftsrch
     std::expected<IndexPtr, Error> OpenIndex(std::span<const std::byte> data);
 
     // Run a full-text search against a loaded index.
-    // All query tokens must match exactly (after stemming).  Results are
-    // sorted by descending relevance score.
+    // Query tokens support AND (required), NOT (prohibited), and OR (default,
+    // optional).  Results are sorted by descending relevance score.
     // index  Index loaded via OpenIndex.
     // query  Space-separated search terms.
     std::expected<std::vector<QueryResult>, Error> Search(const Index& index,

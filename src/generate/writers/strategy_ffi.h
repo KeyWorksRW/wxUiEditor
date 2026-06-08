@@ -15,10 +15,10 @@ public:
     explicit FFIStrategy(const LanguageTraits& traits);
 
     // Maps wxWidgets class names to FFI convention: wxFooBar → wx_foo_bar
-    [[nodiscard]] auto MapClassName(std::string_view wx_class_name) -> std::string override;
+    [[nodiscard]] std::string MapClassName(std::string_view wx_class_name) override;
 
     // FFI languages target full C++ feature parity — all features supported
-    [[nodiscard]] auto IsFeatureSupported(Node* node, GenEnum::PropName prop) -> bool override;
+    [[nodiscard]] bool IsFeatureSupported(Node* node, GenEnum::PropName prop) override;
 
     // Default FFI platform conditional (per-language strategies override for syntax)
     void EmitPlatformBegin(Code& code, std::string_view platforms) override;

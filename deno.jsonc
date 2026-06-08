@@ -6,6 +6,7 @@
   },
   "tasks": {
     "test:run": "deno run --allow-read --allow-write --allow-run tests/scripts/test_run.ts",
-    "full:run": "deno run --allow-read --allow-write --allow-run tests/scripts/full_run.ts"
+    "full:run": "deno run --allow-read --allow-write --allow-run tests/scripts/full_run.ts",
+    "fetch": "deno run --allow-net --allow-read --allow-write --allow-run --allow-env .tts/fetch.ts"
   }
 }

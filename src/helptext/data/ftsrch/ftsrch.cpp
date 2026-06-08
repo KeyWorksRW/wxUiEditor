@@ -14,7 +14,6 @@
 #include "query.h"
 #include "tokenizer.h"
 
-#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <expected>
@@ -23,6 +22,8 @@
 #include <span>
 #include <string>
 #include <string_view>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -46,6 +47,8 @@ namespace ftsrch
         IndexMeta meta;
         WeightConfig weight_config;
         std::vector<std::pair<DocId, std::string>> titles;
+        mutable std::unordered_map<DocId, std::string> title_lookup;
+        mutable bool title_lookup_valid = false;
 
         explicit Index(StemmerFn stemmer_fn) : dictionary(std::move(stemmer_fn)) {}
 
@@ -112,6 +115,7 @@ namespace ftsrch
 
         // Store title for result display
         index.titles.emplace_back(doc_id, std::string(title));
+        index.title_lookup_valid = false;
 
         return {};
     }
@@ -123,11 +127,16 @@ namespace ftsrch
             index.dictionary.Finalize();
             index.collection.Finalize(index.weight_config);
             index.phrase_table.Build();
-            index.state = IndexState::finalized;
         }
 
-        return IndexFile::Save(file_path, index.meta, index.dictionary, index.collection,
-                               index.phrase_table, index.titles);
+        std::expected<void, Error> save_result =
+            IndexFile::Save(file_path, index.meta, index.dictionary, index.collection,
+                            index.phrase_table, index.titles);
+        if (save_result)
+        {
+            index.state = IndexState::finalized;
+        }
+        return save_result;
     }
 
     std::expected<IndexPtr, Error> OpenIndex(const std::filesystem::path& file_path)
@@ -170,14 +179,20 @@ namespace ftsrch
 
     static std::string FindTitle(const Index& index, DocId doc_id)
     {
-        for (const auto& [stored_doc_id, stored_title]: index.titles)
+        if (!index.title_lookup_valid)
         {
-            if (stored_doc_id == doc_id)
+            index.title_lookup.clear();
+            for (const auto& [stored_doc_id, stored_title]: index.titles)
             {
-                return stored_title;
+                index.title_lookup[stored_doc_id] = stored_title;
             }
+            index.title_lookup_valid = true;
         }
 
+        if (index.title_lookup.contains(doc_id))
+        {
+            return index.title_lookup.at(doc_id);
+        }
         return {};
     }
 
@@ -193,6 +208,20 @@ namespace ftsrch
         const std::vector<Token> tokens = tokenizer.Tokenize(query);
 
         Query parsed_query {};
+
+        std::unordered_set<ConceptId> seen_concepts;
+
+        // Operator-parsing state machine:
+        // Interpose between tokenization and dictionary lookup so that
+        // "AND", "NOT", and "OR" are never looked up in the dictionary.
+        enum class OpState
+        {
+            optional,
+            required,
+            prohibited
+        };
+        OpState op_state = OpState::optional;
+
         for (const Token& token: tokens)
         {
             if (token.type != TokenType::word)
@@ -200,10 +229,53 @@ namespace ftsrch
                 continue;
             }
 
+            // Check for operator keywords (full-word, uppercase only)
+            if (token.text.size() == 3)
+            {
+                if (token.text[0] == 'A' && token.text[1] == 'N' && token.text[2] == 'D')
+                {
+                    op_state = OpState::required;
+                    continue;
+                }
+                if (token.text[0] == 'N' && token.text[1] == 'O' && token.text[2] == 'T')
+                {
+                    op_state = OpState::prohibited;
+                    continue;
+                }
+            }
+            if (token.text.size() == 2)
+            {
+                if (token.text[0] == 'O' && token.text[1] == 'R')
+                {
+                    // OR is the default -- reset to optional, never a term
+                    op_state = OpState::optional;
+                    continue;
+                }
+            }
+
             const std::optional<ConceptId> concept_id = index.dictionary.Lookup(token.text);
             if (concept_id && *concept_id != STOP_WORD)
             {
-                parsed_query.AddTerm(*concept_id);
+                if (!seen_concepts.insert(*concept_id).second)
+                {
+                    op_state = OpState::optional;
+                    continue;
+                }
+
+                switch (op_state)
+                {
+                    case OpState::required:
+                        parsed_query.AddRequiredTerm(*concept_id);
+                        break;
+                    case OpState::prohibited:
+                        parsed_query.AddProhibitedTerm(*concept_id);
+                        break;
+                    case OpState::optional:
+                        parsed_query.AddTerm(*concept_id);
+                        break;
+                }
+                // Reset to optional after consuming a term
+                op_state = OpState::optional;
             }
         }
 
@@ -232,40 +304,139 @@ namespace ftsrch
         Tokenizer tokenizer {};
         const std::vector<Token> tokens = tokenizer.Tokenize(partial_query);
 
-        // Filter to word tokens only
-        std::vector<Token> word_tokens {};
+        // First pass: filter to word tokens, parsing AND/NOT/OR operators
+        // to determine the state for each content token.
+        struct ContentToken
+        {
+            std::string_view text;
+            bool is_required;
+            bool is_prohibited;
+        };
+
+        enum class OpState
+        {
+            optional,
+            required,
+            prohibited
+        };
+        OpState op_state = OpState::optional;
+        std::vector<ContentToken> content_tokens {};
+
         for (const Token& token: tokens)
         {
-            if (token.type == TokenType::word)
+            if (token.type != TokenType::word)
             {
-                word_tokens.push_back(token);
+                continue;
             }
+
+            // Check for operator keywords (full-word, uppercase only)
+            if (token.text.size() == 3)
+            {
+                if (token.text[0] == 'A' && token.text[1] == 'N' && token.text[2] == 'D')
+                {
+                    op_state = OpState::required;
+                    continue;
+                }
+                if (token.text[0] == 'N' && token.text[1] == 'O' && token.text[2] == 'T')
+                {
+                    op_state = OpState::prohibited;
+                    continue;
+                }
+            }
+            if (token.text.size() == 2)
+            {
+                if (token.text[0] == 'O' && token.text[1] == 'R')
+                {
+                    op_state = OpState::optional;
+                    continue;
+                }
+            }
+
+            content_tokens.push_back({
+                token.text,
+                op_state == OpState::required,
+                op_state == OpState::prohibited,
+            });
+            op_state = OpState::optional;
         }
 
-        if (word_tokens.empty())
+        if (content_tokens.empty())
         {
             return std::vector<QueryResult> {};
         }
 
         Query parsed_query {};
 
-        // All tokens except last: exact match
-        for (std::size_t token_index = 0; token_index + 1 < word_tokens.size(); ++token_index)
+        std::unordered_set<ConceptId> seen_concepts;
+
+        // All content tokens except last: exact match
+        for (std::size_t token_index = 0; token_index + 1 < content_tokens.size(); ++token_index)
         {
-            const std::optional<ConceptId> concept_id =
-                index.dictionary.Lookup(word_tokens[token_index].text);
+            const ContentToken& content_token = content_tokens[token_index];
+            const std::optional<ConceptId> concept_id = index.dictionary.Lookup(content_token.text);
             if (concept_id && *concept_id != STOP_WORD)
             {
-                parsed_query.AddTerm(*concept_id);
+                if (!seen_concepts.insert(*concept_id).second)
+                {
+                    continue;
+                }
+
+                if (content_token.is_required)
+                {
+                    parsed_query.AddRequiredTerm(*concept_id);
+                }
+                else if (content_token.is_prohibited)
+                {
+                    parsed_query.AddProhibitedTerm(*concept_id);
+                }
+                else
+                {
+                    parsed_query.AddTerm(*concept_id);
+                }
             }
         }
 
-        // Last token: prefix match
-        const Token& last_token = word_tokens.back();
-        std::vector<ConceptId> prefix_concepts = index.dictionary.PrefixMatch(last_token.text);
+        // Last content token: prefix match
+        const ContentToken& last_ct = content_tokens.back();
+        const std::vector<ConceptId> prefix_concepts = index.dictionary.PrefixMatch(last_ct.text);
         if (!prefix_concepts.empty())
         {
-            parsed_query.AddPrefixTerms(prefix_concepts);
+            if (last_ct.is_required)
+            {
+                for (const ConceptId cid_val: prefix_concepts)
+                {
+                    if (seen_concepts.insert(cid_val).second)
+                    {
+                        parsed_query.AddRequiredTerm(cid_val);
+                    }
+                }
+            }
+            else if (last_ct.is_prohibited)
+            {
+                for (const ConceptId cid_val: prefix_concepts)
+                {
+                    if (seen_concepts.insert(cid_val).second)
+                    {
+                        parsed_query.AddProhibitedTerm(cid_val);
+                    }
+                }
+            }
+            else
+            {
+                std::vector<ConceptId> filtered_prefix_concepts;
+                filtered_prefix_concepts.reserve(prefix_concepts.size());
+                for (const ConceptId cid_val: prefix_concepts)
+                {
+                    if (seen_concepts.insert(cid_val).second)
+                    {
+                        filtered_prefix_concepts.push_back(cid_val);
+                    }
+                }
+                if (!filtered_prefix_concepts.empty())
+                {
+                    parsed_query.AddPrefixTerms(filtered_prefix_concepts);
+                }
+            }
         }
 
         const std::vector<QueryResult> raw_results =

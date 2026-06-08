@@ -5,11 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// AI Context: FortranStrategy implements the LanguageStrategy interface for Fortran code
-// generation via kwxFFI. Fortran uses: `use` modules for imports, `type(c_ptr)` for opaque
-// handles, subroutine/function blocks, `! ` comment prefix, `.TRUE.`/`.FALSE.` literals,
-// `%` member access operator, and `C_NULL_PTR` for null. Indentation is 2 spaces.
-
 #pragma once
 
 #include "strategy_ffi.h"

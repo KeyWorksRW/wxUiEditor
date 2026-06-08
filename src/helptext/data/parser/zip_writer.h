@@ -24,7 +24,7 @@ struct ZipArchiveImpl;
 //   ZipWriter zip;
 //   if (!zip.Open("output.zip")) { /* error */ }
 //   zip.AddFile("docs/wxButton.md", markdown_text);
-//   zip.AddFileUncompressed("search_index.kfts", binary_data, binary_size);
+//   zip.AddBinaryFile("data/search_index.kfts", binary_data, binary_size);
 //   if (!zip.Finalize()) { /* error */ }
 //   // destructor cleans up
 class ZipWriter
@@ -49,6 +49,10 @@ public:
     // content  File content (UTF-8 text)
     [[nodiscard]] std::expected<void, std::string> AddFile(std::string_view archive_name,
                                                            std::string_view content);
+
+    // Add arbitrary binary data to the archive with DEFLATE compression.
+    [[nodiscard]] std::expected<void, std::string>
+        AddBinaryFile(std::string_view archive_name, const void* data, std::size_t size);
 
     // Add a binary file to the archive with no compression (STORE method).
     // Useful for pre-compressed or binary index files like .kfts.

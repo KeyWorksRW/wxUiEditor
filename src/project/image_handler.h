@@ -7,9 +7,6 @@
 
 #pragma once
 
-// AI Context [imagehandler]: ImageHandler is a global singleton accessed via ProjectImages. It
-// manages all project images with these key responsibilities:
-//
 // 1. Image Storage & Caching:
 //    - m_map_embedded: Stores compressed embedded images (PNG, SVG, XPM) in EmbeddedImage objects
 //    - m_bundles: Maps image property descriptions to ImageBundle (multi-resolution image sets)

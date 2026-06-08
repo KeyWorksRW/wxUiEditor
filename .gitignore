@@ -10,6 +10,7 @@ build-fedora/
 build-ubuntu/
 
 tests/*
+deno.jsonc
 !tests/scripts/
 
 # Ignore clangd cache
@@ -24,6 +25,7 @@ src/version.h
 src/version.rc
 
 # File extensions to ignore
+*.old
 *.1
 *.3tiff
 *.backup

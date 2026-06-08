@@ -6,8 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wxdocview_dlg.h"  // auto-generated:
-                            // C:/rwCode/wxLanguages/wxUiEditor2/src/wxui/wxdocview_base.h and
-                            // C:/rwCode/wxLanguages/wxUiEditor2/src/wxui/wxdocview_base.cpp
+                            // C:/rwCode/wxLanguages/wxUiEditor/src/wxui/wxdocview_base.h and
+                            // C:/rwCode/wxLanguages/wxUiEditor/src/wxui/wxdocview_base.cpp
 
 // If this constructor is used, the caller must call Create(parent)
 wxDocView::wxDocView() {}
@@ -66,14 +66,3 @@ void wxDocView::OnHtmlLink(wxHtmlLinkEvent& /* event unused */)
 {
     // TODO: Implement OnHtmlLink
 }
-
-// ************* End of generated code ***********
-// DO NOT EDIT THIS COMMENT BLOCK!
-//
-// Code below this comment block will be preserved
-// if the code for this class is re-generated.
-//
-// NOLINTEND
-// cppcheck-suppress-end *
-// ***********************************************
-// </auto-generated>

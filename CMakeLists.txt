@@ -224,8 +224,8 @@ endif()
 # (before wxWidgets config) avoids pulling wx headers into their translation
 # units, speeding up rebuilds when only wxWidgets changes and vice versa.
 
-add_subdirectory(shared/ftsrch)
-add_subdirectory(shared/cppmark)
+add_subdirectory(src/helptext/data/ftsrch)
+add_subdirectory(src/helptext/data/cppmark)
 
 # ###################### wxWidgets #######################
 if(WIN32)

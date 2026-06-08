@@ -7,7 +7,6 @@ on:
 
 env:
   BUILD_TYPE: Release
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   analyze:
@@ -25,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Setup CMake 4.2+
       uses: lukka/get-cmake@latest

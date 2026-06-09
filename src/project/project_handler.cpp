@@ -707,7 +707,7 @@ auto ProjectHandler::get_DerivedFilename(Node* form) const -> wxue::string
     }
 
     path = get_DerivedDirectory(form, GEN_LANG_CPLUSPLUS);
-    path.append_filename(form->as_string(prop_derived_file).filename());
+    path.append_filename(form->as_string(prop_derived_file));
     path.make_absolute();
 
     wxue::string source_ext(".cpp");

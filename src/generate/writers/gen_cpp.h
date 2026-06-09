@@ -199,21 +199,29 @@ private:
     void InsertValidatorVariable(Node* node, const wxue::string& code,
                                  std::set<std::string>& code_lines);
 
+    // Context struct holding derived class data — reduces parameter count in
+    // GenerateDerivedHeader/GenerateDerivedSource
+    struct DerivedClassData
+    {
+        wxue::string src_ext { ".cpp" };
+        wxue::string hdr_ext { ".h" };
+        wxue::string derived_name;
+        wxue::string base_file;
+        wxue::string derived_file;
+
+        DerivedClassData();
+    };
+
     // Helper methods for GenerateDerivedClass
-    static void GetFileExtensions(wxue::string& source_ext, wxue::string& header_ext);
     [[nodiscard]] wxue::string DetermineDerivedFilePath(Node* form, PANEL_PAGE panel_type,
                                                         const wxue::string& source_ext);
     void DetermineBaseFilePath(Node* form, wxue::string& baseFile);
     static void ProcessNamespace(Node* form, wxue::string& namespace_using_name);
     void GenerateDerivedClassName(wxue::string& derived_name);
-    void GenerateDerivedHeader(const wxue::string& derived_name, const wxue::string& baseFile,
-                               const wxue::string& namespace_using_name,
-                               const wxue::string& header_ext, PANEL_PAGE panel_type);
-    void GenerateDerivedSource(const wxue::string& derived_name, const wxue::string& baseFile,
-                               const wxue::string& derived_file,
-                               const wxue::string& namespace_using_name,
-                               const wxue::string& header_ext, const wxue::string& source_ext,
-                               PANEL_PAGE panel_type);
+    void GenerateDerivedHeader(const DerivedClassData& class_data,
+                               const wxue::string& namespace_using_name, PANEL_PAGE panel_type);
+    void GenerateDerivedSource(const DerivedClassData& data,
+                               const wxue::string& namespace_using_name, PANEL_PAGE panel_type);
     void GenerateDerivedEventHandlers(const EventVector& events, const wxue::string& derived_name,
                                       PANEL_PAGE panel_type);
     static bool IsCloseTypeButton(NodeEvent* event);

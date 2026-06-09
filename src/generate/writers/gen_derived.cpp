@@ -63,12 +63,9 @@ int CppCodeGenerator::GenerateDerivedClass(Node* form, PANEL_PAGE panel_type)
     m_form_node = form;
     m_is_derived_class = m_form_node->as_bool(prop_use_derived_class);
 
-    wxue::string source_ext;
-    wxue::string header_ext;
-    GetFileExtensions(source_ext, header_ext);
-
-    const wxue::string derived_file = DetermineDerivedFilePath(form, panel_type, source_ext);
-    if (derived_file.empty() && panel_type == PANEL_PAGE::NOT_PANEL)
+    DerivedClassData class_data;
+    class_data.derived_file = DetermineDerivedFilePath(form, panel_type, class_data.src_ext);
+    if (class_data.derived_file.empty() && panel_type == PANEL_PAGE::NOT_PANEL)
     {
         return result::exists;
     }
@@ -78,24 +75,21 @@ int CppCodeGenerator::GenerateDerivedClass(Node* form, PANEL_PAGE panel_type)
     std::thread thrd_get_events(&CppCodeGenerator::CollectEventHandlers, this, m_form_node,
                                 std::ref(events));
 
-    wxue::string baseFile;
-    DetermineBaseFilePath(form, baseFile);
+    DetermineBaseFilePath(form, class_data.base_file);
 
     wxue::string namespace_using_name;
     ProcessNamespace(form, namespace_using_name);
 
-    wxue::string derived_name;
-    GenerateDerivedClassName(derived_name);
+    GenerateDerivedClassName(class_data.derived_name);
 
     m_header->Clear();
     m_source->Clear();
 
-    GenerateDerivedHeader(derived_name, baseFile, namespace_using_name, header_ext, panel_type);
-    GenerateDerivedSource(derived_name, baseFile, derived_file, namespace_using_name, header_ext,
-                          source_ext, panel_type);
+    GenerateDerivedHeader(class_data, namespace_using_name, panel_type);
+    GenerateDerivedSource(class_data, namespace_using_name, panel_type);
 
     thrd_get_events.join();
-    GenerateDerivedEventHandlers(events, derived_name, panel_type);
+    GenerateDerivedEventHandlers(events, class_data.derived_name, panel_type);
 
     if (m_is_derived_class)
     {
@@ -108,21 +102,18 @@ int CppCodeGenerator::GenerateDerivedClass(Node* form, PANEL_PAGE panel_type)
 
 // Helper method implementations
 
-void CppCodeGenerator::GetFileExtensions(wxue::string& source_ext, wxue::string& header_ext)
+CppCodeGenerator::DerivedClassData::DerivedClassData()
 {
-    source_ext = ".cpp";
-    header_ext = ".h";
-
-    if (const auto& extProp = Project.get_ProjectNode()->as_string(prop_source_ext);
-        !extProp.empty())
+    if (const auto& ext_prop = Project.get_ProjectNode()->as_string(prop_source_ext);
+        !ext_prop.empty())
     {
-        source_ext = extProp;
+        src_ext = ext_prop;
     }
 
-    if (const auto& extProp = Project.get_ProjectNode()->as_string(prop_header_ext);
-        !extProp.empty())
+    if (const auto& ext_prop = Project.get_ProjectNode()->as_string(prop_header_ext);
+        !ext_prop.empty())
     {
-        header_ext = extProp;
+        hdr_ext = ext_prop;
     }
 }
 
@@ -243,10 +234,9 @@ void CppCodeGenerator::GenerateDerivedClassName(wxue::string& derived_name)
     }
 }
 
-void CppCodeGenerator::GenerateDerivedHeader(const wxue::string& derived_name,
-                                             const wxue::string& baseFile,
+void CppCodeGenerator::GenerateDerivedHeader(const DerivedClassData& class_data,
                                              const wxue::string& namespace_using_name,
-                                             const wxue::string& header_ext, PANEL_PAGE panel_type)
+                                             PANEL_PAGE panel_type)
 {
     if (panel_type == PANEL_PAGE::SOURCE_PANEL)
     {
@@ -264,21 +254,21 @@ void CppCodeGenerator::GenerateDerivedHeader(const wxue::string& derived_name,
     m_header->writeLine("\n#pragma once");
     m_header->writeLine();
 
-    if (baseFile.empty())
+    if (class_data.base_file.empty())
     {
         m_header->writeLine("// Specify the filename to use in the base_file property");
         m_header->writeLine("#include \"Your filename here\"");
     }
     else
     {
-        wxue::string base_with_ext(baseFile);
-        base_with_ext.replace_extension(header_ext);
+        wxue::string base_with_ext(class_data.base_file);
+        base_with_ext.replace_extension(class_data.hdr_ext);
         m_header->writeLine(wxue::string("#include ") << '"' << base_with_ext << '"');
     }
     m_header->writeLine();
 
     wxue::string line;
-    line << "class " << derived_name << " : public ";
+    line << "class " << class_data.derived_name << " : public ";
     if (!namespace_using_name.empty())
     {
         line << namespace_using_name << "::";
@@ -292,19 +282,16 @@ void CppCodeGenerator::GenerateDerivedHeader(const wxue::string& derived_name,
     m_header->Indent();
 
     m_header->writeLine(wxue::string()
-                        << derived_name
+                        << class_data.derived_name
                         << "();  // If you use this constructor, you must call Create(parent)");
-    m_header->writeLine(wxue::string() << derived_name << "(wxWindow* parent);");
+    m_header->writeLine(wxue::string() << class_data.derived_name << "(wxWindow* parent);");
 
     m_header->Unindent();
 }
 
-void CppCodeGenerator::GenerateDerivedSource(const wxue::string& derived_name,
-                                             const wxue::string& baseFile,
-                                             const wxue::string& derived_file,
+void CppCodeGenerator::GenerateDerivedSource(const DerivedClassData& data,
                                              const wxue::string& namespace_using_name,
-                                             const wxue::string& header_ext,
-                                             const wxue::string& source_ext, PANEL_PAGE panel_type)
+                                             PANEL_PAGE panel_type)
 {
     if (panel_type == PANEL_PAGE::HDR_INFO_PANEL)
     {
@@ -357,7 +344,7 @@ void CppCodeGenerator::GenerateDerivedSource(const wxue::string& derived_name,
 
     if (m_is_derived_class)
     {
-        if (derived_file.empty())
+        if (data.derived_file.empty())
         {
             m_source->writeLine();
             m_source->writeLine("// Specify the filename to use in the derived_file property");
@@ -366,20 +353,21 @@ void CppCodeGenerator::GenerateDerivedSource(const wxue::string& derived_name,
         else
         {
             wxue::string inc_str;
-            wxue::string base_copy(baseFile);
-            wxue::string derived_copy(derived_file);
+            wxue::string base_copy(data.base_file);
+            wxue::string derived_copy(data.derived_file);
 
             // Add a comment to the header that specifies the generated header and source
             // filenames
-            base_copy.replace_extension(header_ext);
-            derived_copy.replace_extension(header_ext);
+            base_copy.replace_extension(data.hdr_ext);
+            base_copy.make_relative(data.derived_file);
+            derived_copy.replace_extension(data.hdr_ext);
             inc_str << "#include \"" << derived_copy.filename() << "\"";
 
-            wxue::string comment(wxue::string(header_ext) << "\"  // auto-generated: ");
+            wxue::string comment(wxue::string(data.hdr_ext) << "\"  // auto-generated: ");
             comment << base_copy << " and ";
-            base_copy.replace_extension(source_ext);
+            base_copy.replace_extension(data.src_ext);
             comment << base_copy;
-            (void) inc_str.Replace(wxue::string(header_ext) << '"', comment);
+            (void) inc_str.Replace(wxue::string(data.hdr_ext) << '"', comment);
 
             m_source->writeLine();
             m_source->writeLine(inc_str);
@@ -389,7 +377,7 @@ void CppCodeGenerator::GenerateDerivedSource(const wxue::string& derived_name,
     }
     else
     {
-        if (baseFile.empty())
+        if (data.base_file.empty())
         {
             m_source->writeLine();
             m_source->writeLine("// Specify the filename to use in the base_file property");
@@ -397,10 +385,10 @@ void CppCodeGenerator::GenerateDerivedSource(const wxue::string& derived_name,
         }
         else
         {
-            wxue::string base_copy(baseFile);
-            base_copy.replace_extension(header_ext);
+            wxue::string base_copy(data.base_file);
+            base_copy.replace_extension(data.hdr_ext);
             wxue::string inc_line;
-            inc_line << "#include \"" << base_copy << "\"";
+            inc_line << "#include \"" << base_copy.filename() << "\"";
             m_source->writeLine(
                 "// Non-generated additions to base class (virtual events is unchecked)");
             m_source->writeLine("// Copy and paste into your own code as needed.");
@@ -422,13 +410,13 @@ void CppCodeGenerator::GenerateDerivedSource(const wxue::string& derived_name,
         if (m_form_node->is_Gen(gen_wxDialog))
         {
             code << "// If this constructor is used, the caller must call Create(parent)\n";
-            code << derived_name << "::" << derived_name << "() {}\n\n";
-            code << derived_name << "::" << derived_name
+            code << data.derived_name << "::" << data.derived_name << "() {}\n\n";
+            code << data.derived_name << "::" << data.derived_name
                  << "(wxWindow* parent) { Create(parent); }";
         }
         else
         {
-            code << derived_name << "::" << derived_name << "(wxWindow* parent) : ";
+            code << data.derived_name << "::" << data.derived_name << "(wxWindow* parent) : ";
             code << m_form_node->get_NodeName() << "(parent) {}";
         }
 

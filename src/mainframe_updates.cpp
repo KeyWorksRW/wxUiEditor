@@ -22,15 +22,7 @@
 
 auto MainFrame::UpdateFrame() -> void
 {
-    wxue::string filename;
-    if (UserPrefs.is_FullPathTitle())
-    {
-        filename = Project.get_ProjectFile();
-    }
-    else
-    {
-        filename = Project.get_ProjectFile().filename();
-    }
+    wxue::string filename = Project.get_ProjectFile().filename();
 
     if (filename.empty())
     {
@@ -42,6 +34,16 @@ auto MainFrame::UpdateFrame() -> void
     {
         filename.insert(0, "*");
     }
+
+    // Append full path in parentheses
+    const wxue::string project_path = Project.get_ProjectFile();
+    if (!project_path.empty())
+    {
+        filename += "  (";
+        filename += project_path;
+        filename += ")";
+    }
+
     SetTitle(filename.wx());
 
     wxString menu_text = "Undo";

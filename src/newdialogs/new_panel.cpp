@@ -252,7 +252,7 @@ auto NewPanel::CreateNode() -> void
 
     wxGetFrame().FireCreatedEvent(new_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(new_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(new_node.get());
 }
 
 // Called whenever m_classname changes

@@ -409,7 +409,7 @@ auto NewMdiForm::CreateNode() -> void
         std::make_shared<InsertNodeAction>(folder.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(folder);
     wxGetFrame().SelectNode(folder, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(folder.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(folder.get());
 }
 
 // Called whenever m_classname changes

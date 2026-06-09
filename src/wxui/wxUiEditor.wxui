@@ -9676,7 +9676,9 @@
           class="wxSplitterWindow"
           persist_name="rtf_html_sash"
           sashpos="75"
-          var_name="m_splitter2">
+          var_name="m_splitter2"
+          flags="wxEXPAND"
+          proportion="1">
           <node
             class="wxPanel"
             minimum_size="175,-1"
@@ -9696,6 +9698,7 @@
                   class="BookPage"
                   class_access="protected:"
                   label="Search"
+                  select="1"
                   var_name="m_search_page"
                   background_colour="wxSYS_COLOUR_BTNFACE"
                   window_style="wxTAB_TRAVERSAL"
@@ -9707,6 +9710,7 @@
                     <node
                       class="wxSearchCtrl"
                       cancel_button="1"
+                      focus="1"
                       hint="Search documentation..."
                       style="wxTE_PROCESS_ENTER"
                       var_name="m_search_ctrl"

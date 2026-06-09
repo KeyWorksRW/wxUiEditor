@@ -252,7 +252,7 @@ auto NewRibbon::CreateNode() -> void
 
     wxGetFrame().FireCreatedEvent(bar_node);
     wxGetFrame().SelectNode(bar_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(bar_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(bar_node.get());
 
     // This probably already is activated, but let's be sure
     wxGetFrame().getRibbonPanel()->ActivateBarPage();

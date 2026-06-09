@@ -33,7 +33,7 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_splitter2 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
     m_splitter2->SetSashGravity(0.0);
     m_splitter2->SetMinimumPaneSize(150);
-    dlg_sizer->Add(m_splitter2, wxSizerFlags().Border(wxALL));
+    dlg_sizer->Add(m_splitter2, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* panel = new wxPanel(m_splitter2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME|wxTAB_TRAVERSAL);
     panel->SetMinSize(FromDIP(wxSize(175, -1)));
@@ -44,7 +44,7 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     panel_sizer->Add(m_choicebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_search_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_choicebook->AddPage(m_search_page, "Search");
+    m_choicebook->AddPage(m_search_page, "Search", true);
     m_search_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* box_sizer4 = new wxBoxSizer(wxVERTICAL);
@@ -168,6 +168,8 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         SetSize(FromDIP(size));
         Layout();
     }
+    m_search_ctrl->SetFocus();
+
     Centre(wxBOTH);
     wxPersistentRegisterAndRestore(m_splitter2, "rtf_html_sash");
 

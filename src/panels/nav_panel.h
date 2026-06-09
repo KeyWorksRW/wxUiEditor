@@ -20,6 +20,18 @@
 
 using namespace GenEnum;
 
+enum class ExpansionFlag : unsigned int
+{
+    include_children = 1 << 0,
+    expand = 1 << 1,
+};
+
+constexpr ExpansionFlag operator|(ExpansionFlag lhs, ExpansionFlag rhs)
+{
+    return static_cast<ExpansionFlag>(static_cast<unsigned int>(lhs) |
+                                      static_cast<unsigned int>(rhs));
+}
+
 class CustomEvent;
 class MainFrame;
 class NavToolbar;
@@ -32,7 +44,8 @@ public:
 
     void SetMainFrame(MainFrame* frame);
 
-    void ChangeExpansion(Node* node, bool include_children, bool expand);
+    void ChangeExpansion(Node* node, ExpansionFlag flags = ExpansionFlag::include_children |
+                                                           ExpansionFlag::expand);
 
     void EraseAllMaps(Node* node);
     void AddAllChildren(Node* node_parent);

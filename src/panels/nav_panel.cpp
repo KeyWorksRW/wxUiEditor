@@ -523,7 +523,7 @@ void NavigationPanel::InsertNode(Node* node)
                                     node->get_Parent()->is_Type(type_aui_toolbar)))
     {
         // Insure that the toolbar is expanded when a new item is added to it
-        ChangeExpansion(node->get_Parent(), false, true);
+        ChangeExpansion(node->get_Parent(), ExpansionFlag::expand);
     }
 }
 
@@ -911,21 +911,26 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
     }
 }
 
-void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool expand)
+void NavigationPanel::ChangeExpansion(Node* node, ExpansionFlag flags)
 {
-    if (include_children)
+    constexpr auto has_flags = [](ExpansionFlag value, ExpansionFlag flag)
+    {
+        return (static_cast<unsigned int>(value) & static_cast<unsigned int>(flag)) != 0;
+    };
+
+    if (has_flags(flags, ExpansionFlag::include_children))
     {
         for (const auto& child: node->get_ChildNodePtrs())
         {
             if (child->get_ChildCount())
             {
-                ChangeExpansion(child.get(), include_children, expand);
+                ChangeExpansion(child.get(), flags);
             }
         }
     }
     if (node->get_ChildCount())
     {
-        if (expand)
+        if (has_flags(flags, ExpansionFlag::expand))
         {
             if (const NodeTreeMap::iterator item_iter = m_node_tree_map.find(node);
                 item_iter != m_node_tree_map.end())
@@ -955,7 +960,7 @@ void NavigationPanel::OnExpand(wxCommandEvent& /* event */)
 
     const wxWindowUpdateLocker freeze(this);
 
-    ChangeExpansion(node, true, true);
+    ChangeExpansion(node);
 }
 
 void NavigationPanel::OnCollapse(wxCommandEvent& /* event */)
@@ -974,12 +979,12 @@ void NavigationPanel::OnCollapse(wxCommandEvent& /* event */)
     {
         for (const auto& child: parent->get_ChildNodePtrs())
         {
-            ChangeExpansion(child.get(), false, false);
+            ChangeExpansion(child.get(), ExpansionFlag {});
         }
     }
     else
     {
-        ChangeExpansion(node, false, false);
+        ChangeExpansion(node, ExpansionFlag {});
     }
 }
 
@@ -1006,10 +1011,10 @@ void NavigationPanel::ExpandCollapse(Node* node)
         {
             if (child.get() != node)
             {
-                ChangeExpansion(child.get(), false, false);
+                ChangeExpansion(child.get(), ExpansionFlag {});
             }
         }
     }
 
-    ChangeExpansion(node, true, true);
+    ChangeExpansion(node);
 }

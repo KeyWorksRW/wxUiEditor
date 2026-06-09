@@ -207,7 +207,7 @@ auto NewWizard::CreateNode() -> void
         std::make_shared<InsertNodeAction>(new_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(new_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(new_node.get());
 }
 
 // Called whenever m_classname changes

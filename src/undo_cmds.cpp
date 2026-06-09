@@ -360,7 +360,7 @@ void ChangeSizerType::Change()
     {
         wxGetFrame().SelectNode(m_node.get());
     }
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get());
 }
 
 void ChangeSizerType::Revert()
@@ -507,7 +507,7 @@ void ChangeNodeType::Change()
     {
         wxGetFrame().SelectNode(m_node.get());
     }
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_node.get());
 }
 
 void ChangeNodeType::Revert()

@@ -202,7 +202,7 @@ auto NewPropSheet::CreateNode() -> void
         std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(form_node.get());
 }
 
 // Called whenever m_classname changes

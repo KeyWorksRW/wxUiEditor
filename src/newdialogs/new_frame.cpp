@@ -273,7 +273,7 @@ auto NewFrame::CreateNode() -> void
         std::make_shared<InsertNodeAction>(form_node.get(), parent_node, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
-    wxGetFrame().getNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(form_node.get());
 
     // If it's a mainframe then bars were probably added, so it makes sense to switch to the Bars
     // ribbon bar page since that's likely what the user will be doing next (adding tools or menus).

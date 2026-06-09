@@ -1271,7 +1271,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
         {
             path.SetExt("wxui");
             path.MakeAbsolute();
-            set_ProjectPath(&path);
+            set_ProjectPath(path);
         }
         wxGetFrame().setImportedFlag();
     }

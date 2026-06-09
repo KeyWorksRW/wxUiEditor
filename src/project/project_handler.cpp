@@ -55,15 +55,15 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     ProjectData.Clear();
 }
 
-auto ProjectHandler::set_ProjectPath(const wxFileName* path) -> void
+void ProjectHandler::set_ProjectPath(const wxFileName& path)
 {
-    m_project_path->Assign(*path);
+    m_project_path->Assign(path);
 
     // If the Project File is being set, then assume the art directory will need to be changed
     m_art_path->Clear();
 }
 
-auto ProjectHandler::set_ProjectFile(std::string_view file) -> void
+void ProjectHandler::set_ProjectFile(std::string_view file)
 {
     ASSERT(m_project_path);
     m_project_path->Assign(wxString(file));
@@ -73,22 +73,22 @@ auto ProjectHandler::set_ProjectFile(std::string_view file) -> void
     m_art_path->Clear();
 }
 
-auto ProjectHandler::get_ProjectFile() const -> wxue::string
+wxue::string ProjectHandler::get_ProjectFile() const
 {
     return m_project_path->GetFullPath().utf8_string();
 }
 
-auto ProjectHandler::get_ProjectPath() const -> wxue::string
+wxue::string ProjectHandler::get_ProjectPath() const
 {
     return m_project_path->GetPath().utf8_string();
 }
 
-auto ProjectHandler::ChangeDir() const -> void
+void ProjectHandler::ChangeDir() const
 {
     m_project_path->SetCwd();
 }
 
-auto ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start) -> void
+void ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start)
 {
     if (!node_start)
     {
@@ -114,7 +114,7 @@ auto ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start) -
     }
 }
 
-auto ProjectHandler::FixupDuplicatedNode(Node* new_node) -> void
+void ProjectHandler::FixupDuplicatedNode(Node* new_node)
 {
     std::set<std::string_view> base_classnames;
     std::set<std::string_view> derived_classnames;
@@ -132,11 +132,12 @@ auto ProjectHandler::FixupDuplicatedNode(Node* new_node) -> void
 
     for (auto& iter: forms)
     {
-        auto insert_if_has_value = [](Node* node, PropName prop, std::set<std::string_view>& set)
+        auto insert_if_has_value =
+            [](Node* node, PropName prop, std::set<std::string_view>& names_set)
         {
             if (node->HasValue(prop))
             {
-                set.insert(node->as_string(prop));
+                names_set.insert(node->as_string(prop));
             }
         };
 
@@ -193,7 +194,7 @@ auto ProjectHandler::FixupDuplicatedNode(Node* new_node) -> void
         {
             if (set_names.contains(new_node->as_string(prop)))
             {
-                std::string new_name = make_unique_name(new_node->as_view(prop), set_names);
+                const std::string new_name = make_unique_name(new_node->as_view(prop), set_names);
                 new_node->set_value(prop, new_name);
             }
         }
@@ -209,7 +210,7 @@ auto ProjectHandler::FixupDuplicatedNode(Node* new_node) -> void
     SetNewNodeName(xrc_filenames, prop_xrc_file);
 }
 
-auto ProjectHandler::get_wxFileName() const -> const wxFileName*
+const wxFileName* ProjectHandler::get_wxFileName() const
 {
     if (m_project_path->IsOk())
     {
@@ -229,7 +230,7 @@ auto ProjectHandler::get_wxFileName() const -> const wxFileName*
     return m_project_path.get();
 }
 
-auto ProjectHandler::get_ArtPath() -> const wxFileName*
+const wxFileName* ProjectHandler::get_ArtPath()
 {
     if (m_art_path->IsOk())
     {
@@ -249,12 +250,12 @@ auto ProjectHandler::get_ArtPath() -> const wxFileName*
     return m_art_path.get();
 }
 
-auto ProjectHandler::ArtDirectory() -> wxue::string
+wxue::string ProjectHandler::ArtDirectory()
 {
     return get_ArtPath()->GetFullPath();
 }
 
-auto ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const -> wxue::string
+wxue::string ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const
 {
     if (!node || node == m_project_node.get())
     {
@@ -280,8 +281,7 @@ auto ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const -> wx
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-auto ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language, Node*& form) const
-    -> wxue::string
+wxue::string ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language, Node*& form) const
 {
     wxue::string result;
 
@@ -318,7 +318,7 @@ auto ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language, Node*& 
     return result;
 }
 
-auto ProjectHandler::GetProjectOutputPath(GenLang language) const -> wxue::string
+wxue::string ProjectHandler::GetProjectOutputPath(GenLang language) const
 {
     static const std::map<GenLang, PropName> langProjectPropMap = {
         { GEN_LANG_CPLUSPLUS, prop_base_directory },
@@ -337,7 +337,7 @@ auto ProjectHandler::GetProjectOutputPath(GenLang language) const -> wxue::strin
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> wxue::string
+wxue::string ProjectHandler::GetBaseFilename(Node* form, GenLang language) const
 {
     if (language == GEN_LANG_CPLUSPLUS && form->is_Gen(gen_Data))
     {
@@ -351,7 +351,8 @@ auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> wxue
         { GEN_LANG_XRC, prop_xrc_file }
     };
 
-    auto iter = langbase_file_propertyMap.find(language);
+    const std::map<GenLang, PropName>::const_iterator iter =
+        langbase_file_propertyMap.find(language);
     if (iter != langbase_file_propertyMap.end())
     {
         return form->as_string(iter->second);
@@ -362,8 +363,7 @@ auto ProjectHandler::GetBaseFilename(Node* form, GenLang language) const -> wxue
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-auto ProjectHandler::MergeBaseFilePath(wxue::string& result, const wxue::string& base_file) const
-    -> void
+void ProjectHandler::MergeBaseFilePath(wxue::string& result, const wxue::string& base_file) const
 {
     // TODO: [Randalphwa - 01-06-2024] It's possible that the user created the filename using a
     // folder prefix that is the same as the project's base directory. If that's the case, the
@@ -394,8 +394,7 @@ auto ProjectHandler::MergeBaseFilePath(wxue::string& result, const wxue::string&
     result.backslashestoforward();
 }
 
-auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const
-    -> std::pair<wxue::string, bool>
+std::pair<wxue::string, bool> ProjectHandler::GetOutputPath(Node* form, GenLang language) const
 {
     ASSERT(form->is_Form() || form->is_Folder());
 
@@ -412,7 +411,7 @@ auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const
         result = GetProjectOutputPath(language);
     }
 
-    wxue::string base_file = GetBaseFilename(form, language);
+    const wxue::string base_file = GetBaseFilename(form, language);
 
     if (base_file.empty())
     {
@@ -426,11 +425,11 @@ auto ProjectHandler::GetOutputPath(Node* form, GenLang language) const
 
 // Note that this will return a directory for all languages even though we currently don't generate
 // derived files for any language except C++.
-auto ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) const -> std::string
+std::string ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) const
 {
     std::string result;
 
-    Node* folder = node->get_Folder();
+    const Node* folder = node->get_Folder();
     if (folder)
     {
         static const std::map<GenLang, PropName> folderLangPropMap = {
@@ -498,7 +497,7 @@ auto ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) const ->
     return result;
 }
 
-auto ProjectHandler::get_FirstFormChild(Node* node) const -> Node*
+Node* ProjectHandler::get_FirstFormChild(Node* node) const
 {
     if (!node)
     {
@@ -512,7 +511,8 @@ auto ProjectHandler::get_FirstFormChild(Node* node) const -> Node*
         }
         if (child->is_Gen(gen_folder) || child->is_Gen(gen_sub_folder))
         {
-            return get_FirstFormChild(child.get());
+            if (auto* result = get_FirstFormChild(child.get()))
+                return result;
         }
     }
 
@@ -520,7 +520,7 @@ auto ProjectHandler::get_FirstFormChild(Node* node) const -> Node*
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
+GenLang ProjectHandler::get_CodePreference(Node* node) const
 {
     wxue::string value = Project.as_string(prop_code_preference);
     if (node)
@@ -557,12 +557,12 @@ auto ProjectHandler::get_CodePreference(Node* node) const -> GenLang
     return GEN_LANG_CPLUSPLUS;
 }
 
-auto ProjectHandler::get_GenerateLanguages() const -> size_t
+size_t ProjectHandler::get_GenerateLanguages() const
 {
     // Always set the project's code preference to the list
     auto languages = static_cast<size_t>(get_CodePreference(m_project_node.get()));
 
-    auto value = Project.as_view(prop_generate_languages);
+    const std::string_view value = Project.as_view(prop_generate_languages);
 
     // Note: Be sure this list matches the languages in ../xml/project.xml
     // clang-format off
@@ -589,9 +589,9 @@ auto ProjectHandler::get_GenerateLanguages() const -> size_t
     return languages;
 }
 
-auto ProjectHandler::ShouldOutputLanguage(const NodesFormChild& nodes,
+bool ProjectHandler::ShouldOutputLanguage(const NodesFormChild& nodes,
                                           const PropName& base_file_property,
-                                          GenLang language) const -> bool
+                                          GenLang language) const
 {
     if (!nodes.child->HasValue(base_file_property))
     {
@@ -630,7 +630,7 @@ auto ProjectHandler::ShouldOutputLanguage(const NodesFormChild& nodes,
 }
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
-auto ProjectHandler::get_OutputType(int flags) const -> size_t
+size_t ProjectHandler::get_OutputType(int flags) const
 {
     size_t result = OUTPUT_NONE;
 
@@ -651,7 +651,7 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
                     GenLang language;
                     size_t output_flag;
                 };
-                static constexpr auto outputLangs =
+                static constexpr std::array<OutputLangInfo, 4> outputLangs =
                     std::to_array<OutputLangInfo>({ { .base_file_property = prop_base_file,
                                                       .language = GEN_LANG_CPLUSPLUS,
                                                       .output_flag = OUTPUT_CPLUS },
@@ -678,7 +678,7 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
                 if (!(flags & OUT_FLAG_IGNORE_DERIVED) && child->HasValue(prop_derived_file) &&
                     child->as_bool(prop_use_derived_class))
                 {
-                    if (auto path = get_DerivedFilename(child.get()); path.size())
+                    if (auto path = get_DerivedFilename(child.get()); !path.empty())
                     {
                         if (!path.file_exists())
                         {
@@ -695,7 +695,7 @@ auto ProjectHandler::get_OutputType(int flags) const -> size_t
     return result;
 }
 
-auto ProjectHandler::get_DerivedFilename(Node* form) const -> wxue::string
+wxue::string ProjectHandler::get_DerivedFilename(Node* form) const
 {
     wxue::string path;
 
@@ -707,11 +707,11 @@ auto ProjectHandler::get_DerivedFilename(Node* form) const -> wxue::string
     }
 
     path = get_DerivedDirectory(form, GEN_LANG_CPLUSPLUS);
-    path.append_filename(form->as_string(prop_derived_file).filename());
+    path.append_filename(form->as_string(prop_derived_file));
     path.make_absolute();
 
     wxue::string source_ext(".cpp");
-    if (const auto& extProp = as_string(prop_source_ext); extProp.size())
+    if (const auto& extProp = as_string(prop_source_ext); !extProp.empty())
     {
         source_ext = extProp;
     }
@@ -719,7 +719,7 @@ auto ProjectHandler::get_DerivedFilename(Node* form) const -> wxue::string
     return path;
 }
 
-[[nodiscard]] auto ProjectHandler::AllFormTypesFound() const -> bool
+[[nodiscard]] bool ProjectHandler::AllFormTypesFound() const
 {
     return m_form_Animation && m_form_BundleSVG && m_form_BundleBitmaps && m_form_Image;
 }
@@ -857,7 +857,7 @@ void ProjectHandler::FindWxueFunctions(std::vector<Node*>& forms)
     }
 }
 
-auto ProjectHandler::get_ImagesForm() -> Node*
+Node* ProjectHandler::get_ImagesForm()
 {
     if (!m_ImagesForm && m_project_node->get_ChildCount() > 0 &&
         m_project_node->get_Child(0)->is_Gen(gen_Images))
@@ -867,7 +867,7 @@ auto ProjectHandler::get_ImagesForm() -> Node*
     return m_ImagesForm;
 }
 
-auto ProjectHandler::get_DataForm() -> Node*
+Node* ProjectHandler::get_DataForm()
 {
     if (!m_DataForm)
     {
@@ -884,99 +884,95 @@ auto ProjectHandler::get_DataForm() -> Node*
     return m_DataForm;
 }
 
-namespace
+// clang-format off
+static const std::map<GenLang, PropName> langPropMap = {
+    { GEN_LANG_CPLUSPLUS, prop_wxWidgets_version },
+    { GEN_LANG_PYTHON, prop_wxPython_version },
+    { GEN_LANG_RUBY, prop_wxRuby_version },
+    { GEN_LANG_XRC, prop_wxWidgets_version }
+};
+// clang-format on
+
+// Helper function to parse version string and extract major, minor, patch components
+static std::tuple<int, int, int> parseVersionString(std::string_view version)
 {
-    // clang-format off
-    const std::map<GenLang, PropName> langPropMap = {
-        { GEN_LANG_CPLUSPLUS, prop_wxWidgets_version },
-        { GEN_LANG_PYTHON, prop_wxPython_version },
-        { GEN_LANG_RUBY, prop_wxRuby_version },
-        { GEN_LANG_XRC, prop_wxWidgets_version }
-    };
-    // clang-format on
+    int major = 1;
+    int minor = 0;
+    int patch = 0;
 
-    // Helper function to parse version string and extract major, minor, patch components
-    auto parseVersionString(std::string_view version) -> std::tuple<int, int, int>
+    if (version.empty())
     {
-        int major = 1;
-        int minor = 0;
-        int patch = 0;
-
-        if (version.empty())
-        {
-            return { major, minor, patch };
-        }
-
-        // Try parsing with '.' or '-' separator
-        auto parseParts = [&](char sep) -> bool
-        {
-            if (version.find(sep) != std::string_view::npos)
-            {
-                wxue::ViewVector parts(version, sep);
-                if (!parts.empty())
-                {
-                    major = wxue::atoi(parts[0]);
-                }
-                if (parts.size() > 1)
-                {
-                    minor = wxue::atoi(parts[1]);
-                }
-                if (parts.size() > 2)
-                {
-                    patch = wxue::atoi(parts[2]);
-                }
-                return true;
-            }
-            return false;
-        };
-        if (parseParts('.'))
-        {
-            return { major, minor, patch };
-        }
-        if (parseParts('-'))
-        {
-            return { major, minor, patch };
-        }
-
-        // Fallback: parse digits separated by non-digit characters
-        auto skip_non_digits = [](std::string_view& str)
-        {
-            while (!str.empty() && !wxue::is_digit(str[0]))
-            {
-                str.remove_prefix(1);
-            }
-        };
-
-        auto ExtractNumber = [&skip_non_digits](std::string_view& str) -> int
-        {
-            if (str.empty())
-            {
-                return 0;
-            }
-
-            size_t digitEnd = 0;
-            while (digitEnd < str.size() && wxue::is_digit(str[digitEnd]))
-            {
-                ++digitEnd;
-            }
-
-            int result = digitEnd > 0 ? wxue::atoi(str.substr(0, digitEnd)) : 0;
-            str.remove_prefix(digitEnd);
-            skip_non_digits(str);
-            return result;
-        };
-
-        // extractNumbers will modify the version string view to remove processed parts
-        major = ExtractNumber(version);
-        minor = ExtractNumber(version);
-        patch = ExtractNumber(version);
-
         return { major, minor, patch };
     }
 
-}  // namespace
+    // Try parsing with '.' or '-' separator
+    auto parseParts = [&](char separator) -> bool
+    {
+        if (version.find(separator) != std::string_view::npos)
+        {
+            wxue::ViewVector parts(version, separator);
+            if (!parts.empty())
+            {
+                major = wxue::atoi(parts[0]);
+            }
+            if (parts.size() > 1)
+            {
+                minor = wxue::atoi(parts[1]);
+            }
+            if (parts.size() > 2)
+            {
+                patch = wxue::atoi(parts[2]);
+            }
+            return true;
+        }
+        return false;
+    };
+    if (parseParts('.'))
+    {
+        return { major, minor, patch };
+    }
+    if (parseParts('-'))
+    {
+        return { major, minor, patch };
+    }
 
-auto ProjectHandler::get_LangVersion(GenLang language) const -> int
+    // Fallback: parse digits separated by non-digit characters
+    auto skip_non_digits = [](std::string_view& str)
+    {
+        while (!str.empty() && !wxue::is_digit(str[0]))
+        {
+            str.remove_prefix(1);
+        }
+    };
+
+    auto ExtractNumber = [&skip_non_digits](std::string_view& str) -> int
+    {
+        if (str.empty())
+        {
+            return 0;
+        }
+
+        size_t digitEnd = 0;
+        while (digitEnd < str.size() && wxue::is_digit(str[digitEnd]))
+        {
+            ++digitEnd;
+        }
+
+        const int result = digitEnd > 0 ? wxue::atoi(str.substr(0, digitEnd)) : 0;
+        str.remove_prefix(digitEnd);
+        skip_non_digits(str);
+        return result;
+    };
+
+    // extractNumbers will modify the version string view to remove processed parts
+    major = ExtractNumber(version);
+    minor = ExtractNumber(version);
+    patch = ExtractNumber(version);
+
+    return { major, minor, patch };
+}
+
+int ProjectHandler::get_LangVersion(GenLang language) const
 {
     std::string_view version;
 

@@ -691,7 +691,7 @@ auto MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */) -> void
             m_isProject_modified = false;
             m_isImported = false;
             m_FileHistory.AddFileToHistory(filename.GetFullPath());
-            Project.set_ProjectPath(&filename);
+            Project.set_ProjectPath(filename);
             ProjectSaved();
             FireProjectLoadedEvent();
         }

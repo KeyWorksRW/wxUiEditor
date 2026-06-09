@@ -263,6 +263,7 @@ void CppCodeGenerator::GenerateDerivedHeader(const DerivedClassData& class_data,
     {
         wxue::string base_with_ext(class_data.base_file);
         base_with_ext.replace_extension(class_data.hdr_ext);
+        base_with_ext.make_relative(class_data.derived_file);
         m_header->writeLine(wxue::string("#include ") << '"' << base_with_ext << '"');
     }
     m_header->writeLine();

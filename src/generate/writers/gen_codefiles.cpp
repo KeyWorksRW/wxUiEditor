@@ -172,5 +172,9 @@ auto GenInheritedClass(GenResults& results) -> void
         {
             results.GetUpdatedFiles().emplace_back(path);
         }
+        if (retval != result::fail)
+        {
+            Project.UpdateDerivedFileCache(form);
+        }
     }
 }

@@ -53,6 +53,8 @@ void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
 
     ProjectImages.Initialize(m_project_node, allow_ui);
     ProjectData.Clear();
+
+    InitializeDerivedFileCache();
 }
 
 void ProjectHandler::set_ProjectPath(const wxFileName& path)
@@ -674,16 +676,13 @@ size_t ProjectHandler::get_OutputType(int flags) const
                     }
                 }
 
-                // Derived output logic
+                // Derived output logic — uses cache to avoid disk I/O
                 if (!(flags & OUT_FLAG_IGNORE_DERIVED) && child->HasValue(prop_derived_file) &&
                     child->as_bool(prop_use_derived_class))
                 {
-                    if (auto path = get_DerivedFilename(child.get()); !path.empty())
+                    if (IsDerivedFileMissing(child.get()))
                     {
-                        if (!path.file_exists())
-                        {
-                            result |= OUTPUT_DERIVED;
-                        }
+                        result |= OUTPUT_DERIVED;
                     }
                 }
             }
@@ -717,6 +716,79 @@ wxue::string ProjectHandler::get_DerivedFilename(Node* form) const
     }
     path.replace_extension(source_ext);
     return path;
+}
+
+void ProjectHandler::InitializeDerivedFileCache()
+{
+    m_derived_file_exists.clear();
+
+    std::vector<Node*> forms;
+    CollectForms(forms);
+
+    for (const auto& form: forms)
+    {
+        UpdateDerivedFileCache(form);
+    }
+}
+
+void ProjectHandler::UpdateDerivedFileCache(Node* form)
+{
+    if (!form->is_Form())
+    {
+        return;
+    }
+
+    if (!form->HasValue(prop_derived_file) || !form->as_bool(prop_use_derived_class))
+    {
+        // If the form no longer qualifies for derived output, remove any stale entry
+        if (const auto path = get_DerivedFilename(form); !path.empty())
+        {
+            m_derived_file_exists.erase(path);
+        }
+        return;
+    }
+
+    const wxue::string path = get_DerivedFilename(form);
+    if (path.empty())
+    {
+        return;
+    }
+
+    m_derived_file_exists[path] = path.file_exists();
+}
+
+void ProjectHandler::InvalidateDerivedFileCache()
+{
+    InitializeDerivedFileCache();
+}
+
+bool ProjectHandler::IsDerivedFileMissing(Node* form) const
+{
+    const wxue::string path = get_DerivedFilename(form);
+    if (path.empty())
+    {
+        return false;
+    }
+
+    if (auto iter = m_derived_file_exists.find(path); iter != m_derived_file_exists.end())
+    {
+        return !iter->second;
+    }
+
+    // Not in cache — fall back to disk check and return the result
+    return !path.file_exists();
+}
+
+bool ProjectHandler::HasMissingDerivedFiles() const
+{
+    for (const auto& [path, exists]: m_derived_file_exists)
+    {
+        if (!exists)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 [[nodiscard]] bool ProjectHandler::AllFormTypesFound() const

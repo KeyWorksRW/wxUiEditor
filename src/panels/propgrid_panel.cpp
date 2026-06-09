@@ -657,6 +657,7 @@ void PropGridPanel::ReplaceDerivedFile(const wxue::string& newValue, NodePropert
     auto* grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
     grid_property->SetValueFromString(derived_filename.wx());
     ModifyProperty(propType, derived_filename);
+    Project.UpdateDerivedFileCache(propType->getNode()->get_Form());
 }
 
 bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)

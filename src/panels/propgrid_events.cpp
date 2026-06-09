@@ -934,6 +934,7 @@ void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
     }
 
     wxGetFrame().PushUndoAction(undo_derived);
+    Project.InvalidateDerivedFileCache();
 }
 
 void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
@@ -980,4 +981,5 @@ void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
     }
 
     wxGetFrame().PushUndoAction(undo_derived);
+    Project.InvalidateDerivedFileCache();
 }

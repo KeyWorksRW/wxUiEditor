@@ -83,7 +83,7 @@ auto GenInheritedClass(GenResults& results) -> void
         auto cpp_cw = std::make_unique<FileCodeWriter>(path);
         codegen.SetSrcWriteCode(cpp_cw.get());
 
-        auto retval = codegen.GenerateDerivedClass(Project.get_ProjectNode(), form);
+        auto retval = codegen.GenerateDerivedClass(form);
         if (retval == result::fail)
         {
             results.GetMsgs().emplace_back(

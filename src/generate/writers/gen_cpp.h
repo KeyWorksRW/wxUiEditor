@@ -17,13 +17,13 @@ public:
     CppCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    auto GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
+    void GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
-                       wxProgressDialog* progress = nullptr) -> void override;
+                       wxProgressDialog* progress = nullptr) override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
-    auto GenerateDerivedClass(Node* project, Node* form_node,
-                              PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) -> int override;
+    int GenerateDerivedClass(Node* form_node,
+                             PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
 
 protected:
     void GenerateCppClassHeader(bool class_namespace = false);
@@ -100,8 +100,8 @@ private:
     // ============================================================================
 
     // Helper methods for WritePropHdrCode
-    static auto IsAccessSpecifier(const wxue::string& code) -> bool;
-    static auto ShouldIndentAfter(const wxue::string& code) -> bool;
+    static bool IsAccessSpecifier(const wxue::string& code);
+    static bool ShouldIndentAfter(const wxue::string& code);
 
     // Helper methods for GatherGeneratorIncludes
     static void ProcessFontProperty(const NodeProperty& prop, bool isAddToSrc,
@@ -112,11 +112,10 @@ private:
                               std::set<std::string>& set_src, std::set<std::string>& set_hdr);
 
     // Helper methods for GenUnhandledEvents
-    [[nodiscard]] auto CollectUserEventHandlers(std::unordered_set<std::string>& code_lines)
-        -> bool;
-    [[nodiscard]] auto
+    [[nodiscard]] bool CollectUserEventHandlers(std::unordered_set<std::string>& code_lines);
+    [[nodiscard]] bool
         CheckIfAllEventsImplemented(const EventVector& events,
-                                    const std::unordered_set<std::string>& code_lines) -> bool;
+                                    const std::unordered_set<std::string>& code_lines);
     static void GenerateEventFunctionBody(Code& code, NodeEvent* event);
 
     // Helper methods for GenerateCppClassConstructor
@@ -141,8 +140,8 @@ private:
     void FinalizeNamespace(const wxue::StringVector& names, size_t indent, Code& code);
 
     // Helper methods for GenHdrEvents
-    [[nodiscard]] static auto ShouldSkipEvent(const wxue::string& event_code) -> bool;
-    [[nodiscard]] static auto HasContextMenuHandler(NodeEvent* event) -> bool;
+    [[nodiscard]] static bool ShouldSkipEvent(const wxue::string& event_code);
+    [[nodiscard]] static bool HasContextMenuHandler(NodeEvent* event);
     void ProcessSingleEvent(NodeEvent* event, std::set<wxue::string>& code_lines);
     void BuildEventHandlerDeclaration(wxue::string& code, const wxue::string& event_code,
                                       const wxue::string& event_class) const;
@@ -153,7 +152,7 @@ private:
     static void ProcessOrderDependentHeaderIncludes(std::set<std::string>& hdr_includes,
                                                     std::vector<std::string>& ordered_includes);
     void WriteWxWidgetsHeaders(const std::set<std::string>& hdr_includes);
-    static auto ExtractNamespaces(std::set<std::string>& hdr_includes) -> std::vector<std::string>;
+    static std::vector<std::string> ExtractNamespaces(std::set<std::string>& hdr_includes);
     void WriteNonWxHeaders(const std::set<std::string>& hdr_includes);
     void WritePreambleAndCustomIncludes();
     void WriteNamespaceDeclarations(const std::vector<std::string>& namespaces);
@@ -200,26 +199,33 @@ private:
     void InsertValidatorVariable(Node* node, const wxue::string& code,
                                  std::set<std::string>& code_lines);
 
+    // Context struct holding derived class data — reduces parameter count in
+    // GenerateDerivedHeader/GenerateDerivedSource
+    struct DerivedClassData
+    {
+        wxue::string src_ext { ".cpp" };
+        wxue::string hdr_ext { ".h" };
+        wxue::string derived_name;
+        wxue::string base_file;
+        wxue::string derived_file;
+
+        DerivedClassData();
+    };
+
     // Helper methods for GenerateDerivedClass
-    static void GetFileExtensions(Node* project, wxue::string& source_ext,
-                                  wxue::string& header_ext);
-    [[nodiscard]] auto DetermineDerivedFilePath(Node* form, PANEL_PAGE panel_type,
-                                                const wxue::string& source_ext) -> wxue::string;
+    [[nodiscard]] wxue::string DetermineDerivedFilePath(Node* form, PANEL_PAGE panel_type,
+                                                        const wxue::string& source_ext);
     void DetermineBaseFilePath(Node* form, wxue::string& baseFile);
     static void ProcessNamespace(Node* form, wxue::string& namespace_using_name);
     void GenerateDerivedClassName(wxue::string& derived_name);
-    void GenerateDerivedHeader(const wxue::string& derived_name, const wxue::string& baseFile,
-                               const wxue::string& namespace_using_name,
-                               const wxue::string& header_ext, PANEL_PAGE panel_type);
-    void GenerateDerivedSource(Node* project, const wxue::string& derived_name,
-                               const wxue::string& baseFile, const wxue::string& derived_file,
-                               const wxue::string& namespace_using_name,
-                               const wxue::string& header_ext, const wxue::string& source_ext,
-                               PANEL_PAGE panel_type);
+    void GenerateDerivedHeader(const DerivedClassData& class_data,
+                               const wxue::string& namespace_using_name, PANEL_PAGE panel_type);
+    void GenerateDerivedSource(const DerivedClassData& data,
+                               const wxue::string& namespace_using_name, PANEL_PAGE panel_type);
     void GenerateDerivedEventHandlers(const EventVector& events, const wxue::string& derived_name,
                                       PANEL_PAGE panel_type);
-    static auto IsCloseTypeButton(NodeEvent* event) -> bool;
-    static auto ShouldSkipContextMenuEvent(NodeEvent* event) -> bool;
+    static bool IsCloseTypeButton(NodeEvent* event);
+    static bool ShouldSkipContextMenuEvent(NodeEvent* event);
     void WriteEventHandlerDeclaration(const wxue::string& event_code,
                                       const wxue::string& event_class);
     void WriteEventHandlerImplementation(NodeEvent* event, const wxue::string& derived_name,
@@ -256,13 +262,13 @@ public:
         }
     };
 
-    auto get_source_ext() const -> std::string_view { return m_source_ext; }
-    void set_source_ext(std::string_view ext) { m_source_ext = ext; }
+    std::string_view get_source_ext() const { return m_source_ext; }
+    void set_source_ext(std::string_view extension) { m_source_ext = extension; }
 
-    auto get_header_ext() const -> std::string_view { return m_header_ext; }
-    void set_header_ext(std::string_view ext) { m_header_ext = ext; }
+    std::string_view get_header_ext() const { return m_header_ext; }
+    void set_header_ext(std::string_view extension) { m_header_ext = extension; }
 
-    auto get_pClassList() const -> std::vector<std::string>* { return m_pClassList; }
+    std::vector<std::string>* get_pClassList() const { return m_pClassList; }
 
 private:
     std::string m_source_ext;

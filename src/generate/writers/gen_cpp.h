@@ -22,7 +22,7 @@ public:
                        wxProgressDialog* progress = nullptr) override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
-    int GenerateDerivedClass(Node* project, Node* form_node,
+    int GenerateDerivedClass(Node* form_node,
                              PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
 
 protected:
@@ -200,8 +200,7 @@ private:
                                  std::set<std::string>& code_lines);
 
     // Helper methods for GenerateDerivedClass
-    static void GetFileExtensions(Node* project, wxue::string& source_ext,
-                                  wxue::string& header_ext);
+    static void GetFileExtensions(wxue::string& source_ext, wxue::string& header_ext);
     [[nodiscard]] wxue::string DetermineDerivedFilePath(Node* form, PANEL_PAGE panel_type,
                                                         const wxue::string& source_ext);
     void DetermineBaseFilePath(Node* form, wxue::string& baseFile);
@@ -210,8 +209,8 @@ private:
     void GenerateDerivedHeader(const wxue::string& derived_name, const wxue::string& baseFile,
                                const wxue::string& namespace_using_name,
                                const wxue::string& header_ext, PANEL_PAGE panel_type);
-    void GenerateDerivedSource(Node* project, const wxue::string& derived_name,
-                               const wxue::string& baseFile, const wxue::string& derived_file,
+    void GenerateDerivedSource(const wxue::string& derived_name, const wxue::string& baseFile,
+                               const wxue::string& derived_file,
                                const wxue::string& namespace_using_name,
                                const wxue::string& header_ext, const wxue::string& source_ext,
                                PANEL_PAGE panel_type);

@@ -74,7 +74,7 @@ public:
                                wxProgressDialog* progress = nullptr) = 0;
 
     // CppCodeGenerator is the only derived class that implements this method.
-    virtual auto GenerateDerivedClass(Node* /* project */, Node* /* form_node */,
+    virtual auto GenerateDerivedClass(Node* /* form_node */,
                                       PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) -> int
     {
         m_panel_type = panel_type;

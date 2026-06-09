@@ -413,7 +413,7 @@ void BasePanel::GenerateBaseClass()
     CppCodeGenerator code_generator(m_cur_form);
     code_generator.SetSrcWriteCode(m_derived_src_panel);
     code_generator.SetHdrWriteCode(m_derived_hdr_panel);
-    code_generator.GenerateDerivedClass(Project.get_ProjectNode(), m_cur_form, panel_page);
+    code_generator.GenerateDerivedClass(m_cur_form, panel_page);
 
     if (panel_page == PANEL_PAGE::DERIVED_SRC_PANEL)
     {

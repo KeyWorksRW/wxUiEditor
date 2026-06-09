@@ -58,14 +58,14 @@ static constexpr auto lst_close_type_button = std::to_array<const char*>({
 
 // clang-format on
 
-int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE panel_type)
+int CppCodeGenerator::GenerateDerivedClass(Node* form, PANEL_PAGE panel_type)
 {
     m_form_node = form;
     m_is_derived_class = m_form_node->as_bool(prop_use_derived_class);
 
     wxue::string source_ext;
     wxue::string header_ext;
-    GetFileExtensions(project, source_ext, header_ext);
+    GetFileExtensions(source_ext, header_ext);
 
     const wxue::string derived_file = DetermineDerivedFilePath(form, panel_type, source_ext);
     if (derived_file.empty() && panel_type == PANEL_PAGE::NOT_PANEL)
@@ -91,8 +91,8 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
     m_source->Clear();
 
     GenerateDerivedHeader(derived_name, baseFile, namespace_using_name, header_ext, panel_type);
-    GenerateDerivedSource(project, derived_name, baseFile, derived_file, namespace_using_name,
-                          header_ext, source_ext, panel_type);
+    GenerateDerivedSource(derived_name, baseFile, derived_file, namespace_using_name, header_ext,
+                          source_ext, panel_type);
 
     thrd_get_events.join();
     GenerateDerivedEventHandlers(events, derived_name, panel_type);
@@ -108,18 +108,19 @@ int CppCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE
 
 // Helper method implementations
 
-void CppCodeGenerator::GetFileExtensions(Node* project, wxue::string& source_ext,
-                                         wxue::string& header_ext)
+void CppCodeGenerator::GetFileExtensions(wxue::string& source_ext, wxue::string& header_ext)
 {
     source_ext = ".cpp";
     header_ext = ".h";
 
-    if (const auto& extProp = project->as_string(prop_source_ext); !extProp.empty())
+    if (const auto& extProp = Project.get_ProjectNode()->as_string(prop_source_ext);
+        !extProp.empty())
     {
         source_ext = extProp;
     }
 
-    if (const auto& extProp = project->as_string(prop_header_ext); !extProp.empty())
+    if (const auto& extProp = Project.get_ProjectNode()->as_string(prop_header_ext);
+        !extProp.empty())
     {
         header_ext = extProp;
     }
@@ -298,7 +299,7 @@ void CppCodeGenerator::GenerateDerivedHeader(const wxue::string& derived_name,
     m_header->Unindent();
 }
 
-void CppCodeGenerator::GenerateDerivedSource(Node* project, const wxue::string& derived_name,
+void CppCodeGenerator::GenerateDerivedSource(const wxue::string& derived_name,
                                              const wxue::string& baseFile,
                                              const wxue::string& derived_file,
                                              const wxue::string& namespace_using_name,
@@ -315,7 +316,7 @@ void CppCodeGenerator::GenerateDerivedSource(Node* project, const wxue::string& 
         m_source->writeLine(txt_DerivedCmtBlock);
     }
 
-    if (const auto& prop = project->as_string(prop_local_pch_file); !prop.empty())
+    if (const auto& prop = Project.get_ProjectNode()->as_string(prop_local_pch_file); !prop.empty())
     {
         wxue::string pch_str("#include ");
         pch_str << "\"" << prop << "\"";
@@ -325,9 +326,9 @@ void CppCodeGenerator::GenerateDerivedSource(Node* project, const wxue::string& 
         m_source->writeLine();
     }
 
-    if (project->HasValue(prop_src_preamble))
+    if (Project.get_ProjectNode()->HasValue(prop_src_preamble))
     {
-        wxue::string convert(project->as_string(prop_src_preamble));
+        wxue::string convert(Project.get_ProjectNode()->as_string(prop_src_preamble));
         (void) convert.Replace("@@", "\n", wxue::REPLACE::all);
         wxue::StringVector lines(convert, '\n');
         bool initial_bracket = false;

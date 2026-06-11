@@ -71,44 +71,47 @@ bool MainFrame::GenerateFromOutputType(GenResults& results)
 {
     const size_t output_type = Project.get_OutputType();
 
-    bool code_generated = false;
-
-    // Handle derived class generation separately (not part of GenResults)
-    if (output_type & OUTPUT_DERIVED)
+    // If the user *only* wants the derived classes (is that even possible to
+    // specify?) then generate and return.
+    if (output_type == OUTPUT_DERIVED)
     {
         GenInheritedClass(results);
-        code_generated = true;
+        return true;
     }
 
-    // Build combined language flags from detected output types
-    std::uint16_t lang_flags = GEN_LANG_NONE;
-    if (output_type & OUTPUT_CPLUS)
+    // Check to see if the output type is for a single language. If it is, then we don't need to
+    // show a dialog to the user asking which languages to generate. It is *not* a bug that we use
+    // '==' here for a bit flag instead of '&' because if more than one bit is set, then we need to
+    // show the dialog to the user to ask which languages they want to generate. dialog to the user
+    // to ask which languages they want to generate.
+    std::uint16_t language = GEN_LANG_NONE;
+    if (output_type == OUTPUT_CPLUS)
     {
-        lang_flags |= GEN_LANG_CPLUSPLUS;
+        language = GEN_LANG_CPLUSPLUS;
     }
-    if (output_type & OUTPUT_PYTHON)
+    if (output_type == OUTPUT_PYTHON)
     {
-        lang_flags |= GEN_LANG_PYTHON;
+        language = GEN_LANG_PYTHON;
     }
-    if (output_type & OUTPUT_RUBY)
+    if (output_type == OUTPUT_RUBY)
     {
-        lang_flags |= GEN_LANG_RUBY;
+        language = GEN_LANG_RUBY;
     }
-    if (output_type & OUTPUT_XRC)
+    if (output_type == OUTPUT_XRC)
     {
-        lang_flags |= GEN_LANG_XRC;
+        language = GEN_LANG_XRC;
     }
 
-    if (lang_flags != GEN_LANG_NONE)
+    if (language != GEN_LANG_NONE)
     {
         results.SetNodes(Project.get_ProjectNode());
-        results.SetLanguages(static_cast<GenLang>(lang_flags));
+        results.SetLanguages(static_cast<GenLang>(language));
         results.SetMode(GenResults::Mode::generate_and_write);
         std::ignore = results.Generate();
-        code_generated = true;
+        return true;
     }
 
-    return code_generated;
+    return false;
 }
 
 bool MainFrame::GenerateFromDialog(GenResults& results)

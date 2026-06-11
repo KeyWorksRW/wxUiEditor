@@ -174,7 +174,7 @@ auto GenInheritedClass(GenResults& results) -> void
         }
         if (retval != result::fail)
         {
-            Project.UpdateDerivedFileCache(form);
+            Project.InvalidateDerivedFileCache();
         }
     }
 }

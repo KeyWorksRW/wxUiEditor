@@ -133,7 +133,7 @@ void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* gr
 
     if (node_prop->isProp(prop_use_derived_class))
     {
-        Project.UpdateDerivedFileCache(node_prop->getNode());
+        Project.InvalidateDerivedFileCache();
     }
 }
 
@@ -326,7 +326,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
 
     if (node_prop->isProp(prop_derived_file))
     {
-        Project.UpdateDerivedFileCache(node_prop->getNode()->get_Form());
+        Project.InvalidateDerivedFileCache();
     }
 
     // Review: [Randalphwa - 06-26-2023] The panel should already have been created

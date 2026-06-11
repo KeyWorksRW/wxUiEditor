@@ -10,6 +10,8 @@
 
 #include "generate_dlg_gen.h"
 
+#include <format>
+
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
 #include "image_handler.h"    // ImageHandler class
@@ -20,24 +22,19 @@
 
 #include "../wxui/dlg_gen_results.h"
 
-namespace
-{
+static bool gen_base_code = false;
+static bool gen_derived_code = false;
+static bool gen_python_code = false;
+static bool gen_ruby_code = false;
+static bool gen_xrc_code = false;
 
-    bool gen_base_code = false;
-    bool gen_derived_code = false;
-    bool gen_python_code = false;
-    bool gen_ruby_code = false;
-    bool gen_xrc_code = false;
-
-    constexpr int generation_timer_interval_ms = 250;
-
-}  // anonymous namespace
+constexpr int generation_timer_interval_ms = 250;
 
 // This generates the base class files. For the derived class files, see GenInheritedClass()
 // in generate/writers/gen_codefiles.cpp
 void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
 {
-    ProjectImages.UpdateEmbedNodes();
+    std::ignore = ProjectImages.UpdateEmbedNodes();
     GenResults results;
     bool code_generated = false;
     wxBeginBusyCursor();
@@ -70,50 +67,54 @@ void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
     UpdateWakaTime();
 }
 
-auto MainFrame::GenerateFromOutputType(GenResults& results) -> bool
+bool MainFrame::GenerateFromOutputType(GenResults& results)
 {
-    auto output_type = Project.get_OutputType();
+    const size_t output_type = Project.get_OutputType();
 
-    if (output_type == OUTPUT_DERIVED)
+    bool code_generated = false;
+
+    // Handle derived class generation separately (not part of GenResults)
+    if (output_type & OUTPUT_DERIVED)
     {
         GenInheritedClass(results);
-        return true;
+        code_generated = true;
     }
 
-    GenLang language = GEN_LANG_NONE;
-    if (output_type == OUTPUT_XRC)
+    // Build combined language flags from detected output types
+    std::uint16_t lang_flags = GEN_LANG_NONE;
+    if (output_type & OUTPUT_CPLUS)
     {
-        language = GEN_LANG_XRC;
+        lang_flags |= GEN_LANG_CPLUSPLUS;
     }
-    else if (output_type == OUTPUT_CPLUS)
+    if (output_type & OUTPUT_PYTHON)
     {
-        language = GEN_LANG_CPLUSPLUS;
+        lang_flags |= GEN_LANG_PYTHON;
     }
-    else if (output_type == OUTPUT_PYTHON)
+    if (output_type & OUTPUT_RUBY)
     {
-        language = GEN_LANG_PYTHON;
+        lang_flags |= GEN_LANG_RUBY;
     }
-    else if (output_type == OUTPUT_RUBY)
+    if (output_type & OUTPUT_XRC)
     {
-        language = GEN_LANG_RUBY;
+        lang_flags |= GEN_LANG_XRC;
     }
 
-    if (language != GEN_LANG_NONE)
+    if (lang_flags != GEN_LANG_NONE)
     {
         results.SetNodes(Project.get_ProjectNode());
-        results.SetLanguages(language);
+        results.SetLanguages(static_cast<GenLang>(lang_flags));
         results.SetMode(GenResults::Mode::generate_and_write);
         std::ignore = results.Generate();
-        return true;
+        code_generated = true;
     }
 
-    return false;
+    return code_generated;
 }
 
-auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
+bool MainFrame::GenerateFromDialog(GenResults& results)
 {
-    GenerateDlg dlg(this);
-    if (dlg.ShowModal() != wxID_OK)
+    GenerateDlg dialog(this);
+    if (dialog.ShowModal() != wxID_OK)
     {
         return false;
     }
@@ -125,25 +126,25 @@ auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
 
     // Always generate XRC files first in case the XRC files need to be added to a gen_Data
     // section of the other languages.
-    gen_xrc_code = dlg.is_gen_xrc();
+    gen_xrc_code = dialog.is_gen_xrc();
     if (gen_xrc_code)
     {
         lang_flags |= GEN_LANG_XRC;
     }
 
-    gen_base_code = dlg.is_gen_base();
+    gen_base_code = dialog.is_gen_base();
     if (gen_base_code)
     {
         lang_flags |= GEN_LANG_CPLUSPLUS;
     }
 
-    gen_python_code = dlg.is_gen_python();
+    gen_python_code = dialog.is_gen_python();
     if (gen_python_code)
     {
         lang_flags |= GEN_LANG_PYTHON;
     }
 
-    gen_ruby_code = dlg.is_gen_ruby();
+    gen_ruby_code = dialog.is_gen_ruby();
     if (gen_ruby_code)
     {
         lang_flags |= GEN_LANG_RUBY;
@@ -160,7 +161,7 @@ auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
     }
 
     // Handle derived class generation separately (not part of GenResults yet)
-    gen_derived_code = dlg.is_gen_inherited();
+    gen_derived_code = dialog.is_gen_inherited();
     if (gen_derived_code)
     {
         GenInheritedClass(results);
@@ -177,7 +178,7 @@ auto MainFrame::GenerateFromDialog(GenResults& results) -> bool
 
 void MainFrame::SaveGenerationPreferences()
 {
-    auto* config = wxConfig::Get();
+    wxConfigBase* config = wxConfig::Get();
     config->SetPath("/preferences");
     config->Write("gen_xrc_code", gen_xrc_code);
     config->Write("gen_base_code", gen_base_code);
@@ -205,11 +206,14 @@ void MainFrame::OnGenerationTimer(wxTimerEvent& /* event unused */)
 
 void MainFrame::ShowGenerationResults(const GenResults& results)
 {
-    if (results.GetUpdatedFiles().size() || results.GetCreatedFiles().size() ||
-        results.GetMsgs().size())
+    if (!results.GetUpdatedFiles().empty() || !results.GetCreatedFiles().empty() ||
+        !results.GetMsgs().empty())
     {
         GeneratedResultsDlg results_dlg;
-        results_dlg.Create(this);
+        if (!results_dlg.Create(this))
+        {
+            return;
+        }
 
         // Show updated files first
         for (const auto& iter: results.GetUpdatedFiles())
@@ -230,7 +234,7 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
         // TODO: [Randalphwa - 11-29-2025] If we derive from GeneratedResultsDlg then we could make
         // a hidden section that contains "Updated files: and a dropdown combo box that contains the
         // names of all the files that have been updated.
-        auto msgs = results.GetMsgs();  // Make a mutable copy
+        std::vector<std::string> msgs = results.GetMsgs();  // Make a mutable copy
 
         // Report counts for updated and created files
         if (results.GetUpdatedFiles().size() == 1)
@@ -270,7 +274,7 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-    auto languages = Project.get_GenerateLanguages();
+    const size_t languages = Project.get_GenerateLanguages();
 
     switch (Project.get_CodePreference())
     {
@@ -321,10 +325,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkPython = new wxCheckBox(this, wxID_ANY, "Python");
         m_checkPython->SetValidator(wxGenericValidator(&m_gen_python_code));
         m_grid_sizer->Add(m_checkPython, wxSizerFlags().Border(wxALL));
-        if (gen_python_code)
-        {
-            m_checkPython->SetValue(true);
-        }
     }
     if (languages & GEN_LANG_RUBY || gen_ruby_code)
     {
@@ -332,10 +332,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkRuby = new wxCheckBox(this, wxID_ANY, "Ruby");
         m_checkRuby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
         m_grid_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
-        if (gen_ruby_code)
-        {
-            m_checkRuby->SetValue(true);
-        }
     }
     if (languages & GEN_LANG_XRC || gen_xrc_code)
     {
@@ -343,10 +339,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkXRC = new wxCheckBox(this, wxID_ANY, "XRC");
         m_checkXRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
         m_grid_sizer->Add(m_checkXRC, wxSizerFlags().Border(wxALL));
-        if (gen_xrc_code)
-        {
-            m_checkXRC->SetValue(true);
-        }
     }
 
     // You have to reset minimum size to allow the window to shrink

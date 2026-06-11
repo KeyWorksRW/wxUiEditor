@@ -110,8 +110,8 @@ namespace
 
 }  // anonymous namespace
 
-// This generates the base class files. For the derived class files, see OnGenInheritedClass()
-// in generate/gen_codefiles.cpp
+// This generates the base class files. For the derived class files, see GenInheritedClass()
+// in generate/writers/gen_codefiles.cpp
 void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
 {
     ProjectImages.UpdateEmbedNodes();
@@ -135,6 +135,13 @@ void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
     if (code_generated)
     {
         ShowGenerationResults(results);
+    }
+
+    // After generation, re-validate the cache to pick up any derived files that
+    // may now exist (e.g., created by GenInheritedClass or externally).
+    if (Project.HasMissingDerivedFiles())
+    {
+        Project.InvalidateDerivedFileCache();
     }
 
     UpdateWakaTime();
@@ -253,11 +260,15 @@ void MainFrame::SaveGenerationPreferences()
     config->SetPath("/preferences");
     config->Write("gen_xrc_code", gen_xrc_code);
     config->Write("gen_base_code", gen_base_code);
-    config->Write("gen_derived_code", gen_derived_code);
 
     config->Write("gen_python_code", gen_python_code);
     config->Write("gen_ruby_code", gen_ruby_code);
     config->SetPath("/");
+}
+
+void MainFrame::ResetDerivedCodeState()
+{
+    gen_derived_code = Project.HasMissingDerivedFiles();
 }
 
 void MainFrame::UpdateGenerationStatus()
@@ -360,18 +371,27 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             break;
     }
 
-    if (languages & GEN_LANG_CPLUSPLUS || gen_base_code || gen_derived_code)
-    {
-        m_gen_base_code = gen_base_code;
-        m_checkBaseCode = new wxCheckBox(this, wxID_ANY, "C++ &Base");
-        m_checkBaseCode->SetValidator(wxGenericValidator(&m_gen_base_code));
-        m_grid_sizer->Add(m_checkBaseCode, wxSizerFlags().Border(wxALL));
+    const bool show_cpp_section = (languages & GEN_LANG_CPLUSPLUS) || gen_base_code;
+    const bool show_derived = gen_derived_code || Project.HasMissingDerivedFiles();
 
-        m_gen_inherited_code = gen_derived_code;
-        m_checkDerived = new wxCheckBox(this, wxID_ANY, "C++ &Derived");
-        m_checkDerived->SetValidator(wxGenericValidator(&m_gen_inherited_code));
-        m_checkDerived->SetToolTip("Generate any derived files that don\'t currently exist");
-        m_grid_sizer->Add(m_checkDerived, wxSizerFlags().Border(wxALL));
+    if (show_cpp_section || show_derived)
+    {
+        if (show_cpp_section)
+        {
+            m_gen_base_code = gen_base_code;
+            m_checkBaseCode = new wxCheckBox(this, wxID_ANY, "C++ &Base");
+            m_checkBaseCode->SetValidator(wxGenericValidator(&m_gen_base_code));
+            m_grid_sizer->Add(m_checkBaseCode, wxSizerFlags().Border(wxALL));
+        }
+
+        if (show_derived)
+        {
+            m_gen_inherited_code = gen_derived_code;
+            m_checkDerived = new wxCheckBox(this, wxID_ANY, "C++ &Derived");
+            m_checkDerived->SetValidator(wxGenericValidator(&m_gen_inherited_code));
+            m_checkDerived->SetToolTip("Generate any derived files that don\'t currently exist");
+            m_grid_sizer->Add(m_checkDerived, wxSizerFlags().Border(wxALL));
+        }
     }
 
     if (languages & GEN_LANG_PYTHON || gen_python_code)

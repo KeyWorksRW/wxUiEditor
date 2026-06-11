@@ -372,6 +372,7 @@ private:
     static bool GenerateFromOutputType(GenResults& results);
     bool GenerateFromDialog(GenResults& results);
     static void SaveGenerationPreferences();
+    static void ResetDerivedCodeState();
     void ShowGenerationResults(const GenResults& results);
     void UpdateGenerationStatus();
     void OnGenerationTimer(wxTimerEvent& event);

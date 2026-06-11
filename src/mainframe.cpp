@@ -545,6 +545,7 @@ void MainFrame::ProjectLoaded()
 {
     Project.ChangeDir();
     setStatusText("Project loaded");
+    ResetDerivedCodeState();
     if (!m_isImported)
     {
         if (!Project.get_ProjectFile().filename().is_sameas(txtEmptyProject))

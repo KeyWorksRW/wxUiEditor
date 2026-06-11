@@ -130,6 +130,11 @@ void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* gr
         }
     }
     ModifyProperty(node_prop, m_prop_grid->GetPropertyValueAsBool(grid_prop) ? "1" : "0");
+
+    if (node_prop->isProp(prop_use_derived_class))
+    {
+        Project.InvalidateDerivedFileCache();
+    }
 }
 
 void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
@@ -318,6 +323,11 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
         }
     }
     ModifyProperty(node_prop, newValue);
+
+    if (node_prop->isProp(prop_derived_file))
+    {
+        Project.InvalidateDerivedFileCache();
+    }
 
     // Review: [Randalphwa - 06-26-2023] The panel should already have been created
     // wxGetFrame().UpdateLanguagePanels();

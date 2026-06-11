@@ -7,8 +7,9 @@
 
 #pragma once  // NOLINT(#pragma once in main file)
 
-#include <cstdint>  // for std::uint8_t
-#include <utility>  // for pair<>
+#include <cstdint>        // for std::uint8_t
+#include <unordered_map>  // for std::unordered_map
+#include <utility>        // for pair<>
 
 #include "gen_enums.h"                   // Enumerations for generators
 #include "node.h"                        // Node class
@@ -79,7 +80,25 @@ public:
     // Get a bit flag indicating which output types are enabled.
     //
     // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.
+    // Uses an in-memory cache (m_derived_file_exists) to avoid repeated disk I/O.
     [[nodiscard]] size_t get_OutputType(int flags = OUT_FLAG_NONE) const;
+
+    // Populate the derived file existence cache. Call after LoadProject or when the entire
+    // cache needs to be rebuilt (e.g., derived_directory changed).
+    void InitializeDerivedFileCache();
+
+    // Update the cache entry for a single form. Call when derived_file, use_derived_class,
+    // or the derived class name changes for a specific form, or after a derived file is written.
+    void UpdateDerivedFileCache(Node* form);
+
+    // Clear and rebuild the entire derived file cache.
+    void InvalidateDerivedFileCache();
+
+    // Returns true if the form's derived source file does NOT exist on disk (from cache).
+    [[nodiscard]] bool IsDerivedFileMissing(Node* form) const;
+
+    // Returns true if any form has a missing derived file (from cache).
+    [[nodiscard]] bool HasMissingDerivedFiles() const;
 
     // Change to the project's directory
     void ChangeDir() const;
@@ -270,6 +289,10 @@ private:
     Node* m_form_Animation { nullptr };
     Node* m_ImagesForm { nullptr };
     Node* m_DataForm { nullptr };
+
+    // Cache of absolute derived source file paths -> whether the file exists on disk.
+    // Key is the full path with .cpp extension (as returned by get_DerivedFilename).
+    std::unordered_map<std::string, bool> m_derived_file_exists;
 
     // Creating the wxFileName class this way means callers don't need to include
     // wx/filename.h and all the files it includes.

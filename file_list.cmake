@@ -365,6 +365,7 @@ set( file_list
     src/tools/compare/code_compare.cpp  # Code Generation Comparison
     src/tools/compare/diff.cpp          # Simple diff algorithm for comparing text files
     src/tools/compare/diff_viewer.cpp   # Dialog for displaying file differences
+    src/tools/generate_dlg.cpp         # Dialog for choosing and generating specific language file(s)
 
     # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
     # tools/preview_settings.cpp    # Dialog for setting preview options

@@ -69,11 +69,11 @@ void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
 
 bool MainFrame::GenerateFromOutputType(GenResults& results)
 {
-    const size_t output_type = Project.get_OutputType();
+    const GenOutput output_type = Project.get_OutputType();
 
     // If the user *only* wants the derived classes (is that even possible to
     // specify?) then generate and return.
-    if (output_type == OUTPUT_DERIVED)
+    if (output_type == GenOutput::derived)
     {
         GenInheritedClass(results);
         return true;
@@ -85,19 +85,19 @@ bool MainFrame::GenerateFromOutputType(GenResults& results)
     // show the dialog to the user to ask which languages they want to generate. dialog to the user
     // to ask which languages they want to generate.
     GenLang language = GenLang::none;
-    if (output_type == OUTPUT_CPLUS)
+    if (output_type == GenOutput::cplusplus)
     {
         language = GenLang::cplusplus;
     }
-    if (output_type == OUTPUT_PYTHON)
+    if (output_type == GenOutput::python)
     {
         language = GenLang::python;
     }
-    if (output_type == OUTPUT_RUBY)
+    if (output_type == GenOutput::ruby)
     {
         language = GenLang::ruby;
     }
-    if (output_type == OUTPUT_XRC)
+    if (output_type == GenOutput::xrc)
     {
         language = GenLang::xrc;
     }

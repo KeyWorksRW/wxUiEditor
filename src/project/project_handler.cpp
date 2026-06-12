@@ -633,9 +633,9 @@ bool ProjectHandler::ShouldOutputLanguage(const NodesFormChild& nodes,
 }
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
-size_t ProjectHandler::get_OutputType(int flags) const
+GenOutput ProjectHandler::get_OutputType(int flags) const
 {
-    size_t result = OUTPUT_NONE;
+    GenOutput result = GenOutput::none;
 
     auto traverse_forms_recursively = [&](Node* form, auto&& traverse_forms_recursively) -> void
     {
@@ -652,21 +652,21 @@ size_t ProjectHandler::get_OutputType(int flags) const
                 {
                     PropName base_file_property;
                     GenLang language;
-                    size_t output_flag;
+                    GenOutput output_flag;
                 };
                 static constexpr std::array<OutputLangInfo, 4> outputLangs =
                     std::to_array<OutputLangInfo>({ { .base_file_property = prop_base_file,
                                                       .language = GenLang::cplusplus,
-                                                      .output_flag = OUTPUT_CPLUS },
+                                                      .output_flag = GenOutput::cplusplus },
                                                     { .base_file_property = prop_python_file,
                                                       .language = GenLang::python,
-                                                      .output_flag = OUTPUT_PYTHON },
+                                                      .output_flag = GenOutput::python },
                                                     { .base_file_property = prop_ruby_file,
                                                       .language = GenLang::ruby,
-                                                      .output_flag = OUTPUT_RUBY },
+                                                      .output_flag = GenOutput::ruby },
                                                     { .base_file_property = prop_xrc_file,
                                                       .language = GenLang::xrc,
-                                                      .output_flag = OUTPUT_XRC } });
+                                                      .output_flag = GenOutput::xrc } });
 
                 for (const auto& info: outputLangs)
                 {
@@ -683,7 +683,7 @@ size_t ProjectHandler::get_OutputType(int flags) const
                 {
                     if (IsDerivedFileMissing(child.get()))
                     {
-                        result |= OUTPUT_DERIVED;
+                        result |= GenOutput::derived;
                     }
                 }
             }

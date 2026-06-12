@@ -23,16 +23,46 @@ namespace pugi
 
 class ImportXML;
 
-enum : std::uint8_t
+enum class GenOutput
 {
-    OUTPUT_NONE = 0,
-    OUTPUT_CPLUS = 1 << 0,
-    OUTPUT_DERIVED = 1 << 1,
-    OUTPUT_PYTHON = 1 << 2,
-    OUTPUT_RUBY = 1 << 3,
-    OUTPUT_XRC = 1 << 4,
-    OUTPUT_PERL = 1 << 5,
+    none = 0,
+    cplusplus = 1 << 0,
+    python = 1 << 1,
+    ruby = 1 << 2,
+
+    // These 5 are the kwx languages (kwxFortran, kwxGO, etc.)
+    fortran = 1 << 3,
+    go = 1 << 4,
+    julia = 1 << 5,
+    luajit = 1 << 6,
+    typescript = 1 << 7,
+
+    // Not a language — set when a C++ derived class file needs to be generated
+    derived = 1 << 8,
+
+    xrc = 1 << 9,
+
+    reserved1 = 1 << 10,  // Reserved for future use
+
 };
+
+constexpr GenOutput operator|(GenOutput out_a, GenOutput out_b)
+{
+    return static_cast<GenOutput>(std::to_underlying(out_a) | std::to_underlying(out_b));
+}
+constexpr unsigned int operator&(GenOutput out_a, GenOutput out_b)
+{
+    return std::to_underlying(out_a) & std::to_underlying(out_b);
+}
+constexpr GenOutput& operator|=(GenOutput& out_a, GenOutput out_b)
+{
+    return out_a = out_a | out_b;
+}
+constexpr GenOutput& operator&=(GenOutput& out_a, GenOutput out_b)
+{
+    out_a = static_cast<GenOutput>(std::to_underlying(out_a) & std::to_underlying(out_b));
+    return out_a;
+}
 
 enum : std::uint8_t
 {
@@ -79,9 +109,9 @@ public:
 
     // Get a bit flag indicating which output types are enabled.
     //
-    // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.
+    // GenOutput::derived is only set if the file is specified and does *not* exist.
     // Uses an in-memory cache (m_derived_file_exists) to avoid repeated disk I/O.
-    [[nodiscard]] size_t get_OutputType(int flags = OUT_FLAG_NONE) const;
+    [[nodiscard]] GenOutput get_OutputType(int flags = OUT_FLAG_NONE) const;
 
     // Populate the derived file existence cache. Call after LoadProject or when the entire
     // cache needs to be rebuilt (e.g., derived_directory changed).

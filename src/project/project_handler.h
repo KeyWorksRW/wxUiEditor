@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ProjectHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -281,7 +281,7 @@ public:
     // Sets project property value only if the property exists, returns false if it doesn't
     // exist.
     template <typename T>
-    auto set_value(PropName name, T value) -> bool
+    bool set_value(PropName name, T value)
     {
         if (auto* prop = m_project_node->get_PropPtr(name); prop)
         {

@@ -46,16 +46,16 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
 
     Code handler(event->getNode(), code.get_language());
     wxue::string event_code;
-    if (code.get_language() == GEN_LANG_CPLUSPLUS)
+    if (code.get_language() == GenLang::cplusplus)
     {
         event_code = EventHandlerDlg::GetCppValue(event->get_value());
     }
 
-    else if (code.get_language() == GEN_LANG_PYTHON)
+    else if (code.get_language() == GenLang::python)
     {
         event_code = EventHandlerDlg::GetPythonValue(event->get_value());
     }
-    else if (code.get_language() == GEN_LANG_RUBY)
+    else if (code.get_language() == GenLang::ruby)
     {
         event_code = EventHandlerDlg::GetRubyValue(event->get_value());
     }
@@ -454,7 +454,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         BeginPlatformCode(code, map_entry.first);
         code.Eol();
         m_source->writeLine(code);
-        if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_RUBY)
+        if (m_language == GenLang::python || m_language == GenLang::ruby)
         {
             m_source->Indent();
         }

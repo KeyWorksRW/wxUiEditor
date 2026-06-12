@@ -673,7 +673,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     auto generate_languages = Project.get_GenerateLanguages();
 
     // Ignore if the user doesn't want to generate this language
-    if (!(static_cast<size_t>(ConvertToGenLang(name)) & generate_languages))
+    if (!(ConvertToGenLang(name) & generate_languages))
     {
         return;
     }
@@ -682,14 +682,14 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     {
         // These two validators were added to wxWidgets 3.3
         auto preferred_language = Project.get_CodePreference();
-        if (preferred_language == GEN_LANG_CPLUSPLUS &&
+        if (preferred_language == GenLang::cplusplus &&
             Project.get_LangVersion(preferred_language) < CPP_WIDGETS_VERSION_3_3_0)
         {
             return;
         }
         // REVIEW: [Randalphwa - 09-01-2025] It's possible that wxPerl does support it, but it's
         // unlikely
-        if (preferred_language == GEN_LANG_PYTHON)
+        if (preferred_language == GenLang::python)
         {
             return;
         }
@@ -753,7 +753,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ccccff"));  // Light blue
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_CPLUSPLUS)
+        if (Project.get_CodePreference(node) != GenLang::cplusplus)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -770,7 +770,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ccd9ff"));  // Light navy
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_PYTHON)
+        if (Project.get_CodePreference(node) != GenLang::python)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -785,7 +785,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         {
             m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#f8a9c7"));  // Ruby
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_RUBY)
+        if (Project.get_CodePreference(node) != GenLang::ruby)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -801,7 +801,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ffe5b4"));  // Apricot
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_FORTRAN)
+        if (Project.get_CodePreference(node) != GenLang::fortran)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -817,7 +817,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ccf2f4"));  // Light cyan
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_GO)
+        if (Project.get_CodePreference(node) != GenLang::go)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -833,7 +833,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#e6ccff"));  // Light purple
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_JULIA)
+        if (Project.get_CodePreference(node) != GenLang::julia)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -849,7 +849,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ccffcc"));  // Light green
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_LUAJIT)
+        if (Project.get_CodePreference(node) != GenLang::luajit)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -865,7 +865,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ffd9b3"));  // Light rust
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_TYPESCRIPT)
+        if (Project.get_CodePreference(node) != GenLang::typescript)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -882,7 +882,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->SetPropertyBackgroundColour(category_id,
                                                      wxColour("#ccffe6"));  // Mint Cream
         }
-        if (Project.get_CodePreference(node) != GEN_LANG_XRC)
+        if (Project.get_CodePreference(node) != GenLang::xrc)
         {
             m_prop_grid->Collapse(category_id);
         }
@@ -981,7 +981,7 @@ void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* d
             // so we need to create the other two categories here if the preferred
             // language is C++.
 
-            if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
+            if (m_preferred_lang == GenLang::cplusplus &&
                 info_base->get_DeclName().find("Settings") != std::string_view::npos)
             {
                 info_base = declaration->GetBaseClass(++i);
@@ -1007,7 +1007,7 @@ void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* d
         {
             if (info_base->get_DeclName().starts_with(lang_prefix))
             {
-                if (m_preferred_lang == GEN_LANG_CPLUSPLUS &&
+                if (m_preferred_lang == GenLang::cplusplus &&
                     info_base->get_DeclName().find("Settings") != std::string_view::npos)
                 {
                     lang_start += 2;  // skip over Header Settings and Derived Class Settings

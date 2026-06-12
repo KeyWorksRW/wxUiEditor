@@ -126,7 +126,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             code.clear();
             std::vector<std::string> encoded = base64_encode(
                 iter_array->base_image().array_data.data(),
-                iter_array->base_image().array_size & ARRAY_SIZE_MASK, GEN_LANG_PYTHON);
+                iter_array->base_image().array_size & ARRAY_SIZE_MASK, GenLang::python);
             if (!encoded.empty())
             {
                 encoded.back() += ")";
@@ -156,7 +156,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             code.clear();
             std::vector<std::string> encoded =
                 base64_encode(iter_array->base_image().array_data.data(),
-                              iter_array->base_image().array_size & ARRAY_SIZE_MASK, GEN_LANG_RUBY);
+                              iter_array->base_image().array_size & ARRAY_SIZE_MASK, GenLang::ruby);
             if (!encoded.empty())
             {
                 // Remove the trailing " \" suffix
@@ -187,9 +187,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
 const std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
 
-    { GEN_LANG_CPLUSPLUS, prop_cpp_line_length },
-    { GEN_LANG_PYTHON, prop_python_line_length },
-    { GEN_LANG_RUBY, prop_ruby_line_length  },
+    { GenLang::cplusplus, prop_cpp_line_length },
+    { GenLang::python, prop_python_line_length },
+    { GenLang::ruby, prop_ruby_line_length  },
 };
 
 // clang-format on
@@ -198,7 +198,7 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
                                        GenLang language)
 {
     size_t tab_quote_prefix = PYTHON_PREFIX_SIZE;
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         tab_quote_prefix = RUBY_PREFIX_SIZE;
     }
@@ -247,12 +247,12 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
     std::string_view line_begin;
     std::string_view line_end;
-    if (language == GEN_LANG_PYTHON)
+    if (language == GenLang::python)
     {
         line_begin = "\tb\"";
         line_end = "\"";
     }
-    else if (language == GEN_LANG_RUBY)
+    else if (language == GenLang::ruby)
     {
         line_begin = "  '";
         line_end = "' \\";

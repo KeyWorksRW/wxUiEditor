@@ -39,16 +39,16 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 {
     if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
     {
-        if (m_language == GEN_LANG_CPLUSPLUS && disable_langs.contains("C++"))
+        if (m_language == GenLang::cplusplus && disable_langs.contains("C++"))
         {
             return;
         }
 
-        if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        if (m_language == GenLang::python && disable_langs.contains("wxPython"))
         {
             return;
         }
-        if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        if (m_language == GenLang::ruby && disable_langs.contains("wxRuby"))
         {
             return;
         }
@@ -81,13 +81,13 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     if (node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         BeginPlatformCode(gen_code, node->as_string(prop_platforms));
-        if (m_language != GEN_LANG_PYTHON)
+        if (m_language != GenLang::python)
         {
             gen_code.Eol();
         }
         m_source->writeLine(gen_code);
         gen_code.clear();
-        if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_RUBY)
+        if (m_language == GenLang::python || m_language == GenLang::ruby)
         {
             m_source->Indent();
             m_source->SetLastLineBlank();
@@ -155,7 +155,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 
     if (parent->is_Sizer())
     {
-        if (node->is_Gen(gen_wxFileCtrl) && m_language == GEN_LANG_RUBY &&
+        if (node->is_Gen(gen_wxFileCtrl) && m_language == GenLang::ruby &&
             Project.get_ProjectNode()->as_string(prop_wxRuby_version) == "0.9.0")
         {
         }
@@ -357,7 +357,7 @@ auto BaseCodeGenerator::EndPlatformCode() -> void
 
 auto BaseCodeGenerator::BeginBrace() -> void
 {
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    if (m_language == GenLang::cplusplus)
     {
         m_source->writeLine("{");
         m_source->Indent();
@@ -366,7 +366,7 @@ auto BaseCodeGenerator::BeginBrace() -> void
 
 auto BaseCodeGenerator::EndBrace() -> void
 {
-    if (m_language == GEN_LANG_CPLUSPLUS)
+    if (m_language == GenLang::cplusplus)
     {
         m_source->Unindent();
         m_source->writeLine("}");
@@ -382,7 +382,7 @@ auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
     {
         if (code.size())
         {
-            if ((m_language == GEN_LANG_CPLUSPLUS) && within_brace)
+            if ((m_language == GenLang::cplusplus) && within_brace)
             {
                 m_source->Indent();
                 m_source->writeLine(code);
@@ -420,16 +420,16 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
     if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
     {
-        if (m_language == GEN_LANG_CPLUSPLUS && disable_langs.contains("C++"))
+        if (m_language == GenLang::cplusplus && disable_langs.contains("C++"))
         {
             return false;
         }
 
-        if (m_language == GEN_LANG_PYTHON && disable_langs.contains("wxPython"))
+        if (m_language == GenLang::python && disable_langs.contains("wxPython"))
         {
             return false;
         }
-        if (m_language == GEN_LANG_RUBY && disable_langs.contains("wxRuby"))
+        if (m_language == GenLang::ruby && disable_langs.contains("wxRuby"))
         {
             return false;
         }
@@ -496,7 +496,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             if (need_closing_brace)
             {
                 m_source->writeLine(gen_code.GetCode(), indent::auto_keep_whitespace);
-                if (m_language == GEN_LANG_CPLUSPLUS)
+                if (m_language == GenLang::cplusplus)
                 {
                     m_source->writeLine("}");
                 }
@@ -608,7 +608,7 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
     if (need_closing_brace)
     {
         m_source->writeLine(code.GetCode(), indent::auto_keep_whitespace);
-        if (m_language == GEN_LANG_CPLUSPLUS)
+        if (m_language == GenLang::cplusplus)
         {
             m_source->writeLine("}");
         }

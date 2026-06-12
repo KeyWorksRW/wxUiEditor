@@ -108,16 +108,16 @@ public:
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
-    wxue::string get_BaseDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
+    wxue::string get_BaseDirectory(Node* node, GenLang language = GenLang::cplusplus) const;
 
     // Returns the absolute path to the output file for this node. If no output filename is
     // specified, first will still contain a path with no filename, and second will be false.
     std::pair<wxue::string, bool> GetOutputPath(Node* form,
-                                                GenLang language = GEN_LANG_CPLUSPLUS) const;
+                                                GenLang language = GenLang::cplusplus) const;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.
-    std::string get_DerivedDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
+    std::string get_DerivedDirectory(Node* node, GenLang language = GenLang::cplusplus) const;
 
     // Returns the full path to the derived filename or an empty string if no derived file
     // was specified.
@@ -159,13 +159,13 @@ public:
 
     [[nodiscard]] size_t get_ChildCount() const { return m_project_node->get_ChildCount(); }
 
-    // Returns a GEN_LANG_... enum value. Specify a node if you want to check for a folder
+    // Returns a GenLang::... enum value. Specify a node if you want to check for a folder
     // override of the language.
     GenLang get_CodePreference(Node* node = nullptr) const;
 
     // Returns all of the languages that are enabled for this project. The project's Code
     // Preference is always included.
-    [[nodiscard]] size_t get_GenerateLanguages() const;
+    [[nodiscard]] GenLang get_GenerateLanguages() const;
 
     // Assume major, minor, and patch have 99 possible values.
     // Returns major * 10000 + minor * 100 + patch

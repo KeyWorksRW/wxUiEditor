@@ -124,7 +124,7 @@ wxue::string CppCodeGenerator::DetermineDerivedFilePath(Node* form, PANEL_PAGE p
 
     if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
     {
-        derived_file = Project.get_BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        derived_file = Project.get_BaseDirectory(form, GenLang::cplusplus);
         if (!derived_file.empty())
         {
             derived_file.append_filename(m_form_node->as_string(prop_derived_file));
@@ -170,7 +170,7 @@ void CppCodeGenerator::DetermineBaseFilePath(Node* form, wxue::string& baseFile)
 {
     if (const auto& file = m_form_node->as_string(prop_base_file); !file.empty())
     {
-        baseFile = Project.get_BaseDirectory(form, GEN_LANG_CPLUSPLUS);
+        baseFile = Project.get_BaseDirectory(form, GenLang::cplusplus);
         if (!baseFile.empty())
         {
             baseFile.append_filename(file);
@@ -525,7 +525,7 @@ void CppCodeGenerator::WriteEventHandlerImplementation(NodeEvent* event,
     }
     else if (close_type_button)
     {
-        Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+        Code code(m_form_node, GenLang::cplusplus);
         code.Str("if (!Validate() || !TransferDataFromWindow())");
         code.OpenBrace();
         code.Str("return;");

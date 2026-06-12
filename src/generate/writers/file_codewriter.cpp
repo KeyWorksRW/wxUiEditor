@@ -113,7 +113,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     // there's an 'end' statement in the original. User may have modified or removed the
     // comment, added blank lines, or added their own content - none require an update.
     // This handles all size comparisons (same size, larger, or smaller original) in one place.
-    if (m_language == GEN_LANG_RUBY && m_fake_content_pos > 0 &&
+    if (m_language == GenLang::ruby && m_fake_content_pos > 0 &&
         m_org_buffer.size() >= m_fake_content_pos)
     {
         // Compare up to the end of </auto-generated> line (before fake content)
@@ -142,7 +142,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     }
 
     // ========== BRANCH 2b: Handle non-Ruby files where original is larger ==========
-    if (m_language != GEN_LANG_RUBY && m_org_buffer.size() > m_buffer.size())
+    if (m_language != GenLang::ruby && m_org_buffer.size() > m_buffer.size())
     {
         // Non-Ruby languages: Original file has more content than our buffer.
         // Check if our new buffer matches the beginning portion of the original.
@@ -157,7 +157,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     }
 
     // ========== BRANCH 2c: Handle non-Ruby files where buffers are same size ==========
-    if (m_language != GEN_LANG_RUBY && m_org_buffer.size() == m_buffer.size())
+    if (m_language != GenLang::ruby && m_org_buffer.size() == m_buffer.size())
     {
         // Non-Ruby, same size but different content - try to append original user content.
         auto begin_user_content = m_buffer.size();
@@ -234,15 +234,15 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
 
 [[nodiscard]] auto FileCodeWriter::GetCommentLineToFind(GenLang language) -> std::string_view
 {
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         return GetCppEndCommentLine();
     }
-    if (language == GEN_LANG_PYTHON)
+    if (language == GenLang::python)
     {
         return GetPythonEndCommentLine();
     }
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         return GetRubyEndCommentLine();
     }
@@ -252,15 +252,15 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
 
 [[nodiscard]] auto FileCodeWriter::GetBlockLength(GenLang language) -> size_t
 {
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         return GetCppEndBlockLength();
     }
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         return GetRubyEndBlockLength();
     }
-    if (language == GEN_LANG_PYTHON)
+    if (language == GenLang::python)
     {
         return GetPythonEndBlockLength();
     }
@@ -396,7 +396,7 @@ void FileCodeWriter::AppendCppEndBlock()
         // file has content after the comment block that should be preserved instead.
         if (m_node)
         {
-            Code code(m_node, GEN_LANG_CPLUSPLUS);
+            Code code(m_node, GenLang::cplusplus);
             code.Eol().Eol(eol_always).Str("};").Eol();
             m_buffer += code;
         }
@@ -424,7 +424,7 @@ void FileCodeWriter::AppendRubyEndBlock()
     {
         // Always add the 'end' statement here - it will be removed later if the original
         // file has content after the comment block that should be preserved instead.
-        Code code(m_node, GEN_LANG_RUBY);
+        Code code(m_node, GenLang::ruby);
         code.Eol().Str("end  # end of ").Str(m_node->get_NodeName()).Str(" class").Eol();
         m_buffer += code;
     }
@@ -438,13 +438,13 @@ void FileCodeWriter::AppendEndOfFileBlock()
 {
     switch (m_language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             AppendCppEndBlock();
             break;
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             AppendPythonEndBlock();
             break;
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             AppendRubyEndBlock();
             break;
         default:
@@ -454,7 +454,7 @@ void FileCodeWriter::AppendEndOfFileBlock()
 
 void FileCodeWriter::AppendMissingCommentBlockWarning()
 {
-    const auto* const comment_char = (m_language == GEN_LANG_CPLUSPLUS) ? "//" : "#";
+    const auto* const comment_char = (m_language == GenLang::cplusplus) ? "//" : "#";
 
     m_buffer += "\n";
     m_buffer += comment_char;

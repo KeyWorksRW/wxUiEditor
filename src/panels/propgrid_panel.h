@@ -148,7 +148,7 @@ private:
     // Class decorations
     wxArrayString m_astr_wx_decorations;
 
-    GenLang m_preferred_lang { GEN_LANG_CPLUSPLUS };
+    GenLang m_preferred_lang { GenLang::cplusplus };
 
     bool m_isPropChangeSuspended { false };
 

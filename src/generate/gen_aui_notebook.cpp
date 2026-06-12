@@ -221,7 +221,7 @@ void AuiNotebookGenerator::RequiredHandlers(Node* /* node */, std::set<std::stri
 bool AuiNotebookGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
                                       GenLang language)
 {
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         set_imports.insert("require 'wx/aui'");
         return true;

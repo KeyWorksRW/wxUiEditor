@@ -72,7 +72,7 @@ private:
 
     NodeProperty* m_prop { nullptr };
 
-    GenLang m_language = GEN_LANG_CPLUSPLUS;
+    GenLang m_language = GenLang::cplusplus;
 };
 
 // ************* End of generated code ***********

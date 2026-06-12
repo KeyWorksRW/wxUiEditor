@@ -14,7 +14,7 @@ class FortranCodeGenerator : public BaseCodeGenerator
 public:
     FortranCodeGenerator(Node* form_node);
 
-    void GenerateClass(GenLang language = GEN_LANG_FORTRAN,
+    void GenerateClass(GenLang language = GenLang::fortran,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

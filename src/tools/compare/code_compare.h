@@ -53,5 +53,5 @@ protected:
 
 private:
     std::vector<FileDiff> m_file_diffs;  // Diffs collected by OnRadioButton
-    GenLang m_current_language = GEN_LANG_CPLUSPLUS;
+    GenLang m_current_language = GenLang::cplusplus;
 };

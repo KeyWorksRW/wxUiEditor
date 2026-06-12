@@ -50,7 +50,7 @@ std::map<GenLang, std::string> s_lang_category_prefix;
 
 PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
-    for (size_t lang = 1; lang <= GEN_LANG_XRC; lang <<= 1)
+    for (size_t lang = 1; lang <= std::to_underlying(GenLang::xrc); lang <<= 1)
     {
         s_lang_category_prefix[static_cast<GenLang>(lang)] =
             GenLangToString(static_cast<GenLang>(lang));
@@ -630,19 +630,19 @@ void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
 
     switch (Project.get_CodePreference())
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             ChangeOutputFile(prop_base_file);
             break;
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             ChangeOutputFile(prop_python_file);
             break;
 
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             ChangeOutputFile(prop_ruby_file);
             break;
 
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             ChangeOutputFile(prop_xrc_file);
             break;
 

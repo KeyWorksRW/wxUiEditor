@@ -28,11 +28,11 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
     {
         switch (m_language)
         {
-            case GEN_LANG_PYTHON:
+            case GenLang::python:
                 BundlePython(parts);
                 break;
 
-            case GEN_LANG_RUBY:
+            case GenLang::ruby:
                 BundleRuby(parts);
                 break;
 
@@ -382,7 +382,7 @@ void Code::BundleRuby(const wxue::StringVector& parts)
         }
         else if (bundle->lst_filenames.size() == 1)
         {
-            auto path = Project.get_BaseDirectory(node(), GEN_LANG_RUBY);
+            auto path = Project.get_BaseDirectory(node(), GenLang::ruby);
 
             wxue::string name(bundle->lst_filenames[0]);
             name.make_absolute();
@@ -394,7 +394,7 @@ void Code::BundleRuby(const wxue::StringVector& parts)
         }
         else if (bundle->lst_filenames.size() == 2)
         {
-            auto path = Project.get_BaseDirectory(node(), GEN_LANG_RUBY);
+            auto path = Project.get_BaseDirectory(node(), GenLang::ruby);
 
             wxue::string name(bundle->lst_filenames[0]);
             name.make_absolute();

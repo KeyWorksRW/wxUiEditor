@@ -137,11 +137,11 @@ auto IncludeFilesDialog::Initialize(NodeProperty* prop) -> void
 {
     m_prop = prop;
     if (m_prop->isProp(prop_relative_require_list))
-        m_language = GEN_LANG_RUBY;
+        m_language = GenLang::ruby;
     else if (m_prop->isProp(prop_python_import_list))
-        m_language = GEN_LANG_PYTHON;
+        m_language = GenLang::python;
     else
-        m_language = GEN_LANG_CPLUSPLUS;
+        m_language = GenLang::cplusplus;
 }
 
 auto IncludeFilesDialog::SetButtonsEnableState(bool set_ok_btn) -> void

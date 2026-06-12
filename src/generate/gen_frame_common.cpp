@@ -260,19 +260,19 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
     {
         switch (code.get_language())
         {
-            case GEN_LANG_FORTRAN:
+            case GenLang::fortran:
                 ConstructionCodeFortran(code, frame_type);
                 break;
-            case GEN_LANG_GO:
+            case GenLang::go:
                 ConstructionCodeGo(code, frame_type);
                 break;
-            case GEN_LANG_JULIA:
+            case GenLang::julia:
                 ConstructionCodeJulia(code, frame_type);
                 break;
-            case GEN_LANG_LUAJIT:
+            case GenLang::luajit:
                 ConstructionCodeLuaJIT(code, frame_type);
                 break;
-            case GEN_LANG_TYPESCRIPT:
+            case GenLang::typescript:
                 ConstructionCodeTypeScript(code, frame_type);
                 break;
             default:

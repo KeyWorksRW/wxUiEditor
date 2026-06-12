@@ -20,7 +20,7 @@
 
 wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.get_CodePreference() == GEN_LANG_RUBY)
+    if (Project.get_CodePreference() == GenLang::ruby)
     {
         auto* widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY,
                                         "wxInfoBar not available in wxRuby3", wxDefaultPosition,

@@ -132,7 +132,7 @@ void RibbonGalleryGenerator::GenerateGalleryItems(Node* gallery_node, WriteCode*
     const bool check_size = (gallery_size != wxDefaultSize);
 
     // Open brace scope (C++ only)
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         source->writeLine("{");
         source->Indent();
@@ -191,7 +191,7 @@ void RibbonGalleryGenerator::GenerateGalleryItems(Node* gallery_node, WriteCode*
             // Assign the bitmap expression to bmp, wrapping in wxBitmap() to handle
             // both wxBitmap and wxImage return types from GenerateBundleParameter.
             item_code << "bmp = wxBitmap(";
-            if (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) >= CPP_WIDGETS_VERSION_3_3_0)
+            if (Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
             {
                 item_code.GenerateBundleParameter(parts, false);
                 item_code << ".GetBitmap(gallery_size)";
@@ -265,7 +265,7 @@ void RibbonGalleryGenerator::GenerateGalleryItems(Node* gallery_node, WriteCode*
     }
 
     // Close brace scope (C++ only)
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         source->Unindent();
         source->writeLine("}");
@@ -300,7 +300,7 @@ bool RibbonGalleryItemGenerator::ConstructionCode(Code& code)
     // REVIEW: [Randalphwa - 04-17-2026] Technically, this is in 3.3.3, but we don't currently
     // support that level of granularity for wxWidgets versions, so we'll just use 3.3.0 as the
     // cutoff for bundle support in C++.
-    if (code.is_cpp() && Project.get_LangVersion(GEN_LANG_CPLUSPLUS) >= CPP_WIDGETS_VERSION_3_3_0)
+    if (code.is_cpp() && Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
     {
         code.GenerateBundleParameter(parts, false);
     }

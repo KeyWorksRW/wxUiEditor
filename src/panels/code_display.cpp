@@ -140,7 +140,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
         return;
     }
 
-    if (!node->HasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC &&
+    if (!node->HasProp(prop_var_name) && m_panel_type != GenLang::xrc &&
         !node->is_Gen(gen_ribbonTool) && !node->is_Gen(gen_ribbonButton))
     {
         return;  // probably a form, spacer, or image
@@ -149,7 +149,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
     auto is_event = wxGetFrame().get_PropPanel()->IsEventPageShowing();
     PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
 
-    if (m_panel_type != GEN_LANG_CPLUSPLUS && page != PANEL_PAGE::SOURCE_PANEL)
+    if (m_panel_type != GenLang::cplusplus && page != PANEL_PAGE::SOURCE_PANEL)
     {
         return;  // Nothing to search for in secondary pages of non-C++ languages
     }
@@ -197,7 +197,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
             }
         }
     }
-    if (m_panel_type == GEN_LANG_XRC)
+    if (m_panel_type == GenLang::xrc)
     {
         wxue::string search("name=\"");
         ;
@@ -300,11 +300,11 @@ void CodeDisplay::OnRibbonToolSelected(Node* node)
         {
             search << parent->as_string(prop_var_name) << "->AddTool(" << node->as_string(prop_id)
                    << ",";
-            if (m_panel_type == GEN_LANG_PYTHON)
+            if (m_panel_type == GenLang::python)
             {
                 search.Replace("->", ".");
             }
-            if (m_panel_type == GEN_LANG_RUBY)
+            if (m_panel_type == GenLang::ruby)
             {
                 search.Replace("->AddTool(", ".add_tool($");
             }

@@ -993,13 +993,13 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
             }
         };
 
-        if (auto language = import.GetLanguage(); language != GEN_LANG_NONE)
+        if (auto language = import.GetLanguage(); language != GenLang::none)
         {
-            if (language & GEN_LANG_CPLUSPLUS)
+            if (language & GenLang::cplusplus)
                 project_node->set_value(prop_code_preference, "C++");
-            else if (language & GEN_LANG_PYTHON)
+            else if (language & GenLang::python)
                 project_node->set_value(prop_code_preference, "Python");
-            else if (language & GEN_LANG_XRC)
+            else if (language & GenLang::xrc)
                 project_node->set_value(prop_code_preference, "XRC");
 
             // None of the other designers generate code for wxRuby3 or wxHaskell
@@ -1007,7 +1007,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
             SetLangFilenames();
         }
 
-        if (allow_ui && import.GetLanguage() == GEN_LANG_NONE)
+        if (allow_ui && import.GetLanguage() == GenLang::none)
         {
             CodePreferenceDlg dlg(wxGetMainFrame());
             if (dlg.ShowModal() == wxID_OK)

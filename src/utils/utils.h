@@ -86,7 +86,7 @@ extern std::map<std::string, const char*> g_stc_wrap_mode;  // NOLINT () // cppc
 [[nodiscard]] auto isConvertibleMime(const wxue::string& suffix) -> bool;
 
 // Checks whether a string is a valid C++ variable name.
-[[nodiscard]] auto isValidVarName(const std::string& str, GenLang language = GEN_LANG_CPLUSPLUS)
+[[nodiscard]] auto isValidVarName(const std::string& str, GenLang language = GenLang::cplusplus)
     -> bool;
 
 // This takes the class_name of the form, converts it to lowercase, and if the class name
@@ -106,7 +106,7 @@ auto ConvertToUpperSnakeCase(wxue::string_view str) -> wxue::string;
 // Returns false if property contains a 'n', or language is C++ and wxWidgets 3.1 is being
 // used.
 [[nodiscard]] auto isScalingEnabled(Node* node, GenEnum::PropName prop_name,
-                                    GenLang m_language = GEN_LANG_NONE) -> bool;
+                                    GenLang m_language = GenLang::none) -> bool;
 
 // Convert the GEN_LANG enum to a string
 auto GenLangToString(GenLang language) -> std::string_view;

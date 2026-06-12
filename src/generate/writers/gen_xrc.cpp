@@ -54,7 +54,7 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
         else
         {
             auto item = InitializeXrcObject(node, object);
-            auto comment = generator->GetWarning(node, GEN_LANG_XRC);
+            auto comment = generator->GetWarning(node, GenLang::xrc);
             if (comment)
             {
                 // We need a dummy item to hold the comment but which will not show up in the UI
@@ -250,13 +250,13 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     return xml_stream.str();
 }
 
-XrcCodeGenerator::XrcCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_XRC, form_node) {}
+XrcCodeGenerator::XrcCodeGenerator(Node* form_node) : BaseCodeGenerator(GenLang::xrc, form_node) {}
 
 void XrcCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
                                      wxProgressDialog* /* progress */)
 {
     m_language = language;
-    ASSERT(m_language == GEN_LANG_XRC);
+    ASSERT(m_language == GenLang::xrc);
     m_panel_type = panel_type;
 
     if (m_header)
@@ -327,7 +327,7 @@ void MainFrame::OnGenSingleXRC(wxCommandEvent& /* event unused */)
 
     GenResults results;
     results.SetNodes(form);
-    results.SetLanguages(GEN_LANG_XRC);
+    results.SetLanguages(GenLang::xrc);
     results.SetMode(GenResults::Mode::generate_and_write);
     std::ignore = results.Generate();
 

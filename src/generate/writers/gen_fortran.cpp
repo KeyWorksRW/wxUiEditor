@@ -20,7 +20,7 @@ using namespace code;
 using namespace GenEnum;
 
 FortranCodeGenerator::FortranCodeGenerator(Node* form_node) :
-    BaseCodeGenerator(GEN_LANG_FORTRAN, form_node)
+    BaseCodeGenerator(GenLang::fortran, form_node)
 {
 }
 
@@ -29,7 +29,7 @@ void FortranCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_FORTRAN);
+    ASSERT(m_language == GenLang::fortran);
     Code code(m_form_node, m_language);
 
     if (m_header)

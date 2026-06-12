@@ -174,15 +174,15 @@ void FormBuilder::createProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 {
                     if (xml_prop.text().as_view().find("Python") != std::string_view::npos)
                     {
-                        m_language |= GEN_LANG_PYTHON;
+                        m_language |= GenLang::python;
                     }
                     else if (xml_prop.text().as_view().find("C++") != std::string_view::npos)
                     {
-                        m_language |= GEN_LANG_CPLUSPLUS;
+                        m_language |= GenLang::cplusplus;
                     }
                     else if (xml_prop.text().as_view().find("XRC") != std::string_view::npos)
                     {
-                        m_language |= GEN_LANG_XRC;
+                        m_language |= GenLang::xrc;
                     }
 
                     // wxFormBuilder also generates wxPHP code, but wxUiEditor doesn't support that
@@ -375,15 +375,15 @@ auto FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* siz
 
     if (newobject->is_Form() && m_baseFile.size())
     {
-        if (m_language & GEN_LANG_CPLUSPLUS)
+        if (m_language & GenLang::cplusplus)
         {
             newobject->set_value(prop_base_file, m_baseFile);
         }
-        if (m_language & GEN_LANG_PYTHON)
+        if (m_language & GenLang::python)
         {
             newobject->set_value(prop_python_file, m_baseFile);
         }
-        if (m_language & GEN_LANG_XRC)
+        if (m_language & GenLang::xrc)
         {
             newobject->set_value(prop_xrc_file, m_baseFile);
         }
@@ -876,7 +876,7 @@ auto FormBuilder::HandleNameProperty(pugi::xml_node& xml_prop, Node* newobject) 
 auto FormBuilder::HandleIncludeProperty(pugi::xml_node& xml_prop, Node* newobject, Node* parent)
     -> void
 {
-    if (m_language & GEN_LANG_PYTHON)
+    if (m_language & GenLang::python)
     {
         std::string header(xml_prop.text().as_view());
         if (parent)

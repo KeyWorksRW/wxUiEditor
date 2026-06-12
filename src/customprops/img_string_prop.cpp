@@ -59,19 +59,19 @@
                 "*.bmp|Icon|*.ico||";
 #endif
             bool remove_webp = false;
-            if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
+            if (Project.get_CodePreference() == GenLang::cplusplus)
             {
                 // WEBP was added to wxWidgets 3.3.0 -- earlier versions don't support it.
                 remove_webp =
-                    (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < CPP_WIDGETS_VERSION_3_3_0);
+                    (Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0);
             }
-            else if (Project.get_CodePreference() == GEN_LANG_PYTHON)
+            else if (Project.get_CodePreference() == GenLang::python)
             {
                 // REVIEW: [Randalphwa - 08-31-2025] Currently, the wxPython dev has stated
                 // wxWidgets 3.3.x will not be supported -- he is waiting for the stable release
                 // (3.4.x). I'm guessing that the version will be wxPython 4.4.x, but until it gets
                 // released, that's uncertain.
-                remove_webp = Project.get_LangVersion(GEN_LANG_PYTHON) < 404000;
+                remove_webp = Project.get_LangVersion(GenLang::python) < 404000;
             }
             if (remove_webp)
             {

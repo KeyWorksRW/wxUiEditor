@@ -30,8 +30,8 @@ public:
 
     auto GetErrors() { return m_errors; }
 
-    // Returns a GEN_LANG_* value -- default is GEN_LANG_NONE
-    [[nodiscard]] virtual auto GetLanguage() const -> int { return m_language; }
+    // Returns a GenLang::* value -- default is GenLang::none
+    [[nodiscard]] virtual auto GetLanguage() const -> GenLang { return m_language; }
 
     // This will check for an obsolete event name, and if found, it will return the 3.x
     // version of the name. Otherwise, it returns name unmodified.
@@ -88,5 +88,5 @@ protected:
 
     std::set<std::string> m_errors;
 
-    int m_language = GEN_LANG_NONE;
+    GenLang m_language = GenLang::none;
 };

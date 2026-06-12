@@ -34,20 +34,20 @@
 
 namespace
 {
-    [[nodiscard]] auto ParseLanguageSwitch(wxCmdLineParser& parser) -> size_t
+    [[nodiscard]] auto ParseLanguageSwitch(wxCmdLineParser& parser) -> GenLang
     {
-        constexpr auto switches = std::to_array<std::pair<std::string_view, size_t>>({
-            { "verify_cpp", GEN_LANG_CPLUSPLUS },
-            { "verify_python", GEN_LANG_PYTHON },
-            { "verify_ruby", GEN_LANG_RUBY },
-            { "verify_fortran", GEN_LANG_FORTRAN },
-            { "verify_go", GEN_LANG_GO },
-            { "verify_julia", GEN_LANG_JULIA },
-            { "verify_luajit", GEN_LANG_LUAJIT },
-            { "verify_typescript", GEN_LANG_TYPESCRIPT },
-            { "verify_all", GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
-                                GEN_LANG_FORTRAN | GEN_LANG_GO | GEN_LANG_JULIA | GEN_LANG_LUAJIT |
-                                GEN_LANG_TYPESCRIPT },
+        constexpr auto switches = std::to_array<std::pair<std::string_view, GenLang>>({
+            { "verify_cpp", GenLang::cplusplus },
+            { "verify_python", GenLang::python },
+            { "verify_ruby", GenLang::ruby },
+            { "verify_fortran", GenLang::fortran },
+            { "verify_go", GenLang::go },
+            { "verify_julia", GenLang::julia },
+            { "verify_luajit", GenLang::luajit },
+            { "verify_typescript", GenLang::typescript },
+            { "verify_all", GenLang::cplusplus | GenLang::python | GenLang::ruby |
+                                GenLang::fortran | GenLang::go | GenLang::julia | GenLang::luajit |
+                                GenLang::typescript },
         });
 
         for (const auto& [switch_name, lang]: switches)
@@ -57,7 +57,7 @@ namespace
                 return lang;
             }
         }
-        return GEN_LANG_NONE;
+        return GenLang::none;
     }
 
     [[nodiscard]] auto FindProjectFile(wxString& filename) -> verify_codegen::VerifyResult
@@ -74,12 +74,12 @@ namespace
         return verify_codegen::VERIFY_SUCCESS;
     }
 
-    [[nodiscard]] auto LoadProjectFile(wxFileName& project_file, size_t generate_type,
+    [[nodiscard]] auto LoadProjectFile(wxFileName& project_file, GenLang generate_type,
                                        bool& is_project_loaded) -> verify_codegen::VerifyResult
     {
         if (!project_file.FileExists())
         {
-            if (generate_type != GEN_LANG_NONE)
+            if (generate_type != GenLang::none)
             {
                 wxMessageBox("Unable to find project file: " +
                                  project_file.GetFullPath().utf8_string(),
@@ -94,15 +94,15 @@ namespace
             project_file.GetExt().IsSameAs("wxue", false))
         {
             is_project_loaded =
-                Project.LoadProject(project_file.GetFullPath(), generate_type == GEN_LANG_NONE);
+                Project.LoadProject(project_file.GetFullPath(), generate_type == GenLang::none);
         }
         else
         {
             is_project_loaded = Project.ImportProject(project_file.GetFullPath().ToStdString(),
-                                                      generate_type == GEN_LANG_NONE);
+                                                      generate_type == GenLang::none);
         }
 
-        if (generate_type != GEN_LANG_NONE && !is_project_loaded)
+        if (generate_type != GenLang::none && !is_project_loaded)
         {
             wxMessageBox("Unable to load project file: " + project_file.GetFullPath().utf8_string(),
                          "Verify");
@@ -112,7 +112,7 @@ namespace
         return verify_codegen::VERIFY_SUCCESS;
     }
 
-    [[nodiscard]] auto VerifyLanguageGeneration(GenLang language, size_t generate_type,
+    [[nodiscard]] auto VerifyLanguageGeneration(GenLang language, GenLang generate_type,
                                                 Node* form_node = nullptr)
         -> verify_codegen::VerifyResult
     {
@@ -210,8 +210,8 @@ namespace
         filename = parser.GetParam(0);
     }
 
-    size_t generate_type = ParseLanguageSwitch(parser);
-    if (generate_type == GEN_LANG_NONE)
+    auto generate_type = ParseLanguageSwitch(parser);
+    if (generate_type == GenLang::none)
     {
         wxMessageBox("Unknown Language", "Verify");
         return verify_codegen::VERIFY_INVALID;
@@ -219,7 +219,7 @@ namespace
 
     // If no project filename was given on the command line, call FindProjectFile() to look
     // for a .wxui file in the current directory.
-    if (generate_type != GEN_LANG_NONE && filename.empty())
+    if (generate_type != GenLang::none && filename.empty())
     {
         auto result = FindProjectFile(filename);
         if (result != verify_codegen::VERIFY_SUCCESS)
@@ -254,14 +254,14 @@ namespace
     }
 
     constexpr auto languages = std::to_array<GenLang>({
-        GEN_LANG_CPLUSPLUS,
-        GEN_LANG_PYTHON,
-        GEN_LANG_RUBY,
-        GEN_LANG_FORTRAN,
-        GEN_LANG_GO,
-        GEN_LANG_JULIA,
-        GEN_LANG_LUAJIT,
-        GEN_LANG_TYPESCRIPT,
+        GenLang::cplusplus,
+        GenLang::python,
+        GenLang::ruby,
+        GenLang::fortran,
+        GenLang::go,
+        GenLang::julia,
+        GenLang::luajit,
+        GenLang::typescript,
     });
 
     // Testing menu is disabled here so that VerifyLanguageGeneration() does not start/end a timer.

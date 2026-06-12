@@ -26,7 +26,7 @@ public:
 
     bool Import(const std::string& filename, bool write_doc = true) override;
 
-    [[nodiscard]] auto GetLanguage() const -> int override { return GEN_LANG_CPLUSPLUS; }
+    [[nodiscard]] auto GetLanguage() const -> GenLang override { return GenLang::cplusplus; }
 
 protected:
     // Sets validator variable name and variable handler type

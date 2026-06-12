@@ -247,7 +247,7 @@ bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 bool RibbonBarFormGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
                                         GenLang language)
 {
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         set_imports.insert("require 'wx/rbn'");
         return true;
@@ -420,7 +420,7 @@ void RibbonBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
 bool RibbonBarGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
                                     GenLang language)
 {
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         set_imports.insert("require 'wx/rbn'");
         return true;

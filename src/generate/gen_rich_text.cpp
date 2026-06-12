@@ -100,7 +100,7 @@ bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 bool RichTextCtrlGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
                                        GenLang language)
 {
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         set_imports.insert("require 'wx/rtc'");
         return true;

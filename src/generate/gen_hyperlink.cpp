@@ -68,7 +68,7 @@ bool HyperlinkGenerator::ConstructionCode(Code& code)
     if (!code.IsTrue(prop_underlined) ||
         code.node()->as_string(prop_subclass).starts_with("wxGeneric"))
     {
-        if (code.is_cpp() || (code.is_ruby() && Project.get_LangVersion(GEN_LANG_RUBY) >= 10505))
+        if (code.is_cpp() || (code.is_ruby() && Project.get_LangVersion(GenLang::ruby) >= 10505))
         {
             use_generic_version = true;
         }

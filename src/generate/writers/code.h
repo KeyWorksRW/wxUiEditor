@@ -87,8 +87,8 @@ public:
     static constexpr int DEFAULT_BREAK_LENGTH = 80;
     static constexpr int MIN_BREAK_LENGTH = 10;
 
-    Code(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
-    void Init(Node* node, GenLang language = GEN_LANG_CPLUSPLUS);
+    Code(Node* node, GenLang language = GenLang::cplusplus);
+    void Init(Node* node, GenLang language = GenLang::cplusplus);
 
     auto GetCode() -> wxue::string& { return *this; }
     [[nodiscard]] auto GetView() const -> wxue::string_view { return *this; }
@@ -109,9 +109,9 @@ public:
         }
     }
 
-    [[nodiscard]] auto is_cpp() const -> bool { return m_language == GEN_LANG_CPLUSPLUS; }
-    [[nodiscard]] auto is_python() const -> bool { return m_language == GEN_LANG_PYTHON; }
-    [[nodiscard]] auto is_ruby() const -> bool { return m_language == GEN_LANG_RUBY; }
+    [[nodiscard]] auto is_cpp() const -> bool { return m_language == GenLang::cplusplus; }
+    [[nodiscard]] auto is_python() const -> bool { return m_language == GenLang::python; }
+    [[nodiscard]] auto is_ruby() const -> bool { return m_language == GenLang::ruby; }
 
     // Returns true if the language is an FFI-based language (Fortran, Go, Julia, LuaJIT,
     // TypeScript)

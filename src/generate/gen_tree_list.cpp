@@ -57,8 +57,8 @@ bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 void TreeListCtrlGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    if (code.get_language() == GEN_LANG_NONE ||
-        (code.get_language() & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (code.get_language() == GenLang::none ||
+        (code.get_language() & (GenLang::cplusplus | GenLang::python)))
     {
         BaseGenerator::GenEvent(code, event, class_name);
     }
@@ -70,7 +70,7 @@ std::optional<wxue::string> TreeListCtrlGenerator::GetWarning(Node* node, GenLan
 {
     switch (language)
     {
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
@@ -88,7 +88,7 @@ std::optional<wxue::string> TreeListCtrlGenerator::GetWarning(Node* node, GenLan
 
 std::pair<bool, wxue::string> TreeListCtrlGenerator::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
     {
         return { true, {} };
     }

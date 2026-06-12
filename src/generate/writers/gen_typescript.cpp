@@ -20,7 +20,7 @@ using namespace code;
 using namespace GenEnum;
 
 TypeScriptCodeGenerator::TypeScriptCodeGenerator(Node* form_node) :
-    BaseCodeGenerator(GEN_LANG_TYPESCRIPT, form_node)
+    BaseCodeGenerator(GenLang::typescript, form_node)
 {
 }
 
@@ -29,7 +29,7 @@ void TypeScriptCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_t
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_TYPESCRIPT);
+    ASSERT(m_language == GenLang::typescript);
     Code code(m_form_node, m_language);
 
     if (m_header)

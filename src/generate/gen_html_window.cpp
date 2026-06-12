@@ -183,7 +183,7 @@ auto HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 auto HtmlWindowGenerator::GetImports(Node* /*unused*/, std::set<std::string>& set_imports,
                                      GenLang language) -> bool
 {
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         set_imports.insert("require 'wx/html'");
         return true;

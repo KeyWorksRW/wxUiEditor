@@ -294,7 +294,7 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     {
         wxue::string newValue =
             grid_prop->GetValueAsString(wxPGPropValFormatFlags::FullValue).utf8_string();
-        auto result = Project.GetOutputPath(node_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
+        auto result = Project.GetOutputPath(node_prop->getNode()->get_Form(), GenLang::cplusplus);
         auto path = result.first;
         if (result.second)  // true if the the base filename was returned
         {
@@ -453,19 +453,19 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
             auto access = (value == "none");
             switch (Project.get_CodePreference(selected_node))
             {
-                case GEN_LANG_CPLUSPLUS:
+                case GenLang::cplusplus:
                     // If access is changed to local and the name starts with "m_", then the "m_"
                     // will be stripped off. Conversely, if the name is changed from local to a
                     // class member, a "m_" is added as a prefix if preferred language isw C++.
                     UpdateCppMemberPrefix(access, name, node, is_name_changed);
                     break;
 
-                case GEN_LANG_PYTHON:
+                case GenLang::python:
                     // The convention in Python is to use a leading underscore for local members.
                     UpdatePythonMemberPrefix(access, name, node, is_name_changed);
                     break;
 
-                case GEN_LANG_RUBY:
+                case GenLang::ruby:
                     // The convention in Ruby is to use a leading @ for non-local members.
                     UpdateRubyMemberPrefix(access, name, node, is_name_changed);
                     break;

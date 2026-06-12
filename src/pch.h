@@ -141,30 +141,52 @@ enum class MoveDirection : std::uint8_t
 // supports a single language at a time, and passing in multiple languages will cause it to fail to
 // generate any language. As bit flags, this can be used by generators to indicate which languages
 // the generator supports.
-enum GenLang : std::uint16_t
+enum class GenLang : unsigned int
 {
-    GEN_LANG_NONE = 0,
-    GEN_LANG_CPLUSPLUS = 1,
-    GEN_LANG_PYTHON = 1 << 2,
-    GEN_LANG_RUBY = 1 << 3,
+    none = 0,
+    cplusplus = 1 << 0,
+    python = 1 << 1,
+    ruby = 1 << 2,
 
     // These 5 are the kwx languages (kwxFortran, kwxGO, etc.)
-    GEN_LANG_FORTRAN = 1 << 4,
-    GEN_LANG_GO = 1 << 5,
-    GEN_LANG_JULIA = 1 << 6,
-    GEN_LANG_LUAJIT = 1 << 7,
-    GEN_LANG_TYPESCRIPT = 1 << 8,
+    fortran = 1 << 3,
+    go = 1 << 4,
+    julia = 1 << 5,
+    luajit = 1 << 6,
+    typescript = 1 << 7,
 
     // These should always be the last languages in the list.
-    GEN_LANG_XRC = 1 << 9,
-    GEN_LANG_XML = 1 << 10,
-    GEN_LANG_RESERVED1 = 1 << 11,  // Reserved for future use
+    xrc = 1 << 8,
+    xml = 1 << 9,
+    reserved1 = 1 << 10,  // Reserved for future use
 };
+
+constexpr GenLang operator|(GenLang lang_a, GenLang lang_b)
+{
+    return static_cast<GenLang>(std::to_underlying(lang_a) | std::to_underlying(lang_b));
+}
+constexpr unsigned int operator&(GenLang lang_a, GenLang lang_b)
+{
+    return std::to_underlying(lang_a) & std::to_underlying(lang_b);
+}
+constexpr GenLang operator~(GenLang lang_a)
+{
+    return static_cast<GenLang>(~std::to_underlying(lang_a));
+}
+constexpr GenLang& operator|=(GenLang& lang_a, GenLang lang_b)
+{
+    return lang_a = lang_a | lang_b;
+}
+constexpr GenLang& operator&=(GenLang& lang_a, GenLang lang_b)
+{
+    lang_a = static_cast<GenLang>(std::to_underlying(lang_a) & std::to_underlying(lang_b));
+    return lang_a;
+}
 
 // Frozen set containing all supported code generation languages
 constexpr auto gen_lang_set = frozen::make_set<GenLang>(
-    { GEN_LANG_CPLUSPLUS, GEN_LANG_FORTRAN, GEN_LANG_GO, GEN_LANG_JULIA, GEN_LANG_LUAJIT,
-      GEN_LANG_PYTHON, GEN_LANG_RUBY, GEN_LANG_TYPESCRIPT, GEN_LANG_XRC });
+    { GenLang::cplusplus, GenLang::fortran, GenLang::go, GenLang::julia, GenLang::luajit,
+      GenLang::python, GenLang::ruby, GenLang::typescript, GenLang::xrc });
 
 // Used to index fields in a bitmap property
 enum PropIndex : std::uint8_t

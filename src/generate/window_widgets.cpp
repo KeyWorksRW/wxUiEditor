@@ -75,7 +75,7 @@ std::optional<wxue::string> ScrolledCanvasGenerator::GetWarning(Node* node, GenL
 {
     switch (language)
     {
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             {
                 wxue::string msg;
                 if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))

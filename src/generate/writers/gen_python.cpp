@@ -57,7 +57,7 @@ namespace
 }  // anonymous namespace
 
 PythonCodeGenerator::PythonCodeGenerator(Node* form_node) :
-    BaseCodeGenerator(GEN_LANG_PYTHON, form_node)
+    BaseCodeGenerator(GenLang::python, form_node)
 {
 }
 
@@ -333,7 +333,7 @@ void PythonCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_PYTHON);
+    ASSERT(m_language == GenLang::python);
     Code code(m_form_node, m_language);
 
     m_embedded_images.clear();
@@ -422,7 +422,7 @@ void PythonCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
     m_source->writeLine();
     m_source->writeLine("from wx.lib.embeddedimage import PyEmbeddedImage");
 
-    Code code(m_form_node, GEN_LANG_PYTHON);
+    Code code(m_form_node, GenLang::python);
 
     int progress_count = 0;
     for (const auto* iter_array: m_embedded_images)
@@ -459,7 +459,7 @@ void PythonCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
         }
         auto encoded =
             base64_encode(iter_array->base_image().array_data.data(),
-                          iter_array->base_image().array_size & array_size_mask, GEN_LANG_PYTHON);
+                          iter_array->base_image().array_size & array_size_mask, GenLang::python);
         if (encoded.size())
         {
             encoded.back() += ")";
@@ -577,13 +577,13 @@ auto PythonCodeGenerator::WriteEmbeddedImageImports(Code& code, bool blank_line_
 auto PythonCodeGenerator::CollectExistingEventHandlers(std::unordered_set<std::string>& code_lines)
     -> bool
 {
-    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GEN_LANG_PYTHON, m_panel_type,
+    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GenLang::python, m_panel_type,
                                                       code_lines, "def ");
 }
 
 auto PythonCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, Code& code) -> void
 {
-    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GEN_LANG_PYTHON);
+    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GenLang::python);
 }
 
 auto PythonCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& code) -> void
@@ -592,7 +592,7 @@ auto PythonCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& code)
     const auto& dbg_event_name = event->get_name();
     wxUnusedVar(dbg_event_name);
 #endif  // _DEBUG
-    ScriptCommon::GenerateEventHandlerBody(event, code, GEN_LANG_PYTHON);
+    ScriptCommon::GenerateEventHandlerBody(event, code, GenLang::python);
 }
 
 auto PythonCodeGenerator::CheckIfAllEventsImplemented(
@@ -704,7 +704,7 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
     // each function once.
     std::unordered_set<std::string> code_lines;
 
-    Code code(m_form_node, GEN_LANG_PYTHON);
+    Code code(m_form_node, GenLang::python);
     auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
         return (EventHandlerDlg::GetPythonValue(event_a->get_value()) <
@@ -743,7 +743,7 @@ void PythonCodeGenerator::GenUnhandledEvents(EventVector& events)
     m_source->writeLine(code);
 
     code.clear();
-    Code undefined_handlers(m_form_node, GEN_LANG_PYTHON);
+    Code undefined_handlers(m_form_node, GenLang::python);
     GenerateUndefinedHandlers(events, code_lines, undefined_handlers);
 
     WriteEventHandlers(code, undefined_handlers, found_user_handlers, is_all_events_implemented);
@@ -869,5 +869,5 @@ void PythonBtnBitmapCode(Code& code, bool is_single)
 
 auto MakePythonPath(Node* node) -> wxue::string
 {
-    return ScriptCommon::MakeScriptPath(node, GEN_LANG_PYTHON);
+    return ScriptCommon::MakeScriptPath(node, GenLang::python);
 }

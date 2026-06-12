@@ -24,7 +24,7 @@ using namespace code;
 
 void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_language == GenLang::cplusplus);
 
     if (m_form_node->is_Gen(gen_Images) || m_form_node->is_Gen(gen_Data))
     {
@@ -39,7 +39,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
     }
 
     auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
-    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+    Code code(m_form_node, GenLang::cplusplus);
 
     // This may result in two blank lines, but without it there may be a case where there is no
     // blank line at all.
@@ -80,7 +80,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
 
 void CppCodeGenerator::GenHdrEvents()
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_language == GenLang::cplusplus);
 
     if (m_events.size() || m_ctx_menu_events.size())
     {
@@ -116,7 +116,7 @@ void CppCodeGenerator::GenHdrEvents()
             WriteEventHandlerHeader();
         }
 
-        Code code(nullptr, GEN_LANG_CPLUSPLUS);
+        Code code(nullptr, GenLang::cplusplus);
         ProcessConditionalEvents(code);
     }
 }

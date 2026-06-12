@@ -218,7 +218,7 @@ void CppCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::strin
 
 void CppCodeGenerator::GenCppValidatorFunctions(Node* node)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_language == GenLang::cplusplus);
 
     if (node->HasValue(prop_validator_variable))
     {
@@ -315,7 +315,7 @@ void CppCodeGenerator::InsertValidatorVariable(Node* node, const wxue::string& c
 void CppCodeGenerator::GenCppValVarsBase(const NodeDeclaration* declaration, Node* node,
                                          std::set<std::string>& code_lines)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_language == GenLang::cplusplus);
 
     if (const auto& var_name = node->as_string(prop_validator_variable); var_name.size())
     {

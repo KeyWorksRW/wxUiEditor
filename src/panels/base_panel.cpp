@@ -96,7 +96,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
     // generator to generate inherited classes, or just generate generation information about
     // the class.
 
-    if (m_panel_type == GEN_LANG_CPLUSPLUS)
+    if (m_panel_type == GenLang::cplusplus)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
@@ -110,56 +110,56 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_derived_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_derived_hdr_panel, "derived_hdr", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_PYTHON)
+    else if (m_panel_type == GenLang::python)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_RUBY)
+    else if (m_panel_type == GenLang::ruby)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_FORTRAN)
+    else if (m_panel_type == GenLang::fortran)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_GO)
+    else if (m_panel_type == GenLang::go)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_JULIA)
+    else if (m_panel_type == GenLang::julia)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_LUAJIT)
+    else if (m_panel_type == GenLang::luajit)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_TYPESCRIPT)
+    else if (m_panel_type == GenLang::typescript)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_XRC)
+    else if (m_panel_type == GenLang::xrc)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
@@ -374,7 +374,7 @@ void BasePanel::GenerateBaseClass()
 
     // All languages except C++ derived panels use GenResults for unified code generation
     // C++ base class panels (SOURCE_PANEL, HDR_INFO_PANEL) also use GenResults
-    if (m_panel_type != GEN_LANG_CPLUSPLUS || panel_page == PANEL_PAGE::SOURCE_PANEL ||
+    if (m_panel_type != GenLang::cplusplus || panel_page == PANEL_PAGE::SOURCE_PANEL ||
         panel_page == PANEL_PAGE::HDR_INFO_PANEL)
     {
         m_source_panel->Clear();
@@ -403,7 +403,7 @@ void BasePanel::GenerateBaseClass()
     }
 
     // C++ derived class panels only - generate derived code without regenerating base class
-    ASSERT(m_panel_type == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_panel_type == GenLang::cplusplus);
     ASSERT(panel_page == PANEL_PAGE::DERIVED_SRC_PANEL ||
            panel_page == PANEL_PAGE::DERIVED_HDR_PANEL);
 
@@ -464,7 +464,7 @@ void BasePanel::SetCodeFont(const wxFont& font)
 {
     m_source_panel->SetCodeFont(font);
     m_hdr_info_panel->SetCodeFont(font);
-    if (m_panel_type == GEN_LANG_CPLUSPLUS)
+    if (m_panel_type == GenLang::cplusplus)
     {
         m_derived_src_panel->SetCodeFont(font);
         m_derived_hdr_panel->SetCodeFont(font);

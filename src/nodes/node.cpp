@@ -534,7 +534,7 @@ std::string_view Node::get_NodeName(GenLang lang) const
     {
         return "unknown node";
     }
-    if (lang == GEN_LANG_CPLUSPLUS)
+    if (lang == GenLang::cplusplus)
     {
         // '@' is used for Ruby instance variables
         // '$' is commonly used for Perl package variables
@@ -549,7 +549,7 @@ std::string_view Node::get_NodeName(GenLang lang) const
 
     if (name[0] == '@')
     {
-        if (lang != GEN_LANG_RUBY)
+        if (lang != GenLang::ruby)
         {
             name.remove_prefix(1);
         }
@@ -561,8 +561,8 @@ std::string_view Node::get_NodeName(GenLang lang) const
         return name;
     }
 
-    // GEN_LANG_CPLUSPLUS is handled above
-    ASSERT(lang != GEN_LANG_CPLUSPLUS);
+    // GenLang::cplusplus is handled above
+    ASSERT(lang != GenLang::cplusplus);
     if (name.starts_with("m_"))
     {
         name.remove_prefix(2);
@@ -788,13 +788,13 @@ void Node::AdjustMemberNameForLanguage(Node* new_node)
     const auto language = Project.get_CodePreference(this);
 
     // Apply C++ naming conventions
-    if (language == GEN_LANG_CPLUSPLUS && UserPrefs.is_CppSnakeCase())
+    if (language == GenLang::cplusplus && UserPrefs.is_CppSnakeCase())
     {
         member_name = ConvertToSnakeCase(member_name);
     }
 
     // Remove m_ prefix (common in imported projects)
-    if (member_name.starts_with("m_") && language != GEN_LANG_CPLUSPLUS)
+    if (member_name.starts_with("m_") && language != GenLang::cplusplus)
     {
         member_name.erase(0, 2);
 
@@ -806,7 +806,7 @@ void Node::AdjustMemberNameForLanguage(Node* new_node)
     }
 
     // Apply Python private name convention
-    if (language == GEN_LANG_PYTHON && new_node->is_Local())
+    if (language == GenLang::python && new_node->is_Local())
     {
         member_name = "_" + member_name;
     }

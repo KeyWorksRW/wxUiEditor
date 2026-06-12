@@ -500,7 +500,7 @@ void GridGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& ha
 bool GridGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
                                GenLang language)
 {
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         set_imports.insert("require 'wx/grid'");
         return true;

@@ -90,7 +90,7 @@ auto TextViewGenerator::ConstructionCode(Code& code) -> bool
 auto TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                     std::set<std::string>& set_hdr, GenLang language) -> bool
 {
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         set_src.insert("#include <wx/docmdi.h>");
         set_hdr.insert("#include <wx/docview.h>");

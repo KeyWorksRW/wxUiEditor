@@ -249,14 +249,14 @@ constexpr size_t DEFAULT_LINE_LENGTH = 90;         // NOLINT (magic number)
 {
     switch (language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             return Project.as_size_t(prop_cpp_line_length);
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             return Project.as_size_t(prop_python_line_length);
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             return Project.as_size_t(prop_ruby_line_length);
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             return XRC_LINE_LENGTH;
         default:
             return DEFAULT_LINE_LENGTH;
@@ -281,7 +281,7 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
 
     switch (language)
     {
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             if (auto result = find_prefix_match(s_short_python_map, candidate))
             {
                 return *result;
@@ -293,7 +293,7 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
             }
             break;
 
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             if (auto result = find_prefix_match(s_short_ruby_map, candidate))
             {
                 return *result;
@@ -304,7 +304,7 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
             }
             break;
 
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
             return {};
 

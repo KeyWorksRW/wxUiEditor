@@ -130,7 +130,7 @@ void MainFrame::OnGenSingleCpp(wxCommandEvent& /* event unused */)
 
     GenResults results;
     results.SetNodes(form);
-    results.SetLanguages(GEN_LANG_CPLUSPLUS);
+    results.SetLanguages(GenLang::cplusplus);
     results.SetMode(GenResults::Mode::generate_and_write);
     std::ignore = results.Generate();
 
@@ -169,7 +169,7 @@ void GenCppForm(GenData& gen_data, Node* form)
     const auto& source_ext = gen_data.get_source_ext();
     const auto& header_ext = gen_data.get_header_ext();
 
-    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+    auto [path, has_base_file] = Project.GetOutputPath(form, GenLang::cplusplus);
     if (!has_base_file)
     {
         wxue::string msg("No filename specified for ");
@@ -209,7 +209,7 @@ void GenCppForm(GenData& gen_data, Node* form)
     {
         flags |= flag_add_closing_brace;
     }
-    auto retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
+    auto retval = h_cw->WriteFile(GenLang::cplusplus, flags, form);
     if (form->as_bool(prop_no_closing_brace))
     {
         flags = flags & ~flag_add_closing_brace;
@@ -250,7 +250,7 @@ void GenCppForm(GenData& gen_data, Node* form)
     }
 
     path.replace_extension(source_ext);
-    retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags, form);
+    retval = cpp_cw->WriteFile(GenLang::cplusplus, flags, form);
 
     if (retval > 0)
     {
@@ -452,7 +452,7 @@ void CppCodeGenerator::GenCppImageFunctions()
 
     if (m_embedded_images.size())
     {
-        Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+        Code code(m_form_node, GenLang::cplusplus);
         WriteImagePreConstruction(code);
         if (code.size())
         {
@@ -464,13 +464,13 @@ void CppCodeGenerator::GenCppImageFunctions()
 
     if (m_embedded_images.size())
     {
-        Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+        Code code(m_form_node, GenLang::cplusplus);
         WriteImageConstruction(code);
     }
 }
 
 CppCodeGenerator::CppCodeGenerator(Node* form_node) :
-    BaseCodeGenerator(GEN_LANG_CPLUSPLUS, form_node)
+    BaseCodeGenerator(GenLang::cplusplus, form_node)
 {
 }
 
@@ -486,7 +486,7 @@ void CppCodeGenerator::InitializeGenerationState()
     SetImagesForm();
     if (m_ImagesForm && m_ImagesForm->HasValue(prop_base_file))
     {
-        auto [path, has_base_file] = Project.GetOutputPath(m_ImagesForm, GEN_LANG_CPLUSPLUS);
+        auto [path, has_base_file] = Project.GetOutputPath(m_ImagesForm, GenLang::cplusplus);
         if (has_base_file)
         {
             path.make_relative(Project.get_BaseDirectory(m_form_node).make_absolute());
@@ -509,7 +509,7 @@ auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS)
+    ASSERT(m_language == GenLang::cplusplus)
     if (m_form_node->is_Gen(gen_Data))
     {
         GenerateDataClassConstructor(panel_type);
@@ -1089,11 +1089,11 @@ void CppCodeGenerator::GenerateConstructorClosing(Code& code, BaseGenerator* gen
 
 void CppCodeGenerator::GenerateCppClassConstructor()
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_language == GenLang::cplusplus);
     m_source->writeLine();
 
     auto* generator = m_form_node->get_Generator();
-    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+    Code code(m_form_node, GenLang::cplusplus);
 
     GenerateConstructionPreamble(code, generator);
     GenerateChildrenAndEvents(code, generator);
@@ -1102,7 +1102,7 @@ void CppCodeGenerator::GenerateCppClassConstructor()
 
 void CppCodeGenerator::GenerateCppHandlers()
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_language == GenLang::cplusplus);
 
     if (m_embedded_images.size())
     {
@@ -1141,7 +1141,7 @@ auto CppCodeGenerator::CollectUserEventHandlers(std::unordered_set<std::string>&
 #endif  // _DEBUG
     {
         wxue::ViewVector org_file;
-        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_CPLUSPLUS);
+        auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GenLang::cplusplus);
 
         if (has_base_file && path.extension().empty())
         {
@@ -1255,7 +1255,7 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
     // generate each function once.
     std::unordered_set<std::string> code_lines;
 
-    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+    Code code(m_form_node, GenLang::cplusplus);
     auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
         return (EventHandlerDlg::GetCppValue(event_a->get_value()) <
@@ -1348,7 +1348,7 @@ void CppCodeGenerator::GenUnhandledEvents(EventVector& events)
 // This should only be called to generate C++ code.
 void CppCodeGenerator::GenCppEnumIds(Node* class_node)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(m_language == GenLang::cplusplus);
 
     if (!class_node->as_bool(prop_generate_ids))
     {
@@ -1422,7 +1422,7 @@ void CppCodeGenerator::GenCppEnumIds(Node* class_node)
 
 void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
 {
-    Code code(m_form_node, GEN_LANG_CPLUSPLUS);
+    Code code(m_form_node, GenLang::cplusplus);
 
     m_panel_type = panel_type;
 
@@ -1439,7 +1439,7 @@ void CppCodeGenerator::GenerateDataClassConstructor(PANEL_PAGE panel_type)
         m_source->writeLine(txt_SlashCmtBlock);
     }
 
-    auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GEN_LANG_CPLUSPLUS);
+    auto [path, has_base_file] = Project.GetOutputPath(m_form_node, GenLang::cplusplus);
     m_baseFullPath = path;
     if (has_base_file)
     {

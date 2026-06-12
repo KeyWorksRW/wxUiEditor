@@ -639,31 +639,31 @@ auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
 
     switch (language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             SetCppColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             SetPythonColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             SetRubyColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             SetFortranColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_GO:
+        case GenLang::go:
             SetGoColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             SetJuliaColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             SetLuaJitColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             SetTypeScriptColors(stc, set_lexer, add_keywords, theme);
             break;
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             SetXrcColors(stc, set_lexer, add_keywords, theme);
             break;
         default:  // Unknown language, default to xml

@@ -19,11 +19,11 @@
 
 wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.get_CodePreference() == GEN_LANG_RUBY ||
-        Project.get_CodePreference() == GEN_LANG_XRC)
+    if (Project.get_CodePreference() == GenLang::ruby ||
+        Project.get_CodePreference() == GenLang::xrc)
     {
         wxString msg = "wxRearrangeCtrl not available in ";
-        if (Project.get_CodePreference() == GEN_LANG_RUBY)
+        if (Project.get_CodePreference() == GenLang::ruby)
         {
             msg += "wxRuby3";
         }

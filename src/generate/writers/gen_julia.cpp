@@ -20,7 +20,7 @@ using namespace code;
 using namespace GenEnum;
 
 JuliaCodeGenerator::JuliaCodeGenerator(Node* form_node) :
-    BaseCodeGenerator(GEN_LANG_JULIA, form_node)
+    BaseCodeGenerator(GenLang::julia, form_node)
 {
 }
 
@@ -29,7 +29,7 @@ void JuliaCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_JULIA);
+    ASSERT(m_language == GenLang::julia);
     Code code(m_form_node, m_language);
 
     if (m_header)

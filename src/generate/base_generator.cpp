@@ -960,9 +960,9 @@ auto BaseGenerator::isLanguagePropSupported(Node* node, GenLang language, GenEnu
     {
         switch (language)
         {
-            case GEN_LANG_PYTHON:
+            case GenLang::python:
                 return "persist is not supported in Python";
-            case GEN_LANG_XRC:
+            case GenLang::xrc:
                 return "persist is not supported in XRC";
             default:
                 return {};

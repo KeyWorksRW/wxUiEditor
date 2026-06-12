@@ -148,7 +148,7 @@ bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 bool HtmlListBoxGenerator::GetImports(Node* /* node */, std::set<std::string>& set_imports,
                                       GenLang language)
 {
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         set_imports.insert("require 'wx/html'");
         return true;

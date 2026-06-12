@@ -358,7 +358,7 @@ std::optional<wxue::string> StaticRadioBtnBoxSizerGenerator::GetWarning(Node* no
 {
     switch (language)
     {
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
@@ -370,7 +370,7 @@ std::optional<wxue::string> StaticRadioBtnBoxSizerGenerator::GetWarning(Node* no
                 return msg;
             }
 
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             return {};
 
         default:

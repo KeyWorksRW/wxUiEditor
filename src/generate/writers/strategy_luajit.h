@@ -17,4 +17,7 @@ public:
     void EmitPlatformBegin(Code& code, std::string_view platforms) override;
     void EmitImport(Code& code, std::string_view module) override;
     void EmitVarDecl(Code& code, std::string_view type, std::string_view name) override;
+
+    // wxButton → Button (LuaJIT uses module-qualified: wx.Frame)
+    [[nodiscard]] std::string MapClassName(std::string_view wx_class_name) override;
 };

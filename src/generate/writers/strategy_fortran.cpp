@@ -12,6 +12,19 @@
 
 FortranStrategy::FortranStrategy(const LanguageTraits& traits) : FFIStrategy(traits) {}
 
+auto FortranStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+{
+    // wxButton → wx_Button (Fortran uses wx_ prefix as part of the type name)
+    if (!wx_class_name.starts_with("wx"))
+    {
+        return std::string(wx_class_name);
+    }
+
+    std::string result("wx_");
+    result += wx_class_name.substr(2);
+    return result;
+}
+
 void FortranStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
 {
     // Fortran uses preprocessor directives for platform conditionals

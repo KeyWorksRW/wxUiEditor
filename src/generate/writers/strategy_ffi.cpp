@@ -16,34 +16,17 @@ FFIStrategy::FFIStrategy(const LanguageTraits& traits) : CWrapperStrategy(traits
 
 auto FFIStrategy::MapClassName(std::string_view wx_class_name) -> std::string
 {
+    // Default FFI behavior: strip "wx" prefix, keep PascalCase unchanged.
+    // Per-language strategies override for language-specific behavior:
+    //   Fortran: wxButton → wx_Button
+    //   Go:       wxButton → Button  (package-qualified: wx.Button)
+    //   Julia/LuaJIT/TypeScript: same as Go
     if (!wx_class_name.starts_with("wx"))
     {
         return std::string(wx_class_name);
     }
 
-    // Convert wxFooBar → wx_foo_bar
-    // All kwxFFI languages use identical snake_case naming with wx_ prefix
-    std::string result("wx_");
-    auto name_part = wx_class_name.substr(2);  // Remove "wx" prefix
-
-    for (size_t i = 0; i < name_part.size(); ++i)
-    {
-        auto ch = name_part[i];
-        if (std::isupper(static_cast<unsigned char>(ch)))
-        {
-            if (i > 0)
-            {
-                result += '_';
-            }
-            result += static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
-        }
-        else
-        {
-            result += ch;
-        }
-    }
-
-    return result;
+    return std::string(wx_class_name.substr(2));
 }
 
 auto FFIStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop */) -> bool

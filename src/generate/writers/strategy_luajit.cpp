@@ -12,6 +12,17 @@
 
 LuaJITStrategy::LuaJITStrategy(const LanguageTraits& traits) : FFIStrategy(traits) {}
 
+auto LuaJITStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+{
+    // wxButton → Button (LuaJIT uses module-qualified: wx.Frame)
+    if (!wx_class_name.starts_with("wx"))
+    {
+        return std::string(wx_class_name);
+    }
+
+    return std::string(wx_class_name.substr(2));
+}
+
 void LuaJITStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
 {
     // LuaJIT: ffi.os check

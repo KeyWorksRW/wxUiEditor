@@ -14,7 +14,7 @@ class FFIStrategy : public CWrapperStrategy
 public:
     explicit FFIStrategy(const LanguageTraits& traits);
 
-    // Maps wxWidgets class names to FFI convention: wxFooBar → wx_foo_bar
+    // Maps wxWidgets class names to FFI convention: strips wx prefix, keeps PascalCase.
     [[nodiscard]] std::string MapClassName(std::string_view wx_class_name) override;
 
     // FFI languages target full C++ feature parity — all features supported

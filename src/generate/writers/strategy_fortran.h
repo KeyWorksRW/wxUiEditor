@@ -18,4 +18,7 @@ public:
     void EmitPlatformEnd(WriteCode* writer) override;
     void EmitImport(Code& code, std::string_view module) override;
     void EmitVarDecl(Code& code, std::string_view type, std::string_view name) override;
+
+    // wxButton → wx_Button (Fortran uses wx_ prefix as part of the type name)
+    [[nodiscard]] std::string MapClassName(std::string_view wx_class_name) override;
 };

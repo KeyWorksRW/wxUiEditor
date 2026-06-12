@@ -309,11 +309,16 @@ auto Code::GetLanguagePrefix(std::string_view candidate, GenLang language) -> st
             return {};
 
         default:
-            // All FFI languages use wx_ prefix — no special prefix mapping needed
+            // FFI languages: per-language prefix dispatch
+            // Fortran uses wx_ prefix, all others use wx.
             if (auto* traits = GetLanguageTraits(language);
                 traits && traits->family == LanguageTraits::Family::ffi)
             {
-                return "wx_";
+                if (language == GenLang::fortran)
+                {
+                    return "wx_";
+                }
+                return "wx.";
             }
             FAIL_MSG("Unknown language");
             return {};
@@ -581,13 +586,25 @@ auto Code::ClassMethod(wxue::string_view function_name) -> Code&
 {
     ASSERT(m_traits);
     *this += m_traits->scope_operator;
-    if (m_traits->uses_snake_case_methods)
+    switch (m_traits->method_case)
     {
-        *this += ConvertToSnakeCase(function_name);
-    }
-    else
-    {
-        *this += function_name;
+        case LanguageTraits::MethodCase::snake_case:
+            *this += ConvertToSnakeCase(function_name);
+            break;
+        case LanguageTraits::MethodCase::camel_case:
+            {
+                std::string camel_name(function_name);
+                if (!camel_name.empty())
+                {
+                    camel_name[0] =
+                        static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
+                }
+                *this += camel_name;
+            }
+            break;
+        default:
+            *this += function_name;
+            break;
     }
 
     return *this;
@@ -597,13 +614,25 @@ auto Code::VariableMethod(wxue::string_view function_name) -> Code&
 {
     ASSERT(m_traits);
     *this += '.';
-    if (m_traits->uses_snake_case_methods)
+    switch (m_traits->method_case)
     {
-        *this += ConvertToSnakeCase(function_name);
-    }
-    else
-    {
-        *this += function_name;
+        case LanguageTraits::MethodCase::snake_case:
+            *this += ConvertToSnakeCase(function_name);
+            break;
+        case LanguageTraits::MethodCase::camel_case:
+            {
+                std::string camel_name(function_name);
+                if (!camel_name.empty())
+                {
+                    camel_name[0] =
+                        static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
+                }
+                *this += camel_name;
+            }
+            break;
+        default:
+            *this += function_name;
+            break;
     }
 
     return *this;
@@ -616,14 +645,27 @@ auto Code::FormFunction(wxue::string_view text) -> Code&
     {
         *this += "self.";
     }
-    if (m_traits->uses_snake_case_methods)
+    switch (m_traits->method_case)
     {
-        *this += ConvertToSnakeCase(text);
+        case LanguageTraits::MethodCase::snake_case:
+            *this += ConvertToSnakeCase(text);
+            break;
+        case LanguageTraits::MethodCase::camel_case:
+            {
+                std::string camel_name(text);
+                if (!camel_name.empty())
+                {
+                    camel_name[0] =
+                        static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
+                }
+                *this += camel_name;
+            }
+            break;
+        default:
+            *this += text;
+            break;
     }
-    else
-    {
-        *this += text;
-    }
+
     return *this;
 }
 
@@ -1057,13 +1099,25 @@ auto Code::ValidParentName() -> Code&
 auto Code::SizerFlagsFunction(wxue::string_view function_name) -> Code&
 {
     *this += '.';
-    if (m_traits && m_traits->uses_snake_case_methods)
+    switch (m_traits->method_case)
     {
-        *this += ConvertToSnakeCase(function_name);
-    }
-    else
-    {
-        *this += function_name;
+        case LanguageTraits::MethodCase::snake_case:
+            *this += ConvertToSnakeCase(function_name);
+            break;
+        case LanguageTraits::MethodCase::camel_case:
+            {
+                std::string camel_name(function_name);
+                if (!camel_name.empty())
+                {
+                    camel_name[0] =
+                        static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
+                }
+                *this += camel_name;
+            }
+            break;
+        default:
+            *this += function_name;
+            break;
     }
     *this += '(';
     return *this;

@@ -221,7 +221,7 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
 bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
                                 std::set<std::string>& set_hdr, GenLang language)
 {
-    if (node->HasValue(prop_header) && language == GEN_LANG_CPLUSPLUS)
+    if (node->HasValue(prop_header) && language == GenLang::cplusplus)
     {
         wxue::string_view cur_value = node->as_string(prop_header);
         if (cur_value.starts_with("#"))

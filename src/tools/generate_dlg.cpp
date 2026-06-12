@@ -69,11 +69,11 @@ void MainFrame::OnGenerateCode(wxCommandEvent& /* event unused */)
 
 bool MainFrame::GenerateFromOutputType(GenResults& results)
 {
-    const size_t output_type = Project.get_OutputType();
+    const GenOutput output_type = Project.get_OutputType();
 
     // If the user *only* wants the derived classes (is that even possible to
     // specify?) then generate and return.
-    if (output_type == OUTPUT_DERIVED)
+    if (output_type == GenOutput::derived)
     {
         GenInheritedClass(results);
         return true;
@@ -84,25 +84,25 @@ bool MainFrame::GenerateFromOutputType(GenResults& results)
     // '==' here for a bit flag instead of '&' because if more than one bit is set, then we need to
     // show the dialog to the user to ask which languages they want to generate. dialog to the user
     // to ask which languages they want to generate.
-    std::uint16_t language = GEN_LANG_NONE;
-    if (output_type == OUTPUT_CPLUS)
+    GenLang language = GenLang::none;
+    if (output_type == GenOutput::cplusplus)
     {
-        language = GEN_LANG_CPLUSPLUS;
+        language = GenLang::cplusplus;
     }
-    if (output_type == OUTPUT_PYTHON)
+    if (output_type == GenOutput::python)
     {
-        language = GEN_LANG_PYTHON;
+        language = GenLang::python;
     }
-    if (output_type == OUTPUT_RUBY)
+    if (output_type == GenOutput::ruby)
     {
-        language = GEN_LANG_RUBY;
+        language = GenLang::ruby;
     }
-    if (output_type == OUTPUT_XRC)
+    if (output_type == GenOutput::xrc)
     {
-        language = GEN_LANG_XRC;
+        language = GenLang::xrc;
     }
 
-    if (language != GEN_LANG_NONE)
+    if (language != GenLang::none)
     {
         results.SetNodes(Project.get_ProjectNode());
         results.SetLanguages(static_cast<GenLang>(language));
@@ -125,36 +125,36 @@ bool MainFrame::GenerateFromDialog(GenResults& results)
     bool code_generated = false;
 
     // Collect all selected languages into a combined flag
-    std::uint16_t lang_flags = GEN_LANG_NONE;
+    GenLang lang_flags = GenLang::none;
 
     // Always generate XRC files first in case the XRC files need to be added to a gen_Data
     // section of the other languages.
     gen_xrc_code = dialog.is_gen_xrc();
     if (gen_xrc_code)
     {
-        lang_flags |= GEN_LANG_XRC;
+        lang_flags |= GenLang::xrc;
     }
 
     gen_base_code = dialog.is_gen_base();
     if (gen_base_code)
     {
-        lang_flags |= GEN_LANG_CPLUSPLUS;
+        lang_flags |= GenLang::cplusplus;
     }
 
     gen_python_code = dialog.is_gen_python();
     if (gen_python_code)
     {
-        lang_flags |= GEN_LANG_PYTHON;
+        lang_flags |= GenLang::python;
     }
 
     gen_ruby_code = dialog.is_gen_ruby();
     if (gen_ruby_code)
     {
-        lang_flags |= GEN_LANG_RUBY;
+        lang_flags |= GenLang::ruby;
     }
 
     // Generate all selected languages in one call
-    if (lang_flags != GEN_LANG_NONE)
+    if (lang_flags != GenLang::none)
     {
         results.SetNodes(Project.get_ProjectNode());
         results.SetLanguages(static_cast<GenLang>(lang_flags));
@@ -277,21 +277,21 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-    const size_t languages = Project.get_GenerateLanguages();
+    const GenLang languages = Project.get_GenerateLanguages();
 
     switch (Project.get_CodePreference())
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             gen_base_code = true;
             break;
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             gen_python_code = true;
             break;
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             gen_ruby_code = true;
             break;
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             gen_xrc_code = true;
             break;
 
@@ -299,7 +299,7 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             break;
     }
 
-    const bool show_cpp_section = (languages & GEN_LANG_CPLUSPLUS) || gen_base_code;
+    const bool show_cpp_section = (languages & GenLang::cplusplus) || gen_base_code;
     const bool show_derived = gen_derived_code || Project.HasMissingDerivedFiles();
 
     if (show_cpp_section || show_derived)
@@ -322,21 +322,21 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         }
     }
 
-    if (languages & GEN_LANG_PYTHON || gen_python_code)
+    if (languages & GenLang::python || gen_python_code)
     {
         m_gen_python_code = gen_python_code;
         m_checkPython = new wxCheckBox(this, wxID_ANY, "Python");
         m_checkPython->SetValidator(wxGenericValidator(&m_gen_python_code));
         m_grid_sizer->Add(m_checkPython, wxSizerFlags().Border(wxALL));
     }
-    if (languages & GEN_LANG_RUBY || gen_ruby_code)
+    if (languages & GenLang::ruby || gen_ruby_code)
     {
         m_gen_ruby_code = gen_ruby_code;
         m_checkRuby = new wxCheckBox(this, wxID_ANY, "Ruby");
         m_checkRuby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
         m_grid_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
     }
-    if (languages & GEN_LANG_XRC || gen_xrc_code)
+    if (languages & GenLang::xrc || gen_xrc_code)
     {
         m_gen_xrc_code = gen_xrc_code;
         m_checkXRC = new wxCheckBox(this, wxID_ANY, "XRC");

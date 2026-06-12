@@ -28,7 +28,7 @@ public:
         -> NodeSharedPtr;
 
     // wxCrafter only supports C++ code generation
-    int GetLanguage() const override { return GEN_LANG_CPLUSPLUS; }
+    GenLang GetLanguage() const override { return GenLang::cplusplus; }
 
 protected:
     auto ProcessFont(Node* node, const glz::generic& object) -> bool;

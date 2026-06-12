@@ -122,7 +122,7 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
     }
 
     // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-    SetStcColors(m_scintilla, GEN_LANG_XRC, false, true);
+    SetStcColors(m_scintilla, GenLang::xrc, false, true);
 
     wxPersistentRegisterAndRestore(this, "MsgWindow");
 }

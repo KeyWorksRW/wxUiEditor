@@ -191,7 +191,7 @@ auto DocViewAppGenerator::AfterConstructionCode(Code& code) -> bool
             std::string line = wxline.ToStdString();
             utils::replace_in_line(line, "%class%", class_name, true);
             utils::replace_in_line(line, "%document_menu%",
-                                   code.node()->get_NodeName(GEN_LANG_CPLUSPLUS), true);
+                                   code.node()->get_NodeName(GenLang::cplusplus), true);
             if (is_mdi)
             {
                 utils::replace_in_line(line, "wxAuiMDIChildFrame", "wxDocMDIChildFrame", true);
@@ -302,7 +302,7 @@ auto DocViewAppGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 {
     set_hdr.insert("#include <wx/app.h>");
 
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         if (node->as_string(prop_kind) == "AUI")
         {

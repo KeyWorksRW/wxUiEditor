@@ -19,14 +19,14 @@
 using namespace code;
 using namespace GenEnum;
 
-GoCodeGenerator::GoCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_GO, form_node) {}
+GoCodeGenerator::GoCodeGenerator(Node* form_node) : BaseCodeGenerator(GenLang::go, form_node) {}
 
 void GoCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
                                     wxProgressDialog* /* progress */)
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_GO);
+    ASSERT(m_language == GenLang::go);
     Code code(m_form_node, m_language);
 
     if (m_header)

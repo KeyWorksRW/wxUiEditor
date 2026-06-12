@@ -134,7 +134,7 @@ auto DataHandler::LoadAndCompress(Node* node) -> bool
         return false;
     }
 
-    auto [path, has_base_file] = Project.GetOutputPath(node->get_Parent(), GEN_LANG_CPLUSPLUS);
+    auto [path, has_base_file] = Project.GetOutputPath(node->get_Parent(), GenLang::cplusplus);
     if (has_base_file)
     {
         // true if the the base filename was returned, in which case we need to convert the

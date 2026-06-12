@@ -211,14 +211,14 @@ public:
     std::string_view get_NodeName() const;
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
-    // is GEN_LANG_RUBY
+    // is GenLang::ruby
     std::string_view get_NodeName(GenLang lang) const;
 
     // Returns the value of the parent property "var_name" or "class_name"
     std::string_view get_ParentName() const;
 
     // May remove prefix based on the language -- e.g., @foo become foo unless the language
-    // is GEN_LANG_RUBY
+    // is GenLang::ruby
     std::string_view get_ParentName(GenLang lang, bool ignore_sizers = false) const;
 
     // Returns this if the node is a form, else walks up node tree to find the parent form.

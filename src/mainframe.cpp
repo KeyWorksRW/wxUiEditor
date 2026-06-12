@@ -458,7 +458,7 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateSingleLanguage(GEN_LANG_PYTHON);
+                OnGenerateSingleLanguage(GenLang::python);
             },
             id_GenSinglePython);
 
@@ -466,7 +466,7 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateSingleLanguage(GEN_LANG_RUBY);
+                OnGenerateSingleLanguage(GenLang::ruby);
             },
             id_GenSingleRuby);
 
@@ -474,7 +474,7 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateSingleLanguage(GEN_LANG_XRC);
+                OnGenerateSingleLanguage(GenLang::xrc);
             },
             id_GenSingleXrc);
 
@@ -482,7 +482,7 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateLanguage(GEN_LANG_RUBY);
+                OnGenerateLanguage(GenLang::ruby);
             },
             id_GenerateRuby);
 
@@ -490,7 +490,7 @@ MainFrame::MainFrame() :
             wxEVT_MENU,
             [](wxCommandEvent&)
             {
-                OnGenerateLanguage(GEN_LANG_XRC);
+                OnGenerateLanguage(GenLang::xrc);
             },
             id_GenerateXrc);
 

@@ -329,8 +329,8 @@ bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 std::pair<bool, wxue::string> PopupWinBaseGenerator::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE ||
-        (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY)))
+    if (language == GenLang::none ||
+        (language & (GenLang::cplusplus | GenLang::python | GenLang::ruby)))
     {
         return { true, {} };
     }

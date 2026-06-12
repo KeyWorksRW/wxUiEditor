@@ -16,7 +16,7 @@ public:
     RubyCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(GenLang language = GEN_LANG_RUBY,
+    void GenerateClass(GenLang language = GenLang::ruby,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

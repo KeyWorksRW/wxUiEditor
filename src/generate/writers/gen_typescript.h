@@ -14,7 +14,7 @@ class TypeScriptCodeGenerator : public BaseCodeGenerator
 public:
     TypeScriptCodeGenerator(Node* form_node);
 
-    void GenerateClass(GenLang language = GEN_LANG_TYPESCRIPT,
+    void GenerateClass(GenLang language = GenLang::typescript,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

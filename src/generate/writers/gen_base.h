@@ -193,7 +193,7 @@ protected:
 
     PANEL_PAGE m_panel_type { PANEL_PAGE::NOT_PANEL };
 
-    GenLang m_language { GEN_LANG_CPLUSPLUS };
+    GenLang m_language { GenLang::cplusplus };
     std::unique_ptr<LanguageStrategy> m_strategy;
 
     bool m_is_derived_class { true };

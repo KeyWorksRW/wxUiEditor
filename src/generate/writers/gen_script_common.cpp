@@ -62,10 +62,10 @@ namespace ScriptCommon
             // Add appropriate extension based on language
             switch (language)
             {
-                case GEN_LANG_PYTHON:
+                case GenLang::python:
                     path += ".py";
                     break;
-                case GEN_LANG_RUBY:
+                case GenLang::ruby:
                     path += ".rb";
                     break;
                 default:
@@ -84,10 +84,10 @@ namespace ScriptCommon
         std::string_view end_comment_line;
         switch (language)
         {
-            case GEN_LANG_PYTHON:
+            case GenLang::python:
                 end_comment_line = GetPythonEndCommentLine();
                 break;
-            case GEN_LANG_RUBY:
+            case GenLang::ruby:
                 end_comment_line = GetRubyEndCommentLine();
                 break;
             default:
@@ -132,11 +132,11 @@ namespace ScriptCommon
         }
 
         // Python needs triple-quote string start, Ruby needs extra newlines
-        if (language == GEN_LANG_PYTHON)
+        if (language == GenLang::python)
         {
             code.Eol().Str(python_triple_quote).Eol();
         }
-        else if (language == GEN_LANG_RUBY)
+        else if (language == GenLang::ruby)
         {
             code.Eol().Eol();
         }
@@ -148,10 +148,10 @@ namespace ScriptCommon
         {
             switch (language)
             {
-                case GEN_LANG_PYTHON:
+                case GenLang::python:
                     code.Tab().Str("self.EndModal(wx.ID_CLOSE)").Eol().Eol();
                     return;  // Python adds extra newline
-                case GEN_LANG_RUBY:
+                case GenLang::ruby:
                     code.Tab().Str("end_modal(Wx::ID_CLOSE)");
                     break;
                 default:
@@ -162,10 +162,10 @@ namespace ScriptCommon
         {
             switch (language)
             {
-                case GEN_LANG_PYTHON:
+                case GenLang::python:
                     code.Tab().Str("self.EndModal(wx.ID_YES)").Eol().Eol();
                     return;  // Python adds extra newline
-                case GEN_LANG_RUBY:
+                case GenLang::ruby:
                     code.Tab().Str("end_modal(Wx::ID_YES)");
                     break;
                 default:
@@ -176,10 +176,10 @@ namespace ScriptCommon
         {
             switch (language)
             {
-                case GEN_LANG_PYTHON:
+                case GenLang::python:
                     code.Tab().Str("self.EndModal(wx.ID_NO)").Eol().Eol();
                     return;  // Python adds extra newline
-                case GEN_LANG_RUBY:
+                case GenLang::ruby:
                     code.Tab().Str("end_modal(Wx::ID_NO)");
                     break;
                 default:
@@ -191,10 +191,10 @@ namespace ScriptCommon
             // Default event handler - call Skip/skip
             switch (language)
             {
-                case GEN_LANG_PYTHON:
+                case GenLang::python:
                     code.Tab().Str("event.Skip()").Eol().Eol();
                     return;  // Python adds extra newline
-                case GEN_LANG_RUBY:
+                case GenLang::ruby:
                     code.Tab().Str("event.skip");
                     break;
                 default:

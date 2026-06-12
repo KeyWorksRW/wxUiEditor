@@ -416,19 +416,19 @@ auto isValidVarName(const std::string& str, GenLang language) -> bool
     };
 
     // The set is only initialized the first time this function is called.
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         return lambda(g_set_cpp_keywords, g_u8_cpp_keywords);
     }
-    if (language == GEN_LANG_PYTHON)
+    if (language == GenLang::python)
     {
         return lambda(g_set_python_keywords, g_python_keywords);
     }
-    if (language == GEN_LANG_RUBY)
+    if (language == GenLang::ruby)
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
     }
-    if (language == GEN_LANG_TYPESCRIPT)
+    if (language == GenLang::typescript)
     {
         return lambda(g_set_typescript_keywords, g_typescript_keywords);
     }
@@ -606,24 +606,24 @@ auto GenLangToString(GenLang language) -> std::string_view
 {
     switch (language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             return "C++";
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             return "Python";
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             return "Ruby";
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             return "Fortran";
-        case GEN_LANG_GO:
+        case GenLang::go:
             return "Go";
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             return "Julia";
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             return "LuaJIT";
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             return "TypeScript";
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             return "XRC";
         default:
             return "an unknown language";
@@ -634,74 +634,74 @@ auto ConvertToGenLang(wxue::string_view language) -> GenLang
 {
     if (language.starts_with("C++") || language.starts_with("Folder C++"))
     {
-        return GEN_LANG_CPLUSPLUS;
+        return GenLang::cplusplus;
     }
 
     if (language == "Python" || language.starts_with("wxPython") ||
         language.starts_with("Folder wxPython"))
     {
-        return GEN_LANG_PYTHON;
+        return GenLang::python;
     }
     if (language == "Ruby" || language.starts_with("wxRuby") ||
         language.starts_with("Folder wxRuby"))
     {
-        return GEN_LANG_RUBY;
+        return GenLang::ruby;
     }
     if (language == "GO" || language.starts_with("kwxGO") || language.starts_with("Folder kwxGO"))
     {
-        return GEN_LANG_GO;
+        return GenLang::go;
     }
     if (language == "Fortran" || language.starts_with("kwxFortran") ||
         language.starts_with("Folder kwxFortran"))
     {
-        return GEN_LANG_FORTRAN;
+        return GenLang::fortran;
     }
     if (language == "Julia" || language.starts_with("kwxJulia") ||
         language.starts_with("Folder kwxJulia"))
     {
-        return GEN_LANG_JULIA;
+        return GenLang::julia;
     }
     if (language == "LuaJIT" || language.starts_with("kwxLuaJIT") ||
         language.starts_with("Folder kwxLuaJIT"))
     {
-        return GEN_LANG_LUAJIT;
+        return GenLang::luajit;
     }
     if (language == "TypeScript" || language.starts_with("kwxTypeScript") ||
         language.starts_with("Folder kwxTypeScript"))
     {
-        return GEN_LANG_TYPESCRIPT;
+        return GenLang::typescript;
     }
     if (language.starts_with("XRC") || language.starts_with("Folder XRC"))
     {
-        return GEN_LANG_XRC;
+        return GenLang::xrc;
     }
     // If this wasn't an actual language setting, then return all languages
-    return static_cast<GenLang>(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY |
-                                GEN_LANG_XRC);
+    return static_cast<GenLang>(GenLang::cplusplus | GenLang::python | GenLang::ruby |
+                                GenLang::xrc);
 }
 
 auto GetLanguageExtension(GenLang language) -> std::string
 {
     switch (language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             return ".cpp";
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             return ".py";
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             return ".rb";
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             return ".f90";
-        case GEN_LANG_GO:
+        case GenLang::go:
             return ".go";
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             return ".jl";
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             return ".lua";
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             return ".ts";
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             return ".xrc";
 
         default:

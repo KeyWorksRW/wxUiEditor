@@ -14,7 +14,7 @@ class LuaJITCodeGenerator : public BaseCodeGenerator
 public:
     LuaJITCodeGenerator(Node* form_node);
 
-    void GenerateClass(GenLang language = GEN_LANG_LUAJIT,
+    void GenerateClass(GenLang language = GenLang::luajit,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

@@ -91,7 +91,7 @@ static const std::vector<wxue::string> disable_list = {
 // clang-format on
 #endif  // _DEBUG
 
-RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GEN_LANG_RUBY, form_node)
+RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GenLang::ruby, form_node)
 {
 }
 
@@ -139,7 +139,7 @@ auto RubyCodeGenerator::WriteImports(std::set<std::string>& imports) -> void
     {
         if (auto* gen = node->get_Generator(); gen)
         {
-            gen->GetImports(node, imports, GEN_LANG_RUBY);
+            gen->GetImports(node, imports, GenLang::ruby);
         }
         for (auto& child: node->get_ChildNodePtrs())
         {
@@ -424,7 +424,7 @@ void RubyCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_RUBY);
+    ASSERT(m_language == GenLang::ruby);
     Code code(m_form_node, m_language);
 
     m_embedded_images.clear();
@@ -666,7 +666,7 @@ void RubyCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 
     m_source->writeLine(txt_ruby_get_bundle, indent::auto_keep_whitespace);
 
-    Code code(m_form_node, GEN_LANG_RUBY);
+    Code code(m_form_node, GenLang::ruby);
 
     int progress_count = 0;
     for (const auto* iter_array: m_embedded_images)
@@ -701,7 +701,7 @@ void RubyCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
         }
         auto encoded =
             base64_encode(iter_array->base_image().array_data.data(),
-                          iter_array->base_image().array_size & MAX_UINT32, GEN_LANG_RUBY);
+                          iter_array->base_image().array_size & MAX_UINT32, GenLang::ruby);
         if (encoded.size())
         {
             // Remove the trailing '+' character
@@ -719,18 +719,18 @@ void RubyCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 auto RubyCodeGenerator::CollectExistingEventHandlers(std::unordered_set<std::string>& code_lines)
     -> bool
 {
-    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GEN_LANG_RUBY, m_panel_type,
+    return ScriptCommon::CollectExistingEventHandlers(m_form_node, GenLang::ruby, m_panel_type,
                                                       code_lines, "def ");
 }
 
 auto RubyCodeGenerator::GenerateEventHandlerComment(bool found_user_handlers, Code& code) -> void
 {
-    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GEN_LANG_RUBY);
+    ScriptCommon::GenerateEventHandlerComment(found_user_handlers, code, GenLang::ruby);
 }
 
 auto RubyCodeGenerator::GenerateEventHandlerBody(NodeEvent* event, Code& undefined_handlers) -> void
 {
-    ScriptCommon::GenerateEventHandlerBody(event, undefined_handlers, GEN_LANG_RUBY);
+    ScriptCommon::GenerateEventHandlerBody(event, undefined_handlers, GenLang::ruby);
 }
 
 auto RubyCodeGenerator::WriteEventHandlers(Code& code, Code& undefined_handlers) -> void
@@ -763,7 +763,7 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
     // each function once.
     std::unordered_set<std::string> code_lines;
 
-    Code code(m_form_node, GEN_LANG_RUBY);
+    Code code(m_form_node, GenLang::ruby);
     auto sort_event_handlers = [](NodeEvent* event_a, NodeEvent* event_b)
     {
         return (EventHandlerDlg::GetRubyValue(event_a->get_value()) <
@@ -790,7 +790,7 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
     bool found_user_handlers = CollectExistingEventHandlers(code_lines);
     GenerateEventHandlerComment(found_user_handlers, code);
 
-    Code undefined_handlers(m_form_node, GEN_LANG_RUBY);
+    Code undefined_handlers(m_form_node, GenLang::ruby);
     for (auto& event: events)
     {
         auto ruby_handler = EventHandlerDlg::GetRubyValue(event->get_value());
@@ -823,5 +823,5 @@ void RubyCodeGenerator::GenUnhandledEvents(EventVector& events)
 
 auto MakeRubyPath(Node* node) -> wxue::string
 {
-    return ScriptCommon::MakeScriptPath(node, GEN_LANG_RUBY);
+    return ScriptCommon::MakeScriptPath(node, GenLang::ruby);
 }

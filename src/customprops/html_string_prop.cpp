@@ -27,7 +27,7 @@ EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlD
     SetTitle(wxString(prop->get_DeclName()) + " property editor");
     m_value = prop->as_wxString();
 
-    SetStcColors(m_scintilla, GEN_LANG_XML, false, false);
+    SetStcColors(m_scintilla, GenLang::xml, false, false);
 };
 
 auto EditHtmlDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> void

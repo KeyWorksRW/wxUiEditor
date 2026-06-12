@@ -287,7 +287,7 @@ wxue::string ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language,
 {
     wxue::string result;
 
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         if (folder->HasValue(prop_folder_base_directory))
         {
@@ -306,8 +306,8 @@ wxue::string ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language,
     {
         static const std::map<GenLang, PropName> langFolderPropMap = {
 
-            { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
-            { GEN_LANG_XRC, prop_folder_xrc_directory }
+            { GenLang::ruby, prop_folder_ruby_output_folder },
+            { GenLang::xrc, prop_folder_xrc_directory }
         };
 
         if (auto iter = langFolderPropMap.find(language);
@@ -323,10 +323,10 @@ wxue::string ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language,
 wxue::string ProjectHandler::GetProjectOutputPath(GenLang language) const
 {
     static const std::map<GenLang, PropName> langProjectPropMap = {
-        { GEN_LANG_CPLUSPLUS, prop_base_directory },
-        { GEN_LANG_PYTHON, prop_python_output_folder },
-        { GEN_LANG_RUBY, prop_ruby_output_folder },
-        { GEN_LANG_XRC, prop_xrc_directory }
+        { GenLang::cplusplus, prop_base_directory },
+        { GenLang::python, prop_python_output_folder },
+        { GenLang::ruby, prop_ruby_output_folder },
+        { GenLang::xrc, prop_xrc_directory }
     };
 
     if (auto iter = langProjectPropMap.find(language);
@@ -341,16 +341,16 @@ wxue::string ProjectHandler::GetProjectOutputPath(GenLang language) const
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 wxue::string ProjectHandler::GetBaseFilename(Node* form, GenLang language) const
 {
-    if (language == GEN_LANG_CPLUSPLUS && form->is_Gen(gen_Data))
+    if (language == GenLang::cplusplus && form->is_Gen(gen_Data))
     {
         return form->as_string(prop_output_file);
     }
 
     static const std::map<GenLang, PropName> langbase_file_propertyMap = {
-        { GEN_LANG_CPLUSPLUS, prop_base_file },
-        { GEN_LANG_PYTHON, prop_python_file },
-        { GEN_LANG_RUBY, prop_ruby_file },
-        { GEN_LANG_XRC, prop_xrc_file }
+        { GenLang::cplusplus, prop_base_file },
+        { GenLang::python, prop_python_file },
+        { GenLang::ruby, prop_ruby_file },
+        { GenLang::xrc, prop_xrc_file }
     };
 
     const std::map<GenLang, PropName>::const_iterator iter =
@@ -360,7 +360,8 @@ wxue::string ProjectHandler::GetBaseFilename(Node* form, GenLang language) const
         return form->as_string(iter->second);
     }
 
-    FAIL_MSG(wxue::string() << "Unknown language: " << language);
+    FAIL_MSG(wxue::string() << "Unknown language: "
+                            << static_cast<int>(std::to_underlying(language)));
     return "";
 }
 
@@ -435,17 +436,17 @@ std::string ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) c
     if (folder)
     {
         static const std::map<GenLang, PropName> folderLangPropMap = {
-            { GEN_LANG_CPLUSPLUS, prop_folder_derived_directory },
-            { GEN_LANG_PYTHON, prop_folder_python_output_folder },
-            { GEN_LANG_RUBY, prop_folder_ruby_output_folder },
-            { GEN_LANG_XRC, prop_folder_xrc_directory }
+            { GenLang::cplusplus, prop_folder_derived_directory },
+            { GenLang::python, prop_folder_python_output_folder },
+            { GenLang::ruby, prop_folder_ruby_output_folder },
+            { GenLang::xrc, prop_folder_xrc_directory }
         };
         if (auto iter = folderLangPropMap.find(language); iter != folderLangPropMap.end())
         {
             if (folder->HasValue(iter->second))
             {
                 // Special case for C++: use base directory for derived files
-                if (language == GEN_LANG_CPLUSPLUS)
+                if (language == GenLang::cplusplus)
                 {
                     result = folder->as_string(prop_folder_base_directory);
                 }
@@ -462,10 +463,10 @@ std::string ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) c
     if (result.empty() || !folder)
     {
         static const std::map<GenLang, PropName> projectLangPropMap = {
-            { GEN_LANG_CPLUSPLUS, prop_derived_directory },
-            { GEN_LANG_PYTHON, prop_python_output_folder },
-            { GEN_LANG_RUBY, prop_ruby_output_folder },
-            { GEN_LANG_XRC, prop_xrc_directory }
+            { GenLang::cplusplus, prop_derived_directory },
+            { GenLang::python, prop_python_output_folder },
+            { GenLang::ruby, prop_ruby_output_folder },
+            { GenLang::xrc, prop_xrc_directory }
         };
 
         if (auto iter = projectLangPropMap.find(language); iter != projectLangPropMap.end())
@@ -473,7 +474,7 @@ std::string ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) c
             if (m_project_node->HasValue(iter->second))
             {
                 // Special case for C++: use base directory for derived files
-                if (language == GEN_LANG_CPLUSPLUS)
+                if (language == GenLang::cplusplus)
                 {
                     result = m_project_node->as_string(prop_base_directory);
                 }
@@ -540,15 +541,15 @@ GenLang ProjectHandler::get_CodePreference(Node* node) const
     // Note: Be sure this list matches the languages in ../xml/project.xml
     // clang-format off
     static const std::map<std::string_view, GenLang> langStringMap = {
-        { "C++", GEN_LANG_CPLUSPLUS },
-        { "Python", GEN_LANG_PYTHON },
-        { "Ruby", GEN_LANG_RUBY },
-        { "GO", GEN_LANG_GO },
-        { "Fortran", GEN_LANG_FORTRAN },
-        { "Julia", GEN_LANG_JULIA },
-        { "LuaJIT", GEN_LANG_LUAJIT },
-        { "TypeScript", GEN_LANG_TYPESCRIPT },
-        { "XRC", GEN_LANG_XRC }
+        { "C++", GenLang::cplusplus },
+        { "Python", GenLang::python },
+        { "Ruby", GenLang::ruby },
+        { "GO", GenLang::go },
+        { "Fortran", GenLang::fortran },
+        { "Julia", GenLang::julia },
+        { "LuaJIT", GenLang::luajit },
+        { "TypeScript", GenLang::typescript },
+        { "XRC", GenLang::xrc }
     };
     // clang-format on
     if (auto iter = langStringMap.find(value); iter != langStringMap.end())
@@ -556,35 +557,35 @@ GenLang ProjectHandler::get_CodePreference(Node* node) const
         return iter->second;
     }
 
-    return GEN_LANG_CPLUSPLUS;
+    return GenLang::cplusplus;
 }
 
-size_t ProjectHandler::get_GenerateLanguages() const
+GenLang ProjectHandler::get_GenerateLanguages() const
 {
     // Always set the project's code preference to the list
-    auto languages = static_cast<size_t>(get_CodePreference(m_project_node.get()));
+    auto languages = get_CodePreference(m_project_node.get());
 
     const std::string_view value = Project.as_view(prop_generate_languages);
 
     // Note: Be sure this list matches the languages in ../xml/project.xml
     // clang-format off
     static const std::map<std::string_view, size_t> langBitMap = {
-        { "C++", GEN_LANG_CPLUSPLUS },
-        { "Fortran", GEN_LANG_FORTRAN },
-        { "GO", GEN_LANG_GO },
-        { "Julia", GEN_LANG_JULIA },
-        { "LuaJIT", GEN_LANG_LUAJIT },
-        { "Python", GEN_LANG_PYTHON },
-        { "Ruby", GEN_LANG_RUBY },
-        { "TypeScript", GEN_LANG_TYPESCRIPT },
-        { "XRC", GEN_LANG_XRC }
+        { "C++", std::to_underlying(GenLang::cplusplus) },
+        { "Fortran", std::to_underlying(GenLang::fortran) },
+        { "GO", std::to_underlying(GenLang::go) },
+        { "Julia", std::to_underlying(GenLang::julia) },
+        { "LuaJIT", std::to_underlying(GenLang::luajit) },
+        { "Python", std::to_underlying(GenLang::python) },
+        { "Ruby", std::to_underlying(GenLang::ruby) },
+        { "TypeScript", std::to_underlying(GenLang::typescript) },
+        { "XRC", std::to_underlying(GenLang::xrc) }
     };
     // clang-format on
     for (const auto& [langStr, langBit]: langBitMap)
     {
         if (value.find(langStr) != std::string_view::npos)
         {
-            languages |= langBit;
+            languages |= static_cast<GenLang>(langBit);
         }
     }
 
@@ -605,13 +606,13 @@ bool ProjectHandler::ShouldOutputLanguage(const NodesFormChild& nodes,
         nodes.child->get_PropDefaultValue(base_file_property))
     {
         // C++ always outputs with default value
-        if (language == GEN_LANG_CPLUSPLUS)
+        if (language == GenLang::cplusplus)
         {
-            return get_CodePreference(nodes.form) == GEN_LANG_CPLUSPLUS;
+            return get_CodePreference(nodes.form) == GenLang::cplusplus;
         }
 
         // Data/Image nodes with default values follow code preference (except XRC)
-        if (language != GEN_LANG_XRC)
+        if (language != GenLang::xrc)
         {
             if ((nodes.child->is_Gen(gen_Images) || nodes.child->is_Gen(gen_Data)))
             {
@@ -632,9 +633,9 @@ bool ProjectHandler::ShouldOutputLanguage(const NodesFormChild& nodes,
 }
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
-size_t ProjectHandler::get_OutputType(int flags) const
+GenOutput ProjectHandler::get_OutputType(int flags) const
 {
-    size_t result = OUTPUT_NONE;
+    GenOutput result = GenOutput::none;
 
     auto traverse_forms_recursively = [&](Node* form, auto&& traverse_forms_recursively) -> void
     {
@@ -651,21 +652,21 @@ size_t ProjectHandler::get_OutputType(int flags) const
                 {
                     PropName base_file_property;
                     GenLang language;
-                    size_t output_flag;
+                    GenOutput output_flag;
                 };
                 static constexpr std::array<OutputLangInfo, 4> outputLangs =
                     std::to_array<OutputLangInfo>({ { .base_file_property = prop_base_file,
-                                                      .language = GEN_LANG_CPLUSPLUS,
-                                                      .output_flag = OUTPUT_CPLUS },
+                                                      .language = GenLang::cplusplus,
+                                                      .output_flag = GenOutput::cplusplus },
                                                     { .base_file_property = prop_python_file,
-                                                      .language = GEN_LANG_PYTHON,
-                                                      .output_flag = OUTPUT_PYTHON },
+                                                      .language = GenLang::python,
+                                                      .output_flag = GenOutput::python },
                                                     { .base_file_property = prop_ruby_file,
-                                                      .language = GEN_LANG_RUBY,
-                                                      .output_flag = OUTPUT_RUBY },
+                                                      .language = GenLang::ruby,
+                                                      .output_flag = GenOutput::ruby },
                                                     { .base_file_property = prop_xrc_file,
-                                                      .language = GEN_LANG_XRC,
-                                                      .output_flag = OUTPUT_XRC } });
+                                                      .language = GenLang::xrc,
+                                                      .output_flag = GenOutput::xrc } });
 
                 for (const auto& info: outputLangs)
                 {
@@ -682,7 +683,7 @@ size_t ProjectHandler::get_OutputType(int flags) const
                 {
                     if (IsDerivedFileMissing(child.get()))
                     {
-                        result |= OUTPUT_DERIVED;
+                        result |= GenOutput::derived;
                     }
                 }
             }
@@ -705,7 +706,7 @@ wxue::string ProjectHandler::get_DerivedFilename(Node* form) const
         return path;
     }
 
-    path = get_DerivedDirectory(form, GEN_LANG_CPLUSPLUS);
+    path = get_DerivedDirectory(form, GenLang::cplusplus);
     path.append_filename(form->as_string(prop_derived_file));
     path.make_absolute();
 
@@ -958,10 +959,10 @@ Node* ProjectHandler::get_DataForm()
 
 // clang-format off
 static const std::map<GenLang, PropName> langPropMap = {
-    { GEN_LANG_CPLUSPLUS, prop_wxWidgets_version },
-    { GEN_LANG_PYTHON, prop_wxPython_version },
-    { GEN_LANG_RUBY, prop_wxRuby_version },
-    { GEN_LANG_XRC, prop_wxWidgets_version }
+    { GenLang::cplusplus, prop_wxWidgets_version },
+    { GenLang::python, prop_wxPython_version },
+    { GenLang::ruby, prop_wxRuby_version },
+    { GenLang::xrc, prop_wxWidgets_version }
 };
 // clang-format on
 
@@ -1054,7 +1055,8 @@ int ProjectHandler::get_LangVersion(GenLang language) const
     }
     else
     {
-        FAIL_MSG(wxue::string() << "Unknown language: " << language);
+        FAIL_MSG(wxue::string() << "Unknown language: "
+                                << static_cast<int>(std::to_underlying(language)));
     }
 
     auto [major, minor, patch] = parseVersionString(version);

@@ -39,7 +39,7 @@ public:
     [[nodiscard]] auto GetMode() const { return m_mode; }
 
     // Set languages to generate (GenLang values are bit flags, can be combined)
-    // e.g., SetLanguages(GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)
+    // e.g., SetLanguages(GenLang::cplusplus | GenLang::python)
     void SetLanguages(GenLang languages) { m_languages = languages; }
     [[nodiscard]] auto GetLanguages() const { return m_languages; }
 
@@ -73,7 +73,7 @@ public:
     // Generate all forms into a single combined output file for the specified language.
     // language: must be exactly one language (error if multiple bits set)
     // Requires SetCombinedOutputPath() or project prop_combined_xrc_file to be set.
-    // Currently supports GEN_LANG_XRC. Future: Python, Ruby, Perl.
+    // Currently supports GenLang::xrc. Future: Python, Ruby, Perl.
     // Returns true if file was written/needs updating, false otherwise.
     [[nodiscard]] auto GenerateCombinedFile(GenLang language) -> bool;
 
@@ -162,7 +162,7 @@ private:
     // Class members
     Mode m_mode { Mode::generate_and_write };
     Scope m_scope { Scope::unknown };
-    GenLang m_languages { 0 };  // Bit flags for languages to generate
+    GenLang m_languages { GenLang::none };  // Bit flags for languages to generate
 
     std::vector<Node*> m_target_nodes;  // Forms to process
     Node* m_start_node { nullptr };     // Original node passed to SetNodes()
@@ -195,11 +195,11 @@ private:
 };
 
 // DEPRECATED: Use GenResults::Generate() with SetNodes(ProjectNode),
-// SetLanguages(GEN_LANG_CPLUSPLUS). If pClassList is non-null, it must contain the base class name
+// SetLanguages(GenLang::cplusplus). If pClassList is non-null, it must contain the base class name
 // of every form that needs updating.
 //
 // ../generate/gen_codefiles.cpp
-[[deprecated("Use GenResults::Generate() with SetNodes(), SetLanguages(GEN_LANG_CPLUSPLUS)")]]
+[[deprecated("Use GenResults::Generate() with SetNodes(), SetLanguages(GenLang::cplusplus)")]]
 auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList = nullptr) -> bool;
 
 // ../generate/gen_codefiles.cpp

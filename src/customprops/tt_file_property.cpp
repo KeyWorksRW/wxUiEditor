@@ -176,7 +176,7 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* propGrid, wxVariant& va
             else
             {
                 auto result =
-                    Project.GetOutputPath(m_prop->getNode()->get_Form(), GEN_LANG_CPLUSPLUS);
+                    Project.GetOutputPath(m_prop->getNode()->get_Form(), GenLang::cplusplus);
                 if (!result.second)
                 {
                     root_path.AssignDir(result.first);

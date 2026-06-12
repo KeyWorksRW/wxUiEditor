@@ -66,7 +66,7 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool AnimationGenerator::ConstructionCode(Code& code)
 {
-    if (code.get_language() == GEN_LANG_RUBY)
+    if (code.get_language() == GenLang::ruby)
     {
         // wxRuby3 1.0.0 doesn't support the generic version of wxAnimationCtrl
         code.AddAuto().NodeName().CreateClass();

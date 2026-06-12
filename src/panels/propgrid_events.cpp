@@ -494,7 +494,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     {
                         CheckOutputFile(newValue, selected_node);
 
-                        if (Project.get_CodePreference() == GEN_LANG_CPLUSPLUS)
+                        if (Project.get_CodePreference() == GenLang::cplusplus)
                         {
                             if (!selected_node->as_bool(prop_use_derived_class))
                             {

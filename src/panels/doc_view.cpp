@@ -117,9 +117,9 @@ void DocViewPanel::ActivatePage()
     {
         wxBusyCursor wait;
 
-        m_toolBar->ToggleTool(ID_CPLUS, m_language == GEN_LANG_CPLUSPLUS);
-        m_toolBar->ToggleTool(ID_PYTHON, m_language == GEN_LANG_PYTHON);
-        m_toolBar->ToggleTool(ID_RUBY, m_language == GEN_LANG_RUBY);
+        m_toolBar->ToggleTool(ID_CPLUS, m_language == GenLang::cplusplus);
+        m_toolBar->ToggleTool(ID_PYTHON, m_language == GenLang::python);
+        m_toolBar->ToggleTool(ID_RUBY, m_language == GenLang::ruby);
 
 #if wxUSE_WEBVIEW
         m_webview = wxWebView::New(this, wxID_ANY, "about:blank");
@@ -131,13 +131,13 @@ void DocViewPanel::ActivatePage()
     wxCommandEvent dummy;
     switch (m_language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             OnCPlus(dummy);
             break;
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             OnPython(dummy);
             break;
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             OnRuby(dummy);
             break;
 
@@ -158,7 +158,7 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
 {
 #if wxUSE_WEBVIEW
     wxBusyCursor wait;
-    m_language = GEN_LANG_CPLUSPLUS;
+    m_language = GenLang::cplusplus;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* gen = cur_sel->get_Generator(); gen)
@@ -166,7 +166,7 @@ void DocViewPanel::OnCPlus(wxCommandEvent& /* event */)
             if (auto file = gen->GetHelpURL(cur_sel); file.size())
             {
                 wxString url;
-                url = (Project.get_LangVersion(GEN_LANG_CPLUSPLUS) < CPP_WIDGETS_VERSION_3_3_0) ?
+                url = (Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0) ?
                           "https://docs.wxwidgets.org/3.2.8" :
                           "https://docs.wxwidgets.org/latest";
 
@@ -205,7 +205,7 @@ void DocViewPanel::OnPython(wxCommandEvent& /* event */)
 {
 #if wxUSE_WEBVIEW
     wxBusyCursor wait;
-    m_language = GEN_LANG_PYTHON;
+    m_language = GenLang::python;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* gen = cur_sel->get_Generator(); gen)
@@ -231,7 +231,7 @@ void DocViewPanel::OnRuby(wxCommandEvent& /* event */)
 {
 #if wxUSE_WEBVIEW
     wxBusyCursor wait;
-    m_language = GEN_LANG_RUBY;
+    m_language = GenLang::ruby;
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* gen = cur_sel->get_Generator(); gen)

@@ -649,21 +649,22 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
 {
     // Map option names to their corresponding generation type values
     constexpr frozen::map<std::string_view, size_t, 12> gen_options = {
-        { "gen_cpp", GEN_LANG_CPLUSPLUS },
-        { "gen_python", GEN_LANG_PYTHON },
-        { "gen_fortran", GEN_LANG_FORTRAN },
-        { "gen_go", GEN_LANG_GO },
-        { "gen_julia", GEN_LANG_JULIA },
-        { "gen_luajit", GEN_LANG_LUAJIT },
-        { "gen_ruby", GEN_LANG_RUBY },
-        { "gen_typescript", GEN_LANG_TYPESCRIPT },
-        { "gen_xrc", GEN_LANG_XRC },
-        { "gen_all", (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
-        { "gen_quick", (GEN_LANG_PYTHON | GEN_LANG_RUBY) },
-        { "gen_coverage", (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON | GEN_LANG_RUBY) },
+        { "gen_cpp", std::to_underlying(GenLang::cplusplus) },
+        { "gen_python", std::to_underlying(GenLang::python) },
+        { "gen_fortran", std::to_underlying(GenLang::fortran) },
+        { "gen_go", std::to_underlying(GenLang::go) },
+        { "gen_julia", std::to_underlying(GenLang::julia) },
+        { "gen_luajit", std::to_underlying(GenLang::luajit) },
+        { "gen_ruby", std::to_underlying(GenLang::ruby) },
+        { "gen_typescript", std::to_underlying(GenLang::typescript) },
+        { "gen_xrc", std::to_underlying(GenLang::xrc) },
+        { "gen_all", std::to_underlying(GenLang::cplusplus | GenLang::python | GenLang::ruby) },
+        { "gen_quick", std::to_underlying(GenLang::python | GenLang::ruby) },
+        { "gen_coverage",
+          std::to_underlying(GenLang::cplusplus | GenLang::python | GenLang::ruby) },
     };
 
-    size_t generate_type = GEN_LANG_NONE;
+    size_t generate_type = std::to_underlying(GenLang::none);
     bool test_only = false;
 
     // Check gen_* options (mutually exclusive)
@@ -692,10 +693,10 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
     // Check test_* options (can be combined)
     // REVIEW: [Randalphwa - 02-21-2026] Do we still need these?
     constexpr frozen::map<std::string_view, GenLang, 4> test_options = {
-        { "test_cpp", GEN_LANG_CPLUSPLUS },
-        { "test_python", GEN_LANG_PYTHON },
-        { "test_ruby", GEN_LANG_RUBY },
-        { "test_xrc", GEN_LANG_XRC },
+        { "test_cpp", GenLang::cplusplus },
+        { "test_python", GenLang::python },
+        { "test_ruby", GenLang::ruby },
+        { "test_xrc", GenLang::xrc },
     };
 
     for (const auto& [option_name, option_type]: test_options)
@@ -703,7 +704,7 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
         wxString option_filename;
         if (parser.Found(wxString(option_name), &option_filename))
         {
-            generate_type = (generate_type | option_type);
+            generate_type |= std::to_underlying(option_type);
             test_only = true;
 
             // Store the filename from the option value (first one wins)
@@ -740,11 +741,11 @@ bool App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
     if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
         !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
     {
-        is_project_loaded = Project.ImportProject(filename, generate_type == GEN_LANG_NONE);
+        is_project_loaded = Project.ImportProject(filename, generate_type == 0);
     }
     else
     {
-        is_project_loaded = Project.LoadProject(filename, generate_type == GEN_LANG_NONE);
+        is_project_loaded = Project.LoadProject(filename, generate_type == 0);
     }
     return is_project_loaded;
 }
@@ -816,7 +817,7 @@ void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
 
     auto GenCode = [&](GenLang language)
     {
-        if (generate_type & language)
+        if (generate_type & std::to_underlying(language))
         {
             results.Clear();
             class_list.clear();
@@ -854,17 +855,17 @@ void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
         }
     };
 
-    GenCode(GEN_LANG_CPLUSPLUS);
-    GenCode(GEN_LANG_PYTHON);
+    GenCode(GenLang::cplusplus);
+    GenCode(GenLang::python);
 
-    GenCode(GEN_LANG_FORTRAN);
-    GenCode(GEN_LANG_GO);
-    GenCode(GEN_LANG_JULIA);
-    GenCode(GEN_LANG_LUAJIT);
-    GenCode(GEN_LANG_TYPESCRIPT);
-    GenCode(GEN_LANG_RUBY);
+    GenCode(GenLang::fortran);
+    GenCode(GenLang::go);
+    GenCode(GenLang::julia);
+    GenCode(GenLang::luajit);
+    GenCode(GenLang::typescript);
+    GenCode(GenLang::ruby);
 
-    GenCode(GEN_LANG_XRC);
+    GenCode(GenLang::xrc);
 }
 
 int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
@@ -890,7 +891,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 
     const wxString& filename_str = GetCommandLineFilename(parser);
 
-    if (generate_type == GEN_LANG_NONE)
+    if (generate_type == 0)
     {
         if (filename_str.empty())
         {

@@ -120,7 +120,7 @@ auto GenResults::SetDisplayTarget(Node* startNode, GenLang language, WriteCode* 
 
     // Validate: must be exactly one language (not multiple bits set)
     // Count bits set in language
-    auto lang_bits = static_cast<std::uint16_t>(language);
+    auto lang_bits = static_cast<unsigned int>(language);
     if (lang_bits == 0 || (lang_bits & (lang_bits - 1)) != 0)
     {
         // Either no language or multiple languages specified
@@ -311,44 +311,45 @@ auto GenResults::GenerateForDisplay() -> bool
     std::unique_ptr<BaseCodeGenerator> code_generator;
     switch (m_languages)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             code_generator = std::make_unique<CppCodeGenerator>(form);
             break;
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             code_generator = std::make_unique<PythonCodeGenerator>(form);
             break;
 
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             code_generator = std::make_unique<FortranCodeGenerator>(form);
             break;
 
-        case GEN_LANG_GO:
+        case GenLang::go:
             code_generator = std::make_unique<GoCodeGenerator>(form);
             break;
 
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             code_generator = std::make_unique<JuliaCodeGenerator>(form);
             break;
 
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             code_generator = std::make_unique<LuaJITCodeGenerator>(form);
             break;
 
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             code_generator = std::make_unique<TypeScriptCodeGenerator>(form);
             break;
 
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             code_generator = std::make_unique<XrcCodeGenerator>(form);
             break;
 
         default:
-            FAIL_MSG(wxString() << "Unknown language for GenerateForDisplay: " << m_languages);
+            FAIL_MSG(wxString() << "Unknown language for GenerateForDisplay: "
+                                << std::to_underlying(m_languages));
             return false;
     }
 
@@ -405,7 +406,7 @@ void GenResults::Clear()
     // Reset new Phase 1 members
     m_mode = Mode::generate_and_write;
     m_scope = Scope::unknown;
-    m_languages = GEN_LANG_NONE;
+    m_languages = GenLang::none;
     m_target_nodes.clear();
     m_start_node = nullptr;
     m_display_src = nullptr;
@@ -448,11 +449,11 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
     // C++ uses GenerateCppFiles which handles CMake + loops through forms via GenerateCppForm
     // XRC combined mode uses GenerateCombinedXrcFile
 
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         generate_result = GenerateCppFiles(comparison_only);
     }
-    else if (language == GEN_LANG_XRC)
+    else if (language == GenLang::xrc)
     {
         // Handle XRC combined forms mode separately - it requires special handling
         if (Project.as_bool(prop_combine_all_forms))
@@ -572,13 +573,13 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     }
 
     // C++ requires special handling for both header and source files
-    if (m_languages == GEN_LANG_CPLUSPLUS)
+    if (m_languages == GenLang::cplusplus)
     {
         return GenerateCppForm(form, comparison_only);
     }
 
     // XRC doesn't support certain form types
-    if (m_languages == GEN_LANG_XRC)
+    if (m_languages == GenLang::xrc)
     {
         if (form->is_Gen(gen_Images) || form->is_Gen(gen_Data) ||
             form->is_Gen(gen_wxPopupTransientWindow))
@@ -597,41 +598,41 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     std::unique_ptr<BaseCodeGenerator> code_generator;
     switch (m_languages)
     {
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             code_generator = std::make_unique<PythonCodeGenerator>(form);
             break;
 
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             code_generator = std::make_unique<RubyCodeGenerator>(form);
             break;
 
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             code_generator = std::make_unique<FortranCodeGenerator>(form);
             break;
 
-        case GEN_LANG_GO:
+        case GenLang::go:
             code_generator = std::make_unique<GoCodeGenerator>(form);
             break;
 
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             code_generator = std::make_unique<JuliaCodeGenerator>(form);
             break;
 
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             code_generator = std::make_unique<LuaJITCodeGenerator>(form);
             break;
 
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             code_generator = std::make_unique<TypeScriptCodeGenerator>(form);
             break;
 
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             code_generator = std::make_unique<XrcCodeGenerator>(form);
             break;
 
         default:
             FAIL_MSG(wxString() << "GenerateLanguageForm called with unsupported language: "
-                                << m_languages);
+                                << std::to_underlying(m_languages));
             return false;
     }
 
@@ -639,33 +640,33 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     std::string_view file_ext;
     switch (m_languages)
     {
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             file_ext = ".py";
             break;
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             file_ext = ".rb";
             break;
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             file_ext = ".f90";
             break;
-        case GEN_LANG_GO:
+        case GenLang::go:
             file_ext = ".go";
             break;
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             file_ext = ".jl";
             break;
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             file_ext = ".lua";
             break;
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             file_ext = ".ts";
             break;
-        case GEN_LANG_XRC:
+        case GenLang::xrc:
             file_ext = ".xrc";
             break;
         default:
             FAIL_MSG(wxString() << "Unexpected m_languages value in extension switch: "
-                                << m_languages);
+                                << std::to_underlying(m_languages));
             return false;
     }
 
@@ -683,7 +684,7 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
 
     // Generate code into the FileCodeWriter buffer
     // m_languages should be a single language at this point (set in Generate() loop)
-    ASSERT_MSG(m_languages != GEN_LANG_CPLUSPLUS && m_languages != GEN_LANG_NONE,
+    ASSERT_MSG(m_languages != GenLang::cplusplus && m_languages != GenLang::none,
                "GenerateLanguageForm expects a single non-C++ language");
     code_generator->GenerateClass(m_languages);
 
@@ -749,7 +750,7 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
         return false;
     }
 
-    auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+    auto [path, has_base_file] = Project.GetOutputPath(form, GenLang::cplusplus);
     if (!has_base_file)
     {
         return false;  // No output path configured for this form
@@ -784,9 +785,9 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     codegen.SetSrcWriteCode(src_cw.get());
 
     // Generate code into both buffers
-    // m_languages should be GEN_LANG_CPLUSPLUS at this point (set in Generate() loop)
-    ASSERT_MSG(m_languages == GEN_LANG_CPLUSPLUS,
-               "GenerateCppForm expects m_languages to be GEN_LANG_CPLUSPLUS");
+    // m_languages should be GenLang::cplusplus at this point (set in Generate() loop)
+    ASSERT_MSG(m_languages == GenLang::cplusplus,
+               "GenerateCppForm expects m_languages to be GenLang::cplusplus");
     codegen.GenerateClass(m_languages, PANEL_PAGE::NOT_PANEL, progress);
 
     bool any_updated = false;
@@ -1019,7 +1020,7 @@ void GenResults::RemoveFormsWithoutOutputPath(std::vector<Node*>& forms)
 auto GenResults::GenerateCombinedFile(GenLang language) -> bool
 {
     // Validate: must be exactly one language (not multiple bits set)
-    auto lang_bits = static_cast<std::uint16_t>(language);
+    auto lang_bits = static_cast<unsigned int>(language);
     if (lang_bits == 0 || (lang_bits & (lang_bits - 1)) != 0)
     {
         FAIL_MSG("GenerateCombinedFile called with no language or multiple languages specified");
@@ -1027,10 +1028,10 @@ auto GenResults::GenerateCombinedFile(GenLang language) -> bool
     }
 
     // Currently only XRC is supported for combined file generation
-    if (language != GEN_LANG_XRC)
+    if (language != GenLang::xrc)
     {
         // Future: Add support for Python, Ruby, Perl
-        FAIL_MSG("GenerateCombinedFile currently only supports GEN_LANG_XRC");
+        FAIL_MSG("GenerateCombinedFile currently only supports GenLang::xrc");
         return false;
     }
 

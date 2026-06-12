@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ProjectHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -23,16 +23,46 @@ namespace pugi
 
 class ImportXML;
 
-enum : std::uint8_t
+enum class GenOutput
 {
-    OUTPUT_NONE = 0,
-    OUTPUT_CPLUS = 1 << 0,
-    OUTPUT_DERIVED = 1 << 1,
-    OUTPUT_PYTHON = 1 << 2,
-    OUTPUT_RUBY = 1 << 3,
-    OUTPUT_XRC = 1 << 4,
-    OUTPUT_PERL = 1 << 5,
+    none = 0,
+    cplusplus = 1 << 0,
+    python = 1 << 1,
+    ruby = 1 << 2,
+
+    // These 5 are the kwx languages (kwxFortran, kwxGO, etc.)
+    fortran = 1 << 3,
+    go = 1 << 4,
+    julia = 1 << 5,
+    luajit = 1 << 6,
+    typescript = 1 << 7,
+
+    // Not a language — set when a C++ derived class file needs to be generated
+    derived = 1 << 8,
+
+    xrc = 1 << 9,
+
+    reserved1 = 1 << 10,  // Reserved for future use
+
 };
+
+constexpr GenOutput operator|(GenOutput out_a, GenOutput out_b)
+{
+    return static_cast<GenOutput>(std::to_underlying(out_a) | std::to_underlying(out_b));
+}
+constexpr unsigned int operator&(GenOutput out_a, GenOutput out_b)
+{
+    return std::to_underlying(out_a) & std::to_underlying(out_b);
+}
+constexpr GenOutput& operator|=(GenOutput& out_a, GenOutput out_b)
+{
+    return out_a = out_a | out_b;
+}
+constexpr GenOutput& operator&=(GenOutput& out_a, GenOutput out_b)
+{
+    out_a = static_cast<GenOutput>(std::to_underlying(out_a) & std::to_underlying(out_b));
+    return out_a;
+}
 
 enum : std::uint8_t
 {
@@ -79,9 +109,9 @@ public:
 
     // Get a bit flag indicating which output types are enabled.
     //
-    // OUTPUT_DERIVED is only set if the file is specified and does *not* exist.
+    // GenOutput::derived is only set if the file is specified and does *not* exist.
     // Uses an in-memory cache (m_derived_file_exists) to avoid repeated disk I/O.
-    [[nodiscard]] size_t get_OutputType(int flags = OUT_FLAG_NONE) const;
+    [[nodiscard]] GenOutput get_OutputType(int flags = OUT_FLAG_NONE) const;
 
     // Populate the derived file existence cache. Call after LoadProject or when the entire
     // cache needs to be rebuilt (e.g., derived_directory changed).
@@ -108,16 +138,16 @@ public:
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
-    wxue::string get_BaseDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
+    wxue::string get_BaseDirectory(Node* node, GenLang language = GenLang::cplusplus) const;
 
     // Returns the absolute path to the output file for this node. If no output filename is
     // specified, first will still contain a path with no filename, and second will be false.
     std::pair<wxue::string, bool> GetOutputPath(Node* form,
-                                                GenLang language = GEN_LANG_CPLUSPLUS) const;
+                                                GenLang language = GenLang::cplusplus) const;
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project derived directory is returned.
-    std::string get_DerivedDirectory(Node* node, GenLang language = GEN_LANG_CPLUSPLUS) const;
+    std::string get_DerivedDirectory(Node* node, GenLang language = GenLang::cplusplus) const;
 
     // Returns the full path to the derived filename or an empty string if no derived file
     // was specified.
@@ -159,13 +189,13 @@ public:
 
     [[nodiscard]] size_t get_ChildCount() const { return m_project_node->get_ChildCount(); }
 
-    // Returns a GEN_LANG_... enum value. Specify a node if you want to check for a folder
+    // Returns a GenLang::... enum value. Specify a node if you want to check for a folder
     // override of the language.
     GenLang get_CodePreference(Node* node = nullptr) const;
 
     // Returns all of the languages that are enabled for this project. The project's Code
     // Preference is always included.
-    [[nodiscard]] size_t get_GenerateLanguages() const;
+    [[nodiscard]] GenLang get_GenerateLanguages() const;
 
     // Assume major, minor, and patch have 99 possible values.
     // Returns major * 10000 + minor * 100 + patch
@@ -251,7 +281,7 @@ public:
     // Sets project property value only if the property exists, returns false if it doesn't
     // exist.
     template <typename T>
-    auto set_value(PropName name, T value) -> bool
+    bool set_value(PropName name, T value)
     {
         if (auto* prop = m_project_node->get_PropPtr(name); prop)
         {

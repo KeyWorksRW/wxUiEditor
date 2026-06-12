@@ -17,7 +17,7 @@ public:
     CppCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(GenLang language = GEN_LANG_CPLUSPLUS,
+    void GenerateClass(GenLang language = GenLang::cplusplus,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

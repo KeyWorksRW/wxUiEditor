@@ -287,7 +287,7 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
         // this should be changed to call the generator to determine if the control is
         // supported by the current language.
 
-        if (Project.get_CodePreference() == GEN_LANG_PYTHON)
+        if (Project.get_CodePreference() == GenLang::python)
         {
             const GenName gen_name = iter->second->get_GenName();
             if (std::ranges::any_of(unsupported_gen_python,
@@ -300,7 +300,7 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
                                             wxICON_INFORMATION);
             }
         }
-        if (Project.get_CodePreference() == GEN_LANG_RUBY)
+        if (Project.get_CodePreference() == GenLang::ruby)
         {
             const GenName gen_name = iter->second->get_GenName();
             if (std::ranges::any_of(unsupported_gen_ruby,

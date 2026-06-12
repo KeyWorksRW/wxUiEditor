@@ -35,21 +35,21 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
     {
         if (language == "XRC")
         {
-            m_language = GEN_LANG_XRC;
+            m_language = GenLang::xrc;
         }
         else if (language == "python")
         {
-            m_language = GEN_LANG_PYTHON;
+            m_language = GenLang::python;
         }
         else if (language == "C++")
         {
-            m_language = GEN_LANG_CPLUSPLUS;
+            m_language = GenLang::cplusplus;
         }
     }
     else
     {
         // We don't support Perl or Lisp
-        m_language = GEN_LANG_CPLUSPLUS;
+        m_language = GenLang::cplusplus;
     }
 
     // Using a try block means that if at any point it becomes obvious the project file is invalid
@@ -94,17 +94,17 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
                     {
                         switch (m_language)
                         {
-                            case GEN_LANG_CPLUSPLUS:
+                            case GenLang::cplusplus:
                                 new_node->set_value(prop_base_file,
                                                     new_node->as_string(prop_class_name));
                                 break;
 
-                            case GEN_LANG_PYTHON:
+                            case GenLang::python:
                                 new_node->set_value(prop_python_file,
                                                     new_node->as_string(prop_class_name));
                                 break;
 
-                            case GEN_LANG_XRC:
+                            case GenLang::xrc:
                                 new_node->set_value(prop_xrc_file,
                                                     new_node->as_string(prop_class_name));
                                 break;
@@ -113,7 +113,7 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
                 }
                 else
                 {
-                    if (m_language == GEN_LANG_PYTHON)
+                    if (m_language == GenLang::python)
                     {
                         m_project->set_value(prop_python_combine_forms, true);
                         wxString combined_filename = root.attribute("path").as_cstr();
@@ -142,12 +142,12 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
 
             if (m_project->get_ChildCount() > 1)
             {
-                if (m_language == GEN_LANG_PYTHON)
+                if (m_language == GenLang::python)
                 {
                     m_project->set_value(prop_python_combine_forms, true);
                     m_project->set_value(prop_python_combined_file, combined_filename);
                 }
-                else if (m_language == GEN_LANG_XRC)
+                else if (m_language == GenLang::xrc)
                 {
                     m_project->set_value(prop_combine_all_forms, true);
                     m_project->set_value(prop_combined_xrc_file, combined_filename);
@@ -155,11 +155,11 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
             }
             else
             {
-                if (m_language == GEN_LANG_PYTHON)
+                if (m_language == GenLang::python)
                 {
                     m_project->get_Child(0)->set_value(prop_python_file, combined_filename);
                 }
-                else if (m_language == GEN_LANG_XRC)
+                else if (m_language == GenLang::xrc)
                 {
                     m_project->get_Child(0)->set_value(prop_xrc_file, combined_filename);
                 }
@@ -619,11 +619,11 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     if (node_name == "extracode_post")
     {
-        if (m_language == GEN_LANG_PYTHON)
+        if (m_language == GenLang::python)
         {
             node->set_value(prop_python_insert, xml_obj.text().as_view());
         }
-        else if (m_language == GEN_LANG_CPLUSPLUS)
+        else if (m_language == GenLang::cplusplus)
         {
             node->set_value(prop_source_preamble, xml_obj.text().as_view());
         }
@@ -670,12 +670,12 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         // wxGlade specifies the construction code on the right side of the = sign, so we need to
         // insert what should be on the left side.
         std::string construction;
-        if (m_language == GEN_LANG_PYTHON)
+        if (m_language == GenLang::python)
         {
             construction = "self." + node->as_string(prop_var_name) + " = ";
             construction += xml_obj.text().as_view();
         }
-        else if (m_language == GEN_LANG_CPLUSPLUS)
+        else if (m_language == GenLang::cplusplus)
         {
             construction = node->as_string(prop_var_name) + " = ";
             construction += xml_obj.text().as_view();
@@ -776,7 +776,7 @@ auto WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent) -> void
                 else if (iter.name() == "id")
                 {
                     wxString id_value = iter.text().as_cstr();
-                    if (m_language == GEN_LANG_PYTHON)
+                    if (m_language == GenLang::python)
                     {
                         id_value.Replace(".", "");
                     }
@@ -840,7 +840,7 @@ auto WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent) -> void
             else if (iter.name() == "id")
             {
                 wxString id_value = iter.text().as_cstr();
-                if (m_language == GEN_LANG_PYTHON)
+                if (m_language == GenLang::python)
                 {
                     id_value.Replace(".", "");
                 }

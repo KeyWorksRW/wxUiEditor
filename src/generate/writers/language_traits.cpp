@@ -24,7 +24,7 @@ namespace
 
 constexpr LanguageTraits cpp_traits
 {
-    .language = GEN_LANG_CPLUSPLUS,
+    .language = GenLang::cplusplus,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nullptr",
@@ -62,7 +62,7 @@ constexpr LanguageTraits cpp_traits
 
 constexpr LanguageTraits python_traits
 {
-    .language = GEN_LANG_PYTHON,
+    .language = GenLang::python,
     .true_literal = "True",
     .false_literal = "False",
     .null_literal = "None",
@@ -98,7 +98,7 @@ constexpr LanguageTraits python_traits
 
 constexpr LanguageTraits ruby_traits
 {
-    .language = GEN_LANG_RUBY,
+    .language = GenLang::ruby,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nil",
@@ -138,7 +138,7 @@ constexpr LanguageTraits ruby_traits
 
 constexpr LanguageTraits fortran_traits
 {
-    .language = GEN_LANG_FORTRAN,
+    .language = GenLang::fortran,
     .true_literal = ".TRUE.",
     .false_literal = ".FALSE.",
     .null_literal = "C_NULL_PTR",
@@ -174,7 +174,7 @@ constexpr LanguageTraits fortran_traits
 
 constexpr LanguageTraits go_traits
 {
-    .language = GEN_LANG_GO,
+    .language = GenLang::go,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nil",
@@ -210,7 +210,7 @@ constexpr LanguageTraits go_traits
 
 constexpr LanguageTraits julia_traits
 {
-    .language = GEN_LANG_JULIA,
+    .language = GenLang::julia,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nothing",
@@ -246,7 +246,7 @@ constexpr LanguageTraits julia_traits
 
 constexpr LanguageTraits luajit_traits
 {
-    .language = GEN_LANG_LUAJIT,
+    .language = GenLang::luajit,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "nil",
@@ -282,7 +282,7 @@ constexpr LanguageTraits luajit_traits
 
 constexpr LanguageTraits typescript_traits
 {
-    .language = GEN_LANG_TYPESCRIPT,
+    .language = GenLang::typescript,
     .true_literal = "true",
     .false_literal = "false",
     .null_literal = "null",
@@ -324,23 +324,23 @@ auto GetLanguageTraits(GenLang language) -> const LanguageTraits*
 {
     switch (language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             return &cpp_traits;
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             return &python_traits;
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             return &ruby_traits;
 
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             return &fortran_traits;
-        case GEN_LANG_GO:
+        case GenLang::go:
             return &go_traits;
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             return &julia_traits;
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             return &luajit_traits;
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             return &typescript_traits;
 
         default:
@@ -352,28 +352,28 @@ auto CreateLanguageStrategy(GenLang language) -> std::unique_ptr<LanguageStrateg
 {
     switch (language)
     {
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             return std::make_unique<CppStrategy>(cpp_traits);
 
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             return std::make_unique<PythonStrategy>(python_traits);
 
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             return std::make_unique<RubyStrategy>(ruby_traits);
 
-        case GEN_LANG_FORTRAN:
+        case GenLang::fortran:
             return std::make_unique<FortranStrategy>(fortran_traits);
 
-        case GEN_LANG_GO:
+        case GenLang::go:
             return std::make_unique<GoStrategy>(go_traits);
 
-        case GEN_LANG_JULIA:
+        case GenLang::julia:
             return std::make_unique<JuliaStrategy>(julia_traits);
 
-        case GEN_LANG_LUAJIT:
+        case GenLang::luajit:
             return std::make_unique<LuaJITStrategy>(luajit_traits);
 
-        case GEN_LANG_TYPESCRIPT:
+        case GenLang::typescript:
             return std::make_unique<TypeScriptStrategy>(typescript_traits);
 
         default:

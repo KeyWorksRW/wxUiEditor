@@ -41,24 +41,24 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     m_ruby_page(EVENT_PAGE_RUBY), m_gen_languages(Project.get_GenerateLanguages()),
     m_code_preference(Project.get_CodePreference(event->getNode()))
 {
-    m_is_cpp_enabled = (m_gen_languages & GEN_LANG_CPLUSPLUS);
-    m_is_python_enabled = (m_gen_languages & GEN_LANG_PYTHON);
-    m_is_ruby_enabled = (m_gen_languages & GEN_LANG_RUBY);
-    m_is_fortran_enabled = (m_gen_languages & GEN_LANG_FORTRAN);
-    m_is_go_enabled = (m_gen_languages & GEN_LANG_GO);
-    m_is_julia_enabled = (m_gen_languages & GEN_LANG_JULIA);
-    m_is_luajit_enabled = (m_gen_languages & GEN_LANG_LUAJIT);
-    m_is_typescript_enabled = (m_gen_languages & GEN_LANG_TYPESCRIPT);
+    m_is_cpp_enabled = (m_gen_languages & GenLang::cplusplus);
+    m_is_python_enabled = (m_gen_languages & GenLang::python);
+    m_is_ruby_enabled = (m_gen_languages & GenLang::ruby);
+    m_is_fortran_enabled = (m_gen_languages & GenLang::fortran);
+    m_is_go_enabled = (m_gen_languages & GenLang::go);
+    m_is_julia_enabled = (m_gen_languages & GenLang::julia);
+    m_is_luajit_enabled = (m_gen_languages & GenLang::luajit);
+    m_is_typescript_enabled = (m_gen_languages & GenLang::typescript);
 
     m_value = event->get_value().wx();
     if (m_is_cpp_enabled)
     {
-        SetStcColors(m_cpp_stc_lambda, GEN_LANG_CPLUSPLUS);
+        SetStcColors(m_cpp_stc_lambda, GenLang::cplusplus);
     }
 
     if (m_is_ruby_enabled)
     {
-        SetStcColors(m_ruby_stc_lambda, GEN_LANG_RUBY);
+        SetStcColors(m_ruby_stc_lambda, GenLang::ruby);
     }
 
     Node* form = event->getNode()->get_Form();
@@ -123,37 +123,37 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
         }
     }
 
-    if (m_code_preference == GEN_LANG_CPLUSPLUS)
+    if (m_code_preference == GenLang::cplusplus)
     {
         m_notebook->SetSelection(EVENT_PAGE_CPP);
     }
 
-    else if (m_code_preference == GEN_LANG_PYTHON)
+    else if (m_code_preference == GenLang::python)
     {
         m_notebook->SetSelection(m_python_page);
     }
-    else if (m_code_preference == GEN_LANG_RUBY)
+    else if (m_code_preference == GenLang::ruby)
     {
         m_notebook->SetSelection(m_ruby_page);
     }
 
-    else if (m_code_preference == GEN_LANG_FORTRAN)
+    else if (m_code_preference == GenLang::fortran)
     {
         m_notebook->SetSelection(EVENT_PAGE_FORTRAN);
     }
-    else if (m_code_preference == GEN_LANG_GO)
+    else if (m_code_preference == GenLang::go)
     {
         m_notebook->SetSelection(EVENT_PAGE_GO);
     }
-    else if (m_code_preference == GEN_LANG_JULIA)
+    else if (m_code_preference == GenLang::julia)
     {
         m_notebook->SetSelection(EVENT_PAGE_JULIA);
     }
-    else if (m_code_preference == GEN_LANG_LUAJIT)
+    else if (m_code_preference == GenLang::luajit)
     {
         m_notebook->SetSelection(EVENT_PAGE_LUA);
     }
-    else if (m_code_preference == GEN_LANG_TYPESCRIPT)
+    else if (m_code_preference == GenLang::typescript)
     {
         m_notebook->SetSelection(EVENT_PAGE_TYPESCRIPT);
     }
@@ -540,18 +540,18 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
 void EventHandlerDlg::FormatBindText()
 {
     const int page = m_notebook->GetSelection();
-    GenLang language = GEN_LANG_CPLUSPLUS;
+    GenLang language = GenLang::cplusplus;
     if (m_is_cpp_enabled && page == EVENT_PAGE_CPP)
     {
-        language = GEN_LANG_CPLUSPLUS;
+        language = GenLang::cplusplus;
     }
     else if (m_is_python_enabled && page == m_python_page)
     {
-        language = GEN_LANG_PYTHON;
+        language = GenLang::python;
     }
     else if (m_is_ruby_enabled && page == m_ruby_page)
     {
-        language = GEN_LANG_RUBY;
+        language = GenLang::ruby;
     }
     else
     {
@@ -560,7 +560,7 @@ void EventHandlerDlg::FormatBindText()
 
     Code handler(m_event->getNode(), language);
 
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         if (m_cpp_radio_use_function->GetValue())
         {
@@ -594,7 +594,7 @@ void EventHandlerDlg::FormatBindText()
             handler += ") { body }";
         }
     }
-    else if (language == GEN_LANG_PYTHON)
+    else if (language == GenLang::python)
     {
         if (m_py_radio_use_function->GetValue())
         {
@@ -608,7 +608,7 @@ void EventHandlerDlg::FormatBindText()
             handler += "body";
         }
     }
-    else if (language == GEN_LANG_RUBY)
+    else if (language == GenLang::ruby)
     {
         wxue::string event_name = m_event->get_name();
         // remove "wx" prefix, make the rest of the name lower case

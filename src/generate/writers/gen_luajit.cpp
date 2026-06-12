@@ -20,7 +20,7 @@ using namespace code;
 using namespace GenEnum;
 
 LuaJITCodeGenerator::LuaJITCodeGenerator(Node* form_node) :
-    BaseCodeGenerator(GEN_LANG_LUAJIT, form_node)
+    BaseCodeGenerator(GenLang::luajit, form_node)
 {
 }
 
@@ -29,7 +29,7 @@ void LuaJITCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 {
     m_language = language;
     m_panel_type = panel_type;
-    ASSERT(m_language == GEN_LANG_LUAJIT);
+    ASSERT(m_language == GenLang::luajit);
     Code code(m_form_node, m_language);
 
     if (m_header)

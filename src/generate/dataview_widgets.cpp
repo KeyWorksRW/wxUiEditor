@@ -207,7 +207,7 @@ void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& han
 
 std::pair<bool, wxue::string> DataViewCtrl::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
     {
         return { true, {} };
     }
@@ -220,7 +220,7 @@ std::optional<wxue::string> DataViewCtrl::GetWarning(Node* node, GenLang languag
 {
     switch (language)
     {
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
@@ -366,7 +366,7 @@ void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 std::pair<bool, wxue::string> DataViewListCtrl::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
     {
         return { true, {} };
     }
@@ -379,7 +379,7 @@ std::optional<wxue::string> DataViewListCtrl::GetWarning(Node* node, GenLang lan
 {
     switch (language)
     {
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
@@ -426,7 +426,7 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 std::pair<bool, wxue::string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
     {
         return { true, {} };
     }
@@ -439,7 +439,7 @@ std::optional<wxue::string> DataViewTreeCtrl::GetWarning(Node* node, GenLang lan
 {
     switch (language)
     {
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             if (!wxGetApp().isCoverageTesting())
             {
                 wxue::string msg;
@@ -525,7 +525,7 @@ bool DataViewColumn::ConstructionCode(Code& code)
 
 std::pair<bool, wxue::string> DataViewColumn::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
     {
         return { true, {} };
     };
@@ -538,7 +538,7 @@ std::optional<wxue::string> DataViewColumn::GetWarning(Node* node, GenLang langu
 {
     switch (language)
     {
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             {
                 wxue::string msg;
                 if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))
@@ -588,7 +588,7 @@ bool DataViewListColumn::ConstructionCode(Code& code)
 
 std::pair<bool, wxue::string> DataViewListColumn::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GEN_LANG_NONE || (language & (GEN_LANG_CPLUSPLUS | GEN_LANG_PYTHON)))
+    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
     {
         return { true, {} };
     }
@@ -601,7 +601,7 @@ std::optional<wxue::string> DataViewListColumn::GetWarning(Node* node, GenLang l
 {
     switch (language)
     {
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             {
                 wxue::string msg;
                 if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))

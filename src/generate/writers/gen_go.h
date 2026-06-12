@@ -14,7 +14,7 @@ class GoCodeGenerator : public BaseCodeGenerator
 public:
     GoCodeGenerator(Node* form_node);
 
-    void GenerateClass(GenLang language = GEN_LANG_GO,
+    void GenerateClass(GenLang language = GenLang::go,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

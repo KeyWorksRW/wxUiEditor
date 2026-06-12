@@ -96,7 +96,7 @@ auto TextDocGenerator::GetIncludes([[maybe_unused]] Node* node, std::set<std::st
                                    [[maybe_unused]] std::set<std::string>& set_hdr,
                                    GenLang language) -> bool
 {
-    if (language == GEN_LANG_CPLUSPLUS)
+    if (language == GenLang::cplusplus)
     {
         set_src.insert("#include <iostream");
         return true;

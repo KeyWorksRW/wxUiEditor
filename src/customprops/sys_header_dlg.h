@@ -73,7 +73,7 @@ private:
 
     NodeProperty* m_prop { nullptr };
 
-    int m_language = GEN_LANG_CPLUSPLUS;
+    int m_language = std::to_underlying(GenLang::cplusplus);
 
     wxFileHistory m_FileHistory;
 };

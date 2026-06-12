@@ -19,11 +19,11 @@
 
 wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    if (Project.get_CodePreference() == GEN_LANG_RUBY ||
-        Project.get_CodePreference() == GEN_LANG_XRC)
+    if (Project.get_CodePreference() == GenLang::ruby ||
+        Project.get_CodePreference() == GenLang::xrc)
     {
         wxString msg = "wxWebView not available in ";
-        if (Project.get_CodePreference() == GEN_LANG_RUBY)
+        if (Project.get_CodePreference() == GenLang::ruby)
         {
             msg += "wxRuby3";
         }
@@ -97,7 +97,7 @@ std::optional<wxue::string> WebViewGenerator::GetWarning(Node* node, GenLang lan
 {
     switch (language)
     {
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             {
                 wxue::string msg;
                 if (auto* form = node->get_Form(); form && form->HasValue(prop_class_name))

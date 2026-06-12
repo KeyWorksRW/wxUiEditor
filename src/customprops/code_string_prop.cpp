@@ -34,7 +34,7 @@ EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeD
 {
     SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
     m_value = prop->as_wxString();
-    SetStcColors(m_stc, GEN_LANG_CPLUSPLUS);
+    SetStcColors(m_stc, GenLang::cplusplus);
 };
 
 void EditCodeDialog::OnInit(wxInitDialogEvent& /* event unused */)

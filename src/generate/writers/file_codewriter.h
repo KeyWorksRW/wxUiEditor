@@ -108,7 +108,7 @@ private:
     Node* m_node { nullptr };
 
     // Shared state between helper methods
-    GenLang m_language { GEN_LANG_NONE };
+    GenLang m_language { GenLang::none };
     int m_flags { 0 };
     bool m_file_exists { false };
     size_t m_block_length { 0 };

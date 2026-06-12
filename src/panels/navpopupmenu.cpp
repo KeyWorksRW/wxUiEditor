@@ -333,13 +333,13 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 
         case std::to_underlying(Menu::SingleGenPython):
             {
-                OnGenerateSingleLanguage(GEN_LANG_PYTHON);
+                OnGenerateSingleLanguage(GenLang::python);
             }
             break;
 
         case std::to_underlying(Menu::SingleGenRuby):
             {
-                OnGenerateSingleLanguage(GEN_LANG_RUBY);
+                OnGenerateSingleLanguage(GenLang::ruby);
             }
             break;
 

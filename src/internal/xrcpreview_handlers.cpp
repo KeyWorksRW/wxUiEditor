@@ -57,7 +57,7 @@ extern const char* g_xrc_keywords;
 
 void XrcPreview::OnInit(wxInitDialogEvent& event)
 {
-    SetStcColors(m_scintilla, GEN_LANG_XRC, false, true);
+    SetStcColors(m_scintilla, GenLang::xrc, false, true);
 
     m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
 

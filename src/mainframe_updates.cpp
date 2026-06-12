@@ -108,15 +108,15 @@ auto MainFrame::UpdateLanguagePanels() -> void
         }
     };
 
-    manage_panel(GEN_LANG_CPLUSPLUS, m_cppPanel, "C++");
-    manage_panel(GEN_LANG_PYTHON, m_pythonPanel, "Python");
-    manage_panel(GEN_LANG_RUBY, m_rubyPanel, "Ruby");
-    manage_panel(GEN_LANG_FORTRAN, m_fortranPanel, "Fortran");
-    manage_panel(GEN_LANG_GO, m_goPanel, "Go");
-    manage_panel(GEN_LANG_JULIA, m_juliaPanel, "Julia");
-    manage_panel(GEN_LANG_LUAJIT, m_luajitPanel, "LuaJIT");
-    manage_panel(GEN_LANG_TYPESCRIPT, m_typescriptPanel, "TypeScript");
-    manage_panel(GEN_LANG_XRC, m_xrcPanel, "XRC");
+    manage_panel(GenLang::cplusplus, m_cppPanel, "C++");
+    manage_panel(GenLang::python, m_pythonPanel, "Python");
+    manage_panel(GenLang::ruby, m_rubyPanel, "Ruby");
+    manage_panel(GenLang::fortran, m_fortranPanel, "Fortran");
+    manage_panel(GenLang::go, m_goPanel, "Go");
+    manage_panel(GenLang::julia, m_juliaPanel, "Julia");
+    manage_panel(GenLang::luajit, m_luajitPanel, "LuaJIT");
+    manage_panel(GenLang::typescript, m_typescriptPanel, "TypeScript");
+    manage_panel(GenLang::xrc, m_xrcPanel, "XRC");
 
     // Ensure the preferred language panel sits at notebook position 1.
     struct LangInfo
@@ -127,15 +127,15 @@ auto MainFrame::UpdateLanguagePanels() -> void
     };
     const auto preferred = Project.get_CodePreference();
     const std::array lang_info = {
-        LangInfo { .flag = GEN_LANG_CPLUSPLUS, .panel = m_cppPanel, .label = "C++" },
-        LangInfo { .flag = GEN_LANG_PYTHON, .panel = m_pythonPanel, .label = "Python" },
-        LangInfo { .flag = GEN_LANG_RUBY, .panel = m_rubyPanel, .label = "Ruby" },
-        LangInfo { .flag = GEN_LANG_FORTRAN, .panel = m_fortranPanel, .label = "Fortran" },
-        LangInfo { .flag = GEN_LANG_GO, .panel = m_goPanel, .label = "GO" },
-        LangInfo { .flag = GEN_LANG_JULIA, .panel = m_juliaPanel, .label = "Julia" },
-        LangInfo { .flag = GEN_LANG_LUAJIT, .panel = m_luajitPanel, .label = "LuaJIT" },
-        LangInfo { .flag = GEN_LANG_TYPESCRIPT, .panel = m_typescriptPanel, .label = "TypeScript" },
-        LangInfo { .flag = GEN_LANG_XRC, .panel = m_xrcPanel, .label = "XRC" },
+        LangInfo { .flag = GenLang::cplusplus, .panel = m_cppPanel, .label = "C++" },
+        LangInfo { .flag = GenLang::python, .panel = m_pythonPanel, .label = "Python" },
+        LangInfo { .flag = GenLang::ruby, .panel = m_rubyPanel, .label = "Ruby" },
+        LangInfo { .flag = GenLang::fortran, .panel = m_fortranPanel, .label = "Fortran" },
+        LangInfo { .flag = GenLang::go, .panel = m_goPanel, .label = "GO" },
+        LangInfo { .flag = GenLang::julia, .panel = m_juliaPanel, .label = "Julia" },
+        LangInfo { .flag = GenLang::luajit, .panel = m_luajitPanel, .label = "LuaJIT" },
+        LangInfo { .flag = GenLang::typescript, .panel = m_typescriptPanel, .label = "TypeScript" },
+        LangInfo { .flag = GenLang::xrc, .panel = m_xrcPanel, .label = "XRC" },
     };
     for (const auto& [flag, panel, label]: lang_info)
     {

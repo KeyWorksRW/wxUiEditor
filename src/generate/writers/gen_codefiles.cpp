@@ -105,7 +105,7 @@ auto GenInheritedClass(GenResults& results) -> void
             {
                 flags |= flag_add_closing_brace;
             }
-            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+            retval = h_cw->WriteFile(GenLang::cplusplus, flags);
             if (retval == result::fail)
             {
                 results.GetMsgs().emplace_back(
@@ -140,7 +140,7 @@ auto GenInheritedClass(GenResults& results) -> void
                 flags |= flag_add_closing_brace;
             }
 
-            retval = h_cw->WriteFile(GEN_LANG_CPLUSPLUS, flags);
+            retval = h_cw->WriteFile(GenLang::cplusplus, flags);
         }
 
         if (retval == result::fail)
@@ -158,7 +158,7 @@ auto GenInheritedClass(GenResults& results) -> void
         }
 
         path.replace_extension(source_ext);
-        retval = cpp_cw->WriteFile(GEN_LANG_CPLUSPLUS, flag_no_ui);
+        retval = cpp_cw->WriteFile(GenLang::cplusplus, flag_no_ui);
         if (retval == result::fail)
         {
             results.GetMsgs().emplace_back(

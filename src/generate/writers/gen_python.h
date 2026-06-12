@@ -13,7 +13,7 @@ public:
     PythonCodeGenerator(Node* form_node);
 
     // All language generators must implement this method.
-    void GenerateClass(GenLang language = GEN_LANG_PYTHON,
+    void GenerateClass(GenLang language = GenLang::python,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 

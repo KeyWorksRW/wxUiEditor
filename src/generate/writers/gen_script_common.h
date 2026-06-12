@@ -19,7 +19,7 @@ class Code;
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
-enum GenLang : std::uint16_t;
+enum class GenLang : unsigned int;
 
 namespace ScriptCommon
 {

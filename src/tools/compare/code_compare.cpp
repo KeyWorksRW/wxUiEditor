@@ -42,15 +42,15 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
     wxCommandEvent dummy;
     switch (language)
     {
-        case GEN_LANG_PYTHON:
+        case GenLang::python:
             m_radio_python->SetValue(true);
             break;
 
-        case GEN_LANG_RUBY:
+        case GenLang::ruby:
             m_radio_ruby->SetValue(true);
             break;
 
-        case GEN_LANG_CPLUSPLUS:
+        case GenLang::cplusplus:
             m_radio_cplusplus->SetValue(true);
             break;
 
@@ -66,7 +66,7 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
                 // The dialog has not been shown yet, so we displaying a user message box won't
                 // make sense. Instead, default to C++ generation.
                 m_radio_cplusplus->SetValue(true);
-                language = GEN_LANG_CPLUSPLUS;
+                language = GenLang::cplusplus;
             }
             break;
     }
@@ -159,17 +159,17 @@ void CodeCompare::OnRadioButton(GenLang language)
 
 void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
 {
-    OnRadioButton(GEN_LANG_CPLUSPLUS);
+    OnRadioButton(GenLang::cplusplus);
 }
 
 void CodeCompare::OnPython(wxCommandEvent& /* event */)
 {
-    OnRadioButton(GEN_LANG_PYTHON);
+    OnRadioButton(GenLang::python);
 }
 
 void CodeCompare::OnRuby(wxCommandEvent& /* event unused */)
 {
-    OnRadioButton(GEN_LANG_RUBY);
+    OnRadioButton(GenLang::ruby);
 }
 
 void CodeCompare::OnPerl(wxCommandEvent& /* event */)
@@ -180,7 +180,7 @@ void CodeCompare::OnPerl(wxCommandEvent& /* event */)
 
 void CodeCompare::OnXRC(wxCommandEvent& /* event */)
 {
-    OnRadioButton(GEN_LANG_XRC);
+    OnRadioButton(GenLang::xrc);
 }
 
 void CodeCompare::OnDiff(wxCommandEvent& /* event unused */)

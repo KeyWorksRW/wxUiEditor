@@ -480,16 +480,17 @@ namespace
     {
         switch (language)
         {
-            case GEN_LANG_CPLUSPLUS:
+            case GenLang::cplusplus:
                 return EventHandlerDlg::GetCppValue(value);
-            case GEN_LANG_PYTHON:
+            case GenLang::python:
                 return EventHandlerDlg::GetPythonValue(value);
-            case GEN_LANG_RUBY:
+            case GenLang::ruby:
                 return EventHandlerDlg::GetRubyValue(value);
 
             default:
-                FAIL_MSG(wxue::string() << "No event handlers for " << GenLangToString(language)
-                                        << " (" << language << ")");
+                FAIL_MSG(wxue::string()
+                         << "No event handlers for " << GenLangToString(language) << " ("
+                         << static_cast<int>(std::to_underlying(language)) << ")");
                 return EventHandlerDlg::GetCppValue(value);
         }
     }
@@ -610,7 +611,7 @@ namespace
     {
         const auto& event_name = event->get_name();
         const auto is_script_lang =
-            (code.get_language() == GEN_LANG_PYTHON || code.get_language() == GEN_LANG_RUBY);
+            (code.get_language() == GenLang::python || code.get_language() == GenLang::ruby);
 
         if (is_script_lang)
         {

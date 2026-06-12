@@ -168,7 +168,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
                 }
             }
 
-            auto [path, has_base_file] = Project.GetOutputPath(form, GEN_LANG_CPLUSPLUS);
+            auto [path, has_base_file] = Project.GetOutputPath(form, GenLang::cplusplus);
             if (!has_base_file)
             {
                 // No file was specified. It's unlikely this would actually happen given the

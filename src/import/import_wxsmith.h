@@ -19,7 +19,7 @@ public:
     auto Import(const std::string& filename, bool write_doc = true) -> bool override;
 
     // wxSmith only supports C++ code generation
-    auto GetLanguage() const -> int override { return GEN_LANG_CPLUSPLUS; }
+    auto GetLanguage() const -> GenLang override { return GenLang::cplusplus; }
 
     auto HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
                                Node* /* parent */) -> bool override;

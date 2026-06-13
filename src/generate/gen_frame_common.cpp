@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDocParent common generator functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2025-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,234 +15,224 @@
 
 using namespace FrameCommon;
 
-namespace
+static void ConstructionCodeCpp(Code& code, FrameType frame_type)
 {
-    void ConstructionCodeCpp(Code& code, int frame_type)
+    code.Str("bool ").as_string(prop_class_name).Str("::Create(");
+
+    // Note that with the exception of wxAui, all the MDI type windows require a wxFrame as the
+    // parent, not a wxWindow.
+    if (frame_type == FrameType::frame_sdi_doc || frame_type == FrameType::frame_mdi_doc)
     {
-        code.Str("bool ").as_string(prop_class_name).Str("::Create(");
-
-        // Note that with the exception of wxAui, all the MDI type windows require a wxFrame as the
-        // parent, not a wxWindow.
-        if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
-        {
-            code.Str("wxDocManager* manager, wxFrame* parent").Comma();
-        }
-        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
-        {
-            code.Str("wxDocManager* manager, wxView* view, wxFrame* parent").Comma();
-        }
-        else
-        {
-            code.Str("wxWindow* parent").Comma();
-        }
-        code += "wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
-                "long style, const wxString &name)";
-        code.OpenBrace();
-
-        if (code.HasValue(prop_extra_style))
-        {
-            code.Eol(eol_if_needed)
-                .FormFunction("SetExtraStyle(GetExtraStyle() | ")
-                .Add(prop_extra_style);
-            code.EndFunction();
-        }
+        code.Str("wxDocManager* manager, wxFrame* parent").Comma();
     }
-
-    void ConstructionCodePython(Code& code, int frame_type)
+    else if (frame_type == FrameType::frame_sdi_child || frame_type == FrameType::frame_mdi_child)
     {
-        // https://docs.wxpython.org/wx.lib.docview.DocMDIParentFrame.html
-        // https://docs.wxpython.org/wx.lib.docview.DocParentFrame.html
-        code.Add("class ").NodeName();
-        if (frame_type == frame_aui)
-        {
-            code.Str("wx.aui.AuiMDIParentFrame):\n");
-        }
-        else
-        {
-            code.Str("(wx.Frame):\n");
-        }
-        code.Eol().Tab().Add("def __init__(self, ");
-        if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
-        {
-            code.Str("manager").Comma();
-        }
-        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
-        {
-            code.Str("manager, view").Comma();
-        }
-        code.Str("parent, id=").as_string(prop_id);
-        code.Indent(3);
-        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
-        code.Comma().Add("size=").WxSize(prop_size, code::no_scaling);
-        code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
-                                     4);
-        code.Add("style=").Style().Comma();
-        size_t name_len = code.HasValue(prop_window_name) ?
-                              code.node()->as_string(prop_window_name).size() :
-                              sizeof("wx.FrameNameStr");
-        code.CheckLineLength(sizeof("name=") + name_len + 4);
-        code.Str("name=");
-        if (code.HasValue(prop_window_name))
-        {
-            code.QuotedString(prop_window_name);
-        }
-        else
-        {
-            code.Str("wx.FrameNameStr");
-        }
-        code.Str("):");
-        code.Unindent();
-        code.Eol() += "wx.Frame.__init__(self)";
+        code.Str("wxDocManager* manager, wxView* view, wxFrame* parent").Comma();
     }
-
-    void ConstructionCodeRuby(Code& code, int frame_type)
+    else
     {
-        if (frame_type == frame_sdi_doc)
-        {
-            code.AddComment("wxDocParentFrame is not currently supported in wxRuby3. Generating a "
-                            "wxFrame instead.",
-                            true);
-        }
-        else if (frame_type == frame_mdi_doc)
-        {
-            code.AddComment("wxDocMDIParentFrame is not currently supported in wxRuby3. Generating "
-                            "a wxFrame instead.",
-                            true);
-        }
-        code.Add("class ").NodeName();
-        if (frame_type == frame_aui)
-        {
-            code.Str(" < Wx::AUI::AuiMDIParentFrame").Eol();
-        }
-        else
-        {
-            code.Str(" < Wx::Frame").Eol();
-        }
-        code.AddPublicRubyMembers();
-        code.Eol(eol_if_needed).Tab().Str("def initialize(parent");
-        // Indent any wrapped lines
-        code.Indent(3);
-        code.Str(", id = ");
-        if (code.HasValue(prop_id))
-        {
-            code.Add(prop_id);
-        }
-        else
-        {
-            code.Add("Wx::ID_ANY");
-        }
-        code.Comma().Str("title = ").QuotedString(prop_title);
-        // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma()
-            .CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION"))
-            .Str("pos = ")
-            .Pos(prop_pos);
-        code.Comma()
-            .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
-            .Str("size = ")
-            .WxSize(prop_size);
-        code.Comma()
-            .CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE"))
-            .Str("style = ")
-            .Style();
-        if (code.HasValue(prop_window_name))
-        {
-            code.Comma().CheckLineLength(sizeof("name = ") +
-                                         code.as_string(prop_window_name).size() + 2);
-            code.Str("name = ").QuotedString(prop_window_name);
-        }
+        code.Str("wxWindow* parent").Comma();
+    }
+    code += "wxWindowID id, const wxString& title,\n\tconst wxPoint& pos, const wxSize& size, "
+            "long style, const wxString &name)";
+    code.OpenBrace();
 
+    if (code.HasValue(prop_extra_style))
+    {
+        code.Eol(eol_if_needed)
+            .FormFunction("SetExtraStyle(GetExtraStyle() | ")
+            .Add(prop_extra_style);
         code.EndFunction();
-        code.Unindent();
-        if (auto indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
-        {
-            indent_pos -= code.GetCode().find("\n");
-            std::string spaces(indent_pos, ' ');
-            code.GetCode().Replace("\t\t\t\t", spaces, true);
-        }
     }
+}
 
-    void ConstructionCodeFortran(Code& code, int /* frame_type */)
+static void ConstructionCodePython(Code& code, FrameType frame_type)
+{
+    // https://docs.wxpython.org/wx.lib.docview.DocMDIParentFrame.html
+    // https://docs.wxpython.org/wx.lib.docview.DocParentFrame.html
+    code.Add("class ").NodeName();
+    if (frame_type == FrameType::frame_aui)
     {
-        // module MyFrame_mod
-        //     use kwx_fortran
-        //     implicit none
-        //     type(wx_frame_t) :: self
-        // contains
-        // subroutine create(parent)
-        //     type(c_ptr), intent(in) :: parent
-
-        code.Str("module ").NodeName().Str("_mod").Eol();
-        code.Tab().Str("use kwx_fortran").Eol();
-        code.Tab().Str("implicit none").Eol();
-        code.Tab().Str("type(wx_frame_t) :: self").Eol();
-        code.Eol();
-        code.Str("contains").Eol();
-        code.Eol();
-        code.Str("subroutine create(parent)").Eol();
-        code.Tab().Str("type(c_ptr), intent(in) :: parent");
+        code.Str("wx.aui.AuiMDIParentFrame):\n");
     }
-
-    void ConstructionCodeGo(Code& code, int /* frame_type */)
+    else
     {
-        // type MyFrame struct {
-        //     frame *wx.Frame
-        // }
-        //
-        // func NewMyFrame(parent wx.Pointer) *MyFrame {
-        //     self := &MyFrame{}
-
-        code.Str("type ").NodeName().Str(" struct {").Eol();
-        code.Tab().Str("frame *wx.Frame").Eol();
-        code.Str("}").Eol();
-        code.Eol();
-        code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
-        code.Tab().Str("self := &").NodeName().Str("{}");
+        code.Str("(wx.Frame):\n");
     }
-
-    void ConstructionCodeJulia(Code& code, int /* frame_type */)
+    code.Eol().Tab().Add("def __init__(self, ");
+    if (frame_type == FrameType::frame_sdi_doc || frame_type == FrameType::frame_mdi_doc)
     {
-        // mutable struct MyFrame
-        //     frame::Ptr{Cvoid}
-        //
-        //     function MyFrame(parent=nothing)
-        //         self = new()
-
-        code.Str("mutable struct ").NodeName().Eol();
-        code.Indent();
-        code.Tab().Str("frame::Ptr{Cvoid}").Eol();
-        code.Eol();
-        code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
-        code.Indent();
-        code.Tab().Str("self = new()");
+        code.Str("manager").Comma();
     }
-
-    void ConstructionCodeLuaJIT(Code& code, int /* frame_type */)
+    else if (frame_type == FrameType::frame_sdi_child || frame_type == FrameType::frame_mdi_child)
     {
-        // local MyFrame = {}
-        // MyFrame.__index = MyFrame
-        //
-        // function MyFrame:new(parent)
-        //     local self = setmetatable({}, MyFrame)
-
-        code.Str("local ").NodeName().Str(" = {}").Eol();
-        code.NodeName().Str(".__index = ").NodeName().Eol();
-        code.Eol();
-        code.Str("function ").NodeName().Str(":new(parent)").Eol();
-        code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")");
+        code.Str("manager, view").Comma();
     }
-
-    void ConstructionCodeTypeScript(Code& code, int /* frame_type */)
+    code.Str("parent, id=").as_string(prop_id);
+    code.Indent(3);
+    code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
+    code.Comma().Add("size=").WxSize(prop_size, code::no_scaling);
+    code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+    code.Add("style=").Style().Comma();
+    const size_t name_len = code.HasValue(prop_window_name) ?
+                                code.node()->as_string(prop_window_name).size() :
+                                sizeof("wx.FrameNameStr");
+    code.CheckLineLength(sizeof("name=") + name_len + 4);
+    code.Str("name=");
+    if (code.HasValue(prop_window_name))
     {
-        // export class MyFrame {
-        //     constructor(parent: any) {
-
-        code.Str("export class ").NodeName().Str(" {").Eol();
-        code.Tab().Str("constructor(parent: any) {");
+        code.QuotedString(prop_window_name);
     }
-}  // namespace
+    else
+    {
+        code.Str("wx.FrameNameStr");
+    }
+    code.Str("):");
+    code.Unindent();
+    code.Eol() += "wx.Frame.__init__(self)";
+}
 
-bool FrameCommon::ConstructionCode(Code& code, int frame_type)
+static void ConstructionCodeRuby(Code& code, FrameType frame_type)
+{
+    if (frame_type == FrameType::frame_sdi_doc)
+    {
+        code.AddComment("wxDocParentFrame is not currently supported in wxRuby3. Generating a "
+                        "wxFrame instead.",
+                        true);
+    }
+    else if (frame_type == FrameType::frame_mdi_doc)
+    {
+        code.AddComment("wxDocMDIParentFrame is not currently supported in wxRuby3. Generating "
+                        "a wxFrame instead.",
+                        true);
+    }
+    code.Add("class ").NodeName();
+    if (frame_type == FrameType::frame_aui)
+    {
+        code.Str(" < Wx::AUI::AuiMDIParentFrame").Eol();
+    }
+    else
+    {
+        code.Str(" < Wx::Frame").Eol();
+    }
+    code.AddPublicRubyMembers();
+    code.Eol(eol_if_needed).Tab().Str("def initialize(parent");
+    // Indent any wrapped lines
+    code.Indent(3);
+    code.Str(", id = ");
+    if (code.HasValue(prop_id))
+    {
+        code.Add(prop_id);
+    }
+    else
+    {
+        code.Add("Wx::ID_ANY");
+    }
+    code.Comma().Str("title = ").QuotedString(prop_title);
+    // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
+    code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos);
+    code.Comma()
+        .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
+        .Str("size = ")
+        .WxSize(prop_size);
+    code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE")).Str("style = ").Style();
+    if (code.HasValue(prop_window_name))
+    {
+        code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() +
+                                     2);
+        code.Str("name = ").QuotedString(prop_window_name);
+    }
+
+    code.EndFunction();
+    code.Unindent();
+    if (size_t indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
+    {
+        indent_pos -= code.GetCode().rfind("\n", indent_pos);
+        const std::string spaces(indent_pos, ' ');
+        code.GetCode().Replace("\t\t\t\t", spaces, true);
+    }
+}
+
+static void ConstructionCodeFortran(Code& code, FrameType /* frame_type */)
+{
+    // module MyFrame_mod
+    //     use kwx_fortran
+    //     implicit none
+    //     type(wx_frame_t) :: self
+    // contains
+    // subroutine create(parent)
+    //     type(c_ptr), intent(in) :: parent
+
+    code.Str("module ").NodeName().Str("_mod").Eol();
+    code.Tab().Str("use kwx_fortran").Eol();
+    code.Tab().Str("implicit none").Eol();
+    code.Tab().Str("type(wx_frame_t) :: self").Eol();
+    code.Eol();
+    code.Str("contains").Eol();
+    code.Eol();
+    code.Str("subroutine create(parent)").Eol();
+    code.Tab().Str("type(c_ptr), intent(in) :: parent");
+}
+
+static void ConstructionCodeGo(Code& code, FrameType /* frame_type */)
+{
+    // type MyFrame struct {
+    //     frame *wx.Frame
+    // }
+    //
+    // func NewMyFrame(parent wx.Pointer) *MyFrame {
+    //     self := &MyFrame{}
+
+    code.Str("type ").NodeName().Str(" struct {").Eol();
+    code.Tab().Str("frame *wx.Frame").Eol();
+    code.Str("}").Eol();
+    code.Eol();
+    code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
+    code.Tab().Str("self := &").NodeName().Str("{}");
+}
+
+static void ConstructionCodeJulia(Code& code, FrameType /* frame_type */)
+{
+    // mutable struct MyFrame
+    //     frame::Ptr{Cvoid}
+    //
+    //     function MyFrame(parent=nothing)
+    //         self = new()
+
+    code.Str("mutable struct ").NodeName().Eol();
+    code.Indent();
+    code.Tab().Str("frame::Ptr{Cvoid}").Eol();
+    code.Eol();
+    code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
+    code.Indent();
+    code.Tab().Str("self = new()");
+}
+
+static void ConstructionCodeLuaJIT(Code& code, FrameType /* frame_type */)
+{
+    // local MyFrame = {}
+    // MyFrame.__index = MyFrame
+    //
+    // function MyFrame:new(parent)
+    //     local self = setmetatable({}, MyFrame)
+
+    code.Str("local ").NodeName().Str(" = {}").Eol();
+    code.NodeName().Str(".__index = ").NodeName().Eol();
+    code.Eol();
+    code.Str("function ").NodeName().Str(":new(parent)").Eol();
+    code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")");
+}
+
+static void ConstructionCodeTypeScript(Code& code, FrameType /* frame_type */)
+{
+    // export class MyFrame {
+    //     constructor(parent: any) {
+
+    code.Str("export class ").NodeName().Str(" {").Eol();
+    code.Tab().Str("constructor(parent: any) {");
+}
+
+bool FrameCommon::ConstructionCode(Code& code, FrameType frame_type)
 {
     if (code.is_cpp())
     {
@@ -291,7 +281,7 @@ bool FrameCommon::ConstructionCode(Code& code, int frame_type)
     return true;
 }
 
-bool FrameCommon::SettingsCode(Code& code, int frame_type)
+bool FrameCommon::SettingsCode(Code& code, FrameType frame_type)
 {
     if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
@@ -314,7 +304,8 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
 
     if (code.is_cpp())
     {
-        if (auto icon_code = GenerateIconCode(code.node()->as_string(prop_icon)); icon_code.size())
+        if (const std::string icon_code = GenerateIconCode(code.node()->as_string(prop_icon));
+            !icon_code.empty())
         {
             code += icon_code;
             code.Eol();
@@ -355,11 +346,12 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
                 code += ' ';
             }
         }
-        if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
+        if (frame_type == FrameType::frame_sdi_doc || frame_type == FrameType::frame_mdi_doc)
         {
             code.Str("manager").Comma();
         }
-        else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+        else if (frame_type == FrameType::frame_sdi_child ||
+                 frame_type == FrameType::frame_mdi_child)
         {
             code.Str("manager, view").Comma();
         }
@@ -394,9 +386,9 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
         code.CloseBrace(true);
     }
 
-    Node* frame = code.node();
-    const auto min_size = frame->as_wxSize(prop_minimum_size);
-    const auto max_size = frame->as_wxSize(prop_maximum_size);
+    const Node* frame = code.node();
+    const wxSize min_size = frame->as_wxSize(prop_minimum_size);
+    const wxSize max_size = frame->as_wxSize(prop_maximum_size);
     if (min_size != wxDefaultSize)
     {
         code.Eol()
@@ -426,7 +418,7 @@ bool FrameCommon::SettingsCode(Code& code, int frame_type)
     return true;
 }
 
-bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
+bool FrameCommon::AfterChildrenCode(Code& code, FrameType /* frame_type */)
 {
     Node* form = code.node();
     if (form->get_ChildCount())
@@ -467,8 +459,8 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
         }
     }
 
-    const auto& center = code.node()->as_string(prop_center);
-    if (center.size() && !center.is_sameas("no"))
+    const wxue::string& center = code.node()->as_string(prop_center);
+    if (!center.empty() && !center.is_sameas("no"))
     {
         code.Eol(eol_if_needed).FormFunction("Centre(").AddConstant(center).EndFunction();
     }
@@ -476,22 +468,22 @@ bool FrameCommon::AfterChildrenCode(Code& code, int /* frame_type */)
     return true;
 }
 
-bool FrameCommon::HeaderCode(Code& code, int frame_type)
+bool FrameCommon::HeaderCode(Code& code, FrameType frame_type)
 {
-    auto* node = code.node();
+    const Node* node = code.node();
     code.NodeName() += "() = default;";
     code.Eol().NodeName().Str("(");
-    if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
+    if (frame_type == FrameType::frame_sdi_doc || frame_type == FrameType::frame_mdi_doc)
     {
         // Since manager has to be supplied, parent can default to nullptr
         code.Str("wxDocManager* manager, wxFrame* parent = nullptr");
     }
-    else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+    else if (frame_type == FrameType::frame_sdi_child || frame_type == FrameType::frame_mdi_child)
     {
         // Since manager has to be supplied, parent can default to nullptr
         code.Str("wxDocManager* manager, wxView* view, wxFrame* parent");
     }
-    else if (frame_type == frame_aui_child)
+    else if (frame_type == FrameType::frame_aui_child)
     {
         // Since manager has to be supplied, parent can default to nullptr
         code.Str("wxAuiMDIParentFrame* manager");
@@ -504,7 +496,7 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     }
     code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
-    const auto& title = node->as_string(prop_title);
+    const std::string& title = node->as_string(prop_title);
     if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
@@ -515,7 +507,7 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     }
     code.Comma().Str("const wxPoint& pos = ");
 
-    auto position = node->as_wxPoint(prop_pos);
+    const wxPoint position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
     {
         code.Str("wxDefaultPosition");
@@ -527,7 +519,7 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->as_wxSize(prop_size);
+    const wxSize size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
     {
         code.Str("wxDefaultSize");
@@ -537,8 +529,8 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
         code.WxSize(prop_size, no_dpi_scaling);
     }
 
-    const auto& style = node->as_string(prop_style);
-    const auto& win_style = node->as_string(prop_window_style);
+    const std::string& style = node->as_string(prop_style);
+    const std::string& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
     {
         code.Comma().Str("long style = 0");
@@ -548,22 +540,22 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
         code.Comma();
         code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
         code.Str("long style = ");
-        if (style.size())
+        if (!style.empty())
         {
             code.CheckLineLength(style.size() + win_style.size());
             code += style;
-            if (win_style.size())
+            if (!win_style.empty())
             {
                 code << '|' << win_style;
             }
         }
-        else if (win_style.size())
+        else if (!win_style.empty())
         {
             code.Str(win_style);
         }
     }
 
-    if (node->as_string(prop_window_name).size())
+    if (!node->as_string(prop_window_name).empty())
     {
         code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
     }
@@ -573,22 +565,22 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
     }
 
     code.Str(")").Eol().OpenBrace().Str("Create(");
-    if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
+    if (frame_type == FrameType::frame_sdi_doc || frame_type == FrameType::frame_mdi_doc)
     {
         code.Str("manager").Comma();
     }
-    else if (frame_type == frame_sdi_child || frame_type == frame_mdi_child)
+    else if (frame_type == FrameType::frame_sdi_child || frame_type == FrameType::frame_mdi_child)
     {
         code.Str("manager, view").Comma();
     }
     code.Str("parent, id, title, pos, size, style, name);").CloseBrace();
 
     code.Eol().Str("bool Create(");
-    if (frame_type == frame_sdi_doc || frame_type == frame_mdi_doc)
+    if (frame_type == FrameType::frame_sdi_doc || frame_type == FrameType::frame_mdi_doc)
     {
         code.Str("wxDocManager* manager, wxFrame* parent = nullptr");
     }
-    else if (frame_type == frame_sdi_child || frame_type == frame_mdi_doc)
+    else if (frame_type == FrameType::frame_sdi_child || frame_type == FrameType::frame_mdi_child)
     {
         code.Str("wxDocManager* manager, wxView* view, wxFrame* parent");
     }
@@ -629,16 +621,16 @@ bool FrameCommon::HeaderCode(Code& code, int frame_type)
         code.Comma();
         code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
         code.Str("long style = ");
-        if (style.size())
+        if (!style.empty())
         {
             code.CheckLineLength(style.size() + win_style.size());
             code += style;
-            if (win_style.size())
+            if (!win_style.empty())
             {
                 code << '|' << win_style;
             }
         }
-        else if (win_style.size())
+        else if (!win_style.empty())
         {
             code.Str(win_style);
         }
@@ -678,9 +670,13 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
 {
     if (prop->isProp(prop_extra_style))
     {
-        auto* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
-        auto variant = event->GetPropertyValue();
-        wxue::string newValue = property->ValueToString(variant).utf8_string();
+        const wxFlagsProperty* property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        if (!property)
+        {
+            return true;
+        }
+        wxVariant variant = event->GetPropertyValue();
+        const wxue::string newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
         {
             return true;
@@ -688,9 +684,9 @@ bool FrameCommon::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* 
 
         if (newValue.contains("wxFRAME_EX_CONTEXTHELP"))
         {
-            const auto& style = node->as_string(prop_style);
+            const std::string& style = node->as_string(prop_style);
             if (style.contains("wxDEFAULT_FRAME_STYLE") || style.contains("wxMINIMIZE_BOX") ||
-                style.contains("wxMINIMIZE_BOX"))
+                style.contains("wxMAXIMIZE_BOX"))
             {
                 event->SetValidationFailureMessage(
                     "You can't add a context help button if there is a minimize or maximize button "

@@ -1,9 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxFrame and derivative common generator functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#pragma once
 
 class Code;
 class wxPropertyGridEvent;
@@ -12,7 +14,7 @@ class Node;
 
 namespace FrameCommon
 {
-    enum
+    enum class FrameType
     {
         frame_normal,
         frame_sdi_doc,
@@ -23,10 +25,12 @@ namespace FrameCommon
         frame_aui_child,
     };
 
-    bool ConstructionCode(Code& code, int frame_type = frame_normal);
-    bool SettingsCode(Code& code, int frame_type = frame_normal);
-    bool AfterChildrenCode(Code& code, int frame_type = frame_normal);
-    bool HeaderCode(Code& code, int frame_type = frame_normal);
+    using enum FrameType;
+
+    bool ConstructionCode(Code& code, FrameType frame_type = FrameType::frame_normal);
+    bool SettingsCode(Code& code, FrameType frame_type = FrameType::frame_normal);
+    bool AfterChildrenCode(Code& code, FrameType frame_type = FrameType::frame_normal);
+    bool HeaderCode(Code& code, FrameType frame_type = FrameType::frame_normal);
 
     bool BaseClassNameCode(Code& code);
     bool AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node);

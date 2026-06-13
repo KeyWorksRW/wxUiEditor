@@ -12,6 +12,17 @@
 
 GoStrategy::GoStrategy(const LanguageTraits& traits) : FFIStrategy(traits) {}
 
+auto GoStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+{
+    // wxButton → Button (Go uses package-qualified: wx.Button)
+    if (!wx_class_name.starts_with("wx"))
+    {
+        return std::string(wx_class_name);
+    }
+
+    return std::string(wx_class_name.substr(2));
+}
+
 void GoStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
 {
     // Go: runtime.GOOS check

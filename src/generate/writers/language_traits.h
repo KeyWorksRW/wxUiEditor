@@ -17,10 +17,6 @@ class Node;
 class NodeEvent;
 class WriteCode;
 
-// Shut of lint warnings which don't want structure members to be public
-// NOLINTBEGIN
-// cppcheck-suppress-begin *
-
 // Describes a language's static characteristics declaratively.
 // Used by the Code class to replace direct language identity checks with trait queries.
 struct LanguageTraits
@@ -88,39 +84,44 @@ struct LanguageTraits
     };
     FeatureParity feature_parity;
 
+    // How method names are cased for the language wrapper
+    enum class MethodCase : std::uint8_t
+    {
+        pascal_case,  // SetLabel, GetValue (C++, Go, Python)
+        snake_case,   // set_label, get_value (Ruby, Fortran, Julia, LuaJIT)
+        camel_case    // setLabel, getValue (TypeScript)
+    };
+
     // How widgets are instantiated
     enum class ConstructionStyle : std::uint8_t
     {
         cpp_new,       // new wxButton(parent, ...)
         binding_call,  // wx.Button(parent, ...) or Wx::Button.new(parent, ...)
-        ffi_function   // wx_button_create(parent, ...)
+        ffi_function   // wx.Frame(parent, ...) — language-wrapper call
     };
     ConstructionStyle construction_style;
 
     // Feature flags
-    bool supports_markup;          // SetLabelMarkup support
-    bool supports_lambda_events;   // Inline event handlers
-    bool needs_explicit_types;     // Variable type declarations required
-    bool has_header_files;         // Separate .h/.hpp files
-    bool uses_snake_case_methods;  // Method names converted to snake_case
-    bool removes_empty_parens;     // Ruby: remove trailing "()" from method calls
-    bool supports_namespaces;      // Language has namespace/module support
-    bool supports_classes;         // Language has class/object support
+    bool supports_markup;         // SetLabelMarkup support
+    bool supports_lambda_events;  // Inline event handlers
+    bool needs_explicit_types;    // Variable type declarations required
+    bool has_header_files;        // Separate .h/.hpp files
+    MethodCase method_case;       // Method naming convention
+    bool removes_empty_parens;    // Ruby: remove trailing "()" from method calls
+    bool supports_namespaces;     // Language has namespace/module support
+    bool supports_classes;        // Language has class/object support
 
     // Convenience queries
 
-    [[nodiscard]] auto is_cpp_family() const -> bool { return family == Family::native_cpp; }
-    [[nodiscard]] auto is_ffi_family() const -> bool { return family == Family::ffi; }
+    [[nodiscard]] bool is_cpp_family() const { return family == Family::native_cpp; }
+    [[nodiscard]] bool is_ffi_family() const { return family == Family::ffi; }
 
-    [[nodiscard]] auto is_binding_family() const -> bool
+    [[nodiscard]] bool is_binding_family() const
     {
         return family == Family::wx_binding || family == Family::wx_binding_legacy;
     }
 
-    [[nodiscard]] auto has_full_parity() const -> bool
-    {
-        return feature_parity == FeatureParity::full;
-    }
+    [[nodiscard]] bool has_full_parity() const { return feature_parity == FeatureParity::full; }
 };
 
 // NOLINTEND

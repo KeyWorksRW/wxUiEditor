@@ -12,6 +12,17 @@
 
 TypeScriptStrategy::TypeScriptStrategy(const LanguageTraits& traits) : FFIStrategy(traits) {}
 
+auto TypeScriptStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+{
+    // wxButton → Button (TypeScript uses namespace-qualified: wx.Frame)
+    if (!wx_class_name.starts_with("wx"))
+    {
+        return std::string(wx_class_name);
+    }
+
+    return std::string(wx_class_name.substr(2));
+}
+
 void TypeScriptStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
 {
     // TypeScript: process.platform checks

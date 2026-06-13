@@ -18,7 +18,7 @@ public:
 
     // Default implementation: Non-C++ languages never need feature-gap workarounds
     // for features that their binding supports. Override per-language for specific gaps.
-    [[nodiscard]] auto IsFeatureSupported(Node* node, GenEnum::PropName prop) -> bool override;
+    [[nodiscard]] bool IsFeatureSupported(Node* node, GenEnum::PropName prop) override;
 
     // Default: Non-C++ platform end just unindents. Ruby overrides to also add "end".
     void EmitPlatformEnd(WriteCode* writer) override;

@@ -9,6 +9,8 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
+class wxBookCtrlBase;
+
 class BookPageGenerator : public BaseGenerator
 {
 public:
@@ -21,4 +23,7 @@ public:
 
     int GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node* node, std::set<std::string>& /* handlers */) override;
+
+private:
+    bool AddTreebookSubPage(Node* node, wxPanel* widget, Node* node_parent);
 };

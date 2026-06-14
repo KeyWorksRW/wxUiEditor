@@ -288,6 +288,16 @@ bool Node::is_ChildAllowed(NodeDeclaration* child)
 
     if (max_children == child_count::infinite)
     {
+        // We have to special-case book pages since a book page can only be a child of a book page
+        // if the grandparent is a wxTreebook.
+        if (is_Type(type_bookpage) && child->get_GenType() == type_bookpage)
+        {
+            const Node* grandparent = get_Parent();
+            if (!grandparent || !grandparent->is_Gen(gen_wxTreebook))
+            {
+                return false;
+            }
+        }
         return true;
     }
 

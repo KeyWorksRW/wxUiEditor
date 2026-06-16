@@ -9158,15 +9158,15 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_10">
+              var_name="page_sizer5">
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer13_10">
+                var_name="box_sizer13">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Line Length"
-                  var_name="staticText27_10"
+                  var_name="staticText27"
                   wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
@@ -9180,12 +9180,12 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer14_10">
+                var_name="box_sizer14">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="kwxFortran version"
-                  var_name="static_text7_10"
+                  var_name="static_text7"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
@@ -9196,12 +9196,12 @@
               </node>
               <node
                 class="wxGridSizer"
-                var_name="grid_sizer7_10">
+                var_name="grid_sizer7">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets &amp;keyword color:"
-                  var_name="staticText28_10"
+                  var_name="staticText28"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9211,7 +9211,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Comment color:"
-                  var_name="staticText29_10"
+                  var_name="staticText29"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9221,7 +9221,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Number color:"
-                  var_name="staticText30_10"
+                  var_name="staticText30"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9231,12 +9231,12 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;String color:"
-                  var_name="staticText31_10"
+                  var_name="staticText31"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_string_10" />
+                  var_name="m_colour_perl_string" />
               </node>
             </node>
           </node>
@@ -9249,15 +9249,15 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_11">
+              var_name="page_sizer5">
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer13_11">
+                var_name="box_sizer13">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Line Length"
-                  var_name="staticText27_11"
+                  var_name="staticText27"
                   wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
@@ -9271,12 +9271,12 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer14_11">
+                var_name="box_sizer14">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="kwxgo version"
-                  var_name="static_text7_11"
+                  var_name="static_text7"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
@@ -9287,12 +9287,12 @@
               </node>
               <node
                 class="wxGridSizer"
-                var_name="grid_sizer7_11">
+                var_name="grid_sizer7">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets &amp;keyword color:"
-                  var_name="staticText28_11"
+                  var_name="staticText28"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9302,7 +9302,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Comment color:"
-                  var_name="staticText29_11"
+                  var_name="staticText29"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9312,7 +9312,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Number color:"
-                  var_name="staticText30_11"
+                  var_name="staticText30"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9322,12 +9322,12 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;String color:"
-                  var_name="staticText31_11"
+                  var_name="staticText31"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_string_11" />
+                  var_name="m_colour_perl_string" />
               </node>
             </node>
           </node>
@@ -9340,15 +9340,15 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_12">
+              var_name="page_sizer5">
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer13_12">
+                var_name="box_sizer13">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Line Length"
-                  var_name="staticText27_12"
+                  var_name="staticText27"
                   wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
@@ -9362,12 +9362,12 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer14_12">
+                var_name="box_sizer14">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="kwxjulia version"
-                  var_name="static_text7_12"
+                  var_name="static_text7"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
@@ -9378,12 +9378,12 @@
               </node>
               <node
                 class="wxGridSizer"
-                var_name="grid_sizer7_12">
+                var_name="grid_sizer7">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets &amp;keyword color:"
-                  var_name="staticText28_12"
+                  var_name="staticText28"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9393,7 +9393,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Comment color:"
-                  var_name="staticText29_12"
+                  var_name="staticText29"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9403,7 +9403,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Number color:"
-                  var_name="staticText30_12"
+                  var_name="staticText30"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9413,12 +9413,12 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;String color:"
-                  var_name="staticText31_12"
+                  var_name="staticText31"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_string_12" />
+                  var_name="m_colour_perl_string" />
               </node>
             </node>
           </node>
@@ -9431,15 +9431,15 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_13">
+              var_name="page_sizer5">
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer13_13">
+                var_name="box_sizer13">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Line Length"
-                  var_name="staticText27_13"
+                  var_name="staticText27"
                   wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
@@ -9453,12 +9453,12 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer14_13">
+                var_name="box_sizer14">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="kwxluajit version"
-                  var_name="static_text7_13"
+                  var_name="static_text7"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
@@ -9469,12 +9469,12 @@
               </node>
               <node
                 class="wxGridSizer"
-                var_name="grid_sizer7_13">
+                var_name="grid_sizer7">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets &amp;keyword color:"
-                  var_name="staticText28_13"
+                  var_name="staticText28"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9484,7 +9484,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Comment color:"
-                  var_name="staticText29_13"
+                  var_name="staticText29"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9494,7 +9494,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Number color:"
-                  var_name="staticText30_13"
+                  var_name="staticText30"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9504,12 +9504,12 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;String color:"
-                  var_name="staticText31_13"
+                  var_name="staticText31"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_string_13" />
+                  var_name="m_colour_perl_string" />
               </node>
             </node>
           </node>
@@ -9522,15 +9522,15 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_14">
+              var_name="page_sizer5">
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer13_14">
+                var_name="box_sizer13">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Line Length"
-                  var_name="staticText27_14"
+                  var_name="staticText27"
                   wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
@@ -9544,12 +9544,12 @@
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer14_14">
+                var_name="box_sizer14">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="kwxtypescript version"
-                  var_name="static_text7_14"
+                  var_name="static_text7"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
@@ -9560,12 +9560,12 @@
               </node>
               <node
                 class="wxGridSizer"
-                var_name="grid_sizer7_14">
+                var_name="grid_sizer7">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets &amp;keyword color:"
-                  var_name="staticText28_14"
+                  var_name="staticText28"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9575,7 +9575,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Comment color:"
-                  var_name="staticText29_14"
+                  var_name="staticText29"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9585,7 +9585,7 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Number color:"
-                  var_name="staticText30_14"
+                  var_name="staticText30"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
@@ -9595,12 +9595,12 @@
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;String color:"
-                  var_name="staticText31_14"
+                  var_name="staticText31"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_string_14" />
+                  var_name="m_colour_perl_string" />
               </node>
             </node>
           </node>

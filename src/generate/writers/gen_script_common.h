@@ -33,7 +33,7 @@ namespace ScriptCommon
     //
     // Parameters:
     //   form_node - The form node to get output path from
-    //   language - The scripting language (PERL, PYTHON, RUBY)
+    //   language - The scripting language (PYTHON, RUBY)
     //   panel_type - The panel type (NOT_PANEL means it's a standalone file)
     //   code_lines - Set to store found handler definitions
     //   func_prefix - The function/method prefix ("sub ", "def ")

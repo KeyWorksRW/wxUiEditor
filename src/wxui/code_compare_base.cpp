@@ -46,8 +46,20 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_radio_ruby = new wxRadioButton(this, wxID_ANY, "&Ruby");
     grid_sizer->Add(m_radio_ruby, wxSizerFlags().Border(wxALL));
 
-    m_radio_perl = new wxRadioButton(this, wxID_ANY, "&Perl");
-    grid_sizer->Add(m_radio_perl, wxSizerFlags().Border(wxALL));
+    m_radio_fortran = new wxRadioButton(this, wxID_ANY, "&Fortran");
+    grid_sizer->Add(m_radio_fortran, wxSizerFlags().Border(wxALL));
+
+    m_radio_go = new wxRadioButton(this, wxID_ANY, "&GO");
+    grid_sizer->Add(m_radio_go, wxSizerFlags().Border(wxALL));
+
+    m_radio_julia = new wxRadioButton(this, wxID_ANY, "&Julia");
+    grid_sizer->Add(m_radio_julia, wxSizerFlags().Border(wxALL));
+
+    m_radio_luajit = new wxRadioButton(this, wxID_ANY, "&LuaJIT");
+    grid_sizer->Add(m_radio_luajit, wxSizerFlags().Border(wxALL));
+
+    m_radio_typescript = new wxRadioButton(this, wxID_ANY, "&TypeScript");
+    grid_sizer->Add(m_radio_typescript, wxSizerFlags().Border(wxALL));
 
     m_radio_xrc = new wxRadioButton(this, wxID_ANY, "&XRC");
     grid_sizer->Add(m_radio_xrc, wxSizerFlags().Border(wxALL));
@@ -105,9 +117,13 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_btn->Bind(wxEVT_BUTTON, &CodeCompareBase::OnDiff, this);
     Bind(wxEVT_INIT_DIALOG, &CodeCompareBase::OnInit, this);
     m_radio_cplusplus->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnCPlusPlus, this);
-    m_radio_perl->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnPerl, this);
+    m_radio_fortran->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnFortran, this);
+    m_radio_go->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnGO, this);
+    m_radio_julia->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnJulia, this);
+    m_radio_luajit->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnLuaJIT, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnPython, this);
     m_radio_ruby->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnRuby, this);
+    m_radio_typescript->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnTypeScript, this);
     m_radio_xrc->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnXRC, this);
 
     return true;

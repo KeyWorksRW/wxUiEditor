@@ -343,6 +343,34 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case std::to_underlying(Menu::SingleGenFortran):
+            {
+                OnGenerateSingleLanguage(GenLang::fortran);
+            }
+            break;
+
+        case std::to_underlying(Menu::SingleGenGO):
+            {
+                OnGenerateSingleLanguage(GenLang::go);
+            }
+            break;
+        case std::to_underlying(Menu::SingleGenLuaJIT):
+            {
+                OnGenerateSingleLanguage(GenLang::luajit);
+            }
+            break;
+        case std::to_underlying(Menu::SingleGenJulia):
+            {
+                OnGenerateSingleLanguage(GenLang::julia);
+            }
+            break;
+
+        case std::to_underlying(Menu::SingleGenTypeScript):
+            {
+                OnGenerateSingleLanguage(GenLang::typescript);
+            }
+            break;
+
         case std::to_underlying(Menu::SingleGenXRC):
             {
                 wxCommandEvent dummy;
@@ -558,9 +586,31 @@ void NavPopupMenu::MenuAddCommands()
                 Append(std::to_underlying(Menu::SingleGenXRC), "Generate XRC for this form");
                 ++count;
             }
-            if (m_node->HasValue(prop_perl_file))
+            if (m_node->HasValue(prop_typescript_file))
             {
-                Append(std::to_underlying(Menu::SingleGenPerl), "Generate Perl for this form");
+                Append(std::to_underlying(Menu::SingleGenTypeScript),
+                       "Generate TypeScript for this form");
+                ++count;
+            }
+            if (m_node->HasValue(prop_fortran_file))
+            {
+                Append(std::to_underlying(Menu::SingleGenFortran),
+                       "Generate Fortran for this form");
+                ++count;
+            }
+            if (m_node->HasValue(prop_go_file))
+            {
+                Append(std::to_underlying(Menu::SingleGenGO), "Generate GO for this form");
+                ++count;
+            }
+            if (m_node->HasValue(prop_lua_file))
+            {
+                Append(std::to_underlying(Menu::SingleGenLuaJIT), "Generate LuaJIT for this form");
+                ++count;
+            }
+            if (m_node->HasValue(prop_julia_file))
+            {
+                Append(std::to_underlying(Menu::SingleGenJulia), "Generate Julia for this form");
                 ++count;
             }
 

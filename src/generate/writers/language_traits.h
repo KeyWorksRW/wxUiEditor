@@ -68,10 +68,9 @@ struct LanguageTraits
     // Language family — reflects calling convention to wxWidgets
     enum class Family : std::uint8_t
     {
-        native_cpp,         // C++ (only language with direct wxWidgets access)
-        wx_binding,         // wxPython, wxRuby (C wrapper, near-full parity)
-        wx_binding_legacy,  // wxPerl (legacy, replaced by Perl via kwxFFI)
-        ffi                 // All kwxFFI languages (identical naming/constants)
+        native_cpp,  // C++ (only language with direct wxWidgets access)
+        wx_binding,  // wxPython, wxRuby (C wrapper, near-full parity)
+        ffi          // All kwxFFI languages (identical naming/constants)
     };
     Family family;
 
@@ -116,10 +115,7 @@ struct LanguageTraits
     [[nodiscard]] bool is_cpp_family() const { return family == Family::native_cpp; }
     [[nodiscard]] bool is_ffi_family() const { return family == Family::ffi; }
 
-    [[nodiscard]] bool is_binding_family() const
-    {
-        return family == Family::wx_binding || family == Family::wx_binding_legacy;
-    }
+    [[nodiscard]] bool is_binding_family() const { return family == Family::wx_binding; }
 
     [[nodiscard]] bool has_full_parity() const { return feature_parity == FeatureParity::full; }
 };

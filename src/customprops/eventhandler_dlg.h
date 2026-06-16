@@ -57,10 +57,6 @@ public:
     // C++ is not enabled and another language specified a value.
     static std::string GetCppValue(std::string_view value);
 
-    // This will return a string as if Perl was the only value specified even if the original
-    // value had values for multiple languages. Note that this *will* return a value even if
-    // Perl is not enabled and another language specified a value.
-
     // This will return a string as if Python was the only value specified even if the original
     // value had values for multiple languages. Note that this *will* return a value even if
     // Python is not enabled and another language specified a value.

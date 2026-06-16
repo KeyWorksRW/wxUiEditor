@@ -233,41 +233,6 @@
 			help="Check this to make all class member variables private: instead of protected:. This can only be done if you are *not* creating a derived class (use_derived_class is unchecked)."/>
 	</gen>
 
-	<gen class="kwxFortran Settings" type="interface">
-		<property name="fortran_file" type="file"
-			help="The filename to use if generating code for wxFortran."/>
-		<property name="insert_fortran_code" type="code_edit"
-			help="Specify the code to insert into the fortran file after the generated statements. This can be any valid fortran code for use before the program definition."/>
-	</gen>
-
-	<gen class="kwxGO Settings" type="interface">
-		<property name="go_file" type="file"
-			help="The filename to use if generating code for wxGO."/>
-		<property name="insert_go_code" type="code_edit"
-			help="Specify the code to insert into the go file after the generated import statements. This can be any valid go code for use before the class definition."/>
-	</gen>
-
-	<gen class="kwxJulia Settings" type="interface">
-		<property name="julia_file" type="file"
-			help="The filename to use if generating code for wxJulia."/>
-		<property name="insert_julia_code" type="code_edit"
-			help="Specify the code to insert into the julia file after the generated import statements. This can be any valid julia code for use before the class definition."/>
-	</gen>
-
-	<gen class="kwxLuaJIT Settings" type="interface">
-		<property name="luajit_file" type="file"
-			help="The filename to use if generating code for wxLuaJIT."/>
-		<property name="insert_luajit_code" type="code_edit"
-			help="Specify the code to insert into the luajit file after the generated statements. This can be any valid luajit code for use before the class definition."/>
-	</gen>
-
-	<gen class="kwxPerl Settings" type="interface">
-		<property name="perl_file" type="file"
-			help="The filename to use if generating code for wxPerl."/>
-		<property name="insert_perl_code" type="code_edit"
-			help="Specify the code to insert into the perl file after the generated import statements. This can be any valid perl code for use before the class definition."/>
-	</gen>
-
 	<gen class="wxPython Settings" type="interface">
 		<property name="python_file" type="file"
 			help="The filename to use if generating code for wxPython."/>
@@ -296,11 +261,39 @@
 			help="The name to use for an inherited class. If specified, the Inherit tab in the Ruby panel will include a sample for creating an inherited class."/>
 	</gen>
 
-	<gen class="kwxRust Settings" type="interface">
-		<property name="rust_file" type="file"
-			help="The filename to use if generating code for wxRust."/>
-		<property name="insert_rust_code" type="code_edit"
-			help="Specify the code to insert into the rust file after the generated statements. This can be any valid rust code for use before the class definition."/>
+	<gen class="kwxFortran Settings" type="interface">
+		<property name="fortran_file" type="file"
+			help="The filename to use if generating code for kwxFortran."/>
+		<property name="insert_fortran_code" type="code_edit"
+			help="Specify the code to insert into the fortran file after the generated statements. This can be any valid fortran code for use before the program definition."/>
+	</gen>
+
+	<gen class="kwxGO Settings" type="interface">
+		<property name="go_file" type="file"
+			help="The filename to use if generating code for kwxGO."/>
+		<property name="insert_go_code" type="code_edit"
+			help="Specify the code to insert into the go file after the generated import statements. This can be any valid go code for use before the class definition."/>
+	</gen>
+
+	<gen class="kwxJulia Settings" type="interface">
+		<property name="julia_file" type="file"
+			help="The filename to use if generating code for kwxJulia."/>
+		<property name="insert_julia_code" type="code_edit"
+			help="Specify the code to insert into the julia file after the generated import statements. This can be any valid julia code for use before the class definition."/>
+	</gen>
+
+	<gen class="kwxLuaJIT Settings" type="interface">
+		<property name="luajit_file" type="file"
+			help="The filename to use if generating code for kwxLuaJIT."/>
+		<property name="insert_luajit_code" type="code_edit"
+			help="Specify the code to insert into the luajit file after the generated statements. This can be any valid luajit code for use before the class definition."/>
+	</gen>
+
+	<gen class="kwxTypeScript Settings" type="interface">
+		<property name="typescript_file" type="file"
+			help="The filename to use if generating code for kwxTypeScript."/>
+		<property name="insert_typescript_code" type="code_edit"
+			help="Specify the code to insert into the typescript file after the generated import statements. This can be any valid typescript code for use before the class definition."/>
 	</gen>
 
 	<gen class="XRC Settings" type="interface">
@@ -383,7 +376,7 @@
 	<gen class="kwxFortran" type="interface">
 		<property name="kwxFortran_version" type="option"
 			help="Specifies the minimum version of kwxFortran needed to run the generated code.">
-			<option name="0.010"/> 0.010 </property>
+			<option name="0.9.0"/> 0.9.0 </property>
 		<property name="fortran_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all fortran code."/>
 		<property name="fortran_line_length" type="uint"
@@ -396,12 +389,15 @@
 	<gen class="kwxGO" type="interface">
 		<property name="kwxGO_version" type="option"
 			help="Specifies the minimum version of kwxGO needed to run the generated code.">
-			<option name="0.010"/> 0.010 </property>
+			<option name="0.90"/>
+			<option name="1.00"/>
+			0.90
+			</property>
 		<property name="go_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all go code."/>
 		<property name="go_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			100</property>
+			90</property>
 		<property name="go_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
@@ -409,7 +405,7 @@
 	<gen class="kwxJulia" type="interface">
 		<property name="kwxJulia_version" type="option"
 			help="Specifies the minimum version of kwxJulia needed to run the generated code.">
-			<option name="0.010"/> 0.010 </property>
+			<option name="0.9.0"/> 0.9.0 </property>
 		<property name="julia_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all julia code."/>
 		<property name="julia_line_length" type="uint"
@@ -422,7 +418,7 @@
 	<gen class="kwxLuaJIT" type="interface">
 		<property name="kwxLuaJIT_version" type="option"
 			help="Specifies the minimum version of kwxLuaJIT needed to run the generated code.">
-			<option name="0.010"/> 0.010 </property>
+			<option name="0.9.0"/> 0.9.0 </property>
 		<property name="lua_output_folder" type="path"
 			help="If a folder name is specified, it will be used for all lua code."/>
 		<property name="lua_line_length" type="uint"
@@ -432,29 +428,16 @@
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
 
-	<gen class="kwxPerl" type="interface">
-		<property name="kwxPerl_version" type="option"
-			help="Specifies the minimum version of kwxPerl needed to run the generated code.">
-			<option name="0.010"/> 0.010 </property>
-		<property name="perl_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all perl code."/>
-		<property name="perl_line_length" type="uint"
+	<gen class="kwxTypeScript" type="interface">
+		<property name="kwxTypeScript_version" type="option"
+			help="Specifies the minimum version of kwxTypeScript needed to run the generated code.">
+			<option name="0.9.0"/> 0.9.0 </property>
+		<property name="typescript_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all typescript code."/>
+		<property name="typescript_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			80</property>
-		<property name="perl_project_preamble" type="code_edit"
-			help="Code to generate at the top of every source file after the comment block."/>
-	</gen>
-
-	<gen class="kwxRust" type="interface">
-		<property name="kwxRust_version" type="option"
-			help="Specifies the minimum version of kwxRust needed to run the generated code.">
-			<option name="0.010"/> 0.010 </property>
-		<property name="rust_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all rust code."/>
-		<property name="rust_line_length" type="uint"
-			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
-			100</property>
-		<property name="rust_project_preamble" type="code_edit"
+		<property name="typescript_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
 
@@ -508,11 +491,6 @@
 			help="Overrides any project setting of the variable name to set in the .cmake file. Only affects the forms within this folder."/>
 	</gen>
 
-	<gen class="Folder wxPerl Overrides" type="interface">
-		<property name="folder_perl_output_folder" type="path"
-			help="Overrides any project setting of the output folder used for all generated wxPerl code. Only affects the forms within this folder."/>
-	</gen>
-
 	<gen class="Folder wxPython Overrides" type="interface">
 		<property name="folder_python_output_folder" type="path"
 			help="Overrides any project setting of the output folder used for all generated wxPython code. Only affects the forms within this folder."/>
@@ -550,9 +528,9 @@
 			help="Overrides any project setting of the output folder used for all generated wxLuaJIT code. Only affects the forms within this folder."/>
 	</gen>
 
-	<gen class="Folder wxRust Overrides" type="interface">
-		<property name="folder_rust_output_folder" type="path"
-			help="Overrides any project setting of the output folder used for all generated wxRust code. Only affects the forms within this folder."/>
+	<gen class="Folder kwxTypeScript Overrides" type="interface">
+		<property name="folder_typescript_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated wxTypeScript code. Only affects the forms within this folder."/>
 	</gen>
 
 	<gen class="Folder XRC Overrides" type="interface">
@@ -986,12 +964,20 @@
 		<property name="disable_language" type="bitlist">
 			<option name="C++"
 				help="Disable C++ code for this control (ignored if project doesn't generate C++ code)."/>
-			<option name="wxPerl"
-				help="Disable wxPerl code for this control (ignored if project doesn't generate wxPerl code)."/>
 			<option name="wxPython"
 				help="Disable wxPython code for this control (ignored if project doesn't generate wxPython code)."/>
 			<option name="wxRuby"
 				help="Disable wxRuby code for this control (ignored if project doesn't generate wxRuby code)."/>
+			<option name="Fortran"
+				help="Disable Fortran code for this control (ignored if project doesn't generate Fortran code)."/>
+			<option name="GO"
+				help="Disable GO code for this control (ignored if project doesn't generate GO code)."/>
+			<option name="LuaJIT"
+				help="Disable LuaJIT code for this control (ignored if project doesn't generate LuaJIT code)."/>
+			<option name="Julia"
+				help="Disable Julia code for this control (ignored if project doesn't generate Julia code)."/>
+			<option name="TypeScript"
+				help="Disable TypeScript code for this control (ignored if project doesn't generate TypeScript code)."/>
 		</property>
 	</gen>
 

@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   NodeDeclaration class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-15-2026]
 
 #pragma once
 
@@ -42,77 +43,76 @@ public:
     NodeDeclaration(wxue::string_view class_name, NodeType* type);
 
     NodeDeclaration(const NodeDeclaration&) = delete;
-    auto operator=(const NodeDeclaration&) -> NodeDeclaration& = delete;
+    NodeDeclaration& operator=(const NodeDeclaration&) = delete;
     NodeDeclaration(NodeDeclaration&&) = delete;
-    auto operator=(NodeDeclaration&&) -> NodeDeclaration& = delete;
+    NodeDeclaration& operator=(NodeDeclaration&&) = delete;
 
     // This will delete m_generator which was created by NodeCreator::InitGenerators()
     ~NodeDeclaration();
 
-    auto GetCategory() -> NodeCategory& { return m_category; }
+    NodeCategory& GetCategory() { return m_category; }
 
-    [[nodiscard]] auto get_PropertyCount() const -> size_t { return m_properties.size(); }
-    [[nodiscard]] auto get_EventCount() const -> size_t { return m_events.size(); }
+    [[nodiscard]] size_t get_PropertyCount() const { return m_properties.size(); }
+    [[nodiscard]] size_t get_EventCount() const { return m_events.size(); }
 
-    [[nodiscard]] auto get_PropDeclaration(size_t idx) const -> PropDeclaration*;
+    [[nodiscard]] PropDeclaration* get_PropDeclaration(size_t idx) const;
 
-    [[nodiscard]] auto get_EventInfo(wxue::string_view name) const -> const NodeEventInfo*;
-    [[nodiscard]] auto get_EventInfo(size_t idx) const -> const NodeEventInfo*;
+    [[nodiscard]] const NodeEventInfo* get_EventInfo(wxue::string_view name) const;
+    [[nodiscard]] const NodeEventInfo* get_EventInfo(size_t idx) const;
 
     auto GetPropInfoMap() -> auto& { return m_properties; }
     auto GetEventInfoMap() -> auto& { return m_events; }
 
-    [[nodiscard]] auto get_NodeType() const -> NodeType* { return m_type; }
-    [[nodiscard]] auto get_GenName() const noexcept -> GenName { return m_gen_name; }
-    [[nodiscard]] auto get_GenType() const noexcept -> GenType { return m_gen_type; }
+    [[nodiscard]] NodeType* get_NodeType() const { return m_type; }
+    [[nodiscard]] GenName get_GenName() const noexcept { return m_gen_name; }
+    [[nodiscard]] GenType get_GenType() const noexcept { return m_gen_type; }
 
-    [[nodiscard]] auto is_Type(GenType type) const noexcept -> bool { return (type == m_gen_type); }
-    [[nodiscard]] auto is_Gen(GenName name) const noexcept -> bool { return (name == m_gen_name); }
+    [[nodiscard]] bool is_Type(GenType type) const noexcept { return (type == m_gen_type); }
+    [[nodiscard]] bool is_Gen(GenName name) const noexcept { return (name == m_gen_name); }
 
-    [[nodiscard]] auto get_DeclName() const noexcept -> std::string_view { return m_name; }
+    [[nodiscard]] std::string_view get_DeclName() const noexcept { return m_name; }
 
-    auto AddBaseClass(NodeDeclaration* base) -> size_t
+    size_t AddBaseClass(NodeDeclaration* base)
     {
         m_base.emplace_back(base);
         return m_base.size() - 1;
     }
 
-    [[nodiscard]] auto isSubclassOf(GenName class_name) const -> bool;
+    [[nodiscard]] bool isSubclassOf(GenName class_name) const;
 
-    [[nodiscard]] auto GetBaseClass(size_t idx, bool inherited = true) const -> NodeDeclaration*;
+    [[nodiscard]] NodeDeclaration* GetBaseClass(size_t idx, bool inherited = true) const;
 
-    auto GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited = true) const
-        -> void;
+    void GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited = true) const;
 
-    [[nodiscard]] auto GetBaseClassCount(bool inherited = true) const -> size_t;
-    [[nodiscard]] auto hasBaseClasses() const -> bool { return !m_base.empty(); }
+    [[nodiscard]] size_t GetBaseClassCount(bool inherited = true) const;
+    [[nodiscard]] bool hasBaseClasses() const { return !m_base.empty(); }
 
     void SetBundleFunction(std::function<wxBitmapBundle(int width, int height)> func)
     {
         m_bundle_function = std::move(func);
     }
     void SetImage(wxImage image) { m_image = std::move(image); }
-    [[nodiscard]] auto GetImage() const -> wxImage;
-    [[nodiscard]] auto GetBitmapBundle(int width, int height) const -> wxBitmapBundle;
+    [[nodiscard]] wxImage GetImage() const;
+    [[nodiscard]] wxBitmapBundle GetBitmapBundle(int width, int height) const;
 
     void SetGenerator(BaseGenerator* generator) { m_generator = generator; }
-    [[nodiscard]] auto get_Generator() const -> BaseGenerator* { return m_generator; }
+    [[nodiscard]] BaseGenerator* get_Generator() const { return m_generator; }
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
-    auto GetGeneratorFlags() -> const std::string& { return m_internal_flags; }
+    const std::string& GetGeneratorFlags() const { return m_internal_flags; }
     void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 
-    [[nodiscard]] auto get_AllowableChildren(GenType child_gen_type) const -> ptrdiff_t;
+    [[nodiscard]] ptrdiff_t get_AllowableChildren(GenType child_gen_type) const;
 
     void SetOverRideDefValue(GenEnum::PropName prop_name, std::string_view new_value)
     {
         m_override_def_values[prop_name] = new_value;
     }
-    auto GetOverRideDefValue(GenEnum::PropName prop_name) -> std::optional<wxue::string>;
+    std::optional<wxue::string> GetOverRideDefValue(GenEnum::PropName prop_name) const;
 
     void HideProperty(GenEnum::PropName prop_name) { m_hide_properties.emplace(prop_name); }
-    auto IsPropHidden(GenEnum::PropName prop_name) -> bool
+    bool IsPropHidden(GenEnum::PropName prop_name) const
     {
         return (m_hide_properties.contains(prop_name));
     }

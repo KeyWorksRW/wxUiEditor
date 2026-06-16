@@ -783,18 +783,18 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                     return;
                 }
             }
-            else if (prop->isProp(prop_perl_file))
+            else if (prop->isProp(prop_typescript_file))
             {
-                if (child->as_string(prop_perl_file).filename() == filename)
+                if (child->as_string(prop_typescript_file).filename() == filename)
                 {
                     auto* focus = wxWindow::FindFocus();
 
-                    wxMessageBox(wxString() << "The perl filename \"" << filename.wx()
+                    wxMessageBox(wxString() << "The TypeScript filename \"" << filename.wx()
                                             << "\" is already in use by "
                                             << child->as_string(prop_class_name)
                                             << "\n\nEither change the name, or press ESC to "
                                                "restore the original name.",
-                                 "Duplicate perl filename", wxICON_STOP);
+                                 "Duplicate TypeScript filename", wxICON_STOP);
                     if (focus)
                     {
                         focus->SetFocus();

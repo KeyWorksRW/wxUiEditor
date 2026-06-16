@@ -647,14 +647,14 @@ auto ConvertToGenLang(wxue::string_view language) -> GenLang
     {
         return GenLang::ruby;
     }
-    if (language == "GO" || language.starts_with("kwxGO") || language.starts_with("Folder kwxGO"))
-    {
-        return GenLang::go;
-    }
     if (language == "Fortran" || language.starts_with("kwxFortran") ||
         language.starts_with("Folder kwxFortran"))
     {
         return GenLang::fortran;
+    }
+    if (language == "GO" || language.starts_with("kwxGO") || language.starts_with("Folder kwxGO"))
+    {
+        return GenLang::go;
     }
     if (language == "Julia" || language.starts_with("kwxJulia") ||
         language.starts_with("Folder kwxJulia"))

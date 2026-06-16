@@ -507,7 +507,6 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_folder_combined_xrc_file:
                     case prop_initial_filename:
                     case prop_output_file:
-                    case prop_perl_file:
                     case prop_python_combined_file:
                     case prop_python_file:
                     case prop_ruby_combined_file:
@@ -516,7 +515,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_go_file:
                     case prop_julia_file:
                     case prop_lua_file:
-                    case prop_rust_file:
+                    case prop_typescript_file:
                     case prop_subclass_header:
                     case prop_xrc_file:
                         return new ttFileProperty(prop);

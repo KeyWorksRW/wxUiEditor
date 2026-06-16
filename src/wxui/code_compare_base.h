@@ -43,10 +43,14 @@ protected:
 
     virtual void OnCPlusPlus(wxCommandEvent& event) = 0;
     virtual void OnDiff(wxCommandEvent& event) = 0;
+    virtual void OnFortran(wxCommandEvent& event) = 0;
+    virtual void OnGO(wxCommandEvent& event) = 0;
     virtual void OnInit(wxInitDialogEvent& event) = 0;
-    virtual void OnPerl(wxCommandEvent& event) = 0;
+    virtual void OnJulia(wxCommandEvent& event) = 0;
+    virtual void OnLuaJIT(wxCommandEvent& event) = 0;
     virtual void OnPython(wxCommandEvent& event) = 0;
     virtual void OnRuby(wxCommandEvent& event) = 0;
+    virtual void OnTypeScript(wxCommandEvent& event) = 0;
     virtual void OnXRC(wxCommandEvent& event) = 0;
 
     // Class member variables
@@ -54,9 +58,13 @@ protected:
     wxButton* m_btn;
     wxListBox* m_list_changes;
     wxRadioButton* m_radio_cplusplus;
-    wxRadioButton* m_radio_perl;
+    wxRadioButton* m_radio_fortran;
+    wxRadioButton* m_radio_go;
+    wxRadioButton* m_radio_julia;
+    wxRadioButton* m_radio_luajit;
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
+    wxRadioButton* m_radio_typescript;
     wxRadioButton* m_radio_xrc;
     wxStaticText* m_changed_classes_text;
     wxStaticText* m_diff_results;

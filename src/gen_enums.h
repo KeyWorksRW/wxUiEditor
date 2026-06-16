@@ -13,7 +13,7 @@
 
 namespace GenEnum
 {
-    enum PropType : std::uint8_t
+    enum PropType
     {
 
         type_animation,
@@ -76,7 +76,7 @@ namespace GenEnum
     };
     extern const std::map<std::string_view, PropType, std::less<>> umap_PropTypes;
 
-    enum PropName : std::uint16_t
+    enum PropName
     {
         prop_template_description,
         prop_template_directory,
@@ -553,16 +553,16 @@ namespace GenEnum
         prop_lua_project_preamble,
         prop_kwxLuaJIT_version,
 
-        prop_folder_perl_combined_file,
-        prop_folder_perl_output_folder,
-        prop_perl_conditional,
-        prop_perl_file,
-        prop_perl_inherit_name,
-        prop_perl_insert,
-        prop_perl_line_length,
-        prop_perl_output_folder,
-        prop_perl_project_preamble,
-        prop_kwxPerl_version,
+        prop_folder_typescript_combined_file,
+        prop_folder_typescript_output_folder,
+        prop_typescript_conditional,
+        prop_typescript_file,
+        prop_typescript_inherit_name,
+        prop_typescript_insert,
+        prop_typescript_line_length,
+        prop_typescript_output_folder,
+        prop_typescript_project_preamble,
+        prop_kwxtypescript_version,
 
         prop_folder_python_combined_file,
         prop_folder_python_output_folder,
@@ -594,17 +594,6 @@ namespace GenEnum
         prop_ruby_project_preamble,
         prop_wxRuby_version,
 
-        prop_folder_rust_combined_file,
-        prop_folder_rust_output_folder,
-        prop_rust_conditional,
-        prop_rust_file,
-        prop_rust_inherit_name,
-        prop_rust_insert,
-        prop_rust_line_length,
-        prop_rust_output_folder,
-        prop_rust_project_preamble,
-        prop_kwxRust_version,
-
         // This must always be the last item as it is used to calculate the array size needed to
         // store all items
         prop_name_array_size,
@@ -614,7 +603,7 @@ namespace GenEnum
     extern const std::map<GenEnum::PropName, std::string_view> map_PropNames;
     extern const std::map<GenEnum::PropName, std::string_view> map_PropHelp;
     extern std::map<std::string_view, GenEnum::PropName, std::less<>> rmap_PropNames;
-    inline auto FindProp(std::string_view name) -> GenEnum::PropName
+    inline PropName FindProp(std::string_view name)
     {
         if (auto result = rmap_PropNames.find(name); result != rmap_PropNames.end())
         {
@@ -633,7 +622,7 @@ namespace GenEnum
         return {};
     }
 
-    enum GenType : std::uint8_t
+    enum GenType
     {
 
         type_aui_tool,
@@ -722,7 +711,7 @@ namespace GenEnum
     };
     extern const std::map<GenType, std::string_view> map_GenTypes;
 
-    enum GenName : std::uint8_t
+    enum GenName
     {
 
         // Note that this list not only includes all the top level generators, but also the
@@ -751,14 +740,13 @@ namespace GenEnum
         gen_flexgridsizerbase,
         gen_folder_Code,
         gen_folder_XRC,
-        gen_folder_wxPerl,
         gen_folder_wxPython,
         gen_folder_wxRuby,
         gen_folder_wxFortran,
         gen_folder_wxGo,
         gen_folder_wxJulia,
         gen_folder_wxLua,
-        gen_folder_wxRust,
+        gen_folder_kwxTypeScript,
         gen_sizer_child,
         gen_sizeritem_settings,
         gen_wxTopLevelWindow,
@@ -771,26 +759,24 @@ namespace GenEnum
         gen_wxPython,
         gen_wxRuby,
         gen_XRC,
-        gen_kwxPerl,
         gen_kwxFortran,
         gen_kwxGo,
         gen_kwxJulia,
         gen_kwxLua,
-        gen_kwxRust,
+        gen_kwxTypeScript,
 
         gen_LanguageSettings,  // Using this will pull in all the language settings
 
         gen_CPlusSettings,
         gen_DerivedCPlusSettings,
         gen_CPlusHeaderSettings,
-        gen_PerlSettings,
         gen_PythonSettings,
         gen_RubySettings,
         gen_FortranSettings,
         gen_GoSettings,
         gen_JuliaSettings,
         gen_LuaSettings,
-        gen_RustSettings,
+        gen_TypeScriptSettings,
 
         // These are special purpose generators. gen_Images is used for code, but gen_folder is
         // just for organtizing forms in the Navigation panel.

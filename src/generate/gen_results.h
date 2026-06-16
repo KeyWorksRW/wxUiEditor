@@ -73,7 +73,7 @@ public:
     // Generate all forms into a single combined output file for the specified language.
     // language: must be exactly one language (error if multiple bits set)
     // Requires SetCombinedOutputPath() or project prop_combined_xrc_file to be set.
-    // Currently supports GenLang::xrc. Future: Python, Ruby, Perl.
+    // Currently supports GenLang::xrc. Future: Python, Ruby.
     // Returns true if file was written/needs updating, false otherwise.
     [[nodiscard]] auto GenerateCombinedFile(GenLang language) -> bool;
 

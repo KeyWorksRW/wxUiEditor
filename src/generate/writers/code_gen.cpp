@@ -601,36 +601,30 @@ void Code::GenFontInfoInit(const FontProperty& fontprop, double point_size,
 
 void Code::GenFontInfoProperties(const FontProperty& fontprop)
 {
-#if defined(_WIN32)
-    // Windows-specific handling (non-Perl)
-#endif
-
+    if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
     {
-        if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-        {
-            VariableMethod("FaceName(")
-                .QuotedString(wxue::string() << fontprop.GetFaceName().utf8_string()) += ")";
-        }
-        if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
-        {
-            VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
-        }
-        if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
-        {
-            VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
-        }
-        if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
-        {
-            VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
-        }
-        if (fontprop.IsUnderlined())
-        {
-            VariableMethod("Underlined()");
-        }
-        if (fontprop.IsStrikethrough())
-        {
-            VariableMethod("Strikethrough()");
-        }
+        VariableMethod("FaceName(")
+            .QuotedString(wxue::string() << fontprop.GetFaceName().utf8_string()) += ")";
+    }
+    if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+    {
+        VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
+    }
+    if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+    {
+        VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
+    }
+    if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+    {
+        VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+    }
+    if (fontprop.IsUnderlined())
+    {
+        VariableMethod("Underlined()");
+    }
+    if (fontprop.IsStrikethrough())
+    {
+        VariableMethod("Strikethrough()");
     }
 }
 

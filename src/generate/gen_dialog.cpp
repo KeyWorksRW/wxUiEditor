@@ -352,7 +352,7 @@ bool DialogFormGenerator::AfterChildrenCode(Code& code)
         }
         else
         {
-            // For Perl, Python, and Ruby, any scaling is handled by the code that instantiates the
+            // For Python and Ruby, any scaling is handled by the code that instantiates the
             // dialog, so all we need is SetSizerAndFit().
             code.Eol(eol_if_needed)
                 .FormFunction("SetSizerAndFit(")

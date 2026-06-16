@@ -44,6 +44,7 @@
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 #include "version.h"          // Version information for wxUiEditor and wxWidgets
+#include "wxdocview_dlg.h"    // wxDocView -- Dialog for displaying wxWidgets documentation
 
 #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
@@ -103,6 +104,7 @@ enum class MenuIDs : int
     id_ShowLogger,
     id_XrcPreviewDlg,
     id_UndoInfo,
+    id_DocViewDlg,
     id_DebugPythonTest,
     id_DebugRubyTest,
     id_AssertionTest,
@@ -481,25 +483,26 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
         },
         std::to_underlying(MenuIDs::id_NodeMemory));
 
-    frame->Bind(
+    Bind(
         wxEVT_MENU,
-        [frame](wxCommandEvent&)
+        [this](wxCommandEvent&)
         {
-            UndoInfo dialog(frame);
+            UndoInfo dialog(this);
             dialog.ShowModal();
         },
-        std::to_underlying(MenuIDs::id_UndoInfo));
-    frame->Bind(wxEVT_MENU, &MainFrame::OnFindWidget, frame,
-                std::to_underlying(MenuIDs::id_FindWidget));
-    frame->Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, frame,
-                std::to_underlying(MenuIDs::id_GenSingleCpp));
-    frame->Bind(
+        id_UndoInfo);
+    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
+}
+if (wxGetApp().isTestingMenuEnabled())
+{
+    Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
+    Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
             OnGenerateSingleLanguage(GenLang::python);
         },
-        std::to_underlying(MenuIDs::id_GenSinglePython));
+        id_GenSinglePython);
 
     frame->Bind(
         wxEVT_MENU,

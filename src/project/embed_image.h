@@ -26,7 +26,7 @@ struct ImageInfo
 {
     wxue::string filename;  // original filename with extension, but without any path information
 
-    // Valid C++ variable name derived from filename. This name is also compatible with Perl,
+    // Valid C++ variable name derived from filename. This name is also compatible with
     // Python, and Ruby/
     wxue::string array_name;
 

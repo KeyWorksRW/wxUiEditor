@@ -117,7 +117,7 @@ auto Code::Add(wxue::string_view text) -> Code&
 {
     bool old_linebreak = m_auto_break;
     // Ruby changes the prefix to "Wx::", and Python changes it to "wx."
-    // C++ and Perl use the constant unmodified.
+    // C++ uses the constant unmodified.
     //
     // "wx" is the shortest string that could be changed -- no single letter will ever be changed by
     // this function.

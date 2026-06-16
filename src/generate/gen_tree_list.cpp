@@ -97,8 +97,7 @@ std::pair<bool, wxue::string> TreeListCtrlGenerator::isLanguageVersionSupported(
                         << "wxTreeListCtrl is not supported by " << GenLangToString(language) };
 }
 
-//////////////////////////////////////////  TreeListCtrlColumnGenerator
-/////////////////////////////////////////////
+////////////////////////////////////  TreeListCtrlColumnGenerator ////////////////////////////////
 
 bool TreeListCtrlColumnGenerator::ConstructionCode(Code& code)
 {

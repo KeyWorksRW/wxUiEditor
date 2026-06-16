@@ -147,7 +147,7 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
         insert_if_has_value(iter, prop_derived_class_name, derived_classnames);
         insert_if_has_value(iter, prop_base_file, base_filenames);
         insert_if_has_value(iter, prop_derived_file, derived_filenames);
-        insert_if_has_value(iter, prop_perl_file, perl_filenames);
+        insert_if_has_value(iter, prop_typescript_file, perl_filenames);
         insert_if_has_value(iter, prop_python_file, python_filenames);
         insert_if_has_value(iter, prop_ruby_file, ruby_filenames);
         insert_if_has_value(iter, prop_xrc_file, xrc_filenames);
@@ -206,7 +206,7 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     SetNewNodeName(derived_classnames, prop_derived_class_name);
     SetNewNodeName(base_filenames, prop_base_file);
     SetNewNodeName(derived_filenames, prop_derived_file);
-    SetNewNodeName(perl_filenames, prop_perl_file);
+    SetNewNodeName(perl_filenames, prop_typescript_file);
     SetNewNodeName(python_filenames, prop_python_file);
     SetNewNodeName(ruby_filenames, prop_ruby_file);
     SetNewNodeName(xrc_filenames, prop_xrc_file);

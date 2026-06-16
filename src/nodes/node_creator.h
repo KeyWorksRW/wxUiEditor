@@ -154,10 +154,10 @@ private:
         -> bool;
 
     // Helper methods for ParseGeneratorFile
-    auto ParseGenerator(pugi::xml_node& generator, bool is_interface) -> NodeDeclaration*;
+    NodeDeclaration* ParseGenerator(pugi::xml_node& generator, bool is_interface);
     void ProcessGeneratorInheritance(pugi::xml_node& elem_obj);
     static void SetupGeneratorImage(pugi::xml_node& generator, NodeDeclaration* declaration);
-    static auto DetermineGenType(pugi::xml_node& generator, bool is_interface) -> GenType;
+    static GenType DetermineGenType(pugi::xml_node& generator, bool is_interface);
 
     // Helper methods for ParseProperties
     static void ParseSingleProperty(pugi::xml_node& elem_prop, NodeDeclaration* node_declaration,

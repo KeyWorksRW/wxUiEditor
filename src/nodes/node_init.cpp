@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-15-2026]
 
 #include <format>
 #include <functional>
@@ -483,37 +484,47 @@ void NodeCreator::Initialize()
         pugi::xml_document interface_doc;
         m_pdoc_interface = &interface_doc;
 
-        auto result = interface_doc.load_string(wxue_data::get_interfaces());
-        if (!result)
+        try
         {
-            FAIL_MSG("xml/interfaces.xml is corrupted!");
-            throw std::runtime_error("Internal XML file is corrupted.");
-        }
-
-        // Now parse the completed m_pdoc_interface document
-        ParseGeneratorFile("");
-
-        /*
-         [Randalphwa - 11-09-2025] I looked into turning this into threaded code, but it's not
-         really practical:
-
-        - XML decompression (in wxue_data functions) is already CPU-intensive and would saturate
-         cores
-        - Lock contention on m_a_declarations would serialize the critical sections anyway
-         - Memory allocation for NodeDeclaration objects has its own internal synchronization
-         overhead
-        - Only 12 iterations (based on functionArray size) - insufficient parallelism to
-         overcome threading overhead
-
-        */
-
-        for (const auto& iter: functionArray)
-        {
-            auto xml_data = iter();
-            if (xml_data.size())
+            pugi::xml_parse_result const result =
+                interface_doc.load_string(wxue_data::get_interfaces());
+            if (!result)
             {
-                ParseGeneratorFile(xml_data.c_str());
+                FAIL_MSG("xml/interfaces.xml is corrupted!");
+                throw std::runtime_error("Internal XML file is corrupted.");
             }
+
+            // Now parse the completed m_pdoc_interface document
+            ParseGeneratorFile("");
+
+            /*
+             [Randalphwa - 11-09-2025] I looked into turning this into threaded code, but it's not
+             really practical:
+
+            - XML decompression (in wxue_data functions) is already CPU-intensive and would saturate
+             cores
+            - Lock contention on m_a_declarations would serialize the critical sections anyway
+             - Memory allocation for NodeDeclaration objects has its own internal synchronization
+             overhead
+            - Only 12 iterations (based on functionArray size) - insufficient parallelism to
+             overcome threading overhead
+
+            */
+
+            for (const auto& iter: functionArray)
+            {
+                std::string const xml_data = iter();
+                if (!xml_data.empty())
+                {
+                    ParseGeneratorFile(xml_data.c_str());
+                }
+            }
+        }
+        catch (...)
+        {
+            m_interfaces.clear();
+            m_pdoc_interface = nullptr;
+            throw;
         }
 
         m_interfaces.clear();
@@ -528,14 +539,14 @@ void NodeCreator::Initialize()
     }
 }
 
-auto NodeCreator::DetermineGenType(pugi::xml_node& generator, bool is_interface) -> GenType
+GenType NodeCreator::DetermineGenType(pugi::xml_node& generator, bool is_interface)
 {
     if (is_interface)
     {
         return type_interface;
     }
 
-    auto type_name = generator.attribute("type").as_view();
+    std::string_view type_name = generator.attribute("type").as_view();
 #if defined(_DEBUG)
     if (is_interface && type_name != "interface")
     {
@@ -560,8 +571,8 @@ auto NodeCreator::DetermineGenType(pugi::xml_node& generator, bool is_interface)
 
 void NodeCreator::SetupGeneratorImage(pugi::xml_node& generator, NodeDeclaration* declaration)
 {
-    auto image_name = generator.attribute("image").as_view();
-    if (image_name.size())
+    std::string_view image_name = generator.attribute("image").as_view();
+    if (!image_name.empty())
     {
         if (auto bndl_function = GetSvgFunction(image_name); bndl_function)
         {
@@ -569,7 +580,7 @@ void NodeCreator::SetupGeneratorImage(pugi::xml_node& generator, NodeDeclaration
         }
         else
         {
-            auto image = GetInternalImage(image_name);
+            wxImage const image = GetInternalImage(image_name);
             if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
             {
                 MSG_INFO(std::format("{} width: {}height: {}", image_name, image.GetWidth(),
@@ -595,9 +606,9 @@ void NodeCreator::SetupGeneratorImage(pugi::xml_node& generator, NodeDeclaration
     }
 }
 
-auto NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface) -> NodeDeclaration*
+NodeDeclaration* NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface)
 {
-    auto class_name = generator.attribute("class").as_str();
+    wxue::string class_name = generator.attribute("class").as_str();
     if (class_name.starts_with("gen_"))
     {
         class_name.erase(0, sizeof("gen_") - 1);
@@ -624,7 +635,7 @@ auto NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface) -
         }
     }
 
-    GenType type = DetermineGenType(generator, is_interface);
+    GenType const type = DetermineGenType(generator, is_interface);
     if (type == gen_type_unknown)
     {
         return nullptr;
@@ -638,7 +649,7 @@ auto NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface) -
     auto* declaration = new NodeDeclaration(class_name, get_NodeType(type));
     m_a_declarations.at(declaration->get_GenName()) = declaration;
 
-    if (auto flags = generator.attribute("flags").as_view(); flags.size())
+    if (auto flags = generator.attribute("flags").as_view(); !flags.empty())
     {
         declaration->SetGeneratorFlags(flags);
     }
@@ -652,42 +663,43 @@ auto NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_interface) -
 
 void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
 {
-    auto class_name = elem_obj.attribute("class").as_view();
+    std::string_view class_name = elem_obj.attribute("class").as_view();
     if (class_name.starts_with("gen_"))
     {
         class_name.remove_prefix(sizeof("gen_") - 1);
     }
 
-    auto* class_info = get_NodeDeclaration(class_name);
+    NodeDeclaration* class_info = get_NodeDeclaration(class_name);
     if (!class_info)
     {
         return;  // Corrupted or unsupported project file
     }
 
-    auto elem_base = elem_obj.child("inherits");
+    pugi::xml_node elem_base = elem_obj.child("inherits");
     while (elem_base)
     {
-        auto base_name = elem_base.attribute("class").as_view();
+        std::string_view base_name = elem_base.attribute("class").as_view();
         if (base_name == "Language Settings")
         {
+            // NOLINTBEGIN(bugprone-unchecked-error-return)
             class_info->AddBaseClass(get_NodeDeclaration("C++ Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("C++ Header Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("C++ Derived Class Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("wxPython Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("wxRuby Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("kwxFortran Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("kwxGO Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("kwxJulia Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("kwxLuaJIT Settings"));
-            class_info->AddBaseClass(get_NodeDeclaration("kwxPerl Settings"));
-            class_info->AddBaseClass(get_NodeDeclaration("kwxRust Settings"));
-            class_info->AddBaseClass(get_NodeDeclaration("wxPython Settings"));
-            class_info->AddBaseClass(get_NodeDeclaration("wxRuby Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxTypeScript Settings"));
+            // NOLINTEND(bugprone-unchecked-error-return)
 
             elem_base = elem_base.next_sibling("inherits");
             continue;
         }
 
         auto* base_info = get_NodeDeclaration(base_name);
-        if (!class_info || !base_info)
+        if (!base_info)
         {
             elem_base = elem_base.next_sibling("inherits");
             continue;
@@ -695,10 +707,11 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
 
         class_info->AddBaseClass(base_info);
 
-        auto inheritedProperty = elem_base.child("property");
+        pugi::xml_node inheritedProperty = elem_base.child("property");
         while (inheritedProperty)
         {
-            auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
+            std::map<std::string_view, GenEnum::PropName, std::less<>>::const_iterator const
+                lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
             if (lookup_name == rmap_PropNames.end())
             {
                 MSG_ERROR(std::format("Unrecognized inherited property name -- {}",
@@ -714,7 +727,8 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
         inheritedProperty = elem_base.child("hide");
         while (inheritedProperty)
         {
-            auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
+            std::map<std::string_view, GenEnum::PropName, std::less<>>::const_iterator const
+                lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_view());
             if (lookup_name == rmap_PropNames.end())
             {
                 MSG_ERROR(std::format("Unrecognized inherited property name -- {}",
@@ -734,9 +748,9 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
 // processing an interface document.
 void NodeCreator::ParseGeneratorFile(const char* xml_data)
 {
-    pugi::xml_document doc;
+    pugi::xml_document xml_doc;
     pugi::xml_node root;
-    bool is_interface = (xml_data == nullptr || !*xml_data);
+    bool const is_interface = (xml_data == nullptr || !*xml_data);
 
     if (!xml_data || !*xml_data)
     {
@@ -744,13 +758,13 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
     }
     else
     {
-        auto result = doc.load_string(xml_data);
+        pugi::xml_parse_result const result = xml_doc.load_string(xml_data);
         if (!result)
         {
             FAIL_MSG("XML file is corrupted!");
             throw std::runtime_error("Internal XML file is corrupted.");
         }
-        root = doc.child("GeneratorDefinitions");
+        root = xml_doc.child("GeneratorDefinitions");
     }
 
     if (!root)
@@ -759,7 +773,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
         throw std::runtime_error("Internal XML file is corrupted.");
     }
 
-    auto generator = root.child("gen");
+    pugi::xml_node generator = root.child("gen");
     while (generator)
     {
         ParseGenerator(generator, is_interface);
@@ -769,7 +783,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
     // Interface processing doesn't have xml_data
     if (xml_data && *xml_data)
     {
-        auto elem_obj = root.child("gen");
+        pugi::xml_node elem_obj = root.child("gen");
         while (elem_obj)
         {
             ProcessGeneratorInheritance(elem_obj);
@@ -780,11 +794,11 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
 
 void NodeCreator::AddPropertyOptions(pugi::xml_node& elem_prop, PropDeclaration* prop_info)
 {
-    auto& opts = prop_info->getOptions();
-    auto elem_opt = elem_prop.child("option");
+    std::vector<PropDeclaration::Options>& opts = prop_info->getOptions();
+    pugi::xml_node elem_opt = elem_prop.child("option");
     while (elem_opt)
     {
-        auto& opt = opts.emplace_back();
+        PropDeclaration::Options& opt = opts.emplace_back();
         opt.name = elem_opt.attribute("name").as_view();
         opt.help = elem_opt.attribute("help").as_view();
 
@@ -823,7 +837,7 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
     node_declaration->GetPropInfoMap()[std::string(map_PropNames.at(prop_class_access))] =
         prop_info;
 
-    auto& opts = prop_info->getOptions();
+    std::vector<PropDeclaration::Options>& opts = prop_info->getOptions();
 
     if (!node_declaration->is_Gen(gen_wxTimer))
     {
@@ -849,25 +863,26 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
                                                    NodeDeclaration* node_declaration,
                                                    NodeCategory& category)
 {
-    auto name = elem_prop.attribute("name").as_str();
+    wxue::string name = elem_prop.attribute("name").as_str();
     if (name.starts_with("prop_"))
     {
         name.erase(0, sizeof("prop_") - 1);
     }
 
-    auto lookup_name = rmap_PropNames.find(name);
+    std::map<std::string_view, GenEnum::PropName, std::less<>>::const_iterator const lookup_name =
+        rmap_PropNames.find(name);
     if (lookup_name == rmap_PropNames.end())
     {
         MSG_ERROR(std::format("Unrecognized property name -- {}", name));
         return;
     }
-    GenEnum::PropName prop_name = lookup_name->second;
+    GenEnum::PropName const prop_name = lookup_name->second;
 
     category.addProperty(prop_name);
 
-    auto description = elem_prop.attribute("help").as_view();
+    std::string_view const description = elem_prop.attribute("help").as_view();
 
-    auto prop_type = elem_prop.attribute("type").as_view();
+    std::string_view prop_type = elem_prop.attribute("type").as_view();
     if (prop_type.starts_with("type_"))
     {
         prop_type.remove_prefix(sizeof("type_") - 1);
@@ -926,13 +941,13 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
 void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* node_declaration,
                                   NodeCategory& category)
 {
-    auto elem_category = elem_obj.child("category");
+    pugi::xml_node elem_category = elem_obj.child("category");
     while (elem_category)
     {
-        auto name = elem_category.attribute("name").as_view();
-        auto& new_cat = category.addCategory(name);
+        std::string_view const name = elem_category.attribute("name").as_view();
+        NodeCategory& new_cat = category.addCategory(name);
 
-        if (auto base_name = elem_category.attribute("base_name").value(); base_name.size())
+        if (auto base_name = elem_category.attribute("base_name").value(); !base_name.empty())
         {
             if (auto node = m_interfaces.find(base_name); node != m_interfaces.end())
             {
@@ -947,7 +962,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
         elem_category = elem_category.next_sibling("category");
     }
 
-    auto elem_prop = elem_obj.child("property");
+    pugi::xml_node elem_prop = elem_obj.child("property");
     while (elem_prop)
     {
         ParseSingleProperty(elem_prop, node_declaration, category);
@@ -957,28 +972,28 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* nod
 
 void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category)
 {
-    auto elem_category = elem_obj.child("category");
+    pugi::xml_node elem_category = elem_obj.child("category");
     while (elem_category)
     {
         // Only create the category if there is at least one event.
         if (elem_category.child("event"))
         {
-            auto name = elem_category.attribute("name").as_view();
-            auto& new_cat = category.addCategory(name);
+            std::string_view const name = elem_category.attribute("name").as_view();
+            NodeCategory& new_cat = category.addCategory(name);
 
             ParseEvents(elem_category, new_cat);
         }
         elem_category = elem_category.next_sibling("category");
     }
 
-    auto nodeEvent = elem_obj.child("event");
+    pugi::xml_node nodeEvent = elem_obj.child("event");
     while (nodeEvent)
     {
-        auto evt_name = nodeEvent.attribute("name").as_str();
+        wxue::string const evt_name = nodeEvent.attribute("name").as_str();
         category.addEvent(evt_name);
 
-        auto evt_class = nodeEvent.attribute("class").as_view("wxEvent");
-        auto description = nodeEvent.attribute("help").as_view();
+        std::string_view const evt_class = nodeEvent.attribute("class").as_view("wxEvent");
+        std::string_view const description = nodeEvent.attribute("help").as_view();
 
         m_events[evt_name] = new NodeEventInfo(evt_name, evt_class, description);
 

@@ -253,6 +253,9 @@ wxColour Prefs::GetColour(wxSystemColour index)
 
         case wxSYS_COLOUR_MAX:
             break;
+
+        default:
+            break;
     }
 
     FAIL_MSG("unreachable");

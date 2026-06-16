@@ -267,8 +267,7 @@ public:
     // If needed, the line will be broken *before* the string is added.
     auto Add(wxue::string_view text) -> Code&;
 
-    // Same as Add() except that Perl won't use a Wx:: prefix, instead it assumes the
-    // constant was defined in the "use Wx qw(...);" statement.
+    // Same as Add()
     auto AddConstant(wxue::string_view text) -> Code&;
 
     auto Add(const Code& text) -> Code& { return Add(text.GetView()); }
@@ -328,13 +327,13 @@ public:
     // The comment will be followed by a newline.
     auto AddComment(std::string_view comment, bool force = false) -> Code&;
 
-    // Adds "True" for Python, "1" for Perl, and "true" for all other languages
+    // Adds "True" for Python and "true" for all other languages
     auto True() -> Code&;
 
     // Calls AddTrue() or AddFalse() depending on the boolean value of the property
     auto TrueFalseIf(GenEnum::PropName prop_name) -> Code&;
 
-    // Adds "False" for Python, "0" for Perl, and "false" for all other languages
+    // Adds "False" for Python and "false" for all other languages
     auto False() -> Code&;
 
     // Use Str() instead of Add() if you are *absolutely* certain you will never need
@@ -395,7 +394,6 @@ public:
 
     // Adds the object's class name and a open parenthesis: class(
     //
-    // For Perl, the class name will be followed by "->new("
     // For Ruby, the class name will be followed by ".new("
     auto Object(wxue::string_view class_name) -> Code&;
 
@@ -422,7 +420,7 @@ public:
     // non-sizer parents.
     auto ValidParentName() -> Code&;
 
-    // Adds "this" for C++, "$self" for Perl, and "self" for Python and Ruby
+    // Adds "this" for C++ and "self" for Python and Ruby
     auto FormParent() -> Code&;
 
     // Handles regular or or'd properties.
@@ -540,7 +538,7 @@ public:
     void BundleRuby(const wxue::StringVector& parts);
 
     void AddPythonImageName(const EmbeddedImage* embed);
-    void AddPerlImageName(const EmbeddedImage* embed);
+    void AddTypeScriptlImageName(const EmbeddedImage* embed);
 
     void AddPythonSingleBitmapBundle(const wxue::StringVector& parts, const ImageBundle* bundle,
                                      const wxue::string& name);
@@ -565,7 +563,7 @@ public:
     void ResetIndent() { m_indent = 0; }
 
     // Call Indent() and Eol(eol_if_needed).
-    // In C++ and Perl, "{" will be added before calling Indent().
+    // In C++ "{" will be added before calling Indent().
     auto OpenBrace(bool all_languages = false) -> Code&;
 
     // In C++, this adds "\\n}" and removes indentation set by OpenBrace().

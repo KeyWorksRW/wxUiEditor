@@ -75,21 +75,22 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* propGrid, wxVariant& va
             wildcard = "C++ Files|*.cpp;*.cc;*.cxx";
             break;
 
-        case prop_perl_file:
-            if (folder && folder->HasValue(prop_folder_perl_output_folder))
+        case prop_typescript_file:
+            if (folder && folder->HasValue(prop_folder_typescript_output_folder))
             {
-                root_path.AssignDir(folder->as_string(prop_folder_perl_output_folder));
+                root_path.AssignDir(folder->as_string(prop_folder_typescript_output_folder));
             }
-            else if (Project.get_ProjectNode()->HasValue(prop_perl_output_folder))
+            else if (Project.get_ProjectNode()->HasValue(prop_typescript_output_folder))
             {
-                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_perl_output_folder));
+                root_path.AssignDir(
+                    Project.get_ProjectNode()->as_string(prop_typescript_output_folder));
             }
             else
             {
                 root_path.AssignDir(Project.get_wxFileName()->GetPath());
             }
-            title = "Perl filename";
-            wildcard = "Perl Files|*.pl;*.pm";
+            title = "TypeScript filename";
+            wildcard = "TypeScript Files|*.ts;*.tsx";
             break;
 
         case prop_python_file:

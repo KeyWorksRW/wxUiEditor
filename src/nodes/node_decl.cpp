@@ -1,9 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains the declarations for a node (properties, events, etc.)
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <format>
 
 #include "node_decl.h"
 
@@ -12,9 +14,15 @@
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
 NodeDeclaration::NodeDeclaration(wxue::string_view class_name, NodeType* type) :
-    m_type(type), m_category(class_name), m_gen_name(rmap_GenNames[class_name]),
-    m_gen_type(type->get_GenType()), m_name(GenEnum::map_GenNames.at(m_gen_name))
+    m_category(class_name)
 {
+    ASSERT_MSG(rmap_GenNames.contains(class_name),
+               std::format("Class name not found in GenNames map: {}", class_name.ToStdView()));
+
+    m_type = type;
+    m_gen_name = rmap_GenNames.at(class_name);
+    m_gen_type = type->get_GenType();
+    m_name = GenEnum::map_GenNames.at(m_gen_name);
 }
 
 NodeDeclaration::~NodeDeclaration()
@@ -22,16 +30,16 @@ NodeDeclaration::~NodeDeclaration()
     delete m_generator;
 }
 
-auto NodeDeclaration::get_PropDeclaration(size_t idx) const -> PropDeclaration*
+PropDeclaration* NodeDeclaration::get_PropDeclaration(size_t idx) const
 {
     ASSERT(idx < m_properties.size());
 
-    auto iter = m_properties.begin();
+    DeclPropMap::const_iterator iter = m_properties.begin();
     size_t i = 0;
     while (i < idx && iter != m_properties.end())
     {
-        i++;
-        iter++;
+        ++i;
+        ++iter;
     }
 
     if (iter != m_properties.end())
@@ -56,12 +64,12 @@ const NodeEventInfo* NodeDeclaration::get_EventInfo(size_t idx) const
 {
     ASSERT(idx < m_events.size());
 
-    auto iter = m_events.begin();
+    DeclEventMap::const_iterator iter = m_events.begin();
     size_t i = 0;
     while (i < idx && iter != m_events.end())
     {
-        i++;
-        iter++;
+        ++i;
+        ++iter;
     }
 
     if (iter != m_events.end())
@@ -88,7 +96,7 @@ NodeDeclaration* NodeDeclaration::GetBaseClass(size_t idx, bool inherited) const
 
 size_t NodeDeclaration::GetBaseClassCount(bool inherited) const
 {
-    if (inherited && m_base.size())
+    if (inherited && !m_base.empty())
     {
         std::vector<NodeDeclaration*> classes;
 
@@ -112,8 +120,7 @@ size_t NodeDeclaration::GetBaseClassCount(bool inherited) const
     return m_base.size();
 }
 
-auto NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited) const
-    -> void
+void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, bool inherited) const
 {
     for (auto* iter: m_base)
     {
@@ -162,7 +169,7 @@ ptrdiff_t NodeDeclaration::get_AllowableChildren(GenType child_gen_type) const
     return m_type->get_AllowableChildren(child_gen_type);
 }
 
-std::optional<wxue::string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name)
+std::optional<wxue::string> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name) const
 {
     if (auto result = m_override_def_values.find(prop_name); result != m_override_def_values.end())
     {

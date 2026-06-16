@@ -28,6 +28,15 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     #define ASSERT(cond)
     #define ASSERT_MSG(cond, msg)
     #define FAIL_MSG(msg)
+
+    // In release builds, shows a simple wxMessageBox with the message only — no file/line
+    // details, no debugger break. Use for conditions that would cause a crash if ignored
+    // (e.g., nullptr guards).
+    #define ASSERT_OR_WARN(cond, msg)                              \
+        if (!(cond))                                               \
+        {                                                          \
+            wxMessageBox((msg), "Warning", wxOK | wxICON_WARNING); \
+        }
 #else  // not defined(NDEBUG) && !defined(INTERNAL_TESTING)
     #define ASSERT(cond)                                                                 \
         if (!(cond) && AssertionDlg(__FILE__, __func__, __LINE__, #cond, wxEmptyString)) \
@@ -47,5 +56,8 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
         {                                                                \
             wxTrap();                                                    \
         }
+    // In debug builds, identical to ASSERT_MSG — shows file/line/condition with option
+    // to break into the debugger.
+    #define ASSERT_OR_WARN(cond, msg) ASSERT_MSG(cond, msg)
 // NOLINTEND(cppcoreguidelines-macro-usage)
 #endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)

@@ -21,6 +21,9 @@
         bitmap="Embed;DialogBlocks.png" />
       <node
         class="embedded_image"
+        bitmap="SVG;Go-Logo_Blue.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;alignbottom.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -129,6 +132,9 @@
         bitmap="SVG;fontPicker.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;fortran_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;gauge.svg;[24,24]" />
       <node
         class="embedded_image"
@@ -166,6 +172,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;left.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;lua-logo.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;menu.svg;[24,24]" />
@@ -361,6 +370,9 @@
       <node
         class="embedded_image"
         bitmap="SVG;treelistctrlcolumn.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ts-logo-round-128.svg;[24,24]" />
       <node
         class="embedded_image"
         bitmap="SVG;undo.svg;[24,24]" />
@@ -5308,7 +5320,7 @@
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h;wx/tokenzr.h"
         header_preamble="class NodeProperty;"
-        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GEN_LANG_CPLUSPLUS;&quot;"
+        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GenLang::cplusplus;&quot;"
         class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
         private_members="1"
         use_derived_class="0"
@@ -5389,7 +5401,7 @@
         system_src_includes="wx/filedlg.h"
         header_preamble="class NodeProperty;"
         system_hdr_includes="wx/filehistory.h"
-        class_members="&quot;wxue::string m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;int m_language = GEN_LANG_CPLUSPLUS;&quot; &quot;wxFileHistory m_FileHistory;&quot;"
+        class_members="&quot;wxue::string m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GenLang::cplusplus;&quot; &quot;wxFileHistory m_FileHistory;&quot;"
         class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxue::string&amp; GetResults() const { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
         private_members="1"
         use_derived_class="0"
@@ -6689,9 +6701,29 @@
               wxEVT_RADIOBUTTON="OnRuby" />
             <node
               class="wxRadioButton"
-              label="&amp;Perl"
-              var_name="m_radio_perl"
-              wxEVT_RADIOBUTTON="OnPerl" />
+              label="&amp;Fortran"
+              var_name="m_radio_fortran"
+              wxEVT_RADIOBUTTON="OnFortran" />
+            <node
+              class="wxRadioButton"
+              label="&amp;GO"
+              var_name="m_radio_go"
+              wxEVT_RADIOBUTTON="OnGO" />
+            <node
+              class="wxRadioButton"
+              label="&amp;Julia"
+              var_name="m_radio_julia"
+              wxEVT_RADIOBUTTON="OnJulia" />
+            <node
+              class="wxRadioButton"
+              label="&amp;LuaJIT"
+              var_name="m_radio_luajit"
+              wxEVT_RADIOBUTTON="OnLuaJIT" />
+            <node
+              class="wxRadioButton"
+              label="&amp;TypeScript"
+              var_name="m_radio_typescript"
+              wxEVT_RADIOBUTTON="OnTypeScript" />
             <node
               class="wxRadioButton"
               label="&amp;XRC"
@@ -8705,7 +8737,7 @@
         class="wxBoxSizer"
         orientation="wxVERTICAL"
         var_name="dlg_sizer"
-        minimum_size="750,-1">
+        minimum_size="900,-1">
         <node
           class="wxNotebook"
           class_access="none"
@@ -9119,92 +9151,456 @@
           </node>
           <node
             class="BookPage"
-            bitmap="SVG;perl-logo.svg;[24,24]"
-            label="Perl"
-            var_name="page_perl"
+            bitmap="SVG;fortran_logo.svg;[24,24]"
+            label="Fortran"
+            var_name="page_fortran"
             window_style="wxTAB_TRAVERSAL">
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-              var_name="page_sizer5">
+               var_name="page_sizer5_10">
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer13">
+                var_name="box_sizer13_10">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Line Length"
-                  var_name="staticText27"
+                  var_name="staticText27_10"
                   wrap="200"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxTextCtrl"
                   class_access="none"
                   value="80"
-                  var_name="text_perl_line_length"
+                  var_name="text_fortran_line_length"
                   validator_style="wxFILTER_DIGITS"
-                  validator_variable="m_perl_line_length"
+                  validator_variable="m_fortran_line_length"
                   tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
               </node>
               <node
                 class="wxBoxSizer"
-                var_name="box_sizer14">
+                var_name="box_sizer14_10">
                 <node
                   class="wxStaticText"
                   class_access="none"
-                  label="wxPerl version"
-                  var_name="static_text7"
+                  label="kwxFortran version"
+                  var_name="static_text7_10"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxChoice"
-                  contents="&quot;0.91&quot; &quot;3.2.0&quot;"
-                  selection_string="3.2.0"
-                  var_name="m_choice_perl_version"
+                  contents="&quot;0.9.0&quot; &quot;1.0.0&quot;"
+                  selection_string="0.0.0"
+                  var_name="m_choice_fortran_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>
               <node
                 class="wxGridSizer"
-                var_name="grid_sizer7">
+                var_name="grid_sizer7_10">
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="wxWidgets &amp;keyword color:"
-                  var_name="staticText28"
+                  var_name="staticText28_10"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#FF00FF"
-                  var_name="m_colour_perl" />
+                  var_name="m_colour_fortran" />
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Comment color:"
-                  var_name="staticText29"
+                  var_name="staticText29_10"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_comment" />
+                  var_name="m_colour_fortran_comment" />
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;Number color:"
-                  var_name="staticText30"
+                  var_name="staticText30_10"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#FF0000"
-                  var_name="m_colour_perl_number" />
+                  var_name="m_colour_fortran_number" />
                 <node
                   class="wxStaticText"
                   class_access="none"
                   label="&amp;String color:"
-                  var_name="staticText31"
+                  var_name="staticText31_10"
                   alignment="wxALIGN_CENTER_VERTICAL" />
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_string" />
+                  var_name="m_colour_perl_string_10" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;Go-Logo_Blue.svg;[24,24]"
+            label="GO"
+            var_name="page_go"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+               var_name="page_sizer5_11">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer13_11">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText27_11"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="80"
+                  var_name="text_go_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_go_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer14_11">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="kwxgo version"
+                  var_name="static_text7_11"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;0.9.0&quot; &quot;1.0.0&quot;"
+                  selection_string="0.0.0"
+                  var_name="m_choice_go_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer7_11">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText28_11"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_go" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText29_11"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_go_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText30_11"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_go_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText31_11"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_perl_string_11" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;julia_logo.svg;[24,24]"
+            label="Julia"
+            var_name="page_julia"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+               var_name="page_sizer5_12">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer13_12">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText27_12"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="80"
+                  var_name="text_julia_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_julia_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer14_12">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="kwxjulia version"
+                  var_name="static_text7_12"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;0.9.0&quot; &quot;1.0.0&quot;"
+                  selection_string="0.0.0"
+                  var_name="m_choice_julia_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer7_12">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText28_12"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_julia" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText29_12"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_julia_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText30_12"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_julia_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText31_12"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_perl_string_12" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;lua-logo.svg;[24,24]"
+            label="LuaJIT"
+            var_name="page_luajit"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+               var_name="page_sizer5_13">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer13_13">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText27_13"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="80"
+                  var_name="text_luajit_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_luajit_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer14_13">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="kwxluajit version"
+                  var_name="static_text7_13"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;0.9.0&quot; &quot;1.0.0&quot;"
+                  selection_string="0.0.0"
+                  var_name="m_choice_luajit_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer7_13">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText28_13"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_luajit" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText29_13"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_luajit_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText30_13"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_luajit_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText31_13"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_perl_string_13" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;ts-logo-round-128.svg;[24,24]"
+            label="TypeScript"
+            var_name="page_typescript"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+               var_name="page_sizer5_14">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer13_14">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText27_14"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="80"
+                  var_name="text_typescript_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_typescript_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer14_14">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="kwxtypescript version"
+                  var_name="static_text7_14"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;0.9.0&quot; &quot;1.0.0&quot;"
+                  selection_string="0.0.0"
+                  var_name="m_choice_typescript_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer7_14">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText28_14"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_typescript" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText29_14"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_typescript_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText30_14"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_typescript_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText31_14"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_perl_string_14" />
               </node>
             </node>
           </node>

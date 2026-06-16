@@ -245,11 +245,11 @@ void Code::AddPythonMultiBitmapBundle(const wxue::StringVector& parts, const Ima
     *this += "])";
 }
 
-void Code::AddPerlImageName(const EmbeddedImage* embed)
+void Code::AddTypeScriptlImageName(const EmbeddedImage* embed)
 {
     if (embed->get_Form()->is_Gen(gen_Images))
     {
-        wxue::string import_name = embed->get_Form()->as_string(prop_perl_file).filename();
+        wxue::string import_name = embed->get_Form()->as_string(prop_typescript_file).filename();
         import_name.remove_extension();
 
         Str(import_name).Str(".");

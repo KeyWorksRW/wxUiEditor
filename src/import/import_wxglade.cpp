@@ -108,6 +108,9 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
                                 new_node->set_value(prop_xrc_file,
                                                     new_node->as_string(prop_class_name));
                                 break;
+
+                            default:
+                                break;
                         }
                     }
                 }

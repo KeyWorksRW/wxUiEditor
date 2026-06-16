@@ -29,24 +29,27 @@ public:
 
     CodeCompare(const CodeCompare&) = delete;
     CodeCompare(CodeCompare&&) = delete;
-    auto operator=(const CodeCompare&) -> CodeCompare& = delete;
-    auto operator=(CodeCompare&&) -> CodeCompare& = delete;
+    CodeCompare& operator=(const CodeCompare&) = delete;
+    CodeCompare& operator=(CodeCompare&&) = delete;
 
     // Static method for non-UI code comparison (used by verify_codegen)
     // If form_node is provided, only compare that form; otherwise compare entire project
-    [[nodiscard]] static auto CollectFileDiffsForLanguage(GenLang language,
-                                                          Node* form_node = nullptr)
-        -> std::vector<FileDiff>;
+    [[nodiscard]] static std::vector<FileDiff>
+        CollectFileDiffsForLanguage(GenLang language, Node* form_node = nullptr);
 
 protected:
     // Event handlers
 
     void OnCPlusPlus(wxCommandEvent& event) override;
+    void OnDiff(wxCommandEvent& event) override;
+    void OnFortran(wxCommandEvent& event) override;
+    void OnGO(wxCommandEvent& event) override;
     void OnInit(wxInitDialogEvent& event) override;
-    void OnPerl(wxCommandEvent& event) override;
+    void OnJulia(wxCommandEvent& event) override;
+    void OnLuaJIT(wxCommandEvent& event) override;
     void OnPython(wxCommandEvent& event) override;
     void OnRuby(wxCommandEvent& event) override;
-    void OnDiff(wxCommandEvent& event) override;
+    void OnTypeScript(wxCommandEvent& event) override;
     void OnXRC(wxCommandEvent& event) override;
 
     void OnRadioButton(GenLang language);

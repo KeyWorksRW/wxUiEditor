@@ -564,7 +564,7 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
 auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* form,
                                       bool comparison_only) -> bool
 {
-    // This handles Python, Ruby, Perl, and XRC - they only have a single source file per form
+    // This handles Python, Ruby, and XRC - they only have a single source file per form
     // C++ is handled via GenerateCppForm which manages both .h and .cpp files
 
     if (!form || !form->is_Form())
@@ -1030,7 +1030,7 @@ auto GenResults::GenerateCombinedFile(GenLang language) -> bool
     // Currently only XRC is supported for combined file generation
     if (language != GenLang::xrc)
     {
-        // Future: Add support for Python, Ruby, Perl
+        // Future: Add support for Python and Ruby
         FAIL_MSG("GenerateCombinedFile currently only supports GenLang::xrc");
         return false;
     }

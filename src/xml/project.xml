@@ -10,34 +10,31 @@
         <inherits class="kwxGO"/>
         <inherits class="kwxLuaJIT"/>
         <inherits class="kwxJulia"/>
-        <inherits class="kwxPerl"/>
-        <inherits class="kwxRust"/>
+        <inherits class="kwxTypeScript"/>
         <inherits class="XRC"/>
 
         <property name="code_preference" type="option"
             help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
             <option name="C++"/>
-			<option name="Fortran"/>
-			<option name="GO"/>
-			<option name="Julia"/>
-			<option name="LuaJIT"/>
-			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
-			<option name="Rust"/>
-			<option name="XRC"/>
+			<option name="Fortran"/>
+			<option name="GO"/>
+			<option name="LuaJIT"/>
+			<option name="Julia"/>
+			<option name="TypeScript"/>
+		<option name="XRC"/>
             C++</property>
         <property name="generate_languages" type="bitlist"
             help="Specify the programming languages you might want to view or generate from this project. The code preference language above will always be available when this project is loaded.">
             <option name="C++"/>
+			<option name="Python"/>
+			<option name="Ruby"/>
 			<option name="Fortran"/>
 			<option name="GO"/>
 			<option name="Julia"/>
 			<option name="LuaJIT"/>
-			<option name="Perl"/>
-			<option name="Python"/>
-			<option name="Ruby"/>
-			<option name="Rust"/>
+			<option name="TypeScript"/>
 			<option name="XRC"/>
             C++ | Python
         </property>
@@ -75,15 +72,13 @@
         <property name="code_preference" type="option"
             help="Specify the code you prefer to generate. This can affect default settings for variable names, various initial UI states, and the UI display in the Mockup panel.">
             <option name="C++"/>
-			<option name="Perl"/>
 			<option name="Python"/>
 			<option name="Ruby"/>
 			<option name="GO"/>
 			<option name="Fortran"/>
 			<option name="Julia"/>
 			<option name="LuaJIT"/>
-			<option name="Perl"/>
-			<option name="Rust"/>
+			<option name="TypeScript"/>
 			<option name="XRC"/>C++</property>
     </gen>
 

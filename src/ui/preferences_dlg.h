@@ -23,6 +23,12 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 
+namespace wxue_img
+{
+    // ../art_src/julia_logo.svg
+    extern const unsigned char julia_logo_svg[167];
+}
+
 class PreferencesDlg : public wxDialog
 {
 public:
@@ -49,9 +55,13 @@ protected:
 
     bool m_isWakaTimeEnabled { true };
     wxString m_cpp_line_length { "110" };
-    wxString m_perl_line_length { "80" };
+    wxString m_fortran_line_length { "80" };
+    wxString m_go_line_length { "80" };
+    wxString m_julia_line_length { "80" };
+    wxString m_luajit_line_length { "80" };
     wxString m_python_line_length { "90" };
     wxString m_ruby_line_length { "80" };
+    wxString m_typescript_line_length { "80" };
 
     // Class member variables
 
@@ -65,19 +75,36 @@ protected:
     wxCheckBox* m_check_right_propgrid;
     wxCheckBox* m_check_svg_bitmaps;
     wxChoice* m_choice_cpp_version;
+    wxChoice* m_choice_fortran_version;
+    wxChoice* m_choice_go_version;
     wxChoice* m_choice_icon_size;
-    wxChoice* m_choice_perl_version;
+    wxChoice* m_choice_julia_version;
+    wxChoice* m_choice_luajit_version;
     wxChoice* m_choice_python_version;
     wxChoice* m_choice_ruby_version;
+    wxChoice* m_choice_typescript_version;
     wxColourPickerCtrl* m_colour_cpp;
     wxColourPickerCtrl* m_colour_cpp_comment;
     wxColourPickerCtrl* m_colour_cpp_keyword;
     wxColourPickerCtrl* m_colour_cpp_number;
     wxColourPickerCtrl* m_colour_cpp_string;
-    wxColourPickerCtrl* m_colour_perl;
-    wxColourPickerCtrl* m_colour_perl_comment;
-    wxColourPickerCtrl* m_colour_perl_number;
-    wxColourPickerCtrl* m_colour_perl_string;
+    wxColourPickerCtrl* m_colour_fortran;
+    wxColourPickerCtrl* m_colour_fortran_comment;
+    wxColourPickerCtrl* m_colour_fortran_number;
+    wxColourPickerCtrl* m_colour_go;
+    wxColourPickerCtrl* m_colour_go_comment;
+    wxColourPickerCtrl* m_colour_go_number;
+    wxColourPickerCtrl* m_colour_julia;
+    wxColourPickerCtrl* m_colour_julia_comment;
+    wxColourPickerCtrl* m_colour_julia_number;
+    wxColourPickerCtrl* m_colour_luajit;
+    wxColourPickerCtrl* m_colour_luajit_comment;
+    wxColourPickerCtrl* m_colour_luajit_number;
+    wxColourPickerCtrl* m_colour_perl_string_10;
+    wxColourPickerCtrl* m_colour_perl_string_11;
+    wxColourPickerCtrl* m_colour_perl_string_12;
+    wxColourPickerCtrl* m_colour_perl_string_13;
+    wxColourPickerCtrl* m_colour_perl_string_14;
     wxColourPickerCtrl* m_colour_python;
     wxColourPickerCtrl* m_colour_python_comment;
     wxColourPickerCtrl* m_colour_python_keyword;
@@ -87,6 +114,9 @@ protected:
     wxColourPickerCtrl* m_colour_ruby_comment;
     wxColourPickerCtrl* m_colour_ruby_number;
     wxColourPickerCtrl* m_colour_ruby_string;
+    wxColourPickerCtrl* m_colour_typescript;
+    wxColourPickerCtrl* m_colour_typescript_comment;
+    wxColourPickerCtrl* m_colour_typescript_number;
     wxColourPickerCtrl* m_colour_xrc_attribute;
     wxColourPickerCtrl* m_colour_xrc_string;
     wxColourPickerCtrl* m_colour_xrc_tag;

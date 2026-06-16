@@ -11,6 +11,7 @@
 #include "code_compare.h"
 
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
+#include <wx/msgdlg.h>
 
 #include "diff_viewer.h"      // DiffViewer -- Dialog for displaying file differences
 #include "gen_results.h"      // Code generation file writing functions
@@ -18,28 +19,32 @@
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 
-void MainFrame::OnCodeCompare(wxCommandEvent& /* event */)
+void MainFrame::OnCodeCompare([[maybe_unused]] wxCommandEvent& event)
 {
-    CodeCompare dlg(this);
-    dlg.ShowModal();
+    CodeCompare dialog(this);
+    dialog.ShowModal();
 }
 
-void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
+void CodeCompare::OnInit([[maybe_unused]] wxInitDialogEvent& event)
 {
-    auto* node = wxGetFrame().getSelectedNode();
-    ASSERT_MSG(node, "No node selected for code comparison dialog");  // this should be impossible
+    Node* node = wxGetFrame().getSelectedNode();
+    ASSERT_OR_WARN(node != nullptr, "No form node selected for code comparison dialog");
+    if (!node)
+    {
+        return;
+    }
     if (node->is_Form())
     {
         m_changed_classes_text->SetLabel(node->as_string(prop_class_name));
     }
     else if (node->is_Folder())
     {
-        wxString text = node->as_string(prop_label).wx() << " (Folder)";
+        const wxString text = node->as_string(prop_label).wx() << " (Folder)";
         m_changed_classes_text->SetLabel(text);
     }
 
     GenLang language = Project.get_CodePreference(node);
-    wxCommandEvent dummy;
+    const wxCommandEvent dummy;
     switch (language)
     {
         case GenLang::python:
@@ -54,17 +59,38 @@ void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
             m_radio_cplusplus->SetValue(true);
             break;
 
+        case GenLang::fortran:
+            m_radio_fortran->SetValue(true);
+            break;
+
+        case GenLang::go:
+            m_radio_go->SetValue(true);
+            break;
+
+        case GenLang::julia:
+            m_radio_julia->SetValue(true);
+            break;
+
+        case GenLang::luajit:
+            m_radio_luajit->SetValue(true);
+            break;
+
+        case GenLang::typescript:
+            m_radio_typescript->SetValue(true);
+            break;
+
             // TODO: [Randalphwa - 12-17-2025] We need to support XRC, but we don't currently
             // have a verified way of comparing XRC files
 
         default:
             {
-                auto msg = std::format("Unsupported code generation language: {}",
-                                       GenLangToString(language));
-                FAIL_MSG(msg);
+                const std::string message = std::format("Unsupported code generation language: {}",
+                                                        GenLangToString(language));
+                FAIL_MSG(message);
 
-                // The dialog has not been shown yet, so we displaying a user message box won't
-                // make sense. Instead, default to C++ generation.
+                // The dialog has not been shown yet, so displaying a user
+                // message box won't make sense. Instead, default to C++
+                // generation.
                 m_radio_cplusplus->SetValue(true);
                 language = GenLang::cplusplus;
             }
@@ -86,12 +112,12 @@ void CodeCompare::OnRadioButton(GenLang language)
 
     if (!gen_lang_set.contains(language))
     {
-        auto msg = std::format("Unknown language: {}", GenLangToString(language));
-        FAIL_MSG(msg);
+        const std::string message = std::format("Unknown language: {}", GenLangToString(language));
+        FAIL_MSG(message);
         return;
     }
 
-    auto* current_node = wxGetFrame().getSelectedNode();
+    Node* current_node = wxGetFrame().getSelectedNode();
     if (!current_node)
     {
         current_node = Project.get_ProjectNode();
@@ -144,8 +170,9 @@ void CodeCompare::OnRadioButton(GenLang language)
         }
         else
         {
-            auto text = std::format(std::locale(""), "{} file difference{} found.",
-                                    m_file_diffs.size(), m_file_diffs.size() == 1 ? "" : "s");
+            const std::string text =
+                std::format(std::locale(""), "{} file difference{} found.", m_file_diffs.size(),
+                            m_file_diffs.size() == 1 ? "" : "s");
             m_diff_results->SetLabel(text);
         }
     }
@@ -157,33 +184,52 @@ void CodeCompare::OnRadioButton(GenLang language)
     wxGetMainFrame()->UpdateWakaTime();
 }
 
-void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
+void CodeCompare::OnCPlusPlus([[maybe_unused]] wxCommandEvent& event)
 {
     OnRadioButton(GenLang::cplusplus);
 }
 
-void CodeCompare::OnPython(wxCommandEvent& /* event */)
+void CodeCompare::OnPython([[maybe_unused]] wxCommandEvent& event)
 {
     OnRadioButton(GenLang::python);
 }
 
-void CodeCompare::OnRuby(wxCommandEvent& /* event unused */)
+void CodeCompare::OnRuby([[maybe_unused]] wxCommandEvent& event)
 {
     OnRadioButton(GenLang::ruby);
 }
 
-void CodeCompare::OnPerl(wxCommandEvent& /* event */)
+void CodeCompare::OnFortran([[maybe_unused]] wxCommandEvent& event)
 {
-    // Legacy wxPerl generation has been removed. This stub satisfies the pure virtual
-    // in the auto-generated base class.
+    OnRadioButton(GenLang::fortran);
 }
 
-void CodeCompare::OnXRC(wxCommandEvent& /* event */)
+void CodeCompare::OnGO([[maybe_unused]] wxCommandEvent& event)
+{
+    OnRadioButton(GenLang::go);
+}
+
+void CodeCompare::OnJulia([[maybe_unused]] wxCommandEvent& event)
+{
+    OnRadioButton(GenLang::julia);
+}
+
+void CodeCompare::OnLuaJIT([[maybe_unused]] wxCommandEvent& event)
+{
+    OnRadioButton(GenLang::luajit);
+}
+
+void CodeCompare::OnTypeScript([[maybe_unused]] wxCommandEvent& event)
+{
+    OnRadioButton(GenLang::typescript);
+}
+
+void CodeCompare::OnXRC([[maybe_unused]] wxCommandEvent& event)
 {
     OnRadioButton(GenLang::xrc);
 }
 
-void CodeCompare::OnDiff(wxCommandEvent& /* event unused */)
+void CodeCompare::OnDiff([[maybe_unused]] wxCommandEvent& event)
 {
     if (!m_file_diffs.empty())
     {
@@ -197,8 +243,7 @@ void CodeCompare::OnDiff(wxCommandEvent& /* event unused */)
 }
 
 // Static method for non-UI code comparison (used by verify_codegen)
-auto CodeCompare::CollectFileDiffsForLanguage(GenLang language, Node* form_node)
-    -> std::vector<FileDiff>
+std::vector<FileDiff> CodeCompare::CollectFileDiffsForLanguage(GenLang language, Node* form_node)
 {
     // Use GenResults in compare_only mode to generate code and capture diffs
     GenResults results;

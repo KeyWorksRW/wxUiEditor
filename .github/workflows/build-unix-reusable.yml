@@ -33,10 +33,10 @@ jobs:
       if: inputs.runner-type != 'self-hosted'
       run: sudo apt-get update && sudo apt-get install -y unzip
 
-    - name: Setup CMake 3.30+ and Ninja
+    - name: Setup CMake 4.2+ and Ninja
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: '~3.30.0'
+        cmakeVersion: 'latest'
         ninjaVersion: 'latest'
 
     - run: mkdir ${{github.workspace}}/build

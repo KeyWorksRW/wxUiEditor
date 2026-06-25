@@ -37,19 +37,21 @@ constexpr int EVENT_PAGE_RUBY = 6;
 constexpr int EVENT_PAGE_TYPESCRIPT = 7;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
-    EventHandlerDlgBase(parent), m_event(event), m_python_page(EVENT_PAGE_PYTHON),
-    m_ruby_page(EVENT_PAGE_RUBY), m_gen_languages(Project.get_GenerateLanguages()),
+    EventHandlerDlgBase(parent),
+    m_event(event),
+    m_python_page(EVENT_PAGE_PYTHON),
+    m_ruby_page(EVENT_PAGE_RUBY),
+    m_gen_languages(Project.get_GenerateLanguages()),
+    m_is_cpp_enabled(m_gen_languages & GenLang::cplusplus),
+    m_is_python_enabled(m_gen_languages & GenLang::python),
+    m_is_ruby_enabled(m_gen_languages & GenLang::ruby),
+    m_is_fortran_enabled(m_gen_languages & GenLang::fortran),
+    m_is_go_enabled(m_gen_languages & GenLang::go),
+    m_is_julia_enabled(m_gen_languages & GenLang::julia),
+    m_is_luajit_enabled(m_gen_languages & GenLang::luajit),
+    m_is_typescript_enabled(m_gen_languages & GenLang::typescript),
     m_code_preference(Project.get_CodePreference(event->getNode()))
 {
-    m_is_cpp_enabled = (m_gen_languages & GenLang::cplusplus);
-    m_is_python_enabled = (m_gen_languages & GenLang::python);
-    m_is_ruby_enabled = (m_gen_languages & GenLang::ruby);
-    m_is_fortran_enabled = (m_gen_languages & GenLang::fortran);
-    m_is_go_enabled = (m_gen_languages & GenLang::go);
-    m_is_julia_enabled = (m_gen_languages & GenLang::julia);
-    m_is_luajit_enabled = (m_gen_languages & GenLang::luajit);
-    m_is_typescript_enabled = (m_gen_languages & GenLang::typescript);
-
     m_value = event->get_value().wx();
     if (m_is_cpp_enabled)
     {

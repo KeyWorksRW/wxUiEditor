@@ -32,10 +32,7 @@
 // For the actual Scintilla constants, see the following file.
 // ../../wxWidgets/src/stc/lexilla/include/SciLexer.h
 
-extern const char* g_u8_cpp_keywords;
-extern const char* g_python_keywords;
-extern const char* g_ruby_keywords;
-extern const char* g_typescript_keywords;
+#include "keywords.h"
 
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC
 // generators support more XRC controls.
@@ -44,7 +41,8 @@ extern const char* g_xrc_keywords;
 const int node_marker = 1;
 
 CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
-    CodeDisplayBase(parent), m_panel_type(panel_type)
+    CodeDisplayBase(parent),
+    m_panel_type(panel_type)
 {
     SetStcColors(m_scintilla, panel_type);
 

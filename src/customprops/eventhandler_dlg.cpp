@@ -21,9 +21,7 @@
 // List of events and suggested function names
 extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 
-// Defined in base_panel.cpp
-extern const char* g_u8_cpp_keywords;
-extern const char* g_ruby_keywords;
+#include "keywords.h"
 
 constexpr int SCI_SETKEYWORDS = 4005;
 

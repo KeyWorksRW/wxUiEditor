@@ -18,11 +18,11 @@
 #include "utils.h"                     // Miscellaneous utility functions
 #include "wxui/editcodedialog_base.h"  // auto-generated: wxui/editcodedialog_base.cpp
 
-// Defined in base_panel.cpp
-extern const char* g_u8_cpp_keywords;
+#include "keywords.h"
 
 EditCodeProperty::EditCodeProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

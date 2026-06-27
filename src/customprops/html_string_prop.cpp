@@ -14,11 +14,11 @@
 #include "mainframe.h"           // MainFrame -- Main window frame
 #include "utils.h"               // Miscellaneous utility functions
 
-// Defined in base_panel.cpp
-extern const char* g_u8_cpp_keywords;
+#include "keywords.h"
 
 EditHtmlProperty::EditHtmlProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

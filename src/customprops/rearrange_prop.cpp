@@ -12,11 +12,11 @@
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "mainframe.h"           // MainFrame -- Main window frame
 
-// Defined in base_panel.cpp
-extern const char* g_u8_cpp_keywords;
+#include "keywords.h"
 
 RearrangeProperty::RearrangeProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

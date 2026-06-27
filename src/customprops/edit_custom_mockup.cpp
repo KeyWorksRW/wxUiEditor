@@ -12,11 +12,11 @@
 
 #include "edit_custom_mockup.h"
 
-// Defined in base_panel.cpp
-extern const char* g_u8_cpp_keywords;
+#include "keywords.h"
 
 EditCustomMockupProperty::EditCustomMockupProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

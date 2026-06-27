@@ -25,6 +25,8 @@
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 #include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
+#include "keywords.h"
+
 // Look for search string in line, and if found, replace with replace_with string. If all
 // is true, replace all instances, otherwise only the first instance is replaced.
 auto utils::replace_in_line(std::string& line, std::string_view search,
@@ -358,15 +360,6 @@ auto isConvertibleMime(const wxue::string& suffix) -> bool
                                    return !suffix.is_sameas(iter);
                                });
 }
-
-extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
-extern const char* g_python_keywords;
-extern const char* g_ruby_keywords;
-extern const char* g_typescript_keywords;
-extern const char* g_fortran_keywords;
-extern const char* g_go_keywords;
-extern const char* g_julia_keywords;
-extern const char* g_luajit_keywords;
 
 std::set<std::string> g_set_cpp_keywords;
 std::set<std::string> g_set_python_keywords;

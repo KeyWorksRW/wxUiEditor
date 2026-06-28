@@ -1,34 +1,36 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Load wxUiEditor project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-27-2026]
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/stc/stc.h>   // A wxWidgets implementation of Scintilla.
 #include <wx/utils.h>     // Miscellaneous utilities
 
 #include <format>  // for std::format
+#include <tuple>   // for std::ignore
 
 #include "wxue_namespace/wxue.h"
 #include "wxue_namespace/wxue_string.h"
 #include "wxue_namespace/wxue_string_vector.h"
 #include "wxue_namespace/wxue_view_vector.h"
 
-#include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "gen_enums.h"        // Enumerations for generators
-#include "image_handler.h"    // ProjectImage class
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator class
-#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
-#include "project_handler.h"  // ProjectHandler class
-#include "version.h"          // Version information for wxUiEditor and wxWidgets
+#include "base_generator.h"       // BaseGenerator -- Base widget generator class
+#include "code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
+#include "gen_enums.h"            // Enumerations for generators
+#include "image_handler.h"        // ProjectImage class
+#include "mainframe.h"            // MainFrame -- Main window frame
+#include "node.h"                 // Node class
+#include "node_creator.h"         // NodeCreator class
+#include "preferences.h"          // Prefs -- Set/Get wxUiEditor preferences
+#include "project_handler.h"      // ProjectHandler class
+#include "pugixml.hpp"            // pugixml parser
+#include "version.h"              // Version information for wxUiEditor and wxWidgets
 
-#include "../pugixml/pugixml.hpp"  // pugixml parser
-
-using namespace GenEnum;
+#include <frozen/map.h>
 
 #include "../import/import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
 #include "../import/import_formblder.h"     // FormBuilder -- Import a wxFormBuilder project
@@ -40,16 +42,16 @@ using namespace GenEnum;
 #include "import_dlg.h"    // ImportDlg -- Dialog to create a new project
 #include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 
-#include "../ui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
-
 #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 
 using namespace GenEnum;
 
-auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> bool
+bool ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui)
 {
-    pugi::xml_document doc;
-    auto result = doc.load_file_string(file);
+    m_isNewProject = false;
+
+    pugi::xml_document xml_doc;
+    const pugi::xml_parse_result result = xml_doc.load_file_string(file);
     if (!result)
     {
         wxString msg;
@@ -69,7 +71,7 @@ auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> boo
         return false;
     }
 
-    auto root = doc.first_child();
+    const pugi::xml_node root = xml_doc.first_child();
     if (!wxue::is_sameas(root.name(), "wxUiEditorData", wxue::CASE::either))
     {
         if (allow_ui)
@@ -96,10 +98,7 @@ auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> boo
             {
                 return false;
             }
-            else
-            {
-                project = LoadProject(doc, allow_ui);
-            }
+            project = LoadProject(xml_doc, allow_ui);
         }
         else
         {
@@ -118,7 +117,7 @@ auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> boo
             }
             return false;
         }
-        else if (m_ProjectVersion < 11)
+        if (m_ProjectVersion < 11)
         {
             if (allow_ui)
             {
@@ -137,7 +136,11 @@ auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> boo
                 return false;
             }
 
-            project = LoadProject(doc, allow_ui);
+            project = LoadProject(xml_doc, allow_ui);
+        }
+        else
+        {
+            project = LoadProject(xml_doc, allow_ui);
         }
     }
     else
@@ -152,7 +155,7 @@ auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> boo
             return false;
         }
 
-        project = LoadProject(doc, allow_ui);
+        project = LoadProject(xml_doc, allow_ui);
     }
 
     if (!project)
@@ -208,19 +211,19 @@ auto ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui) -> boo
     return true;
 }
 
-NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui)
+NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& xml_doc, bool allow_ui)
 {
     NodeSharedPtr project;
     try
     {
-        auto root = doc.first_child();
+        const pugi::xml_node root = xml_doc.first_child();
         if (!root)
         {
             FAIL_MSG("Project does not have a root child.");
             throw std::runtime_error("Invalid project file");
         }
 
-        auto node = root.child("node");
+        pugi::xml_node node = root.child("node");
         if (!node)
         {
             FAIL_MSG("Project does not have a \"node\" node.");
@@ -242,7 +245,7 @@ NodeSharedPtr ProjectHandler::LoadProject(pugi::xml_document& doc, bool allow_ui
 }
 
 // clang-format off
-static const auto lstStdButtonEvents = {
+static const std::initializer_list<const char*> lstStdButtonEvents = {
 
     "OKButtonClicked",
     "YesButtonClicked",
@@ -269,10 +272,162 @@ static const auto lstStdButtonEvents = {
 
 #include "utils.h"  // for old style art indices
 
+// Helper for converting a comma-separated string to wxSize
+// Called by: CreateNodeFromXml
+static wxSize ConvertToWxSize(std::string_view value)
+{
+    wxSize result { -1, -1 };
+    if (!value.empty())
+    {
+        wxue::ViewVector tokens(value, ',');
+        if (!tokens.empty())
+        {
+            if (!tokens[0].empty())
+            {
+                result.x = tokens[0].atoi();
+            }
+
+            if (tokens.size() > 1 && !tokens[1].empty())
+            {
+                result.y = tokens[1].atoi();
+            }
+        }
+    }
+    return result;
+}
+
+// Helper for converting old-style quoted array contents to semicolon-separated format
+// Called by: CreateNodeFromXml
+static void ConvertQuotedArray(pugi::xml_attribute& iter, NodeProperty* prop)
+{
+    std::vector<wxue::string> items;
+    wxue::string_view view = iter.as_sview().view_substr(0, '"', '"');
+    while (!view.empty())
+    {
+        items.emplace_back(view);
+        view = wxue::stepover(std::string_view(view.data() + view.size()));
+        view = view.view_substr(0, '"', '"');
+    }
+
+    wxue::string value;
+    for (auto& item: items)
+    {
+        if (!value.empty())
+        {
+            value << ';';
+        }
+        value << item;
+    }
+
+    prop->set_value(value);
+    if (Project.get_ProjectVersion() < 18)
+    {
+        Project.ForceProjectVersion(18);
+    }
+}
+
+// Helper for fixing up imported project properties to friendly names and resolving
+// bit flag conflicts. Handles type_editoption, type_option, type_bitlist, type_image.
+// Called by: CreateNodeFromXml
+static void FixupImportProperty(NodeProperty* prop, pugi::xml_attribute& iter, Node* node)
+{
+    switch (prop->type())
+    {
+        case type_editoption:
+        case type_option:
+            {
+                bool found = false;
+                for (const auto& friendly_pair: g_friend_constant)
+                {
+                    if (wxue::is_sameas(friendly_pair.second, iter.value()))
+                    {
+                        prop->set_value(
+                            friendly_pair.first.substr(friendly_pair.first.find('_') + 1));
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    prop->set_value(iter.value());
+                }
+            }
+            break;
+
+        case type_bitlist:
+            {
+                const wxue::StringVector mstr(iter.value(), '|', wxue::TRIM::both);
+                bool found = false;
+                wxue::string new_value;
+                for (auto& bit_value: mstr)
+                {
+                    found = false;
+                    for (const auto& friendly_pair: g_friend_constant)
+                    {
+                        if (wxue::is_sameas(friendly_pair.second, bit_value))
+                        {
+                            if (!new_value.empty())
+                            {
+                                new_value << '|';
+                            }
+
+                            new_value
+                                << friendly_pair.first.substr(friendly_pair.first.find('_') + 1);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    prop->set_value(new_value);
+                }
+                else
+                {
+                    prop->set_value(iter.value());
+                }
+
+                if (auto* generator = node->get_Generator(); generator)
+                {
+                    std::ignore = generator->VerifyProperty(prop);
+                }
+            }
+            break;
+
+        case type_image:
+            {
+                wxue::StringVector parts(iter.value(), ';', wxue::TRIM::both);
+                if (parts.size() < 3)
+                {
+                    prop->set_value(iter.value());
+                }
+                else
+                {
+                    parts[1].backslashestoforward();
+                    wxue::string description(parts[0]);
+                    description << ';' << parts[1];
+                    if (parts[0].starts_with("SVG"))
+                    {
+                        description << ';' << parts[2];
+                    }
+                    prop->set_value(description);
+                }
+            }
+            break;
+
+        default:
+            prop->set_value(iter.value());
+    }
+}
+
 NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* parent,
                                              bool check_for_duplicates, bool allow_ui)
 {
-    auto class_name = xml_obj.attribute("class").as_str();
+    std::string class_name = xml_obj.attribute("class").as_str();
     if (class_name.empty())
     {
         return NodeSharedPtr();
@@ -284,7 +439,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
         class_name = "wxListView";
     }
 
-    auto new_node = CreateNode(class_name, parent).first;
+    NodeSharedPtr new_node = CreateNode(class_name, parent).first;
     if (!new_node)
     {
         FAIL_MSG(
@@ -315,38 +470,6 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
             if (prop)
             {
-                auto convert_quoted_array = [&]()
-                {
-                    // Convert old style wxCheckListBox contents in quotes to new style separated by
-                    // semicolons
-                    std::vector<wxue::string> items;
-                    auto view = iter.as_sview().view_substr(0, '"', '"');
-                    while (view.size() > 0)
-                    {
-                        items.emplace_back(view);
-                        view = wxue::stepover(std::string_view(view.data() + view.size()));
-                        view = view.view_substr(0, '"', '"');
-                    }
-
-                    wxue::string value;
-                    for (auto& item: items)
-                    {
-                        if (value.size())
-                        {
-                            value << ';';
-                        }
-                        value << item;
-                    }
-
-                    prop->set_value(value);
-                    // Conversion from quoted items to semicolon separated items was introduced
-                    // in 1.1.1 (project version 18)
-                    if (Project.get_ProjectVersion() < 18)
-                    {
-                        Project.ForceProjectVersion(18);
-                    }
-                };
-
                 // If there is a mainframe window, then convert dialog units to pixels since
                 // starting with wxUiEditor 21 (1.3.0) all positions and sizes are scaled
                 // automatically using FromDIP().
@@ -354,34 +477,9 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     (prop->type() == type_wxSize || prop->type() == type_wxPoint) &&
                     wxue::contains(iter.value(), 'd', wxue::CASE::either))
                 {
-                    auto convertToWxSize = [](std::string_view value) -> wxSize
-                    {
-                        wxSize result { -1, -1 };
-                        if (value.size())
-                        {
-                            wxue::ViewVector tokens(value, ',');
-                            if (tokens.size())
-                            {
-                                if (tokens[0].size())
-                                {
-                                    result.x = tokens[0].atoi();
-                                }
-
-                                if (tokens.size() > 1 && tokens[1].size())
-                                {
-                                    result.y = tokens[1].atoi();
-                                }
-                            }
-                        }
-                        return result;
-                    };
-
-                    if (allow_ui)
-                    {
-                        auto pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(
-                            convertToWxSize(iter.value()));
-                        prop->set_value(pixel_value);
-                    }
+                    const wxSize pixel_value = wxGetMainFrame()->getWindow()->ConvertDialogToPixels(
+                        ConvertToWxSize(iter.value()));
+                    prop->set_value(pixel_value);
                     Project.ForceProjectVersion(21);
                     continue;
                 }
@@ -389,8 +487,8 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 // wxUiEditor 1.2.0 mistakenly added both prop_hidden and prop_hide_children.
                 // 1.2.1 removes the duplicate prop_hide_children, so this sets prop_hidden to
                 // true if prop_hide_children is true.
-                else if (prop->get_name() == prop_hide_children &&
-                         new_node->is_Gen(gen_wxStaticBoxSizer) && iter.as_bool())
+                if (prop->get_name() == prop_hide_children &&
+                    new_node->is_Gen(gen_wxStaticBoxSizer) && iter.as_bool())
                 {
                     new_node->set_value(prop_hidden, true);
                     prop->set_value(false);
@@ -415,10 +513,10 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 else if (prop->get_name() == prop_contents &&
                          Project.get_OriginalProjectVersion() < 18)
                 {
-                    if (new_node->is_Gen(gen_wxCheckListBox) && iter.as_sview().size() &&
+                    if (new_node->is_Gen(gen_wxCheckListBox) && !iter.as_sview().empty() &&
                         iter.as_sview()[0] == '"')
                     {
-                        convert_quoted_array();
+                        ConvertQuotedArray(iter, prop);
                     }
                     else
                     {
@@ -428,9 +526,9 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 else if (prop->type() == type_stringlist_semi &&
                          Project.get_OriginalProjectVersion() < 18)
                 {
-                    if (iter.as_sview().size() && iter.as_sview()[0] == '"')
+                    if (!iter.as_sview().empty() && iter.as_sview()[0] == '"')
                     {
-                        convert_quoted_array();
+                        ConvertQuotedArray(iter, prop);
                     }
                     else
                     {
@@ -443,93 +541,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
                 else if (Project.get_ProjectVersion() <= ImportProjectVersion)
                 {
-                    switch (prop->type())
-                    {
-                        case type_editoption:
-                        case type_option:
-                            {
-                                bool found = false;
-                                for (const auto& friendly_pair: g_friend_constant)
-                                {
-                                    if (wxue::is_sameas(friendly_pair.second, iter.value()))
-                                    {
-                                        prop->set_value(friendly_pair.first.substr(
-                                            friendly_pair.first.find('_') + 1));
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (!found)
-                                {
-                                    prop->set_value(iter.value());
-                                }
-                            }
-                            break;
-
-                        case type_bitlist:
-                            {
-                                wxue::StringVector mstr(iter.value(), '|', wxue::TRIM::both);
-                                bool found = false;
-                                wxue::string new_value;
-                                for (auto& bit_value: mstr)
-                                {
-                                    for (const auto& friendly_pair: g_friend_constant)
-                                    {
-                                        if (wxue::is_sameas(friendly_pair.second, bit_value))
-                                        {
-                                            if (new_value.size())
-                                            {
-                                                new_value << '|';
-                                            }
-
-                                            new_value << friendly_pair.first.substr(
-                                                friendly_pair.first.find('_') + 1);
-                                            found = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!found)
-                                    {
-                                        break;
-                                    }
-                                }
-                                if (found)
-                                {
-                                    prop->set_value(new_value);
-                                }
-                                else
-                                {
-                                    prop->set_value(iter.value());
-                                }
-
-                                if (auto* gen = new_node->get_Generator(); gen)
-                                {
-                                    gen->VerifyProperty(prop);
-                                }
-                            }
-                            break;
-
-                        case type_image:
-                            {
-                                wxue::StringVector parts(iter.value(), ';', wxue::TRIM::both);
-                                if (parts.size() < 3)
-                                {
-                                    prop->set_value(iter.value());
-                                }
-                                else
-                                {
-                                    parts[1].backslashestoforward();
-                                    wxue::string description(parts[0]);
-                                    description << ';' << parts[1];
-                                    if (parts[0].starts_with("SVG"))
-                                        description << ';' << parts[2];
-                                    prop->set_value(description);
-                                }
-                            }
-
-                        default:
-                            prop->set_value(iter.value());
-                    }
+                    FixupImportProperty(prop, iter, new_node.get());
                 }
                 else
                 {
@@ -594,7 +606,7 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                 continue;
             }
 
-            if (auto value = iter.value(); value.size())
+            if (auto value = iter.value(); !value.empty())
             {
                 {
                     // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2
@@ -606,18 +618,18 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                         // Just ignore it
                         continue;
                     }
-                    else if (wxue::is_sameas(iter.name(), "original_art"))
+                    if (wxue::is_sameas(iter.name(), "original_art"))
                     {
                         new_node->set_value(prop_art_directory, value);
                         continue;
                     }
-                    else if (wxue::is_sameas(iter.name(), "virtual_events"))
+                    if (wxue::is_sameas(iter.name(), "virtual_events"))
                     {
                         new_node->set_value(prop_use_derived_class, value);
                         continue;
                     }
-                    else if (wxue::is_sameas(iter.name(), "choices") ||
-                             wxue::is_sameas(iter.name(), "strings"))
+                    if (wxue::is_sameas(iter.name(), "choices") ||
+                        wxue::is_sameas(iter.name(), "strings"))
                     {
                         new_node->set_value(prop_contents, value);
                         continue;
@@ -638,9 +650,9 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
                     MSG_WARNING(std::format("Unrecognized property: {} in class: {}", iter.name(),
                                             class_name));
 
-                    std::string prop_name(iter.name());
-                    std::string prop_value(iter.value());
-                    wxMessageBox(wxString().Format(
+                    const std::string prop_name(iter.name());
+                    const std::string prop_value(iter.value());
+                    wxMessageBox(wxString::Format(
                         "The property named \"%s\" of class \"%s\" is not supported by this "
                         "version of wxUiEditor.\n\n"
                         "If your project file was just converted from an older version, then the "
@@ -660,11 +672,13 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
         // Order is important -- don't call GetProject() if check_for_duplicates is false
         // because there may not be a project yet.
         if (check_for_duplicates && parent == Project.get_ProjectNode())
+        {
             Project.FixupDuplicatedNode(new_node.get());
+        }
         parent->AdoptChild(new_node);
     }
 
-    for (auto child = xml_obj.child("node"); child; child = child.next_sibling("node"))
+    for (pugi::xml_node child = xml_obj.child("node"); child; child = child.next_sibling("node"))
     {
         CreateNodeFromXml(child, new_node.get(), false, allow_ui);
     }
@@ -679,31 +693,33 @@ NodeSharedPtr NodeCreator::CreateNodeFromXml(pugi::xml_node& xml_obj, Node* pare
 
 NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow_ui)
 {
-    auto* node_decl = m_a_declarations[gen_Project];
+    NodeDeclaration* node_decl = m_a_declarations[gen_Project];
     auto new_node = std::make_shared<Node>(node_decl);
 
     // Calling GetBaseClassCount() is expensive, so do it once and store the result
-    auto node_info_base_count = m_a_declarations[gen_Project]->GetBaseClassCount();
+    const size_t node_info_base_count = m_a_declarations[gen_Project]->GetBaseClassCount();
 
     size_t base = 0;
-    for (auto* class_info = node_decl; class_info; class_info = node_decl->GetBaseClass(base++))
+    for (const NodeDeclaration* class_info = node_decl; class_info;
+         class_info = node_decl->GetBaseClass(base++))
     {
         for (size_t index = 0; index < class_info->get_PropertyCount(); ++index)
         {
-            auto* prop_declaration = class_info->get_PropDeclaration(index);
+            PropDeclaration* prop_declaration = class_info->get_PropDeclaration(index);
 
             // Set the default value, either from the property info, or an override from this class
-            auto defaultValue = prop_declaration->getDefaultValue();
+            std::string defaultValue = prop_declaration->getDefaultValue();
             if (base > 0)
             {
-                auto result = node_decl->GetOverRideDefValue(prop_declaration->get_name());
+                std::optional<wxue::string> result =
+                    node_decl->GetOverRideDefValue(prop_declaration->get_name());
                 if (result)
                 {
                     defaultValue = result.value();
                 }
             }
 
-            auto* prop = new_node->AddNodeProperty(prop_declaration);
+            NodeProperty* prop = new_node->AddNodeProperty(prop_declaration);
             prop->set_value(defaultValue);
         }
 
@@ -744,12 +760,12 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
                 else if (prop->type() == type_stringlist_semi &&
                          Project.get_OriginalProjectVersion() < 18)
                 {
-                    auto view = iter.as_sview();
-                    if (view.size() > 0 && view[0] == '\"')
+                    wxue::string_view view = iter.as_sview();
+                    if (!view.empty() && view[0] == '\"')
                     {
                         std::vector<wxue::string> items;
                         view = view.view_substr(0, '\"', '\"');
-                        while (view.size() > 0)
+                        while (!view.empty())
                         {
                             items.emplace_back(view);
                             view = wxue::stepover(std::string_view(view.data() + view.size()));
@@ -759,7 +775,7 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
                         wxue::string value;
                         for (auto& item: items)
                         {
-                            if (value.size())
+                            if (!value.empty())
                             {
                                 value << ';';
                             }
@@ -780,7 +796,7 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
         }
     }
 
-    for (auto child = xml_obj->child("node"); child; child = child.next_sibling("node"))
+    for (pugi::xml_node child = xml_obj->child("node"); child; child = child.next_sibling("node"))
     {
         CreateNodeFromXml(child, new_node.get(), false, allow_ui);
     }
@@ -793,66 +809,64 @@ NodeSharedPtr NodeCreator::CreateProjectNode(pugi::xml_node* xml_obj, bool allow
     return new_node;
 }
 
-#include <frozen/map.h>
-
-namespace
+enum class ImportFileType : std::uint8_t
 {
-    enum class ImportFileType : std::uint8_t
+    wxcp,
+    fbp,
+    rc_dlg,
+    wxs_xrc,
+    wxg,
+    pjd,
+    unknown
+};
+
+static constexpr frozen::map<std::string_view, ImportFileType, 8> import_file_types =
+    frozen::make_map<std::string_view, ImportFileType>({ { "wxcp", ImportFileType::wxcp },
+                                                         { "fbp", ImportFileType::fbp },
+                                                         { "rc", ImportFileType::rc_dlg },
+                                                         { "dlg", ImportFileType::rc_dlg },
+                                                         { "wxs", ImportFileType::wxs_xrc },
+                                                         { "xrc", ImportFileType::wxs_xrc },
+                                                         { "wxg", ImportFileType::wxg },
+                                                         { "pjd", ImportFileType::pjd } });
+
+[[nodiscard]] static ImportFileType GetImportFileType(std::string_view file_ext)
+{
+    if (file_ext.empty())
     {
-        wxcp,
-        fbp,
-        rc_dlg,
-        wxs_xrc,
-        wxg,
-        pjd,
-        unknown
-    };
-
-    constexpr auto import_file_types =
-        frozen::make_map<std::string_view, ImportFileType>({ { "wxcp", ImportFileType::wxcp },
-                                                             { "fbp", ImportFileType::fbp },
-                                                             { "rc", ImportFileType::rc_dlg },
-                                                             { "dlg", ImportFileType::rc_dlg },
-                                                             { "wxs", ImportFileType::wxs_xrc },
-                                                             { "xrc", ImportFileType::wxs_xrc },
-                                                             { "wxg", ImportFileType::wxg },
-                                                             { "pjd", ImportFileType::pjd } });
-
-    [[nodiscard]] auto GetImportFileType(std::string_view ext) -> ImportFileType
-    {
-        if (ext.empty())
-        {
-            return ImportFileType::unknown;
-        }
-
-        const auto* result = import_file_types.find(ext);
-        return (result != import_file_types.end()) ? result->second : ImportFileType::unknown;
+        return ImportFileType::unknown;
     }
 
-    [[nodiscard]] auto GetLexerType(ImportFileType type) -> int
-    {
-        switch (type)
-        {
-            case ImportFileType::wxcp:
-                return wxSTC_LEX_JSON;
-            case ImportFileType::fbp:
-            case ImportFileType::wxs_xrc:
-            case ImportFileType::wxg:
-            case ImportFileType::pjd:
-                return wxSTC_LEX_XML;
-            case ImportFileType::rc_dlg:
-                return wxSTC_LEX_CPP;
-            default:
-                return wxSTC_LEX_XML;
-        }
-    }
-}  // namespace
+    frozen::map<std::string_view, ImportFileType, 8>::const_iterator result =
+        import_file_types.find(file_ext);
+    return (result != import_file_types.end()) ? result->second : ImportFileType::unknown;
+}
 
-[[nodiscard]] auto ProjectHandler::ImportProject(std::string_view file, bool allow_ui) -> bool
+[[nodiscard]] static int GetLexerType(ImportFileType type)
 {
+    switch (type)
+    {
+        case ImportFileType::wxcp:
+            return wxSTC_LEX_JSON;
+        case ImportFileType::fbp:
+        case ImportFileType::wxs_xrc:
+        case ImportFileType::wxg:
+        case ImportFileType::pjd:
+            return wxSTC_LEX_XML;
+        case ImportFileType::rc_dlg:
+            return wxSTC_LEX_CPP;
+        default:
+            return wxSTC_LEX_XML;
+    }
+}
+
+[[nodiscard]] bool ProjectHandler::ImportProject(std::string_view file, bool allow_ui)
+{
+    m_isNewProject = false;
+
     // Importers will change the file extension, so make a copy here
     auto import_file = wxFileName(wxString(file));
-    auto file_type = GetImportFileType(import_file.GetExt().ToStdString());
+    const ImportFileType file_type = GetImportFileType(import_file.GetExt().ToStdString());
 
     std::string import_path(import_file.GetFullPath().ToStdString());
     bool result = false;
@@ -909,6 +923,7 @@ namespace
 
 bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, bool allow_ui)
 {
+    m_isNewProject = false;
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
     {
@@ -923,9 +938,9 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
         // NodeCreation.CreateNodeFromXml() which will fix bitflag conflicts, convert wxWidgets
         // constants to friendly names, and handle old-project style conversions.
 
-        auto& doc = import.GetDocument();
-        auto root = doc.first_child();
-        auto project = root.child("node");
+        pugi::xml_document& xml_doc = import.GetDocument();
+        const pugi::xml_node root = xml_doc.first_child();
+        pugi::xml_node project = root.child("node");
         if (!project || project.attribute("class").as_view() != "Project")
         {
             ASSERT_MSG(project,
@@ -938,7 +953,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
 
         if (append && m_project_node->get_ChildCount())
         {
-            auto form = project.child("node");
+            pugi::xml_node form = project.child("node");
             while (form)
             {
                 NodeCreation.CreateNodeFromXml(form, m_project_node.get(), false, allow_ui);
@@ -948,7 +963,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
             return true;
         }
 
-        auto project_node = NodeCreation.CreateProjectNode(&project);
+        NodeSharedPtr project_node = NodeCreation.CreateProjectNode(&project);
 
         auto SetLangFilenames = [&]()
         {
@@ -975,8 +990,10 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
                         iter->set_value(prop_xrc_file, iter->as_string(prop_base_file));
                         // XRC files can be combined into a single file
                         if (!project_node->HasValue(prop_combined_xrc_file))
+                        {
                             project_node->set_value(prop_combined_xrc_file,
                                                     iter->as_string(prop_base_file));
+                        }
                     }
                 }
             }
@@ -996,11 +1013,17 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
         if (auto language = import.GetLanguage(); language != GenLang::none)
         {
             if (language & GenLang::cplusplus)
+            {
                 project_node->set_value(prop_code_preference, "C++");
+            }
             else if (language & GenLang::python)
+            {
                 project_node->set_value(prop_code_preference, "Python");
+            }
             else if (language & GenLang::xrc)
+            {
                 project_node->set_value(prop_code_preference, "XRC");
+            }
 
             // None of the other designers generate code for wxRuby3 or wxHaskell
 
@@ -1009,19 +1032,19 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
 
         if (allow_ui && import.GetLanguage() == GenLang::none)
         {
-            CodePreferenceDlg dlg(wxGetMainFrame());
-            if (dlg.ShowModal() == wxID_OK)
+            CodePreferenceDlg pref_dlg(wxGetMainFrame());
+            if (pref_dlg.ShowModal() == wxID_OK)
             {
-                if (dlg.is_gen_python())
+                if (pref_dlg.is_gen_python())
                 {
                     project_node->set_value(prop_code_preference, "Python");
                 }
-                else if (dlg.is_gen_python())
+                else if (pref_dlg.is_gen_ruby())
                 {
                     project_node->set_value(prop_code_preference, "Ruby");
                 }
 
-                else if (dlg.is_gen_xrc())
+                else if (pref_dlg.is_gen_xrc())
                 {
                     project_node->set_value(prop_code_preference, "XRC");
                 }
@@ -1048,32 +1071,25 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
 
         if (m_project_node->get_ChildCount() && wxFileName::FileExists(file))
         {
-            doc.reset();
-            auto result = doc.load_file_string(file);
+            xml_doc.reset();
+            const pugi::xml_parse_result result = xml_doc.load_file_string(file);
             if (!result)
             {
-    #if defined(_DEBUG)
                 wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
                                 wxOK | wxICON_ERROR)
                     .ShowModal();
-    #else
-                if (allow_ui)
-                {
-                    wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg,
-                                    "Parsing Error", wxOK | wxICON_ERROR)
-                        .ShowModal();
-                }
-    #endif  // _DEBUG
             }
             else
             {
-                if (auto old_project = LoadProject(doc, allow_ui);
+                if (auto old_project = LoadProject(xml_doc, allow_ui);
                     old_project && old_project->get_ChildCount())
                 {
-                    auto* old_form = old_project->get_Child(0);
-                    auto* new_form = m_project_node->get_Child(0);
-                    new_form->set_value(prop_class_name, old_form->as_string(prop_class_name));
-                    new_form->set_value(prop_base_file, old_form->as_string(prop_base_file));
+                    const Node* old_form = old_project->get_Child(0);
+                    Node* new_form = m_project_node->get_Child(0);
+                    std::ignore =
+                        new_form->set_value(prop_class_name, old_form->as_string(prop_class_name));
+                    std::ignore =
+                        new_form->set_value(prop_base_file, old_form->as_string(prop_base_file));
                 }
             }
         }
@@ -1100,49 +1116,55 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     if (create_empty)
     {
-        auto project = NodeCreation.CreateProjectNode(nullptr);
+        const NodeSharedPtr project = NodeCreation.CreateProjectNode(nullptr);
 
         wxue::string file;
         file.assignCwd();
-        file.append_filename(txtEmptyProject);
+        file.append_filename(txtNewProject);
 
         if (allow_ui)
         {
-            CodePreferenceDlg dlg(wxGetMainFrame());
-            if (dlg.ShowModal() == wxID_OK)
+            CodePreferenceDlg pref_dlg(wxGetMainFrame());
+            if (pref_dlg.ShowModal() == wxID_OK)
             {
                 wxue::string generate_languages = project->as_string(prop_generate_languages);
                 bool generated_changed = false;
-                if (dlg.is_gen_python())
+                if (pref_dlg.is_gen_python())
                 {
                     project->set_value(prop_code_preference, "Python");
                     if (!generate_languages.contains("Python", wxue::CASE::either))
                     {
-                        if (generate_languages.size())
+                        if (!generate_languages.empty())
+                        {
                             generate_languages << '|';
+                        }
                         generate_languages << "Python";
                         generated_changed = true;
                     }
                 }
-                else if (dlg.is_gen_ruby())
+                else if (pref_dlg.is_gen_ruby())
                 {
                     project->set_value(prop_code_preference, "Ruby");
                     if (!generate_languages.contains("Ruby", wxue::CASE::either))
                     {
-                        if (generate_languages.size())
+                        if (!generate_languages.empty())
+                        {
                             generate_languages << '|';
+                        }
                         generate_languages << "Ruby";
                         generated_changed = true;
                     }
                 }
 
-                else if (dlg.is_gen_xrc())
+                else if (pref_dlg.is_gen_xrc())
                 {
                     project->set_value(prop_code_preference, "XRC");
                     if (!generate_languages.contains("XRC", wxue::CASE::either))
                     {
-                        if (generate_languages.size())
+                        if (!generate_languages.empty())
+                        {
                             generate_languages << '|';
+                        }
                         generate_languages << "XRC";
                         generated_changed = true;
                     }
@@ -1159,6 +1181,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
             }
         }
 
+        m_isNewProject = true;
         FinalImportCheck(project.get());
         // Calling this will also initialize the ProjectImage class
         Project.Initialize(project);
@@ -1173,16 +1196,20 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
     }
 
     if (!allow_ui)
+    {
         return false;
+    }
 
-    ImportDlg dlg(wxGetMainFrame());
-    if (dlg.ShowModal() != wxID_OK)
+    ImportDlg import_dlg(wxGetMainFrame());
+    if (import_dlg.ShowModal() != wxID_OK)
+    {
         return false;
+    }
 
-    auto project = NodeCreation.CreateProjectNode(nullptr);
+    const NodeSharedPtr project = NodeCreation.CreateProjectNode(nullptr);
 
     wxue::string file;
-    wxue::SaveCwd starting_cwd(wxue::restore_cwd);
+    const wxue::SaveCwd starting_cwd(wxue::restore_cwd);
     file.assignCwd();
     file.append_filename("MyImportedProject");
 
@@ -1194,74 +1221,91 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     wxue::string imported_from;
 
-    auto& file_list = dlg.GetFileList();
-    if (file_list.size())
+    std::vector<wxue::string>& file_list = import_dlg.GetFileList();
+    if (!file_list.empty())
     {
         for (auto& iter: file_list)
         {
             try
             {
                 // Importers will change the file extension, so make a copy here
-                wxue::string import_file = iter;
+                const wxue::string import_file = iter;
 
                 if (iter.has_extension(".wxcp"))
                 {
                     WxCrafter crafter;
-                    Import(crafter, iter, true);
+                    std::ignore = Import(crafter, iter, true);
                     if (wxGetApp().isTestingMenuEnabled())
+                    {
                         wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+                    }
                 }
                 else if (iter.has_extension(".fbp"))
                 {
-                    FormBuilder fb;
-                    Import(fb, iter, true);
+                    FormBuilder form_builder;
+                    std::ignore = Import(form_builder, iter, true);
                     if (wxGetApp().isTestingMenuEnabled())
+                    {
                         wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    }
                 }
                 else if (iter.has_extension(".wxs") || iter.has_extension(".xrc"))
                 {
                     WxSmith smith;
-                    Import(smith, iter, true);
+                    std::ignore = Import(smith, iter, true);
                     if (wxGetApp().isTestingMenuEnabled())
+                    {
                         wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    }
                 }
                 else if (iter.has_extension(".wxg"))
                 {
                     WxGlade glade;
-                    Import(glade, iter, true);
+                    std::ignore = Import(glade, iter, true);
                     if (wxGetApp().isTestingMenuEnabled())
+                    {
                         wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    }
                 }
                 else if (iter.has_extension(".rc") || iter.has_extension(".dlg"))
                 {
                     WinResource winres;
-                    Import(winres, iter, true);
+                    std::ignore = Import(winres, iter, true);
                     if (wxGetApp().isTestingMenuEnabled())
+                    {
                         wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+                    }
                 }
                 else if (iter.has_extension(".pjd"))
                 {
                     DialogBlocks db;
-                    Import(db, iter, true);
+                    std::ignore = Import(db, iter, true);
                     if (wxGetApp().isTestingMenuEnabled())
+                    {
                         wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+                    }
                 }
 
-                if (imported_from.size())
+                if (!imported_from.empty())
+                {
                     imported_from << "@@";
+                }
                 imported_from << "// Imported from " << iter;
             }
-            catch (const std::exception& /* e */)
+            catch (const std::exception& e)
             {
-                // silently continue with the next project file
+                MSG_WARNING(std::format("Import failed for '{}': {}",
+                                        static_cast<std::string>(iter), e.what()));
             }
         }
 
-        if (imported_from.size())
+        if (!imported_from.empty())
         {
             wxue::string preamble = m_project_node->as_string(prop_src_preamble);
-            if (preamble.size())
+            if (!preamble.empty())
+            {
                 preamble << "@@@@";
+            }
             preamble << imported_from;
             m_project_node->set_value(prop_src_preamble, preamble);
         }
@@ -1279,7 +1323,9 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 
     wxGetFrame().FireProjectLoadedEvent();
     if (m_project_node->get_ChildCount())
+    {
         wxGetFrame().setModified();
+    }
     return true;
 }
 
@@ -1288,10 +1334,10 @@ void ProjectHandler::AppendWinRes(const wxue::string& rc_file, std::vector<wxue:
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
     {
-        const auto& project = winres.GetProjectPtr();
+        const NodeSharedPtr project = winres.GetProjectPtr();
         for (const auto& child: project->get_ChildNodePtrs())
         {
-            auto new_node = NodeCreation.MakeCopy(child);
+            const NodeSharedPtr new_node = NodeCreation.MakeCopy(child);
             Project.FixupDuplicatedNode(new_node.get());
             m_project_node->AdoptChild(new_node);
         }
@@ -1311,9 +1357,9 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
 
         if (crafter.Import(file.ToStdString()))
         {
-            auto& doc = crafter.GetDocument();
-            auto root = doc.first_child();
-            auto project = root.child("node");
+            const pugi::xml_document& xml_doc = crafter.GetDocument();
+            const pugi::xml_node root = xml_doc.first_child();
+            const pugi::xml_node project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
                 if (m_allow_ui)
@@ -1325,7 +1371,7 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
                 return;
             }
 
-            auto* cur_sel = wxGetFrame().getSelectedNode();
+            Node* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
             {
                 cur_sel = m_project_node.get();
@@ -1342,7 +1388,7 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
                 }
             }
 
-            auto form = project.child("node");
+            pugi::xml_node form = project.child("node");
             while (form)
             {
                 if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
@@ -1365,13 +1411,13 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
 {
     for (auto& file: files)
     {
-        FormBuilder fb;
+        FormBuilder form_builder;
 
-        if (fb.Import(file.ToStdString()))
+        if (form_builder.Import(file.ToStdString()))
         {
-            auto& doc = fb.GetDocument();
-            auto root = doc.first_child();
-            auto project = root.child("node");
+            const pugi::xml_document& xml_doc = form_builder.GetDocument();
+            const pugi::xml_node root = xml_doc.first_child();
+            const pugi::xml_node project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
                 if (m_allow_ui)
@@ -1383,7 +1429,7 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
                 return;
             }
 
-            auto* cur_sel = wxGetFrame().getSelectedNode();
+            Node* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
             {
                 cur_sel = m_project_node.get();
@@ -1400,7 +1446,7 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
                 }
             }
 
-            auto form = project.child("node");
+            pugi::xml_node form = project.child("node");
             while (form)
             {
                 if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
@@ -1427,9 +1473,9 @@ void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
 
         if (db.Import(file.ToStdString()))
         {
-            auto& doc = db.GetDocument();
-            auto root = doc.first_child();
-            auto project = root.child("node");
+            const pugi::xml_document& xml_doc = db.GetDocument();
+            const pugi::xml_node root = xml_doc.first_child();
+            const pugi::xml_node project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
                 if (m_allow_ui)
@@ -1441,20 +1487,24 @@ void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
                 return;
             }
 
-            auto cur_sel = wxGetFrame().getSelectedNode();
+            Node* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
+            {
                 cur_sel = m_project_node.get();
+            }
             else
             {
                 if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
                     cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
+                    {
                         cur_sel = m_project_node.get();
+                    }
                 }
             }
 
-            auto form = project.child("node");
+            pugi::xml_node form = project.child("node");
             while (form)
             {
                 if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
@@ -1481,9 +1531,9 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
 
         if (glade.Import(file.ToStdString()))
         {
-            auto& doc = glade.GetDocument();
-            auto root = doc.first_child();
-            auto project = root.child("node");
+            const pugi::xml_document& xml_doc = glade.GetDocument();
+            const pugi::xml_node root = xml_doc.first_child();
+            const pugi::xml_node project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
                 if (m_allow_ui)
@@ -1495,20 +1545,24 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
                 return;
             }
 
-            auto cur_sel = wxGetFrame().getSelectedNode();
+            Node* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
+            {
                 cur_sel = m_project_node.get();
+            }
             else
             {
                 if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
                     cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
+                    {
                         cur_sel = m_project_node.get();
+                    }
                 }
             }
 
-            auto form = project.child("node");
+            pugi::xml_node form = project.child("node");
             while (form)
             {
                 if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
@@ -1535,9 +1589,9 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
 
         if (smith.Import(file.ToStdString()))
         {
-            auto& doc = smith.GetDocument();
-            auto root = doc.first_child();
-            auto project = root.child("node");
+            const pugi::xml_document& xml_doc = smith.GetDocument();
+            const pugi::xml_node root = xml_doc.first_child();
+            const pugi::xml_node project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
                 if (m_allow_ui)
@@ -1549,20 +1603,24 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
                 return;
             }
 
-            auto cur_sel = wxGetFrame().getSelectedNode();
+            Node* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
+            {
                 cur_sel = m_project_node.get();
+            }
             else
             {
                 if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
                     cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
+                    {
                         cur_sel = m_project_node.get();
+                    }
                 }
             }
 
-            auto form = project.child("node");
+            pugi::xml_node form = project.child("node");
             while (form)
             {
                 if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
@@ -1590,9 +1648,9 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
 
         if (smith.Import(file.ToStdString()))
         {
-            auto& doc = smith.GetDocument();
-            auto root = doc.first_child();
-            auto project = root.child("node");
+            const pugi::xml_document& xml_doc = smith.GetDocument();
+            const pugi::xml_node root = xml_doc.first_child();
+            const pugi::xml_node project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
                 if (m_allow_ui)
@@ -1604,20 +1662,24 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
                 return;
             }
 
-            auto cur_sel = wxGetFrame().getSelectedNode();
+            Node* cur_sel = wxGetFrame().getSelectedNode();
             if (!cur_sel)
+            {
                 cur_sel = m_project_node.get();
+            }
             else
             {
                 if (!cur_sel->is_Gen(gen_Project) && !cur_sel->is_Gen(gen_folder))
                 {
                     cur_sel = cur_sel->get_Folder();
                     if (!cur_sel)
+                    {
                         cur_sel = m_project_node.get();
+                    }
                 }
             }
 
-            auto form = project.child("node");
+            pugi::xml_node form = project.child("node");
             while (form)
             {
                 if (auto new_node = NodeCreation.CreateNodeFromXml(form, cur_sel, true, m_allow_ui);
@@ -1638,11 +1700,12 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
 
 void ProjectHandler::RecursiveNodeCheck(Node* node)
 {
-    if (auto prop_ptr = node->get_PropPtr(prop_alignment); prop_ptr && prop_ptr->as_string().size())
+    if (auto prop_ptr = node->get_PropPtr(prop_alignment);
+        prop_ptr && !prop_ptr->as_string().empty())
     {
         if (auto parent = node->get_Parent(); parent && parent->is_Sizer())
         {
-            std::string old_value = prop_ptr->as_string();
+            const std::string old_value = prop_ptr->as_string();
             if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
             {
                 // You can't set vertical alignment flags if the parent sizer is vertical
@@ -1708,7 +1771,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
         {
             // REVIEW: [Randalphwa - 08-29-2023] Need to check if it is a performance hit to make
             // the sizer figure this out. We could set it whenever we generate the code for it.
-            node->set_value(prop_rows, 0);
+            std::ignore = node->set_value(prop_rows, 0);
             m_isProject_updated = true;
             MSG_INFO((wxString() << "Removed row setting from " << node->as_string(prop_var_name)
                                  << " since cols is set")
@@ -1729,15 +1792,17 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
 // properlyy by the designer.
 
 void ProjectHandler::FinalImportCheck(Node* parent, bool set_line_length)
+
 {
     if (set_line_length && parent->is_Gen(gen_Project))
     {
-        parent->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
-        parent->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
-        parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
+        std::ignore = parent->set_value(prop_cpp_line_length, UserPrefs.get_CppLineLength());
+        std::ignore = parent->set_value(prop_python_line_length, UserPrefs.get_PythonLineLength());
+        std::ignore = parent->set_value(prop_ruby_line_length, UserPrefs.get_RubyLineLength());
         if (!parent->HasValue(prop_wxWidgets_version))
         {
-            parent->set_value(prop_wxWidgets_version, MINIMUM_SUPPORTED_WXWIDGETS_VERSION);
+            std::ignore =
+                parent->set_value(prop_wxWidgets_version, MINIMUM_SUPPORTED_WXWIDGETS_VERSION);
         }
     }
 

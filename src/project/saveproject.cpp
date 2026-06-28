@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-27-2026]
 
 #include "base_generator.h"   // BaseGenerator class
 #include "mainapp.h"          // App -- Main application class
@@ -17,10 +18,10 @@
 
 using namespace GenEnum;
 
-void Node::CreateDoc(pugi::xml_document& doc)
+void Node::CreateDoc(pugi::xml_document& xml_doc)
 {
-    auto root = doc.append_child("wxUiEditorData");
-    auto node = root.append_child("node");
+    pugi::xml_node root = xml_doc.append_child("wxUiEditorData");
+    pugi::xml_node node = root.append_child("node");
 
     int project_version = minRequiredVer;
     if (Project.is_ProjectUpdated())
@@ -36,11 +37,12 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
     if (project_version < curSupportedVer)
     {
         // Don't check if the version is already as high as we support -- this speeds up the process
-        if (auto* gen = get_Generator(); gen)
+        if (BaseGenerator* generator = get_Generator(); generator)
         {
-            if (gen->GetRequiredVersion(this) > project_version)
+            if (const int required_ver = generator->GetRequiredVersion(this);
+                required_ver > project_version)
             {
-                project_version = gen->GetRequiredVersion(this);
+                project_version = required_ver;
             }
         }
     }
@@ -49,10 +51,10 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 
     for (auto& iter: m_properties)
     {
-        auto& value = iter.as_string();
-        if (value.size())
+        const wxue::string& value = iter.as_string();
+        if (!value.empty())
         {
-            auto* info = iter.get_PropDeclaration();
+            const PropDeclaration* info = iter.get_PropDeclaration();
 
             // If the value hasn't changed from the default, don't save it
             if (info->getDefaultValue() == value)
@@ -60,10 +62,10 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
                 continue;
             }
 
-            auto attr = node.append_attribute(iter.get_DeclName());
+            pugi::xml_attribute attr = node.append_attribute(iter.get_DeclName());
             if (iter.type() == type_bool)
             {
-                attr.set_value(iter.as_bool());
+                std::ignore = attr.set_value(iter.as_bool());
             }
             else
             {
@@ -75,6 +77,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
                     wxue::StringVector parts(value, ';', wxue::TRIM::both);
                     if (parts.size() < 2)
                     {
+                        node.remove_attribute(attr);
                         continue;
                     }
 
@@ -87,11 +90,11 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
                     {
                         description << ';' << parts[2];
                     }
-                    attr.set_value(description.c_str());
+                    std::ignore = attr.set_value(description.c_str());
                 }
                 else
                 {
-                    attr.set_value(value.c_str());
+                    std::ignore = attr.set_value(value.c_str());
                 }
             }
         }
@@ -108,8 +111,8 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 
     for (auto& iter: m_map_events)
     {
-        const auto& value = iter.second.get_value();
-        if (value.size())
+        const wxue::string& value = iter.second.get_value();
+        if (!value.empty())
         {
             node.append_attribute(iter.second.get_name()) = value;
         }
@@ -117,7 +120,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 
     for (const auto& child: m_children)
     {
-        auto child_element = node.append_child("node");
+        pugi::xml_node child_element = node.append_child("node");
         child->AddNodeToDoc(child_element, project_version);
     }
 }

@@ -154,7 +154,7 @@ public:
     wxue::string get_DerivedFilename(Node*) const;
 
     [[nodiscard]] Node* get_ProjectNode() const { return m_project_node.get(); }
-    auto get_ChildNodePtrs() -> auto& { return m_project_node->get_ChildNodePtrs(); }
+    std::vector<NodeSharedPtr>& get_ChildNodePtrs() { return m_project_node->get_ChildNodePtrs(); }
     Node* get_Child(size_t index) { return m_project_node->get_Child(index); }
 
     // This includes forms in folders and sub-folders
@@ -186,6 +186,9 @@ public:
     [[nodiscard]] bool is_ProjectUpdated() const { return m_isProject_updated; }
 
     [[nodiscard]] bool is_UiAllowed() const { return m_allow_ui; }
+
+    [[nodiscard]] bool is_NewProject() const { return m_isNewProject; }
+    void clear_NewProject() { m_isNewProject = false; }
 
     [[nodiscard]] size_t get_ChildCount() const { return m_project_node->get_ChildCount(); }
 
@@ -248,7 +251,7 @@ public:
     // final check and fixup for things like inconsistent styles, invalid gridbag sizer rows
     // and columns, etc. Because it runs on the Node tree, it doesn't matter what importer
     // was used.
-    void FinalImportCheck(Node* project, bool set_line_length = true);
+    void FinalImportCheck(Node* parent, bool set_line_length = true);
 
     // Called by FinalImportCheck() to recursively check the node and all of it's children,
     // grandchildren, etc.
@@ -334,6 +337,7 @@ private:
     int m_OriginalProjectVersion;
 
     bool m_allow_ui { true };
+    bool m_isNewProject { false };
     bool m_isProject_updated { false };
 };
 

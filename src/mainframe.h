@@ -52,12 +52,13 @@ bool isClipboardDataAvailable();
 
 // Warning! This MUST be at least 3!
 inline constexpr int STATUS_PANELS = 3;
+inline constexpr int STATUS_SASH_INSET = 12;
 
 inline constexpr const char* txt_main_window_config = "/main_window";
 
 namespace evt_flags
 {
-    enum : std::uint8_t
+    enum
     {
         no_event = 0,
         fire_event = 1 << 0,
@@ -134,7 +135,7 @@ public:
     void ChangeEventHandler(NodeEvent* event, std::string_view value);
 
     // This will first call cmd->Change() and then push cmd onto the undo stack.
-    void PushUndoAction(UndoActionPtr cmd, bool add_to_stack = true);
+    void PushUndoAction(const UndoActionPtr& cmd, bool add_to_stack = true);
 
     void Undo();
     void Redo();
@@ -180,10 +181,10 @@ public:
     }
 
     // Removes the node and places it in the internal clipboard
-    void CutNode(Node* node) { node->RemoveNode(true); };
+    static void CutNode(Node* node) { node->RemoveNode(true); };
 
     // Erase the node without placing it in the clipboard
-    void DeleteNode(Node* node) { node->RemoveNode(false); };
+    static void DeleteNode(Node* node) { node->RemoveNode(false); };
 
     // Call this MainFrame version if you don't have access to a node.
     void ModifyProperty(NodeProperty* prop, std::string_view value);
@@ -376,15 +377,16 @@ private:
     void ShowGenerationResults(const GenResults& results);
     void UpdateGenerationStatus();
     void OnGenerationTimer(wxTimerEvent& event);
+    static void CreateTestingMenuItems(MainFrame* frame);
 
     wxSplitterWindow* m_SecondarySplitter { nullptr };
 
-    wxAuiNotebook* m_notebook;
-    PropGridPanel* m_property_panel;
+    wxAuiNotebook* m_notebook { nullptr };
+    PropGridPanel* m_property_panel { nullptr };
     RibbonPanel* m_ribbon_panel;
     std::unique_ptr<WakaTime> m_wakatime { nullptr };
 
-    MockupParent* m_mockupPanel;
+    MockupParent* m_mockupPanel { nullptr };
     DocViewPanel* m_docviewPanel { nullptr };
 
     BasePanel* m_cppPanel { nullptr };
@@ -423,7 +425,7 @@ private:
 
     wxFileHistory m_FileHistory;
     wxFileHistory m_ImportHistory;
-    wxMenu* m_submenu_import_recent;
+    wxMenu* m_submenu_import_recent { nullptr };
 
     wxSize m_dpi_menu_size;
     wxSize m_dpi_ribbon_size;
@@ -446,7 +448,7 @@ private:
     NodeSharedPtr m_selected_node { nullptr };
 
     NodeSharedPtr m_clipboard;
-    size_t m_clip_hash;  // generated clipboard hash
+    size_t m_clip_hash { 0 };  // generated clipboard hash
 
     wxDialog* m_pxrc_dlg { nullptr };
     wxFrame* m_pxrc_win { nullptr };
@@ -475,4 +477,4 @@ inline MainFrame* wxGetMainFrame()
     return wxGetApp().getMainFrame();
 }
 
-extern const std::string_view txtEmptyProject;  // "Empty Project"
+extern const std::string_view txtNewProject;  // "New Project"

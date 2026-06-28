@@ -656,7 +656,8 @@ void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui
     // extension
     wxFileDialog dialog(
-        this, "Save Project As", wxFileName::GetCwd(), filename.GetFullName(),
+        this, "Save Project As", wxFileName::GetCwd(),
+        Project.is_NewProject() ? wxString() : filename.GetFullName(),
         wxString(std::format("wxUiEditor Project File (*{})|{};{}", PROJECT_FILE_EXTENSION,
                              PROJECT_FILE_EXTENSION, PROJECT_LEGACY_FILE_EXTENSION)),
         wxFD_SAVE | wxFD_OVERWRITE_PROMPT);

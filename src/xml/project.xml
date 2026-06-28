@@ -36,7 +36,7 @@
 			<option name="LuaJIT"/>
 			<option name="TypeScript"/>
 			<option name="XRC"/>
-            C++ | Python
+            C++
         </property>
         <property name="art_directory" type="path"
             help="The directory containing your images (png, ico, xpm, etc.).">./</property>

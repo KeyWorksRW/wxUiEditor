@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-27-2026]
+
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/stc/stc.h>   // A wxWidgets implementation of Scintilla.
 #include <wx/utils.h>     // Miscellaneous utilities
@@ -17,21 +18,19 @@
 #include "wxue_namespace/wxue_string_vector.h"
 #include "wxue_namespace/wxue_view_vector.h"
 
-#include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "gen_enums.h"        // Enumerations for generators
-#include "image_handler.h"    // ProjectImage class
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator class
-#include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
-#include "project_handler.h"  // ProjectHandler class
-#include "version.h"          // Version information for wxUiEditor and wxWidgets
-
-#include "../pugixml/pugixml.hpp"  // pugixml parser
+#include "base_generator.h"       // BaseGenerator -- Base widget generator class
+#include "code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
+#include "gen_enums.h"            // Enumerations for generators
+#include "image_handler.h"        // ProjectImage class
+#include "mainframe.h"            // MainFrame -- Main window frame
+#include "node.h"                 // Node class
+#include "node_creator.h"         // NodeCreator class
+#include "preferences.h"          // Prefs -- Set/Get wxUiEditor preferences
+#include "project_handler.h"      // ProjectHandler class
+#include "pugixml.hpp"            // pugixml parser
+#include "version.h"              // Version information for wxUiEditor and wxWidgets
 
 #include <frozen/map.h>
-
-using namespace GenEnum;
 
 #include "../import/import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
 #include "../import/import_formblder.h"     // FormBuilder -- Import a wxFormBuilder project
@@ -43,9 +42,9 @@ using namespace GenEnum;
 #include "import_dlg.h"    // ImportDlg -- Dialog to create a new project
 #include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 
-#include "../ui/code_preference_dlg.h"  // CodePreferenceDlg -- Dialog to set code generation preference
-
 #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
+
+using namespace GenEnum;
 
 bool ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui)
 {
@@ -1793,6 +1792,7 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
 // properlyy by the designer.
 
 void ProjectHandler::FinalImportCheck(Node* parent, bool set_line_length)
+
 {
     if (set_line_length && parent->is_Gen(gen_Project))
     {

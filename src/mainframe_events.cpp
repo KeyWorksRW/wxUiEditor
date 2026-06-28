@@ -664,6 +664,15 @@ void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
     if (dialog.ShowModal() == wxID_OK)
     {
         filename = dialog.GetPath();
+
+        if (filename.GetName().CmpNoCase("New Project") == 0)
+        {
+            wxMessageBox("You cannot save the project as \"New Project\". Please choose a "
+                         "different name.",
+                         "Save Project As");
+            return;
+        }
+
         // Note that under Windows, any extension the user added will be followed with a .wxui
         // extension
         const wxString file_ext = filename.GetExt();
@@ -716,6 +725,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
         {
             m_isProject_modified = false;
             m_isImported = false;
+            Project.clear_NewProject();
             m_FileHistory.AddFileToHistory(filename.GetFullPath());
             Project.set_ProjectPath(filename);
             ProjectSaved();
@@ -731,8 +741,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
-    if (m_isImported || Project.get_ProjectFile().empty() ||
-        Project.get_ProjectFile().filename().is_sameas(txtEmptyProject))
+    if (m_isImported || Project.get_ProjectFile().empty() || Project.is_NewProject())
     {
         OnSaveAsProject(event);
     }

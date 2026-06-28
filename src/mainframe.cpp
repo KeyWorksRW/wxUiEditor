@@ -108,7 +108,7 @@ enum class MenuIDs : int
     id_VerifyTtwx,
 };
 
-const std::string_view txtEmptyProject = "Empty Project";
+const std::string_view txtNewProject = "New Project";
 constexpr int MAX_HISTORY_FILES = 9;
 
 MainFrame::MainFrame() :
@@ -557,7 +557,7 @@ void MainFrame::ProjectLoaded()
     ResetDerivedCodeState();
     if (!m_isImported)
     {
-        if (!Project.get_ProjectFile().filename().is_sameas(txtEmptyProject))
+        if (!Project.is_NewProject())
         {
             m_FileHistory.AddFileToHistory(Project.get_ProjectFile());
         }

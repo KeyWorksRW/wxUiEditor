@@ -65,7 +65,7 @@ public:
     auto CreateNode(std::string_view name, Node* parent, bool verify_language_support = false)
         -> std::pair<NodeSharedPtr, Node::Validity>;
 
-    auto CreateNodeFromXml(pugi::xml_node& node, Node* parent = nullptr,
+    auto CreateNodeFromXml(pugi::xml_node& xml_obj, Node* parent = nullptr,
                            bool check_for_duplicates = false, bool allow_ui = true)
         -> NodeSharedPtr;
 

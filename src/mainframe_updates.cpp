@@ -23,26 +23,42 @@
 
 void MainFrame::UpdateFrame()
 {
-    wxue::string filename = Project.get_ProjectFile().filename();
+    wxue::string filename;
 
-    if (filename.empty())
+    if (Project.is_NewProject())
     {
-        filename = "untitled";
+        // For new projects, only show the path (no filename since there isn't one)
+        const wxue::string project_path = Project.get_ProjectPath();
+        if (!project_path.empty())
+        {
+            filename = "call Save As to save project (";
+            filename += project_path;
+            filename += ")";
+        }
     }
-    filename.remove_extension();
+    else
+    {
+        filename = Project.get_ProjectFile().filename();
+
+        if (filename.empty())
+        {
+            filename = "untitled";
+        }
+        filename.remove_extension();
+
+        // Append full path in parentheses
+        const wxue::string project_path = Project.get_ProjectFile();
+        if (!project_path.empty())
+        {
+            filename += "  (";
+            filename += project_path;
+            filename += ")";
+        }
+    }
 
     if (m_isProject_modified)
     {
         filename.insert(0, "*");
-    }
-
-    // Append full path in parentheses
-    const wxue::string project_path = Project.get_ProjectFile();
-    if (!project_path.empty())
-    {
-        filename += "  (";
-        filename += project_path;
-        filename += ")";
     }
 
     SetTitle(filename.wx());

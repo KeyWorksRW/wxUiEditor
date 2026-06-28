@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-27-2026]
 
 // mainframe_events.cpp contains the event handlers for the MainFrame class.
 // mainframe_updates.cpp contains the MainFrame::Update...() functions
@@ -65,8 +66,6 @@
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 
-#include "pugixml.hpp"
-
 // Warning! This MUST be at least 3!
 constexpr const size_t StatusPanels = 3;
 
@@ -75,9 +74,9 @@ using namespace GenEnum;
 
 // Comment out the following line to change the UI back to the way it was in 1.1.2 and all earlier
 // versions.
-#define NEW_LAYOUT 1
+constexpr int NEW_LAYOUT = 1;
 
-enum : std::uint16_t
+enum class MenuIDs : int
 {
     IDM_IMPORT_WINRES = START_TESTING_IDS,
 
@@ -97,7 +96,6 @@ enum : std::uint16_t
     id_GenerateRuby,
     id_GenerateXrc,
     id_GenSingleCpp,
-    id_GenSinglePerl,
     id_GenSinglePython,
     id_GenSingleRuby,
     id_GenSingleXrc,
@@ -108,14 +106,14 @@ enum : std::uint16_t
     id_DebugPythonTest,
     id_DebugRubyTest,
     id_VerifyTtwx,
-
 };
 
 const std::string_view txtEmptyProject = "Empty Project";
 constexpr int MAX_HISTORY_FILES = 9;
 
 MainFrame::MainFrame() :
-    MainFrameBase(nullptr), m_findData(wxFR_DOWN),
+    MainFrameBase(nullptr),
+    m_findData(wxFR_DOWN),
     m_ImportHistory(MAX_HISTORY_FILES, START_IMPORT_FILE_IDS)
 {
     m_dpi_menu_size = FromDIP(wxSize(16, 16));
@@ -192,110 +190,32 @@ MainFrame::MainFrame() :
     m_FileHistory.UseMenu(m_submenu_recent);
     m_FileHistory.AddFilesToMenu();
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        wxMenuItem* item = nullptr;
-
-        auto* menuExperimental = new wxMenu;
-        menuExperimental->Append(ID_EXPERIMENTAL_MDI_APP, "Experimental MDI App",
-                                 "Create a base Document/View MDI application");
-
-        auto* menuTesting = new wxMenu;
-
-        menuTesting->Append(id_FindWidget, "&Find Widget...",
-                            "Search for a widget starting with the current selected node");
-        menuTesting->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
-        menuTesting->Append(id_UndoInfo, "Undo &Stack Information...",
-                            "Show undo/redo stack memory usage");
-        menuTesting->AppendSeparator();
-        menuTesting->Append(id_GeneratePython, "&Generate Python",
-                            "Generate all python files from current project.");
-        menuTesting->Append(id_GenerateRuby, "&Generate Ruby",
-                            "Generate all ruby files from current project.");
-
-        auto* submenu_xrc = new wxMenu();
-        item = submenu_xrc->Append(id_XrcPreviewDlg, "&XRC Tests...",
-                                   "Dialog with multiple XRC tests");
-        item->SetBitmap(bundle_xrc_tests_svg(16, 16));
-        item = submenu_xrc->Append(id_DebugXrcImport, "&Test XRC import",
-                                   "Export the current form, then verify importing it");
-        item->SetBitmap(bundle_import_svg(16, 16));
-        submenu_xrc->Append(id_DebugXrcDuplicate, "&Test XRC duplication",
-                            "Duplicate the current form via Export and Import XRC");
-        menuTesting->AppendSubMenu(submenu_xrc, "&XRC");
-
-        menuTesting->AppendSeparator();
-        menuTesting->Append(id_ShowLogger, "Show &Log Window",
-                            "Show window containing debug messages");
-        wxMenuItem* menuItem = menuTesting->Append(id_TestSwitch, "Testing Switch",
-                                                   "Toggle test switch", wxITEM_CHECK);
-        menuItem->Check(wxGetApp().isTestingSwitch());
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent& event)
-            {
-                if (wxGetApp().isTestingSwitch())
-                {
-                    wxGetApp().setTestingSwitch(false);
-                    wxStaticCast(event.GetEventObject(), wxMenu)
-                        ->FindItem(id_TestSwitch)
-                        ->Check(false);
-                }
-                else
-                {
-                    wxGetApp().setTestingSwitch(true);
-                    wxStaticCast(event.GetEventObject(), wxMenu)
-                        ->FindItem(id_TestSwitch)
-                        ->Check(true);
-                }
-            },
-            id_TestSwitch);
-
-        m_menubar->Append(menuExperimental, "Experimental");
-        m_menubar->Append(menuTesting, "Testing");
-
-        m_submenu_import_recent = new wxMenu();
-        m_menuFile->AppendSeparator();
-        m_menuFile->AppendSubMenu(m_submenu_import_recent, "Import &Recent");
-
-        config = wxConfig::Get();
-        config->SetPath("/debug_history");
-        m_ImportHistory.Load(*config);
-        m_ImportHistory.UseMenu(m_submenu_import_recent);
-        m_ImportHistory.AddFilesToMenu();
-        config->SetPath("/");
-
-        Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, START_IMPORT_FILE_IDS,
-             START_IMPORT_FILE_IDS + MAX_HISTORY_FILES);
-    }
+    CreateTestingMenuItems(this);
 
 #if defined(_DEBUG)
     auto* menuInternal = new wxMenu;
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_DebugPreferences, "Test &Settings...",
+    menuInternal->Append(std::to_underlying(MenuIDs::id_DebugPreferences), "Test &Settings...",
                          "Settings to use in testing builds");
-    menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
+    menuInternal->Append(std::to_underlying(MenuIDs::id_DebugCurrentTest), "&Current Test",
+                         "Current debugging test");
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_VerifyTtwx, "&Verify TTWX...", "Verify TTWX files");
+    menuInternal->Append(std::to_underlying(MenuIDs::id_VerifyTtwx), "&Verify TTWX...",
+                         "Verify TTWX files");
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
+    menuInternal->Append(std::to_underlying(MenuIDs::id_ConvertImage), "&Convert Image...",
+                         "Image conversion testing...");
 
     m_menubar->Append(menuInternal, "&Internal");
 
 #endif  // defined(_DEBUG)
 
-    if (wxGetApp().isTestingMenuEnabled())
+    if (!wxGetApp().isTestingMenuEnabled())
     {
-        m_toolbar->AddTool(id_XrcPreviewDlg, "XRC Tests", bundle_xrc_tests_svg(24, 24),
-                           "Dialog with multiple XRC tests");
-    }
-
-    // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
-    else
-    {
+        // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
         m_menuTools->Delete(m_mi_preview);
         m_toolbar->DeleteTool(id_PreviewForm);
     }
@@ -323,7 +243,8 @@ MainFrame::MainFrame() :
                              UpdateStatusWidths();
                          });
 
-    Bind(wxEVT_MENU, &MainFrame::OnImportWindowsResource, this, IDM_IMPORT_WINRES);
+    Bind(wxEVT_MENU, &MainFrame::OnImportWindowsResource, this,
+         std::to_underlying(MenuIDs::IDM_IMPORT_WINRES));
     Bind(wxEVT_MENU, &MainFrame::OnOpenRecentProject, this, wxID_FILE1, wxID_FILE9);
 
     Bind(wxEVT_FIND, &MainFrame::OnFind, this);
@@ -416,101 +337,6 @@ MainFrame::MainFrame() :
         },
         id_Magnify);
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        // Experimental menu items
-        Bind(
-            wxEVT_MENU,
-            [this](wxCommandEvent&)
-            {
-                wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
-                NewMdiForm dialog(this);
-                if (dialog.ShowModal() == wxID_OK)
-                {
-                    dialog.CreateNode();
-                }
-            },
-            ID_EXPERIMENTAL_MDI_APP);
-
-        Bind(
-            wxEVT_MENU,
-            [this](wxCommandEvent&)
-            {
-                NodeInfo dialog(this);
-                dialog.ShowModal();
-            },
-            id_NodeMemory);
-
-        Bind(
-            wxEVT_MENU,
-            [this](wxCommandEvent&)
-            {
-                UndoInfo dialog(this);
-                dialog.ShowModal();
-            },
-            id_UndoInfo);
-        Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
-    }
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GenLang::python);
-            },
-            id_GenSinglePython);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GenLang::ruby);
-            },
-            id_GenSingleRuby);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateSingleLanguage(GenLang::xrc);
-            },
-            id_GenSingleXrc);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GenLang::ruby);
-            },
-            id_GenerateRuby);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                OnGenerateLanguage(GenLang::xrc);
-            },
-            id_GenerateXrc);
-
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                g_pMsgLogging->ShowLogger();
-            },
-            id_ShowLogger);
-        Bind(wxEVT_MENU, &MainFrame::OnXrcPreview, this, id_XrcPreviewDlg);
-        Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, this, id_DebugXrcImport);
-        Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, this, id_DebugXrcDuplicate);
-    }
-
-#if defined(INTERNAL_BLD_TESTING)
-    Bind(wxEVT_MENU, &MainFrame::OnVerifyTTWX, this, id_VerifyTtwx);
-    Bind(wxEVT_MENU, &MainFrame::OnConvertImageDlg, this, id_ConvertImage);
-#endif
-
 #if defined(_DEBUG)
     Bind(
         wxEVT_MENU,
@@ -519,9 +345,10 @@ MainFrame::MainFrame() :
             DebugSettings dialog(this);
             dialog.ShowModal();
         },
-        id_DebugPreferences);
+        std::to_underlying(MenuIDs::id_DebugPreferences));
 
-    Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
+    Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(),
+         std::to_underlying(MenuIDs::id_DebugCurrentTest));
 #endif
 
     AddCustomEventHandler(GetEventHandler());
@@ -532,6 +359,188 @@ MainFrame::MainFrame() :
 MainFrame::~MainFrame()
 {
     delete m_findDialog;
+}
+
+void MainFrame::CreateTestingMenuItems(MainFrame* frame)
+{
+    if (!wxGetApp().isTestingMenuEnabled())
+    {
+        return;
+    }
+
+    wxMenuItem* item = nullptr;
+
+    auto* menuExperimental = new wxMenu;
+    menuExperimental->Append(std::to_underlying(MenuIDs::ID_EXPERIMENTAL_MDI_APP),
+                             "Experimental MDI App", "Create a base Document/View MDI application");
+
+    auto* menuTesting = new wxMenu;
+
+    menuTesting->Append(std::to_underlying(MenuIDs::id_FindWidget), "&Find Widget...",
+                        "Search for a widget starting with the current selected node");
+    menuTesting->Append(std::to_underlying(MenuIDs::id_NodeMemory), "Node &Information...",
+                        "Show node memory usage");
+    menuTesting->Append(std::to_underlying(MenuIDs::id_UndoInfo), "Undo &Stack Information...",
+                        "Show undo/redo stack memory usage");
+    menuTesting->AppendSeparator();
+    menuTesting->Append(std::to_underlying(MenuIDs::id_GeneratePython), "&Generate Python",
+                        "Generate all python files from current project.");
+    menuTesting->Append(std::to_underlying(MenuIDs::id_GenerateRuby), "&Generate Ruby",
+                        "Generate all ruby files from current project.");
+
+    auto* submenu_xrc = new wxMenu();
+    item = submenu_xrc->Append(std::to_underlying(MenuIDs::id_XrcPreviewDlg), "&XRC Tests...",
+                               "Dialog with multiple XRC tests");
+    item->SetBitmap(bundle_xrc_tests_svg(16, 16));
+    item = submenu_xrc->Append(std::to_underlying(MenuIDs::id_DebugXrcImport), "&Test XRC import",
+                               "Export the current form, then verify importing it");
+    item->SetBitmap(bundle_import_svg(16, 16));
+    submenu_xrc->Append(std::to_underlying(MenuIDs::id_DebugXrcDuplicate), "&Test XRC duplication",
+                        "Duplicate the current form via Export and Import XRC");
+    menuTesting->AppendSubMenu(submenu_xrc, "&XRC");
+
+    menuTesting->AppendSeparator();
+    menuTesting->Append(std::to_underlying(MenuIDs::id_ShowLogger), "Show &Log Window",
+                        "Show window containing debug messages");
+    wxMenuItem* menuItem =
+        menuTesting->Append(std::to_underlying(MenuIDs::id_TestSwitch), "Testing Switch",
+                            "Toggle test switch", wxITEM_CHECK);
+    menuItem->Check(wxGetApp().isTestingSwitch());
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent& event)
+        {
+            if (wxGetApp().isTestingSwitch())
+            {
+                wxGetApp().setTestingSwitch(false);
+                if (wxMenuItem* menuItemTestSwitch =
+                        wxStaticCast(event.GetEventObject(), wxMenu)
+                            ->FindItem(std::to_underlying(MenuIDs::id_TestSwitch)))
+                {
+                    menuItemTestSwitch->Check(false);
+                }
+            }
+            else
+            {
+                wxGetApp().setTestingSwitch(true);
+                if (wxMenuItem* menuItemTestSwitch =
+                        wxStaticCast(event.GetEventObject(), wxMenu)
+                            ->FindItem(std::to_underlying(MenuIDs::id_TestSwitch)))
+                {
+                    menuItemTestSwitch->Check(true);
+                }
+            }
+        },
+        std::to_underlying(MenuIDs::id_TestSwitch));
+
+    frame->m_menubar->Append(menuExperimental, "Experimental");
+    frame->m_menubar->Append(menuTesting, "Testing");
+
+    frame->m_submenu_import_recent = new wxMenu();
+    frame->m_menuFile->AppendSeparator();
+    frame->m_menuFile->AppendSubMenu(frame->m_submenu_import_recent, "Import &Recent");
+
+    wxConfigBase* config = wxConfig::Get();
+    config->SetPath("/debug_history");
+    frame->m_ImportHistory.Load(*config);
+    frame->m_ImportHistory.UseMenu(frame->m_submenu_import_recent);
+    frame->m_ImportHistory.AddFilesToMenu();
+    config->SetPath("/");
+
+    frame->Bind(wxEVT_MENU, &MainFrame::OnImportRecent, frame, START_IMPORT_FILE_IDS,
+                START_IMPORT_FILE_IDS + MAX_HISTORY_FILES);
+
+    // Experimental menu items
+    frame->Bind(
+        wxEVT_MENU,
+        [frame](wxCommandEvent&)
+        {
+            wxGetMainFrame()->SelectNode(Project.get_ProjectNode(), evt_flags::force_selection);
+            NewMdiForm dialog(frame);
+            if (dialog.ShowModal() == wxID_OK)
+            {
+                dialog.CreateNode();
+            }
+        },
+        std::to_underlying(MenuIDs::ID_EXPERIMENTAL_MDI_APP));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [frame](wxCommandEvent&)
+        {
+            NodeInfo dialog(frame);
+            dialog.ShowModal();
+        },
+        std::to_underlying(MenuIDs::id_NodeMemory));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [frame](wxCommandEvent&)
+        {
+            UndoInfo dialog(frame);
+            dialog.ShowModal();
+        },
+        std::to_underlying(MenuIDs::id_UndoInfo));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnFindWidget, frame,
+                std::to_underlying(MenuIDs::id_FindWidget));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, frame,
+                std::to_underlying(MenuIDs::id_GenSingleCpp));
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            OnGenerateSingleLanguage(GenLang::python);
+        },
+        std::to_underlying(MenuIDs::id_GenSinglePython));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            OnGenerateSingleLanguage(GenLang::ruby);
+        },
+        std::to_underlying(MenuIDs::id_GenSingleRuby));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            OnGenerateSingleLanguage(GenLang::xrc);
+        },
+        std::to_underlying(MenuIDs::id_GenSingleXrc));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            OnGenerateLanguage(GenLang::ruby);
+        },
+        std::to_underlying(MenuIDs::id_GenerateRuby));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            OnGenerateLanguage(GenLang::xrc);
+        },
+        std::to_underlying(MenuIDs::id_GenerateXrc));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            g_pMsgLogging->ShowLogger();
+        },
+        std::to_underlying(MenuIDs::id_ShowLogger));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnXrcPreview, frame,
+                std::to_underlying(MenuIDs::id_XrcPreviewDlg));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, frame,
+                std::to_underlying(MenuIDs::id_DebugXrcImport));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, frame,
+                std::to_underlying(MenuIDs::id_DebugXrcDuplicate));
+
+    frame->m_toolbar->AddTool(std::to_underlying(MenuIDs::id_XrcPreviewDlg), "XRC Tests",
+                              bundle_xrc_tests_svg(24, 24), "Dialog with multiple XRC tests");
 }
 
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg,
@@ -597,8 +606,8 @@ bool MainFrame::SaveWarning()
 
     if (m_isProject_modified)
     {
-        // Testing often requires importing multiple projects to verify they work, so there is no
-        // reason to save them.
+        // Testing often requires importing multiple projects to verify they work, so there is
+        // no reason to save them.
         if (wxGetApp().isTestingMenuEnabled() && m_isImported)
         {
             result = wxNO;
@@ -635,7 +644,8 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        // Shows original import file if project is imported, otherwise it shows the project file
+        // Shows original import file if project is imported, otherwise it shows the project
+        // file
         m_importPanel = new ImportPanel(m_notebook);
         m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
@@ -645,9 +655,9 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
 void MainFrame::CreateSplitters()
 {
-    // The main splitter contains the navigation tree control and it's toolbar on the left. On the
-    // right is a panel containing the Ribbon toolbar at the top, and a splitter window containing
-    // the property grid and notebook with mockup and code windows below it.
+    // The main splitter contains the navigation tree control and it's toolbar on the left. On
+    // the right is a panel containing the Ribbon toolbar at the top, and a splitter window
+    // containing the property grid and notebook with mockup and code windows below it.
 
     m_panel_right->SetWindowStyle(wxBORDER_RAISED);
 
@@ -701,7 +711,9 @@ void MainFrame::CreateSplitters()
     // UpdateStatusWidths();
     m_MainSashPosition = m_MainSplitter->GetSashPosition();
     m_SecondarySashPosition = m_SecondarySplitter->GetSashPosition();
-    int widths[StatusPanels] = { 1, (m_MainSashPosition + m_SecondarySashPosition) - 12, -1 };
+    int widths[StatusPanels] = { 1,
+                                 (m_MainSashPosition + m_SecondarySashPosition) - STATUS_SASH_INSET,
+                                 -1 };
     SetStatusWidths(sizeof(widths) / sizeof(int), widths);
 
     // SetMinSize(wxSize(700, 380));
@@ -716,7 +728,7 @@ void MainFrame::setStatusField(const wxString& text, int position)
     setStatusText(text, position);
 }
 
-auto MainFrame::getSelectedForm() -> Node*
+Node* MainFrame::getSelectedForm()
 {
     if (!m_selected_node || m_selected_node->is_Gen(gen_Project))
     {
@@ -861,7 +873,7 @@ void MainFrame::PasteNode(Node* parent)
 
         if (new_node->is_Gen(gen_wxMenuItem))
         {
-            if (parent->is_ToolBar() || grandparent->is_ToolBar())
+            if (grandparent && (parent->is_ToolBar() || grandparent->is_ToolBar()))
             {
                 if (!parent->is_ToolBar())
                 {
@@ -871,60 +883,60 @@ void MainFrame::PasteNode(Node* parent)
                     (parent->is_Type(type_toolbar) || parent->is_Type(type_toolbar_form)) ?
                         gen_tool :
                         gen_auitool;
-                const std::pair<NodeSharedPtr, Node::Validity> tool_node =
+                auto [tool_node_ptr, tool_node_validity] =
                     NodeCreation.CreateNode(tool_generator, parent);
-                ASSERT(tool_node.second == Node::Validity::valid_node);
+                ASSERT(tool_node_validity == Node::Validity::valid_node);
                 // REVIEW: [Randalphwa - 04-28-2025] Not being able to create a tool node with a
-                // valid toolbar parent is extremely unlikely. Simply returning prevents a crash,
-                // but tells the user nothing...
-                if (tool_node.second != Node::Validity::valid_node)
+                // valid toolbar parent is extremely unlikely. Simply returning prevents a
+                // crash, but tells the user nothing...
+                if (tool_node_validity != Node::Validity::valid_node)
                 {
                     return;
                 }
 
                 for (const auto& iter: new_node->get_NodeDeclaration()->GetPropInfoMap())
                 {
-                    // Walk through all the properties in the menu item and copy any of them that
-                    // exist in the tool node.
-                    if (tool_node.first->HasProp(iter.second->get_name()))
+                    // Walk through all the properties in the menu item and copy any of them
+                    // that exist in the tool node.
+                    if (tool_node_ptr->HasProp(iter.second->get_name()))
                     {
-                        tool_node.first->set_value(
+                        tool_node_ptr->set_value(
                             iter.second->get_name(),
                             new_node->get_PropPtr(iter.second->get_name())->get_value());
                     }
                 }
-                create_undo_event(tool_node.first);
+                create_undo_event(tool_node_ptr);
                 return;
             }
         }
         else if (new_node->is_Gen(gen_tool) || new_node->is_Gen(gen_auitool))
         {
-            if (parent->is_Menu() || grandparent->is_Menu())
+            if (grandparent && (parent->is_Menu() || grandparent->is_Menu()))
             {
                 if (!parent->is_Menu())
                 {
                     parent = grandparent;
                 }
-                const std::pair<NodeSharedPtr, Node::Validity> menu_node =
+                auto [menu_node_ptr, menu_node_validity] =
                     NodeCreation.CreateNode(gen_wxMenuItem, parent);
-                ASSERT(menu_node.second == Node::Validity::valid_node);
-                if (menu_node.second != Node::Validity::valid_node)
+                ASSERT(menu_node_validity == Node::Validity::valid_node);
+                if (menu_node_validity != Node::Validity::valid_node)
                 {
                     return;
                 }
 
                 for (const auto& iter: new_node->get_NodeDeclaration()->GetPropInfoMap())
                 {
-                    // Walk through all the properties in the menu item and copy any of them that
-                    // exist in the tool node.
-                    if (menu_node.first->HasProp(iter.second->get_name()))
+                    // Walk through all the properties in the menu item and copy any of them
+                    // that exist in the tool node.
+                    if (menu_node_ptr->HasProp(iter.second->get_name()))
                     {
-                        menu_node.first->set_value(
+                        menu_node_ptr->set_value(
                             iter.second->get_name(),
                             new_node->get_PropPtr(iter.second->get_name())->get_value());
                     }
                 }
-                create_undo_event(menu_node.first);
+                create_undo_event(menu_node_ptr);
                 return;
             }
         }
@@ -1062,7 +1074,7 @@ void MainFrame::RemoveFileFromHistory(std::string_view file)
     }
 }
 
-void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
+void MainFrame::PushUndoAction(const UndoActionPtr& cmd, bool add_to_stack)
 {
     m_isProject_modified = true;
     if (!add_to_stack)
@@ -1092,8 +1104,9 @@ void MainFrame::DismissInfoBar()
 
 BasePanel* MainFrame::GetFirstCodePanel()
 {
-    wxWindow* page = m_notebook->GetPage(1);
-    return static_cast<BasePanel*>(page);
+    auto* panel = dynamic_cast<BasePanel*>(m_notebook->GetPage(1));
+    ASSERT_MSG(panel, "Page 1 is not a BasePanel");
+    return panel;
 }
 
 void MainFrame::RemoveCustomEventHandler(wxEvtHandler* handler)

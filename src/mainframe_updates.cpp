@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame Update() functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-27-2026]
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/wupdlock.h>     // wxWindowUpdateLocker prevents window redrawing
@@ -20,7 +21,7 @@
 
 #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 
-auto MainFrame::UpdateFrame() -> void
+void MainFrame::UpdateFrame()
 {
     wxue::string filename = Project.get_ProjectFile().filename();
 
@@ -49,26 +50,32 @@ auto MainFrame::UpdateFrame() -> void
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())
     {
-        if (m_undo_stack.GetUndoString().size())
+        if (!m_undo_stack.GetUndoString().empty())
         {
             menu_text << ' ' << m_undo_stack.GetUndoString();
         }
     }
     menu_text << "\tCtrl+Z";
-    m_menuEdit->FindChildItem(wxID_UNDO)->SetItemLabel(menu_text);
+    if (auto* item = m_menuEdit->FindChildItem(wxID_UNDO); item)
+    {
+        item->SetItemLabel(menu_text);
+    }
 
     menu_text = "Redo";
     if (m_undo_stack.IsRedoAvailable())
     {
-        if (m_undo_stack.GetRedoString().size())
+        if (!m_undo_stack.GetRedoString().empty())
         {
             menu_text << ' ' << m_undo_stack.GetRedoString();
         }
     }
     menu_text << "\tCtrl+Y";
-    m_menuEdit->FindChildItem(wxID_REDO)->SetItemLabel(menu_text);
+    if (auto* item = m_menuEdit->FindChildItem(wxID_REDO); item)
+    {
+        item->SetItemLabel(menu_text);
+    }
 
-    bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == "Mock Up");
+    const bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == "Mock Up");
     m_menuEdit->Enable(wxID_FIND, !isMockup);
 
     UpdateMoveMenu();
@@ -76,9 +83,9 @@ auto MainFrame::UpdateFrame() -> void
     UpdateWakaTime();
 }
 
-auto MainFrame::UpdateLanguagePanels() -> void
+void MainFrame::UpdateLanguagePanels()
 {
-    wxWindowUpdateLocker freeze(this);
+    const wxWindowUpdateLocker freeze(this);
 
     // Temporarily remove end panels so language panels can be added in display order,
     // then restored at the end.
@@ -91,7 +98,7 @@ auto MainFrame::UpdateLanguagePanels() -> void
         m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
     }
 
-    const auto languages = Project.get_GenerateLanguages();
+    const GenLang languages = Project.get_GenerateLanguages();
 
     // For each language: create the panel if newly enabled, or destroy it if disabled.
     auto manage_panel = [&](GenLang flag, BasePanel*& panel, const char* label)
@@ -112,7 +119,7 @@ auto MainFrame::UpdateLanguagePanels() -> void
     manage_panel(GenLang::python, m_pythonPanel, "Python");
     manage_panel(GenLang::ruby, m_rubyPanel, "Ruby");
     manage_panel(GenLang::fortran, m_fortranPanel, "Fortran");
-    manage_panel(GenLang::go, m_goPanel, "Go");
+    manage_panel(GenLang::go, m_goPanel, "GO");
     manage_panel(GenLang::julia, m_juliaPanel, "Julia");
     manage_panel(GenLang::luajit, m_luajitPanel, "LuaJIT");
     manage_panel(GenLang::typescript, m_typescriptPanel, "TypeScript");
@@ -125,7 +132,7 @@ auto MainFrame::UpdateLanguagePanels() -> void
         BasePanel* panel;
         const char* label;
     };
-    const auto preferred = Project.get_CodePreference();
+    const GenLang preferred = Project.get_CodePreference();
     const std::array lang_info = {
         LangInfo { .flag = GenLang::cplusplus, .panel = m_cppPanel, .label = "C++" },
         LangInfo { .flag = GenLang::python, .panel = m_pythonPanel, .label = "Python" },
@@ -162,7 +169,7 @@ auto MainFrame::UpdateLanguagePanels() -> void
     }
 }
 
-auto MainFrame::UpdateLayoutTools() -> void
+void MainFrame::UpdateLayoutTools()
 {
     int option = -1;
     int border = 0;
@@ -238,10 +245,10 @@ auto MainFrame::UpdateLayoutTools() -> void
     m_toolbar->ToggleTool(id_Expand, ((flag & wxEXPAND) != 0) && gotLayoutSettings);
 }
 
-auto MainFrame::UpdateMoveMenu() -> void
+void MainFrame::UpdateMoveMenu()
 {
-    auto* node = m_selected_node.get();
-    Node* parent = nullptr;
+    Node* node = m_selected_node.get();
+    const Node* parent = nullptr;
     if (node)
     {
         parent = node->get_Parent();
@@ -261,7 +268,7 @@ auto MainFrame::UpdateMoveMenu() -> void
     m_menuEdit->Enable(id_MoveRight, node->MoveNode(MoveDirection::Right, true));
 }
 
-auto MainFrame::UpdateStatusWidths() -> void
+void MainFrame::UpdateStatusWidths()
 {
     if (m_MainSplitter)
     {
@@ -273,12 +280,12 @@ auto MainFrame::UpdateStatusWidths() -> void
     }
 
     const std::array<int, STATUS_PANELS> widths = {
-        1, (m_MainSashPosition + m_SecondarySashPosition - 16), -1
+        1, (m_MainSashPosition + m_SecondarySashPosition - STATUS_SASH_INSET), -1
     };
     SetStatusWidths(static_cast<int>(widths.size()), widths.data());
 }
 
-auto MainFrame::UpdateWakaTime([[maybe_unused]] bool FileSavedEvent) -> void
+void MainFrame::UpdateWakaTime([[maybe_unused]] bool FileSavedEvent)
 {
     if (m_wakatime && UserPrefs.is_WakaTimeEnabled())
     {

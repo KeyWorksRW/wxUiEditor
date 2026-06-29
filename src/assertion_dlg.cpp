@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <mutex>
 
+#include <wx/ffile.h>
+#include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 
 #include "mainapp.h"    // App -- Main application class
@@ -16,6 +18,26 @@
 namespace
 {
     std::mutex mutex_assert;  // NOLINT (cppcheck-suppress)
+}  // namespace
+
+// Saves assertion/crash details to a user-chosen log file via wxFileDialog.
+void SaveAssertionInfo(const wxString& content)
+{
+    wxFileDialog file_dlg(nullptr, "Save Assertion Log", "", "assertion_log.txt",
+                          "Text files (*.txt)|*.txt|Log files (*.log)|*.log|All files (*.*)|*.*",
+                          wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+    if (file_dlg.ShowModal() == wxID_CANCEL)
+    {
+        return;
+    }
+
+    const wxString filepath = file_dlg.GetPath();
+    wxFFile file(filepath, "w");
+    if (file.IsOpened())
+    {
+        file.Write(content);
+    }
 }
 
 // Note that this returns bool allowing the ASSERT macro to call wxTrap in the caller's code rather
@@ -43,10 +65,13 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
     str << "File: " << filename << '\n';
     str << "Function: " << function << '\n';
     str << "Line: " << line << "\n\n";
-    str << "Press Yes to call wxTrap, No to continue, Cancel to exit program.";
+
+#if defined(_DEBUG)
+    str << "Run 'Attach to wxUiEditor' in VSCode, then press Yes to break into debugger.\n"
+        << "No to continue, Cancel to exit program.";
 
     wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
-    dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
+    dlg.SetYesNoCancelLabels("DebugBreak", "Continue", "Exit program");
 
     const auto answer = dlg.ShowModal();
 
@@ -54,6 +79,20 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
     {
         return true;
     }
+#else  // INTERNAL_TESTING without _DEBUG
+    str << "Press Yes to save details to log file, No to continue, Cancel to exit program.";
+
+    wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    dlg.SetYesNoCancelLabels("Save to log", "Continue", "Exit program");
+
+    const auto answer = dlg.ShowModal();
+
+    if (answer == wxID_YES)
+    {
+        SaveAssertionInfo(str);
+        return false;
+    }
+#endif
     if (answer == wxID_CANCEL)
     {
         std::quick_exit(2);
@@ -99,10 +138,13 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     str << "File: " << filename << '\n';
     str << "Function: " << function << '\n';
     str << "Line: " << line << "\n\n";
-    str << "Press Yes to call wxTrap, No to continue, Cancel to exit program.";
+
+#if defined(_DEBUG)
+    str << "Run 'Attach to wxUiEditor' in VSCode, then press Yes to break into debugger.\n"
+        << "No to continue, Cancel to exit program.";
 
     wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
-    dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
+    dlg.SetYesNoCancelLabels("DebugBreak", "Continue", "Exit program");
 
     const auto answer = dlg.ShowModal();
 
@@ -110,6 +152,19 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     {
         wxTrap();
     }
+#else  // INTERNAL_TESTING without _DEBUG
+    str << "Press Yes to save details to log file, No to continue, Cancel to exit program.";
+
+    wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    dlg.SetYesNoCancelLabels("Save to log", "Continue", "Exit program");
+
+    const auto answer = dlg.ShowModal();
+
+    if (answer == wxID_YES)
+    {
+        SaveAssertionInfo(str);
+    }
+#endif
     else if (answer == wxID_CANCEL)
     {
         std::quick_exit(2);

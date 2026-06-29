@@ -15,6 +15,10 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
 void ttAssertionHandler(const wxString& filename, int line, const wxString& function,
                         const wxString& cond, const wxString& msg);
 
+// Saves assertion/crash details to a user-chosen log file via wxFileDialog.
+// Used by OnAssertFailure() in release+testing builds and by the assertion dialog.
+void SaveAssertionInfo(const wxString& content);
+
 // The advantage of using ASSERT over wxASSERT is that ASSERT allows the macro to execute wxTrap in
 // the caller's code, so that you don't have to step out of the assertion function to get back to
 // the code that threw the assert.
@@ -37,7 +41,7 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
         {                                                          \
             wxMessageBox((msg), "Warning", wxOK | wxICON_WARNING); \
         }
-#else  // not defined(NDEBUG) && !defined(INTERNAL_TESTING)
+#elif defined(_DEBUG)
     #define ASSERT(cond)                                                                 \
         if (!(cond) && AssertionDlg(__FILE__, __func__, __LINE__, #cond, wxEmptyString)) \
         {                                                                                \
@@ -58,6 +62,32 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
         }
     // In debug builds, identical to ASSERT_MSG — shows file/line/condition with option
     // to break into the debugger.
+    #define ASSERT_OR_WARN(cond, msg) ASSERT_MSG(cond, msg)
+// NOLINTEND(cppcoreguidelines-macro-usage)
+
+#else  // INTERNAL_TESTING without _DEBUG
+    // In release+testing builds, show the assertion dialog but never break into the
+    // debugger. The dialog offers a "Save to log" option instead.
+    // NOLINTBEGIN(cppcoreguidelines-macro-usage)
+    #define ASSERT(cond)                                                                    \
+        if (!(cond))                                                                        \
+        {                                                                                   \
+            std::ignore = AssertionDlg(__FILE__, __func__, __LINE__, #cond, wxEmptyString); \
+        }
+
+    #define ASSERT_MSG(cond, msg)                                                   \
+        if (!(cond))                                                                \
+        {                                                                           \
+            std::ignore = AssertionDlg(__FILE__, __func__, __LINE__, #cond, (msg)); \
+        }
+
+    #define FAIL_MSG(msg)                                                              \
+        {                                                                              \
+            std::ignore = AssertionDlg(__FILE__, __func__, __LINE__, "failed", (msg)); \
+        }
+
+    // In testing builds, identical to ASSERT_MSG — shows file/line/condition with
+    // option to save to log.
     #define ASSERT_OR_WARN(cond, msg) ASSERT_MSG(cond, msg)
 // NOLINTEND(cppcoreguidelines-macro-usage)
 #endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)

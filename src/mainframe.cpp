@@ -105,7 +105,7 @@ enum class MenuIDs : int
     id_UndoInfo,
     id_DebugPythonTest,
     id_DebugRubyTest,
-    id_VerifyTtwx,
+    id_AssertionTest,
 };
 
 const std::string_view txtNewProject = "New Project";
@@ -202,8 +202,8 @@ MainFrame::MainFrame() :
                          "Current debugging test");
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(std::to_underlying(MenuIDs::id_VerifyTtwx), "&Verify TTWX...",
-                         "Verify TTWX files");
+    menuInternal->Append(std::to_underlying(MenuIDs::id_AssertionTest), "&Assertion Test...",
+                         "Run assertion test");
 
     menuInternal->AppendSeparator();
     menuInternal->Append(std::to_underlying(MenuIDs::id_ConvertImage), "&Convert Image...",
@@ -346,6 +346,14 @@ MainFrame::MainFrame() :
             dialog.ShowModal();
         },
         std::to_underlying(MenuIDs::id_DebugPreferences));
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            ASSERT_MSG(false, wxue::string() << "Assertion test triggered");
+        },
+        std::to_underlying(MenuIDs::id_AssertionTest));
 
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(),
          std::to_underlying(MenuIDs::id_DebugCurrentTest));

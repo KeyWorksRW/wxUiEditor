@@ -13,6 +13,7 @@
 #include <wx/cshelp.h>   // Context-sensitive help support classes
 #include <wx/dir.h>      // wxDir is a class for enumerating the files in a directory
 #include <wx/filedlg.h>  // wxFileDialog base header
+#include <wx/msgdlg.h>   // wxMessageDialog
 #include <wx/msgout.h>   // wxMessageOutput and related classes
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
@@ -371,7 +372,10 @@ int App::OnRun()
         g_pMsgLogging = new MsgLogging();
         wxLog::SetActiveTarget(g_pMsgLogging);
 
-        // Use our own assertion handler
+        // Replace wxWidgets' default assertion handler with our own (ttAssertionHandler
+        // in assertion_dlg.cpp). It provides a three-button dialog (DebugBreak/Continue/Exit)
+        // matching our custom ASSERT macros. Once set, wxASSERT will use this handler
+        // instead of calling App::OnAssertFailure().
         wxSetAssertHandler(ttAssertionHandler);
     }
 

@@ -17,7 +17,8 @@
 #include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.cpp
 
 EditStringProperty::EditStringProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

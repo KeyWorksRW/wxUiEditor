@@ -14,7 +14,8 @@
 #include "project_handler.h"  // ProjectHandler class
 
 DirectoryProperty::DirectoryProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

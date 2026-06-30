@@ -14,7 +14,8 @@
 #include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 
 EventStringProperty::EventStringProperty(const wxString& label, NodeEvent* event) :
-    wxStringProperty(label, wxPG_LABEL, event->get_value()), m_event(event)
+    wxStringProperty(label, wxPG_LABEL, event->get_value()),
+    m_event(event)
 {
 }
 

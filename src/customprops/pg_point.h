@@ -52,7 +52,8 @@ class CustomBoolProperty : public wxBoolProperty
 {
 public:
     CustomBoolProperty(const wxString& label = wxPG_LABEL, const wxString& name = wxPG_LABEL,
-                       bool value = false) : wxBoolProperty(label, name, value)
+                       bool value = false) :
+        wxBoolProperty(label, name, value)
     {
     }
 

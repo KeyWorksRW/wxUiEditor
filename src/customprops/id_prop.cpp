@@ -15,7 +15,8 @@
 #include "mainframe.h"           // MainFrame -- Main window frame
 
 ID_Property::ID_Property(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

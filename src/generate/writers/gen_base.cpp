@@ -29,7 +29,10 @@
 using namespace GenEnum;
 
 BaseCodeGenerator::BaseCodeGenerator(GenLang language, Node* form_node) :
-    m_header(nullptr), m_source(nullptr), m_form_node(form_node), m_language(language),
+    m_header(nullptr),
+    m_source(nullptr),
+    m_form_node(form_node),
+    m_language(language),
     m_strategy(CreateLanguageStrategy(language))
 {
 }

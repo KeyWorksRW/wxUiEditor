@@ -49,7 +49,9 @@ namespace
 }  // namespace
 
 MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* parent) :
-    MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
+    MsgFrameBase(parent),
+    m_pMsgs(pMsgs),
+    m_pDestroyed(pDestroyed)
 {
     // These will adjust for both dark mode and high contrast mode if needed
     const auto clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);

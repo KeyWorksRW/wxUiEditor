@@ -17,7 +17,8 @@
 #include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.h wxui/editstringdialog_base.cpp
 
 EditCodeSingleProperty::EditCodeSingleProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 
@@ -25,7 +26,9 @@ class EditCodeSingleDialog : public EditStringDialogBase
 {
 public:
     EditCodeSingleDialog(wxWindow* parent, NodeProperty* prop) :
-        EditStringDialogBase(parent), m_node(prop->getNode()), m_prop(prop)
+        EditStringDialogBase(parent),
+        m_node(prop->getNode()),
+        m_prop(prop)
     {
         SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
         m_value = prop->as_wxString();

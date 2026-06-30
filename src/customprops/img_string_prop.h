@@ -16,7 +16,8 @@ class ImageDialogAdapter : public wxPGEditorDialogAdapter
 {
 public:
     ImageDialogAdapter(ImageProperties& img_props) :
-        wxPGEditorDialogAdapter(), m_img_props(img_props)
+        wxPGEditorDialogAdapter(),
+        m_img_props(img_props)
     {
     }
 
@@ -31,7 +32,8 @@ class ImageStringProperty : public wxStringProperty
 {
 public:
     ImageStringProperty(const wxString& label, ImageProperties& img_props) :
-        wxStringProperty(label, wxPG_LABEL, img_props.image.wx()), m_img_props(img_props)
+        wxStringProperty(label, wxPG_LABEL, img_props.image.wx()),
+        m_img_props(img_props)
     {
     }
 

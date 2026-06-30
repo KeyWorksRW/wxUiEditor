@@ -241,7 +241,8 @@ class GenData
 {
 public:
     GenData(GenResults& results, std::vector<std::string>* pClassList) :
-        m_pClassList(pClassList), m_results(&results)
+        m_pClassList(pClassList),
+        m_results(&results)
     {
     }
 

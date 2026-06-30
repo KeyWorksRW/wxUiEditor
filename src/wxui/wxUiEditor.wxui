@@ -9158,7 +9158,7 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_10">
+              var_name="page_sizer5_10">
               <node
                 class="wxBoxSizer"
                 var_name="box_sizer13_10">
@@ -9249,7 +9249,7 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_11">
+              var_name="page_sizer5_11">
               <node
                 class="wxBoxSizer"
                 var_name="box_sizer13_11">
@@ -9340,7 +9340,7 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_12">
+              var_name="page_sizer5_12">
               <node
                 class="wxBoxSizer"
                 var_name="box_sizer13_12">
@@ -9431,7 +9431,7 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_13">
+              var_name="page_sizer5_13">
               <node
                 class="wxBoxSizer"
                 var_name="box_sizer13_13">
@@ -9522,7 +9522,7 @@
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-               var_name="page_sizer5_14">
+              var_name="page_sizer5_14">
               <node
                 class="wxBoxSizer"
                 var_name="box_sizer13_14">
@@ -9666,7 +9666,8 @@
       base_file="wxdocview_base"
       derived_class_name="wxDocView"
       derived_file="../ui/wxdocview_dlg.cpp"
-      pure_virtual_functions="1">
+      pure_virtual_functions="1"
+      wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"

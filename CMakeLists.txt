@@ -222,13 +222,71 @@ else()
 endif()
 
 # ###################### Library subdirectories #######################
-# ftsrch and cppmark are built as separate static libraries with their own
-# precompiled headers.  Neither depends on wxWidgets, so building them here
-# (before wxWidgets config) avoids pulling wx headers into their translation
-# units, speeding up rebuilds when only wxWidgets changes and vice versa.
+# ftsrch, cppmark, and docparser are built as separate static libraries
+# with their own precompiled headers.  None depends on wxWidgets, so
+# building them here (before wxWidgets config) avoids pulling wx headers
+# into their translation units, speeding up rebuilds when only wxWidgets
+# changes and vice versa.
+
+# ##################### libdeflate ######################
+# DEFLATE compression/decompression — always Release, size-optimized, no debug symbols
+
+FetchContent_Declare(
+    libdeflate
+    URL https://github.com/ebiggers/libdeflate/releases/download/v1.25/libdeflate-1.25.tar.gz
+    DOWNLOAD_NO_PROGRESS TRUE
+)
+
+set(LIBDEFLATE_BUILD_SHARED_LIB OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_BUILD_GZIP OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_COMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
+set(LIBDEFLATE_DECOMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
+set(LIBDEFLATE_ZLIB_SUPPORT OFF CACHE BOOL "" FORCE)
+set(LIBDEFLATE_GZIP_SUPPORT ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(libdeflate)
+
+# Always optimize for size, never debug
+if(MSVC)
+    target_compile_options(libdeflate_static PRIVATE /O1)
+else()
+    target_compile_options(libdeflate_static PRIVATE -Os)
+endif()
+target_compile_definitions(libdeflate_static PRIVATE NDEBUG)
+
+set_target_properties(libdeflate_static PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<CONFIG:Debug>DebugDLL"
+)
+
+# ##################### miniz ######################
+# ZIP archive reading/writing — always Release, size-optimized, no debug symbols
+
+FetchContent_Declare(
+    miniz
+    URL https://github.com/richgel999/miniz/archive/refs/tags/3.1.1.zip
+    DOWNLOAD_NO_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(miniz)
+
+set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(miniz INTERFACE MINIZ_NO_ZLIB_COMPATIBLE_NAMES)
+
+if(MSVC)
+    target_compile_options(miniz PRIVATE /O1)
+else()
+    target_compile_options(miniz PRIVATE -Os)
+endif()
+target_compile_definitions(miniz PRIVATE NDEBUG)
+
+set_target_properties(miniz PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<CONFIG:Debug>DebugDLL"
+)
 
 add_subdirectory(src/helptext/data/ftsrch)
 add_subdirectory(src/helptext/data/cppmark)
+add_subdirectory(src/helptext/data/parser)
 
 # ###################### wxWidgets #######################
 if(WIN32)
@@ -425,6 +483,7 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/customprops
     ${CMAKE_CURRENT_LIST_DIR}/src/ui
     ${CMAKE_CURRENT_LIST_DIR}/src/wxui
+    ${CMAKE_CURRENT_LIST_DIR}/src/helptext
 
     ${kwsfrozen_SOURCE_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
@@ -441,6 +500,7 @@ target_link_libraries(wxUiEditor PRIVATE
     snowball_stemmer
     cppmark
     ftsrch
+    docparser
 )
 
 # ###################### Packaging Instructions #######################

@@ -20,6 +20,7 @@
 #include "pugixml.hpp"
 
 #include "gen_enums.h"  // Enumerations for generators
+
 using namespace GenEnum;
 
 class Node;

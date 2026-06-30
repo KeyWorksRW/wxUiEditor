@@ -53,6 +53,7 @@ protected:
     virtual void OnHtmlLink(wxHtmlLinkEvent& event) = 0;
     virtual void OnIndexTextChange(wxCommandEvent& event) = 0;
     virtual void OnIndexTextEnter(wxCommandEvent& event) = 0;
+    virtual void OnInit(wxInitDialogEvent& event) = 0;
     virtual void OnPageChanged(wxBookCtrlEvent& event) = 0;
     virtual void OnSearchCancel(wxCommandEvent& event) = 0;
     virtual void OnSearchTextChanged(wxCommandEvent& event) = 0;

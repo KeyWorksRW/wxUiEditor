@@ -176,6 +176,7 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     // Event handlers
     m_choicebook->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &wxDocView_base::OnPageChanged, this);
     m_html_win->Bind(wxEVT_HTML_LINK_CLICKED, &wxDocView_base::OnHtmlLink, this);
+    Bind(wxEVT_INIT_DIALOG, &wxDocView_base::OnInit, this);
     m_classes_textctrl->Bind(wxEVT_KEY_DOWN, &wxDocView_base::OnTextKeyDown, this);
     m_events_textctrl->Bind(wxEVT_KEY_DOWN, &wxDocView_base::OnTextKeyDown, this);
     m_functions_textctrl->Bind(wxEVT_KEY_DOWN, &wxDocView_base::OnTextKeyDown, this);

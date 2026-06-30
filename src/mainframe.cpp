@@ -85,7 +85,6 @@ enum class MenuIDs : int
 
     id_TestSwitch,
     id_CodeDiffDlg,
-    id_ConvertImage,
     id_DebugCurrentTest,
     id_DebugPreferences,
     id_DebugXrcDuplicate,
@@ -100,6 +99,7 @@ enum class MenuIDs : int
     id_GenSinglePython,
     id_GenSingleRuby,
     id_GenSingleXrc,
+    id_HelpDialog,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -208,8 +208,9 @@ MainFrame::MainFrame() :
                          "Run assertion test");
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(std::to_underlying(MenuIDs::id_ConvertImage), "&Convert Image...",
-                         "Image conversion testing...");
+    menuInternal->Append(std::to_underlying(MenuIDs::id_HelpDialog), "&Help Dialog...",
+
+                         "Help Dialog...");
 
     m_menubar->Append(menuInternal, "&Internal");
 
@@ -357,6 +358,14 @@ MainFrame::MainFrame() :
         },
         std::to_underlying(MenuIDs::id_AssertionTest));
 
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            wxDocView dialog(this);
+            dialog.ShowModal();
+        },
+        std::to_underlying(MenuIDs::id_HelpDialog));
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(),
          std::to_underlying(MenuIDs::id_DebugCurrentTest));
 #endif
@@ -483,75 +492,16 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
         },
         std::to_underlying(MenuIDs::id_NodeMemory));
 
-    Bind(
+    frame->Bind(
         wxEVT_MENU,
-        [this](wxCommandEvent&)
+        [frame](wxCommandEvent&)
         {
-            UndoInfo dialog(this);
+            UndoInfo dialog(frame);
             dialog.ShowModal();
         },
-        id_UndoInfo);
-    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
-}
-if (wxGetApp().isTestingMenuEnabled())
-{
-    Bind(wxEVT_MENU, &MainFrame::OnGenSingleCpp, this, id_GenSingleCpp);
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            OnGenerateSingleLanguage(GenLang::python);
-        },
-        id_GenSinglePython);
-
-    frame->Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            OnGenerateSingleLanguage(GenLang::ruby);
-        },
-        std::to_underlying(MenuIDs::id_GenSingleRuby));
-
-    frame->Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            OnGenerateSingleLanguage(GenLang::xrc);
-        },
-        std::to_underlying(MenuIDs::id_GenSingleXrc));
-
-    frame->Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            OnGenerateLanguage(GenLang::ruby);
-        },
-        std::to_underlying(MenuIDs::id_GenerateRuby));
-
-    frame->Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            OnGenerateLanguage(GenLang::xrc);
-        },
-        std::to_underlying(MenuIDs::id_GenerateXrc));
-
-    frame->Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            g_pMsgLogging->ShowLogger();
-        },
-        std::to_underlying(MenuIDs::id_ShowLogger));
-    frame->Bind(wxEVT_MENU, &MainFrame::OnXrcPreview, frame,
-                std::to_underlying(MenuIDs::id_XrcPreviewDlg));
-    frame->Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, frame,
-                std::to_underlying(MenuIDs::id_DebugXrcImport));
-    frame->Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, frame,
-                std::to_underlying(MenuIDs::id_DebugXrcDuplicate));
-
-    frame->m_toolbar->AddTool(std::to_underlying(MenuIDs::id_XrcPreviewDlg), "XRC Tests",
-                              bundle_xrc_tests_svg(24, 24), "Dialog with multiple XRC tests");
+        std::to_underlying(MenuIDs::id_UndoInfo));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnFindWidget, frame,
+                std::to_underlying(MenuIDs::id_FindWidget));
 }
 
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg,

@@ -23,7 +23,8 @@
 #include "wxui/colourprop_base.h"  // auto-generated: wxui/colourprop_base.h wxui/colourprop_base.cpp
 
 EditColourProperty::EditColourProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 
@@ -79,7 +80,9 @@ bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
 }
 
 EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) :
-    ColourPropBase(parent), m_node(prop->getNode()), m_prop_name(prop->get_name())
+    ColourPropBase(parent),
+    m_node(prop->getNode()),
+    m_prop_name(prop->get_name())
 {
     SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
     m_value = prop->as_color();

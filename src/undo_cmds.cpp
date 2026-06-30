@@ -23,7 +23,8 @@
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
 InsertNodeAction::InsertNodeAction(Node* node, Node* parent, std::string_view undo_str, int pos) :
-    m_old_selected(wxGetFrame().getSelectedNodePtr()), m_pos(pos)
+    m_old_selected(wxGetFrame().getSelectedNodePtr()),
+    m_pos(pos)
 {
     m_node = node->get_SharedPtr();
     m_parent = parent->get_SharedPtr();
@@ -97,7 +98,8 @@ void InsertNodeAction::Revert()
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
 
 RemoveNodeAction::RemoveNodeAction(Node* node, std::string_view undo_str, bool AddToClipboard) :
-    m_old_selected(wxGetFrame().getSelectedNodePtr()), m_AddToClipboard(AddToClipboard)
+    m_old_selected(wxGetFrame().getSelectedNodePtr()),
+    m_AddToClipboard(AddToClipboard)
 {
     m_node = node->get_SharedPtr();
     m_parent = m_node->get_ParentPtr();
@@ -154,7 +156,8 @@ void RemoveNodeAction::Revert()
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, std::string_view value) :
-    m_property(prop), m_revert_value(prop->as_string())
+    m_property(prop),
+    m_revert_value(prop->as_string())
 {
     m_undo_string << "change " << prop->get_DeclName();
 
@@ -165,7 +168,8 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, std::string_view 
 }
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) :
-    m_property(prop), m_revert_value(prop->as_string())
+    m_property(prop),
+    m_revert_value(prop->as_string())
 {
     m_undo_string << "change " << prop->get_DeclName();
 
@@ -189,7 +193,8 @@ void ModifyPropertyAction::Revert()
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
 
 ModifyProperties::ModifyProperties(std::string_view undo_string, bool fire_events) :
-    UndoAction(undo_string), m_fire_events(fire_events)
+    UndoAction(undo_string),
+    m_fire_events(fire_events)
 {
     m_RedoEventGenerated = true;
     m_UndoEventGenerated = true;
@@ -251,7 +256,9 @@ size_t ModifyProperties::GetMemorySize()
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
 ModifyEventAction::ModifyEventAction(NodeEvent* event, std::string_view value) :
-    m_event(event), m_revert_value(event->get_value()), m_change_value(value)
+    m_event(event),
+    m_revert_value(event->get_value()),
+    m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
 
@@ -620,7 +627,8 @@ void ChangeParentAction::Revert()
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
 
 AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) :
-    m_old_selected(wxGetFrame().getSelectedNodePtr()), m_old_pos(m_parent->get_ChildPosition(node)),
+    m_old_selected(wxGetFrame().getSelectedNodePtr()),
+    m_old_pos(m_parent->get_ChildPosition(node)),
     m_pos(pos)
 {
     m_node = node->get_SharedPtr();

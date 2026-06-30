@@ -13,7 +13,8 @@
 #include "mainframe.h"           // MainFrame -- Main window frame
 
 EditParamProperty::EditParamProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

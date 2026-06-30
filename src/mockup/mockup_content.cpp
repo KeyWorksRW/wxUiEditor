@@ -39,7 +39,8 @@ constexpr double VARIANT_SCALE_FACTOR = 1.2;
 constexpr int MAGNIFY_INCREMENT = 200;
 
 MockupContent::MockupContent(wxWindow* parent, MockupParent* mockupParent) :
-    wxPanel(parent), m_mockupParent(mockupParent)
+    wxPanel(parent),
+    m_mockupParent(mockupParent)
 {
 }
 

@@ -30,7 +30,9 @@ public:
 
     PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type,
                     DefaultValue def_value, HelpText help) :
-        m_def_value(def_value.value), m_help(help.value), m_prop_type(prop_type),
+        m_def_value(def_value.value),
+        m_help(help.value),
+        m_prop_type(prop_type),
         m_name_enum(prop_name)
     {
     }

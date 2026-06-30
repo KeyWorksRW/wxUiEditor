@@ -23,8 +23,10 @@
 #include "node.h"       // Node class
 
 MockupWizard::MockupWizard(wxWindow* parent, Node* node) :
-    wxPanel(parent), m_window_sizer(new wxBoxSizer(wxVERTICAL)),
-    m_column_sizer(new wxBoxSizer(wxVERTICAL)), m_wizard_node(node)
+    wxPanel(parent),
+    m_window_sizer(new wxBoxSizer(wxVERTICAL)),
+    m_column_sizer(new wxBoxSizer(wxVERTICAL)),
+    m_wizard_node(node)
 {
     m_window_sizer->Add(m_column_sizer, wxSizerFlags(1).Expand().Border());
 

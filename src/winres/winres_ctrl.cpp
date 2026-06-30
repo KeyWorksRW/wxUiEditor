@@ -14,7 +14,9 @@
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 resCtrl::resCtrl() :
-    m_pWinResource(nullptr), m_add_min_width_property(false), m_add_wrap_property(false)
+    m_pWinResource(nullptr),
+    m_add_min_width_property(false),
+    m_add_wrap_property(false)
 {
 }
 

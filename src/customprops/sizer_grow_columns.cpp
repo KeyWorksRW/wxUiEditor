@@ -14,7 +14,8 @@
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector, wxue::is_digit, wxue::atoi
 
 GrowColumnsProperty::GrowColumnsProperty(const wxString& label, NodeProperty* prop) :
-    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
+    wxStringProperty(label, wxPG_LABEL, prop->as_wxString()),
+    m_prop(prop)
 {
 }
 

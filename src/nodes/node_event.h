@@ -15,7 +15,9 @@ class NodeEventInfo
 {
 public:
     NodeEventInfo(std::string_view name, std::string_view event_class, std::string_view help) :
-        m_name(name), m_event_class(event_class), m_help(help)
+        m_name(name),
+        m_event_class(event_class),
+        m_help(help)
     {
     }
 

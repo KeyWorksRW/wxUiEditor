@@ -19,12 +19,14 @@ class CustomEvent : public wxEvent
 public:
     CustomEvent(wxEventType Command, Node* node) : wxEvent(0, Command), m_node(node) {}
     CustomEvent(wxEventType Command, NodeProperty* property) :
-        wxEvent(0, Command), m_property(property)
+        wxEvent(0, Command),
+        m_property(property)
     {
     }
     CustomEvent(wxEventType Command, NodeEvent* event) : wxEvent(0, Command), m_event(event) {}
     CustomEvent(wxEventType Command, UndoAction* undo_cmd) :
-        wxEvent(0, Command), m_undo_cmd(undo_cmd)
+        wxEvent(0, Command),
+        m_undo_cmd(undo_cmd)
     {
     }
 

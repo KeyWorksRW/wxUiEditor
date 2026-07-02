@@ -106,6 +106,129 @@ namespace docparser
         return result;
     }
 
+    // Classify a method name for the summary table kind column.
+    [[nodiscard]] static std::string ClassifyMethodKind(const std::string& method_name,
+                                                        const std::string& class_name)
+    {
+        if (method_name == class_name)
+        {
+            return "🏗️";
+        }
+        if (method_name.starts_with('~'))
+        {
+            return "💣";
+        }
+        if (method_name.starts_with("operator"))
+        {
+            return "⚙️";
+        }
+        // Group getters by common prefixes
+        if (method_name.starts_with("Get") || method_name.starts_with("Is") ||
+            method_name.starts_with("Has") || method_name.starts_with("Can") ||
+            method_name.starts_with("Should"))
+        {
+            return "🔍";
+        }
+        if (method_name.starts_with("Set"))
+        {
+            return "✏️";
+        }
+        return "";
+    }
+
+    // Strip markdown formatting from text for use in the summary table.
+    // Removes **bold**, *italic*, `code`, [links](url), and collapses whitespace.
+    [[nodiscard]] static std::string StripInlineMarkdown(const std::string& text)
+    {
+        std::string result;
+        result.reserve(text.size());
+        bool in_bold = false;
+        bool in_italic = false;
+        bool in_code = false;
+        bool in_link_text = false;
+
+        for (size_t idx = 0; idx < text.size(); ++idx)
+        {
+            const char character = text[idx];
+
+            if (character == '`')
+            {
+                in_code = !in_code;
+                continue;
+            }
+            if (in_code)
+            {
+                continue;
+            }
+            if (character == '*' && idx + 1 < text.size() && text[idx + 1] == '*')
+            {
+                in_bold = !in_bold;
+                ++idx;
+                continue;
+            }
+            if (character == '*' && !in_bold)
+            {
+                in_italic = !in_italic;
+                continue;
+            }
+            if (character == '[')
+            {
+                in_link_text = true;
+                continue;
+            }
+            if (in_link_text && character == ']')
+            {
+                in_link_text = false;
+                // Skip the URL portion: ](url)
+                if (idx + 1 < text.size() && text[idx + 1] == '(')
+                {
+                    const size_t close_paren = text.find(')', idx + 2);
+                    if (close_paren != std::string::npos)
+                    {
+                        idx = close_paren;
+                    }
+                }
+                continue;
+            }
+            if (in_link_text)
+            {
+                result += character;
+                continue;
+            }
+            result += character;
+        }
+
+        // Collapse multiple spaces and trim
+        std::string cleaned;
+        cleaned.reserve(result.size());
+        bool last_was_space = false;
+        for (const char character: result)
+        {
+            if (character == ' ' || character == '\n' || character == '\t')
+            {
+                if (!last_was_space)
+                {
+                    cleaned += ' ';
+                    last_was_space = true;
+                }
+            }
+            else
+            {
+                cleaned += character;
+                last_was_space = false;
+            }
+        }
+        while (!cleaned.empty() && cleaned.back() == ' ')
+        {
+            cleaned.pop_back();
+        }
+        while (!cleaned.empty() && cleaned.front() == ' ')
+        {
+            cleaned.erase(0, 1);
+        }
+        return cleaned;
+    }
+
     // Fix indentation of code blocks based on brace nesting depth.
     // Strips existing leading whitespace and re-indents with 4 spaces per brace level.
     [[nodiscard]] static std::string FixBraceIndentation(const std::string& code)
@@ -337,8 +460,11 @@ namespace docparser
     // Replace occurrences of known method names (e.g. "GetKeyCode()") in text
     // with markdown links to their section anchors within the same file.
     // Skips occurrences already inside markdown links or backtick code spans.
+    // When class_name is non-empty, bare constructor names (method == class)
+    // are rendered as bold text without () rather than linked as methods.
     [[nodiscard]] static std::string LinkifyMethods(const std::string& text,
-                                                    const std::set<std::string>& method_names)
+                                                    const std::set<std::string>& method_names,
+                                                    const std::string& class_name = {})
     {
         if (method_names.empty())
         {
@@ -466,6 +592,17 @@ namespace docparser
                 {
                     display = std::string(text, offset, match_len);
                 }
+                // Constructor names (method == class) are rendered as bold
+                // rather than linked with () — they refer to the class, not the
+                // constructor call. Destructors (~Name) still link normally.
+                if (!has_parens && !class_name.empty() && method_name == class_name)
+                {
+                    result += "**" + display + "**";
+                    offset += match_len;
+                    matched = true;
+                    break;
+                }
+
                 if (!has_parens)
                 {
                     display += "()";
@@ -486,9 +623,12 @@ namespace docparser
         return result;
     }
 
-    // Write a DocComment's brief and detailed text, optionally linkifying method names
+    // Write a DocComment's brief and detailed text, optionally linkifying method names.
+    // class_name is used to detect constructors (method == class) and render them as
+    // bold rather than method links with ().
     static void WriteDocText(std::ostream& output, const DocComment& doc_comment,
-                             const std::set<std::string>& method_names = {})
+                             const std::set<std::string>& method_names = {},
+                             const std::string& class_name = {})
     {
         if (!doc_comment.brief.empty())
         {
@@ -497,7 +637,7 @@ namespace docparser
             {
                 text.pop_back();
             }
-            output << LinkifyMethods(text, method_names) << "\n\n";
+            output << LinkifyMethods(text, method_names, class_name) << "\n\n";
         }
         if (!doc_comment.detailed.empty() && doc_comment.detailed != doc_comment.brief)
         {
@@ -506,7 +646,7 @@ namespace docparser
             {
                 text.pop_back();
             }
-            output << LinkifyMethods(text, method_names) << "\n\n";
+            output << LinkifyMethods(text, method_names, class_name) << "\n\n";
         }
     }
 
@@ -677,18 +817,39 @@ namespace docparser
         return signature;
     }
 
-    // Write a single method section
+    // Write a single method section. When 'disambiguate' is true and the method has
+    // parameters, the heading lists the parameter names so overloads can be told apart
+    // (e.g. "### wxButton(parent, id, label, ...)" instead of a second "### wxButton()").
+    // class_name is the owning class, used to suppress () on constructor-name references.
     static void WriteMethod(std::ostream& output, const MethodInfo& method,
                             const SymbolTable& symbols,
-                            const std::set<std::string>& method_names = {})
+                            const std::set<std::string>& method_names = {},
+                            bool disambiguate = false, const std::string& class_name = {})
     {
         output << "---\n\n";
-        output << "### " << method.name << "()\n\n";
+
+        std::string heading = method.name + "()";
+        if (disambiguate && !method.params.empty())
+        {
+            std::string args;
+            bool first_arg = true;
+            for (const ParamInfo& param: method.params)
+            {
+                if (!first_arg)
+                {
+                    args += ", ";
+                }
+                first_arg = false;
+                args += param.name.empty() ? param.type : param.name;
+            }
+            heading = method.name + "(" + args + ")";
+        }
+        output << "### " << heading << "\n\n";
         output << "```cpp\n";
         output << FormatMethodSignature(method) << "\n";
         output << "```\n\n";
 
-        WriteDocText(output, method.doc, method_names);
+        WriteDocText(output, method.doc, method_names, class_name);
 
         // Code blocks from method doc
         for (const CodeBlock& code: method.doc.code_blocks)
@@ -767,9 +928,10 @@ namespace docparser
         }
     }
 
-    // Write a class section
+    // Write a class section. 'include_hint' is the path used for the '#include'
+    // directive (e.g. "wx/button.h"); an explicit @header value overrides it.
     static void WriteClass(std::ostream& output, const ClassInfo& class_info,
-                           const SymbolTable& symbols)
+                           const SymbolTable& symbols, const std::string& include_hint)
     {
         // Collect all method names for cross-reference linkification
         std::set<std::string> method_names;
@@ -779,6 +941,15 @@ namespace docparser
         }
 
         output << "# " << class_info.name << "\n\n";
+
+        // Include directive (Doxygen lists this prominently near the top). Prefer an
+        // explicit @header value; otherwise use the derived include hint.
+        const std::string include_path =
+            class_info.doc.header_file.empty() ? include_hint : class_info.doc.header_file;
+        if (!include_path.empty())
+        {
+            output << "```cpp\n#include <" << include_path << ">\n```\n\n";
+        }
 
         // Metadata line
         bool have_meta = false;
@@ -835,7 +1006,7 @@ namespace docparser
         }
 
         // Description
-        WriteDocText(output, class_info.doc, method_names);
+        WriteDocText(output, class_info.doc, method_names, class_info.name);
 
         // Code blocks from class doc
         for (const CodeBlock& code: class_info.doc.code_blocks)
@@ -885,9 +1056,67 @@ namespace docparser
         if (!class_info.methods.empty())
         {
             output << "## Methods\n\n";
+
+            // Emit a compact summary table grouping methods by kind
+            static constexpr size_t BRIEF_MAX_LEN = 120;
+            output << "| | Method | Description |\n";
+            output << "|---|--------|-------------|\n";
             for (const MethodInfo& method: class_info.methods)
             {
-                WriteMethod(output, method, symbols, method_names);
+                const std::string kind_icon = ClassifyMethodKind(method.name, class_info.name);
+                std::string brief = StripInlineMarkdown(method.doc.brief);
+                if (brief.size() > BRIEF_MAX_LEN)
+                {
+                    // Truncate at last space before the limit
+                    size_t chop_pos = BRIEF_MAX_LEN;
+                    while (chop_pos > 0 && brief[chop_pos] != ' ')
+                    {
+                        --chop_pos;
+                    }
+                    if (chop_pos == 0)
+                    {
+                        chop_pos = BRIEF_MAX_LEN;
+                    }
+                    brief.resize(chop_pos);
+                    brief += "…";
+                }
+                const std::string anchor = NameToAnchor(method.name);
+                output << "| " << kind_icon << " | [" << method.name << "()"
+                       << "](#" << anchor << ") | " << EscapePipe(brief) << " |\n";
+            }
+            output << "\n";
+
+            std::set<std::string> seen_names;
+            for (const MethodInfo& method: class_info.methods)
+            {
+                // First occurrence of a name keeps the plain "name()" heading (and its
+                // anchor); later overloads get parameter names for disambiguation.
+                const bool is_overload = !seen_names.insert(method.name).second;
+
+                MethodInfo effective = method;
+                // wxWidgets interface headers omit 'virtual' on overrides; restore it
+                // when an ancestor declares the method virtual (matches Doxygen output).
+                if (!effective.is_virtual && !effective.is_static &&
+                    symbols.IsMethodVirtual(class_info.name, effective.name))
+                {
+                    effective.is_virtual = true;
+                }
+
+                WriteMethod(output, effective, symbols, method_names, is_overload, class_info.name);
+            }
+        }
+
+        // Inherited members note — references the first known direct base class
+        if (!class_info.bases.empty() && !class_info.methods.empty())
+        {
+            for (const std::string& base: class_info.bases)
+            {
+                if (symbols.ClassToFile(base).has_value())
+                {
+                    output << "> See [" << base << "](" << ClassNameToFile(base)
+                           << ") for inherited members.\n\n";
+                    break;
+                }
             }
         }
 
@@ -966,6 +1195,7 @@ namespace docparser
         {
             std::string current_group;
             bool need_header = true;
+            std::set<std::string> seen_func_names;
 
             for (const MethodInfo& func: content.free_functions)
             {
@@ -987,7 +1217,8 @@ namespace docparser
                     output << "## Functions\n\n";
                     need_header = false;
                 }
-                WriteMethod(output, func, symbols);
+                const bool is_overload = !seen_func_names.insert(func.name).second;
+                WriteMethod(output, func, symbols, {}, is_overload);
             }
         }
     }
@@ -997,11 +1228,20 @@ namespace docparser
     // ---------------------------------------------------------------------------
 
     std::vector<fs::path> WriteFile(const FileContent& content, const SymbolTable& symbols,
-                                    const fs::path& output_dir, const fs::path& source_rel_path)
+                                    const fs::path& output_dir, const fs::path& source_rel_path,
+                                    const fs::path& input_dir)
     {
         // Guard: only header files should be written here. Assert to catch any
         // unexpected source or markdown file routed through this function.
         assert(source_rel_path.extension() == ".h");
+
+        // Derive the '#include' path. The parser is run with the wxWidgets 'wx'
+        // directory as its input root, so prefixing the scan root's leaf name
+        // reconstructs the canonical include (e.g. "wx/button.h").
+        const fs::path include_leaf = input_dir.filename();
+        const std::string include_hint = include_leaf.empty() ?
+                                             source_rel_path.generic_string() :
+                                             (include_leaf / source_rel_path).generic_string();
 
         // Ensure the output directory exists
         {
@@ -1030,36 +1270,26 @@ namespace docparser
                 continue;
             }
 
-            WriteClass(output_stream, class_info, symbols);
+            WriteClass(output_stream, class_info, symbols, include_hint);
             output_stream << "---\n*Generated from `" << content.filename << "`*\n";
 
             generated_files.emplace_back(class_rel);
         }
 
         // Write non-class content (enums, typedefs, defines, free functions) to a
-        // file named after the source header, preserving its relative directory.
+        // file named after the source header, written flat in the output root.
         const bool has_non_class_content = !content.enums.empty() || !content.typedefs.empty() ||
                                            !content.defines.empty() ||
                                            !content.free_functions.empty();
         if (has_non_class_content)
         {
-            fs::path non_class_rel = source_rel_path;
+            // Use only the filename, discarding any subdirectory from the header
+            // path — all converted markdown files are written flat in the output
+            // root. Subdirectories (e.g. data/) are reserved for support files
+            // such as the FTS index, not for header conversions.
+            fs::path non_class_rel = source_rel_path.filename();
             non_class_rel.replace_extension(".md");
             const fs::path non_class_abs = output_dir / non_class_rel;
-
-            // Ensure parent subdirectory exists (source tree may have subdirs)
-            const fs::path parent = non_class_abs.parent_path();
-            if (!parent.empty())
-            {
-                std::error_code error_code;
-                std::ignore = fs::create_directories(parent, error_code);
-                if (error_code)
-                {
-                    parser::AddErrorMessage("Error creating directory " + parent.string() + ": " +
-                                            error_code.message());
-                    return generated_files;
-                }
-            }
 
             std::ofstream output_stream(non_class_abs);
             if (!output_stream)

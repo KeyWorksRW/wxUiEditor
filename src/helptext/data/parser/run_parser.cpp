@@ -105,7 +105,7 @@ static bool PackageOutputArchive(const ParseOptions& opts, const fs::path& outpu
             std::vector<char> kfts_data(static_cast<std::size_t>(kfts_size));
             if (kfts_file.read(kfts_data.data(), kfts_size))
             {
-                const std::expected<void, std::string> add_result = zipper.AddFileUncompressed(
+                const std::expected<void, std::string> add_result = zipper.AddBinaryFile(
                     "data/search_index.kfts", kfts_data.data(), kfts_data.size());
                 if (!add_result)
                 {
@@ -406,6 +406,61 @@ static void GenerateWelcomePage(const docparser::SymbolTable& symbols,
     index_file << "\n---\n*Generated documentation home page*\n";
 }
 
+// Write data/inheritance.json: per-class direct base and direct derived classes.
+// The viewer consumes this to render inheritance graphs on the fly. Classes with
+// neither bases nor derived are omitted to keep the file small.
+static void WriteInheritanceJson(const docparser::SymbolTable& symbols, const fs::path& output_dir)
+{
+    {
+        std::error_code error_code;
+        std::ignore = fs::create_directories(output_dir / "data", error_code);
+    }
+    const fs::path json_path = output_dir / "data" / "inheritance.json";
+    std::ofstream out_stream(json_path);
+    if (!out_stream)
+    {
+        parser::AddErrorMessage("Error: could not write inheritance.json");
+        return;
+    }
+
+    const auto write_array = [&out_stream](const std::vector<std::string>& items)
+    {
+        out_stream << '[';
+        for (std::size_t i = 0; i < items.size(); ++i)
+        {
+            if (i > 0)
+            {
+                out_stream << ',';
+            }
+            out_stream << '"' << items[i] << '"';
+        }
+        out_stream << ']';
+    };
+
+    out_stream << "{\n";
+    bool first_entry = true;
+    for (const auto& [name, _path]: symbols.AllClasses())
+    {
+        const std::vector<std::string> bases = symbols.DirectBases(name);
+        const std::vector<std::string> derived = symbols.DirectDerived(name);
+        if (bases.empty() && derived.empty())
+        {
+            continue;
+        }
+        if (!first_entry)
+        {
+            out_stream << ",\n";
+        }
+        first_entry = false;
+        out_stream << "  \"" << name << "\": {\"bases\": ";
+        write_array(bases);
+        out_stream << ", \"derived\": ";
+        write_array(derived);
+        out_stream << '}';
+    }
+    out_stream << "\n}\n";
+}
+
 int RunParser(const ParseOptions& opts)
 {
     const fs::path input_dir = opts.input_dir;
@@ -529,7 +584,7 @@ int RunParser(const ParseOptions& opts)
                 // WriteFile creates per-class files plus a source-derived file for
                 // any non-class content; returns all generated relative paths.
                 const std::vector<fs::path> generated =
-                    docparser::WriteFile(content, symbols, output_dir, slot.rel_path);
+                    docparser::WriteFile(content, symbols, output_dir, slot.rel_path, input_dir);
 
                 slot.class_count = content.classes.size();
                 slot.enum_count = content.enums.size();
@@ -704,6 +759,13 @@ int RunParser(const ParseOptions& opts)
             parser::AddErrorMessage("Error: could not write doc_map.json");
             ++error_count;
         }
+    }
+
+    // Write data/inheritance.json (independent of FTS) for on-the-fly graphs.
+    if (!opts.single_file)
+    {
+        WriteInheritanceJson(symbols, output_dir);
+        all_generated_files.emplace_back("data/inheritance.json");
     }
 
     // Generate list files (classes, events, overviews, functions) in data/.

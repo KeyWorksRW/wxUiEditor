@@ -77,6 +77,12 @@ public:
     // Current archive page name (empty if none displayed).
     const std::string& GetCurrentPage() const noexcept { return m_current_archive_page; }
 
+    // Raw markdown for the currently displayed page (empty if none displayed).
+    const std::string& GetCurrentMarkdown() const noexcept { return m_current_markdown; }
+
+    // HTML (with heading IDs injected) for the currently displayed page.
+    const std::string& GetCurrentHtml() const noexcept { return m_current_html_with_ids; }
+
     // ----- Search -----
 
     // Load the full-text search index from the archive.

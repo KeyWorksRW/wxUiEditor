@@ -36,6 +36,8 @@
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
+#include "helptext/doc_view_frame/doc_view_frame.h"
+
 #if defined(_WIN32) && defined(_MSC_VER)
     #pragma comment(lib, "kernel32.lib")
     #pragma comment(lib, "user32.lib")
@@ -345,6 +347,9 @@ int App::OnRun()
 
     parser.AddLongSwitch("data-version", "return current data_version", wxCMD_LINE_HIDDEN);
 
+    parser.AddLongOption("docview", "Open documentation viewer", wxCMD_LINE_VAL_STRING,
+                         wxCMD_LINE_HIDDEN);
+
     parser.Parse();
 
     // Return current data_version for AI tools and exit immediately
@@ -352,6 +357,16 @@ int App::OnRun()
     {
         wxMessageOutput::Get()->Printf("%d", curSupportedVer);
         return 0;
+    }
+
+    // --docview: launch standalone documentation viewer, skipping MainFrame and project loading
+    if (wxString zip_str; parser.Found("docview", &zip_str))
+    {
+        const std::filesystem::path zip_path = zip_str.ToStdWstring();
+        m_docViewFrame = new DocViewFrame(nullptr, zip_path);
+        m_docViewFrame->Show();
+        SetTopWindow(m_docViewFrame);
+        return wxApp::OnRun();
     }
 
 #if defined(INTERNAL_TESTING)

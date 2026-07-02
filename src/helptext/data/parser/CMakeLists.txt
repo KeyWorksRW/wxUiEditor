@@ -1,13 +1,6 @@
-# shared/parser/CMakeLists.txt
-# 
 # Builds the documentation parser as a static library. This library is
 # wxWidgets-free — all error reporting goes through a simple console reporter.
-# 
-# Three source files were migrated from wxViewer and de-wx-ified:
-#   run_parser.cpp    — changed wxGetApp() -> parser::Add*()
-#   zip_test.cpp      — changed wxGetApp() -> parser::Add*()
-#   markdown_writer.cpp — changed wxGetApp() -> parser::Add*()
-# 
+#
 # The GUI (wxUiEditor proper) can link this same library and provide its
 # own reporter implementation if needed.
 
@@ -32,6 +25,9 @@ add_library(docparser STATIC
 
     # ZIP writer (miniz + libdeflate)
     zip_writer.cpp
+
+    # Inheritance graph SVG renderer (viewer-side, no wxWidgets dependency)
+    inherit_graph.cpp
 
     # Console reporter
     parser_reporter.cpp

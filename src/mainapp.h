@@ -27,6 +27,7 @@ namespace pugi
 }
 
 class ImportXML;
+class DocViewFrame;
 class MainFrame;
 class ProjectSettings;
 class EmbeddedImage;
@@ -41,6 +42,9 @@ public:
     App();
 
     [[nodiscard]] MainFrame* getMainFrame() { return m_frame; }
+    DocViewFrame* getDocViewFrame() { return m_docViewFrame; }
+    void setDocViewFrame(DocViewFrame* frame) { m_docViewFrame = frame; }
+    [[nodiscard]] bool IsDocViewMode() const noexcept { return m_docViewFrame != nullptr; }
 
     static bool isFireCreationMsgs();
 
@@ -155,6 +159,7 @@ private:
     // ProjectSettings* m_pjtSettings { nullptr };
 
     MainFrame* m_frame { nullptr };
+    DocViewFrame* m_docViewFrame { nullptr };
 
     int m_ProjectVersion { 15 };
     bool m_isMainFrameClosing { false };

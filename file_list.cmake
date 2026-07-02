@@ -399,6 +399,10 @@ set( file_list
     src/helptext/archive_handler.cpp     # Handles doc archive: open, search, display
     src/helptext/wxdocview_dlg.cpp      # Dialog to display wxWidgets documentation
 
+    src/helptext/doc_view_utils/find_in_page.cpp  # Find-in-page utilities for DocViewPane
+    src/helptext/doc_view_panel/doc_view_pane.cpp  # Reusable doc viewer panel (wxHtmlWindow + index tabs)
+    src/helptext/doc_view_frame/doc_view_frame.cpp  # wxFrame host for DocViewPane (menu bar, status bar)
+
     # (generated) ui/preferences_dlg.cpp  # Preferences dialog
     $<$<CONFIG:Debug>:src/internal/convert_img.cpp> # Convert image
     $<$<CONFIG:Debug>:src/tests/test_xrc_import.cpp> # XRC Import tests

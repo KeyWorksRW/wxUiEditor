@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #include <wx/textwrapper.h>  // declaration of wxTextWrapper class
 
@@ -24,15 +25,15 @@ wxObject* TextSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool TextSizerGenerator::ConstructionCode(Code& code)
 {
-    auto* node = code.node();
+    const Node* node = code.node();
     code.AddAuto().NodeName();
-    auto* parent = node->get_Parent();
-    while (parent->is_Sizer())
+    const Node* parent = node->get_Parent();
+    while (parent && parent->is_Sizer())
     {
         parent = parent->get_Parent();
     }
 
-    if (parent->is_Gen(gen_wxDialog))
+    if (parent && parent->is_Gen(gen_wxDialog))
     {
         code << " = CreateTextSizer(";
     }
@@ -49,13 +50,13 @@ bool TextSizerGenerator::ConstructionCode(Code& code)
 bool TextSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                      std::set<std::string>& set_hdr, GenLang /* language */)
 {
-    auto* parent = node->get_Parent();
-    while (parent->is_Sizer())
+    const Node* parent = node->get_Parent();
+    while (parent && parent->is_Sizer())
     {
         parent = parent->get_Parent();
     }
 
-    if (parent->is_Gen(gen_wxDialog))
+    if (parent && parent->is_Gen(gen_wxDialog))
     {
         InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
     }

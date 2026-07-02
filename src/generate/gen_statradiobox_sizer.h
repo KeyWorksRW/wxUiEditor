@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #pragma once
 
@@ -33,5 +34,5 @@ public:
     std::optional<wxue::string> GetWarning(Node* node, GenLang language) override;
 
 private:
-    wxRadioButton* m_radiobtn;
+    wxRadioButton* m_radiobtn { nullptr };
 };

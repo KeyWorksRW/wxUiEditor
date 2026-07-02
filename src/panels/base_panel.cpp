@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-01-2026]
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
@@ -187,8 +188,8 @@ BasePanel::~BasePanel()
 
 wxString BasePanel::GetSelectedText()
 {
-    auto* notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
-    auto text = notebook->GetPageText(notebook->GetSelection());
+    const wxAuiNotebook* const notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
+    const wxString text = notebook->GetPageText(notebook->GetSelection());
     if (text == "source")
     {
         return m_source_panel->GetTextCtrl()->GetSelectedText();
@@ -211,10 +212,10 @@ wxString BasePanel::GetSelectedText()
 
 void BasePanel::OnFind(wxFindDialogEvent& event)
 {
-    auto* notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
+    const wxAuiNotebook* const notebook = wxStaticCast(m_source_panel->GetParent(), wxAuiNotebook);
     ASSERT(notebook);
 
-    auto text = notebook->GetPageText(notebook->GetSelection());
+    const wxString text = notebook->GetPageText(notebook->GetSelection());
     if (text == "source")
     {
         m_source_panel->GetEventHandler()->ProcessEvent(event);
@@ -235,8 +236,12 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
 
 PANEL_PAGE BasePanel::GetPanelPage() const
 {
-    auto* top_notebook = wxGetFrame().getTopNotebook();
+    const wxAuiNotebook* const top_notebook = wxGetFrame().getTopNotebook();
     auto* child_panel = static_cast<BasePanel*>(top_notebook->GetCurrentPage());
+    if (!child_panel)
+    {
+        return PANEL_PAGE::SOURCE_PANEL;
+    }
     if (auto* page = child_panel->m_notebook->GetCurrentPage(); page)
     {
         if (page == child_panel->m_source_panel)
@@ -270,7 +275,11 @@ void BasePanel::GenerateBaseClass()
     m_cur_form = wxGetFrame().getSelectedForm();
     if (!m_cur_form)
     {
-        auto* cur_selection = wxGetFrame().getSelectedNode();
+        const Node* cur_selection = wxGetFrame().getSelectedNode();
+        if (!cur_selection)
+        {
+            return;
+        }
         if ((cur_selection->is_Gen(gen_folder) || cur_selection->is_Gen(gen_sub_folder)) &&
             cur_selection->get_ChildCount() > 0)
         {
@@ -296,7 +305,7 @@ void BasePanel::GenerateBaseClass()
         }
     }
 
-    wxWindowUpdateLocker freeze(this);
+    const wxWindowUpdateLocker freeze(this);
 
     PANEL_PAGE panel_page = PANEL_PAGE::SOURCE_PANEL;
     if (auto* page = m_notebook->GetCurrentPage(); page)
@@ -376,7 +385,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
         return;
     }
 
-    auto* form = event.getNode()->get_Form();
+    Node* form = event.getNode()->get_Form();
 
     if (form != m_cur_form)
     {

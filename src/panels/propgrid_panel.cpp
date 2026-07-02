@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-01-2026]
 
 // See propgrid_events.cpp for event handlers for this class
 // See progrid_modify.cpp for functions that modify properties in the property grid
@@ -43,8 +44,8 @@
 
 using namespace GenEnum;
 
-constexpr auto PROPERTY_ID = wxID_HIGHEST + 1;
-constexpr auto EVENT_ID = PROPERTY_ID + 1;
+constexpr wxWindowID PROPERTY_ID = wxID_HIGHEST + 1;
+constexpr wxWindowID EVENT_ID = PROPERTY_ID + 1;
 
 std::map<GenLang, std::string> s_lang_category_prefix;
 
@@ -125,8 +126,8 @@ void PropGridPanel::RestoreDescBoxHeight()
 {
     auto* config = wxConfig::Get();
     config->SetPath(txt_main_window_config);
-    auto prop_height = config->ReadLong("prop_height", 100);
-    auto event_height = config->ReadLong("event_height", 100);
+    long prop_height = config->ReadLong("prop_height", 100);
+    long event_height = config->ReadLong("event_height", 100);
     config->SetPath("/");
 
     m_prop_grid->SetDescBoxHeight(prop_height);
@@ -143,7 +144,7 @@ void PropGridPanel::SaveDescBoxHeight()
 }
 
 // static method
-auto PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int
+int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags)
 {
     if (strVal.IsEmpty())
     {
@@ -154,7 +155,7 @@ auto PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_fla
     int value = 0;
     while (strTok.HasMoreTokens())
     {
-        auto token = strTok.GetNextToken();
+        wxString token = strTok.GetNextToken();
         for (unsigned int index = 0; index < bit_flags.GetCount(); ++index)
         {
             if (bit_flags.GetLabel(index) == token)
@@ -170,11 +171,11 @@ auto PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_fla
 void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCategory& category,
                                   PropNameSet& prop_set, bool is_child_cat)
 {
-    size_t propCount = category.get_PropNameCount();
-    for (size_t i = 0; i < propCount; i++)
+    const size_t propCount = category.get_PropNameCount();
+    for (size_t i = 0; i < propCount; ++i)
     {
         auto prop_name = category.get_PropName(i);
-        auto* prop = node->get_PropPtr(prop_name);
+        NodeProperty* prop = node->get_PropPtr(prop_name);
 
         if (!prop)
         {
@@ -193,11 +194,11 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
                 continue;
             }
 
-            auto* grid_prop = m_prop_grid->Append(CreatePGProperty(prop));
+            wxPGProperty* grid_prop = m_prop_grid->Append(CreatePGProperty(prop));
             auto propType = prop->type();
             if (propType != type_option)
             {
-                if (auto* gen = node->get_Generator(); gen)
+                if (BaseGenerator* gen = node->get_Generator(); gen)
                 {
                     if (auto result = gen->GetHint(prop); result)
                     {
@@ -280,16 +281,19 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
         }
         else
         {
-            auto decl_name = node->get_DeclName();
-            auto prop_sv = map_PropNames.at(prop_name);
-            MSG_WARNING((wxString("The property ") << wxString(prop_sv.data(), prop_sv.size())
-                                                   << " appears more than once in "
-                                                   << wxString(decl_name.data(), decl_name.size()))
-                            .ToStdString());
+            std::string_view decl_name = node->get_DeclName();
+            if (const auto prop_it = map_PropNames.find(prop_name); prop_it != map_PropNames.end())
+            {
+                MSG_WARNING((wxString("The property ")
+                             << wxString(prop_it->second.data(), prop_it->second.size())
+                             << " appears more than once in "
+                             << wxString(decl_name.data(), decl_name.size()))
+                                .ToStdString());
+            }
         }
     }
 
-    for (size_t i = 0; i < propCount; i++)
+    for (size_t i = 0; i < propCount; ++i)
     {
         ChangeEnableState(node->get_PropPtr(category.get_PropName(i)));
     }
@@ -301,7 +305,7 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
             continue;
         }
 
-        wxPGProperty* catId;
+        wxPGProperty* catId = nullptr;
         if (is_child_cat)
         {
             catId = m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()),
@@ -377,14 +381,14 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
     auto& eventList = category.get_Events();
     for (auto& eventName: eventList)
     {
-        auto* event = node->get_Event(eventName);
+        NodeEvent* event = node->get_Event(eventName);
 
         if (!event)
         {
             continue;
         }
 
-        const auto* eventInfo = event->get_EventInfo();
+        const NodeEventInfo* eventInfo = event->get_EventInfo();
 
         {
             auto decl_name = node->get_DeclName();
@@ -396,7 +400,7 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
         {
             auto* grid_property = new EventStringProperty(event->get_name(), event);
 
-            auto* prop_id = m_event_grid->Append(grid_property);
+            wxPGProperty* prop_id = m_event_grid->Append(grid_property);
 
             m_event_grid->SetPropertyHelpString(prop_id, wxGetTranslation(eventInfo->get_help()));
 
@@ -404,11 +408,11 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
             {
                 if (UserPrefs.is_DarkMode())
                 {
-                    m_prop_grid->SetPropertyBackgroundColour(prop_id, wxColour("#386d2c"));
+                    m_event_grid->SetPropertyBackgroundColour(prop_id, wxColour("#386d2c"));
                 }
                 else
                 {
-                    m_prop_grid->SetPropertyBackgroundColour(prop_id, wxColour("#e7f4e4"));
+                    m_event_grid->SetPropertyBackgroundColour(prop_id, wxColour("#e7f4e4"));
                 }
             }
 
@@ -430,10 +434,10 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
         }
     }
 
-    size_t catCount = category.getCategoryCount();
-    for (size_t i = 0; i < catCount; i++)
+    const size_t catCount = category.getCategoryCount();
+    for (size_t i = 0; i < catCount; ++i)
     {
-        auto& nextCat = category.getCategories()[i];
+        NodeCategory& nextCat = category.getCategories()[i];
         if (nextCat.GetName() == "Keyboard Events")
         {
             if (node->get_NodeDeclaration()->GetGeneratorFlags().find("no_key_events") !=
@@ -463,8 +467,8 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
         {
             continue;
         }
-        wxPGProperty* catId = m_event_grid->AppendIn(GetCategoryDisplayName(category.GetName()),
-                                                     new wxPropertyCategory(nextCat.GetName()));
+        wxPGProperty* const catId = m_event_grid->AppendIn(
+            GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
 
         AddEvents(name, node, nextCat, event_set);
 
@@ -490,7 +494,8 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
                 bool has_event { false };
                 for (const auto& iter: lst_key_events)
                 {
-                    if (auto* event = node->get_Event(iter); event && event->get_value().size())
+                    if (NodeEvent* event = node->get_Event(iter);
+                        event && !event->get_value().empty())
                     {
                         has_event = true;
                         break;
@@ -508,7 +513,8 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
                 bool has_event { false };
                 for (const auto& iter: lst_mouse_events)
                 {
-                    if (auto* event = node->get_Event(iter); event && event->get_value().size())
+                    if (NodeEvent* event = node->get_Event(iter);
+                        event && !event->get_value().empty())
                     {
                         has_event = true;
                         break;
@@ -532,7 +538,7 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
     }
 
     // Project properties don't have a generator, so always check if generator exists
-    if (auto* gen = changed_prop->getNode()->get_Generator(); gen)
+    if (BaseGenerator* gen = changed_prop->getNode()->get_Generator(); gen)
     {
         gen->ChangeEnableState(m_prop_grid, changed_prop);
     }
@@ -594,7 +600,7 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
 
 void PropGridPanel::ReplaceDerivedName(const wxue::string& newValue, NodeProperty* propType)
 {
-    auto drvName = newValue;
+    wxue::string drvName = newValue;
     if (drvName.ends_with("Base"))
     {
         drvName.erase(drvName.size() - (sizeof("Base") - 1));
@@ -604,14 +610,19 @@ void PropGridPanel::ReplaceDerivedName(const wxue::string& newValue, NodePropert
         drvName += "Derived";
     }
 
-    auto* grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
+    wxPGProperty* grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
+    ASSERT(grid_property);
+    if (!grid_property)
+    {
+        return;
+    }
     grid_property->SetValueFromString(drvName.wx());
     ModifyProperty(propType, drvName);
 }
 
 void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
 {
-    auto* form_node = node->get_Form();
+    Node* form_node = node->get_Form();
 
     auto ChangeOutputFile = [&](PropName prop_name)
     {
@@ -621,8 +632,13 @@ void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
         }
         if (auto label = GetPropStringName(prop_name); label)
         {
-            auto output_filename = CreateBaseFilename(form_node, newValue);
-            auto* grid_property = m_prop_grid->GetPropertyByLabel(label->wx());
+            wxue::string output_filename = CreateBaseFilename(form_node, newValue);
+            wxPGProperty* grid_property = m_prop_grid->GetPropertyByLabel(label->wx());
+            ASSERT(grid_property);
+            if (!grid_property)
+            {
+                return;
+            }
             grid_property->SetValueFromString(output_filename.wx());
             ModifyProperty(form_node->get_PropPtr(prop_name), output_filename);
         }
@@ -653,8 +669,14 @@ void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
 
 void PropGridPanel::ReplaceDerivedFile(const wxue::string& newValue, NodeProperty* propType)
 {
-    auto derived_filename = CreateDerivedFilename(propType->getNode()->get_Form(), newValue);
-    auto* grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
+    wxue::string derived_filename =
+        CreateDerivedFilename(propType->getNode()->get_Form(), newValue);
+    wxPGProperty* grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
+    ASSERT(grid_property);
+    if (!grid_property)
+    {
+        return;
+    }
     grid_property->SetValueFromString(derived_filename.wx());
     ModifyProperty(propType, derived_filename);
     Project.InvalidateDerivedFileCache();
@@ -680,7 +702,7 @@ bool PropGridPanel::IsEventPageShowing()
 wxue::string PropGridPanel::GetPropHelp(NodeProperty* prop) const
 {
     wxue::string description;
-    if (auto* gen = prop->getNode()->get_Generator(); gen)
+    if (BaseGenerator* gen = prop->getNode()->get_Generator(); gen)
     {
         // First let the generator specify the description
         if (auto result = gen->GetPropertyDescription(prop); result)
@@ -703,6 +725,6 @@ wxue::string PropGridPanel::GetPropHelp(NodeProperty* prop) const
             description = prop->get_PropDeclaration()->getDescription();
         }
     }
-    description.Replace("\\n", "\n", true);
+    std::ignore = description.Replace("\\n", "\n", true);
     return description;
 }

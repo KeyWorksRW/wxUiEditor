@@ -4,8 +4,10 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-01-2026]
 
 #include <algorithm>  // for std::ranges::any_of
+#include <memory>     // std::make_unique
 #include <tuple>      // for std::ignore
 
 #include <wx/imaglist.h>  // wxImageList base header
@@ -337,10 +339,10 @@ void NavigationPanel::OnRightClick(wxTreeEvent& event)
     if (const TreeNodeMap::iterator iter = m_tree_node_map.find(tree_item);
         iter != m_tree_node_map.end())
     {
-        auto* menu = new NavPopupMenu(iter->second);
+        auto menu = std::make_unique<NavPopupMenu>(iter->second);
         const wxPoint pos = event.GetPoint();
-        menu->UpdateUI(menu);
-        PopupMenu(menu, pos.x, pos.y);
+        menu->UpdateUI(menu.get());
+        PopupMenu(menu.get(), pos.x, pos.y);
     }
 }
 
@@ -506,7 +508,13 @@ void NavigationPanel::InsertNode(Node* node)
 {
     Node* node_parent = node->get_Parent();
     ASSERT(node_parent);
-    const wxTreeItemId tree_parent = m_node_tree_map[node_parent];
+    const auto it_parent = m_node_tree_map.find(node_parent);
+    ASSERT(it_parent != m_node_tree_map.end());
+    if (it_parent == m_node_tree_map.end())
+    {
+        return;
+    }
+    const wxTreeItemId tree_parent = it_parent->second;
     ASSERT(tree_parent);
     const wxTreeItemId new_item =
         m_tree_ctrl->InsertItem(tree_parent, node_parent->get_ChildPosition(node),
@@ -529,7 +537,13 @@ void NavigationPanel::InsertNode(Node* node)
 
 void NavigationPanel::AddAllChildren(Node* node_parent)
 {
-    const wxTreeItemId tree_parent = m_node_tree_map[node_parent];
+    const auto it_parent = m_node_tree_map.find(node_parent);
+    ASSERT(it_parent != m_node_tree_map.end());
+    if (it_parent == m_node_tree_map.end())
+    {
+        return;
+    }
+    const wxTreeItemId tree_parent = it_parent->second;
     ASSERT(tree_parent.IsOk());
 
     for (const auto& iter_child: node_parent->get_ChildNodePtrs())
@@ -755,8 +769,13 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
 
 void NavigationPanel::OnMultiPropChange(CustomEvent& event)
 {
-    const std::vector<ModifyProperties::MULTI_PROP>& properties =
-        dynamic_cast<ModifyProperties*>(event.GetUndoCmd())->GetVector();
+    auto* cmd = dynamic_cast<ModifyProperties*>(event.GetUndoCmd());
+    ASSERT(cmd);
+    if (!cmd)
+    {
+        return;
+    }
+    const std::vector<ModifyProperties::MULTI_PROP>& properties = cmd->GetVector();
     for (const ModifyProperties::MULTI_PROP& property: properties)
     {
         CustomEvent prop_event(EVT_NodePropChange, property.property);
@@ -876,6 +895,11 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
     const wxWindowUpdateLocker freeze(this);
 
     auto* undo_cmd = dynamic_cast<ChangeParentAction*>(event.GetUndoCmd());
+    ASSERT(undo_cmd);
+    if (!undo_cmd)
+    {
+        return;
+    }
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();
@@ -896,6 +920,11 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
     const wxWindowUpdateLocker freeze(this);
 
     auto* undo_cmd = dynamic_cast<ChangePositionAction*>(event.GetUndoCmd());
+    ASSERT(undo_cmd);
+    if (!undo_cmd)
+    {
+        return;
+    }
 
     m_isSelChangeSuspended = true;
     m_tree_ctrl->Unselect();

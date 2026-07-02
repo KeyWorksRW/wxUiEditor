@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "strategy_typescript.h"
 
@@ -12,7 +13,7 @@
 
 TypeScriptStrategy::TypeScriptStrategy(const LanguageTraits& traits) : FFIStrategy(traits) {}
 
-auto TypeScriptStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+std::string TypeScriptStrategy::MapClassName(std::string_view wx_class_name)
 {
     // wxButton → Button (TypeScript uses namespace-qualified: wx.Frame)
     if (!wx_class_name.starts_with("wx"))
@@ -57,8 +58,8 @@ void TypeScriptStrategy::EmitPlatformBegin(Code& code, std::string_view platform
 
 void TypeScriptStrategy::EmitImport(Code& code, std::string_view module)
 {
-    // TypeScript: import * as module from 'path';
-    code.Str("import * as ").Str(module);
+    // TypeScript: import * as module from 'module';
+    code.Str("import * as ").Str(module).Str(" from '").Str(module).Str("';");
 }
 
 void TypeScriptStrategy::EmitVarDecl(Code& code, std::string_view type, std::string_view name)

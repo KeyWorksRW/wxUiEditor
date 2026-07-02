@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #include <wx/radiobut.h>
 #include <wx/sizer.h>
@@ -22,7 +23,7 @@
 
 wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    wxStaticBoxSizer* sizer;
+    wxStaticBoxSizer* sizer = nullptr;
 
     // When testing, always display the checkbox, otherwise if Python is preferred, then don't
     // display the checkbox since Python doesn't support it.
@@ -53,11 +54,11 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
                                      node->as_wxString(prop_label));
     }
 
-    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dialog = wxDynamicCast(parent, wxDialog); dialog)
     {
-        if (!dlg->GetSizer())
+        if (!dialog->GetSizer())
         {
-            dlg->SetSizer(sizer);
+            dialog->SetSizer(sizer);
         }
     }
 
@@ -72,7 +73,7 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
 void StaticRadioBtnBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
                                                     Node* node, bool /* is_preview */)
 {
-    if (node->as_bool(prop_hidden))
+    if (node->as_bool(prop_hide_children))
     {
         if (auto* sizer = wxStaticCast(wxobject, wxSizer); sizer)
         {
@@ -94,14 +95,14 @@ bool StaticRadioBtnBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
 
 bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
 {
-    Node* node = code.node();
+    const Node* node = code.node();
     if (code.is_cpp())
     {
         code.as_string(prop_radiobtn_var_name) << " = new wxRadioButton(";
         code.ValidParentName().Comma().as_string(prop_id).Comma().QuotedString(prop_label);
         code.Comma().Pos().Comma().WxSize().Comma().Add("wxRB_SINGLE").EndFunction();
 
-        auto cur_size = code.size();
+        const size_t cur_size = code.size();
         if (GenValidatorSettings(code); code.size() > cur_size)
         {
             code.Eol();
@@ -128,7 +129,7 @@ bool StaticRadioBtnBoxSizerGenerator::ConstructionCode(Code& code)
     Code parent_name(code.node(), code.get_language());
     if (!node->get_Parent()->is_Form())
     {
-        auto* parent = node->get_Parent();
+        Node* parent = node->get_Parent();
         while (parent)
         {
             if (parent->is_Container())
@@ -255,7 +256,7 @@ bool StaticRadioBtnBoxSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto* parent = code.node()->get_Parent();
+    const Node* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -312,7 +313,7 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
                                                   size_t /* xrc_flags */)
 {
     pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
+    int result = BaseGenerator::xrc_sizer_item_created;
 
     if (node->get_Parent()->is_Sizer())
     {
@@ -334,8 +335,8 @@ int StaticRadioBtnBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     }
     ADD_ITEM_BOOL(prop_hidden, "hideitems");
 
-    auto checkbox = item.append_child("windowlabel");
-    auto child = checkbox.append_child("object");
+    pugi::xml_node checkbox = item.append_child("windowlabel");
+    pugi::xml_node child = checkbox.append_child("object");
     child.append_attribute("class").set_value("wxRadioButton");
     child.append_attribute("name").set_value(node->as_string(prop_radiobtn_var_name));
     child.append_child("label").text().set(node->as_string(prop_label));
@@ -369,7 +370,7 @@ std::optional<wxue::string> StaticRadioBtnBoxSizerGenerator::GetWarning(Node* no
                 msg << "wxPython currently does not support a radio button as a static box label";
                 return msg;
             }
-
+            [[fallthrough]];
         case GenLang::ruby:
             return {};
 

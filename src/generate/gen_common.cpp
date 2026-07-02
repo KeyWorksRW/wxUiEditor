@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <array>
 
@@ -55,23 +56,23 @@ void ColourCode(Code& code, GenEnum::PropName prop_name)
     }
     else
     {
-        auto colour = code.node()->as_wxColour(prop_name);
+        const wxColour colour = code.node()->as_wxColour(prop_name);
         code.Object("wxColour").QuotedString(colour) += ')';
     }
 }
 
-auto GenerateQuotedString(const wxue::string& str) -> wxue::string
+wxue::string GenerateQuotedString(const wxue::string& str)
 {
     wxue::string code;
 
-    if (str.size())
+    if (!str.empty())
     {
-        auto str_with_escapes = ConvertToCodeString(str);
+        const wxue::string str_with_escapes = ConvertToCodeString(str);
 
         bool has_utf_char = false;
         for (auto iter: str_with_escapes)
         {
-            if (iter < 0)
+            if (static_cast<unsigned char>(iter) > 127)
             {
                 has_utf_char = true;
                 break;
@@ -111,7 +112,7 @@ auto GenerateQuotedString(const wxue::string& str) -> wxue::string
     return code;
 }
 
-auto GenerateQuotedString(Node* node, GenEnum::PropName prop_name) -> wxue::string
+wxue::string GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     if (node->HasValue(prop_name))
     {
@@ -124,29 +125,26 @@ auto GenerateQuotedString(Node* node, GenEnum::PropName prop_name) -> wxue::stri
 // clang-format off
 
 
-namespace
-{
-    // List of valid component parent types
-    constexpr std::array<GenType, 11> s_GenParentTypes = {
-        type_auinotebook,
-        type_bookpage,
-        type_choicebook,
-        type_container,
-        type_listbook,
-        type_notebook,
-        type_panel,
-        type_ribbonpanel,
-        type_simplebook,
-        type_splitter,
-        type_wizardpagesimple,
-    };
-} // anonymous namespace
+// List of valid component parent types
+static constexpr std::array<GenType, 11> s_GenParentTypes = {
+    type_auinotebook,
+    type_bookpage,
+    type_choicebook,
+    type_container,
+    type_listbook,
+    type_notebook,
+    type_panel,
+    type_ribbonpanel,
+    type_simplebook,
+    type_splitter,
+    type_wizardpagesimple,
+};
 
 // clang-format on
 
-auto get_ParentName(Node* node, GenLang language) -> wxue::string
+wxue::string get_ParentName(Node* node, GenLang language)
 {
-    auto* parent = node->get_Parent();
+    const Node* parent = node->get_Parent();
     while (parent)
     {
         if (parent->is_Sizer())
@@ -187,7 +185,7 @@ static void GenStyle(Node* node, wxue::string& code, const char* prefix)
     if (node->HasValue(prop_tab_position) &&
         !node->as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
     {
-        if (all_styles.size())
+        if (!all_styles.empty())
         {
             all_styles << '|';
         }
@@ -197,7 +195,7 @@ static void GenStyle(Node* node, wxue::string& code, const char* prefix)
     if (node->HasValue(prop_orientation) &&
         !node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
     {
-        if (all_styles.size())
+        if (!all_styles.empty())
         {
             all_styles << '|';
         }
@@ -206,7 +204,7 @@ static void GenStyle(Node* node, wxue::string& code, const char* prefix)
 
     if (node->is_Gen(gen_wxRichTextCtrl))
     {
-        if (all_styles.size())
+        if (!all_styles.empty())
         {
             all_styles << '|';
         }
@@ -215,7 +213,7 @@ static void GenStyle(Node* node, wxue::string& code, const char* prefix)
 
     if (node->HasValue(prop_style))
     {
-        if (all_styles.size())
+        if (!all_styles.empty())
         {
             all_styles << '|';
         }
@@ -231,7 +229,7 @@ static void GenStyle(Node* node, wxue::string& code, const char* prefix)
 
     if (node->HasValue(prop_window_style))
     {
-        if (all_styles.size())
+        if (!all_styles.empty())
         {
             all_styles << '|';
         }
@@ -240,7 +238,7 @@ static void GenStyle(Node* node, wxue::string& code, const char* prefix)
 
     if (node->is_Gen(gen_wxListView))
     {
-        if (all_styles.size())
+        if (!all_styles.empty())
         {
             all_styles << '|';
         }
@@ -257,7 +255,7 @@ static void GenStyle(Node* node, wxue::string& code, const char* prefix)
     }
 }
 
-auto GetStyleInt(Node* node, const char* prefix) -> int
+int GetStyleInt(Node* node, const char* prefix)
 {
     wxue::string styles;
 
@@ -267,7 +265,7 @@ auto GetStyleInt(Node* node, const char* prefix) -> int
     int result = 0;
     // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
-    wxue::StringVector mstr(styles, '|');
+    const wxue::StringVector mstr(styles, '|');
     for (const auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
@@ -276,12 +274,12 @@ auto GetStyleInt(Node* node, const char* prefix) -> int
     return result;
 }
 
-auto GetBitlistInt(Node* node, GenEnum::PropName prop_name) -> int
+int GetBitlistInt(Node* node, GenEnum::PropName prop_name)
 {
     int result = 0;
     // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires a
     // std::string to pass to it
-    wxue::StringVector mstr(std::string_view(node->as_string(prop_name)), '|');
+    const wxue::StringVector mstr(std::string_view(node->as_string(prop_name)), '|');
     for (const auto& iter: mstr)
     {
         // Friendly names will have already been converted, so normal lookup works fine.
@@ -304,19 +302,19 @@ inline constexpr auto btn_bmp_types = std::to_array<BTN_BMP_TYPES>({
     { .prop_name = prop_current, .function_name = "SetBitmapCurrent" },
 });
 
-auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single) -> bool
+bool GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single)
 {
-    bool has_additional_bitmaps =
+    const bool has_additional_bitmaps =
         (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
          node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
-    if (code.size())
+    if (!code.empty())
     {
         code << '\n';
     }
 
     if (has_additional_bitmaps)
     {
-        if (code.size() && !(code.back() == '\n'))
+        if (!code.empty() && !(code.back() == '\n'))
         {
             code << '\n';
         }
@@ -331,7 +329,8 @@ auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single) -> bool
         if (node->HasValue(iter.prop_name))
         {
             bundle_code.clear();
-            bool is_code_block = GenerateBundleCode(node->as_string(iter.prop_name), bundle_code);
+            const bool is_code_block =
+                GenerateBundleCode(node->as_string(iter.prop_name), bundle_code);
             if (is_code_block)
             {
                 if (is_vector_generated)
@@ -346,10 +345,10 @@ auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single) -> bool
                 }
 
                 // GenerateBundleCode assumes an indent within an indent
-                bundle_code.Replace("\t\t\t", "\t", true);
+                std::ignore = bundle_code.Replace("\t\t\t", "\t", true);
                 // if has_additional_bitmaps is true, we already have an opening brace
-                code << (has_additional_bitmaps && bundle_code.size() > 0 ? bundle_code.substr(1) :
-                                                                            bundle_code);
+                code << (has_additional_bitmaps && !bundle_code.empty() ? bundle_code.substr(1) :
+                                                                          bundle_code);
                 code << "\t" << node->get_NodeName() << "->" << iter.function_name;
                 code << "(wxBitmapBundle::FromBitmaps(bitmaps));";
 
@@ -360,7 +359,7 @@ auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single) -> bool
             }
             else
             {
-                if (code.size() && !(code.back() == '\n'))
+                if (!code.empty() && !(code.back() == '\n'))
                 {
                     code << '\n';
                 }
@@ -383,7 +382,7 @@ auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single) -> bool
     return is_vector_generated;
 }
 
-auto GenerateBitmapCode(const wxue::string& description) -> wxue::string
+wxue::string GenerateBitmapCode(const wxue::string& description)
 {
     wxue::string code;
 
@@ -417,7 +416,7 @@ auto GenerateBitmapCode(const wxue::string& description) -> wxue::string
         }
 
         code << "wxArtProvider::GetBitmap(" << art_id;
-        if (art_client.size())
+        if (!art_client.empty())
         {
             code << ", " << art_client;
         }
@@ -426,7 +425,7 @@ auto GenerateBitmapCode(const wxue::string& description) -> wxue::string
         return code;
     }
 
-    wxue::string result;
+    const wxue::string result;
     if (parts[IndexType] == "XPM")
     {
         code << "wxImage(";
@@ -441,12 +440,12 @@ auto GenerateBitmapCode(const wxue::string& description) -> wxue::string
 
         wxue::string name(wxue::find_filename(parts[1]));
         name.remove_extension();
-        name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have
-                                       // to be converted to '_'
+        std::ignore = name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra
+                                                     // dots that have to be converted to '_'
 
         if (parts[IndexType].starts_with("Embed"))
         {
-            auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 name = "wxue_img::" + embed->base_image().array_name;
@@ -488,12 +487,12 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
 
         // Note that current documentation states that the client is required, but the header file
         // says otherwise
-        if (art_client.size())
+        if (!art_client.empty())
         {
             code << art_client;
         }
 
-        if (parts.size() > IndexSize && parts[IndexSize].size())
+        if (parts.size() > IndexSize && !parts[IndexSize].empty())
         {
             wxSize svg_size { -1, -1 };
             svg_size = GetSizeInfo(parts[IndexSize]);
@@ -508,7 +507,8 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
 
     else if (parts[IndexType] == "XPM")
     {
-        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(description);
+            !function_name.empty())
         {
             // We get here if there is an Image form that contains the function to retrieve this
             // bundle.
@@ -563,7 +563,8 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
     }
     else if (description.starts_with("SVG"))
     {
-        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(description);
+            !function_name.empty())
         {
             // We get here if there is an Image form that contains the function to retrieve this
             // bundle.
@@ -571,7 +572,7 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
             return false;
         }
 
-        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
             MSG_WARNING(wxue::string() << description << " not embedded!");
@@ -580,12 +581,12 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
         }
 
         wxSize svg_size { -1, -1 };
-        if (parts[IndexSize].size())
+        if (!parts[IndexSize].empty())
         {
             svg_size = GetSizeInfo(parts[IndexSize]);
         }
 
-        wxue::string name = "wxue_img::" + embed->base_image().array_name;
+        const wxue::string name = "wxue_img::" + embed->base_image().array_name;
         code << "wxueBundleSVG(" << name << ", "
              << (to_size_t) (embed->base_image().array_size & 0xFFFFFFFF) << ", ";
         code << (to_size_t) (embed->base_image().array_size >> 32) << ", wxSize(" << svg_size.x
@@ -597,7 +598,8 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
         // if there is an Images List function to load the image
 
         ASSERT_MSG(description.starts_with("Embed"), "Unknown image type!");
-        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(description);
+            !function_name.empty())
         {
             // We get here if there is an Images List that contains the function to retrieve this
             // bundle.
@@ -614,7 +616,7 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
                 if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
                     if (auto function_name = ProjectImages.GetBundleFuncName(embed);
-                        function_name.size())
+                        !function_name.empty())
                     {
                         code << function_name;
                         return false;
@@ -644,7 +646,7 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
                     second_name = "wxue_img::" + embed->base_image().array_name;
                 }
                 code << "wxBitmapBundle::FromBitmaps(\n\t\t";
-                if (first_function.size())
+                if (!first_function.empty())
                 {
                     code << first_function;
                 }
@@ -656,7 +658,7 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
                 }
                 code << ",\n\t\t";
 
-                if (second_function.size())
+                if (!second_function.empty())
                 {
                     code << second_function;
                 }
@@ -681,7 +683,7 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
                         name = "wxue_img::" + embed->base_image().array_name;
                     }
                     code << "\tbitmaps.push_back(";
-                    if (function.size())
+                    if (!function.empty())
                     {
                         code << function << ");\n";
                     }
@@ -720,11 +722,11 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
 
 void GenFormSettings(Code& code)
 {
-    const auto* node = code.node();
+    const Node* node = code.node();
     if (!node->is_Gen(gen_PanelForm) && !node->is_Gen(gen_wxToolBar))
     {
-        const auto max_size = node->as_wxSize(prop_maximum_size);
-        const auto min_size = node->as_wxSize(prop_minimum_size);
+        const wxSize max_size = node->as_wxSize(prop_maximum_size);
+        const wxSize min_size = node->as_wxSize(prop_minimum_size);
         if (min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             code.Eol(eol_if_needed).FormFunction("SetSizeHints(");
@@ -757,13 +759,13 @@ void GenFormSettings(Code& code)
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 // Used when generating code.
-auto ConvertToCodeString(const wxue::string& text) -> wxue::string
+wxue::string ConvertToCodeString(const wxue::string& text)
 {
     wxue::string result;
 
-    for (auto chr: text)
+    for (auto character: text)
     {
-        switch (chr)
+        switch (character)
         {
             case '\"':
                 result += "\\\"";
@@ -791,25 +793,25 @@ auto ConvertToCodeString(const wxue::string& text) -> wxue::string
                 break;
 
             default:
-                result += chr;
+                result += character;
                 break;
         }
     }
     return result;
 }
 
-auto GenGetSetCode(Node* node) -> std::optional<wxue::string>
+std::optional<wxue::string> GenGetSetCode(Node* node)
 {
-    const auto& get_name = node->as_string(prop_get_function);
-    const auto& set_name = node->as_string(prop_set_function);
+    const wxue::string& get_name = node->as_string(prop_get_function);
+    const wxue::string& set_name = node->as_string(prop_set_function);
     if (get_name.empty() && set_name.empty())
     {
         return {};
     }
 
-    if (const auto& var_name = node->as_string(prop_validator_variable); var_name.size())
+    if (const auto& var_name = node->as_string(prop_validator_variable); !var_name.empty())
     {
-        auto val_data_type = node->get_ValidatorDataType();
+        const std::string val_data_type = node->get_ValidatorDataType();
         if (val_data_type.empty())
         {
             return {};
@@ -818,14 +820,14 @@ auto GenGetSetCode(Node* node) -> std::optional<wxue::string>
         if (val_data_type == "wxString" || val_data_type == "wxFileName" ||
             val_data_type == "wxArrayInt")
         {
-            if (get_name.size())
+            if (!get_name.empty())
             {
                 code << "\tconst " << val_data_type << "& " << get_name << "() const { return "
                      << var_name << "; }";
             }
-            if (set_name.size())
+            if (!set_name.empty())
             {
-                if (code.size())
+                if (!code.empty())
                 {
                     code << "\n";
                 }
@@ -839,14 +841,14 @@ auto GenGetSetCode(Node* node) -> std::optional<wxue::string>
             return code;
         }
 
-        if (get_name.size())
+        if (!get_name.empty())
         {
             code << '\t' << val_data_type << ' ' << get_name << "() const { return " << var_name
                  << "; }";
         }
-        if (set_name.size())
+        if (!set_name.empty())
         {
-            if (code.size())
+            if (!code.empty())
             {
                 code << "\n";
             }
@@ -866,10 +868,10 @@ auto GenGetSetCode(Node* node) -> std::optional<wxue::string>
 void GenValidatorSettings(Code& code)
 {
     // assignment just for convenience
-    const auto* node = code.node();
+    const Node* node = code.node();
 
     // Make a copy of this -- most languages will need to modify it.
-    auto var_name = node->as_string(prop_validator_variable);
+    wxue::string var_name = node->as_string(prop_validator_variable);
     // Unless there is a variable name, we ignore the entire validator section
     if (var_name.empty())
     {
@@ -943,22 +945,22 @@ void GenValidatorSettings(Code& code)
         return;
     }
 
-    const auto& data_type = node->as_string(prop_validator_data_type);
-    ASSERT(data_type.size())
+    const wxue::string& data_type = node->as_string(prop_validator_data_type);
+    ASSERT(!data_type.empty())
     if (data_type.empty())
     {  // theoretically impossible
         FAIL_MSG(wxString() << "No validator data type for " << wxString(node->get_NodeName()));
         code.Add("wxDefaultValidator").EndFunction();
         return;
     }
-    auto style = node->as_string(prop_validator_style);
-    style.Replace("wxFILTER_NONE", "", true);
+    wxue::string style = node->as_string(prop_validator_style);
+    std::ignore = style.Replace("wxFILTER_NONE", "", true);
     if (style.starts_with('|'))
     {
         style.erase(0, 1);
     }
 
-    auto validator_type = node->get_ValidatorType();
+    const std::string_view validator_type = node->get_ValidatorType();
 
     if (validator_type == "wxGenericValidator")
     {
@@ -988,7 +990,7 @@ void GenValidatorSettings(Code& code)
             if (data_type.contains("unsigned"))
             {
                 code.Str("Wx::UnsignedValidator.new");
-                if (style.size())
+                if (!style.empty())
                 {
                     code << '(';
                 }
@@ -996,7 +998,7 @@ void GenValidatorSettings(Code& code)
             else
             {
                 code.Add(validator_type).Str(".new");
-                if (style.size())
+                if (!style.empty())
                 {
                     code << '(';
                 }
@@ -1015,7 +1017,7 @@ void GenValidatorSettings(Code& code)
         }
     }
 
-    wxue::StringVector styles(style, '|', wxue::TRIM::both);
+    const wxue::StringVector styles(style, '|', wxue::TRIM::both);
     if (validator_type == "wxTextValidator")
     {
         if (style.contains("wxFILTER_"))
@@ -1025,7 +1027,7 @@ void GenValidatorSettings(Code& code)
             {
                 if (iter.starts_with("wxFILTER_"))
                 {
-                    if (filters.size())
+                    if (!filters.empty())
                     {
                         filters << '|';
                     }
@@ -1077,7 +1079,7 @@ void GenValidatorSettings(Code& code)
             {
                 if (iter.starts_with("wxNUM_"))
                 {
-                    if (num_styles.size())
+                    if (!num_styles.empty())
                     {
                         num_styles << '|';
                     }
@@ -1148,7 +1150,7 @@ void GenValidatorSettings(Code& code)
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything
 // needed to set the window's icon.
 
-auto GenerateIconCode(const wxue::string& description) -> wxue::string
+wxue::string GenerateIconCode(const wxue::string& description)
 {
     wxue::string code;
 
@@ -1185,7 +1187,7 @@ auto GenerateIconCode(const wxue::string& description) -> wxue::string
         code << "SetIcon(wxArtProvider::GetBitmapBundle(" << art_id << ", ";
         // Note that current documentation states that the client is required, but the header file
         // says otherwise
-        if (art_client.size())
+        if (!art_client.empty())
         {
             code << art_client;
         }
@@ -1193,22 +1195,23 @@ auto GenerateIconCode(const wxue::string& description) -> wxue::string
     }
     else if (description.starts_with("SVG"))
     {
-        auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+        EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
             FAIL_MSG(wxue::string() << description << " not embedded!")
             return code;
         }
 
-        auto svg_size = GetSizeInfo(parts[IndexSize]);
+        const wxSize svg_size = GetSizeInfo(parts[IndexSize]);
 
-        if (auto function_name = ProjectImages.GetBundleFuncName(description); function_name.size())
+        if (auto function_name = ProjectImages.GetBundleFuncName(description);
+            !function_name.empty())
         {
             code << "SetIcon(" << function_name;
         }
         else
         {
-            wxue::string name = "wxue_img::" + embed->base_image().array_name;
+            const wxue::string name = "wxue_img::" + embed->base_image().array_name;
             code << "SetIcon(wxueBundleSVG(" << name << ", "
                  << (to_size_t) (embed->base_image().array_size & 0xFFFFFFFF) << ", ";
             code << (to_size_t) (embed->base_image().array_size >> 32) << ", wxSize(" << svg_size.x
@@ -1227,11 +1230,11 @@ auto GenerateIconCode(const wxue::string& description) -> wxue::string
                 code << "SetIcon(wxBitmapBundle::FromBitmap(wxueImage(";
                 wxue::string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
-                name.Replace(".", "_", true);  // fix wxFormBuilder header files
+                std::ignore = name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
                 if (parts[IndexType].starts_with("Embed"))
                 {
-                    auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+                    EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->base_image().array_name;
@@ -1248,10 +1251,10 @@ auto GenerateIconCode(const wxue::string& description) -> wxue::string
                 {
                     wxue::string name(iter.filename());
                     name.remove_extension();
-                    name.Replace(".", "_", true);  // fix wxFormBuilder header files
+                    std::ignore = name.Replace(".", "_", true);  // fix wxFormBuilder header files
                     if (parts[IndexType].starts_with("Embed"))
                     {
-                        auto* embed = ProjectImages.GetEmbeddedImage(iter);
+                        EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(iter);
                         if (embed)
                         {
                             name = "wxue_img::" + embed->base_image().array_name;
@@ -1277,7 +1280,7 @@ auto GenerateIconCode(const wxue::string& description) -> wxue::string
 // This is called to add a tool to wxToolBar, wxAuiToolBar or wxRibbonToolBar
 void GenToolCode(Code& code)
 {
-    const auto* node = code.node();
+    const Node* node = code.node();
     code.Eol(eol_if_needed);
     bool need_variable_result =
         (node->HasValue(prop_var_name) &&
@@ -1377,16 +1380,16 @@ void GenToolCode(Code& code)
     code.EndFunction();
 }
 
-auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
+bool BitmapList(Code& code, const GenEnum::PropName prop)
 {
-    auto* node = code.node();  // for convenience
+    const Node* node = code.node();  // for convenience
     // Note that Ruby always uses a function, and therefore has no need for a list
     if (!node->HasValue(prop) || code.is_ruby())
     {
         return false;
     }
 
-    const auto& description = node->as_string(prop);
+    const wxue::string& description = node->as_string(prop);
     wxue::ViewVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
 
     if (parts[IndexImage].empty() || parts[IndexType].contains("Art") ||
@@ -1395,7 +1398,7 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
         return false;
     }
 
-    const auto* bundle = ProjectImages.GetPropertyImageBundle(description);
+    const ImageBundle* bundle = ProjectImages.GetPropertyImageBundle(description);
 
     if (!bundle || bundle->lst_filenames.size() < 3)
     {
@@ -1404,11 +1407,11 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
 
     // If we get here, then the bitmaps need to be put into a vector
 
-    bool is_xpm = (parts[IndexType] == "XPM");
+    const bool is_xpm = (parts[IndexType] == "XPM");
 
     if (code.is_python())
     {
-        auto path = MakePythonPath(code.node());
+        const wxue::string path = MakePythonPath(code.node());
 
         code += "bitmaps = [ ";
         bool needs_comma = false;
@@ -1439,10 +1442,10 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
     }
 
     //////////////// C++ code starts here ////////////////
-    bool use_lambda = (node->HasValue(prop_var_name) &&
-                       (node->is_Gen(gen_tool_dropdown) ||
-                        (node->is_Gen(gen_auitool) &&
-                         node->as_string(prop_initial_state) != "wxAUI_BUTTON_STATE_NORMAL")));
+    const bool use_lambda = (node->HasValue(prop_var_name) &&
+                             (node->is_Gen(gen_tool_dropdown) ||
+                              (node->is_Gen(gen_auitool) && node->as_string(prop_initial_state) !=
+                                                                "wxAUI_BUTTON_STATE_NORMAL")));
 
     if (use_lambda)
     {
@@ -1460,10 +1463,10 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
         }
         else
         {
-            name.Replace(".", "_", true);  // fix wxFormBuilder header files
+            std::ignore = name.Replace(".", "_", true);  // fix wxFormBuilder header files
             if (parts[IndexType].starts_with("Embed"))
             {
-                auto* embed = ProjectImages.GetEmbeddedImage(iter);
+                EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(iter);
                 if (embed)
                 {
                     name = "wxue_img::" + embed->base_image().array_name;
@@ -1486,7 +1489,7 @@ auto BitmapList(Code& code, const GenEnum::PropName prop) -> bool
 
 void OnGenerateSingleLanguage(GenLang language)
 {
-    auto* form = wxGetMainFrame()->getSelectedNode();
+    Node* form = wxGetMainFrame()->getSelectedNode();
     if (form && !form->is_Form())
     {
         form = form->get_Form();
@@ -1504,7 +1507,7 @@ void OnGenerateSingleLanguage(GenLang language)
     std::ignore = results.Generate();
 
     wxue::string msg;
-    if (results.GetUpdatedFiles().size())
+    if (!results.GetUpdatedFiles().empty())
     {
         if (results.GetUpdatedFiles().size() == 1)
         {
@@ -1521,7 +1524,7 @@ void OnGenerateSingleLanguage(GenLang language)
         msg << "Generated file is current";
     }
 
-    if (results.GetMsgs().size())
+    if (!results.GetMsgs().empty())
     {
         for (const auto& iter: results.GetMsgs())
         {
@@ -1543,7 +1546,7 @@ void OnGenerateLanguage(GenLang language)
     std::ignore = results.Generate();
 
     wxue::string msg;
-    if (results.GetUpdatedFiles().size())
+    if (!results.GetUpdatedFiles().empty())
     {
         if (results.GetUpdatedFiles().size() == 1)
         {
@@ -1551,7 +1554,7 @@ void OnGenerateLanguage(GenLang language)
         }
         else
         {
-            msg << " files were updated";
+            msg << results.GetUpdatedFiles().size() << " files were updated";
         }
         msg << '\n';
     }
@@ -1560,7 +1563,7 @@ void OnGenerateLanguage(GenLang language)
         msg << "All " << results.GetFileCount() << " generated files are current";
     }
 
-    if (results.GetMsgs().size())
+    if (!results.GetMsgs().empty())
     {
         for (const auto& iter: results.GetMsgs())
         {

@@ -33,5 +33,5 @@ public:
     std::optional<wxue::string> GetWarning(Node* node, GenLang language) override;
 
 private:
-    wxCheckBox* m_checkbox;
+    wxCheckBox* m_checkbox { nullptr };
 };

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "strategy_cwrapper.h"
 
@@ -15,7 +16,7 @@
 
 CWrapperStrategy::CWrapperStrategy(const LanguageTraits& traits) : LanguageStrategy(traits) {}
 
-auto CWrapperStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop */) -> bool
+bool CWrapperStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop */)
 {
     // Default: all features supported. Python and Ruby strategies override this
     // for specific feature gaps in their bindings.

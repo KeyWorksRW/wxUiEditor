@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "node_creator.h"  // NodeCreator
 
@@ -111,7 +112,7 @@
 
 #include "mdi/gen_aui_mdi_frame.h"     // AuiMdiFrameGenerator -- wxFrame generator
 #include "mdi/gen_doc_mdi_frame.h"     // DocParentFrameGenerator -- wxDocParentFrame generator
-#include "mdi/gen_doc_parent_frame.h"  // DocParentFrameGenerator -- wxDocParentFrame generamdi/tor
+#include "mdi/gen_doc_parent_frame.h"  // DocParentFrameGenerator -- wxDocParentFrame generator
 
 #include "mdi/gen_doc_view_app.h"  // Generates base class for wxDocument/wView applications
 #include "mdi/gen_mdi_menu.h"      // Menu bar classes for an MDI frame
@@ -132,16 +133,13 @@
 
 using namespace GenEnum;
 
-namespace
+template <typename GeneratorType>
+static void SetGenerator(GenName name)
 {
-    template <typename GeneratorType>
-    auto SetGenerator(GenName name) -> void
-    {
-        auto* decl = NodeCreation.get_declaration(name);
-        ASSERT(decl);
-        decl->SetGenerator(new GeneratorType());
-    }
-}  // namespace
+    NodeDeclaration* decl = NodeCreation.get_declaration(name);
+    ASSERT(decl);
+    decl->SetGenerator(new GeneratorType());
+}
 
 void NodeCreator::InitGenerators()
 {

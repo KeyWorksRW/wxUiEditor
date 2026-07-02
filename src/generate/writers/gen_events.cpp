@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <algorithm>
 
@@ -27,7 +28,7 @@ using namespace code;
 
 ////////////////////////////////// Default generator event code //////////////////////////////////
 
-constexpr auto prop_sheet_events =
+constexpr frozen::map<std::string_view, std::string_view, 7> prop_sheet_events =
     frozen::make_map<std::string_view, std::string_view>({ { "OKButtonClicked", "wxID_OK" },
                                                            { "YesButtonClicked", "wxID_YES" },
                                                            { "ApplyButtonClicked", "wxID_APPLY" },
@@ -92,7 +93,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
         else if (code.is_python())
         {
             handler.Add(event->get_name()) += ", lambda event:";
-            auto body_pos = event_code.find(']') + 1;
+            const size_t body_pos = event_code.find(']') + 1;
             event_code.erase(0, body_pos);
             handler.Str(event_code);
             is_lambda = true;
@@ -124,7 +125,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             // We don't know what module this function is in, so I'm not sure this will
             // actually work. The user will instead need to create a Python function
             // that starts with the module name.
-            event_code.Replace("::", ".");
+            std::ignore = event_code.Replace("::", ".");
         }
 
         handler << event_code;
@@ -164,9 +165,9 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             // remove "wx" prefix, make the rest of the name lower case
             event_name.erase(0, 2);
             std::transform(event_name.begin(), event_name.end(), event_name.begin(),
-                           [](unsigned char chr)
+                           [](unsigned char character)
                            {
-                               return std::tolower(chr);
+                               return std::tolower(character);
                            });
 
             if (event->getNode()->is_Form())
@@ -252,7 +253,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             code << "Bind(" << handler.GetCode() << comma;
             if (event->getNode()->as_string(prop_id) != "wxID_ANY")
             {
-                const auto& id_value = event->getNode()->get_PropId();
+                const wxue::string& id_value = event->getNode()->get_PropId();
                 code.AddIfPython("id=").Add(id_value).EndFunction();
             }
             else
@@ -340,16 +341,45 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
     code.EnableAutoLineBreak(true);
 }
 
+void BaseCodeGenerator::WriteLambdaEventLines(Code& code)
+{
+    wxue::string convert(code.GetCode());
+    std::ignore = convert.Replace("@@", "\n", wxue::REPLACE::all);
+    wxue::StringVector lines(convert, '\n');
+    bool initial_bracket = false;
+    for (auto& line: lines)
+    {
+        if (line.contains("}"))
+        {
+            m_source->Unindent();
+        }
+        else if (!initial_bracket && line.contains("["))
+        {
+            initial_bracket = true;
+            m_source->Indent();
+        }
+
+        constexpr size_t indentation = indent::auto_no_whitespace;
+        m_source->writeLine(line, indentation);
+
+        if (line.contains("{"))
+        {
+            m_source->Indent();
+        }
+    }
+    m_source->Unindent();
+}
+
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 {
-    ASSERT_MSG(events.size() || m_map_conditional_events.size(),
+    ASSERT_MSG(!events.empty() || !m_map_conditional_events.empty(),
                "GenSrcEventBinding() shouldn't be called if there are no events");
     if (events.empty() && m_map_conditional_events.empty())
     {
         return;
     }
 
-    auto* propName = node->get_PropPtr(prop_class_name);
+    const NodeProperty* propName = node->get_PropPtr(prop_class_name);
     if (!propName)
     {
         FAIL_MSG(wxue::string("Missing \"name\" property in ")
@@ -357,7 +387,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         return;
     }
 
-    const auto& class_name = propName->as_string();
+    const std::string& class_name = propName->as_string();
     if (class_name.empty())
     {
         FAIL_MSG("Property name cannot be null");
@@ -399,7 +429,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         if (auto* generator = event->getNode()->get_Generator(); generator)
         {
             code.clear();
-            if (generator->GenEvent(code, event, class_name); code.size())
+            if (generator->GenEvent(code, event, class_name); !code.empty())
             {
                 if (!code.GetCode().contains("["))
                 {
@@ -414,31 +444,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                     }
                     else
                     {
-                        wxue::string convert(code.GetCode());
-                        convert.Replace("@@", "\n", wxue::REPLACE::all);
-                        wxue::StringVector lines(convert, '\n');
-                        bool initial_bracket = false;
-                        for (auto& line: lines)
-                        {
-                            if (line.contains("}"))
-                            {
-                                m_source->Unindent();
-                            }
-                            else if (!initial_bracket && line.contains("["))
-                            {
-                                initial_bracket = true;
-                                m_source->Indent();
-                            }
-
-                            size_t indentation = indent::auto_no_whitespace;
-                            m_source->writeLine(line, indentation);
-
-                            if (line.contains("{"))
-                            {
-                                m_source->Indent();
-                            }
-                        }
-                        m_source->Unindent();
+                        WriteLambdaEventLines(code);
                     }
                 }
             }
@@ -447,7 +453,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
 
     for (auto& map_entry: m_map_conditional_events)
     {
-        auto& conditional_events = map_entry.second;
+        std::vector<NodeEvent*>& conditional_events = map_entry.second;
         std::sort(conditional_events.begin(), conditional_events.end(), sort_by_event_name);
 
         code.clear();
@@ -464,7 +470,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
             code.clear();
             if (auto* generator = conditional_event->getNode()->get_Generator(); generator)
             {
-                if (generator->GenEvent(code, conditional_event, class_name); code.size())
+                if (generator->GenEvent(code, conditional_event, class_name); !code.empty())
                 {
                     if (!code.GetCode().contains("["))
                     {
@@ -479,31 +485,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
                         }
                         else
                         {
-                            wxue::string convert(code.GetCode());
-                            convert.Replace("@@", "\n", wxue::REPLACE::all);
-                            wxue::StringVector lines(convert, '\n');
-                            bool initial_bracket = false;
-                            for (auto& line: lines)
-                            {
-                                if (line.contains("}"))
-                                {
-                                    m_source->Unindent();
-                                }
-                                else if (!initial_bracket && line.contains("["))
-                                {
-                                    initial_bracket = true;
-                                    m_source->Indent();
-                                }
-
-                                size_t indentation = indent::auto_no_whitespace;
-                                m_source->writeLine(line, indentation);
-
-                                if (line.contains("{"))
-                                {
-                                    m_source->Indent();
-                                }
-                            }
-                            m_source->Unindent();
+                            WriteLambdaEventLines(code);
                         }
                     }
                 }

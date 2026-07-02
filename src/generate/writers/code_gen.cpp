@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-29-2026]
 
 #include <array>
 #include <charconv>  // for std::to_chars()
@@ -12,9 +13,9 @@
 
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
-auto Code::GenFont(GenEnum::PropName prop_name, wxue::string_view font_function) -> Code&
+Code& Code::GenFont(GenEnum::PropName prop_name, wxue::string_view font_function)
 {
-    FontProperty fontprop(m_node->get_PropPtr(prop_name));
+    const FontProperty fontprop(m_node->get_PropPtr(prop_name));
     if (fontprop.isDefGuiFont())
     {
         GenDefGuiFont(fontprop, font_function);
@@ -43,7 +44,7 @@ void Code::GenColourValue(wxue::string_view colour_str, GenEnum::PropName prop_n
     else
     {
         // This handles older project versions, and hand-edited project files
-        const auto colour = m_node->as_wxColour(prop_name);
+        const wxColour colour = m_node->as_wxColour(prop_name);
         Object("wxColour").QuotedString(colour.GetAsString(wxC2S_HTML_SYNTAX).ToStdString()) += ')';
     }
 }
@@ -69,13 +70,13 @@ void Code::GenSetColourFunction(wxue::string_view function_name, bool for_proper
 
 void Code::GenFontColourSettings()
 {
-    auto* node = m_node;
+    const Node* node = m_node;
     if (HasValue(prop_font))
     {
         GenFont();
     }
 
-    if (const auto& fg_clr = node->as_string(prop_foreground_colour); fg_clr.size())
+    if (const auto& fg_clr = node->as_string(prop_foreground_colour); !fg_clr.empty())
     {
         Eol(eol_if_needed);
         GenSetColourFunction("SetForegroundColour(", m_node->is_Gen(gen_wxPropertySheetDialog));
@@ -83,7 +84,7 @@ void Code::GenFontColourSettings()
         EndFunction();
     }
 
-    if (const auto& bg_clr = node->as_string(prop_background_colour); bg_clr.size())
+    if (const auto& bg_clr = node->as_string(prop_background_colour); !bg_clr.empty())
     {
         Eol(eol_if_needed);
         GenSetColourFunction("SetBackgroundColour(", false);
@@ -101,18 +102,18 @@ void Code::GenFontColourSettings()
     }
 }
 
-auto Code::GenSizerFlags() -> Code&
+Code& Code::GenSizerFlags()
 {
     // wxSizerFlags functions are chained together, so we don't want to break them. Instead,
     // shut off auto_break and then restore it when we are done, after which we can check whether
     // or note the entire wxSizerFlags() statement needs to be broken.
 
-    bool save_auto_break = m_auto_break;
+    const bool save_auto_break = m_auto_break;
     m_auto_break = false;
-    auto cur_pos = size();
+    const size_t cur_pos = size();
 
     Add("wxSizerFlags");
-    if (m_traits && m_traits->construction_suffix.size())
+    if (m_traits && !m_traits->construction_suffix.empty())
     {
         Add(m_traits->construction_suffix);
     }
@@ -126,17 +127,17 @@ auto Code::GenSizerFlags() -> Code&
         *this << "()";
     }
 
-    if (const auto& prop = m_node->as_string(prop_alignment); prop.size())
+    if (const auto& prop = m_node->as_string(prop_alignment); !prop.empty())
     {
         ProcessAlignmentFlags(prop);
     }
 
-    if (const auto& prop = m_node->as_string(prop_flags); prop.size())
+    if (const auto& prop = m_node->as_string(prop_flags); !prop.empty())
     {
         ProcessSizerFlags(prop);
     }
 
-    if (const auto& prop = m_node->as_string(prop_borders); prop.size())
+    if (const auto& prop = m_node->as_string(prop_borders); !prop.empty())
     {
         ProcessBorderFlags(prop, m_node->as_int(prop_border_size));
     }
@@ -153,6 +154,8 @@ auto Code::GenSizerFlags() -> Code&
 
 void Code::ProcessAlignmentFlags(const wxue::string& prop)
 {
+    const size_t size_before = size();
+
     if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
         (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
          m_node->get_Parent()->is_Gen(gen_wxFlexGridSizer) ||
@@ -193,7 +196,7 @@ void Code::ProcessAlignmentFlags(const wxue::string& prop)
         SizerFlagsFunction("Bottom") += ')';
     }
 
-    if (is_ruby())
+    if (is_ruby() && size() > size_before)
     {
         // Ruby style guidelines are to eliminate empty parenthesis
         pop_back();
@@ -203,6 +206,8 @@ void Code::ProcessAlignmentFlags(const wxue::string& prop)
 
 void Code::ProcessSizerFlags(const wxue::string& prop)
 {
+    const size_t size_before = size();
+
     if (prop.contains("wxEXPAND"))
     {
         SizerFlagsFunction("Expand") += ')';
@@ -220,7 +225,7 @@ void Code::ProcessSizerFlags(const wxue::string& prop)
         SizerFlagsFunction("ReserveSpaceEvenIfHidden") += ')';
     }
 
-    if (is_ruby())
+    if (is_ruby() && size() > size_before)
     {
         // Ruby style guidelines are to eliminate empty parenthesis
         pop_back();
@@ -439,7 +444,7 @@ void Code::CallNodeOrFormFunction(wxue::string_view function_name)
 
 void Code::GenDefGuiFont(const FontProperty& fontprop, wxue::string_view font_function)
 {
-    const auto* const font_var_name = "font";
+    const char* const font_var_name = "font";
 
     OpenFontBrace();
     if (is_cpp())
@@ -516,12 +521,12 @@ void Code::SetFontOnControl(const wxue::string& font_var_name, wxue::string_view
 void Code::GenFontInfoCode(const FontProperty& fontprop)
 {
     const bool more_than_pointsize =
-        ((fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default") ||
+        ((!fontprop.GetFaceName().empty() && fontprop.GetFaceName() != "default") ||
          fontprop.GetFamily() != wxFONTFAMILY_DEFAULT ||
          fontprop.GetStyle() != wxFONTSTYLE_NORMAL || fontprop.GetWeight() != wxFONTWEIGHT_NORMAL ||
          fontprop.IsUnderlined() || fontprop.IsStrikethrough());
 
-    const auto point_size = fontprop.GetFractionalPointSize();
+    const double point_size = fontprop.GetFractionalPointSize();
 
     GenFontInfoInit(fontprop, point_size, more_than_pointsize);
     GenFontInfoProperties(fontprop);
@@ -567,6 +572,10 @@ void Code::GenFontInfoInit(const FontProperty& fontprop, double point_size,
         {
             Str(std::string_view(float_str.data(), ptr - float_str.data())).EndFunction();
         }
+        else
+        {
+            EndFunction();
+        }
     }
     else
     {
@@ -601,7 +610,7 @@ void Code::GenFontInfoInit(const FontProperty& fontprop, double point_size,
 
 void Code::GenFontInfoProperties(const FontProperty& fontprop)
 {
-    if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+    if (!fontprop.GetFaceName().empty() && fontprop.GetFaceName() != "default")
     {
         VariableMethod("FaceName(")
             .QuotedString(wxue::string() << fontprop.GetFaceName().utf8_string()) += ")";

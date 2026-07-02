@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -12,7 +13,7 @@
 
 #include "utils_prop_grid.h"
 
-void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
+void AfterCreationAddItems(wxPropertyGridInterface* grid_iface, Node* node)
 {
     for (const auto& child: node->get_ChildNodePtrs())
     {
@@ -20,8 +21,8 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
         {
             if (child->as_string(prop_type) == "Category")
             {
-                pgi->Append(new wxPropertyCategory(child->as_wxString(prop_label),
-                                                   child->as_wxString(prop_label)));
+                grid_iface->Append(new wxPropertyCategory(child->as_wxString(prop_label),
+                                                          child->as_wxString(prop_label)));
             }
             else
             {
@@ -32,26 +33,26 @@ void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node)
                 {
                     prop->SetLabel(child->as_wxString(prop_label));
                     prop->SetName(child->as_wxString(prop_label));
-                    pgi->Append(prop);
+                    grid_iface->Append(prop);
 
                     if (child->HasValue(prop_help))
                     {
-                        pgi->SetPropertyHelpString(prop, child->as_wxString(prop_help));
+                        grid_iface->SetPropertyHelpString(prop, child->as_wxString(prop_help));
                     }
                 }
             }
         }
         else if (child->is_Gen(gen_propGridCategory))
         {
-            pgi->Append(new wxPropertyCategory(child->as_wxString(prop_label),
-                                               child->as_wxString(prop_label)));
-            AfterCreationAddItems(pgi, child.get());
+            grid_iface->Append(new wxPropertyCategory(child->as_wxString(prop_label),
+                                                      child->as_wxString(prop_label)));
+            AfterCreationAddItems(grid_iface, child.get());
         }
     }
 }
 
 // clang-format off
-static const auto advanced_items = {
+static const std::initializer_list<const char*> advanced_items = {
 
     "Colour",
     "Cursor",
@@ -70,7 +71,7 @@ bool CheckAdvancePropertyInclude(Node* node)
     {
         if (child->is_Gen(gen_propGridItem))
         {
-            const auto& value = child->as_string(prop_type);
+            const wxue::string& value = child->as_string(prop_type);
             for (const auto& iter: advanced_items)
             {
                 if (value == iter)

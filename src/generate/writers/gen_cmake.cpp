@@ -4,6 +4,9 @@
 // Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
+
+#include <format>
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_enums.h"
@@ -28,14 +31,13 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 {
     if (parent_node->is_Gen(gen_folder) && !parent_node->HasValue(prop_folder_cmake_file))
     {
-        if (!Project.as_bool(prop_generate_cmake) ||
-            (parent_node->is_Gen(gen_Project) && !Project.HasValue(prop_cmake_file)))
+        if (!Project.as_bool(prop_generate_cmake))
         {
             return result::exists;
         }
     }
 
-    wxue::SaveCwd cwd(wxue::restore_cwd);
+    const wxue::SaveCwd saved_cwd(wxue::restore_cwd);
 
     // The generated files may be in a different directory then the project file, and if so, we
     // need to tread that directory as the root of the file.
@@ -43,7 +45,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     wxue::string cmake_file;
     if (flag == CMAKE_WRITE_TEMP_FILE)
     {
-        ASSERT(results.GetUpdatedFiles().size());
+        ASSERT(!results.GetUpdatedFiles().empty());
         cmake_file = results.GetUpdatedFiles()[0];
     }
     else if (parent_node->is_Gen(gen_folder) && parent_node->HasValue(prop_folder_cmake_file))
@@ -76,7 +78,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
     cmake_file.make_relative(cur_dir);
     wxue::string cmake_file_dir(cmake_file);
     cmake_file_dir.remove_filename();
-    if (cmake_file.size())
+    if (!cmake_file.empty())
     {
         cmake_file_dir.make_absolute();
     }
@@ -177,7 +179,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
                 continue;
             }
 
-            if (cmake_file_dir.size())
+            if (!cmake_file_dir.empty())
             {
                 path.make_relative(cmake_file_dir);
             }
@@ -192,7 +194,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
             base_file.remove_extension();
 
             wxue::string source_ext(".cpp");
-            if (auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+            if (auto& extProp = Project.as_string(prop_source_ext); !extProp.empty())
             {
                 source_ext = extProp;
             }
@@ -203,14 +205,14 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         }
     };
 
-    if (forms.size())
+    if (!forms.empty())
     {
-        if (derived_forms.size())
+        if (!derived_forms.empty())
         {
             out.emplace_back("    # Non-base classes");
         }
         OutputFilenames(forms);
-        if (derived_forms.size())
+        if (!derived_forms.empty())
         {
             out.emplace_back();
             out.emplace_back("    # Base classes");
@@ -237,7 +239,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         for (auto& iter: data_form->get_ChildNodePtrs())
         {
             wxue::string base_file = iter->as_string(prop_data_file);
-            if (base_file.size())
+            if (!base_file.empty())
             {
                 base_file.make_relative(cur_dir);
                 base_file.backslashestoforward();
@@ -260,7 +262,7 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
     // The return value is ignored because if the file doesn't exist then it will be created,
     // returning result::fail if it cannot be written.
-    current.ReadFile(std::string_view(cmake_file));
+    std::ignore = current.ReadFile(std::string_view(cmake_file));
 
     if (out.is_sameas(current))
     {

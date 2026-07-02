@@ -682,7 +682,7 @@ private:
     void AddFormParentName();
 
     // Helper methods for QuotedString()
-    void ProcessEscapedChar(char chr, bool& has_escape);
+    void ProcessEscapedChar(char char_val, bool& has_escape);
     [[nodiscard]] static auto HasUtf8Char(wxue::string_view text) -> bool;
     void AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_char);
 

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-01-2026]
 
 #include <wx/menu.h>          // wxMenu and wxMenuBar classes
 #include <wx/ribbon/page.h>   // Container for ribbon-bar-style interface panels
@@ -44,10 +45,10 @@ bool CreateViaNewDlg(size_t menu_id)
     {
         case CreateNewDialog:
             {
-                NewDialog dlg(wxGetFrame().getWindow());
-                if (dlg.ShowModal() == wxID_OK)
+                NewDialog dlg_dialog(wxGetFrame().getWindow());
+                if (dlg_dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dlg_dialog.CreateNode();
                 }
                 return true;
             }
@@ -55,10 +56,10 @@ bool CreateViaNewDlg(size_t menu_id)
 
         case CreateNewFrame:
             {
-                NewFrame dlg(wxGetFrame().getWindow());
-                if (dlg.ShowModal() == wxID_OK)
+                NewFrame dlg_dialog(wxGetFrame().getWindow());
+                if (dlg_dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dlg_dialog.CreateNode();
                 }
                 return true;
             }
@@ -66,10 +67,10 @@ bool CreateViaNewDlg(size_t menu_id)
 
         case CreateMdiFrame:
             {
-                NewMdiForm dlg(wxGetFrame().getWindow());
-                if (dlg.ShowModal() == wxID_OK)
+                NewMdiForm dlg_dialog(wxGetFrame().getWindow());
+                if (dlg_dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dlg_dialog.CreateNode();
                 }
                 return true;
             }
@@ -77,11 +78,11 @@ bool CreateViaNewDlg(size_t menu_id)
 
         case CreateNewPanel:
             {
-                NewPanel dlg(wxGetFrame().getWindow());
-                dlg.WantFormVersion();
-                if (dlg.ShowModal() == wxID_OK)
+                NewPanel dlg_dialog(wxGetFrame().getWindow());
+                dlg_dialog.WantFormVersion();
+                if (dlg_dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dlg_dialog.CreateNode();
                 }
                 return true;
             }
@@ -89,10 +90,10 @@ bool CreateViaNewDlg(size_t menu_id)
 
         case CreateNewPropertySheet:
             {
-                NewPropSheet dlg(wxGetFrame().getWindow());
-                if (dlg.ShowModal() == wxID_OK)
+                NewPropSheet dlg_dialog(wxGetFrame().getWindow());
+                if (dlg_dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dlg_dialog.CreateNode();
                 }
                 return true;
             }
@@ -100,12 +101,12 @@ bool CreateViaNewDlg(size_t menu_id)
 
         case CreateNewRibbon:
             {
-                NewRibbon dlg(wxGetFrame().getWindow());
-                if (dlg.IsCreatable())
+                NewRibbon dlg_dialog(wxGetFrame().getWindow());
+                if (dlg_dialog.IsCreatable())
                 {
-                    if (dlg.ShowModal() == wxID_OK)
+                    if (dlg_dialog.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateNode();
+                        dlg_dialog.CreateNode();
                     }
                 }
                 return true;
@@ -114,11 +115,11 @@ bool CreateViaNewDlg(size_t menu_id)
 
         case CreateNewFormRibbon:
             {
-                NewRibbon dlg(wxGetFrame().getWindow());
-                dlg.WantFormVersion();
-                if (dlg.ShowModal() == wxID_OK)
+                NewRibbon dlg_dialog(wxGetFrame().getWindow());
+                dlg_dialog.WantFormVersion();
+                if (dlg_dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dlg_dialog.CreateNode();
                 }
                 return true;
             }
@@ -126,10 +127,10 @@ bool CreateViaNewDlg(size_t menu_id)
 
         case CreateNewWizard:
             {
-                NewWizard dlg(wxGetFrame().getWindow());
-                if (dlg.ShowModal() == wxID_OK)
+                NewWizard dlg_dialog(wxGetFrame().getWindow());
+                if (dlg_dialog.ShowModal() == wxID_OK)
                 {
-                    dlg.CreateNode();
+                    dlg_dialog.CreateNode();
                 }
                 return true;
             }
@@ -145,7 +146,7 @@ RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent) {}
 
 void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 {
-    size_t tool_id = event.GetId();
+    int tool_id = event.GetId();
 
     if (tool_id == CreateNewRibbon &&
         (!wxGetFrame().getSelectedNode() || wxGetFrame().getSelectedNode()->is_Gen(gen_Project)))
@@ -153,13 +154,13 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
         tool_id = CreateNewFormRibbon;
     }
 
-    if (tool_id < gen_name_array_size)
+    if (tool_id >= 0 && static_cast<size_t>(tool_id) < gen_name_array_size)
     {
         wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));
         return;
     }
 
-    if (CreateViaNewDlg(tool_id))
+    if (CreateViaNewDlg(static_cast<size_t>(tool_id)))
     {
         return;
     }
@@ -169,7 +170,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
     // For release build, we'll at least attempt to create it in case the help string specifies a
     // widget.
-    auto name = event.GetBar()->GetToolHelpString(event.GetId());
+    const wxString name = event.GetBar()->GetToolHelpString(event.GetId());
     if (auto result = rmap_GenNames.find(name.utf8_string()); result != rmap_GenNames.end())
     {
         wxGetFrame().CreateToolNode(result->second);
@@ -190,7 +191,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 
         case BarTools:
             {
-                const auto* cur_sel = wxGetFrame().getSelectedNode();
+                const Node* cur_sel = wxGetFrame().getSelectedNode();
                 if (!cur_sel || cur_sel->is_Gen(gen_Project))
                 {
                     return;
@@ -213,7 +214,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 
         case AuiBarTools:
             {
-                const auto* cur_sel = wxGetFrame().getSelectedNode();
+                const Node* cur_sel = wxGetFrame().getSelectedNode();
                 if (!cur_sel || cur_sel->is_Gen(gen_Project))
                 {
                     return;

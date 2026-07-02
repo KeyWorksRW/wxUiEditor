@@ -7,7 +7,7 @@
 
 class wxPropertyGridInterface;
 
-void AfterCreationAddItems(wxPropertyGridInterface* pgi, Node* node);
+void AfterCreationAddItems(wxPropertyGridInterface* grid_iface, Node* node);
 
 // This will return true if wx/propgrid/advprops.h needs to be included
 bool CheckAdvancePropertyInclude(Node* node);

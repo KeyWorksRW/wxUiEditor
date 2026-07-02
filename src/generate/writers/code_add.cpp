@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-29-2026]
 
 #include <frozen/map.h>
 #include <frozen/set.h>
@@ -31,7 +32,7 @@ void Code::AddClassNameForLanguage(const std::string& class_name)
     if (class_name.starts_with("wx"))
     {
         if (auto language_prefix = GetLanguagePrefix(class_name, m_language);
-            language_prefix.size())
+            !language_prefix.empty())
         {
             *this << language_prefix << class_name.substr(2);
         }
@@ -46,7 +47,8 @@ void Code::AddClassNameForLanguage(const std::string& class_name)
     }
 
     // Add language-specific instantiation suffix (e.g., ".new" for Ruby)
-    if (m_traits->construction_suffix.size())
+    ASSERT(m_traits);
+    if (!m_traits->construction_suffix.empty())
     {
         *this += m_traits->construction_suffix;
     }
@@ -113,7 +115,7 @@ void Code::AddFunctionWithOperatorPython(wxue::string_view text)
     }
 }
 
-auto Code::Add(wxue::string_view text) -> Code&
+Code& Code::Add(wxue::string_view text)
 {
     bool old_linebreak = m_auto_break;
     // Ruby changes the prefix to "Wx::", and Python changes it to "wx."
@@ -132,7 +134,7 @@ auto Code::Add(wxue::string_view text) -> Code&
 
     if (is_ruby())
     {
-        if (text.size())
+        if (!text.empty())
         {
             // Ruby doesn't like breaking the parenthesis for a function call onto the next
             // line, or the .new function
@@ -173,16 +175,17 @@ auto Code::Add(wxue::string_view text) -> Code&
 }
 
 // Helper method: Check if text matches a Ruby constant mapping
-[[nodiscard]] auto Code::AddRubyConstant(wxue::string_view text) -> bool
+[[nodiscard]] bool Code::AddRubyConstant(wxue::string_view text)
 {
     // Handle Ruby-specific constant mappings
-    static constexpr auto ruby_constant_map = frozen::make_map<std::string_view, std::string_view>(
-        { { "wxEmptyString", "''" },
-          { "wxDefaultCoord", "Wx::DEFAULT_COORD" },
-          { "wxDefaultSize", "Wx::DEFAULT_SIZE" },
-          { "wxDefaultPosition", "Wx::DEFAULT_POSITION" },
-          { "wxNullBitmap", "Wx::NULL_BITMAP" },
-          { "wxNullAnimation", "Wx::NULL_ANIMATION" } });
+    static constexpr frozen::map<std::string_view, std::string_view, 6> ruby_constant_map =
+        frozen::make_map<std::string_view, std::string_view>(
+            { { "wxEmptyString", "''" },
+              { "wxDefaultCoord", "Wx::DEFAULT_COORD" },
+              { "wxDefaultSize", "Wx::DEFAULT_SIZE" },
+              { "wxDefaultPosition", "Wx::DEFAULT_POSITION" },
+              { "wxNullBitmap", "Wx::NULL_BITMAP" },
+              { "wxNullAnimation", "Wx::NULL_ANIMATION" } });
 
     if (const auto* iter = ruby_constant_map.find(text); iter != ruby_constant_map.end())
     {
@@ -193,10 +196,10 @@ auto Code::Add(wxue::string_view text) -> Code&
 }
 
 // Helper method: Handle combined values separated by pipes (|)
-auto Code::AddCombinedValues(wxue::string_view text) -> Code&
+Code& Code::AddCombinedValues(wxue::string_view text)
 {
     bool initial_combined_value_set = false;
-    wxue::ViewVector multistr(text, "|", wxue::TRIM::both);
+    const wxue::ViewVector multistr(text, "|", wxue::TRIM::both);
     for (auto& iter: multistr)
     {
         if (iter.empty())
@@ -209,8 +212,8 @@ auto Code::AddCombinedValues(wxue::string_view text) -> Code&
         }
         if (iter.is_sameprefix("wx") && !is_cpp())
         {
-            if (std::string_view language_prefix = GetLanguagePrefix(iter, m_language);
-                language_prefix.size())
+            if (const std::string_view language_prefix = GetLanguagePrefix(iter, m_language);
+                !language_prefix.empty())
             {
                 // Some languages will have a module added after their standard prefix.
                 CheckLineLength(language_prefix.size() + iter.size() - 2);
@@ -235,10 +238,10 @@ auto Code::AddCombinedValues(wxue::string_view text) -> Code&
 }
 
 // Helper method: Handle wx-prefixed constants with language transformations
-auto Code::AddWxPrefixedConstant(wxue::string_view text) -> Code&
+Code& Code::AddWxPrefixedConstant(wxue::string_view text)
 {
-    if (std::string_view language_prefix = GetLanguagePrefix(text, m_language);
-        language_prefix.size())
+    if (const std::string_view language_prefix = GetLanguagePrefix(text, m_language);
+        !language_prefix.empty())
     {
         CheckLineLength(language_prefix.size() + text.size() - 2);
         *this << language_prefix << text.substr(2);
@@ -251,7 +254,7 @@ auto Code::AddWxPrefixedConstant(wxue::string_view text) -> Code&
     return *this;
 }
 
-auto Code::AddComment(std::string_view comment, bool force) -> Code&
+Code& Code::AddComment(std::string_view comment, bool force)
 {
     if (!Project.AddOptionalComments() && !force)
     {
@@ -265,7 +268,7 @@ auto Code::AddComment(std::string_view comment, bool force) -> Code&
     return *this;
 }
 
-auto Code::AddAuto() -> Code&
+Code& Code::AddAuto()
 {
     ASSERT(m_traits);
     if (is_local_var() && !m_traits->local_var_keyword.empty())
@@ -275,26 +278,26 @@ auto Code::AddAuto() -> Code&
     return *this;
 }
 
-auto Code::AddConditionalAnd() -> Code&
+Code& Code::AddConditionalAnd()
 {
     ASSERT(m_traits);
     *this << m_traits->logical_and;
     return *this;
 }
 
-auto Code::AddConditionalOr() -> Code&
+Code& Code::AddConditionalOr()
 {
     ASSERT(m_traits);
     *this << m_traits->logical_or;
     return *this;
 }
 
-auto Code::AddConstant(GenEnum::PropName prop_name, wxue::string_view short_name) -> Code&
+Code& Code::AddConstant(GenEnum::PropName prop_name, wxue::string_view short_name)
 {
     return Add(m_node->as_constant(prop_name, short_name));
 }
 
-auto Code::AddConstant(wxue::string_view text) -> Code&
+Code& Code::AddConstant(wxue::string_view text)
 {
     if (is_cpp())
     {
@@ -327,7 +330,7 @@ void Code::AddPublicRubyMembers()
 
     FindPublicMembers(m_node, FindPublicMembers);
 
-    if (public_members.size())
+    if (!public_members.empty())
     {
         Indent(1);
         Tab() << "attr_accessor ";
@@ -347,7 +350,7 @@ void Code::AddPublicRubyMembers()
     }
 }
 
-auto Code::AddType(wxue::string_view text) -> Code&
+Code& Code::AddType(wxue::string_view text)
 {
     if (is_cpp() || text.size() < 3)
     {
@@ -356,7 +359,7 @@ auto Code::AddType(wxue::string_view text) -> Code&
     }
     else if (is_ruby())
     {
-        auto new_text = ConvertToUpperSnakeCase(text.substr(2));
+        const wxue::string new_text = ConvertToUpperSnakeCase(text.substr(2));
         CheckLineLength(sizeof("Wx::") + new_text.size());
         *this << "Wx::" << new_text;
     }

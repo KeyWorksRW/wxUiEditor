@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <cstring>  // for std::memcmp
 #include <format>
@@ -13,6 +14,7 @@
 
 #include <wx/file.h>     // wxFile - raw file I/O
 #include <wx/progdlg.h>  // wxProgressDialog
+#include <wx/thread.h>   // wxThread::IsMain()
 
 #include "gen_results.h"
 
@@ -68,7 +70,7 @@ void GenResults::SetNodes(Node* startNode)
     else
     {
         // For non-form nodes, navigate to containing form
-        auto* form = startNode->get_Form();
+        Node* form = startNode->get_Form();
         if (form)
         {
             m_scope = Scope::form;
@@ -91,10 +93,10 @@ void GenResults::SetNodes(const std::vector<Node*>& nodes)
     m_scope = Scope::form;  // Explicit list is treated as form-level scope
 }
 
-auto GenResults::SetDisplayTarget(Node* startNode, GenLang language, WriteCode* src, WriteCode* hdr,
-                                  PANEL_PAGE panel_page) -> bool
+bool GenResults::SetDisplayTarget(Node* startNode, GenLang language, WriteCode* src,
+                                  WriteCode* hdr_write, PANEL_PAGE panel_page)
 {
-#ifdef _DEBUG
+#if defined(_DEBUG)
     if (!Project.is_UiAllowed())
     {
         FAIL_MSG("SetDisplayTarget called when UI is not allowed");
@@ -112,7 +114,7 @@ auto GenResults::SetDisplayTarget(Node* startNode, GenLang language, WriteCode* 
         return false;
     }
     // Validate: at least one WriteCode must be non-null
-    if (!src && !hdr)
+    if (!src && !hdr_write)
     {
         FAIL_MSG("SetDisplayTarget called with both src and hdr as nullptr");
         return false;
@@ -144,7 +146,7 @@ auto GenResults::SetDisplayTarget(Node* startNode, GenLang language, WriteCode* 
     m_scope = Scope::display;
     m_languages = language;
     m_display_src = src;
-    m_display_hdr = hdr;
+    m_display_hdr = hdr_write;
     m_panel_page = panel_page;
 
     // Navigate to form if needed
@@ -152,7 +154,7 @@ auto GenResults::SetDisplayTarget(Node* startNode, GenLang language, WriteCode* 
     {
         if (!startNode->is_Form())
         {
-            auto* form = startNode->get_Form();
+            Node* form = startNode->get_Form();
             ASSERT_MSG(form, "SetDisplayTarget called with non-form node that has no parent form");
             if (!form)
             {
@@ -167,7 +169,7 @@ auto GenResults::SetDisplayTarget(Node* startNode, GenLang language, WriteCode* 
     return true;
 }
 
-auto GenResults::Generate() -> bool
+bool GenResults::Generate()
 {
     ASSERT_MSG(m_scope != Scope::unknown, "Generate called without setting nodes or scope");
     if (m_scope == Scope::unknown)
@@ -186,14 +188,14 @@ auto GenResults::Generate() -> bool
         return GenerateForDisplay();
     }
 
-    bool comparison_only = (m_mode == Mode::compare_only);
+    const bool comparison_only = (m_mode == Mode::compare_only);
 
     if (wxGetApp().isTestingMenuEnabled())
     {
         StartClock();
     }
 
-    wxue::SaveCwd cwd(wxue::restore_cwd);
+    const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
     bool generate_result = false;
@@ -206,7 +208,7 @@ auto GenResults::Generate() -> bool
             if (m_languages & lang)
             {
                 // Save current language for GenerateLanguageForm/GenerateCppForm
-                auto saved_lang = m_languages;
+                const GenLang saved_lang = m_languages;
                 m_languages = lang;
 
                 for (auto* form: m_target_nodes)
@@ -229,7 +231,7 @@ auto GenResults::Generate() -> bool
             if (m_languages & lang)
             {
                 // Save current language for GenerateLanguageForm/GenerateCppForm
-                auto saved_lang = m_languages;
+                const GenLang saved_lang = m_languages;
                 m_languages = lang;
 
                 if (GenerateLanguageFiles(lang, comparison_only))
@@ -285,7 +287,7 @@ void GenResults::CollectFormsFromNodes()
     }
 }
 
-auto GenResults::GenerateForDisplay() -> bool
+bool GenResults::GenerateForDisplay()
 {
     ASSERT_MSG(!m_target_nodes.empty(), "GenerateForDisplay called with no target forms");
     if (m_target_nodes.empty())
@@ -300,7 +302,7 @@ auto GenResults::GenerateForDisplay() -> bool
         return false;
     }
 
-    auto* form = m_target_nodes[0];
+    Node* form = m_target_nodes[0];
     ASSERT_MSG(form && form->is_Form(), "GenerateForDisplay target is not a form");
     if (!form || !form->is_Form())
     {
@@ -384,7 +386,7 @@ void GenResults::StartClock()
 
 void GenResults::EndClock()
 {
-    auto end_time = std::chrono::steady_clock::now();
+    const std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
     m_elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(end_time - m_start_time).count();
     m_msgs.emplace_back(std::format("Elapsed time: {} milliseconds", m_elapsed));
@@ -424,7 +426,7 @@ void GenResults::EnableProgressDialog(const wxString& title)
 constexpr int progress_forms_step = 50;
 constexpr size_t max_diff_file_size = (100 * 1024);  // 102,400 bytes
 
-auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -> bool
+bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
 {
     if (Project.get_ChildCount() == 0)
     {
@@ -433,15 +435,16 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
 
     // Ensure m_languages is set to the single language we're generating
     // This is critical because GenerateLanguageForm and GenerateCppForm read from m_languages
-    auto saved_lang = m_languages;
+    const GenLang saved_lang = m_languages;
     m_languages = language;
 
-    if (wxGetApp().isTestingMenuEnabled() && !m_clock_started)
+    const bool started_clock = (wxGetApp().isTestingMenuEnabled() && !m_clock_started);
+    if (started_clock)
     {
         StartClock();
     }
 
-    wxue::SaveCwd cwd(wxue::restore_cwd);
+    const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
     bool generate_result = false;
@@ -483,7 +486,7 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
                 std::ignore =
                     GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
 
-                if (GetUpdatedFiles().size())
+                if (!GetUpdatedFiles().empty())
                 {
                     generate_result = true;
                 }
@@ -534,7 +537,7 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
             std::ignore =
                 GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
 
-            if (GetUpdatedFiles().size())
+            if (!GetUpdatedFiles().empty())
             {
                 generate_result = true;
             }
@@ -552,7 +555,10 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
 
     if (wxGetApp().isTestingMenuEnabled())
     {
-        EndClock();
+        if (started_clock)
+        {
+            EndClock();
+        }
     }
 
     // Restore original m_languages value
@@ -561,8 +567,8 @@ auto GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only) -
     return generate_result;
 }
 
-auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* form,
-                                      bool comparison_only) -> bool
+bool GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* form,
+                                      bool comparison_only)
 {
     // This handles Python, Ruby, and XRC - they only have a single source file per form
     // C++ is handled via GenerateCppForm which manages both .h and .cpp files
@@ -673,7 +679,7 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     wxue::string src_path(path);
     // Check extension on the filename only, not the full path
     // (path may contain dots in directory names like "C:/Users/user.name/...")
-    wxue::string_view filename_only(src_path.filename());
+    const wxue::string_view filename_only(src_path.filename());
     if (filename_only.extension().empty())
     {
         src_path += file_ext;
@@ -688,12 +694,13 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
                "GenerateLanguageForm expects a single non-C++ language");
     code_generator->GenerateClass(m_languages);
 
-    int write_flags = comparison_only ? (code::flag_test_only | code::flag_no_ui) : code::flag_none;
+    const int write_flags =
+        comparison_only ? (code::flag_test_only | code::flag_no_ui) : code::flag_none;
 
     // Check if file exists before writing (to distinguish created vs updated)
-    bool file_existed = src_path.file_exists();
+    const bool file_existed = src_path.file_exists();
 
-    int result = src_cw->WriteFile(m_languages, write_flags, form);
+    const int result = src_cw->WriteFile(m_languages, write_flags, form);
 
     if (comparison_only)
     {
@@ -742,8 +749,7 @@ auto GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     return false;
 }
 
-auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDialog* progress)
-    -> bool
+bool GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDialog* progress)
 {
     if (!form || !form->is_Form())
     {
@@ -760,11 +766,11 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     std::string source_ext(".cpp");
     std::string header_ext(".h");
 
-    if (const auto& ext_prop = Project.as_view(prop_source_ext); ext_prop.size())
+    if (const auto& ext_prop = Project.as_view(prop_source_ext); !ext_prop.empty())
     {
         source_ext = ext_prop;
     }
-    if (const auto& ext_prop = Project.as_view(prop_header_ext); ext_prop.size())
+    if (const auto& ext_prop = Project.as_view(prop_header_ext); !ext_prop.empty())
     {
         header_ext = ext_prop;
     }
@@ -794,8 +800,8 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     int write_flags = comparison_only ? (code::flag_test_only | code::flag_no_ui) : code::flag_none;
 
     // Check if files exist before writing (to distinguish created vs updated)
-    bool hdr_existed = hdr_path.file_exists();
-    bool src_existed = src_path.file_exists();
+    const bool hdr_existed = hdr_path.file_exists();
+    const bool src_existed = src_path.file_exists();
 
     // Add closing brace flag if needed
     if (form->as_bool(prop_no_closing_brace))
@@ -804,7 +810,7 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     }
 
     // Process header file first (order matters for C++)
-    int hdr_result = hdr_cw->WriteFile(m_languages, write_flags, form);
+    const int hdr_result = hdr_cw->WriteFile(m_languages, write_flags, form);
 
     if (comparison_only)
     {
@@ -858,7 +864,7 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     }
 
     // Process source file
-    int src_result = src_cw->WriteFile(m_languages, write_flags, form);
+    const int src_result = src_cw->WriteFile(m_languages, write_flags, form);
 
     if (comparison_only)
     {
@@ -908,7 +914,7 @@ auto GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
     return any_updated;
 }
 
-auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
+bool GenResults::GenerateCppFiles(bool comparison_only)
 {
     if (Project.get_ChildCount() == 0)
     {
@@ -947,12 +953,12 @@ auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
 
     if (Project.as_bool(prop_generate_cmake))
     {
-        auto is_testing = comparison_only;
+        const bool is_testing = comparison_only;
         for (auto& iter: Project.get_ChildNodePtrs())
         {
             if (iter->is_Gen(gen_folder) && iter->HasValue(prop_folder_cmake_file))
             {
-                auto result = WriteCMakeFile(iter.get(), *this, is_testing);
+                const int result = WriteCMakeFile(iter.get(), *this, is_testing);
                 if (result == result::created || result == result::needs_writing)
                 {
                     IncrementFileCount();
@@ -965,7 +971,7 @@ auto GenResults::GenerateCppFiles(bool comparison_only) -> bool
         }
         if (Project.HasValue(prop_cmake_file))
         {
-            auto result = WriteCMakeFile(Project.get_ProjectNode(), *this, is_testing);
+            const int result = WriteCMakeFile(Project.get_ProjectNode(), *this, is_testing);
             if (result == result::created || result == result::needs_writing)
             {
                 IncrementFileCount();
@@ -1017,7 +1023,7 @@ void GenResults::RemoveFormsWithoutOutputPath(std::vector<Node*>& forms)
                 forms.end());
 }
 
-auto GenResults::GenerateCombinedFile(GenLang language) -> bool
+bool GenResults::GenerateCombinedFile(GenLang language)
 {
     // Validate: must be exactly one language (not multiple bits set)
     auto lang_bits = static_cast<unsigned int>(language);
@@ -1035,17 +1041,17 @@ auto GenResults::GenerateCombinedFile(GenLang language) -> bool
         return false;
     }
 
-    bool comparison_only = (m_mode == Mode::compare_only);
+    const bool comparison_only = (m_mode == Mode::compare_only);
 
     if (wxGetApp().isTestingMenuEnabled())
     {
         StartClock();
     }
 
-    wxue::SaveCwd cwd(wxue::restore_cwd);
+    const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
-    bool generate_result = GenerateCombinedXrcFile(comparison_only);
+    const bool generate_result = GenerateCombinedXrcFile(comparison_only);
 
     if (wxGetApp().isTestingMenuEnabled())
     {
@@ -1055,7 +1061,7 @@ auto GenResults::GenerateCombinedFile(GenLang language) -> bool
     return generate_result;
 }
 
-auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
+bool GenResults::GenerateCombinedXrcFile(bool comparison_only)
 {
     // Determine output path: use override if set, otherwise use project settings
     wxue::string output_path;
@@ -1067,8 +1073,8 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
     else
     {
         // Use project settings for combined XRC file
-        auto xrc_dir = Project.as_string(prop_xrc_directory);
-        auto combined_file = Project.as_string(prop_combined_xrc_file);
+        const wxue::string xrc_dir = Project.as_string(prop_xrc_directory);
+        wxue::string combined_file = Project.as_string(prop_combined_xrc_file);
 
         if (combined_file.empty())
         {
@@ -1136,9 +1142,9 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
     }
 
     // Get the generated XML string
-    auto xml_content = xrc_gen.getXmlString();
+    std::string xml_content = xrc_gen.getXmlString();
 
-    bool file_existed = output_path.file_exists();
+    const bool file_existed = output_path.file_exists();
 
     if (comparison_only)
     {
@@ -1159,7 +1165,13 @@ auto GenResults::GenerateCombinedXrcFile(bool comparison_only) -> bool
             return true;
         }
 
-        auto in_size = file_original.Length();
+        const wxFileOffset in_size = file_original.Length();
+        if (in_size == wxInvalidOffset)
+        {
+            m_msgs.emplace_back(
+                std::format("Error reading file size: {}", static_cast<std::string>(output_path)));
+            return true;
+        }
         if (xml_content.size() != static_cast<size_t>(in_size))
         {
             // Size differs, file needs updating
@@ -1213,24 +1225,33 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
 {
     // This function assumes it is being called from the main thread *only* and as such it does not
     // protect m_pending_diffs from race conditions.
+    ASSERT(wxThread::IsMain());
     while (m_pending_diffs.size() >= std::thread::hardware_concurrency())
     {
         // Process and remove completed futures
-        for (auto it = m_pending_diffs.begin(); it != m_pending_diffs.end();)
+        bool any_removed = false;
+        for (std::vector<std::future<std::optional<FileDiff>>>::iterator it =
+                 m_pending_diffs.begin();
+             it != m_pending_diffs.end();)
         {
             if (it->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
             {
-                auto diff = it->get();
+                std::optional<FileDiff> diff = it->get();
                 if (diff.has_value())
                 {
                     m_file_diffs.push_back(std::move(*diff));
                 }
                 it = m_pending_diffs.erase(it);
+                any_removed = true;
             }
             else
             {
                 ++it;
             }
+        }
+        if (!any_removed)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 
@@ -1261,7 +1282,7 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
                        wxue::ViewVector gen_content;
                        gen_content.ReadString(std::string_view(*content));
 
-                       auto diff_result = Diff::Compare(disk_content, gen_content);
+                       DiffResult diff_result = Diff::Compare(disk_content, gen_content);
                        if (diff_result.has_differences)
                        {
                            FileDiff file_diff;
@@ -1285,7 +1306,7 @@ void GenResults::WaitForPendingDiffs()
         {
             try
             {
-                auto diff = future.get();
+                std::optional<FileDiff> diff = future.get();
                 if (diff.has_value())
                 {
                     m_file_diffs.push_back(std::move(diff.value()));

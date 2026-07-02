@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
 
@@ -23,7 +24,7 @@ bool isBookDisplayImages(Node* node)
     {
         return node->as_bool(prop_display_images);
     }
-    for (auto* node_parent = node->get_Parent(); node_parent;
+    for (const Node* node_parent = node->get_Parent(); node_parent;
          node_parent = node_parent->get_Parent())
     {
         if (!node_parent->is_Gen(gen_BookPage))
@@ -36,7 +37,7 @@ bool isBookDisplayImages(Node* node)
 
 bool isBookHasImage(Node* node)
 {
-    bool is_book = !node->is_Gen(gen_BookPage);
+    const bool is_book = !node->is_Gen(gen_BookPage);
 
     for (const auto& child_node: node->get_ChildNodePtrs())
     {
@@ -55,7 +56,7 @@ bool isBookHasImage(Node* node)
             {
                 if (grand_child->is_Gen(gen_BookPage))
                 {
-                    auto result = isBookHasImage(grand_child.get());
+                    const bool result = isBookHasImage(grand_child.get());
                     if (result)
                     {
                         return true;
@@ -76,7 +77,7 @@ void AddBookImageList(Node* node_book, wxObject* widget)
         {
             if (child_node->HasValue(prop_bitmap))
             {
-                auto bundle = child_node->as_wxBitmapBundle(prop_bitmap);
+                wxBitmapBundle bundle = child_node->as_wxBitmapBundle(prop_bitmap);
                 if (!bundle.IsOk())
                 {
                     bundle = wxue_img::bundle_unknown_svg(24, 24);
@@ -89,7 +90,7 @@ void AddBookImageList(Node* node_book, wxObject* widget)
                 AddTreebookSubImages(child_node.get(), bundle_list);
             }
         }
-        auto* book = wxStaticCast(widget, wxBookCtrlBase);
+        wxBookCtrlBase* book = wxStaticCast(widget, wxBookCtrlBase);
         book->SetImages(bundle_list);
     }
 }
@@ -272,37 +273,42 @@ int GetTreebookImageIndex(Node* node)
 {
     int idx_image = 0;
 
-    auto* treebook = node->get_Parent();
+    Node* treebook = node->get_Parent();
+    ASSERT(treebook);
+    if (!treebook)
+        return 0;
     while (treebook->is_Gen(gen_BookPage))
     {
         treebook = treebook->get_Parent();
     }
 
-    for (const auto& child_node: treebook->get_ChildNodePtrs())
+    bool found = false;
+
+    auto search_lambda = [&](Node* parent, auto&& self) -> void
     {
-        if (child_node.get() == node)
+        for (const auto& child: parent->get_ChildNodePtrs())
         {
-            return idx_image;
-        }
-        if (child_node->HasValue(prop_bitmap))
-        {
-            ++idx_image;
-        }
-        for (const auto& grand_child: child_node->get_ChildNodePtrs())
-        {
-            if (grand_child->is_Gen(gen_BookPage))
+            if (child.get() == node)
             {
-                if (grand_child.get() == node)
+                found = true;
+                return;
+            }
+            if (child->HasValue(prop_bitmap))
+            {
+                ++idx_image;
+            }
+            if (child->is_Gen(gen_BookPage))
+            {
+                self(child.get(), self);
+                if (found)
                 {
-                    return idx_image;
-                }
-                if (grand_child->HasValue(prop_bitmap))
-                {
-                    ++idx_image;
+                    return;
                 }
             }
         }
-    }
+    };
+
+    search_lambda(treebook, search_lambda);
 
     return idx_image;
 }

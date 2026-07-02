@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "code.h"                // Code -- Helper class for generating code
 #include "gen_base.h"            // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
@@ -35,9 +36,9 @@ GenType aftercode_types[] = {
 };
 // clang-format on
 
-auto BaseCodeGenerator::GenConstruction(Node* node) -> void
+void BaseCodeGenerator::GenConstruction(Node* node)
 {
-    if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
+    if (auto& disable_langs = node->as_string(prop_disable_language); !disable_langs.empty())
     {
         if (m_language == GenLang::cplusplus && disable_langs.contains("C++"))
         {
@@ -54,9 +55,9 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         }
     }
 
-    auto type = node->get_GenType();
-    auto* declaration = node->get_NodeDeclaration();
-    auto* generator = declaration->get_Generator();
+    const GenType type = node->get_GenType();
+    const NodeDeclaration* declaration = node->get_NodeDeclaration();
+    BaseGenerator* generator = declaration->get_Generator();
     if (!generator)
     {
         return;
@@ -67,10 +68,11 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         m_warnings.emplace(warning_msg.value());
     }
 
-    if (auto supported = generator->isLanguageVersionSupported(m_language); !supported.first)
+    if (auto [is_supported, support_msg] = generator->isLanguageVersionSupported(m_language);
+        !is_supported)
     {
         Code gen_code(node, m_language);
-        gen_code.AddComment(supported.second, true);
+        gen_code.AddComment(support_msg, true);
         m_source->writeLine(gen_code);
         return;
     }
@@ -97,7 +99,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     if (generator->ConstructionCode(gen_code))
     {
         // Don't add blank lines when adding tools to a toolbar, or creating menu items
-        if (gen_code.size() && gen_code[0] != '{' && type != type_aui_tool && type != type_tool &&
+        if (!gen_code.empty() && gen_code[0] != '{' && type != type_aui_tool && type != type_tool &&
             type != type_menuitem)
         {
             m_source->writeLine();
@@ -146,7 +148,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         return;
     }
 
-    auto* parent = node->get_Parent();
+    const Node* parent = node->get_Parent();
 
     if (GenAfterChildren(node, need_closing_brace))
     {
@@ -167,7 +169,6 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     else if (parent->is_ToolBar() && !node->is_Type(type_tool) && !node->is_Type(type_aui_tool) &&
              !node->is_Type(type_tool_separator) && !node->is_Type(type_tool_dropdown))
     {
-        wxue::string code;
         gen_code.clear();
         if (parent->is_Type(type_toolbar_form) || parent->is_Type(type_aui_toolbar_form))
         {
@@ -217,7 +218,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
         // type_page will have already constructed the code for the child. However, we still need to
         // generate settings and process any grandchildren.
 
-        auto* page_child = node->get_Child(0);
+        Node* page_child = node->get_Child(0);
         if (page_child)
         {
             GenSettings(page_child);
@@ -246,7 +247,6 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
 
             gen_code.clear();
 
-            wxue::string code;
             if (parent->is_Gen(gen_wxRibbonPanel))
             {
                 gen_code.ParentName().Function("SetSizerAndFit(").NodeName().EndFunction();
@@ -294,14 +294,16 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
                 .NodeName(node->get_Child(1))
                 .EndFunction();
 
-            if (auto sash_pos = node->get_PropPtr(prop_sashpos)->as_int();
-                sash_pos != 0 && sash_pos != -1)
+            if (const auto* sash_prop = node->get_PropPtr(prop_sashpos); sash_prop)
             {
-                gen_code.Eol()
-                    .NodeName()
-                    .Function("SetSashPosition(")
-                    .Add(prop_sashpos)
-                    .EndFunction();
+                if (auto sash_pos = sash_prop->as_int(); sash_pos != 0 && sash_pos != -1)
+                {
+                    gen_code.Eol()
+                        .NodeName()
+                        .Function("SetSashPosition(")
+                        .Add(prop_sashpos)
+                        .EndFunction();
+                }
             }
         }
         m_source->writeLine(gen_code);
@@ -316,7 +318,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
                 gen_code.clear();
                 if (generator->AfterChildrenCode(gen_code))
                 {
-                    if (gen_code.size())
+                    if (!gen_code.empty())
                     {
                         m_source->writeLine(gen_code);
                     }
@@ -333,7 +335,7 @@ auto BaseCodeGenerator::GenConstruction(Node* node) -> void
     }
 }
 
-auto BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platforms) -> void
+void BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platforms)
 {
     if (m_strategy)
     {
@@ -344,7 +346,7 @@ auto BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platfo
     FAIL_MSG("No language strategy available for BeginPlatformCode");
 }
 
-auto BaseCodeGenerator::EndPlatformCode() -> void
+void BaseCodeGenerator::EndPlatformCode()
 {
     if (m_strategy)
     {
@@ -355,7 +357,7 @@ auto BaseCodeGenerator::EndPlatformCode() -> void
     FAIL_MSG("No language strategy available for EndPlatformCode");
 }
 
-auto BaseCodeGenerator::BeginBrace() -> void
+void BaseCodeGenerator::BeginBrace()
 {
     if (m_language == GenLang::cplusplus)
     {
@@ -364,7 +366,7 @@ auto BaseCodeGenerator::BeginBrace() -> void
     }
 }
 
-auto BaseCodeGenerator::EndBrace() -> void
+void BaseCodeGenerator::EndBrace()
 {
     if (m_language == GenLang::cplusplus)
     {
@@ -373,14 +375,14 @@ auto BaseCodeGenerator::EndBrace() -> void
     }
 }
 
-auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
+void BaseCodeGenerator::GenSettings(Node* node, bool within_brace)
 {
-    auto generator = node->get_Generator();
+    BaseGenerator* generator = node->get_Generator();
 
     Code code(node, m_language);
     if (generator->SettingsCode(code))
     {
-        if (code.size())
+        if (!code.empty())
         {
             if ((m_language == GenLang::cplusplus) && within_brace)
             {
@@ -400,14 +402,14 @@ auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
     if (node->get_PropPtr(prop_window_extra_style))
     {
         GenValidatorSettings(code);
-        if (code.size())
+        if (!code.empty())
         {
             m_source->writeLine(code);
             code.clear();
         }
 
         code.GenWindowSettings();
-        if (code.size())
+        if (!code.empty())
         {
             m_source->writeLine(code);
         }
@@ -416,9 +418,9 @@ auto BaseCodeGenerator::GenSettings(Node* node, bool within_brace) -> void
 
 bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
-    auto* generator = node->get_Generator();
+    BaseGenerator* generator = node->get_Generator();
 
-    if (auto& disable_langs = node->as_string(prop_disable_language); disable_langs.size())
+    if (auto& disable_langs = node->as_string(prop_disable_language); !disable_langs.empty())
     {
         if (m_language == GenLang::cplusplus && disable_langs.contains("C++"))
         {
@@ -447,7 +449,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
         }
 
         m_source->writeLine(gen_code);
-        auto* parent = node->get_Parent();
+        const Node* parent = node->get_Parent();
 
         // Code for spacer's is handled by the component's GenConstruction() call
         if (parent->is_Sizer() && !node->is_Gen(gen_spacer))
@@ -471,7 +473,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
                 {
                     gen_code.as_string(prop_borders);
                 }
-                if (node->as_string(prop_flags).size())
+                if (!node->as_string(prop_flags).empty())
                 {
                     if (node->HasValue(prop_borders))
                     {
@@ -512,10 +514,10 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
     return false;
 }
 
-auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> void
+void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
 {
-    auto* declaration = node->get_NodeDeclaration();
-    auto* generator = declaration->get_Generator();
+    const NodeDeclaration* declaration = node->get_NodeDeclaration();
+    BaseGenerator* generator = declaration->get_Generator();
 
     Code code(node, m_language);
     if (generator->AfterChildrenCode(code))
@@ -574,9 +576,9 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
             code.Object("wxGBSpan").as_string(prop_rowspan).Comma().as_string(prop_colspan)
                 << "), ";
             wxue::string flags(node->as_string(prop_borders));
-            if (node->as_string(prop_flags).size())
+            if (!node->as_string(prop_flags).empty())
             {
-                if (flags.size())
+                if (!flags.empty())
                 {
                     flags << '|';
                 }
@@ -591,11 +593,11 @@ auto BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace) -> v
             code.Add(flags).Comma().BorderSize().EndFunction();
             if (code.is_cpp())
             {
-                code.Replace(", 0, 0);", ");");
+                std::ignore = code.Replace(", 0, 0);", ");");
             }
             else
             {
-                code.Replace(", 0, 0)", ")");
+                std::ignore = code.Replace(", 0, 0)", ")");
             }
         }
         else

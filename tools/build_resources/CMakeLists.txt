@@ -80,7 +80,7 @@ set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_definitions(miniz INTERFACE MINIZ_NO_ZLIB_COMPATIBLE_NAMES)
 target_compile_definitions(miniz PRIVATE USE_EXTERNAL_MZCRC)
 target_link_libraries(miniz PRIVATE libdeflate_static)
-target_sources(miniz PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../../shared/miniz_crc32_wrapper.c)
+target_sources(miniz PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../../src/helptext/data/miniz_crc32_wrapper.c)
 
 # Always optimize for size, never debug
 if(MSVC)
@@ -139,9 +139,9 @@ FetchContent_MakeAvailable(interface)
 # (before wxWidgets config) avoids pulling wx headers into their translation
 # units, speeding up rebuilds when only wxWidgets changes and vice versa.
 
-add_subdirectory(../../shared/ftsrch ${CMAKE_BINARY_DIR}/libs/ftsrch)
-add_subdirectory(../../shared/cppmark ${CMAKE_BINARY_DIR}/libs/cppmark)
-add_subdirectory(../../shared/parser ${CMAKE_BINARY_DIR}/libs/docparser)
+add_subdirectory(../../src/helptext/data/ftsrch ${CMAKE_BINARY_DIR}/libs/ftsrch)
+add_subdirectory(../../src/helptext/data/cppmark ${CMAKE_BINARY_DIR}/libs/cppmark)
+add_subdirectory(../../src/helptext/data/parser ${CMAKE_BINARY_DIR}/libs/docparser)
 
 ####################### Resource Builder Executable ######################
 

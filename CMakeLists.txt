@@ -356,9 +356,17 @@ FetchContent_Declare(
     DOWNLOAD_NO_PROGRESS TRUE
 )
 
+FetchContent_Declare(
+    interface
+    URL https://github.com/KeyWorksRW/kwxFetch/releases/download/latest-interface/kwxFetch-source.tar.xz
+    DOWNLOAD_NO_PROGRESS TRUE
+    UPDATE_DISCONNECTED FALSE  # Explicitly enable updates
+)
+
 message(NOTICE "Configuring wxWidgets...")
 
 FetchContent_MakeAvailable(wxWidgets)
+FetchContent_MakeAvailable(interface)
 
 message(NOTICE "wxWidgets has been fetched and configured.")
 message(STATUS "wxWidgets sources: " ${wxWidgets_SOURCE_DIR})

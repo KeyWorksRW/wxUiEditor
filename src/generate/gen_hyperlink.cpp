@@ -102,21 +102,21 @@ bool HyperlinkGenerator::SettingsCode(Code& code)
     if (code.HasValue(prop_hover_color))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetHoverColour(");
-        ColourCode(code, prop_hover_color);
+        code.ColourCode(prop_hover_color);
         code.EndFunction();
     }
 
     if (code.HasValue(prop_normal_color))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetNormalColour(");
-        ColourCode(code, prop_normal_color);
+        code.ColourCode(prop_normal_color);
         code.EndFunction();
     }
 
     if (code.HasValue(prop_visited_color))
     {
         code.Eol(eol_if_empty).NodeName().Function("SetVisitedColour(");
-        ColourCode(code, prop_visited_color);
+        code.ColourCode(prop_visited_color);
         code.EndFunction();
     }
 

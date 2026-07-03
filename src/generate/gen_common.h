@@ -29,11 +29,6 @@ class FontProperty;
 // Will return "wxEmptyString" if prop_name is empty.
 auto GenerateQuotedString(const wxue::string& str) -> wxue::string;
 
-auto GenerateQuotedString(Node* node, GenEnum::PropName prop_name) -> wxue::string;
-
-// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
-auto ConvertToCodeString(const wxue::string& text) -> wxue::string;
-
 // Insert a required include file into either src or hdr set (depending on prop_class_access)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr);
@@ -80,14 +75,9 @@ void GenValidatorSettings(Code& code);
 // everything needed to set the window's icon.
 auto GenerateIconCode(const wxue::string& description) -> wxue::string;
 
-// Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
-// Generates wxNullColour if the property is empty.
-void ColourCode(Code& code, GenEnum::PropName prop_name);
-
 class GenResults;
 
 void OnGenerateSingleLanguage(GenLang language);
-void OnGenerateLanguage(GenLang language);
 
 /////////////////////////////////////// Code-enabled Functions /////////////////////////////////
 
@@ -106,9 +96,6 @@ auto BitmapList(Code& code, GenEnum::PropName prop) -> bool;
 
 // Returns true if a list was created. List name will be called "bitmaps".
 auto PythonBitmapList(Code& code, GenEnum::PropName prop) -> bool;
-
-// Generates code to load a bitmap from Art, SVG, or up to two bitmap files.
-auto PythonBundleCode(Code& code, GenEnum::PropName prop) -> bool;
 
 // Deterimes where the python code will be written to, and returns an absolute path to that
 // location.

@@ -30,9 +30,9 @@ bool ColourPickerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
-    if (code.node()->as_string(prop_colour).size())
+    if (!code.node()->as_string(prop_colour).empty())
     {
-        ColourCode(code, prop_colour);
+        code.ColourCode(prop_colour);
     }
     else
     {

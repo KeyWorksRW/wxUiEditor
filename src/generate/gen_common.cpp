@@ -48,18 +48,7 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
     }
 }
 
-void ColourCode(Code& code, GenEnum::PropName prop_name)
-{
-    if (!code.HasValue(prop_name))
-    {
-        code.Add("wxNullColour");
-    }
-    else
-    {
-        const wxColour colour = code.node()->as_wxColour(prop_name);
-        code.Object("wxColour").QuotedString(colour) += ')';
-    }
-}
+static wxue::string ConvertToCodeString(const wxue::string& text);
 
 wxue::string GenerateQuotedString(const wxue::string& str)
 {
@@ -110,16 +99,6 @@ wxue::string GenerateQuotedString(const wxue::string& str)
     }
 
     return code;
-}
-
-wxue::string GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
-{
-    if (node->HasValue(prop_name))
-    {
-        return GenerateQuotedString(node->as_string(prop_name));
-    }
-
-    return wxue::string("wxEmptyString");
 }
 
 // clang-format off
@@ -759,7 +738,7 @@ void GenFormSettings(Code& code)
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 // Used when generating code.
-wxue::string ConvertToCodeString(const wxue::string& text)
+static wxue::string ConvertToCodeString(const wxue::string& text)
 {
     wxue::string result;
 
@@ -1522,45 +1501,6 @@ void OnGenerateSingleLanguage(GenLang language)
     else
     {
         msg << "Generated file is current";
-    }
-
-    if (!results.GetMsgs().empty())
-    {
-        for (const auto& iter: results.GetMsgs())
-        {
-            msg << '\n';
-            msg << iter;
-        }
-    }
-
-    wxMessageBox(msg, wxue::string() << GenLangToString(language) << " Code Generation",
-                 wxOK | wxICON_INFORMATION);
-}
-
-void OnGenerateLanguage(GenLang language)
-{
-    GenResults results;
-    results.SetNodes(Project.get_ProjectNode());
-    results.SetLanguages(language);
-    results.SetMode(GenResults::Mode::generate_and_write);
-    std::ignore = results.Generate();
-
-    wxue::string msg;
-    if (!results.GetUpdatedFiles().empty())
-    {
-        if (results.GetUpdatedFiles().size() == 1)
-        {
-            msg << "1 file was updated";
-        }
-        else
-        {
-            msg << results.GetUpdatedFiles().size() << " files were updated";
-        }
-        msg << '\n';
-    }
-    else
-    {
-        msg << "All " << results.GetFileCount() << " generated files are current";
     }
 
     if (!results.GetMsgs().empty())

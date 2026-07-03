@@ -332,13 +332,10 @@ bool BookPageGenerator::ConstructionCode(Code& code)
                 .QuotedString(prop_label);
         }
 
+        // Default is false, so only add parameter if it is true.
         if (code.IsTrue(prop_select))
         {
             code.Comma().True();
-        }
-        else
-        {
-            code.Comma().False();
         }
 
         if (node->HasValue(prop_bitmap) && (node->get_Parent()->as_bool(prop_display_images) ||

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-29-2026]
 
 #include "code.h"
 
@@ -11,11 +12,11 @@
 
 using namespace code;
 
-auto Code::as_string(PropName prop_name) -> Code&
+Code& Code::as_string(PropName prop_name)
 {
     if (prop_name == prop_id)
     {
-        auto result = m_node->get_PropId();
+        wxue::string result = m_node->get_PropId();
         CheckLineLength(result.size());
 
         // For Ruby, if it doesn't start with 'wx' then assume it is a global with a '$' prefix
@@ -26,7 +27,7 @@ auto Code::as_string(PropName prop_name) -> Code&
         }
         if (!is_cpp())
         {
-            result.Replace("wx", m_language_wxPrefix);
+            std::ignore = result.Replace("wx", m_language_wxPrefix);
         }
         *this += result;
         return *this;
@@ -35,7 +36,7 @@ auto Code::as_string(PropName prop_name) -> Code&
     return Add(m_node->as_string(prop_name));
 }
 
-auto Code::QuotedString(GenEnum::PropName prop_name) -> Code&
+Code& Code::QuotedString(GenEnum::PropName prop_name)
 {
     if (!m_node->HasValue(prop_name))
     {
@@ -58,9 +59,9 @@ auto Code::QuotedString(GenEnum::PropName prop_name) -> Code&
     return QuotedString(m_node->as_string(prop_name));
 }
 
-void Code::ProcessEscapedChar(char chr, bool& has_escape)
+void Code::ProcessEscapedChar(char char_val, bool& has_escape)
 {
-    switch (chr)
+    switch (char_val)
     {
         case '"':
             *this += "\\\"";
@@ -93,12 +94,12 @@ void Code::ProcessEscapedChar(char chr, bool& has_escape)
             break;
 
         default:
-            *this += chr;
+            *this += char_val;
             break;
     }
 }
 
-[[nodiscard]] auto Code::HasUtf8Char(wxue::string_view text) -> bool
+[[nodiscard]] bool Code::HasUtf8Char(wxue::string_view text)
 {
     return std::ranges::any_of(text,
                                [](auto iter)
@@ -107,9 +108,15 @@ void Code::ProcessEscapedChar(char chr, bool& has_escape)
                                });
 }
 
-void Code::AddQuoteClosing([[maybe_unused]] bool has_escape, [[maybe_unused]] size_t begin_quote,
-                           bool has_utf_char)
+void Code::AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_char)
 {
+    if (is_ruby() && has_escape)
+    {
+        at(begin_quote) = '"';
+        *this += '"';
+        return;
+    }
+
     if (is_ruby())
     {
         *this += '\'';
@@ -125,9 +132,9 @@ void Code::AddQuoteClosing([[maybe_unused]] bool has_escape, [[maybe_unused]] si
     }
 }
 
-auto Code::QuotedString(wxue::string_view text) -> Code&
+Code& Code::QuotedString(wxue::string_view text)
 {
-    auto cur_pos = this->size();
+    const size_t cur_pos = this->size();
 
     if (Project.as_bool(prop_internationalize))
     {
@@ -141,13 +148,13 @@ auto Code::QuotedString(wxue::string_view text) -> Code&
         }
     }
 
-    bool has_utf_char = is_cpp() && HasUtf8Char(text);
+    const bool has_utf_char = is_cpp() && HasUtf8Char(text);
     if (has_utf_char)
     {
         *this += "wxString::FromUTF8(";
     }
 
-    auto begin_quote = this->size();
+    const size_t begin_quote = this->size();
     bool has_escape = false;
 
     if (is_ruby())
@@ -159,9 +166,9 @@ auto Code::QuotedString(wxue::string_view text) -> Code&
         *this += '"';
     }
 
-    for (auto chr: text)
+    for (auto char_val: text)
     {
-        ProcessEscapedChar(chr, has_escape);
+        ProcessEscapedChar(char_val, has_escape);
     }
 
     AddQuoteClosing(has_escape, begin_quote, has_utf_char);

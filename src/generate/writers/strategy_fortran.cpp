@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "strategy_fortran.h"
 
@@ -12,7 +13,7 @@
 
 FortranStrategy::FortranStrategy(const LanguageTraits& traits) : FFIStrategy(traits) {}
 
-auto FortranStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+std::string FortranStrategy::MapClassName(std::string_view wx_class_name)
 {
     // wxButton → wx_Button (Fortran uses wx_ prefix as part of the type name)
     if (!wx_class_name.starts_with("wx"))
@@ -57,6 +58,7 @@ void FortranStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         else
         {
             code.Eol() << "#if ";
+            has_prior = true;
         }
         code << "defined(__APPLE__)";
     }
@@ -64,6 +66,7 @@ void FortranStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
 
 void FortranStrategy::EmitPlatformEnd(WriteCode* writer)
 {
+    // Caller guarantees EmitPlatformBegin was invoked first with valid platforms.
     writer->writeLine("#endif");
 }
 

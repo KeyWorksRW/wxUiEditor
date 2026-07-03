@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #include <wx/sizer.h>
 #include <wx/statbox.h>
@@ -23,15 +24,15 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     auto* sizer =
         new wxStaticBoxSizer(node->as_int(prop_orientation), wxStaticCast(parent, wxWindow),
                              node->as_wxString(prop_label));
-    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dialog = wxDynamicCast(parent, wxDialog); dialog)
     {
-        if (!dlg->GetSizer())
+        if (!dialog->GetSizer())
         {
-            dlg->SetSizer(sizer);
+            dialog->SetSizer(sizer);
         }
     }
 
-    auto min_size = node->as_wxSize(prop_minimum_size);
+    const wxSize min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
     {
         sizer->SetMinSize(min_size);
@@ -47,12 +48,12 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
 {
-    Node* node = code.node();
+    const Node* node = code.node();
 
     wxue::string parent_name(code.is_cpp() ? "this" : "self");
     if (!node->get_Parent()->is_Form())
     {
-        auto* parent = node->get_Parent();
+        Node* parent = node->get_Parent();
         while (parent)
         {
             if (parent->is_Container())
@@ -98,7 +99,7 @@ bool StaticBoxSizerGenerator::ConstructionCode(Code& code)
     }
     code.AddAuto().NodeName().CreateClass();
     code.Add(prop_orientation).Comma().Str(parent_name);
-    if (const auto& label = node->as_string(prop_label); label.size())
+    if (const auto& label = node->as_string(prop_label); !label.empty())
     {
         code.Comma().QuotedString(label);
     }
@@ -130,7 +131,7 @@ bool StaticBoxSizerGenerator::SettingsCode(Code& code)
 
 bool StaticBoxSizerGenerator::AfterChildrenCode(Code& code)
 {
-    auto* parent = code.node()->get_Parent();
+    const Node* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -179,7 +180,7 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
                                           size_t /* xrc_flags */)
 {
     pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
+    int result = BaseGenerator::xrc_sizer_item_created;
 
     if (node->get_Parent()->is_Sizer())
     {

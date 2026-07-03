@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #include <wx/sizer.h>
 
@@ -20,11 +21,11 @@ wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto* sizer = new wxBoxSizer(node->as_int(prop_orientation));
     sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
-    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dialog = wxDynamicCast(parent, wxDialog); dialog)
     {
-        if (!dlg->GetSizer())
+        if (!dialog->GetSizer())
         {
-            dlg->SetSizer(sizer);
+            dialog->SetSizer(sizer);
         }
     }
     return sizer;
@@ -46,7 +47,7 @@ bool BoxSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto().NodeName().CreateClass().Add(prop_orientation).EndFunction();
 
-    auto min_size = code.node()->as_wxSize(prop_minimum_size);
+    const wxSize min_size = code.node()->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
@@ -63,7 +64,7 @@ bool BoxSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto* parent = code.node()->get_Parent();
+    const Node* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -113,7 +114,7 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
+    int result = BaseGenerator::xrc_sizer_item_created;
 
     if (node->get_Parent()->is_Sizer())
     {

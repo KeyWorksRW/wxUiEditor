@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "language_traits.h"
 
@@ -17,12 +18,11 @@
 #include "strategy_typescript.h"
 
 // clang-format off
-namespace
-{
+
 
 // ---- Active language traits (connected via GetLanguageTraits) ----
 
-constexpr LanguageTraits cpp_traits
+static constexpr LanguageTraits cpp_traits
 {
     .language = GenLang::cplusplus,
     .true_literal = "true",
@@ -60,7 +60,7 @@ constexpr LanguageTraits cpp_traits
 
 
 
-constexpr LanguageTraits python_traits
+static constexpr LanguageTraits python_traits
 {
     .language = GenLang::python,
     .true_literal = "True",
@@ -96,7 +96,7 @@ constexpr LanguageTraits python_traits
     .supports_classes = true,
 };
 
-constexpr LanguageTraits ruby_traits
+static constexpr LanguageTraits ruby_traits
 {
     .language = GenLang::ruby,
     .true_literal = "true",
@@ -136,7 +136,7 @@ constexpr LanguageTraits ruby_traits
 // Phase 5 will assign GenLang values and wire these into GetLanguageTraits().
 // All FFI languages share identical constant/function naming via kwxFFI.
 
-constexpr LanguageTraits fortran_traits
+static constexpr LanguageTraits fortran_traits
 {
     .language = GenLang::fortran,
     .true_literal = ".TRUE.",
@@ -172,7 +172,7 @@ constexpr LanguageTraits fortran_traits
     .supports_classes = true,
 };
 
-constexpr LanguageTraits go_traits
+static constexpr LanguageTraits go_traits
 {
     .language = GenLang::go,
     .true_literal = "true",
@@ -208,7 +208,7 @@ constexpr LanguageTraits go_traits
     .supports_classes = false,
 };
 
-constexpr LanguageTraits julia_traits
+static constexpr LanguageTraits julia_traits
 {
     .language = GenLang::julia,
     .true_literal = "true",
@@ -244,7 +244,7 @@ constexpr LanguageTraits julia_traits
     .supports_classes = true,
 };
 
-constexpr LanguageTraits luajit_traits
+static constexpr LanguageTraits luajit_traits
 {
     .language = GenLang::luajit,
     .true_literal = "true",
@@ -280,7 +280,7 @@ constexpr LanguageTraits luajit_traits
     .supports_classes = true,
 };
 
-constexpr LanguageTraits typescript_traits
+static constexpr LanguageTraits typescript_traits
 {
     .language = GenLang::typescript,
     .true_literal = "true",
@@ -316,11 +316,9 @@ constexpr LanguageTraits typescript_traits
     .supports_classes = true,
 };
 
-    // clang-format on
+// clang-format on
 
-}  // anonymous namespace
-
-auto GetLanguageTraits(GenLang language) -> const LanguageTraits*
+const LanguageTraits* GetLanguageTraits(GenLang language)
 {
     switch (language)
     {
@@ -348,7 +346,7 @@ auto GetLanguageTraits(GenLang language) -> const LanguageTraits*
     }
 }
 
-auto CreateLanguageStrategy(GenLang language) -> std::unique_ptr<LanguageStrategy>
+std::unique_ptr<LanguageStrategy> CreateLanguageStrategy(GenLang language)
 {
     switch (language)
     {

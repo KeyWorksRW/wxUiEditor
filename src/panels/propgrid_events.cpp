@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-01-2026]
 
 #include <wx/config.h>             // wxConfig base header
 #include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
@@ -35,11 +36,11 @@ void PropGridPanel::OnEventGridChanged(wxPropertyGridEvent& event)
 {
     if (auto iter = m_event_map.find(event.GetProperty()); iter != m_event_map.end())
     {
-        NodeEvent* evt = iter->second;
-        wxString handler = event.GetPropertyValue();
-        auto value = ConvertEscapeSlashes(handler.utf8_string());
+        NodeEvent* event_ptr = iter->second;
+        const wxString handler = event.GetPropertyValue();
+        wxue::string value = ConvertEscapeSlashes(handler.utf8_string());
         value.trim(wxue::TRIM::both);
-        wxGetFrame().ChangeEventHandler(evt, value);
+        wxGetFrame().ChangeEventHandler(event_ptr, value);
     }
 }
 
@@ -57,8 +58,8 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         return;
     }
 
-    auto* prop = event.GetNodeProperty();
-    auto* grid_property = m_prop_grid->GetPropertyByLabel(wxString(prop->get_DeclName()));
+    NodeProperty* prop = event.GetNodeProperty();
+    wxPGProperty* grid_property = m_prop_grid->GetPropertyByLabel(wxString(prop->get_DeclName()));
     if (grid_property == nullptr)
     {
         return;
@@ -98,7 +99,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 
         case type_bitlist:
             {
-                auto value = prop->as_wxString();
+                wxString value = prop->as_wxString();
                 value.Replace("|", ", ", true);
                 if (value == "0")
                 {
@@ -111,25 +112,25 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         case type_wxPoint:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
-                auto aux = prop->as_wxString();
-                aux.Replace(",", ";");
-                grid_property->SetValueFromString(aux);
+                wxString aux_value = prop->as_wxString();
+                aux_value.Replace(",", ";");
+                grid_property->SetValueFromString(aux_value);
             }
             break;
 
         case type_wxSize:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
-                auto aux = prop->as_wxString();
-                aux.Replace(",", ";");
-                grid_property->SetValueFromString(aux);
+                wxString aux_value = prop->as_wxString();
+                aux_value.Replace(",", ";");
+                grid_property->SetValueFromString(aux_value);
             }
             break;
 
         case type_wxColour:
             {
-                wxColourPropertyValue def(wxPG_COLOUR_CUSTOM, prop->as_color());
-                m_prop_grid->SetPropertyValue(grid_property, def);
+                wxColourPropertyValue def_value(wxPG_COLOUR_CUSTOM, prop->as_color());
+                m_prop_grid->SetPropertyValue(grid_property, def_value);
             }
             break;
 
@@ -166,7 +167,7 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
 {
     if (event.GetNodeProperty()->isProp(prop_border))
     {
-        auto* info = wxGetFrame().GetPropInfoBar();
+        wxInfoBar* info = wxGetFrame().GetPropInfoBar();
         info->Dismiss();
         if (event.GetNodeProperty()->as_string() == "wxBORDER_RAISED")
         {
@@ -176,8 +177,8 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
     }
     else if (event.GetNodeProperty()->isProp(prop_focus))
     {
-        auto* node = event.getNode();
-        auto* form = node->get_Form();
+        Node* node = event.getNode();
+        Node* form = node->get_Form();
         auto list = form->FindAllChildProperties(prop_focus);
         size_t count = 0;
         for (auto* iter: list)
@@ -202,10 +203,10 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
              event.GetNodeProperty()->isProp(prop_minimum_size) ||
              event.GetNodeProperty()->isProp(prop_maximum_size))
     {
-        auto* node = event.getNode();
-        auto new_size = node->as_wxSize(prop_size);
-        auto min_size = node->as_wxSize(prop_minimum_size);
-        auto max_size = node->as_wxSize(prop_maximum_size);
+        Node* node = event.getNode();
+        wxSize new_size = node->as_wxSize(prop_size);
+        wxSize min_size = node->as_wxSize(prop_minimum_size);
+        wxSize max_size = node->as_wxSize(prop_maximum_size);
         if (new_size != wxDefaultSize || min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             // If any value is -1 then it's not actually set and no comparison is needed
@@ -241,7 +242,7 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
 
 void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 {
-    auto* property = event.GetProperty();
+    wxPGProperty* property = event.GetProperty();
 
     auto iter = m_property_map.find(property);
     if (iter == m_property_map.end())
@@ -255,7 +256,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         return;
     }
 
-    auto* prop = iter->second;
+    NodeProperty* prop = iter->second;
     if (prop->get_name() == prop_code_preference)
     {
         // TODO: [Randalphwa - 10-23-2024] Either code preferences should only show
@@ -267,7 +268,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         auto grid_iterator = m_prop_grid->GetCurrentPage()->GetIterator(wxPG_ITERATE_CATEGORIES);
         while (!grid_iterator.AtEnd())
         {
-            auto* grid_property = grid_iterator.GetProperty();
+            wxPGProperty* grid_property = grid_iterator.GetProperty();
             if (grid_property->GetLabel().Contains("C++"))
             {
                 if (prop->as_string() != "any" && prop->as_string() != "C++")
@@ -340,13 +341,13 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         return;
     }
 
-    auto* node = prop->getNode();
+    Node* node = prop->getNode();
 
     switch (prop->type())
     {
         case type_float:
             {
-                double val = m_prop_grid->GetPropertyValueAsDouble(property);
+                const double val = m_prop_grid->GetPropertyValueAsDouble(property);
                 ModifyProperty(prop, wxString() << val);
                 break;
             }
@@ -374,7 +375,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_string_escapes:
         case type_string_edit_escapes:
             {
-                auto value = ConvertEscapeSlashes(
+                std::string value = ConvertEscapeSlashes(
                     m_prop_grid->GetPropertyValueAsString(property).ToStdString());
                 ModifyProperty(prop, value);
             }
@@ -444,7 +445,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_wxPoint:
         case type_wxSize:
             {
-                auto value = event.GetPropertyValue().GetString();
+                wxString value = event.GetPropertyValue().GetString();
                 ModifyProperty(prop, value.utf8_string());
             }
             break;
@@ -476,11 +477,11 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     {
                         // An empty name will generate uncompilable code, so we simply switch it to
                         // the default name
-                        auto new_name = prop->get_PropDeclaration()->getDefaultValue();
-                        auto final_name = node->get_UniqueName(new_name);
+                        std::string new_name = prop->get_PropDeclaration()->getDefaultValue();
+                        std::string final_name = node->get_UniqueName(new_name);
                         newValue = final_name.empty() ? std::string(new_name) : final_name;
 
-                        auto* grid_property = m_prop_grid->GetPropertyByLabel("var_name");
+                        wxPGProperty* grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                         grid_property->SetValueFromString(newValue.wx());
                     }
                 }
@@ -528,7 +529,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
     ChangeEnableState(prop);
 
-    if (auto* gen = prop->getNode()->get_Generator(); gen)
+    if (BaseGenerator* gen = prop->getNode()->get_Generator(); gen)
     {
         auto result = gen->isLanguagePropSupported(prop->getNode(), Project.get_CodePreference(),
                                                    prop->get_name());
@@ -567,7 +568,7 @@ void PropGridPanel::OnPropertyGridExpand(wxPropertyGridEvent& event)
 // Only process property changes that we may need to cancel here.
 void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 {
-    auto* property = event.GetProperty();
+    wxPGProperty* property = event.GetProperty();
 
     auto iter = m_property_map.find(property);
     if (iter == m_property_map.end())
@@ -581,8 +582,8 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
         return;
     }
 
-    auto* prop = iter->second;
-    auto* node = prop->getNode();
+    NodeProperty* prop = iter->second;
+    Node* node = prop->getNode();
 
     if (auto* generator = node->get_Generator(); generator)
     {
@@ -643,16 +644,16 @@ void PropGridPanel::AllowDirectoryChange(wxPropertyGridEvent& event, NodePropert
     newValue.MakeAbsolute();
     newValue.MakeRelativeTo(Project.get_wxFileName()->GetPath());
 
-    wxue::SaveCwd cwd(wxue::restore_cwd);
+    const wxue::SaveCwd saved_cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
     if (!newValue.DirExists())
     {
         // Displaying the message box can cause a focus change event which will call validation
         // again in the OnIdle() processing. Preserve the focus to avoid validating twice.
-        auto* focus = wxWindow::FindFocus();
+        wxWindow* focus = wxWindow::FindFocus();
 
-        auto result =
+        int result =
             wxMessageBox(wxString() << "The directory \"" << newValue.GetFullPath()
                                     << "\" does not exist. Do you want to use this name anyway?",
                          "Directory doesn't exist", wxYES_NO | wxICON_WARNING, wxGetMainFrame());
@@ -685,7 +686,8 @@ void PropGridPanel::AllowDirectoryChange(wxPropertyGridEvent& event, NodePropert
 void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
     if (prop->isProp(prop_base_file) || prop->isProp(prop_python_file) ||
-        prop->isProp(prop_ruby_file) || prop->isProp(prop_xrc_file))
+        prop->isProp(prop_ruby_file) || prop->isProp(prop_xrc_file) ||
+        prop->isProp(prop_typescript_file))
     {
         wxFileName newValue;
         newValue.Assign(event.GetPropertyValue().GetString());
@@ -712,7 +714,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
             {
                 if (child->as_string(prop_base_file).filename() == filename)
                 {
-                    auto* focus = wxWindow::FindFocus();
+                    wxWindow* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The base filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -737,7 +739,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
             {
                 if (child->as_string(prop_python_file).filename() == filename)
                 {
-                    auto* focus = wxWindow::FindFocus();
+                    wxWindow* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The python filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -762,7 +764,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
             {
                 if (child->as_string(prop_ruby_file).filename() == filename)
                 {
-                    auto* focus = wxWindow::FindFocus();
+                    wxWindow* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The ruby filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -787,7 +789,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
             {
                 if (child->as_string(prop_typescript_file).filename() == filename)
                 {
-                    auto* focus = wxWindow::FindFocus();
+                    wxWindow* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The TypeScript filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -815,7 +817,7 @@ void PropGridPanel::AllowFileChange(wxPropertyGridEvent& event, NodeProperty* pr
                 // same filename provided it is in a different directory.
                 if (child->as_string(prop_xrc_file) == filename)
                 {
-                    auto* focus = wxWindow::FindFocus();
+                    wxWindow* focus = wxWindow::FindFocus();
 
                     wxMessageBox(wxString() << "The xrc filename \"" << filename.wx()
                                             << "\" is already in use by "
@@ -898,7 +900,7 @@ void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
     {
         path.clear();
     }
-    if (path.size() && path.back() == '/')
+    if (!path.empty() && path.back() == '/')
     {
         path.pop_back();
     }
@@ -916,7 +918,7 @@ void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
             wxue::string cur_path = form->as_string(prop_derived_file);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
-            if (cur_path.size() && cur_path.back() == '/')
+            if (!cur_path.empty() && cur_path.back() == '/')
             {
                 cur_path.pop_back();
             }
@@ -945,7 +947,7 @@ void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
     {
         path.clear();
     }
-    if (path.size() && path.back() == '/')
+    if (!path.empty() && path.back() == '/')
     {
         path.pop_back();
     }

@@ -383,8 +383,7 @@ if (code.is_fortran()) { ... }
 else if (code.is_go()) { ... }
 else if (code.is_julia()) { ... }
 else if (code.is_luajit()) { ... }
-else if (code.is_perl()) { ... }
-else if (code.is_rust()) { ... }
+else if (code.is_typescript()) { ... }
 
 // RIGHT — all FFI languages share one path
 if (code.is_ffi()) { ... }

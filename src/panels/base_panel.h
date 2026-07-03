@@ -31,7 +31,7 @@ enum class PANEL_PAGE : std::uint8_t
 class BasePanel : public wxPanel
 {
 public:
-    BasePanel(wxWindow* parent, MainFrame* frame, GenLang GenerateDerivedCode);
+    BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type);
     ~BasePanel() override;
 
     BasePanel(const BasePanel&) = delete;

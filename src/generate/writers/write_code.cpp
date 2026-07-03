@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <wx/stc/stc.h>  // Scintilla
 
@@ -15,7 +16,7 @@
 
 void WriteCode::writeLine(const Code& code)
 {
-    if (!code.size())
+    if (code.empty())
     {
         writeLine();
         return;
@@ -29,12 +30,12 @@ void WriteCode::writeLine(const Code& code)
     {
         // Remove any trailing tabs -- this occurs when Code::Eol() is called when an indent
         // is active.
-        while (line.size() && line.back() == '\t')
+        while (!line.empty() && line.back() == '\t')
         {
             line.remove_suffix(1);
         }
 
-        if (line.size())
+        if (!line.empty())
         {
             // Don't indent #if, #else or #endif
             if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") ||
@@ -52,8 +53,8 @@ void WriteCode::writeLine(const Code& code)
                 {
                     doWrite(m_TabSpaces);
                     line.remove_prefix(1);
-                    ASSERT_MSG(line.size(), "Line ended with nothing but tabs.");
-                } while (line.size() && line[0] == '\t');
+                    ASSERT_MSG(!line.empty(), "Line ended with nothing but tabs.");
+                } while (!line.empty() && line[0] == '\t');
             }
 
             doWrite(line);
@@ -70,12 +71,12 @@ void WriteCode::writeLine(std::vector<std::string>& lines)
     {
         // Remove any trailing tabs -- this occurs when Code::Eol() is called when an indent
         // is active.
-        while (line.size() && line.back() == '\t')
+        while (!line.empty() && line.back() == '\t')
         {
             line.pop_back();
         }
 
-        if (line.size())
+        if (!line.empty())
         {
             // Don't indent #if, #else or #endif
             if (line[0] != '#' || !(line.starts_with("#if") || line.starts_with("#else") ||
@@ -111,6 +112,9 @@ void WriteCode::writeLine(std::vector<std::string>& lines)
         }
         doWrite("\n");
     }
+
+    if (lines.empty())
+        return;
 
     m_IsLastLineBlank = (lines.back().empty() ? true : false);
 }
@@ -149,15 +153,15 @@ void WriteCode::WriteCodeLine(wxue::string_view code, size_t indentation)
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);
-        for (auto chr: code)
+        for (auto character: code)
         {
-            if (chr == '\t')
+            if (character == '\t')
             {
                 tab_code += m_TabSpaces;
             }
             else
             {
-                tab_code.push_back(chr);
+                tab_code.push_back(character);
             }
         }
         doWrite(tab_code);
@@ -182,7 +186,7 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
     }
     if (wxue::is_found(code.find('\n')))
     {
-        wxue::ViewVector lines(code, '\n');
+        const wxue::ViewVector lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, indentation);
@@ -203,7 +207,7 @@ void WriteCode::writeLine(wxue::string_view code, size_t indentation)
     }
     if (wxue::is_found(code.find('\n')))
     {
-        wxue::ViewVector lines(code, '\n');
+        const wxue::ViewVector lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, indentation);
@@ -250,15 +254,15 @@ void WriteCode::write(wxue::string_view code, bool auto_indent)
     {
         std::string tab_code;
         tab_code.reserve(code.size() + 16);
-        for (auto chr: code)
+        for (auto character: code)
         {
-            if (chr == '\t')
+            if (character == '\t')
             {
                 tab_code += m_TabSpaces;
             }
             else
             {
-                tab_code.push_back(chr);
+                tab_code.push_back(character);
             }
         }
         doWrite(tab_code);

@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Size and position code generation
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-29-2026]
 
 #include "code.h"
 
@@ -11,7 +12,7 @@
 
 using namespace code;
 
-auto Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling) -> Code&
+Code& Code::WxSize(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
     return WxSize(m_node->as_wxSize(prop_name), enable_dpi_scaling);
 }
@@ -39,10 +40,10 @@ void Code::AddUnscaledSizePerl(wxSize size)
     Class("Wx::Size->new(").itoa(size.x).Comma().itoa(size.y) << ')';
 }
 
-auto Code::WxSize(wxSize size, int enable_dpi_scaling) -> Code&
+Code& Code::WxSize(wxSize size, int enable_dpi_scaling)
 {
-    auto cur_pos = this->size();
-    auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
+    const size_t cur_pos = this->size();
+    const bool size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
 
     if (is_ruby())
     {
@@ -52,7 +53,7 @@ auto Code::WxSize(wxSize size, int enable_dpi_scaling) -> Code&
     return WxSize_Other(size, cur_pos, size_scaling);
 }
 
-auto Code::WxSize_Ruby(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
+Code& Code::WxSize_Ruby(wxSize size, size_t cur_pos, bool size_scaling)
 {
     if (size == wxDefaultSize)
     {
@@ -80,7 +81,7 @@ auto Code::WxSize_Ruby(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
     return *this;
 }
 
-auto Code::WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
+Code& Code::WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling)
 {
     if (size == wxDefaultSize)
     {
@@ -110,10 +111,10 @@ auto Code::WxSize_Other(wxSize size, size_t cur_pos, bool size_scaling) -> Code&
     return *this;
 }
 
-auto Code::WxPoint(wxPoint position, int enable_dpi_scaling) -> Code&
+Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
 {
-    auto cur_pos = this->size();
-    auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
+    const size_t cur_pos = this->size();
+    const bool pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
 
     if (is_ruby())
     {
@@ -166,17 +167,15 @@ auto Code::WxPoint(wxPoint position, int enable_dpi_scaling) -> Code&
         if (is_cpp())
         {
             CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
-            FormFunction("FromDIP(");
-            Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
-            *this += ')';
         }
-        else if (is_python())
+        else
         {
+            // Python and FFI languages have a self-reference prefix, use conservative estimate
             CheckLineLength(sizeof("self.FromDIP(wxPoint(999, 999))"));
-            FormFunction("FromDIP(");
-            Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
-            *this += ')';
         }
+        FormFunction("FromDIP(");
+        Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
+        *this += ')';
     }
     else
     {

@@ -4,9 +4,12 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-03-2026]
 
 #include <array>
+#include <format>
 #include <memory>
+#include <unordered_map>
 #include <utility>
 
 #include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
@@ -20,6 +23,7 @@
 
 #include "data_handler.h"   // DataHandler class
 #include "image_handler.h"  // ProjectImage class
+#include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
 #include "utils.h"          // Miscellaneous utility functions
 #include "version.h"        // Version numbers and other constants
@@ -45,6 +49,13 @@ ProjectHandler::~ProjectHandler()
 
 void ProjectHandler::Initialize(NodeSharedPtr project, bool allow_ui)
 {
+    m_ImagesForm = nullptr;
+    m_DataForm = nullptr;
+    m_form_BundleSVG = nullptr;
+    m_form_BundleBitmaps = nullptr;
+    m_form_Image = nullptr;
+    m_form_Animation = nullptr;
+
     m_project_node = std::move(project);
     m_allow_ui = allow_ui;
 
@@ -122,7 +133,11 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     std::set<std::string_view> derived_classnames;
     std::set<std::string_view> base_filenames;
     std::set<std::string_view> derived_filenames;
-    std::set<std::string_view> perl_filenames;
+    std::set<std::string_view> fortran_filenames;
+    std::set<std::string_view> go_filenames;
+    std::set<std::string_view> julia_filenames;
+    std::set<std::string_view> luajit_filenames;
+    std::set<std::string_view> typescript_filenames;
     std::set<std::string_view> python_filenames;
     std::set<std::string_view> ruby_filenames;
     std::set<std::string_view> xrc_filenames;
@@ -147,7 +162,11 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
         insert_if_has_value(iter, prop_derived_class_name, derived_classnames);
         insert_if_has_value(iter, prop_base_file, base_filenames);
         insert_if_has_value(iter, prop_derived_file, derived_filenames);
-        insert_if_has_value(iter, prop_typescript_file, perl_filenames);
+        insert_if_has_value(iter, prop_fortran_file, fortran_filenames);
+        insert_if_has_value(iter, prop_go_file, go_filenames);
+        insert_if_has_value(iter, prop_julia_file, julia_filenames);
+        insert_if_has_value(iter, prop_lua_file, luajit_filenames);
+        insert_if_has_value(iter, prop_typescript_file, typescript_filenames);
         insert_if_has_value(iter, prop_python_file, python_filenames);
         insert_if_has_value(iter, prop_ruby_file, ruby_filenames);
         insert_if_has_value(iter, prop_xrc_file, xrc_filenames);
@@ -197,7 +216,7 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
             if (set_names.contains(new_node->as_string(prop)))
             {
                 const std::string new_name = make_unique_name(new_node->as_view(prop), set_names);
-                new_node->set_value(prop, new_name);
+                std::ignore = new_node->set_value(prop, new_name);
             }
         }
     };
@@ -206,7 +225,11 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
     SetNewNodeName(derived_classnames, prop_derived_class_name);
     SetNewNodeName(base_filenames, prop_base_file);
     SetNewNodeName(derived_filenames, prop_derived_file);
-    SetNewNodeName(perl_filenames, prop_typescript_file);
+    SetNewNodeName(fortran_filenames, prop_fortran_file);
+    SetNewNodeName(go_filenames, prop_go_file);
+    SetNewNodeName(julia_filenames, prop_julia_file);
+    SetNewNodeName(luajit_filenames, prop_lua_file);
+    SetNewNodeName(typescript_filenames, prop_typescript_file);
     SetNewNodeName(python_filenames, prop_python_file);
     SetNewNodeName(ruby_filenames, prop_ruby_file);
     SetNewNodeName(xrc_filenames, prop_xrc_file);
@@ -214,21 +237,7 @@ void ProjectHandler::FixupDuplicatedNode(Node* new_node)
 
 const wxFileName* ProjectHandler::get_wxFileName() const
 {
-    if (m_project_path->IsOk())
-    {
-        return m_project_path.get();
-    }
-
-    if (m_project_node->HasValue(prop_art_directory))
-    {
-        m_project_path->Assign(m_project_node->as_string(prop_art_directory), wxEmptyString,
-                               wxEmptyString, wxPATH_NATIVE);
-        m_project_path->MakeRelativeTo(m_project_path->GetPath());
-        m_project_path->MakeAbsolute();
-        return m_project_path.get();
-    }
-
-    m_project_path->Assign(m_project_path->GetFullPath());
+    ASSERT_MSG(m_project_path->IsOk(), "Project path not set");
     return m_project_path.get();
 }
 
@@ -305,7 +314,12 @@ wxue::string ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language,
     else
     {
         static const std::map<GenLang, PropName> langFolderPropMap = {
-
+            { GenLang::python, prop_folder_python_output_folder },
+            { GenLang::fortran, prop_folder_fortran_output_folder },
+            { GenLang::go, prop_folder_go_output_folder },
+            { GenLang::julia, prop_folder_julia_output_folder },
+            { GenLang::luajit, prop_folder_lua_output_folder },
+            { GenLang::typescript, prop_folder_typescript_output_folder },
             { GenLang::ruby, prop_folder_ruby_output_folder },
             { GenLang::xrc, prop_folder_xrc_directory }
         };
@@ -375,7 +389,6 @@ void ProjectHandler::MergeBaseFilePath(wxue::string& result, const wxue::string&
     result.backslashestoforward();
     if (base_file.contains("/"))
     {
-        result.backslashestoforward();
         if (result.back() == '/')
         {
             result.pop_back();
@@ -514,8 +527,10 @@ Node* ProjectHandler::get_FirstFormChild(Node* node) const
         }
         if (child->is_Gen(gen_folder) || child->is_Gen(gen_sub_folder))
         {
-            if (auto* result = get_FirstFormChild(child.get()))
+            if (Node* result = get_FirstFormChild(child.get()))
+            {
                 return result;
+            }
         }
     }
 
@@ -563,7 +578,7 @@ GenLang ProjectHandler::get_CodePreference(Node* node) const
 GenLang ProjectHandler::get_GenerateLanguages() const
 {
     // Always set the project's code preference to the list
-    auto languages = get_CodePreference(m_project_node.get());
+    GenLang languages = get_CodePreference(m_project_node.get());
 
     const std::string_view value = Project.as_view(prop_generate_languages);
 
@@ -647,6 +662,9 @@ GenOutput ProjectHandler::get_OutputType(int flags) const
             }
             else if (child->is_Form())
             {
+                // KWX languages (Fortran, GO, Julia, LuaJIT, TypeScript) are not per-form
+                // and are handled by a separate pipeline.
+
                 // Table-driven output flag logic
                 struct OutputLangInfo
                 {
@@ -969,7 +987,7 @@ static const std::map<GenLang, PropName> langPropMap = {
 // Helper function to parse version string and extract major, minor, patch components
 static std::tuple<int, int, int> parseVersionString(std::string_view version)
 {
-    int major = 1;
+    int major = 1;  // Default: 1.0.0 — minimum supported version
     int minor = 0;
     int patch = 0;
 
@@ -1062,4 +1080,184 @@ int ProjectHandler::get_LangVersion(GenLang language) const
     auto [major, minor, patch] = parseVersionString(version);
 
     return (major * VERSION_MAJOR_MULTIPLIER) + (minor * VERSION_MINOR_MULTIPLIER) + patch;
+}
+
+static constexpr std::array<PropName, 3> LOCAL_VAR_PROPS = std::to_array<PropName>({
+    prop_var_name,
+    prop_checkbox_var_name,
+    prop_radiobtn_var_name,
+});
+
+static int CountLocalDuplicatesInForm(Node* form)
+{
+    std::unordered_map<std::string, int> name_count;
+
+    auto collect = [&](Node* node_ptr, auto&& collect_fn) -> void
+    {
+        if (node_ptr != form && !node_ptr->is_Form() && !node_ptr->is_Gen(gen_wxPropertyGrid) &&
+            !node_ptr->is_Gen(gen_wxPropertyGridManager))
+        {
+            for (const PropName prop: LOCAL_VAR_PROPS)
+            {
+                if (node_ptr->HasValue(prop))
+                {
+                    ++name_count[std::string(node_ptr->as_string(prop))];
+                }
+            }
+        }
+        for (const auto& child: node_ptr->get_ChildNodePtrs())
+        {
+            collect_fn(child.get(), collect_fn);
+        }
+    };
+
+    collect(form, collect);
+
+    int dup_count = 0;
+    for (const auto& [name, count]: name_count)
+    {
+        if (count > 1)
+        {
+            dup_count += (count - 1);
+        }
+    }
+    return dup_count;
+}
+
+// Count duplicate validator_variable names within a single form.
+// Returns the number of excess duplicates (count - 1 for each name with count > 1).
+static int CountValidatorDuplicatesInForm(Node* form)
+{
+    std::unordered_map<std::string, int> name_count;
+
+    auto collect = [&](Node* node_ptr, auto&& collect_fn) -> void
+    {
+        if (node_ptr != form && !node_ptr->is_Form() && !node_ptr->is_Gen(gen_wxPropertyGrid) &&
+            !node_ptr->is_Gen(gen_wxPropertyGridManager))
+        {
+            if (node_ptr->HasValue(prop_validator_variable))
+            {
+                ++name_count[std::string(node_ptr->as_string(prop_validator_variable))];
+            }
+        }
+        for (const auto& child: node_ptr->get_ChildNodePtrs())
+        {
+            collect_fn(child.get(), collect_fn);
+        }
+    };
+
+    collect(form, collect);
+
+    int dup_count = 0;
+    for (const auto& [name, count]: name_count)
+    {
+        if (count > 1)
+        {
+            dup_count += (count - 1);
+        }
+    }
+    return dup_count;
+}
+
+void ProjectHandler::FixDuplicateVarNames(bool allow_ui)
+{
+    // Step A: Fix local variables per-form.
+    int total_local_fixes = 0;
+    int forms_with_fixes = 0;
+
+    // Pre-scan: store per-form duplicate counts before fixing.
+    std::unordered_map<Node*, int> form_before_counts;
+    std::vector<Node*> all_forms;
+    CollectForms(all_forms);
+    for (Node* form: all_forms)
+    {
+        const int count = CountLocalDuplicatesInForm(form);
+        if (count > 0)
+        {
+            form_before_counts[form] = count;
+        }
+    }
+
+    // Fix all forms with duplicates unconditionally.
+    if (!form_before_counts.empty())
+    {
+        for (Node* form: all_forms)
+        {
+            form->FixDuplicateNodeNames(nullptr);
+        }
+
+        // Post-scan: determine how many duplicates were actually resolved per form.
+        for (Node* form: all_forms)
+        {
+            const int after_count = CountLocalDuplicatesInForm(form);
+            const std::unordered_map<Node*, int>::const_iterator it = form_before_counts.find(form);
+            const int before_count = (it != form_before_counts.end()) ? it->second : 0;
+            const int fixed = before_count - after_count;
+            if (fixed > 0)
+            {
+                total_local_fixes += fixed;
+                ++forms_with_fixes;
+            }
+        }
+    }
+
+    // Step B: Report local fixes.
+    if (total_local_fixes > 0 && allow_ui)
+    {
+        wxMessageBox(wxString::Format("%d duplicate local variable name%s fixed across %d form%s.",
+                                      total_local_fixes, total_local_fixes == 1 ? "" : "s",
+                                      forms_with_fixes, forms_with_fixes == 1 ? "" : "s"),
+                     "Variable Names Fixed", wxOK | wxICON_INFORMATION);
+    }
+
+    // Step C: Check validator_variable per-form (opt-in).
+    int total_validator_fixes = 0;
+
+    for (const auto& child: m_project_node->get_ChildNodePtrs())
+    {
+        if (!child->is_Form())
+        {
+            continue;
+        }
+
+        const int validator_dupes = CountValidatorDuplicatesInForm(child.get());
+        if (validator_dupes > 0)
+        {
+            bool do_fix = false;
+            if (allow_ui)
+            {
+                const int answer = wxMessageBox(
+                    wxString::Format(
+                        "Form '%s' has %d duplicate validator variable name%s. "
+                        "If these are not fixed, the generated code may not build correctly.\n\n"
+                        "Do you want to automatically fix them?",
+                        child->as_string(prop_class_name).wx(), validator_dupes,
+                        validator_dupes == 1 ? "" : "s"),
+                    "Duplicate Validator Variables", wxYES_NO | wxICON_WARNING);
+                do_fix = (answer == wxYES);
+            }
+
+            if (do_fix)
+            {
+                const int before_count = CountValidatorDuplicatesInForm(child.get());
+                child->FixDuplicateNodeNames(nullptr);
+                const int after_count = CountValidatorDuplicatesInForm(child.get());
+                total_validator_fixes += (before_count - after_count);
+            }
+        }
+    }
+
+    // Step D: Report validator fixes.
+    if (total_validator_fixes > 0)
+    {
+        wxMessageBox(wxString::Format("%d duplicate validator variable name%s fixed.",
+                                      total_validator_fixes, total_validator_fixes == 1 ? "" : "s"),
+                     "Validator Variables Fixed", wxOK | wxICON_INFORMATION);
+    }
+
+    // Step E: Mark modified if any fixes were applied.
+    if ((total_local_fixes > 0 || total_validator_fixes > 0) && allow_ui)
+    {
+        wxGetFrame().setModified();
+    }
 }

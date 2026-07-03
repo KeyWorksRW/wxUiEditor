@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "strategy_cpp.h"
 
@@ -27,6 +28,7 @@ void CppStrategy::EmitEventBinding(Code& /* code */, Node* /* node */, NodeEvent
 void CppStrategy::EmitImport(Code& code, std::string_view module)
 {
     // C++ uses #include for imports
+    // module must include delimiters: "<wx/wx.h>" or "\"myfile.h\""
     code.Str("#include ").Str(module);
 }
 
@@ -36,7 +38,7 @@ void CppStrategy::EmitVarDecl(Code& code, std::string_view type, std::string_vie
     code.Str(type).Str(" ").Str(name);
 }
 
-auto CppStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop */) -> bool
+bool CppStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop */)
 {
     // C++ has full feature parity — all features are supported
     return true;
@@ -73,6 +75,7 @@ void CppStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         else
         {
             code.Eol() << "#if ";
+            has_prior = true;
         }
         code << "defined(__WXOSX__)";
     }
@@ -80,10 +83,11 @@ void CppStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
 
 void CppStrategy::EmitPlatformEnd(WriteCode* writer)
 {
+    // Caller guarantees EmitPlatformBegin was invoked first with valid platforms.
     writer->writeLine("#endif  // limited to specific platforms");
 }
 
-auto CppStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+std::string CppStrategy::MapClassName(std::string_view wx_class_name)
 {
     // C++ uses wxWidgets class names unmodified
     return std::string(wx_class_name);

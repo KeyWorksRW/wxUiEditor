@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-29-2026]
 
 #include "code.h"
 
@@ -13,9 +14,9 @@
 
 Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
 {
-    auto cur_pos = size();
-    auto point = m_node->as_wxPoint(prop_name);
-    auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
+    const size_t cur_pos = size();
+    wxPoint point = m_node->as_wxPoint(prop_name);
+    const bool pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
 
     if (m_node->as_string(prop_name).contains("d", wxue::CASE::either))
     {
@@ -89,11 +90,11 @@ Code& Code::Pos(GenEnum::PropName prop_name, int enable_dpi_scaling)
     return *this;
 }
 
-auto Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
-                        wxue::string_view def_style) -> Code&
+Code& Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
+                         wxue::string_view def_style)
 {
-    auto pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
-    auto size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
+    const bool pos_scaling = is_ScalingEnabled(prop_pos, enable_dpi_scaling);
+    const bool size_scaling = is_ScalingEnabled(prop_size, enable_dpi_scaling);
 
     if (m_node->HasValue(prop_window_name))
     {
@@ -146,7 +147,7 @@ auto Code::PosSizeFlags(ScalingType enable_dpi_scaling, bool uses_def_validator,
     {
         Comma();
         Pos(prop_pos, pos_scaling).Comma().WxSize(prop_size, size_scaling).Comma().Style();
-        if (def_style.size() && ends_with(def_style))
+        if (!def_style.empty() && ends_with(def_style))
         {
             erase(size() - def_style.size());
             if (back() == '|')
@@ -194,7 +195,7 @@ Code& Code::PosSizeForceStyle(wxue::string_view force_style, bool uses_def_valid
     return *this;
 }
 
-auto Code::Style(const char* prefix, wxue::string_view force_style) -> Code&
+Code& Code::Style(const char* prefix, wxue::string_view force_style)
 {
     auto add_separator = [this](bool& style_set)
     {
@@ -206,7 +207,7 @@ auto Code::Style(const char* prefix, wxue::string_view force_style) -> Code&
 
     bool style_set = false;
 
-    if (force_style.size())
+    if (!force_style.empty())
     {
         Add(force_style);
         style_set = true;
@@ -223,7 +224,8 @@ auto Code::Style(const char* prefix, wxue::string_view force_style) -> Code&
 
     // Add orientation style
     if (m_node->HasValue(prop_orientation) &&
-        !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+        !m_node->as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL") &&
+        !m_node->as_string(prop_orientation).is_sameas("wxSL_HORIZONTAL"))
     {
         add_separator(style_set);
         style_set = true;
@@ -231,7 +233,7 @@ auto Code::Style(const char* prefix, wxue::string_view force_style) -> Code&
     }
 
     // Note that as_string() may break the line, so recalculate any time as_string() is called
-    auto cur_pos = size();
+    size_t cur_pos = size();
 
     if (m_node->is_Gen(gen_wxRichTextCtrl))
     {
@@ -253,8 +255,8 @@ auto Code::Style(const char* prefix, wxue::string_view force_style) -> Code&
             }
             else
             {
-                wxue::ViewVector multistr(m_node->as_constant(prop_style, prefix), "|",
-                                          wxue::TRIM::both);
+                const wxue::ViewVector multistr(m_node->as_constant(prop_style, prefix), "|",
+                                                wxue::TRIM::both);
                 for (auto& iter: multistr)
                 {
                     if (iter.empty())
@@ -266,20 +268,8 @@ auto Code::Style(const char* prefix, wxue::string_view force_style) -> Code&
 
                     if (iter.is_sameprefix("wx"))
                     {
-                        if (std::string_view language_prefix = GetLanguagePrefix(iter, m_language);
-                            language_prefix.size())
-                        {
-                            // Some languages will have a module added after their standard prefix.
-                            CheckLineLength(language_prefix.size() + iter.size() - 2);
-                            *this << language_prefix << iter.substr(2);
-                        }
-                        else
-                        {
-                            // If there was no sub-language module added (e.g., wx.aui. for
-                            // Python), then use the default language prefix.
-                            CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
-                            *this << m_language_wxPrefix << iter.substr(2);
-                        }
+                        CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
+                        *this << m_language_wxPrefix << iter.substr(2);
                     }
                     else
                     {

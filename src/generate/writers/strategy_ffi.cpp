@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <cctype>
 
@@ -14,7 +15,7 @@
 
 FFIStrategy::FFIStrategy(const LanguageTraits& traits) : CWrapperStrategy(traits) {}
 
-auto FFIStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+std::string FFIStrategy::MapClassName(std::string_view wx_class_name)
 {
     // Default FFI behavior: strip "wx" prefix, keep PascalCase unchanged.
     // Per-language strategies override for language-specific behavior:
@@ -29,7 +30,7 @@ auto FFIStrategy::MapClassName(std::string_view wx_class_name) -> std::string
     return std::string(wx_class_name.substr(2));
 }
 
-auto FFIStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop */) -> bool
+bool FFIStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop */)
 {
     // kwxFFI provides full C++ parity — all features are supported
     return true;
@@ -70,6 +71,7 @@ void FFIStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
 
 void FFIStrategy::EmitPlatformEnd(WriteCode* writer)
 {
+    // Caller guarantees EmitPlatformBegin was invoked first with valid platforms.
     // Default: unindent and emit block_end if the language uses one
     writer->Unindent();
     if (!m_traits.block_end.empty())

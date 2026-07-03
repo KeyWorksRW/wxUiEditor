@@ -262,5 +262,8 @@ private:
     static auto ProcessStaticBoxSizerDeclaration(const wxue::string& class_name, Node* node,
                                                  wxue::string& code) -> void;
 
+    // Writes lambda event code lines with proper indentation tracking
+    auto WriteLambdaEventLines(Code& code) -> void;
+
     std::mutex m_embedded_images_mutex;  // Protects m_embedded_images from concurrent access
 };

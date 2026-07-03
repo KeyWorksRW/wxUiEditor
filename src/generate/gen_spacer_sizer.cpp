@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #include <wx/sizer.h>
 
@@ -17,12 +18,12 @@
 
 bool SpacerGenerator::ConstructionCode(Code& code)
 {
-    auto* node = code.node();
+    const Node* node = code.node();
     code.ParentName();
 
     if (node->get_Parent()->is_Gen(gen_wxGridBagSizer))
     {
-        auto flags = node->getSizerFlags();
+        const wxSizerFlags flags = node->getSizerFlags();
 
         code.Function("Add(").as_string(prop_width).Comma().as_string(prop_height);
         code.Comma().Object("wxGBPosition").as_string(prop_row).Comma().as_string(prop_column) +=
@@ -89,7 +90,7 @@ bool SpacerGenerator::ConstructionCode(Code& code)
 int SpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item = object;
-    auto result = BaseGenerator::xrc_updated;
+    constexpr int result = BaseGenerator::xrc_updated;
 
     item.append_attribute("class").set_value("spacer");
     item.append_child("size").text().set(wxue::string() << node->as_string(prop_width) << ','

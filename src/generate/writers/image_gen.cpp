@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <wx/artprov.h>
 
@@ -12,6 +13,8 @@
 #include <span>
 #include <tuple>
 #include <vector>
+
+#include <frozen/map.h>
 
 #include "image_gen.h"
 
@@ -47,7 +50,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
     bool is_namespace_written = false;
     // -12 to account for 8 indent + max 3 chars for number + comma
-    const size_t cpp_line_length = Project.as_size_t(prop_cpp_line_length) - 12;
+    const size_t cpp_line_length = (Project.as_size_t(prop_cpp_line_length) > 12) ?
+                                       Project.as_size_t(prop_cpp_line_length) - 12 :
+                                       80;
 
     for (const auto* iter_array: m_embedded_images)
     {
@@ -185,12 +190,16 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
 // clang-format off
 
-const std::map<GenLang, GenEnum::PropName> map_lang_to_prop = {
-
-    { GenLang::cplusplus, prop_cpp_line_length },
-    { GenLang::python, prop_python_line_length },
-    { GenLang::ruby, prop_ruby_line_length  },
-};
+constexpr auto map_lang_to_prop = frozen::make_map<GenLang, GenEnum::PropName>({
+    { GenLang::cplusplus,  prop_cpp_line_length        },
+    { GenLang::python,     prop_python_line_length     },
+    { GenLang::ruby,       prop_ruby_line_length       },
+    { GenLang::fortran,    prop_fortran_line_length    },
+    { GenLang::go,         prop_go_line_length         },
+    { GenLang::julia,      prop_julia_line_length      },
+    { GenLang::luajit,     prop_lua_line_length        },
+    { GenLang::typescript, prop_typescript_line_length },
+});
 
 // clang-format on
 
@@ -203,14 +212,14 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
         tab_quote_prefix = RUBY_PREFIX_SIZE;
     }
     GenEnum::PropName prop = prop_python_line_length;
-    if (const std::map<GenLang, GenEnum::PropName>::const_iterator result =
-            map_lang_to_prop.find(language);
-        result != map_lang_to_prop.end())
+    if (const auto result = map_lang_to_prop.find(language); result != map_lang_to_prop.end())
     {
         prop = result->second;
     }
 
-    const size_t line_length = Project.as_size_t(prop) - tab_quote_prefix;
+    const size_t line_length = (Project.as_size_t(prop) > tab_quote_prefix + 4) ?
+                                   Project.as_size_t(prop) - tab_quote_prefix :
+                                   76;
 
     constexpr auto base64_chars = std::to_array(
         { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -295,7 +304,7 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
         a3_to_a4();
 
-        for (size_t a4_pos = 0; a4_pos < a3_pos + 1; a4_pos++)
+        for (size_t a4_pos = 0; a4_pos < a3_pos + 1; ++a4_pos)
         {
             line += base64_chars.at(char_array_4.at(a4_pos));
         }
@@ -304,8 +313,11 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
             line += '=';
         }
     }
-    line += line_end;
-    result.emplace_back(line);
+    if (line.size() > line_begin.size())
+    {
+        line += line_end;
+        result.emplace_back(line);
+    }
 
     return result;
 }

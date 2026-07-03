@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "strategy_python.h"
 
@@ -43,10 +44,14 @@ void PythonStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         else
         {
             code.Eol() << "if ";
+            has_prior = true;
         }
         code << "wx.Platform == \"mac\"";
     }
-    code << ':';
+    if (has_prior)
+    {
+        code << ':';
+    }
 }
 
 void PythonStrategy::EmitPlatformEnd(WriteCode* writer)
@@ -55,7 +60,7 @@ void PythonStrategy::EmitPlatformEnd(WriteCode* writer)
     writer->Unindent();
 }
 
-auto PythonStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+std::string PythonStrategy::MapClassName(std::string_view wx_class_name)
 {
     if (!wx_class_name.starts_with("wx"))
     {

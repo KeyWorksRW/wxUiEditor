@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #include <array>
 
@@ -27,7 +28,7 @@
 
 namespace
 {
-    auto CanUseCreateStdDialogButtonSizer(Node* node) -> bool
+    bool CanUseCreateStdDialogButtonSizer(Node* node)
     {
         // The CreateStdDialogButtonSizer() code does not support a wxID_SAVE or
         // wxID_CONTEXT_HELP button even though wxStdDialogButtonSizer does support it.
@@ -40,7 +41,7 @@ namespace
     {
         auto AddBitFlag = [&](std::string_view flag)
         {
-            if (flags.size())
+            if (!flags.empty())
             {
                 flags << '|';
             }
@@ -106,7 +107,7 @@ namespace
         }
     }
 
-    auto GenerateButtonName(const Code& code, std::string_view var_name) -> wxue::string
+    wxue::string GenerateButtonName(const Code& code, std::string_view var_name)
     {
         wxue::string btn_name;
         if (code.is_cpp())
@@ -159,9 +160,9 @@ namespace
     }
 }  // namespace
 
-auto StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent) -> wxObject*
+wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto* dlg = wxDynamicCast(parent, wxDialog);
+    wxDialog* dialog = wxDynamicCast(parent, wxDialog);
     auto* sizer = new wxStdDialogButtonSizer();
 
     sizer->SetMinSize(node->as_wxSize(prop_minimum_size));
@@ -173,25 +174,25 @@ auto StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent) -
     else if (node->as_bool(prop_Yes))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_YES));
-        if (dlg)
+        if (dialog)
         {
-            dlg->SetAffirmativeId(wxID_YES);
+            dialog->SetAffirmativeId(wxID_YES);
         }
     }
     else if (node->as_bool(prop_Save))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_SAVE));
-        if (dlg)
+        if (dialog)
         {
-            dlg->SetAffirmativeId(wxID_SAVE);
+            dialog->SetAffirmativeId(wxID_SAVE);
         }
     }
     if (node->as_bool(prop_No))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_NO));
-        if (dlg)
+        if (dialog)
         {
-            dlg->SetEscapeId(wxID_NO);
+            dialog->SetEscapeId(wxID_NO);
         }
     }
 
@@ -202,9 +203,9 @@ auto StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent) -
     else if (node->as_bool(prop_Close))
     {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CLOSE));
-        if (dlg)
+        if (dialog)
         {
-            dlg->SetEscapeId(wxID_CLOSE);
+            dialog->SetEscapeId(wxID_CLOSE);
         }
     }
 
@@ -238,12 +239,12 @@ auto StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent) -
     return sizer;
 }
 
-auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
+bool StdDialogButtonSizerGenerator::ConstructionCode(Code& code)
 {
     code.AddAuto();
 
     Node* node = code.node();
-    const auto& def_btn_name = node->as_string(prop_default_button);
+    const wxue::string& def_btn_name = node->as_string(prop_default_button);
 
     if (CanUseCreateStdDialogButtonSizer(node))
     {
@@ -260,7 +261,7 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
 
     code.NodeName().CreateClass(false, "wxStdDialogButtonSizer").EndFunction();
 
-    auto min_size = node->as_wxSize(prop_minimum_size);
+    const wxSize min_size = node->as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code.Eol().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
@@ -276,7 +277,7 @@ auto StdDialogButtonSizerGenerator::ConstructionCode(Code& code) -> bool
         }
         if (!code.is_local_var() || def_btn_name == var_name)
         {
-            const auto btn_name = GenerateButtonName(code, var_name);
+            const wxue::string btn_name = GenerateButtonName(code, var_name);
             AddNamedButton(code, btn_name, button_id, var_name, def_btn_name);
         }
         else
@@ -337,10 +338,10 @@ namespace
     void AddXrcButton(pugi::xml_node& parent_item, const char* button_id, Node* node,
                       const char* default_name)
     {
-        auto button_parent = parent_item.append_child("object");
+        pugi::xml_node button_parent = parent_item.append_child("object");
         button_parent.append_attribute("class").set_value("button");
 
-        auto button = button_parent.append_child("object");
+        pugi::xml_node button = button_parent.append_child("object");
         button.append_attribute("class").set_value("wxButton");
         button.append_attribute("name").set_value(button_id);
 
@@ -352,22 +353,22 @@ namespace
 
     void AddXrcContextHelpButton(pugi::xml_node& parent_item)
     {
-        auto button_parent = parent_item.append_child("object");
+        pugi::xml_node button_parent = parent_item.append_child("object");
         button_parent.append_attribute("class").set_value("button");
 
-        auto button = button_parent.append_child("object");
+        pugi::xml_node button = button_parent.append_child("object");
         button.append_attribute("class").set_value("wxButton");
         button.append_attribute("name").set_value("wxID_CONTEXT_HELP");
         button.append_child("label").text().set("?");
     }
 
-    auto SetupXrcItemWithStaticLine(Node* node, pugi::xml_node& object) -> pugi::xml_node
+    pugi::xml_node SetupXrcItemWithStaticLine(Node* node, pugi::xml_node& object)
     {
         object.append_attribute("class").set_value("sizeritem");
         object.append_child("flag").text().set("wxLEFT|wxRIGHT|wxTOP|wxEXPAND");
         object.append_child("border").text().set("5");
 
-        auto item = object.append_child("object");
+        pugi::xml_node item = object.append_child("object");
         item.append_attribute("class").set_value("wxBoxSizer");
         item.append_child("orient").text().set("wxVERTICAL");
 
@@ -385,19 +386,17 @@ namespace
     }
 }  // namespace
 
-auto StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
-                                                 size_t /* xrc_flags */) -> int
+int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
+                                                size_t /* xrc_flags */)
 {
     pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
+    int result = BaseGenerator::xrc_sizer_item_created;
 
     if (node->get_Parent()->is_Sizer())
     {
-        // BUGBUG: [Randalphwa - 08-06-2023] This should be added with a platform directive
-
-        // In C++, we would call CreateSeparatedSizer to get the line on Windows and Unix, but not
-        // on Mac. XRC doesn't support this, so we emulate it by adding the line. That's not correct
-        // on a Mac, though...
+        // BUGBUG: [Randalphwa - 08-06-2023] XRC currently lacks a <platform> wrapper, so the
+        // static line separator is emitted unconditionally. On macOS this is incorrect — C++
+        // uses CreateSeparatedSizer (platform-aware) and omits the separator on Mac.
 
         if (node->as_bool(prop_static_line))
         {
@@ -418,7 +417,10 @@ auto StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obj
     item.append_attribute("class").set_value("wxStdDialogButtonSizer");
     item.append_attribute("name").set_value(node->as_string(prop_var_name));
 
-    // BUGBUG: [Randalphwa - 08-06-2023] Need to set min size if specified
+    if (node->HasValue(prop_minimum_size))
+    {
+        item.append_child("minsize").text().set(node->as_string(prop_minimum_size));
+    }
 
     // You can only have one of: Ok, Yes, Save
     if (node->as_bool(prop_OK))
@@ -475,8 +477,7 @@ void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node unused */,
 
 namespace
 {
-    [[nodiscard]] auto GetEventCodeForLanguage(GenLang language, std::string_view value)
-        -> std::string
+    [[nodiscard]] std::string GetEventCodeForLanguage(GenLang language, std::string_view value)
     {
         switch (language)
         {
@@ -508,7 +509,7 @@ namespace
             { "ApplyButton", "_apply" },
         });
 
-    [[nodiscard]] auto GetButtonIdSuffix(std::string_view event_name) -> std::string_view
+    [[nodiscard]] std::string_view GetButtonIdSuffix(std::string_view event_name)
     {
         for (const auto& [prefix, suffix]: button_suffix_map)
         {
@@ -532,7 +533,7 @@ namespace
         { "ContextHelpButton", "wxID_CONTEXT_HELP" },
     });
 
-    [[nodiscard]] auto GetButtonIdConstant(std::string_view event_name) -> std::string_view
+    [[nodiscard]] std::string_view GetButtonIdConstant(std::string_view event_name)
     {
         for (const auto& [prefix, id_btn]: button_id_map)
         {
@@ -547,7 +548,7 @@ namespace
     void GenerateHandlerCode(Code& handler, const Code& code, const std::string& event_code,
                              NodeEvent* event, const std::string& class_name, std::string& comma)
     {
-        if (event_code.find('[') != std::string::npos || event_code.find("::") != std::string::npos)
+        if (event_code.find('[') != std::string::npos)
         {
             // BUGBUG: [Randalphwa - 08-19-2025] Why aren't we supporting Python and Ruby lambdas
             // like we do in gen_events.cpp
@@ -607,10 +608,10 @@ namespace
     }
 
     // Returns true if the Bind code is complete, false if more needs to be added
-    [[nodiscard]] auto AddButtonIdentifier(Code& code, NodeEvent* event) -> bool
+    [[nodiscard]] bool AddButtonIdentifier(Code& code, NodeEvent* event)
     {
-        const auto& event_name = event->get_name();
-        const auto is_script_lang =
+        const std::string_view& event_name = event->get_name();
+        const bool is_script_lang =
             (code.get_language() == GenLang::python || code.get_language() == GenLang::ruby);
 
         if (is_script_lang)
@@ -643,7 +644,7 @@ namespace
         }
         else
         {
-            const auto id_constant = GetButtonIdConstant(event_name);
+            const std::string_view id_constant = GetButtonIdConstant(event_name);
             if (!id_constant.empty())
             {
                 code.Add(id_constant);
@@ -671,14 +672,14 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
                                              const std::string& class_name)
 {
     Code handler(event->getNode(), code.get_language());
-    const auto event_code = GetEventCodeForLanguage(code.get_language(), event->get_value());
+    const std::string event_code = GetEventCodeForLanguage(code.get_language(), event->get_value());
 
     // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on
     // it's own line, so we use a string for this to allow the lambda processing code to replace it.
     std::string comma(", ");
     GenerateHandlerCode(handler, code, event_code, event, class_name, comma);
 
-    std::string_view event_name =
+    const std::string_view event_name =
         (event->get_EventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" :
                                                                          "wxEVT_UPDATE_UI");
     GenerateEventBinding(code, event_name, handler.GetCode(), comma);
@@ -689,9 +690,9 @@ void StdDialogButtonSizerGenerator::GenEvent(Code& code, NodeEvent* event,
     code.EndFunction();
 }
 
-auto StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                                 std::set<std::string>& set_hdr,
-                                                GenLang /* language */) -> bool
+                                                GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);

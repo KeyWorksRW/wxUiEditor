@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "file_codewriter.h"  // FileCodeWriter -- Class to write code to disk
 #include "gen_results.h"      // Code generation file writing functions
@@ -21,27 +22,28 @@
 #include "gen_xrc.h"         // XrcGenerator -- Generate XRC code
 
 #include "pugixml.hpp"
+#include <format>
 #include <memory>
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
 
 using namespace code;
 
-auto GenInheritedClass(GenResults& results) -> void
+void GenInheritedClass(GenResults& results)
 {
-    wxue::SaveCwd cwd(wxue::restore_cwd);
+    const wxue::SaveCwd saved_cwd(wxue::restore_cwd);
     Project.ChangeDir();
     wxue::string path;
 
     wxue::string source_ext(".cpp");
     wxue::string header_ext(".h");
 
-    if (const auto& extProp = Project.as_string(prop_source_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_source_ext); !extProp.empty())
     {
         source_ext = extProp;
     }
 
-    if (const auto& extProp = Project.as_string(prop_header_ext); extProp.size())
+    if (const auto& extProp = Project.as_string(prop_header_ext); !extProp.empty())
     {
         header_ext = extProp;
     }
@@ -51,7 +53,7 @@ auto GenInheritedClass(GenResults& results) -> void
 
     for (const auto& form: forms)
     {
-        if (const auto& file = form->as_string(prop_derived_file); !file.size())
+        if (const auto& file = form->as_string(prop_derived_file); file.empty())
         {
             continue;
         }
@@ -83,7 +85,7 @@ auto GenInheritedClass(GenResults& results) -> void
         auto cpp_cw = std::make_unique<FileCodeWriter>(path);
         codegen.SetSrcWriteCode(cpp_cw.get());
 
-        auto retval = codegen.GenerateDerivedClass(form);
+        int retval = codegen.GenerateDerivedClass(form);
         if (retval == result::fail)
         {
             results.GetMsgs().emplace_back(

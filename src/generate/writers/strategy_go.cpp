@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "strategy_go.h"
 
@@ -12,7 +13,7 @@
 
 GoStrategy::GoStrategy(const LanguageTraits& traits) : FFIStrategy(traits) {}
 
-auto GoStrategy::MapClassName(std::string_view wx_class_name) -> std::string
+std::string GoStrategy::MapClassName(std::string_view wx_class_name)
 {
     // wxButton → Button (Go uses package-qualified: wx.Button)
     if (!wx_class_name.starts_with("wx"))
@@ -34,7 +35,7 @@ void GoStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         {
             if (has_prior)
             {
-                code << " || ";
+                code << m_traits.logical_or;
             }
             else
             {

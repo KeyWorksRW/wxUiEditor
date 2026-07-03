@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include <wx/file.h>      // wxFile - encapsulates low-level "file descriptor"
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
@@ -31,14 +32,13 @@ using namespace code;
 //    we added and replace it with the original file's content (preserving user edits).
 // 4. Also handles cleanup of duplicate asterisk lines from earlier buggy versions.
 
-auto FileCodeWriter::WriteFile(GenLang language, int flags,
-                               Node* node)  // NOLINT (cppcheck-suppress)
-    -> int                                  // NOLINT (cppcheck-suppress)
+int FileCodeWriter::WriteFile(GenLang language, int flags,
+                              Node* node)  // NOLINT (cppcheck-suppress)
 {
     ASSERT_MSG(!m_filename.GetFullPath().IsEmpty(),
                "Filename must be set before calling WriteFile()");
 
-    if (int dir_result = EnsureDirectoryExists(flags); dir_result != 0)
+    if (const int dir_result = EnsureDirectoryExists(flags); dir_result != 0)
     {
         return dir_result;
     }
@@ -67,8 +67,8 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
 
     // TODO: [Randalphwa - 11-28-2025] Do we ever create temporary files with names starting with
     // '~' anymore? If not, this needs to go away.
-    bool is_comparing = (!m_filename.GetName().IsEmpty() && m_filename.GetName()[0] == '~');
-    if (int result = ReadOriginalFile(is_comparing); result != 0)
+    const bool is_comparing = (!m_filename.GetName().IsEmpty() && m_filename.GetName()[0] == '~');
+    if (const int result = ReadOriginalFile(is_comparing); result != 0)
     {
         // TODO: [Randalphwa - 11-06-2025] Need to be sure caller handles this properly
         return result;
@@ -122,14 +122,15 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
         {
             // Generated code matches. Now verify there's an 'end' statement somewhere
             // after the </auto-generated> marker in the original file.
-            auto remaining = std::string_view(m_org_buffer).substr(m_fake_content_pos);
+            const std::string_view remaining =
+                std::string_view(m_org_buffer).substr(m_fake_content_pos);
 
             // Find first non-whitespace character
-            auto first_non_ws = remaining.find_first_not_of(" \t\r\n");
+            const size_t first_non_ws = remaining.find_first_not_of(" \t\r\n");
             if (first_non_ws != std::string_view::npos)
             {
                 // There's content after </auto-generated> - check if it starts with 'end'
-                auto content_start = remaining.substr(first_non_ws);
+                const std::string_view content_start = remaining.substr(first_non_ws);
                 if (content_start.starts_with("end"))
                 {
                     // Original file has 'end' statement - file is current, no write needed.
@@ -160,7 +161,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     if (m_language != GenLang::ruby && m_org_buffer.size() == m_buffer.size())
     {
         // Non-Ruby, same size but different content - try to append original user content.
-        auto begin_user_content = m_buffer.size();
+        const size_t begin_user_content = m_buffer.size();
         std::ignore = AppendOriginalUserContent(begin_user_content);
 
         // Check if buffers match after appending (or attempting to append) user content
@@ -188,7 +189,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
                            150);  // Pre-allocate assuming average line length of 80 chars
         m_org_file.ReadString(std::string_view(m_org_buffer));
     }
-    auto line = FindAdditionalContentIndex();
+    const std::ptrdiff_t line = FindAdditionalContentIndex();
     if (line == -1)
     {
         // The original file is missing the final comment block marker.
@@ -210,7 +211,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
         // Real user content exists after the final comment block in the original file.
         // Set m_additional_content to mark where user content begins, then append it.
         m_additional_content = line;
-        (void) AppendOriginalUserContent(0);
+        std::ignore = AppendOriginalUserContent(0);
         // Verify buffers differ before writing
         if (m_buffer.size() == m_org_buffer.size() &&
             std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
@@ -232,7 +233,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     return (m_flags & flag_test_only) ? write_needed : WriteToFile();
 }
 
-[[nodiscard]] auto FileCodeWriter::GetCommentLineToFind(GenLang language) -> std::string_view
+[[nodiscard]] std::string_view FileCodeWriter::GetCommentLineToFind(GenLang language)
 {
     if (language == GenLang::cplusplus)
     {
@@ -250,7 +251,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     return {};
 }
 
-[[nodiscard]] auto FileCodeWriter::GetBlockLength(GenLang language) -> size_t
+[[nodiscard]] size_t FileCodeWriter::GetBlockLength(GenLang language)
 {
     if (language == GenLang::cplusplus)
     {
@@ -268,9 +269,9 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     return 0;
 }
 
-[[nodiscard]] auto FileCodeWriter::IsOldStyleFile() -> bool
+[[nodiscard]] bool FileCodeWriter::IsOldStyleFile()
 {
-    constexpr auto npos = std::string::npos;
+    constexpr size_t npos = std::string::npos;
     return m_org_file.size() > 3 && m_org_file[1].find("Code generated by wxUiEditor") != npos &&
            m_org_file[3].find(
                "DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!") != npos;
@@ -284,7 +285,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
 // (with </auto-generated> marker). Returns the first line after the comment block
 // without skipping any content - the caller (AppendOriginalUserContent) is responsible
 // for handling duplicate lines and preserving the original file's structure.
-[[nodiscard]] auto FileCodeWriter::FindAdditionalContentIndex() -> std::ptrdiff_t
+[[nodiscard]] std::ptrdiff_t FileCodeWriter::FindAdditionalContentIndex()
 {
     // Step 1: Find the "End of generated code" comment line
     // Optimization: Check last ~15 lines first since most files won't have user content
@@ -350,7 +351,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
         for (size_t line_index = static_cast<size_t>(end_comment_line_index) + 1;
              line_index < m_org_file.size(); ++line_index)
         {
-            auto line = m_org_file[line_index];
+            const std::string_view line = m_org_file[line_index];
             if (line.find("***********************************************") !=
                 std::string_view::npos)
             {
@@ -368,7 +369,7 @@ auto FileCodeWriter::WriteFile(GenLang language, int flags,
     }
 
     // Step 3: New 1.3 style file - user content starts after "</auto-generated>"
-    std::ptrdiff_t user_content_start = auto_generated_end_index + 1;
+    const std::ptrdiff_t user_content_start = auto_generated_end_index + 1;
 
     // Step 4: Return the line after </auto-generated> as the start of user content.
     // We do NOT skip fake content (Ruby 'end', C++ '};', Perl '1;') here because:
@@ -454,7 +455,7 @@ void FileCodeWriter::AppendEndOfFileBlock()
 
 void FileCodeWriter::AppendMissingCommentBlockWarning()
 {
-    const auto* const comment_char = (m_language == GenLang::cplusplus) ? "//" : "#";
+    const char* const comment_char = (m_language == GenLang::cplusplus) ? "//" : "#";
 
     m_buffer += "\n";
     m_buffer += comment_char;
@@ -473,7 +474,7 @@ void FileCodeWriter::AppendMissingCommentBlockWarning()
     }
 }
 
-auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) -> bool
+bool FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content)
 {
     if (m_org_file.empty())
     {
@@ -496,7 +497,7 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
     auto start_idx = static_cast<size_t>(m_additional_content);
     while (start_idx < m_org_file.size())
     {
-        auto line = m_org_file[start_idx];
+        const std::string_view line = m_org_file[start_idx];
 
         // Skip blank/whitespace-only lines
         if (line.find_first_not_of(" \t\r\n") == std::string_view::npos)
@@ -536,13 +537,13 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
 
     // Calculate total length to reserve in m_buffer before appending user content
     size_t total_length = 0;
-    for (auto idx = start_idx; idx < m_org_file.size(); ++idx)
+    for (size_t idx = start_idx; idx < m_org_file.size(); ++idx)
     {
         total_length += m_org_file[idx].length() + 1;  // +1 for '\n'
     }
     m_buffer.reserve(m_buffer.size() + total_length);
 
-    for (auto idx = start_idx; idx < m_org_file.size(); ++idx)
+    for (size_t idx = start_idx; idx < m_org_file.size(); ++idx)
     {
         m_buffer += m_org_file[idx];
         m_buffer += "\n";
@@ -551,7 +552,7 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
     return true;
 }
 
-[[nodiscard]] auto FileCodeWriter::ReadOriginalFile(bool is_comparing) -> int
+[[nodiscard]] int FileCodeWriter::ReadOriginalFile(bool is_comparing)
 {
     wxFileName org_filename(m_filename);
     if (is_comparing)
@@ -564,11 +565,11 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
     wxFile file(org_filename.GetFullPath());
     if (file.IsOpened())
     {
-        wxFileOffset length = file.Length();
+        const wxFileOffset length = file.Length();
         if (length > 0)
         {
             m_org_buffer.resize(static_cast<size_t>(length));
-            if (file.Read(m_org_buffer.data(), length) == wxInvalidOffset)
+            if (file.Read(m_org_buffer.data(), length) != static_cast<wxFileOffset>(length))
             {
                 m_org_buffer.clear();
                 return write_cant_read;
@@ -584,7 +585,7 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
     return 0;
 }
 
-[[nodiscard]] auto FileCodeWriter::EnsureDirectoryExists(int flags) -> int
+[[nodiscard]] int FileCodeWriter::EnsureDirectoryExists(int flags)
 {
     // In test-only mode, we don't need to check or create directories
     if (flags & flag_test_only)
@@ -609,8 +610,8 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
 
     wxString msg("The directory:\n    \"" + dir.GetFullPath() +
                  "\"\ndoesn't exist. Would you like it to be created?");
-    wxMessageDialog dlg(nullptr, msg, "Generate Files", wxICON_WARNING | wxYES_NO);
-    if (dlg.ShowModal() == wxID_YES)
+    wxMessageDialog dialog(nullptr, msg, "Generate Files", wxICON_WARNING | wxYES_NO);
+    if (dialog.ShowModal() == wxID_YES)
     {
         if (!wxFileName::Mkdir(dir.GetFullPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
         {
@@ -627,7 +628,7 @@ auto FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content) ->
     return 0;
 }
 
-[[nodiscard]] auto FileCodeWriter::WriteToFile() -> int
+[[nodiscard]] int FileCodeWriter::WriteToFile()
 {
     wxFile fileOut;
     if (!fileOut.Create(m_filename.GetFullPath(), true))

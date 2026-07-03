@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-02-2026]
 
 #include <wx/sizer.h>
 
@@ -22,25 +23,25 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto* sizer = new wxFlexGridSizer(node->as_int(prop_rows), node->as_int(prop_cols),
                                       node->as_int(prop_vgap), node->as_int(prop_hgap));
-    if (auto* dlg = wxDynamicCast(parent, wxDialog); dlg)
+    if (auto* dialog = wxDynamicCast(parent, wxDialog); dialog)
     {
-        if (!dlg->GetSizer())
+        if (!dialog->GetSizer())
         {
-            dlg->SetSizer(sizer);
+            dialog->SetSizer(sizer);
         }
     }
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (const auto& growable = node->as_string(prop_name); growable.size())
+        if (const auto& growable = node->as_string(prop_name); !growable.empty())
         {
-            wxue::ViewVector values(growable, ',');
-            auto rows = node->as_int(prop_rows);
-            auto cols = node->as_int(prop_cols);
-            int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
+            const wxue::ViewVector values(growable, ',');
+            const int rows = node->as_int(prop_rows);
+            const int cols = node->as_int(prop_cols);
+            const int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
             for (const auto& iter: values)
             {
-                const auto value = iter.atoi();
+                const int value = iter.atoi();
                 if (value <= row_or_col)
                 {
                     int proportion = 0;
@@ -95,15 +96,15 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
 
     auto lambda = [&](GenEnum::PropName prop_name)
     {
-        if (const auto& growable = node->as_string(prop_name); growable.size())
+        if (const auto& growable = node->as_string(prop_name); !growable.empty())
         {
-            wxue::ViewVector values(growable, ',');
-            auto rows = node->as_int(prop_rows);
-            auto cols = node->as_int(prop_cols);
-            int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
+            const wxue::ViewVector values(growable, ',');
+            const int rows = node->as_int(prop_rows);
+            const int cols = node->as_int(prop_cols);
+            const int row_or_col = (prop_name == prop_growablerows) ? rows : cols;
             for (const auto& iter: values)
             {
-                const auto val = iter.atoi();
+                const int val = iter.atoi();
                 if (val <= row_or_col)
                 {
                     if (!is_within_braces)
@@ -143,7 +144,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
     lambda(prop_growablecols);
     lambda(prop_growablerows);
 
-    const auto& direction = node->as_string(prop_flexible_direction);
+    const wxue::string& direction = node->as_string(prop_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         if (is_within_braces)
@@ -159,7 +160,7 @@ bool FlexGridSizerGenerator::ConstructionCode(Code& code)
         .Add(direction)
         .EndFunction();
 
-    const auto& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
+    const wxue::string& non_flex_growth = node->as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         if (is_within_braces)
@@ -196,7 +197,7 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
         code.NodeName().Function("ShowItems(").False().EndFunction();
     }
 
-    auto* parent = code.node()->get_Parent();
+    const Node* parent = code.node()->get_Parent();
     if (!parent->is_Sizer() && !parent->is_Gen(gen_wxDialog) && !parent->is_Gen(gen_PanelForm) &&
         !parent->is_Gen(gen_wxPopupTransientWindow))
     {
@@ -243,7 +244,7 @@ bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
+    int result = BaseGenerator::xrc_sizer_item_created;
 
     if (node->get_Parent()->is_Sizer())
     {

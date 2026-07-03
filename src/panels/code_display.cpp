@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-01-2026]
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
@@ -49,7 +50,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
     // which is not cross-platform. See issue #597.
 
-    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    const FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
 
     // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
@@ -63,7 +64,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
 
 void CodeDisplay::OnFind(wxFindDialogEvent& event)
 {
-    auto wxflags = event.GetFlags();
+    const int wxflags = event.GetFlags();
     int sciflags = 0;
 
     if (wxflags & wxFR_WHOLEWORD)
@@ -75,7 +76,7 @@ void CodeDisplay::OnFind(wxFindDialogEvent& event)
         sciflags |= wxSTC_FIND_MATCHCASE;
     }
 
-    int result;
+    int result {};
     if (wxflags & wxFR_DOWN)
     {
         m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
@@ -138,14 +139,13 @@ void CodeDisplay::OnNodeSelected(Node* node)
         return;
     }
 
-    if (!node->HasProp(prop_var_name) && m_panel_type != GenLang::xrc &&
-        !node->is_Gen(gen_ribbonTool) && !node->is_Gen(gen_ribbonButton))
+    if (!node->HasProp(prop_var_name) && m_panel_type != GenLang::xrc)
     {
         return;  // probably a form, spacer, or image
     }
 
-    auto is_event = wxGetFrame().get_PropPanel()->IsEventPageShowing();
-    PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
+    const bool is_event = wxGetFrame().get_PropPanel()->IsEventPageShowing();
+    const PANEL_PAGE page = wxGetFrame().GetCppPanel()->GetPanelPage();
 
     if (m_panel_type != GenLang::cplusplus && page != PANEL_PAGE::SOURCE_PANEL)
     {
@@ -172,16 +172,16 @@ void CodeDisplay::OnNodeSelected(Node* node)
             line = (to_int) m_view.FindLineContaining(name);
             if (!wxue::is_found(line))
             {
-                name.Replace("->Bind", " = ");
+                std::ignore = name.Replace("->Bind", " = ");
                 line = (to_int) m_view.FindLineContaining(name);
             }
         }
         else
         {
-            auto map_events = node->get_MapEvents();
+            const NodeMapEvents map_events = node->get_MapEvents();
             for (auto& iter: map_events)
             {
-                auto value = iter.second.get_value();
+                const std::string value = iter.second.get_value();
                 if (value.empty())
                 {
                     continue;
@@ -198,7 +198,6 @@ void CodeDisplay::OnNodeSelected(Node* node)
     if (m_panel_type == GenLang::xrc)
     {
         wxue::string search("name=\"");
-        ;
         if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
         {
             search << node->get_PropId();
@@ -222,7 +221,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
             {
                 wxue::ViewVector parts(node->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
                                        wxue::TRIM::both);
-                if (parts.size() && parts[IndexImage].size())
+                if (!parts.empty() && !parts[IndexImage].empty())
                 {
                     if (auto result = FileNameToVarName(parts[IndexImage]); result)
                     {
@@ -300,16 +299,16 @@ void CodeDisplay::OnRibbonToolSelected(Node* node)
                    << ",";
             if (m_panel_type == GenLang::python)
             {
-                search.Replace("->", ".");
+                std::ignore = search.Replace("->", ".");
             }
             if (m_panel_type == GenLang::ruby)
             {
-                search.Replace("->AddTool(", ".add_tool($");
+                std::ignore = search.Replace("->AddTool(", ".add_tool($");
             }
         }
     }
 
-    if (search.size())
+    if (!search.empty())
     {
         if (auto line = (to_int) m_view.FindLineContaining(search); line >= 0)
         {
@@ -326,7 +325,7 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
     if (node->HasValue(prop_bitmap))
     {
         auto func_name = ProjectImages.GetBundleFuncName(node->as_string(prop_bitmap));
-        if (func_name.size())
+        if (!func_name.empty())
         {
             if (func_name.starts_with("wxue_img::"))
             {
@@ -346,7 +345,7 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
             }
 
             // For icons, there is no bundle, just an image_ function
-            func_name.Replace("bundle_", "image_");
+            std::ignore = func_name.Replace("bundle_", "image_");
             if (auto line = (to_int) m_view.FindLineContaining(func_name); line >= 0)
             {
                 m_scintilla->MarkerDeleteAll(node_marker);
@@ -356,7 +355,7 @@ void CodeDisplay::OnEmbedImageSelected(Node* node)
             }
 
             // If all else fails, try just the name. This will also handle Python and Ruby panels
-            func_name.Replace("image_", "");
+            std::ignore = func_name.Replace("image_", "");
             if (auto line = (to_int) m_view.FindLineContaining(func_name); line >= 0)
             {
                 m_scintilla->MarkerDeleteAll(node_marker);

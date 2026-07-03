@@ -4,8 +4,10 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-30-2026]
 
 #include "gen_xrc_utils.h"
+#include <format>
 
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "image_handler.h"    // ImageHandler class
@@ -58,7 +60,7 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
         }
         if (node->as_string(prop_platforms).contains("Unix"))
         {
-            if (platforms.size())
+            if (!platforms.empty())
             {
                 platforms += "|";
             }
@@ -66,7 +68,7 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
         }
         if (node->as_string(prop_platforms).contains("Mac"))
         {
-            if (platforms.size())
+            if (!platforms.empty())
             {
                 platforms += "|";
             }
@@ -95,7 +97,7 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     flags += node->as_string(prop_borders);
     if (node->HasValue(prop_flags))
     {
-        if (flags.size())
+        if (!flags.empty())
         {
             flags += '|';
         }
@@ -103,7 +105,7 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     }
     if (node->HasValue(prop_alignment))
     {
-        if (flags.size())
+        if (!flags.empty())
         {
             flags += '|';
         }
@@ -138,7 +140,7 @@ void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style
     wxue::string combined_style(node->as_string(prop_style));
     if (other_style != prop_unknown && node->HasValue(other_style))
     {
-        if (combined_style.size())
+        if (!combined_style.empty())
         {
             combined_style += '|';
         }
@@ -147,14 +149,14 @@ void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style
 
     if (node->HasValue(prop_window_style))
     {
-        if (combined_style.size())
+        if (!combined_style.empty())
         {
             combined_style += '|';
         }
         combined_style += node->as_string(prop_window_style);
     }
 
-    if (combined_style.size())
+    if (!combined_style.empty())
     {
         object.append_child("style").text().set(combined_style);
     }
@@ -175,14 +177,14 @@ void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view 
 
     if (node->HasValue(prop_window_style))
     {
-        if (combined_style.size())
+        if (!combined_style.empty())
         {
             combined_style += '|';
         }
         combined_style += node->as_string(prop_window_style);
     }
 
-    if (combined_style.size())
+    if (!combined_style.empty())
     {
         object.append_child("style").text().set(combined_style);
     }
@@ -198,7 +200,7 @@ void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view 
 }
 
 // clang-format off
-static std::map<wxFontWeight, const char*> s_weight_pairs = {
+static const std::map<wxFontWeight, const char*> s_weight_pairs = {
     { wxFONTWEIGHT_THIN, "thin" },
     { wxFONTWEIGHT_EXTRALIGHT, "extralight" },
     { wxFONTWEIGHT_LIGHT,"light" },
@@ -211,7 +213,7 @@ static std::map<wxFontWeight, const char*> s_weight_pairs = {
     { wxFONTWEIGHT_EXTRAHEAVY, "extraheavy" },
 };
 
-static std::map<wxFontFamily, const char*> s_family_pairs = {
+static const std::map<wxFontFamily, const char*> s_family_pairs = {
     { wxFONTFAMILY_DEFAULT, "default" },
     { wxFONTFAMILY_DECORATIVE, "decorative"},
     { wxFONTFAMILY_ROMAN, "roman"},
@@ -224,7 +226,7 @@ static std::map<wxFontFamily, const char*> s_family_pairs = {
 
 void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop)
 {
-    auto font_object = object.append_child("font");
+    pugi::xml_node font_object = object.append_child("font");
     font_object.append_child("size").text().set(font_prop.GetFractionalPointSize());
     if (font_prop.GetStyle() == wxFONTSTYLE_ITALIC)
     {
@@ -236,11 +238,17 @@ void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop)
     }
     if (font_prop.GetWeight() != wxFONTWEIGHT_NORMAL)
     {
-        font_object.append_child("weight").text().set(s_weight_pairs[font_prop.GetWeight()]);
+        if (auto it = s_weight_pairs.find(font_prop.GetWeight()); it != s_weight_pairs.end())
+        {
+            font_object.append_child("weight").text().set(it->second);
+        }
     }
     if (font_prop.GetFamily() != wxFONTFAMILY_DEFAULT)
     {
-        font_object.append_child("family").text().set(s_family_pairs[font_prop.GetFamily()]);
+        if (auto it = s_family_pairs.find(font_prop.GetFamily()); it != s_family_pairs.end())
+        {
+            font_object.append_child("family").text().set(it->second);
+        }
     }
     if (font_prop.HasFaceName() && font_prop.GetFaceName() != "default")
     {
@@ -258,8 +266,8 @@ void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop)
 
 void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, PropName prop)
 {
-    auto font_object = item.append_child(param_name);
-    auto font_prop = node->as_font_prop(prop);
+    pugi::xml_node font_object = item.append_child(param_name);
+    const FontProperty font_prop = node->as_font_prop(prop);
 
     font_object.append_child("size").text().set(font_prop.GetFractionalPointSize());
     if (font_prop.GetStyle() == wxFONTSTYLE_ITALIC)
@@ -272,11 +280,17 @@ void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, P
     }
     if (font_prop.GetWeight() != wxFONTWEIGHT_NORMAL)
     {
-        font_object.append_child("weight").text().set(s_weight_pairs[font_prop.GetWeight()]);
+        if (auto it = s_weight_pairs.find(font_prop.GetWeight()); it != s_weight_pairs.end())
+        {
+            font_object.append_child("weight").text().set(it->second);
+        }
     }
     if (font_prop.GetFamily() != wxFONTFAMILY_DEFAULT)
     {
-        font_object.append_child("family").text().set(s_family_pairs[font_prop.GetFamily()]);
+        if (auto it = s_family_pairs.find(font_prop.GetFamily()); it != s_family_pairs.end())
+        {
+            font_object.append_child("family").text().set(it->second);
+        }
     }
     if (font_prop.HasFaceName() && font_prop.GetFaceName() != "default")
     {
@@ -309,7 +323,7 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     }
     if (node->HasValue(prop_font))
     {
-        auto font_prop = node->as_font_prop(prop_font);
+        FontProperty font_prop = node->as_font_prop(prop_font);
         GenXrcFont(object, font_prop);
     }
     if (node->HasValue(prop_background_colour))
@@ -363,7 +377,7 @@ static PropNamePair props[] = {
 };
 // clang-format on
 
-void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::string_view param_name)
+void GenXrcBitmap(Node* node, pugi::xml_node& item, size_t xrc_flags, std::string_view param_name)
 {
     for (auto& prop_pair: props)
     {
@@ -373,7 +387,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             if (xrc_flags & xrc::use_xrc_dir)
             {
                 xrc_dir = Project.as_string(prop_xrc_art_directory);
-                if (xrc_dir.size())
+                if (!xrc_dir.empty())
                 {
                     xrc_dir.addtrailingslash();
                 }
@@ -382,19 +396,28 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
             ASSERT(parts.size() > 1)
             if (parts[IndexType].is_sameas("Art"))
             {
-                wxue::StringVector art_parts(parts[IndexArtID], '|');
-                auto bmp =
-                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
-                bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
-                bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
+                wxue::string art_id(parts[IndexArtID]);
+                wxue::string art_client;
+                if (auto pos = art_id.find('|'); wxue::is_found(pos))
+                {
+                    art_client = art_id.subview(pos + 1);
+                    art_id.erase(pos);
+                }
+                pugi::xml_node bmp =
+                    item.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
+                bmp.append_attribute("stock_id").set_value(art_id.c_str());
+                if (!art_client.empty())
+                {
+                    bmp.append_attribute("stock_client").set_value(art_client.c_str());
+                }
             }
             else if (parts[IndexType].is_sameas("SVG"))
             {
-                auto svg_object =
-                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
+                pugi::xml_node svg_object =
+                    item.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
 
                 // Optionally replace the directory portion with the xrc art directory.
-                if ((xrc_flags & xrc::use_xrc_dir) && xrc_dir.size())
+                if ((xrc_flags & xrc::use_xrc_dir) && !xrc_dir.empty())
                 {
                     wxue::string path(xrc_dir);
                     path += parts[IndexImage].filename();
@@ -404,7 +427,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                 {
                     svg_object.text().set(parts[IndexImage]);
                 }
-                auto size = GetSizeInfo(parts[IndexSize]);
+                wxSize size = GetSizeInfo(parts[IndexSize]);
                 svg_object.append_attribute("default_size")
                     .set_value(std::format("{},{}", size.x, size.y));
             }
@@ -415,13 +438,13 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                     wxue::string names;
                     for (const auto& file: bundle->lst_filenames)
                     {
-                        if (names.size())
+                        if (!names.empty())
                         {
                             names += ';';
                         }
 
                         // Optionally replace the directory portion with the xrc art directory.
-                        if ((xrc_flags & xrc::use_xrc_dir) && xrc_dir.size())
+                        if ((xrc_flags & xrc::use_xrc_dir) && !xrc_dir.empty())
                         {
                             wxue::string path(xrc_dir);
                             path += file.filename();
@@ -432,7 +455,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
                             names += file;
                         }
                     }
-                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name)
+                    item.append_child(param_name.empty() ? prop_pair.xrc_name : param_name)
                         .text()
                         .set(names);
                 }
@@ -442,12 +465,12 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, size_t xrc_flags, std::str
 
     if (node->HasValue(prop_position))
     {
-        object.append_child("bitmapposition").text().set(node->as_string(prop_position));
+        item.append_child("bitmapposition").text().set(node->as_string(prop_position));
     }
 
     if (node->HasValue(prop_margins))
     {
-        object.append_child("margins").text().set(node->as_string(prop_margins));
+        item.append_child("margins").text().set(node->as_string(prop_margins));
     }
 }
 
@@ -509,7 +532,7 @@ void GenXrcToolProps(Node* node, pugi::xml_node& item, size_t xrc_flags)
 
     if (!node->HasValue(prop_bitmap))
     {
-        auto bmp = item.append_child("bitmap");
+        pugi::xml_node bmp = item.append_child("bitmap");
         bmp.append_attribute("stock_id").set_value("wxART_QUESTION");
         bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
     }

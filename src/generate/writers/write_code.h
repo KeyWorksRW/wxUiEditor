@@ -48,7 +48,7 @@ public:
 
     // Write one or more lines, adding a trailing \n to the final line. Multiple lines
     // are indicated if the supplied string contains one or more \n characters.
-    void writeLine(std::string& lines, size_t indentation = indent::auto_no_whitespace);
+    void writeLine(std::string& code, size_t indentation = indent::auto_no_whitespace);
 
     // This will NOT right trim a single line
     void writeLine(wxue::string_view, size_t indentation = indent::auto_no_whitespace);

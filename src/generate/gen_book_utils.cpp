@@ -14,7 +14,6 @@
 #include "node.h"       // Node class
 #include "ui_images.h"  // Generated images header
 #include "utils.h"
-#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 #include "gen_book_utils.h"
 

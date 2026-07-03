@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Size and position code generation
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-29-2026]
@@ -167,17 +167,15 @@ Code& Code::WxPoint(wxPoint position, int enable_dpi_scaling)
         if (is_cpp())
         {
             CheckLineLength(sizeof("FromDIP(wxPoint(999, 999))"));
-            FormFunction("FromDIP(");
-            Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
-            *this += ')';
         }
-        else if (is_python())
+        else
         {
+            // Python and FFI languages have a self-reference prefix, use conservative estimate
             CheckLineLength(sizeof("self.FromDIP(wxPoint(999, 999))"));
-            FormFunction("FromDIP(");
-            Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
-            *this += ')';
         }
+        FormFunction("FromDIP(");
+        Class("wxPoint(").itoa(position.x).Comma().itoa(position.y) << ')';
+        *this += ')';
     }
     else
     {

@@ -37,6 +37,10 @@ Code& Code::Bundle(GenEnum::PropName prop_name)
                 break;
 
             default:
+                if (is_ffi())
+                {
+                    BundleFfi(parts);
+                }
                 break;
         }
     }
@@ -426,4 +430,11 @@ void Code::BundleRuby(const wxue::StringVector& parts)
         FAIL_MSG("Missing bundle description");
         Add("wxNullBitmap");
     }
+}
+
+void Code::BundleFfi(const wxue::StringVector& /*parts*/)
+{
+    // Stub: FFI bitmap bundle support is not yet implemented.
+    // WX_NULL_BITMAP is the correct FFI null bitmap constant (UPPER_SNAKE_CASE naming).
+    Str("WX_NULL_BITMAP");
 }

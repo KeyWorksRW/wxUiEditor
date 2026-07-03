@@ -268,21 +268,8 @@ Code& Code::Style(const char* prefix, wxue::string_view force_style)
 
                     if (iter.is_sameprefix("wx"))
                     {
-                        if (const std::string_view language_prefix =
-                                GetLanguagePrefix(iter, m_language);
-                            !language_prefix.empty())
-                        {
-                            // Some languages will have a module added after their standard prefix.
-                            CheckLineLength(language_prefix.size() + iter.size() - 2);
-                            *this << language_prefix << iter.substr(2);
-                        }
-                        else
-                        {
-                            // If there was no sub-language module added (e.g., wx.aui. for
-                            // Python), then use the default language prefix.
-                            CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
-                            *this << m_language_wxPrefix << iter.substr(2);
-                        }
+                        CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
+                        *this << m_language_wxPrefix << iter.substr(2);
                     }
                     else
                     {

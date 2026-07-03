@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code::Gen() functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-29-2026]
@@ -10,8 +10,6 @@
 #include <charconv>  // for std::to_chars()
 
 #include "code.h"
-
-#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 Code& Code::GenFont(GenEnum::PropName prop_name, wxue::string_view font_function)
 {
@@ -122,7 +120,8 @@ Code& Code::GenSizerFlags()
     {
         *this << '(' << prop << ')';
     }
-    else if (!is_ruby())  // Don't use empty () for Ruby
+    else if (!m_traits ||
+             !m_traits->removes_empty_parens)  // Don't use empty () for languages that remove them
     {
         *this << "()";
     }
@@ -196,9 +195,9 @@ void Code::ProcessAlignmentFlags(const wxue::string& prop)
         SizerFlagsFunction("Bottom") += ')';
     }
 
-    if (is_ruby() && size() > size_before)
+    if (m_traits && m_traits->removes_empty_parens && size() > size_before)
     {
-        // Ruby style guidelines are to eliminate empty parenthesis
+        // Language style guidelines are to eliminate empty parenthesis
         pop_back();
         pop_back();
     }
@@ -225,9 +224,9 @@ void Code::ProcessSizerFlags(const wxue::string& prop)
         SizerFlagsFunction("ReserveSpaceEvenIfHidden") += ')';
     }
 
-    if (is_ruby() && size() > size_before)
+    if (m_traits && m_traits->removes_empty_parens && size() > size_before)
     {
-        // Ruby style guidelines are to eliminate empty parenthesis
+        // Language style guidelines are to eliminate empty parenthesis
         pop_back();
         pop_back();
     }
@@ -361,9 +360,9 @@ void Code::GenHiddenState()
         Eol(eol_if_empty);
         CallNodeOrFormFunction("Hide(");
         EndFunction();
-        if (is_ruby())
+        if (m_traits && m_traits->removes_empty_parens)
         {
-            // Ruby style guidelines are to eliminate empty parenthesis
+            // Language style guidelines are to eliminate empty parenthesis
             pop_back();
             pop_back();
         }
@@ -462,17 +461,17 @@ void Code::GenDefGuiFont(const FontProperty& fontprop, wxue::string_view font_fu
     if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
     {
         ApplyFontProperty(font_var_name, "SetSymbolicSize(",
-                          font_symbol_pairs.GetValue(fontprop.GetSymbolSize()));
+                          FontSymbolPairs::GetValue(fontprop.GetSymbolSize()));
     }
     if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
     {
         ApplyFontProperty(font_var_name, "SetStyle(",
-                          font_style_pairs.GetValue(fontprop.GetStyle()));
+                          FontStylePairs::GetValue(fontprop.GetStyle()));
     }
     if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
     {
         ApplyFontProperty(font_var_name, "SetWeight(",
-                          font_weight_pairs.GetValue(fontprop.GetWeight()));
+                          FontWeightPairs::GetValue(fontprop.GetWeight()));
     }
     if (fontprop.IsUnderlined())
     {
@@ -617,15 +616,15 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
     }
     if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
     {
-        VariableMethod("Family(").Add(font_family_pairs.GetValue(fontprop.GetFamily())) += ")";
+        VariableMethod("Family(").Add(FontFamilyPairs::GetValue(fontprop.GetFamily())) += ")";
     }
     if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
     {
-        VariableMethod("Style(").Add(font_style_pairs.GetValue(fontprop.GetStyle())) += ")";
+        VariableMethod("Style(").Add(FontStylePairs::GetValue(fontprop.GetStyle())) += ")";
     }
     if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
     {
-        VariableMethod("Weight(").Add(font_weight_pairs.GetValue(fontprop.GetWeight())) += ")";
+        VariableMethod("Weight(").Add(FontWeightPairs::GetValue(fontprop.GetWeight())) += ")";
     }
     if (fontprop.IsUnderlined())
     {

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Helper class for generating code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-29-2026]
@@ -257,77 +257,21 @@ constexpr size_t DEFAULT_LINE_LENGTH = 90;         // NOLINT (magic number)
             return Project.as_size_t(prop_python_line_length);
         case GenLang::ruby:
             return Project.as_size_t(prop_ruby_line_length);
+        case GenLang::fortran:
+            return Project.as_size_t(prop_fortran_line_length);
+        case GenLang::go:
+            return Project.as_size_t(prop_go_line_length);
+        case GenLang::julia:
+            return Project.as_size_t(prop_julia_line_length);
+        case GenLang::luajit:
+            return Project.as_size_t(prop_lua_line_length);
+        case GenLang::typescript:
+            return Project.as_size_t(prop_typescript_line_length);
         case GenLang::xrc:
             return XRC_LINE_LENGTH;
         default:
             return DEFAULT_LINE_LENGTH;
     }
-}
-
-std::string_view Code::GetLanguagePrefix(std::string_view candidate, GenLang language)
-{
-    // Lambda to find a matching prefix in a map
-    auto find_prefix_match = [](const view_map& prefix_map,
-                                std::string_view candidate) -> std::optional<std::string_view>
-    {
-        for (const auto& [key, value]: prefix_map)
-        {
-            if (candidate.starts_with(key))
-            {
-                return value;
-            }
-        }
-        return std::nullopt;
-    };
-
-    switch (language)
-    {
-        case GenLang::python:
-            if (std::optional<std::string_view> result =
-                    find_prefix_match(s_short_python_map, candidate))
-            {
-                return *result;
-            }
-            if (auto result = g_map_python_prefix.find(candidate);
-                result != g_map_python_prefix.end())
-            {
-                return result->second;
-            }
-            break;
-
-        case GenLang::ruby:
-            if (std::optional<std::string_view> result =
-                    find_prefix_match(s_short_ruby_map, candidate))
-            {
-                return *result;
-            }
-            if (auto result = g_map_ruby_prefix.find(candidate); result != g_map_ruby_prefix.end())
-            {
-                return result->second;
-            }
-            break;
-
-        case GenLang::cplusplus:
-            FAIL_MSG("Don't call GetLanguagePrefix() for C++ code!");
-            return {};
-
-        default:
-            // FFI languages: per-language prefix dispatch
-            // Fortran uses wx_ prefix, all others use wx.
-            if (auto* traits = GetLanguageTraits(language);
-                traits && traits->family == LanguageTraits::Family::ffi)
-            {
-                if (language == GenLang::fortran)
-                {
-                    return "wx_";
-                }
-                return "wx.";
-            }
-            FAIL_MSG("Unknown language");
-            return {};
-    }
-
-    return {};
 }
 
 Code::Code(Node* node, GenLang language)  // NOLINT (doesn't initialize all members) //
@@ -560,7 +504,7 @@ Code& Code::Function(wxue::string_view text, bool add_operator)
 {
     if (!add_operator)
     {
-        if (text.is_sameprefix("wx") && (is_python() || is_ruby()))
+        if (text.is_sameprefix("wx") && !is_cpp())
         {
             AddFunctionNoOperatorWithWx(text);
         }
@@ -581,6 +525,26 @@ Code& Code::Function(wxue::string_view text, bool add_operator)
     {
         AddFunctionWithOperatorPython(text);
     }
+    else if (is_fortran())
+    {
+        AddFunctionWithOperatorFortran(text);
+    }
+    else if (is_go())
+    {
+        AddFunctionWithOperatorGo(text);
+    }
+    else if (is_julia())
+    {
+        AddFunctionWithOperatorJulia(text);
+    }
+    else if (is_luajit())
+    {
+        AddFunctionWithOperatorLua(text);
+    }
+    else if (is_typescript())
+    {
+        AddFunctionWithOperatorTypeScript(text);
+    }
 
     return *this;
 }
@@ -588,24 +552,26 @@ Code& Code::Function(wxue::string_view text, bool add_operator)
 Code& Code::ClassMethod(wxue::string_view function_name)
 {
     ASSERT(m_traits);
+    ASSERT_MSG(!function_name.empty(), "function_name must not be empty");
     *this += m_traits->scope_operator;
     switch (m_traits->method_case)
     {
         case LanguageTraits::MethodCase::snake_case:
             *this += ConvertToSnakeCase(function_name);
             break;
+
         case LanguageTraits::MethodCase::camel_case:
             {
                 std::string camel_name(function_name);
-                if (!camel_name.empty())
-                {
-                    camel_name[0] =
-                        static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
-                }
+                camel_name[0] =
+                    static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
                 *this += camel_name;
             }
             break;
-        default:
+
+        case LanguageTraits::MethodCase::pascal_case:
+            ASSERT_MSG(m_traits->method_case == LanguageTraits::MethodCase::pascal_case,
+                       "expected pascal_case");
             *this += function_name;
             break;
     }
@@ -616,24 +582,26 @@ Code& Code::ClassMethod(wxue::string_view function_name)
 Code& Code::VariableMethod(wxue::string_view function_name)
 {
     ASSERT(m_traits);
+    ASSERT_MSG(!function_name.empty(), "function_name must not be empty");
     *this += '.';
     switch (m_traits->method_case)
     {
         case LanguageTraits::MethodCase::snake_case:
             *this += ConvertToSnakeCase(function_name);
             break;
+
         case LanguageTraits::MethodCase::camel_case:
             {
                 std::string camel_name(function_name);
-                if (!camel_name.empty())
-                {
-                    camel_name[0] =
-                        static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
-                }
+                camel_name[0] =
+                    static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
                 *this += camel_name;
             }
             break;
-        default:
+
+        case LanguageTraits::MethodCase::pascal_case:
+            ASSERT_MSG(m_traits->method_case == LanguageTraits::MethodCase::pascal_case,
+                       "expected pascal_case");
             *this += function_name;
             break;
     }
@@ -644,6 +612,7 @@ Code& Code::VariableMethod(wxue::string_view function_name)
 Code& Code::FormFunction(wxue::string_view text)
 {
     ASSERT(m_traits);
+    ASSERT_MSG(!text.empty(), "text must not be empty");
     if (is_python())
     {
         *this += "self.";
@@ -656,15 +625,14 @@ Code& Code::FormFunction(wxue::string_view text)
         case LanguageTraits::MethodCase::camel_case:
             {
                 std::string camel_name(text);
-                if (!camel_name.empty())
-                {
-                    camel_name[0] =
-                        static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
-                }
+                camel_name[0] =
+                    static_cast<char>(std::tolower(static_cast<unsigned char>(camel_name[0])));
                 *this += camel_name;
             }
             break;
-        default:
+        case LanguageTraits::MethodCase::pascal_case:
+            ASSERT_MSG(m_traits->method_case == LanguageTraits::MethodCase::pascal_case,
+                       "expected pascal_case");
             *this += text;
             break;
     }
@@ -707,6 +675,17 @@ Code& Code::Class(wxue::string_view text)
             *this += text;
         }
     }
+    else if (is_ffi())
+    {
+        if (text.is_sameprefix("wx"))
+        {
+            *this << m_language_wxPrefix << text.substr(2);
+        }
+        else
+        {
+            *this += text;
+        }
+    }
 
     return *this;
 }
@@ -734,6 +713,17 @@ Code& Code::Object(wxue::string_view class_name)
         if (class_name.is_sameprefix("wx"))
         {
             *this << "Wx::" << class_name.substr(2);
+        }
+        else
+        {
+            *this += class_name;
+        }
+    }
+    else if (is_ffi())
+    {
+        if (class_name.is_sameprefix("wx"))
+        {
+            *this << m_language_wxPrefix << class_name.substr(2);
         }
         else
         {
@@ -974,7 +964,7 @@ Code& Code::ValidParentName()
         if (parent->is_Sizer() && parent->is_StaticBoxSizer())
         {
             NodeName(parent);
-            if (is_ruby())
+            if (m_traits && m_traits->removes_empty_parens)
             {
                 Function("GetStaticBox");
             }

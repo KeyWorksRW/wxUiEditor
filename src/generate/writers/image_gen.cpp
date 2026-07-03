@@ -191,9 +191,14 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 // clang-format off
 
 constexpr auto map_lang_to_prop = frozen::make_map<GenLang, GenEnum::PropName>({
-    { GenLang::cplusplus, prop_cpp_line_length },
-    { GenLang::python,    prop_python_line_length },
-    { GenLang::ruby,      prop_ruby_line_length  },
+    { GenLang::cplusplus,  prop_cpp_line_length        },
+    { GenLang::python,     prop_python_line_length     },
+    { GenLang::ruby,       prop_ruby_line_length       },
+    { GenLang::fortran,    prop_fortran_line_length    },
+    { GenLang::go,         prop_go_line_length         },
+    { GenLang::julia,      prop_julia_line_length      },
+    { GenLang::luajit,     prop_lua_line_length        },
+    { GenLang::typescript, prop_typescript_line_length },
 });
 
 // clang-format on

@@ -7,6 +7,8 @@
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
+#include <utility>
+
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
@@ -98,10 +100,13 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
 bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
                                            Node* /* node */)
 {
-    if (prop->isProp(prop_cpp_line_length) || prop->isProp(prop_python_line_length))
+    if (prop->isProp(prop_cpp_line_length) || prop->isProp(prop_python_line_length) ||
+        prop->isProp(prop_ruby_line_length) || prop->isProp(prop_fortran_line_length) ||
+        prop->isProp(prop_go_line_length) || prop->isProp(prop_julia_line_length) ||
+        prop->isProp(prop_lua_line_length) || prop->isProp(prop_typescript_line_length))
     {
-        auto variant = event->GetPropertyValue();
-        auto num = variant.GetInteger();
+        wxVariant const variant = event->GetPropertyValue();
+        long const num = variant.GetInteger();
         if (num < 70)
         {
             event->SetValidationFailureMessage(
@@ -115,10 +120,10 @@ bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePrope
 
 bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
 {
-    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddDialog), "Add new dialog...");
-    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWindow), "Add new window...");
-    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddWizard), "Add new wizard...");
-    menu->Append(static_cast<int>(NavPopupMenu::Menu::ProjectAddFolder), "Add folder");
+    menu->Append(std::to_underlying(NavPopupMenu::Menu::ProjectAddDialog), "Add new dialog...");
+    menu->Append(std::to_underlying(NavPopupMenu::Menu::ProjectAddWindow), "Add new window...");
+    menu->Append(std::to_underlying(NavPopupMenu::Menu::ProjectAddWizard), "Add new wizard...");
+    menu->Append(std::to_underlying(NavPopupMenu::Menu::ProjectAddFolder), "Add folder");
 
     menu->Bind(
         wxEVT_MENU,

@@ -31,15 +31,7 @@ void Code::AddClassNameForLanguage(const std::string& class_name)
     // Handle non-C++ languages
     if (class_name.starts_with("wx"))
     {
-        if (auto language_prefix = GetLanguagePrefix(class_name, m_language);
-            !language_prefix.empty())
-        {
-            *this << language_prefix << class_name.substr(2);
-        }
-        else
-        {
-            *this << m_language_wxPrefix << class_name.substr(2);
-        }
+        *this << m_language_wxPrefix << class_name.substr(2);
     }
     else
     {
@@ -77,8 +69,14 @@ void Code::AddFunctionNoOperatorWithWx(wxue::string_view text)
     {
         *this << "Wx::" << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
     }
+    else if (is_fortran() || is_julia() || is_luajit())
+    {
+        // wxGetStockLabel( → wx_get_stock_label(
+        *this << "wx_" << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
+    }
     else
     {
+        // Python, Go, TypeScript: wx.GetStockLabel(
         *this << "wx." << text.substr(sizeof("wx") - 1);
     }
 }
@@ -113,6 +111,40 @@ void Code::AddFunctionWithOperatorPython(wxue::string_view text)
     {
         *this += text;
     }
+}
+
+void Code::AddFunctionWithOperatorFortran(wxue::string_view text)
+{
+    // Fortran uses the C-wrapper calling convention: wx_button_set_label(button, ...)
+    // The underscore connects to the preceding variable name (e.g., wx_button +
+    // _set_label = wx_button_set_label)
+    *this << '_' << ConvertToSnakeCase(text);
+}
+
+void Code::AddFunctionWithOperatorGo(wxue::string_view text)
+{
+    // Go uses .PascalCase method calls: button.SetLabel(...)
+    *this << '.' << text;
+}
+
+void Code::AddFunctionWithOperatorJulia(wxue::string_view text)
+{
+    // Julia uses standalone snake_case functions with object as first argument:
+    // set_status_text(frame, "Ready"). No operator prefix — the function name
+    // stands alone.
+    *this += ConvertToSnakeCase(text);
+}
+
+void Code::AddFunctionWithOperatorLua(wxue::string_view text)
+{
+    // LuaJIT uses : operator with snake_case: button:set_label(...)
+    *this << ':' << ConvertToSnakeCase(text);
+}
+
+void Code::AddFunctionWithOperatorTypeScript(wxue::string_view text)
+{
+    // TypeScript uses .PascalCase method calls: button.SetLabel(...)
+    *this << '.' << text;
 }
 
 Code& Code::Add(wxue::string_view text)
@@ -212,20 +244,8 @@ Code& Code::AddCombinedValues(wxue::string_view text)
         }
         if (iter.is_sameprefix("wx") && !is_cpp())
         {
-            if (const std::string_view language_prefix = GetLanguagePrefix(iter, m_language);
-                !language_prefix.empty())
-            {
-                // Some languages will have a module added after their standard prefix.
-                CheckLineLength(language_prefix.size() + iter.size() - 2);
-                *this << language_prefix << iter.substr(2);
-            }
-            else
-            {
-                // If there was no sub-language module added (e.g., wx.aui. for
-                // Python), then use the default language prefix.
-                CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
-                *this << m_language_wxPrefix << iter.substr(2);
-            }
+            CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
+            *this << m_language_wxPrefix << iter.substr(2);
         }
         else
         {
@@ -240,17 +260,8 @@ Code& Code::AddCombinedValues(wxue::string_view text)
 // Helper method: Handle wx-prefixed constants with language transformations
 Code& Code::AddWxPrefixedConstant(wxue::string_view text)
 {
-    if (const std::string_view language_prefix = GetLanguagePrefix(text, m_language);
-        !language_prefix.empty())
-    {
-        CheckLineLength(language_prefix.size() + text.size() - 2);
-        *this << language_prefix << text.substr(2);
-    }
-    else
-    {
-        CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
-        *this << m_language_wxPrefix << text.substr(2);
-    }
+    CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
+    *this << m_language_wxPrefix << text.substr(2);
     return *this;
 }
 

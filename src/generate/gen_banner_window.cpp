@@ -62,7 +62,7 @@ bool BannerWindowGenerator::ConstructionCode(Code& code)
     {
         code.ValidParentName().Comma().as_string(prop_direction);
     }
-    else if (code.is_python() || code.is_ruby())
+    else if (code.is_python() || code.is_ruby() || code.is_ffi())
     {
         code.ValidParentName().Comma().Add(prop_id).Comma().Add(prop_direction);
     }

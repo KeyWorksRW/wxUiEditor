@@ -397,7 +397,7 @@ set( file_list
     src/ui/viewdetails_dlg.cpp          # Dialog to display details about a node in the Mockup
 
     src/helptext/archive_handler.cpp     # Handles doc archive: open, search, display
-    src/helptext/wxdocview_dlg.cpp      # Dialog to display wxWidgets documentation
+    # src/helptext/wxdocview_dlg.cpp      # Dialog to display wxWidgets documentation
 
     src/helptext/doc_view_utils/find_in_page.cpp  # Find-in-page utilities for DocViewPane
     src/helptext/doc_view_panel/doc_view_pane.cpp  # Reusable doc viewer panel (wxHtmlWindow + index tabs)

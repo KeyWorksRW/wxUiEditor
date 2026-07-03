@@ -51,6 +51,7 @@ set (wxue_generated_code
 
     # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/doc_view_frame_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
@@ -68,7 +69,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/viewdetails_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/wxdocview_base.cpp
 
 )
 

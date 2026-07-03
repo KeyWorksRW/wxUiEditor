@@ -21,6 +21,228 @@
 
 #include "gen_dialog.h"
 
+// Static helper functions for ConstructionCode — extracted from ConstructionCode to reduce
+// complexity when adding FFI language support.
+
+static void ConstructionCodeCpp(Code& code)
+{
+    code.Str("bool ").as_string(prop_class_name);
+    code += "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst "
+            "wxPoint& pos, const wxSize& size, "
+            "long style, const wxString &name)";
+    code.OpenBrace();
+
+    if (code.HasValue(prop_extra_style))
+    {
+        code.Eol(eol_if_needed)
+            .FormFunction("SetExtraStyle(GetExtraStyle() | ")
+            .Add(prop_extra_style);
+        code.EndFunction();
+    }
+
+    if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
+    {
+        code.AddComment("Scaling of pos and size are handled after the dialog")
+            .AddComment("has been created and controls added.");
+    }
+    code.Eol(eol_if_needed) += "if (!";
+    if (code.node()->HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxDialog";
+    }
+    code += "::Create(";
+    if (code.node()->HasValue(prop_subclass_params))
+    {
+        code += code.node()->as_string(prop_subclass_params);
+        code.RightTrim();
+        if (code.back() != ',')
+        {
+            code.Comma();
+        }
+        else
+        {
+            code += ' ';
+        }
+    }
+    code += "parent, id, title, pos, size, style, name))";
+    code.OpenBrace().Str("return false;").CloseBrace();
+}
+
+static void ConstructionCodePython(Code& code)
+{
+    // The Python version creates an empty wx.Dialog and generates the Create() method in
+    // SettingsCode(). From the user's perspective, it looks like one-step creation, but
+    // it's actually two steps.
+    code.Add("class ").NodeName().Str("(wx.Dialog):");
+    code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
+    code.Indent(3);
+    code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
+    code.Comma().Str("size=").WxSize(prop_size).Comma();
+    code.CheckLineLength(std::string_view("style=").size() +
+                         code.node()->as_string(prop_style).size() + 4);
+    code.Add("style=").Style().Comma();
+    const size_t name_len = code.HasValue(prop_window_name) ?
+                                code.node()->as_string(prop_window_name).size() :
+                                std::string_view("wx.DialogNameStr").size();
+    code.CheckLineLength(std::string_view("name=").size() + name_len + 4);
+    code.Str("name=");
+    if (code.HasValue(prop_window_name))
+    {
+        code.QuotedString(prop_window_name);
+    }
+    else
+    {
+        code.Str("wx.DialogNameStr");
+    }
+    code.Str("):");
+    code.Unindent();
+    code.Eol() += "wx.Dialog.__init__(self)";
+}
+
+static void ConstructionCodeRuby(Code& code)
+{
+    code.Add("class ").NodeName().Add(" < Wx::Dialog").Eol();
+    code.AddPublicRubyMembers();
+    code.Eol(eol_if_needed).Tab().Add("def initialize(parent");
+    // Indent any wrapped lines
+    code.Indent(3);
+    code.Str(", id = ");
+    if (code.HasValue(prop_id))
+    {
+        code.Add(prop_id);
+    }
+    else
+    {
+        code.Add("Wx::ID_ANY");
+    }
+    code.Comma().Str("title = ").QuotedString(prop_title);
+    // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
+    code.Comma()
+        .CheckLineLength(std::string_view("pos = Wx::DEFAULT_POSITION").size())
+        .Str("pos = ")
+        .Pos(prop_pos);
+    code.Comma()
+        .CheckLineLength(std::string_view("size = Wx::DEFAULT_SIZE").size())
+        .Str("size = ")
+        .WxSize(prop_size);
+    code.Comma()
+        .CheckLineLength(std::string_view("style = Wx::DEFAULT_DIALOG_STYLE").size())
+        .Str("style = ")
+        .Style();
+    if (code.HasValue(prop_window_name))
+    {
+        code.Comma().CheckLineLength(std::string_view("name = ").size() +
+                                     code.as_string(prop_window_name).size() + 2);
+        code.Str("name = ").QuotedString(prop_window_name);
+    }
+
+    code.EndFunction();
+    code.Unindent();
+    if (auto indent_pos = code.GetCode().find("initialize(parent"); wxue::is_found(indent_pos))
+    {
+        indent_pos += sizeof("initialize(") - 1;
+        indent_pos -= code.GetCode().rfind("\n", indent_pos);
+        const std::string spaces(indent_pos, ' ');
+        code.GetCode().Replace("\t\t\t\t", spaces, true);
+    }
+}
+
+static void ConstructionCodeFortran(Code& code)
+{
+    code.Str("module ").NodeName().Str("_mod").Eol();
+    code.Tab().Str("use kwx_fortran").Eol();
+    code.Tab().Str("implicit none").Eol();
+    code.Tab().Str("type(wx_dialog_t) :: self").Eol();
+    code.Eol();
+    code.Str("contains").Eol();
+    code.Eol();
+    code.Str("subroutine create(parent)").Eol();
+    code.Tab().Str("type(c_ptr), intent(in) :: parent");
+}
+
+static void ConstructionCodeGo(Code& code)
+{
+    code.Str("type ").NodeName().Str(" struct {").Eol();
+    code.Tab().Str("dialog *wx.Dialog").Eol();
+    code.Str("}").Eol();
+    code.Eol();
+    code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
+    code.Tab().Str("self := &").NodeName().Str("{}");
+}
+
+static void ConstructionCodeJulia(Code& code)
+{
+    code.Str("mutable struct ").NodeName().Eol();
+    code.Indent();
+    code.Tab().Str("dialog::Ptr{Cvoid}").Eol();
+    code.Eol();
+    code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
+    code.Indent();
+    code.Tab().Str("self = new()");
+}
+
+static void ConstructionCodeLuaJIT(Code& code)
+{
+    code.Str("local ").NodeName().Str(" = {}").Eol();
+    code.NodeName().Str(".__index = ").NodeName().Eol();
+    code.Eol();
+    code.Str("function ").NodeName().Str(":new(parent)").Eol();
+    code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")");
+}
+
+static void ConstructionCodeTypeScript(Code& code)
+{
+    const LanguageTraits& traits = code.get_traits();
+    const Node* node = code.node();
+
+    code.Tab().Str("const title_wxstr = createWxString(").QuotedString(prop_title).Str(")");
+    code.Str(traits.stmt_end).Eol();
+
+    code.Tab().Str(traits.self_reference).Str(".dialog = wxDialog.Create(").Eol().Tab(2);
+    code.Str("parent").Comma();
+
+    if (code.HasValue(prop_id))
+    {
+        code.Add(prop_id);
+    }
+    else
+    {
+        code.Add("wxID_ANY");
+    }
+    code.Comma().Eol().Tab(2).Str("title_wxstr.ptr").Comma();
+
+    code.Str("-1, -1").Comma();
+
+    const wxSize dialog_size = node->as_wxSize(prop_size);
+    if (dialog_size == wxDefaultSize)
+    {
+        code.itoa(-1).Comma().itoa(-1);
+    }
+    else
+    {
+        code.itoa(dialog_size.x).Comma().itoa(dialog_size.y);
+    }
+    code.Comma().Eol().Tab(2);
+
+    if (code.HasValue(prop_style))
+    {
+        code.Add(prop_style);
+    }
+    else
+    {
+        code.Add("wxDEFAULT_DIALOG_STYLE");
+    }
+
+    code.Str(")!");
+    code.Str(traits.stmt_end).Eol();
+
+    code.Tab().Str("title_wxstr.Delete()").Str(traits.stmt_end);
+}
+
 // This is only used for Mockup Preview and XrcCompare -- it is not used by the Mockup panel
 wxObject* DialogFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -62,134 +284,57 @@ bool DialogFormGenerator::ConstructionCode(Code& code)
 {
     ASSERT_MSG(!code.node()->as_string(prop_size).contains("d", wxue::CASE::either),
                "Dialog units should not be used for wxDialog")
-    if (code.is_cpp())
+
+    const LanguageTraits& traits = code.get_traits();
+
+    if (traits.is_cpp_family())
     {
-        code.Str("bool ").as_string(prop_class_name);
-        code += "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst "
-                "wxPoint& pos, const wxSize& size, "
-                "long style, const wxString &name)";
-        code.OpenBrace();
-
-        if (code.HasValue(prop_extra_style))
-        {
-            code.Eol(eol_if_needed)
-                .FormFunction("SetExtraStyle(GetExtraStyle() | ")
-                .Add(prop_extra_style);
-            code.EndFunction();
-        }
-
-        if (isScalingEnabled(code.node(), prop_pos) || isScalingEnabled(code.node(), prop_size))
-        {
-            code.AddComment("Scaling of pos and size are handled after the dialog")
-                .AddComment("has been created and controls added.");
-        }
-        code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->HasValue(prop_subclass))
-        {
-            code.as_string(prop_subclass);
-        }
-        else
-        {
-            code += "wxDialog";
-        }
-        code += "::Create(";
-        if (code.node()->HasValue(prop_subclass_params))
-        {
-            code += code.node()->as_string(prop_subclass_params);
-            code.RightTrim();
-            if (code.back() != ',')
-            {
-                code.Comma();
-            }
-            else
-            {
-                code += ' ';
-            }
-        }
-        code += "parent, id, title, pos, size, style, name))";
-        code.OpenBrace().Str("return false;").CloseBrace();
+        ConstructionCodeCpp(code);
     }
-    else if (code.is_python())
+    else if (traits.is_binding_family())
     {
-        // The Python version creates an empty wx.Dialog and generates the Create() method in
-        // SettingsCode(). From the user's perspective, it looks like one-step creation, but
-        // it's actually two steps.
-        code.Add("class ").NodeName().Str("(wx.Dialog):");
-        code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
-        code.Indent(3);
-        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
-        code.Comma().Str("size=").WxSize(prop_size).Comma();
-        code.CheckLineLength(std::string_view("style=").size() +
-                             code.node()->as_string(prop_style).size() + 4);
-        code.Add("style=").Style().Comma();
-        const size_t name_len = code.HasValue(prop_window_name) ?
-                                    code.node()->as_string(prop_window_name).size() :
-                                    std::string_view("wx.DialogNameStr").size();
-        code.CheckLineLength(std::string_view("name=").size() + name_len + 4);
-        code.Str("name=");
-        if (code.HasValue(prop_window_name))
+        if (code.get_language() == GenLang::python)
         {
-            code.QuotedString(prop_window_name);
+            ConstructionCodePython(code);
+        }
+        else if (code.get_language() == GenLang::ruby)
+        {
+            ConstructionCodeRuby(code);
         }
         else
         {
-            code.Str("wx.DialogNameStr");
+            code.AddComment("Unsupported wxBinding language", true);
         }
-        code.Str("):");
-        code.Unindent();
-        code.Eol() += "wx.Dialog.__init__(self)";
     }
-    else if (code.is_ruby())
+    else if (traits.is_ffi_family())
     {
-        code.Add("class ").NodeName().Add(" < Wx::Dialog").Eol();
-        code.AddPublicRubyMembers();
-        code.Eol(eol_if_needed).Tab().Add("def initialize(parent");
-        // Indent any wrapped lines
-        code.Indent(3);
-        code.Str(", id = ");
-        if (code.HasValue(prop_id))
+        switch (code.get_language())
         {
-            code.Add(prop_id);
-        }
-        else
-        {
-            code.Add("Wx::ID_ANY");
-        }
-        code.Comma().Str("title = ").QuotedString(prop_title);
-        // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma()
-            .CheckLineLength(std::string_view("pos = Wx::DEFAULT_POSITION").size())
-            .Str("pos = ")
-            .Pos(prop_pos);
-        code.Comma()
-            .CheckLineLength(std::string_view("size = Wx::DEFAULT_SIZE").size())
-            .Str("size = ")
-            .WxSize(prop_size);
-        code.Comma()
-            .CheckLineLength(std::string_view("style = Wx::DEFAULT_DIALOG_STYLE").size())
-            .Str("style = ")
-            .Style();
-        if (code.HasValue(prop_window_name))
-        {
-            code.Comma().CheckLineLength(std::string_view("name = ").size() +
-                                         code.as_string(prop_window_name).size() + 2);
-            code.Str("name = ").QuotedString(prop_window_name);
-        }
-
-        code.EndFunction();
-        code.Unindent();
-        if (auto indent_pos = code.GetCode().find("initialize(parent"); wxue::is_found(indent_pos))
-        {
-            indent_pos += sizeof("initialize(") - 1;
-            indent_pos -= code.GetCode().rfind("\n", indent_pos);
-            const std::string spaces(indent_pos, ' ');
-            code.GetCode().Replace("\t\t\t\t", spaces, true);
+            case GenLang::fortran:
+                ConstructionCodeFortran(code);
+                break;
+            case GenLang::go:
+                ConstructionCodeGo(code);
+                break;
+            case GenLang::julia:
+                ConstructionCodeJulia(code);
+                break;
+            case GenLang::luajit:
+                ConstructionCodeLuaJIT(code);
+                break;
+            case GenLang::typescript:
+                ConstructionCodeTypeScript(code);
+                break;
+            default:
+                code.AddComment("Unsupported FFI language", true);
+                break;
         }
     }
     else
     {
         code.AddComment("Unknown language", true);
     }
+
     code.ResetIndent();
     code.ResetBraces();  // In C++, caller must close the final brace after all construction
 

@@ -166,6 +166,12 @@ public:
     // Make class and filenames unique to the project
     void FixupDuplicatedNode(Node* new_node);
 
+    // Check all variable names in the project tree for uniqueness.
+    // Local variables (var_name, checkbox_var_name, radiobtn_var_name) are checked
+    // per-form and auto-fixed. validator_variable duplicates are checked project-wide
+    // and the user is given the option to fix them.
+    void FixDuplicateVarNames(bool allow_ui);
+
     [[nodiscard]] int get_ProjectVersion() const { return m_ProjectVersion; }
     [[nodiscard]] int get_OriginalProjectVersion() const { return m_OriginalProjectVersion; }
     void ForceProjectVersion(int version) { m_ProjectVersion = version; }

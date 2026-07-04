@@ -13,6 +13,11 @@ on:
         required: false
         type: string
         default: 'Release'
+      enable-pgo:
+        description: 'Enable Profile-Guided Optimization (Clang-only, Release-only)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   buildWindows:
@@ -31,11 +36,68 @@ jobs:
     - name: Setup sccache
       uses: mozilla-actions/sccache-action@v0.0.9
 
-    - name: Configure CMake
+    # ── Non-PGO path: MSVC build ──────────────────────────────────────────
+
+    - name: Configure CMake (MSVC)
+      if: ${{ !inputs.enable-pgo }}
       run: cmake -G "Visual Studio 18 2026" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}}
 
-    - name: Build wxUiEditor
+    - name: Build wxUiEditor (MSVC)
+      if: ${{ !inputs.enable-pgo }}
       run: cmake --build ${{github.workspace}}/build --config ${{inputs.build-type}} --target wxUiEditor
+
+    # ── PGO path: Clang + Ninja, instrument → profile → optimize ──────────
+
+    - name: Install LLVM/Clang and Ninja (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: |
+        choco install llvm ninja --no-progress
+        echo "C:\Program Files\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Configure CMake — Instrumented (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: >-
+        cmake -G Ninja
+        -DCMAKE_C_COMPILER=clang
+        -DCMAKE_CXX_COMPILER=clang++
+        -DCMAKE_RC_COMPILER=llvm-rc
+        -DCMAKE_BUILD_TYPE=Release
+        -DUSE_PGO_INSTRUMENT=ON
+        -DUSE_PGO_OPTIMIZE=OFF
+        -B ${{github.workspace}}/build
+
+    - name: Build — Instrumented (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: cmake --build ${{github.workspace}}/build --config Release
+
+    - name: Collect PGO Profiles
+      if: ${{ inputs.enable-pgo }}
+      run: ${{github.workspace}}/bin/Release/wxUiEditor.exe --verify_all ${{github.workspace}}/src/wxui/wxUiEditor.wxui
+      env:
+        LLVM_PROFILE_FILE: ${{github.workspace}}/build/pgo_profiles/%p_%m.profraw
+
+    - name: Merge PGO Profiles
+      if: ${{ inputs.enable-pgo }}
+      run: >-
+        llvm-profdata merge
+        -output=${{github.workspace}}/build/pgo_profiles/merged.profdata
+        ${{github.workspace}}/build/pgo_profiles/*.profraw
+
+    - name: Configure CMake — Optimized (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: >-
+        cmake -G Ninja
+        -DCMAKE_C_COMPILER=clang
+        -DCMAKE_CXX_COMPILER=clang++
+        -DCMAKE_RC_COMPILER=llvm-rc
+        -DCMAKE_BUILD_TYPE=Release
+        -DUSE_PGO_OPTIMIZE=ON
+        -DUSE_PGO_INSTRUMENT=OFF
+        -B ${{github.workspace}}/build
+
+    - name: Build — PGO Optimized
+      if: ${{ inputs.enable-pgo }}
+      run: cmake --build ${{github.workspace}}/build --config Release
 
     - name: Install NSIS
       if: ${{ inputs.create-setup }}

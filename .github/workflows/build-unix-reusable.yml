@@ -18,6 +18,11 @@ on:
         required: false
         type: string
         default: 'github-hosted'
+      enable-pgo:
+        description: 'Enable Profile-Guided Optimization (Clang-only, Release-only)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   buildUnix:
@@ -48,7 +53,7 @@ jobs:
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble main'
         sudo apt-get update
-        sudo apt-get install -y libgtk-3-dev clang-20
+        sudo apt-get install -y libgtk-3-dev clang-20 llvm-20-tools
         clang-20 --version
         cmake --version
 
@@ -59,11 +64,58 @@ jobs:
     # weekly from wxWidgets master, and stale cache can cause build failures
     # due to partial/mismatched source files.
 
+    # ── Non-PGO path: standard build ───────────────────────────────────────
+
     - name: Configure CMake
+      if: ${{ !inputs.enable-pgo }}
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20
 
     - name: Build wxUiEditor
+      if: ${{ !inputs.enable-pgo }}
       run: cmake --build ${{github.workspace}}/build -j$(nproc) --config ${{inputs.build-type}} --target wxUiEditor
+
+    # ── PGO path: instrument → profile → optimize ──────────────────────────
+
+    - name: Configure CMake — Instrumented (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: >-
+        cmake -B ${{github.workspace}}/build
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_C_COMPILER=clang-20
+        -DCMAKE_CXX_COMPILER=clang++-20
+        -DUSE_PGO_INSTRUMENT=ON
+        -DUSE_PGO_OPTIMIZE=OFF
+
+    - name: Build — Instrumented (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: cmake --build ${{github.workspace}}/build -j$(nproc) --config Release
+
+    - name: Collect PGO Profiles
+      if: ${{ inputs.enable-pgo }}
+      run: ${{github.workspace}}/bin/Release/wxUiEditor --verify_all ${{github.workspace}}/src/wxui/wxUiEditor.wxui
+      env:
+        LLVM_PROFILE_FILE: ${{github.workspace}}/build/pgo_profiles/%p_%m.profraw
+
+    - name: Merge PGO Profiles
+      if: ${{ inputs.enable-pgo }}
+      run: >-
+        llvm-profdata-20 merge
+        -output=${{github.workspace}}/build/pgo_profiles/merged.profdata
+        ${{github.workspace}}/build/pgo_profiles/*.profraw
+
+    - name: Configure CMake — Optimized (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: >-
+        cmake -B ${{github.workspace}}/build
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_C_COMPILER=clang-20
+        -DCMAKE_CXX_COMPILER=clang++-20
+        -DUSE_PGO_OPTIMIZE=ON
+        -DUSE_PGO_INSTRUMENT=OFF
+
+    - name: Build — PGO Optimized
+      if: ${{ inputs.enable-pgo }}
+      run: cmake --build ${{github.workspace}}/build -j$(nproc) --config Release
 
     - name: Build Setup
       if: ${{ inputs.create-setup }}

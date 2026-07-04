@@ -275,7 +275,7 @@ static std::vector<fs::path> GenerateLists(const std::vector<PerFileResult>& res
 // documentation ZIP archive.
 static void CopyLogoSvg(const std::filesystem::path& output_dir)
 {
-    static constexpr std::string_view kSvgFile = "art/wxlogo.svg";
+    static constexpr std::string_view kSvgFile = "src/art_src/wxlogo.svg";
     static const fs::path candidates[] = {
         fs::path(kSvgFile),
         fs::path("..") / kSvgFile,

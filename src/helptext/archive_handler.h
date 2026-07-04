@@ -49,7 +49,7 @@ public:
     // ----- Archive lifecycle -----
 
     // Open a documentation ZIP archive and prepare the in-memory file
-    // system for embedded images (SVG logo rendered as PNG).
+    // system for embedded images.
     [[nodiscard]] std::expected<void, std::string>
         OpenArchive(const std::filesystem::path& zip_path);
 

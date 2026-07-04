@@ -8,7 +8,8 @@ project(build_resources
 
 ####################### Check for Multi-Config Generator #######################
 
-if(NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
+get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(NOT IS_MULTI_CONFIG)
     set(allowedBuildTypes Debug Release)
 
     if(NOT CMAKE_BUILD_TYPE)

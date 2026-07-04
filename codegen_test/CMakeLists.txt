@@ -8,9 +8,10 @@ project(codegen_test
 
 ####################### Check for Multi-Config Generator #######################
 
-if (NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
-    message("\nBecause you are using a single target generator, you MUST specify")
-    message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
+get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if (NOT IS_MULTI_CONFIG)
+    message("\nSingle-config generator (${CMAKE_GENERATOR}).")
+    message("    CMAKE_BUILD_TYPE defaulting to Debug. Override with -DCMAKE_BUILD_TYPE=Release.\n")
 
     set(allowedBuildTypes Debug Release)
 
@@ -21,6 +22,9 @@ if (NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
     endif()
 
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
+else()
+    message("\nMulti-config generator (${CMAKE_GENERATOR}).")
+    message("    Use \"--config [Debug|Release]\" with the cmake --build command.\n")
 endif()
 
 set(CMAKE_CXX_STANDARD 14)

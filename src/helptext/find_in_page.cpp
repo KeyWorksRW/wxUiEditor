@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include "find_in_page.h"
 
@@ -63,16 +64,17 @@ static std::string HeadingTextToId(std::string_view heading_text)
                     {
                         ++i;
                     }
+                    // i is at ')' — loop's ++i advances past it; no adjustment needed
+                }
+                else
+                {
+                    // No URL part: i is past ']'; back up so loop's ++i lands on the char after ']'
+                    --i;
                 }
             }
             if (i >= heading_text.size())
             {
                 break;
-            }
-            // Continue to process next char — the loop increment will move past it
-            if (i > 0)
-            {
-                --i;  // Let the loop increment handle it
             }
             continue;
         }
@@ -171,9 +173,32 @@ std::string AddHeadingIds(std::string_view html,
         // Copy everything up to the heading tag
         result.append(html.substr(html_pos, tag_start - html_pos));
 
-        // Find the end of the opening tag (the '>')
-        const std::size_t tag_end = html.find('>', tag_start);
-        if (tag_end == std::string::npos)
+        // Find the end of the opening tag (the '>'), skipping quoted values
+        std::size_t tag_end = tag_start + 1;
+        bool in_quotes = false;
+        char quote_char = '\0';
+        while (tag_end < html.size())
+        {
+            const char c = html[tag_end];
+            if (in_quotes)
+            {
+                if (c == quote_char)
+                {
+                    in_quotes = false;
+                }
+            }
+            else if (c == '"' || c == '\'')
+            {
+                in_quotes = true;
+                quote_char = c;
+            }
+            else if (c == '>')
+            {
+                break;
+            }
+            ++tag_end;
+        }
+        if (tag_end >= html.size())
         {
             // Malformed — copy rest as-is
             result.append(html.substr(tag_start));
@@ -227,11 +252,19 @@ std::string AddHeadingIds(std::string_view html,
             local_ids.emplace_back(plain_heading, heading_id);
         }
 
-        // Copy the opening tag, insert id attribute
-        result.append(html.substr(tag_start, tag_end - tag_start));
-        result += " id=\"";
-        result += heading_id;
-        result += "\">";
+        // Copy the opening tag, inject id attribute if none exists
+        const std::string_view opening_tag(html.data() + tag_start, tag_end - tag_start);
+        if (opening_tag.find(" id=") == std::string_view::npos)
+        {
+            result.append(html.substr(tag_start, tag_end - tag_start));
+            result += " id=\"";
+            result += heading_id;
+            result += "\">";
+        }
+        else
+        {
+            result.append(html.substr(tag_start, tag_end - tag_start + 1));
+        }
 
         // Copy the content and closing tag
         result.append(html.substr(tag_end + 1, closing_pos - tag_end - 1 + closing_tag.size()));
@@ -398,8 +431,7 @@ std::string
 //  Public: FindInMarkdown
 // ---------------------------------------------------------------------------
 
-std::size_t FindInMarkdown(std::string_view markdown, std::string_view query,
-                           std::size_t start_pos)
+std::size_t FindInMarkdown(std::string_view markdown, std::string_view query, std::size_t start_pos)
 {
     if (query.empty() || markdown.empty())
     {

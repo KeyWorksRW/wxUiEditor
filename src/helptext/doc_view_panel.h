@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ..\..\LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #pragma once
 
@@ -107,4 +108,8 @@ private:
 
     // Toolbar tool ID for the Find button (assigned dynamically in InitPanel)
     int m_find_tool_id { wxID_NONE };
+
+    // Find-in-page state (persists across dialog invocations for "Find Next")
+    std::string m_find_last_query;
+    std::size_t m_find_last_pos { 0 };
 };

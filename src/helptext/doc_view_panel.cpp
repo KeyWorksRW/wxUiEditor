@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ..\..\LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <filesystem>
 #include <sstream>
@@ -36,7 +37,8 @@ struct glz::meta<InheritEntry>
     using Type = InheritEntry;
     // NOLINTNEXTLINE(readability-avoid-auto) — type is detail::Object<glz::tuple<...>>, not
     // writable
-    static constexpr auto value = glz::object("bases", &Type::bases, "derived", &Type::derived);
+    static constexpr auto value =  // NOLINT(readability-avoid-auto) — glz type not expressible
+        glz::object("bases", &Type::bases, "derived", &Type::derived);
 };
 
 // ---------------------------------------------------------------------------
@@ -174,6 +176,10 @@ void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
     {
         return;
     }
+
+    // Reset find-in-page state for the new page
+    m_find_last_query.clear();
+    m_find_last_pos = 0;
 
     // Inject inheritance graph after </h1> if data is available for this page.
     const std::string class_name = std::filesystem::path(archive_name).stem().string();
@@ -336,7 +342,7 @@ void DocViewPanel::OnIndexTextChange(wxCommandEvent& event)
 
 void DocViewPanel::OnIndexTextEnter(wxCommandEvent& event)
 {
-    wxListBox* const listbox = GetActiveIndexListbox(event.GetEventObject());
+    const wxListBox* const listbox = GetActiveIndexListbox(event.GetEventObject());
     if (listbox == nullptr)
     {
         event.Skip();
@@ -395,14 +401,14 @@ void DocViewPanel::OnTextKeyDown(wxKeyEvent& event)
     // Down arrow: move selection down, wrapping at bottom
     if (key_code == WXK_DOWN)
     {
-        const int sel = listbox->GetSelection();
-        if (sel == wxNOT_FOUND)
+        const int selection = listbox->GetSelection();
+        if (selection == wxNOT_FOUND)
         {
             listbox->SetSelection(0);
         }
-        else if (sel + 1 < static_cast<int>(listbox->GetCount()))
+        else if (selection + 1 < static_cast<int>(listbox->GetCount()))
         {
-            listbox->SetSelection(sel + 1);
+            listbox->SetSelection(selection + 1);
         }
         else
         {
@@ -414,14 +420,14 @@ void DocViewPanel::OnTextKeyDown(wxKeyEvent& event)
     // Up arrow: move selection up, wrapping at top
     if (key_code == WXK_UP)
     {
-        const int sel = listbox->GetSelection();
-        if (sel == wxNOT_FOUND)
+        const int selection = listbox->GetSelection();
+        if (selection == wxNOT_FOUND)
         {
             listbox->SetSelection(static_cast<int>(listbox->GetCount()) - 1);
         }
-        else if (sel > 0)
+        else if (selection > 0)
         {
-            listbox->SetSelection(sel - 1);
+            listbox->SetSelection(selection - 1);
         }
         else
         {
@@ -433,10 +439,10 @@ void DocViewPanel::OnTextKeyDown(wxKeyEvent& event)
     // Enter: display the selected item
     if (key_code == WXK_RETURN)
     {
-        const int sel = listbox->GetSelection();
-        if (sel != wxNOT_FOUND)
+        const int selection = listbox->GetSelection();
+        if (selection != wxNOT_FOUND)
         {
-            const std::string archive_name = listbox->GetString(sel).utf8_string() + ".md";
+            const std::string archive_name = listbox->GetString(selection).utf8_string() + ".md";
             DisplayArchivePage(archive_name);
             return;
         }
@@ -561,13 +567,32 @@ void DocViewPanel::OnFind([[maybe_unused]] wxCommandEvent& event)
 
     const std::string query = search_text.utf8_string();
 
-    // Search the raw markdown for the query
-    const std::size_t found_pos = FindInMarkdown(markdown, query);
+    // Reset position when the query changes
+    if (query != m_find_last_query)
+    {
+        m_find_last_query = query;
+        m_find_last_pos = 0;
+    }
+
+    // Search the raw markdown for the query, starting from the last position
+    std::size_t found_pos = FindInMarkdown(markdown, query, m_find_last_pos);
+    bool wrapped = false;
+    if (found_pos == std::string::npos && m_find_last_pos > 0)
+    {
+        // Wrap around: retry from the beginning
+        found_pos = FindInMarkdown(markdown, query, 0);
+        if (found_pos != std::string::npos)
+        {
+            wrapped = true;
+        }
+    }
     if (found_pos == std::string::npos)
     {
         SetStatusMessage(wxString::Format("Not found: %s", search_text));
         return;
     }
+
+    m_find_last_pos = found_pos + query.size();
 
     // Extract heading IDs from the cached HTML
     std::vector<std::pair<std::string, std::string>> heading_ids;
@@ -587,8 +612,16 @@ void DocViewPanel::OnFind([[maybe_unused]] wxCommandEvent& event)
     const bool loaded = m_html_win->LoadPage(anchor_href);
     if (loaded)
     {
-        SetStatusMessage(wxString::Format("Found \"%s\" in section #%s", search_text,
-                                          wxString::FromUTF8(section_id)));
+        if (wrapped)
+        {
+            SetStatusMessage(wxString::Format("Wrapped; found \"%s\" in section #%s", search_text,
+                                              wxString::FromUTF8(section_id)));
+        }
+        else
+        {
+            SetStatusMessage(wxString::Format("Found \"%s\" in section #%s", search_text,
+                                              wxString::FromUTF8(section_id)));
+        }
     }
     else
     {

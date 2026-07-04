@@ -18,6 +18,11 @@ on:
         required: false
         type: string
         default: 'macos-15'
+      enable-pgo:
+        description: 'Enable Profile-Guided Optimization (Clang-only, Release-only)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   buildMacOS:
@@ -56,21 +61,66 @@ jobs:
     # weekly from wxWidgets master, and stale cache can cause build failures
     # due to partial/mismatched source files.
 
+    # ── Non-PGO path: standard build ───────────────────────────────────────
+
     - name: Configure CMake (GitHub runner - universal binary)
-      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
+      if: ${{ !startsWith(inputs.runner-type, 'self-hosted') && !inputs.enable-pgo }}
       run: |
         clang++ --version
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
 
     - name: Configure CMake (self-hosted - native architecture)
-      if: ${{ startsWith(inputs.runner-type, 'self-hosted') }}
+      if: ${{ startsWith(inputs.runner-type, 'self-hosted') && !inputs.enable-pgo }}
       run: |
         clang++ --version
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -GNinja
 
     - name: Build wxUiEditor
+      if: ${{ !inputs.enable-pgo }}
       run: |
         cmake --build ${{github.workspace}}/build -j$(nproc 2>/dev/null || sysctl -n hw.ncpu) --config ${{inputs.build-type}} --target wxUiEditor
+
+    # ── PGO path: instrument → profile → optimize ──────────────────────────
+
+    - name: Configure CMake — Instrumented (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: |
+        clang++ --version
+        cmake -B ${{github.workspace}}/build -GNinja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+          -DUSE_PGO_INSTRUMENT=ON
+          -DUSE_PGO_OPTIMIZE=OFF
+
+    - name: Build — Instrumented (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: cmake --build ${{github.workspace}}/build -j$(sysctl -n hw.ncpu) --config Release
+
+    - name: Collect PGO Profiles
+      if: ${{ inputs.enable-pgo }}
+      run: ${{github.workspace}}/bin/Release/wxUiEditor --verify_all ${{github.workspace}}/src/wxui/wxUiEditor.wxui
+      env:
+        LLVM_PROFILE_FILE: ${{github.workspace}}/build/pgo_profiles/%p_%m.profraw
+
+    - name: Merge PGO Profiles
+      if: ${{ inputs.enable-pgo }}
+      run: >-
+        llvm-profdata merge
+        -output=${{github.workspace}}/build/pgo_profiles/merged.profdata
+        ${{github.workspace}}/build/pgo_profiles/*.profraw
+
+    - name: Configure CMake — Optimized (PGO)
+      if: ${{ inputs.enable-pgo }}
+      run: |
+        cmake -B ${{github.workspace}}/build -GNinja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+          -DUSE_PGO_OPTIMIZE=ON
+          -DUSE_PGO_INSTRUMENT=OFF
+
+    - name: Build — PGO Optimized
+      if: ${{ inputs.enable-pgo }}
+      run: cmake --build ${{github.workspace}}/build -j$(sysctl -n hw.ncpu) --config Release
 
     - name: Build DMG
       if: ${{ inputs.create-setup }}

@@ -19,9 +19,11 @@ project(wxUiEditor
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
 # ###################### Check for Multi-Config Generator #######################
-if(NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
-    message("\nBecause you are using a single target generator, you MUST specify")
-    message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
+# GENERATOR_IS_MULTI_CONFIG is a global property, not a variable — must use get_property()
+get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(NOT IS_MULTI_CONFIG)
+    message("\nSingle-config generator (${CMAKE_GENERATOR}).")
+    message("    CMAKE_BUILD_TYPE defaulting to Debug. Override with -DCMAKE_BUILD_TYPE=Release.\n")
 
     set(allowedBuildTypes Debug Release)
 
@@ -32,7 +34,9 @@ if(NOT CMAKE_GENERATOR_IS_MULTI_CONFIG)
     endif()
 
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
-
+else()
+    message("\nMulti-config generator (${CMAKE_GENERATOR}).")
+    message("    Use \"--config [Debug|Release]\" with the cmake --build command.\n")
 endif()
 
 # ###################### General Settings #######################
@@ -67,6 +71,15 @@ option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 option(INTERNAL_FEATURE1 "Build with Feature #1 enabled") # Currently tied to IndexAltName
 option(INTERNAL_FEATURE2 "Build with Feature #2 enabled") # Currently tied to Data List
 option(INTERNAL_FEATURE3 "Build with Feature #3 enabled") # unused
+
+# ###################### PGO (Profile-Guided Optimization) #######################
+# Clang-only, two-phase workflow:
+#   Phase 1: cmake -DUSE_PGO_INSTRUMENT=ON → build profile-collecting binary
+#   Phase 2: run workload, llvm-profdata merge, cmake -DUSE_PGO_OPTIMIZE=ON
+option(USE_PGO_INSTRUMENT "Build instrumented binary for PGO training (Clang)" OFF)
+option(USE_PGO_OPTIMIZE "Build optimized binary using PGO profile data (Clang)" OFF)
+set(PGO_PROFILE_DIR "${CMAKE_BINARY_DIR}/pgo_profiles"
+    CACHE PATH "Directory for PGO .profraw output (instrument) or .profdata input (optimize)")
 
 # ###################### Version #######################
 # Generate C++ header file with version constants for use in source code
@@ -118,7 +131,7 @@ if(MSVC)
 else()
     # -Os over -O3: UI-heavy codebase sees minimal speedup from aggressive inlining
     # and vectorization, while -Os reduces L1 I-cache pressure and binary size.
-    set(CMAKE_CXX_FLAGS_RELEASE -Os -DNDEBUG CACHE STRING "C++ Release flags" FORCE)
+    set(CMAKE_CXX_FLAGS_RELEASE "-Os -DNDEBUG" CACHE STRING "C++ Release flags" FORCE)
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         add_compile_options($<$<CONFIG:Debug>:-g>)
@@ -126,6 +139,42 @@ else()
         # add_compile_options(-fdebug-types-section)
         add_compile_options($<$<CONFIG:Debug>:-fno-standalone-debug>)
         add_compile_options($<$<CONFIG:Debug>:-gz=zlib>)
+
+        if(USE_PGO_INSTRUMENT AND USE_PGO_OPTIMIZE)
+            message(FATAL_ERROR "USE_PGO_INSTRUMENT and USE_PGO_OPTIMIZE are mutually exclusive")
+        endif()
+
+        # Auto-detect PGO profile: if neither option was explicitly set,
+        # check for merged.profdata and enable optimize automatically.
+        # Most users cloning the repo won't have a profile; this silently
+        # skips PGO for them while CI can drop in a profile for free perf.
+        if(NOT USE_PGO_INSTRUMENT AND NOT USE_PGO_OPTIMIZE)
+            if(EXISTS "${PGO_PROFILE_DIR}/merged.profdata")
+                message(STATUS "PGO: auto-detected profile at ${PGO_PROFILE_DIR}/merged.profdata")
+                set(USE_PGO_OPTIMIZE ON CACHE BOOL "Build optimized binary using PGO profile data (Clang)" FORCE)
+            endif()
+        endif()
+
+        if(USE_PGO_INSTRUMENT)
+            message(STATUS "PGO: instrumenting → profiles written to ${PGO_PROFILE_DIR}")
+            add_compile_options(-fprofile-generate=${PGO_PROFILE_DIR})
+            add_compile_options(-fno-omit-frame-pointer)
+            add_link_options(-fprofile-generate=${PGO_PROFILE_DIR})
+        elseif(USE_PGO_OPTIMIZE)
+            set(PGO_PROFDATA "${PGO_PROFILE_DIR}/merged.profdata")
+            if(NOT EXISTS "${PGO_PROFDATA}")
+                message(FATAL_ERROR
+                    "PGO profile not found: ${PGO_PROFDATA}\n"
+                    "  Run the instrumented build, collect profiles, then run:\n"
+                    "  llvm-profdata merge -output=${PGO_PROFDATA} ${PGO_PROFILE_DIR}/*.profraw")
+            endif()
+            message(STATUS "PGO: optimizing with profile ${PGO_PROFDATA}")
+            add_compile_options(
+                -fprofile-use=${PGO_PROFDATA}
+                -Wno-backend-plugin
+            )
+            add_link_options(-fprofile-use=${PGO_PROFDATA})
+        endif()
     endif()
 endif()
 

@@ -16,12 +16,14 @@ jobs:
     with:
       create-setup: true
       build-type: Release
+      enable-pgo: true
 
   buildUnix:
     uses: ./.github/workflows/build-unix-reusable.yml
     with:
       create-setup: true
       build-type: Release
+      enable-pgo: true
 
   buildMacOS:
     uses: ./.github/workflows/build-macos-reusable.yml
@@ -29,3 +31,4 @@ jobs:
       create-setup: true
       build-type: Release
       runner-type: macos-15
+      enable-pgo: true

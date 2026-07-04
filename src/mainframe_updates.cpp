@@ -16,8 +16,8 @@
 #include "preferences.h"      // Preferences -- Stores user preferences
 #include "project_handler.h"  // ProjectHandler class
 
-#include "panels/base_panel.h"  // BasePanel -- C++ panel
-#include "panels/doc_view.h"    // Panel for displaying docs in wxWebView
+#include "panels/base_panel.h"     // BasePanel -- C++ panel
+#include "panels/language_docs.h"  // Panel for displaying docs in wxWebView
 
 #include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
 
@@ -109,9 +109,9 @@ void MainFrame::UpdateLanguagePanels()
     {
         m_notebook->RemovePage(m_notebook->GetPageIndex(m_importPanel));
     }
-    if (m_docviewPanel)
+    if (m_languageDocsPanel)
     {
-        m_notebook->RemovePage(m_notebook->GetPageIndex(m_docviewPanel));
+        m_notebook->RemovePage(m_notebook->GetPageIndex(m_languageDocsPanel));
     }
 
     const GenLang languages = Project.get_GenerateLanguages();
@@ -179,9 +179,9 @@ void MainFrame::UpdateLanguagePanels()
     {
         m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
     }
-    if (m_docviewPanel)
+    if (m_languageDocsPanel)
     {
-        m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+        m_notebook->AddPage(m_languageDocsPanel, "Docs", false, wxWithImages::NO_IMAGE);
     }
 }
 

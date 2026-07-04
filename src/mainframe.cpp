@@ -49,7 +49,7 @@
 #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
-#include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
+#include "panels/language_docs.h"   // Panel for displaying docs in wxWebView
 #include "panels/nav_panel.h"       // NavigationPanel -- Node tree class
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
@@ -612,8 +612,8 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
 #if wxUSE_WEBVIEW
-    m_docviewPanel = new DocViewPanel(m_notebook, this);
-    m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+    m_languageDocsPanel = new LanguageDocs(m_notebook, this);
+    m_notebook->AddPage(m_languageDocsPanel, "Docs", false, wxWithImages::NO_IMAGE);
 #endif
 
     if (wxGetApp().isTestingMenuEnabled())

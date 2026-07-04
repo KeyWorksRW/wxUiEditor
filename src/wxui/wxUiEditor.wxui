@@ -3359,9 +3359,9 @@
       </node>
       <node
         class="PanelForm"
-        class_name="DocViewPanel"
+        class_name="LanguageDocs"
         window_style="0"
-        base_file="..\panels\doc_view.cpp"
+        base_file="..\panels\language_docs.cpp"
         initial_enum_string="START_DOCVIEW_IDS"
         local_src_includes="version.h"
         header_preamble="class CustomEvent;@@class wxWebView;@@class MainFrame;"
@@ -8730,7 +8730,6 @@
         title="wxWidgets Documentation"
         base_file="..\internal\doc_view_frame_base"
         derived_class_name="DocViewFrame"
-        derived_file="mainframe"
         pure_virtual_functions="1"
         minimum_size="300,600"
         wxEVT_CLOSE_WINDOW="OnClose">

@@ -182,7 +182,7 @@ namespace docparser
             // desired Y is the parent's Y and the parent's desired Y is the average
             // of the children, the system drifts downward indefinitely. Instead,
             // position the rightmost (highest rank) column evenly, then center
-            // each node at the average Y of its connected neighbours in higher
+            // each node at the average Y of its connected neighbors in higher
             // ranks, working right-to-left. This converges in one pass.
 
             for (std::size_t i = 0; i < count; ++i)

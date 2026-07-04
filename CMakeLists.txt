@@ -116,14 +116,16 @@ if(MSVC)
     # Increase stack size for large projects with many object files
     string(APPEND CMAKE_EXE_LINKER_FLAGS " /STACK:8388608") # 8MB stack
 else()
-    set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
+    # -Os over -O3: UI-heavy codebase sees minimal speedup from aggressive inlining
+    # and vectorization, while -Os reduces L1 I-cache pressure and binary size.
+    set(CMAKE_CXX_FLAGS_RELEASE -Os -DNDEBUG CACHE STRING "C++ Release flags" FORCE)
 
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_compile_options(-g)
-        add_compile_options(-flimit-debug-info)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        add_compile_options($<$<CONFIG:Debug>:-g>)
+        add_compile_options($<$<CONFIG:Debug>:-flimit-debug-info>)
         # add_compile_options(-fdebug-types-section)
-        add_compile_options(-fno-standalone-debug)
-        add_compile_options(-gz=zlib)
+        add_compile_options($<$<CONFIG:Debug>:-fno-standalone-debug>)
+        add_compile_options($<$<CONFIG:Debug>:-gz=zlib>)
     endif()
 endif()
 

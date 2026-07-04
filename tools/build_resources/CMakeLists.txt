@@ -25,44 +25,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 ####################### libdeflate ######################
-# DEFLATE compression/decompression — always Release, size-optimized, no debug symbols
+# DEFLATE compression/decompression — always Release, size-optimized, no debug symbols.
+# Built via our own CMakeLists.txt (cmake/libdeflate/) to avoid policy issues
+# with libdeflate's cmake_minimum_required(VERSION 3.10).
 
-include(FetchContent)
-set(FETCHCONTENT_QUIET ON)
-
-# Use CACHE FORCE variables instead of normal variables so libdeflate's
-# option() honors them regardless of CMP0077. This is needed because
-# libdeflate's own cmake_minimum_required(VERSION 3.10) implicitly resets
-# CMP0077 to OLD (introduced in 3.13), making option() ignore normal vars.
-
-FetchContent_Declare(
-    libdeflate
-    URL https://github.com/ebiggers/libdeflate/releases/download/v1.25/libdeflate-1.25.tar.gz
-    DOWNLOAD_NO_PROGRESS TRUE
-)
-
-set(LIBDEFLATE_BUILD_SHARED_LIB OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_BUILD_GZIP OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_COMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
-set(LIBDEFLATE_DECOMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
-set(LIBDEFLATE_ZLIB_SUPPORT OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_GZIP_SUPPORT ON CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(libdeflate)
-
-# Always optimize for size, never debug, regardless of parent build config
-if(MSVC)
-    target_compile_options(libdeflate_static PRIVATE /O1)
-else()
-    target_compile_options(libdeflate_static PRIVATE -Os)
-endif()
-target_compile_definitions(libdeflate_static PRIVATE NDEBUG)
-
-# Match the parent project's CRT (MD/MDd)
-set_target_properties(libdeflate_static PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<CONFIG:Debug>DebugDLL"
-)
+add_subdirectory(../../cmake/libdeflate ${CMAKE_BINARY_DIR}/libs/libdeflate)
 
 # ##################### miniz ######################
 # ZIP archive reading/writing — always Release, size-optimized, no debug symbols
@@ -154,9 +121,7 @@ target_include_directories(build_resources PRIVATE
     # ${CMAKE_CURRENT_SOURCE_DIR}/../../src/pugixml
 )
 
-target_include_directories(build_resources PRIVATE
-    ${libdeflate_SOURCE_DIR}
-)
+# libdeflate include path is set PUBLIC on libdeflate_static — no explicit include needed
 
 target_link_libraries(build_resources PRIVATE
     docparser

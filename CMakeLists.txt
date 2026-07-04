@@ -229,35 +229,11 @@ endif()
 # changes and vice versa.
 
 # ##################### libdeflate ######################
-# DEFLATE compression/decompression — always Release, size-optimized, no debug symbols
+# DEFLATE compression/decompression — always Release, size-optimized, no debug symbols.
+# Built via our own CMakeLists.txt (cmake/libdeflate/) to avoid policy issues
+# with libdeflate's cmake_minimum_required(VERSION 3.10).
 
-FetchContent_Declare(
-    libdeflate
-    URL https://github.com/ebiggers/libdeflate/releases/download/v1.25/libdeflate-1.25.tar.gz
-    DOWNLOAD_NO_PROGRESS TRUE
-)
-
-set(LIBDEFLATE_BUILD_SHARED_LIB OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_BUILD_GZIP OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_COMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
-set(LIBDEFLATE_DECOMPRESSION_SUPPORT ON CACHE BOOL "" FORCE)
-set(LIBDEFLATE_ZLIB_SUPPORT OFF CACHE BOOL "" FORCE)
-set(LIBDEFLATE_GZIP_SUPPORT ON CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(libdeflate)
-
-# Always optimize for size, never debug
-if(MSVC)
-    target_compile_options(libdeflate_static PRIVATE /O1)
-else()
-    target_compile_options(libdeflate_static PRIVATE -Os)
-endif()
-target_compile_definitions(libdeflate_static PRIVATE NDEBUG)
-
-set_target_properties(libdeflate_static PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<CONFIG:Debug>DebugDLL"
-)
+add_subdirectory(cmake/libdeflate)
 
 # ##################### miniz ######################
 # ZIP archive reading/writing — always Release, size-optimized, no debug symbols

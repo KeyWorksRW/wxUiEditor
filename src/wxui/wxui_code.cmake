@@ -24,7 +24,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_propsheet.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_ribbon.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_wizard.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../panels/doc_view.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../panels/language_docs.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../panels/nav_toolbar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg.cpp
@@ -55,6 +55,8 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/doc_view_frame_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/doc_view_panel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
@@ -68,7 +70,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/viewdetails_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/wxdocview_base.cpp
 
 )
 

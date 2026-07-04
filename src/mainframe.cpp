@@ -29,14 +29,15 @@
 
 #include "mainframe.h"
 
-#include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "clipboard.h"        // wxUiEditorData -- Handles reading and writing OS clipboard data
-#include "cstm_event.h"       // CustomEvent -- Custom Event class
-#include "gen_base.h"         // Generate Base class
-#include "gen_common.h"       // Common component functions
-#include "gen_enums.h"        // Enumerations for generators
-#include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator class
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "clipboard.h"       // wxUiEditorData -- Handles reading and writing OS clipboard data
+#include "cstm_event.h"      // CustomEvent -- Custom Event class
+#include "gen_base.h"        // Generate Base class
+#include "gen_common.h"      // Common component functions
+#include "gen_enums.h"       // Enumerations for generators
+#include "helptext/doc_view_frame.h"  // DocViewFrame -- modeless documentation viewer
+#include "node.h"                     // Node class
+#include "node_creator.h"             // NodeCreator class
 #include "node_gridbag.h"     // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "preferences.h"      // Preferences -- Stores user preferences
@@ -44,12 +45,11 @@
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
 #include "version.h"          // Version information for wxUiEditor and wxWidgets
-#include "wxdocview_dlg.h"    // wxDocView -- Dialog for displaying wxWidgets documentation
 
 #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
-#include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
+#include "panels/language_docs.h"   // Panel for displaying docs in wxWebView
 #include "panels/nav_panel.h"       // NavigationPanel -- Node tree class
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
@@ -99,7 +99,7 @@ enum class MenuIDs : int
     id_GenSinglePython,
     id_GenSingleRuby,
     id_GenSingleXrc,
-    id_HelpDialog,
+    id_OpenDocViewer,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
@@ -208,9 +208,8 @@ MainFrame::MainFrame() :
                          "Run assertion test");
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(std::to_underlying(MenuIDs::id_HelpDialog), "&Help Dialog...",
-
-                         "Help Dialog...");
+    menuInternal->Append(std::to_underlying(MenuIDs::id_OpenDocViewer), "&Documentation Viewer...",
+                         "Documentation Viewer");
 
     m_menubar->Append(menuInternal, "&Internal");
 
@@ -360,12 +359,26 @@ MainFrame::MainFrame() :
 
     Bind(
         wxEVT_MENU,
-        [this](wxCommandEvent&)
+        [this]([[maybe_unused]] wxCommandEvent& evt)
         {
-            wxDocView dialog(this);
-            dialog.ShowModal();
+            DocViewFrame* doc_frame = wxGetApp().getDocViewFrame();
+            if (doc_frame != nullptr)
+            {
+                doc_frame->Show();
+                doc_frame->Raise();
+                doc_frame->SetFocus();
+            }
+            else
+            {
+                const std::filesystem::path zip_path {
+                    "C:/rwCode/wxLanguages/wxUiEditor/tests/wxWidgetsDocs.zip"
+                };
+                doc_frame = new DocViewFrame(this, zip_path);
+                wxGetApp().setDocViewFrame(doc_frame);
+                doc_frame->Show();
+            }
         },
-        std::to_underlying(MenuIDs::id_HelpDialog));
+        std::to_underlying(MenuIDs::id_OpenDocViewer));
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(),
          std::to_underlying(MenuIDs::id_DebugCurrentTest));
 #endif
@@ -599,8 +612,8 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
 #if wxUSE_WEBVIEW
-    m_docviewPanel = new DocViewPanel(m_notebook, this);
-    m_notebook->AddPage(m_docviewPanel, "Docs", false, wxWithImages::NO_IMAGE);
+    m_languageDocsPanel = new LanguageDocs(m_notebook, this);
+    m_notebook->AddPage(m_languageDocsPanel, "Docs", false, wxWithImages::NO_IMAGE);
 #endif
 
     if (wxGetApp().isTestingMenuEnabled())

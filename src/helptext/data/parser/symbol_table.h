@@ -11,6 +11,7 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace docparser
@@ -32,11 +33,24 @@ namespace docparser
         // Get the inheritance chain for a class (immediate bases first).
         [[nodiscard]] std::vector<std::string> InheritanceChain(const std::string& name) const;
 
+        // Direct base classes declared by 'name' (empty if none/unknown).
+        [[nodiscard]] std::vector<std::string> DirectBases(const std::string& name) const;
+
+        // Direct derived classes — every class that names 'name' as a base.
+        // Sorted alphabetically for deterministic output.
+        [[nodiscard]] std::vector<std::string> DirectDerived(const std::string& name) const;
+
         // Get all known classes as (name, relative_path) pairs.
         [[nodiscard]] std::vector<std::pair<std::string, std::filesystem::path>> AllClasses() const;
 
         // Returns true when 'name' derives from wxEvent anywhere in its inheritance chain.
         bool IsEventClass(const std::string& name) const;
+
+        // Returns true when 'class_name' or any of its ancestors declares a method
+        // named 'method_name' with the 'virtual' keyword. wxWidgets interface headers
+        // omit 'virtual' on overrides, so this resolves inherited virtuality the way
+        // Doxygen does (matching by name across the inheritance graph).
+        bool IsMethodVirtual(const std::string& class_name, const std::string& method_name) const;
 
         // Stats
         [[nodiscard]] std::size_t ClassCount() const { return class_to_file_.size(); }
@@ -48,6 +62,12 @@ namespace docparser
 
         // class name -> list of base class names
         std::unordered_map<std::string, std::vector<std::string>> class_bases_;
+
+        // class name -> list of directly derived class names (reverse of class_bases_)
+        std::unordered_map<std::string, std::vector<std::string>> class_derived_;
+
+        // class name -> set of method names declared 'virtual' directly in that class
+        std::unordered_map<std::string, std::unordered_set<std::string>> class_virtual_methods_;
 
         std::size_t enum_count_ = 0;
     };

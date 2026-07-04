@@ -21,7 +21,7 @@
 using namespace GenEnum;
 
 class BasePanel;
-class DocViewPanel;
+class LanguageDocs;
 class CustomEvent;
 class FocusKillerEvtHandler;
 class GridBagAction;
@@ -100,7 +100,7 @@ public:
     void UpdateLanguagePanels();
 
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
-    DocViewPanel* getDocViewPanel() { return m_docviewPanel; }
+    LanguageDocs* getLanguageDocsPanel() { return m_languageDocsPanel; }
 
     ImportPanel* getImportPanel() { return m_importPanel; }
 
@@ -387,7 +387,7 @@ private:
     std::unique_ptr<WakaTime> m_wakatime { nullptr };
 
     MockupParent* m_mockupPanel { nullptr };
-    DocViewPanel* m_docviewPanel { nullptr };
+    LanguageDocs* m_languageDocsPanel { nullptr };
 
     BasePanel* m_cppPanel { nullptr };
 

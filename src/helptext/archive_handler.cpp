@@ -13,10 +13,8 @@
 #include <string>
 #include <vector>
 
-#include <wx/bmpbndl.h>
 #include <wx/fs_mem.h>
 #include <wx/html/htmlwin.h>
-#include <wx/mstream.h>
 #include <wx/string.h>
 
 #include "data/cppmark/include/cppmark_html.h"
@@ -230,26 +228,8 @@ bool ArchiveHandler::ExtractAndRegisterSvgLogo()
     }
 
     const std::string& svg_data = *svg_result;
-    const wxBitmapBundle bundle = wxBitmapBundle::FromSVG(
-        reinterpret_cast<const wxByte*>(svg_data.data()), svg_data.size(), wxSize(64, 64));
-    if (!bundle.IsOk())
-    {
-        return false;
-    }
-
-    const wxBitmap bitmap = bundle.GetBitmap(wxSize(64, 64));
-    const wxImage image = bitmap.ConvertToImage();
-    wxMemoryOutputStream png_stream;
-    if (!image.SaveFile(png_stream, wxBITMAP_TYPE_PNG))
-    {
-        return false;
-    }
-
-    const size_t png_size = static_cast<size_t>(png_stream.GetLength());
-    std::vector<char> png_data(png_size);
-    png_stream.CopyTo(png_data.data(), png_data.size());
-    wxMemoryFSHandler::AddFileWithMimeType("wxlogo.svg", png_data.data(), png_data.size(),
-                                           "image/png");
+    wxMemoryFSHandler::AddFileWithMimeType("wxlogo.svg", svg_data.data(), svg_data.size(),
+                                           "image/svg+xml");
     return true;
 }
 

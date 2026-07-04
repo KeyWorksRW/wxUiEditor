@@ -16,7 +16,6 @@
 #include <wx/bitmap.h>
 #include <wx/choicebk.h>
 #include <wx/colour.h>
-#include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/html/htmlwin.h>
@@ -29,35 +28,32 @@
 #include <wx/srchctrl.h>
 #include <wx/textctrl.h>
 
-class wxDocView_base : public wxDialog
+class DocViewPanelBase : public wxPanel
 {
 public:
-    wxDocView_base() {}
-    wxDocView_base(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "wxWidgets Documentation",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
+    DocViewPanelBase() {}
+    DocViewPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr)
     {
-        Create(parent, id, title, pos, size, style, name);
+        Create(parent, id, pos, size, style, name);
     }
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "wxWidgets Documentation",
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size =
+        wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr);
 
 protected:
 
     // Virtual event handlers -- override them in your derived class
 
-    virtual void OnDblClickListBox(wxCommandEvent& event) = 0;
-    virtual void OnDisplaySearchListItem(wxCommandEvent& event) = 0;
-    virtual void OnHome(wxCommandEvent& event) = 0;
-    virtual void OnHtmlLink(wxHtmlLinkEvent& event) = 0;
-    virtual void OnIndexTextChange(wxCommandEvent& event) = 0;
-    virtual void OnIndexTextEnter(wxCommandEvent& event) = 0;
-    virtual void OnInit(wxInitDialogEvent& event) = 0;
-    virtual void OnPageChanged(wxBookCtrlEvent& event) = 0;
-    virtual void OnSearchCancel(wxCommandEvent& event) = 0;
-    virtual void OnSearchTextChanged(wxCommandEvent& event) = 0;
-    virtual void OnTextKeyDown(wxKeyEvent& event) = 0;
+    virtual void OnDblClickListBox(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDisplaySearchListItem(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnHome(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnHtmlLink(wxHtmlLinkEvent& event) { event.Skip(); }
+    virtual void OnIndexTextChange(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnIndexTextEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
+    virtual void OnSearchCancel(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSearchTextChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTextKeyDown(wxKeyEvent& event) { event.Skip(); }
 
     // Class member variables
 

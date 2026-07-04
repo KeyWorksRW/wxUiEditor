@@ -49,7 +49,7 @@ public:
     // ----- Archive lifecycle -----
 
     // Open a documentation ZIP archive and prepare the in-memory file
-    // system for embedded images (SVG logo rendered as PNG).
+    // system for embedded images.
     [[nodiscard]] std::expected<void, std::string>
         OpenArchive(const std::filesystem::path& zip_path);
 
@@ -76,6 +76,12 @@ public:
 
     // Current archive page name (empty if none displayed).
     const std::string& GetCurrentPage() const noexcept { return m_current_archive_page; }
+
+    // Raw markdown for the currently displayed page (empty if none displayed).
+    const std::string& GetCurrentMarkdown() const noexcept { return m_current_markdown; }
+
+    // HTML (with heading IDs injected) for the currently displayed page.
+    const std::string& GetCurrentHtml() const noexcept { return m_current_html_with_ids; }
 
     // ----- Search -----
 

@@ -30,7 +30,7 @@
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
-#include "panels/doc_view.h"        // Panel for displaying docs in wxWebView
+#include "panels/language_docs.h"   // Panel for displaying docs in wxWebView
 #include "panels/nav_panel.h"       // NavigationPanel -- Node tree class
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 
@@ -178,9 +178,9 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
             m_mockupPanel->CreateContent();
         }
 #if wxUSE_WEBVIEW
-        else if (page == m_docviewPanel)
+        else if (page == m_languageDocsPanel)
         {
-            m_docviewPanel->ActivatePage();
+            m_languageDocsPanel->ActivatePage();
         }
 #endif
         else if (page != m_importPanel)
@@ -459,7 +459,7 @@ void MainFrame::OnFindDialog([[maybe_unused]] wxCommandEvent& event)
             {
                 m_findData.SetFindString(m_importPanel->GetTextCtrl()->GetSelectedText());
             }
-            else if (page != m_mockupPanel && page != m_docviewPanel)
+            else if (page != m_mockupPanel && page != m_languageDocsPanel)
             {
                 m_findData.SetFindString(dynamic_cast<BasePanel*>(page)->GetSelectedText());
             }

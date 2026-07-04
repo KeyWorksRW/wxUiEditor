@@ -11,29 +11,26 @@
 // cppcheck-suppress-begin *
 
 #include <wx/artprov.h>
-#include <wx/button.h>
 #include <wx/persist/splitter.h>
 #include <wx/sizer.h>
 
-#include "wxdocview_base.h"
+#include "doc_view_panel_base.h"
 
-bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style, const wxString &name)
+bool DocViewPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+    const wxString& name)
 {
-    // Scaling of pos and size are handled after the dialog
-    // has been created and controls added.
-    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+
+    if (!wxPanel::Create(parent, id, pos, size, style, name))
     {
         return false;
     }
 
-    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
-    dlg_sizer->SetMinSize(800, 1024);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_splitter2 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
     m_splitter2->SetSashGravity(0.0);
     m_splitter2->SetMinimumPaneSize(150);
-    dlg_sizer->Add(m_splitter2, wxSizerFlags(1).Expand().Border(wxALL));
+    box_sizer->Add(m_splitter2, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* panel = new wxPanel(m_splitter2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME|wxTAB_TRAVERSAL);
     panel->SetMinSize(FromDIP(wxSize(175, -1)));
@@ -44,7 +41,7 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     panel_sizer->Add(m_choicebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_search_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_choicebook->AddPage(m_search_page, "Search", true);
+    m_choicebook->AddPage(m_search_page, "Search");
     m_search_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto* box_sizer4 = new wxBoxSizer(wxVERTICAL);
@@ -57,6 +54,7 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer4->Add(m_search_ctrl, wxSizerFlags().Expand().Border(wxALL));
 
     m_search_listbox = new wxListBox(m_search_page, wxID_ANY);
+    m_search_listbox->SetFocus();
     box_sizer4->Add(m_search_listbox,
         wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
     m_search_page->SetSizerAndFit(box_sizer4);
@@ -142,61 +140,32 @@ bool wxDocView_base::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_splitter2->SplitVertically(panel, panel2);
     m_splitter2->SetSashPosition(75);
 
-    auto* stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
-    stdBtn->GetCancelButton()->SetDefault();
-    dlg_sizer->Add(stdBtn, wxSizerFlags().Expand().Border(wxALL));
-
-    if (pos != wxDefaultPosition)
-    {
-        // Now that the dialog is created, set the scaled position
-        SetPosition(FromDIP(pos));
-    }
-    if (size == wxDefaultSize)
-    {
-        // If default size let the sizer set the dialog's size
-        // so that it is large enough to fit it's child controls.
-        SetSizerAndFit(dlg_sizer);
-    }
-    else
-    {
-        SetSizer(dlg_sizer);
-        if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
-        {
-            // Use the sizer to calculate the missing dimension
-            Fit();
-        }
-        SetSize(FromDIP(size));
-        Layout();
-    }
-    m_search_ctrl->SetFocus();
-
-    Centre(wxBOTH);
+    SetSizerAndFit(box_sizer);
     wxPersistentRegisterAndRestore(m_splitter2, "rtf_html_sash");
 
     // Event handlers
-    m_choicebook->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &wxDocView_base::OnPageChanged, this);
-    m_html_win->Bind(wxEVT_HTML_LINK_CLICKED, &wxDocView_base::OnHtmlLink, this);
-    Bind(wxEVT_INIT_DIALOG, &wxDocView_base::OnInit, this);
-    m_classes_textctrl->Bind(wxEVT_KEY_DOWN, &wxDocView_base::OnTextKeyDown, this);
-    m_events_textctrl->Bind(wxEVT_KEY_DOWN, &wxDocView_base::OnTextKeyDown, this);
-    m_functions_textctrl->Bind(wxEVT_KEY_DOWN, &wxDocView_base::OnTextKeyDown, this);
-    m_overviews_textctrl->Bind(wxEVT_KEY_DOWN, &wxDocView_base::OnTextKeyDown, this);
-    m_classes_listbox->Bind(wxEVT_LISTBOX_DCLICK, &wxDocView_base::OnDblClickListBox, this);
-    m_events_listbox->Bind(wxEVT_LISTBOX_DCLICK, &wxDocView_base::OnDblClickListBox, this);
-    m_functions_listbox->Bind(wxEVT_LISTBOX_DCLICK, &wxDocView_base::OnDblClickListBox, this);
-    m_overviews_listbox->Bind(wxEVT_LISTBOX_DCLICK, &wxDocView_base::OnDblClickListBox, this);
-    m_search_listbox->Bind(wxEVT_LISTBOX_DCLICK, &wxDocView_base::OnDisplaySearchListItem, this);
-    m_search_ctrl->Bind(wxEVT_SEARCHCTRL_CANCEL_BTN, &wxDocView_base::OnSearchCancel, this);
-    m_classes_textctrl->Bind(wxEVT_TEXT, &wxDocView_base::OnIndexTextChange, this);
-    m_events_textctrl->Bind(wxEVT_TEXT, &wxDocView_base::OnIndexTextChange, this);
-    m_functions_textctrl->Bind(wxEVT_TEXT, &wxDocView_base::OnIndexTextChange, this);
-    m_overviews_textctrl->Bind(wxEVT_TEXT, &wxDocView_base::OnIndexTextChange, this);
-    m_search_ctrl->Bind(wxEVT_TEXT, &wxDocView_base::OnSearchTextChanged, this);
-    m_classes_textctrl->Bind(wxEVT_TEXT_ENTER, &wxDocView_base::OnIndexTextEnter, this);
-    m_events_textctrl->Bind(wxEVT_TEXT_ENTER, &wxDocView_base::OnIndexTextEnter, this);
-    m_functions_textctrl->Bind(wxEVT_TEXT_ENTER, &wxDocView_base::OnIndexTextEnter, this);
-    m_overviews_textctrl->Bind(wxEVT_TEXT_ENTER, &wxDocView_base::OnIndexTextEnter, this);
-    Bind(wxEVT_TOOL, &wxDocView_base::OnHome, this, m_home->GetId());
+    m_choicebook->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &DocViewPanelBase::OnPageChanged, this);
+    m_html_win->Bind(wxEVT_HTML_LINK_CLICKED, &DocViewPanelBase::OnHtmlLink, this);
+    m_classes_textctrl->Bind(wxEVT_KEY_DOWN, &DocViewPanelBase::OnTextKeyDown, this);
+    m_events_textctrl->Bind(wxEVT_KEY_DOWN, &DocViewPanelBase::OnTextKeyDown, this);
+    m_functions_textctrl->Bind(wxEVT_KEY_DOWN, &DocViewPanelBase::OnTextKeyDown, this);
+    m_overviews_textctrl->Bind(wxEVT_KEY_DOWN, &DocViewPanelBase::OnTextKeyDown, this);
+    m_classes_listbox->Bind(wxEVT_LISTBOX_DCLICK, &DocViewPanelBase::OnDblClickListBox, this);
+    m_events_listbox->Bind(wxEVT_LISTBOX_DCLICK, &DocViewPanelBase::OnDblClickListBox, this);
+    m_functions_listbox->Bind(wxEVT_LISTBOX_DCLICK, &DocViewPanelBase::OnDblClickListBox, this);
+    m_overviews_listbox->Bind(wxEVT_LISTBOX_DCLICK, &DocViewPanelBase::OnDblClickListBox, this);
+    m_search_listbox->Bind(wxEVT_LISTBOX_DCLICK, &DocViewPanelBase::OnDisplaySearchListItem, this);
+    m_search_ctrl->Bind(wxEVT_SEARCHCTRL_CANCEL_BTN, &DocViewPanelBase::OnSearchCancel, this);
+    m_classes_textctrl->Bind(wxEVT_TEXT, &DocViewPanelBase::OnIndexTextChange, this);
+    m_events_textctrl->Bind(wxEVT_TEXT, &DocViewPanelBase::OnIndexTextChange, this);
+    m_functions_textctrl->Bind(wxEVT_TEXT, &DocViewPanelBase::OnIndexTextChange, this);
+    m_overviews_textctrl->Bind(wxEVT_TEXT, &DocViewPanelBase::OnIndexTextChange, this);
+    m_search_ctrl->Bind(wxEVT_TEXT, &DocViewPanelBase::OnSearchTextChanged, this);
+    m_classes_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
+    m_events_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
+    m_functions_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
+    m_overviews_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
+    Bind(wxEVT_TOOL, &DocViewPanelBase::OnHome, this, m_home->GetId());
 
     return true;
 }

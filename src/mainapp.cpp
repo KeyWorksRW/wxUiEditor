@@ -36,7 +36,7 @@
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
-#include "helptext/doc_view_frame/doc_view_frame.h"
+#include "helptext/doc_view_frame.h"
 
 #if defined(_WIN32) && defined(_MSC_VER)
     #pragma comment(lib, "kernel32.lib")

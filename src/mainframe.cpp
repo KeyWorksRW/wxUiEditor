@@ -35,9 +35,9 @@
 #include "gen_base.h"        // Generate Base class
 #include "gen_common.h"      // Common component functions
 #include "gen_enums.h"       // Enumerations for generators
-#include "helptext/doc_view_frame/doc_view_frame.h"  // DocViewFrame -- modeless documentation viewer
-#include "node.h"                                    // Node class
-#include "node_creator.h"                            // NodeCreator class
+#include "helptext/doc_view_frame.h"  // DocViewFrame -- modeless documentation viewer
+#include "node.h"                     // Node class
+#include "node_creator.h"             // NodeCreator class
 #include "node_gridbag.h"     // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"        // NodeProperty -- NodeProperty class
 #include "preferences.h"      // Preferences -- Stores user preferences

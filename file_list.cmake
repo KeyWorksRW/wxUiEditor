@@ -397,9 +397,9 @@ set( file_list
     src/ui/viewdetails_dlg.cpp          # Dialog to display details about a node in the Mockup
 
     src/helptext/archive_handler.cpp                # Handles doc archive: open, search, display
-    src/helptext/doc_view_utils/find_in_page.cpp    # Find-in-page utilities for DocViewPane
-    src/helptext/doc_view_panel/doc_view_pane.cpp   # Reusable doc viewer panel (wxHtmlWindow + index tabs)
-    src/helptext/doc_view_frame/doc_view_frame.cpp  # wxFrame host for DocViewPane (menu bar, status bar)
+    src/helptext/find_in_page.cpp    # Find-in-page utilities for DocViewPane
+    src/helptext/doc_view_panel.cpp                 # Reusable doc viewer panel (wxHtmlWindow + index tabs)
+    src/helptext/doc_view_frame.cpp  # wxFrame host for DocViewPane (menu bar, status bar)
 
     # (generated) ui/preferences_dlg.cpp  # Preferences dialog
     $<$<CONFIG:Debug>:src/internal/convert_img.cpp> # Convert image

@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   wxFrame wrapper for DocViewPane — menu bar, status bar, modes
+// Purpose:   Reusable doc viewer panel (wxHtmlWindow + index tabs)
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2026 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../../LICENSE
+// License:   Apache License -- see ..\..\LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <filesystem>
@@ -11,7 +11,7 @@
 
 #include <wx/button.h>
 #include <wx/dialog.h>
-#include <wx/filedlg.h>
+#include <wx/frame.h>
 #include <wx/fs_mem.h>
 #include <wx/listbox.h>
 #include <wx/sizer.h>
@@ -19,47 +19,58 @@
 
 #include <glaze/glaze.hpp>
 
-#include "doc_view_frame/doc_view_frame.h"
+#include "doc_view_panel.h"
 
 #include "archive_handler.h"
-#include "doc_view_utils/find_in_page.h"
+#include "find_in_page.h"
 #include "inherit_graph.h"  // docparser::InheritGraphNode, RenderInheritanceSvg
 
 // ---------------------------------------------------------------------------
-//  Glaze meta — serialize/deserialize InheritEntry by name
+//  Glaze meta — serialize/deserialize InheritEntry by name.
+//  Placed here (not in the header) to avoid pulling glaze into every TU.
 // ---------------------------------------------------------------------------
 
 template <>
 struct glz::meta<InheritEntry>
 {
     using Type = InheritEntry;
+    // NOLINTNEXTLINE(readability-avoid-auto) — type is detail::Object<glz::tuple<...>>, not
+    // writable
     static constexpr auto value = glz::object("bases", &Type::bases, "derived", &Type::derived);
 };
 
 // ---------------------------------------------------------------------------
-//  Constructor
+//  Constructors
 // ---------------------------------------------------------------------------
 
-DocViewFrame::DocViewFrame(wxWindow* parent, const std::filesystem::path& zip_path) :
-    DocViewFrame_base(parent)
+DocViewPanel::DocViewPanel(wxWindow* parent) : DocViewPanelBase(parent)
 {
-    // Find the Find toolbar button by excluding the stored tool references
-    for (std::size_t i = 0; i < m_aui_tool_bar->GetToolCount(); ++i)
+    InitPanel();
+}
+
+// ---------------------------------------------------------------------------
+//  InitPanel — bind Find toolbar button and Ctrl+F after Create() runs
+// ---------------------------------------------------------------------------
+
+void DocViewPanel::InitPanel()
+{
+    for (int idx = 0; idx < static_cast<int>(m_aui_tool_bar->GetToolCount()); ++idx)
     {
-        const wxAuiToolBarItem* const tool = m_aui_tool_bar->FindToolByIndex(i);
-        if (tool)
+        const wxAuiToolBarItem* const item = m_aui_tool_bar->FindToolByIndex(idx);
+        if (item != nullptr)
         {
-            const int id = tool->GetId();
-            if (id != m_home->GetId() && id != m_back->GetId() && id != m_forward->GetId())
+            const int tool_id = item->GetId();
+            if (tool_id != m_home->GetId() && tool_id != m_back->GetId() &&
+                tool_id != m_forward->GetId())
             {
-                m_find_tool_id = id;
+                m_find_tool_id = tool_id;
                 break;
             }
         }
     }
     if (m_find_tool_id != wxID_NONE)
     {
-        Bind(wxEVT_TOOL, &DocViewFrame::OnFind, this, m_find_tool_id);
+        Bind(wxEVT_TOOL, &DocViewPanel::OnFind, this, m_find_tool_id);
     }
 
     // Ctrl+F via CHAR_HOOK — more reliable than an accelerator table with
@@ -75,18 +86,13 @@ DocViewFrame::DocViewFrame(wxWindow* parent, const std::filesystem::path& zip_pa
              }
              key_event.Skip();
          });
-
-    if (!zip_path.empty())
-    {
-        std::ignore = OpenArchive(zip_path);
-    }
 }
 
 // ---------------------------------------------------------------------------
 //  OpenArchive
 // ---------------------------------------------------------------------------
 
-bool DocViewFrame::OpenArchive(const std::filesystem::path& zip_path)
+bool DocViewPanel::OpenArchive(const std::filesystem::path& zip_path)
 {
     // Reset state for the new archive
     m_inherit_map.clear();
@@ -105,7 +111,7 @@ bool DocViewFrame::OpenArchive(const std::filesystem::path& zip_path)
     std::expected<void, std::string> open_result = wxueArchive.OpenArchive(zip_path);
     if (!open_result)
     {
-        SetStatusText(wxString::FromUTF8(open_result.error()));
+        SetStatusMessage(wxString::FromUTF8(open_result.error()));
         return false;
     }
 
@@ -136,25 +142,28 @@ bool DocViewFrame::OpenArchive(const std::filesystem::path& zip_path)
     std::ignore = wxueArchive.DisplayHomePage(*m_html_win);
 
     m_archive_open = true;
-
-    // Update the title bar to reflect the loaded archive.
-    const wxString archive_name = wxString::FromUTF8(zip_path.filename().string());
-    SetTitle(wxString::Format("Doc Viewer - %s", archive_name));
-    SetStatusText(wxString::Format("Loaded %s", archive_name));
-
     return true;
 }
 
-bool DocViewFrame::IsArchiveOpen() const
+bool DocViewPanel::IsArchiveOpen() const
 {
     return m_archive_open;
+}
+
+void DocViewPanel::NavigateHome()
+{
+    if (wxueArchive.is_open())
+    {
+        std::ignore = wxueArchive.DisplayHomePage(*m_html_win);
+        SetStatusMessage("index.md");
+    }
 }
 
 // ---------------------------------------------------------------------------
 //  DisplayArchivePage
 // ---------------------------------------------------------------------------
 
-void DocViewFrame::DisplayArchivePage(const std::string& archive_name)
+void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
 {
     if (!wxueArchive.is_open())
     {
@@ -173,7 +182,7 @@ void DocViewFrame::DisplayArchivePage(const std::string& archive_name)
     {
         std::string modified_html = wxueArchive.GetCurrentHtml();
         const std::size_t h1_end_pos = modified_html.find("</h1>");
-        constexpr std::size_t H1_CLOSE_LEN = 5;
+        constexpr std::size_t H1_CLOSE_LEN = 5;  // length of "</h1>"
         if (h1_end_pos != std::string::npos)
         {
             modified_html.insert(h1_end_pos + H1_CLOSE_LEN, "\n" + img_block);
@@ -185,79 +194,41 @@ void DocViewFrame::DisplayArchivePage(const std::string& archive_name)
         m_html_win->SetPage(wxString::FromUTF8(modified_html));
     }
 
-    SetStatusText(wxString::FromUTF8(archive_name));
-}
-
-// ---------------------------------------------------------------------------
-//  Event handlers — file / navigation
-// ---------------------------------------------------------------------------
-
-void DocViewFrame::OnOpenArchive([[maybe_unused]] wxCommandEvent& event)
-{
-    wxFileDialog file_dlg(this, "Open Documentation Archive", wxEmptyString, wxEmptyString,
-                          "ZIP archives (*.zip)|*.zip|All files (*.*)|*.*",
-                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-
-    if (file_dlg.ShowModal() != wxID_OK)
-    {
-        return;
-    }
-
-    const std::filesystem::path zip_path(file_dlg.GetPath().ToStdWstring());
-    std::ignore = OpenArchive(zip_path);
-}
-
-void DocViewFrame::OnHome([[maybe_unused]] wxCommandEvent& event)
-{
-    if (wxueArchive.is_open())
-    {
-        std::ignore = wxueArchive.DisplayHomePage(*m_html_win);
-        SetStatusText("index.md");
-    }
-}
-
-void DocViewFrame::OnClose(wxCloseEvent& event)
-{
-    // Child mode: hide the frame so the caller (MainFrame) can re-raise it
-    // without re-creating it.  Top-level mode: default destroy exits the app.
-    if (GetParent() != nullptr)
-    {
-        Hide();
-        event.Veto();
-        return;
-    }
-    event.Skip();  // top-level: proceed with destroy → app exits
+    SetStatusMessage(wxString::FromUTF8(archive_name));
 }
 
 // ---------------------------------------------------------------------------
 //  Event handlers — HTML window
 // ---------------------------------------------------------------------------
 
-void DocViewFrame::OnHtmlLink(wxHtmlLinkEvent& event)
+void DocViewPanel::OnHtmlLink(wxHtmlLinkEvent& event)
 {
     wxueArchive.OnHtmlLink(event.GetLinkInfo(), *m_html_win);
 
     const std::string& current_page = wxueArchive.GetCurrentPage();
     if (!current_page.empty())
     {
-        SetStatusText(wxString::FromUTF8(current_page));
+        SetStatusMessage(wxString::FromUTF8(current_page));
     }
+}
+
+// ---------------------------------------------------------------------------
+//  Event handlers — navigation
+// ---------------------------------------------------------------------------
+
+void DocViewPanel::OnHome([[maybe_unused]] wxCommandEvent& event)
+{
+    NavigateHome();
 }
 
 // ---------------------------------------------------------------------------
 //  Event handlers — index tabs (classes / events / functions / overviews)
 // ---------------------------------------------------------------------------
 
-void DocViewFrame::OnPageChanged(wxBookCtrlEvent& event)
+void DocViewPanel::OnPageChanged(wxBookCtrlEvent& event)
 {
     const int page_sel = event.GetSelection();
     if (page_sel == wxNOT_FOUND)
-    {
-        event.Skip();
-        return;
-    }
-
-    if (!wxueArchive.is_open())
     {
         event.Skip();
         return;
@@ -308,14 +279,14 @@ void DocViewFrame::OnPageChanged(wxBookCtrlEvent& event)
         return;
     }
 
-    if (listbox->IsEmpty())
+    if (wxueArchive.is_open() && listbox->IsEmpty())
     {
         PopulateIndexListbox(index_file, listbox, textctrl, default_filter, *item_store);
     }
     event.Skip();
 }
 
-void DocViewFrame::OnDblClickListBox(wxCommandEvent& event)
+void DocViewPanel::OnDblClickListBox(wxCommandEvent& event)
 {
     const wxString selection = event.GetString();
     if (selection.empty())
@@ -327,7 +298,7 @@ void DocViewFrame::OnDblClickListBox(wxCommandEvent& event)
     DisplayArchivePage(archive_name);
 }
 
-void DocViewFrame::OnIndexTextChange(wxCommandEvent& event)
+void DocViewPanel::OnIndexTextChange(wxCommandEvent& event)
 {
     wxListBox* const listbox = GetActiveIndexListbox(event.GetEventObject());
     if (listbox == nullptr)
@@ -338,13 +309,21 @@ void DocViewFrame::OnIndexTextChange(wxCommandEvent& event)
 
     const std::vector<std::string>* item_vec = nullptr;
     if (listbox == m_classes_listbox)
+    {
         item_vec = &m_classes_items;
+    }
     else if (listbox == m_events_listbox)
+    {
         item_vec = &m_events_items;
+    }
     else if (listbox == m_functions_listbox)
+    {
         item_vec = &m_functions_items;
+    }
     else if (listbox == m_overviews_listbox)
+    {
         item_vec = &m_overviews_items;
+    }
 
     if (item_vec == nullptr)
     {
@@ -355,7 +334,7 @@ void DocViewFrame::OnIndexTextChange(wxCommandEvent& event)
     ApplyFilter(listbox, *item_vec, event.GetString());
 }
 
-void DocViewFrame::OnIndexTextEnter(wxCommandEvent& event)
+void DocViewPanel::OnIndexTextEnter(wxCommandEvent& event)
 {
     wxListBox* const listbox = GetActiveIndexListbox(event.GetEventObject());
     if (listbox == nullptr)
@@ -371,7 +350,7 @@ void DocViewFrame::OnIndexTextEnter(wxCommandEvent& event)
     }
 }
 
-void DocViewFrame::OnTextKeyDown(wxKeyEvent& event)
+void DocViewPanel::OnTextKeyDown(wxKeyEvent& event)
 {
     const int key_code = event.GetKeyCode();
 
@@ -387,15 +366,25 @@ void DocViewFrame::OnTextKeyDown(wxKeyEvent& event)
     wxListBox* listbox = nullptr;
 
     if (changed_page == m_classes_page)
+    {
         listbox = m_classes_listbox;
+    }
     else if (changed_page == m_events_page)
+    {
         listbox = m_events_listbox;
+    }
     else if (changed_page == m_functions_page)
+    {
         listbox = m_functions_listbox;
+    }
     else if (changed_page == m_overviews_page)
+    {
         listbox = m_overviews_listbox;
+    }
     else if (changed_page == m_search_page)
+    {
         listbox = m_search_listbox;
+    }
 
     if (listbox == nullptr || listbox->GetCount() == 0)
     {
@@ -408,11 +397,17 @@ void DocViewFrame::OnTextKeyDown(wxKeyEvent& event)
     {
         const int sel = listbox->GetSelection();
         if (sel == wxNOT_FOUND)
+        {
             listbox->SetSelection(0);
+        }
         else if (sel + 1 < static_cast<int>(listbox->GetCount()))
+        {
             listbox->SetSelection(sel + 1);
+        }
         else
+        {
             listbox->SetSelection(0);
+        }
         return;
     }
 
@@ -421,11 +416,17 @@ void DocViewFrame::OnTextKeyDown(wxKeyEvent& event)
     {
         const int sel = listbox->GetSelection();
         if (sel == wxNOT_FOUND)
+        {
             listbox->SetSelection(static_cast<int>(listbox->GetCount()) - 1);
+        }
         else if (sel > 0)
+        {
             listbox->SetSelection(sel - 1);
+        }
         else
+        {
             listbox->SetSelection(static_cast<int>(listbox->GetCount()) - 1);
+        }
         return;
     }
 
@@ -448,7 +449,7 @@ void DocViewFrame::OnTextKeyDown(wxKeyEvent& event)
 //  Event handlers — search
 // ---------------------------------------------------------------------------
 
-void DocViewFrame::OnSearchTextChanged(wxCommandEvent& event)
+void DocViewPanel::OnSearchTextChanged(wxCommandEvent& event)
 {
     const wxString query = event.GetString();
     m_search_listbox->Clear();
@@ -459,31 +460,32 @@ void DocViewFrame::OnSearchTextChanged(wxCommandEvent& event)
     }
 
     const std::string query_utf8 = query.utf8_string();
-    auto results = wxueArchive.SearchIncremental(query_utf8);
+    std::expected<std::vector<ftsrch::QueryResult>, ftsrch::Error> results =
+        wxueArchive.SearchIncremental(query_utf8);
     if (!results)
     {
         return;
     }
 
-    for (const auto& result: *results)
+    for (const ftsrch::QueryResult& result: *results)
     {
         const std::string archive_path = wxueArchive.GetArchivePathForDoc(result.doc_id);
         if (!archive_path.empty())
         {
             // Strip the .md extension for display
-            std::string display_name = std::filesystem::path(archive_path).stem().string();
+            const std::string display_name = std::filesystem::path(archive_path).stem().string();
             m_search_listbox->Append(wxString::FromUTF8(display_name));
         }
     }
 }
 
-void DocViewFrame::OnSearchCancel([[maybe_unused]] wxCommandEvent& event)
+void DocViewPanel::OnSearchCancel([[maybe_unused]] wxCommandEvent& event)
 {
     m_search_ctrl->Clear();
     m_search_listbox->Clear();
 }
 
-void DocViewFrame::OnDisplaySearchListItem(wxCommandEvent& event)
+void DocViewPanel::OnDisplaySearchListItem(wxCommandEvent& event)
 {
     const wxString selection = event.GetString();
     if (selection.empty())
@@ -493,64 +495,38 @@ void DocViewFrame::OnDisplaySearchListItem(wxCommandEvent& event)
 
     const std::string archive_name = selection.utf8_string() + ".md";
     DisplayArchivePage(archive_name);
-
-    // Switch to the search page to show results context
-    // (the page is already visible since we're on the search tab)
-}
-
-// ---------------------------------------------------------------------------
-//  Event handlers — info
-// ---------------------------------------------------------------------------
-
-void DocViewFrame::OnInfo([[maybe_unused]] wxCommandEvent& event)
-{
-    if (!wxueArchive.is_open())
-    {
-        SetStatusText("No archive loaded");
-        return;
-    }
-
-    const std::string& current_page = wxueArchive.GetCurrentPage();
-    if (current_page.empty())
-    {
-        SetStatusText("No page currently displayed");
-        return;
-    }
-
-    // Show the current page name and path in the status bar
-    SetStatusText(wxString::Format("Current page: %s", wxString::FromUTF8(current_page)));
 }
 
 // ---------------------------------------------------------------------------
 //  Find-in-page
 // ---------------------------------------------------------------------------
 
-void DocViewFrame::OnFind([[maybe_unused]] wxCommandEvent& event)
+void DocViewPanel::OnFind([[maybe_unused]] wxCommandEvent& event)
 {
     if (!wxueArchive.is_open())
     {
-        SetStatusText("No archive loaded");
+        SetStatusMessage("No archive loaded");
         return;
     }
 
     const std::string& markdown = wxueArchive.GetCurrentMarkdown();
     if (markdown.empty())
     {
-        SetStatusText("No page loaded");
+        SetStatusMessage("No page loaded");
         return;
     }
 
     // Create a simple modal find dialog
-    wxDialog find_dlg(this, wxID_ANY, "Find in page", wxDefaultPosition);
-    auto* find_sizer = new wxBoxSizer(wxVERTICAL);
+    wxDialog find_dlg(this, wxID_ANY, wxT("Find in page"), wxDefaultPosition);
+    wxBoxSizer* const find_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* text_ctrl = new wxTextCtrl(&find_dlg, wxID_ANY, wxEmptyString, wxDefaultPosition,
-                                     wxSize(300, -1), wxTE_PROCESS_ENTER);
+    wxTextCtrl* const text_ctrl = new wxTextCtrl(
+        &find_dlg, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(300, -1), wxTE_PROCESS_ENTER);
     find_sizer->Add(text_ctrl, wxSizerFlags().Expand().Border(wxALL, 8));
 
-    auto* btn_sizer = new wxBoxSizer(wxHORIZONTAL);
-    auto* find_next_btn = new wxButton(&find_dlg, wxID_FORWARD, "&Find Next");
-    auto* cancel_btn = new wxButton(&find_dlg, wxID_CANCEL, "&Close");
+    wxBoxSizer* const btn_sizer = new wxBoxSizer(wxHORIZONTAL);
+    wxButton* const find_next_btn = new wxButton(&find_dlg, wxID_FORWARD, wxT("&Find Next"));
+    wxButton* const cancel_btn = new wxButton(&find_dlg, wxID_CANCEL, wxT("&Close"));
     btn_sizer->Add(find_next_btn, wxSizerFlags().Border(wxRIGHT, 8));
     btn_sizer->Add(cancel_btn, wxSizerFlags());
     find_sizer->Add(btn_sizer, wxSizerFlags().Center().Border(wxBOTTOM, 8));
@@ -561,7 +537,7 @@ void DocViewFrame::OnFind([[maybe_unused]] wxCommandEvent& event)
     bool search_requested = false;
 
     text_ctrl->Bind(wxEVT_TEXT_ENTER,
-                    [&](wxCommandEvent&)
+                    [&]([[maybe_unused]] wxCommandEvent& event_arg)
                     {
                         search_text = text_ctrl->GetValue();
                         search_requested = true;
@@ -569,7 +545,7 @@ void DocViewFrame::OnFind([[maybe_unused]] wxCommandEvent& event)
                     });
 
     find_next_btn->Bind(wxEVT_BUTTON,
-                        [&](wxCommandEvent&)
+                        [&]([[maybe_unused]] wxCommandEvent& event_arg)
                         {
                             search_text = text_ctrl->GetValue();
                             search_requested = true;
@@ -589,7 +565,7 @@ void DocViewFrame::OnFind([[maybe_unused]] wxCommandEvent& event)
     const std::size_t found_pos = FindInMarkdown(markdown, query);
     if (found_pos == std::string::npos)
     {
-        SetStatusText(wxString::Format("Not found: %s", search_text));
+        SetStatusMessage(wxString::Format("Not found: %s", search_text));
         return;
     }
 
@@ -601,7 +577,7 @@ void DocViewFrame::OnFind([[maybe_unused]] wxCommandEvent& event)
 
     if (section_id.empty())
     {
-        SetStatusText(
+        SetStatusMessage(
             wxString::Format("Found \"%s\" but could not determine section", search_text));
         return;
     }
@@ -611,12 +587,12 @@ void DocViewFrame::OnFind([[maybe_unused]] wxCommandEvent& event)
     const bool loaded = m_html_win->LoadPage(anchor_href);
     if (loaded)
     {
-        SetStatusText(wxString::Format("Found \"%s\" in section #%s", search_text,
-                                       wxString::FromUTF8(section_id)));
+        SetStatusMessage(wxString::Format("Found \"%s\" in section #%s", search_text,
+                                          wxString::FromUTF8(section_id)));
     }
     else
     {
-        SetStatusText(
+        SetStatusMessage(
             wxString::Format("Found \"%s\" but section anchor failed to load", search_text));
     }
 }
@@ -625,9 +601,10 @@ void DocViewFrame::OnFind([[maybe_unused]] wxCommandEvent& event)
 //  Private helpers
 // ---------------------------------------------------------------------------
 
-std::string DocViewFrame::BuildInheritanceImage(const std::string& class_name)
+std::string DocViewPanel::BuildInheritanceImage(const std::string& class_name)
 {
-    const auto found = m_inherit_map.find(class_name);
+    const std::unordered_map<std::string, InheritEntry>::const_iterator found =
+        m_inherit_map.find(class_name);
     if (found == m_inherit_map.end())
     {
         return {};
@@ -701,7 +678,7 @@ std::string DocViewFrame::BuildInheritanceImage(const std::string& class_name)
            class_name + "\"></p>\n";
 }
 
-void DocViewFrame::PopulateIndexListbox(const std::string& index_file, wxListBox* listbox,
+void DocViewPanel::PopulateIndexListbox(const std::string& index_file, wxListBox* listbox,
                                         wxTextCtrl* filter_ctrl, const wxString& default_filter,
                                         std::vector<std::string>& item_store)
 {
@@ -730,7 +707,7 @@ void DocViewFrame::PopulateIndexListbox(const std::string& index_file, wxListBox
     ApplyFilter(listbox, item_store, default_filter);
 }
 
-void DocViewFrame::ApplyFilter(wxListBox* listbox, const std::vector<std::string>& all_items,
+void DocViewPanel::ApplyFilter(wxListBox* listbox, const std::vector<std::string>& all_items,
                                const wxString& filter_text)
 {
     const std::string filter = filter_text.utf8_string();
@@ -747,7 +724,7 @@ void DocViewFrame::ApplyFilter(wxListBox* listbox, const std::vector<std::string
     listbox->Thaw();
 }
 
-wxListBox* DocViewFrame::GetActiveIndexListbox(const wxObject* source) const
+wxListBox* DocViewPanel::GetActiveIndexListbox(const wxObject* source) const
 {
     if (source == m_classes_textctrl)
     {
@@ -766,4 +743,13 @@ wxListBox* DocViewFrame::GetActiveIndexListbox(const wxObject* source) const
         return m_overviews_listbox;
     }
     return nullptr;
+}
+
+void DocViewPanel::SetStatusMessage(const wxString& msg)
+{
+    wxFrame* const frame = wxDynamicCast(wxGetTopLevelParent(this), wxFrame);
+    if (frame != nullptr)
+    {
+        frame->SetStatusText(msg);
+    }
 }

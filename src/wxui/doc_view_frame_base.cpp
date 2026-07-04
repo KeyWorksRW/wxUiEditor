@@ -16,6 +16,7 @@
 #include <wx/image.h>
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
+#include <wx/sizer.h>
 
 #include "../helptext/doc_view_panel.h"
 
@@ -36,6 +37,12 @@ bool DocViewFrame_base::Create(wxWindow* parent, wxWindowID id, const wxString& 
         FromDIP(size).x, FromDIP(size).y, wxSIZE_USE_EXISTING);
     }
     SetMinSize(FromDIP(wxSize(300, 600)));
+
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
+
+    m_DocViewPanel = new DocViewPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    box_sizer->Add(m_DocViewPanel, wxSizerFlags(1).Expand());
+    SetSizerAndFit(box_sizer);
 
     m_toolBar = CreateToolBar();
     auto* tool = m_toolBar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR,
@@ -61,8 +68,6 @@ bool DocViewFrame_base::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_menubar->Append(m_file_menu, "&File");
 
     SetMenuBar(m_menubar);
-
-    m_DocViewPanel = new DocViewPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
     m_statusBar = CreateStatusBar();
 

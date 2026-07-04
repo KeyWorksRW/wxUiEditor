@@ -49,7 +49,7 @@ public:
     // Navigate to the archive home page.
     void NavigateHome();
 
-    // Run post-Create initialisation: bind the Find toolbar button and Ctrl+F.
+    // Run post-Create initialization: bind the Find toolbar button and Ctrl+F.
     // Called automatically by the constructors that invoke Create().
     void InitPanel();
 

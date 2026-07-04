@@ -385,6 +385,9 @@ add_executable(wxUiEditor WIN32
 # This will get passed to the resource compiler as well
 target_compile_definitions(wxUiEditor PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
 
+# Debug builds produce wxUiEditorD.exe / wxUiEditorD
+set_target_properties(wxUiEditor PROPERTIES DEBUG_POSTFIX "D")
+
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(wxUiEditor PRIVATE WXUSINGDLL)
 endif()

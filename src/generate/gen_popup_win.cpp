@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/popupwin.h>  // wxBitmapComboBox base header
 
@@ -184,11 +185,10 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
 {
     Node* form = code.node();
     Node* child_node = form;
-    ASSERT_MSG(form->is_Gen(gen_wxPopupWindow) || form->get_ChildCount(),
-               "Trying to generate code for wxPopup with no children.")
+    ASSERT_MSG(form->get_ChildCount(), "Trying to generate code for wxPopup with no children.")
     if (!form->get_ChildCount())
     {
-        return {};  // empty popup window, so nothing to do
+        return false;  // empty popup window, so nothing to do
     }
     ASSERT_MSG(form->get_Child(0)->is_Sizer(), "Expected first child of wxPopup to be a sizer.");
     if (form->get_Child(0)->is_Sizer())
@@ -199,8 +199,8 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
         child_node = form->get_Child(0);
     }
 
-    const auto min_size = form->as_wxSize(prop_minimum_size);
-    const auto max_size = form->as_wxSize(prop_maximum_size);
+    const wxSize min_size = form->as_wxSize(prop_minimum_size);
+    const wxSize max_size = form->as_wxSize(prop_maximum_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize &&
         form->as_wxSize(prop_size) == wxDefaultSize)
@@ -239,7 +239,7 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
             code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
             code.Eol().OpenBrace();
 
-            const auto size = form->as_wxSize(prop_size);
+            const wxSize size = form->as_wxSize(prop_size);
 
             if (code.is_cpp())
             {

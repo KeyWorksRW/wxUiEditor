@@ -4,8 +4,9 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
-#include <wx/listbook.h>  // wxChoicebook: wxChoice and wxNotebook combination
+#include <wx/listbook.h>  // wxListbook: wxListBox and wxNotebook combination
 
 #include "gen_book_utils.h"  // Common Book utilities
 #include "gen_common.h"      // GeneratorLibrary -- Generator classes
@@ -35,7 +36,7 @@ wxObject* ListbookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void ListbookGenerator::OnPageChanged(wxListbookEvent& event)
 {
-    auto* book = wxDynamicCast(event.GetEventObject(), wxListbook);
+    const wxListbook* book = wxDynamicCast(event.GetEventObject(), wxListbook);
     if (book && event.GetSelection() != wxNOT_FOUND)
     {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
@@ -70,16 +71,16 @@ bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int ListbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxListbook");
 
     wxue::string styles(node->as_string(prop_style));
     if (node->as_string(prop_tab_position) != "wxBK_DEFAULT")
     {
-        if (styles.size())
+        if (!styles.empty())
         {
             styles << '|';
         }

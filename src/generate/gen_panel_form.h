@@ -14,20 +14,20 @@ class PanelFormGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    bool ConstructionCode(Code&) override;
-    bool SettingsCode(Code&) override;
-    bool AfterChildrenCode(Code&) override;
-    bool HeaderCode(Code&) override;
-    bool BaseClassNameCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
+    bool SettingsCode(Code& code) override;
+    bool AfterChildrenCode(Code& code) override;
+    bool HeaderCode(Code& code) override;
+    bool BaseClassNameCode(Code& code) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
-    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+    void RequiredHandlers(Node* node, std::set<std::string>& handlers) override;
 
-    wxue::string GetPythonHelpText(Node*) override;
-    wxue::string GetRubyHelpText(Node*) override;
-    wxue::string GetPythonURL(Node*) override;
-    wxue::string GetRubyURL(Node*) override;
+    wxue::string GetPythonHelpText(Node* node) override;
+    wxue::string GetRubyHelpText(Node* node) override;
+    wxue::string GetPythonURL(Node* node) override;
+    wxue::string GetRubyURL(Node* node) override;
 };

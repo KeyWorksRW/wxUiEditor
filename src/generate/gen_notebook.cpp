@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
 
@@ -34,7 +35,7 @@ wxObject* NotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void NotebookGenerator::OnPageChanged(wxNotebookEvent& event)
 {
-    auto* book = wxDynamicCast(event.GetEventObject(), wxNotebook);
+    const wxNotebook* book = wxDynamicCast(event.GetEventObject(), wxNotebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
     {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
@@ -68,16 +69,16 @@ bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int NotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxNotebook");
 
     wxue::string styles(node->as_string(prop_style));
     if (node->as_string(prop_tab_position) != "wxBK_DEFAULT")
     {
-        if (styles.size())
+        if (!styles.empty())
         {
             styles << '|';
         }

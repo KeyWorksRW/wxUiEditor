@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
 #include <wx/choicebk.h>  // wxChoicebook: wxChoice and wxNotebook combination
@@ -29,7 +30,7 @@
 wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxWindow* widget = nullptr;
-    const auto& book_type = node->as_string(prop_book_type);
+    const std::string& book_type = node->as_string(prop_book_type);
     if (book_type == "wxPROPSHEET_CHOICEBOOK")
     {
         widget =
@@ -63,7 +64,7 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
         int ex_style = 0;
         // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires
         // a std::string to pass to it
-        wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
+        const wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -91,7 +92,7 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool PropSheetDlgGenerator::ConstructionCode(Code& code)
 {
-    auto* node = code.node();  // for convenience
+    const Node* node = code.node();  // for convenience
     if (code.is_cpp())
     {
         code.Str("bool ").as_string(prop_class_name);
@@ -144,9 +145,9 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         code.Comma().Str("size=").WxSize(prop_size).Comma();
         code.CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
         code.Add("style=").Style().Comma();
-        size_t name_len = code.HasValue(prop_window_name) ?
-                              code.node()->as_string(prop_window_name).size() :
-                              sizeof("wx.DialogNameStr");
+        const size_t name_len = code.HasValue(prop_window_name) ?
+                                    code.node()->as_string(prop_window_name).size() :
+                                    sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.HasValue(prop_window_name))
@@ -160,7 +161,7 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         code.Str("):");
         code.Unindent();
         code.Eol().Str("wx.adv.PropertySheetDialog.__init__(self)");
-        auto book_type = node->as_string(prop_book_type);
+        wxue::string book_type = node->as_string(prop_book_type);
         book_type.erase(0, 2);  // Remove the "wx" from the front
         code.Eol().FormFunction("SetSheetStyle(wx.adv.").Str(book_type).EndFunction().Eol();
         if (node->as_int(prop_inner_border) >= 0)
@@ -222,9 +223,13 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
         // Try to line up the parameters with the "parent" parameter
         if (auto indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
         {
-            indent_pos -= code.GetCode().find("\n");
-            std::string spaces(indent_pos, ' ');
-            code.GetCode().Replace("\t\t\t\t", spaces, true);
+            auto rfind_pos = code.GetCode().rfind("\n", indent_pos - 1);
+            if (wxue::is_found(rfind_pos))
+            {
+                indent_pos = indent_pos - (rfind_pos + 1);
+                const std::string spaces(indent_pos, ' ');
+                code.GetCode().Replace("\t\t\t\t", spaces, true);
+            }
         }
 
         code.Eol().Str("super()");
@@ -309,14 +314,14 @@ bool PropSheetDlgGenerator::AfterChildrenCode(Code& code)
 
 bool PropSheetDlgGenerator::HeaderCode(Code& code)
 {
-    auto* node = code.node();
+    const Node* node = code.node();
     code.NodeName() += "() {}";
     code.Eol().NodeName() += "(wxWindow *parent";
     code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
     code.Comma().Str("const wxPoint& pos = ");
 
-    auto position = node->as_wxPoint(prop_pos);
+    const wxPoint position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
     {
         code.Str("wxDefaultPosition");
@@ -328,7 +333,7 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->as_wxSize(prop_size);
+    const wxSize size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
     {
         code.Str("wxDefaultSize");
@@ -442,7 +447,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 {
     // We use item so that the macros in base_generator.h work, and the code looks the same
     // as other widget XRC generatorsl
-    auto item = object;
+    pugi::xml_node item = object;
     GenXrcObjectAttributes(node, item, "wxPropertySheetDialog");
 
     ADD_ITEM_PROP(prop_title, "title")
@@ -485,7 +490,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
             {
                 item.append_child(pugi::node_comment)
                     .set_value((wxue::string(node->as_string(prop_center))
-                                << " cannot be be set in the XRC file."));
+                                << " cannot be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
@@ -504,9 +509,12 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         if (parts[IndexType].is_sameas("Art"))
         {
             wxue::StringVector art_parts(parts[IndexArtID], '|');
-            auto icon = item.append_child("icon");
-            icon.append_attribute("stock_id").set_value(art_parts[0]);
-            icon.append_attribute("stock_client").set_value(art_parts[1]);
+            if (art_parts.size() > 1)
+            {
+                pugi::xml_node icon = item.append_child("icon");
+                icon.append_attribute("stock_id").set_value(art_parts[0]);
+                icon.append_attribute("stock_client").set_value(art_parts[1]);
+            }
         }
         else
         {

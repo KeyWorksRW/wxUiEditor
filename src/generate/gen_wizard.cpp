@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/wizard.h>  // wxWizard class: a GUI control presenting the user with a
 
@@ -86,9 +87,13 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
 
         if (auto indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
         {
-            indent_pos -= code.GetCode().find("\n");
-            std::string spaces(indent_pos, ' ');
-            code.GetCode().Replace("\t\t\t\t", spaces, true);
+            auto rfind_pos = code.GetCode().rfind("\n", indent_pos - 1);
+            if (wxue::is_found(rfind_pos))
+            {
+                indent_pos = indent_pos - (rfind_pos + 1);
+                const std::string spaces(indent_pos, ' ');
+                code.GetCode().Replace("\t\t\t\t", spaces, true);
+            }
         }
 
         code.ResetIndent();
@@ -166,7 +171,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
     // Ruby passed the bitmap via the constructor
     if (code.HasValue(prop_bitmap) && !code.is_ruby())
     {
-        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        const bool is_bitmaps_list = BitmapList(code, prop_bitmap);
         if (code.is_cpp())
         {
             code.Eol(eol_if_needed).Str("if (!Create(parent, id, title").Comma();
@@ -234,7 +239,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
 
 bool WizardFormGenerator::AfterChildrenCode(Code& code)
 {
-    if (auto panes = GetChildPanes(code.node()); panes.size())
+    if (auto panes = GetChildPanes(code.node()); !panes.empty())
     {
         if (panes.size() > 1)
         {
@@ -264,7 +269,7 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
     }
 
     if (const auto& center = code.node()->as_string(prop_center);
-        center.size() && !center.is_sameas("no"))
+        !center.empty() && !center.is_sameas("no"))
     {
         code.Eol(eol_if_needed).FormFunction("Center(").Add(center).EndFunction();
     }
@@ -284,13 +289,14 @@ bool WizardFormGenerator::BaseClassNameCode(Code& code)
     }
     return true;
 }
+
 bool WizardFormGenerator::HeaderCode(Code& code)
 {
-    auto* node = code.node();
+    const Node* node = code.node();
 
     code.as_string(prop_class_name).Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ");
-    const auto& title = node->as_string(prop_title);
+    const std::string& title = node->as_string(prop_title);
     if (code.HasValue(prop_title))
     {
         code.QuotedString(title);
@@ -302,7 +308,7 @@ bool WizardFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxPoint& pos = ");
 
-    auto position = node->as_wxPoint(prop_pos);
+    const wxPoint position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
     {
         code.Str("wxDefaultPosition");
@@ -312,8 +318,8 @@ bool WizardFormGenerator::HeaderCode(Code& code)
         code.Pos(prop_pos, no_dpi_scaling);
     }
 
-    const auto& style = node->as_string(prop_style);
-    const auto& win_style = node->as_string(prop_window_style);
+    const std::string& style = node->as_string(prop_style);
+    const std::string& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
     {
         code.Comma().Str("long style = 0");
@@ -323,16 +329,16 @@ bool WizardFormGenerator::HeaderCode(Code& code)
         code.Comma();
         code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
         code.Str("long style = ");
-        if (style.size())
+        if (!style.empty())
         {
             code.CheckLineLength(style.size() + win_style.size());
             code += style;
-            if (win_style.size())
+            if (!win_style.empty())
             {
                 code << '|' << win_style;
             }
         }
-        else if (win_style.size())
+        else if (!win_style.empty())
         {
             code.Str(win_style);
         }
@@ -381,14 +387,14 @@ std::optional<wxue::string> WizardFormGenerator::GetHint(NodeProperty* prop)
 
 bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 {
-    menu->Append(static_cast<int>(NavPopupMenu::Menu::AddWizardPage), "Add Page");
+    menu->Append(std::to_underlying(NavPopupMenu::Menu::AddWizardPage), "Add Page");
     menu->Bind(
         wxEVT_MENU,
         [=](wxCommandEvent&)
         {
-            node->CreateToolNode(gen_wxWizardPageSimple);
+            std::ignore = node->CreateToolNode(gen_wxWizardPageSimple);
         },
-        static_cast<int>(NavPopupMenu::Menu::AddWizardPage));
+        std::to_underlying(NavPopupMenu::Menu::AddWizardPage));
 
     return false;
 }
@@ -400,7 +406,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
 {
     // We use item so that the macros in base_generator.h work, and the code looks the same
     // as other widget XRC generatorsl
-    auto item = object;
+    pugi::xml_node item = object;
     GenXrcObjectAttributes(node, item, "wxWizard");
 
     ADD_ITEM_PROP(prop_title, "title")
@@ -415,7 +421,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
             {
                 item.append_child(pugi::node_comment)
                     .set_value((wxue::string(node->as_string(prop_center))
-                                << " cannot be be set in the XRC file."));
+                                << " cannot be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
@@ -527,7 +533,7 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
     }
     else
     {
-        auto is_bitmaps_list = BitmapList(code, prop_bitmap);
+        const bool is_bitmaps_list = BitmapList(code, prop_bitmap);
         code.AddAuto().as_string(prop_var_name).CreateClass();
         if (code.is_cpp())
         {
@@ -559,6 +565,10 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
             {
                 code += "wx.BitmapBundle.FromBitmaps(bitmaps)";
             }
+            else if (code.is_ruby())
+            {
+                code += "Wx::BitmapBundle.from_bitmaps(bitmaps)";
+            }
         }
         else
         {
@@ -582,14 +592,14 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
 
 bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 {
-    menu->Append(static_cast<int>(NavPopupMenu::Menu::AddWizardPage), "Add Page");
+    menu->Append(std::to_underlying(NavPopupMenu::Menu::AddWizardPage), "Add Page");
     menu->Bind(
         wxEVT_MENU,
         [=](wxCommandEvent&)
         {
-            node->CreateToolNode(gen_wxWizardPageSimple);
+            std::ignore = node->CreateToolNode(gen_wxWizardPageSimple);
         },
-        static_cast<int>(NavPopupMenu::Menu::AddWizardPage));
+        std::to_underlying(NavPopupMenu::Menu::AddWizardPage));
 
     if (node->get_ChildCount() && node->get_Child(0)->is_Sizer())
     {
@@ -601,8 +611,8 @@ bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 
 int WizardPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    constexpr int result = BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxWizardPageSimple");
     GenXrcBitmap(node, item, xrc_flags);

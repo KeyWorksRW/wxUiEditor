@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/bookctrl.h>     // wxBookCtrlBase: common base class for wxList/Tree/Notebook
@@ -22,12 +23,21 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         return nullptr;
     }
 
-    auto* child_generator = node->get_Child(0)->get_Generator();
+    BaseGenerator* child_generator = node->get_Child(0)->get_Generator();
     ASSERT(child_generator);
-    auto* widget = child_generator->CreateMockup(node->get_Child(0), parent);
-    ASSERT(widget);
+    if (!child_generator)
+    {
+        return nullptr;
+    }
 
-    auto* node_parent = node->get_Parent();
+    wxObject* widget = child_generator->CreateMockup(node->get_Child(0), parent);
+    ASSERT(widget);
+    if (!widget)
+    {
+        return nullptr;
+    }
+
+    Node* node_parent = node->get_Parent();
 
     if (auto* book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
@@ -44,7 +54,14 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                     }
                     break;
                 }
-                ++idx_image;
+                if (child->HasValue(prop_bitmap))
+                {
+                    if (idx_image < 0)
+                    {
+                        idx_image = 0;
+                    }
+                    ++idx_image;
+                }
             }
             book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label), false,
                           idx_image);
@@ -82,7 +99,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
             book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label));
         }
 
-        auto cur_selection = book->GetSelection();
+        const int cur_selection = book->GetSelection();
         if (node->as_bool(prop_select))
         {
             book->SetSelection(book->GetPageCount() - 1);
@@ -94,12 +111,12 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        auto* aui_book = wxDynamicCast(parent, wxAuiNotebook);
+        wxAuiNotebook* aui_book = wxDynamicCast(parent, wxAuiNotebook);
         if (aui_book)
         {
             if (node->HasValue(prop_bitmap) && node_parent->as_bool(prop_display_images))
             {
-                int idx_image = 0;
+                int idx_image = -1;
                 for (size_t idx_child = 0; idx_child < node_parent->get_ChildCount(); ++idx_child)
                 {
                     if (node_parent->get_Child(idx_child) == node)
@@ -129,7 +146,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 aui_book->AddPage(wxStaticCast(widget, wxWindow), node->as_wxString(prop_label));
             }
 
-            auto cur_selection = aui_book->GetSelection();
+            const int cur_selection = aui_book->GetSelection();
             if (node->as_bool(prop_select))
             {
                 aui_book->SetSelection(aui_book->GetPageCount() - 1);
@@ -146,7 +163,7 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool PageCtrlGenerator::ConstructionCode(Code& code)
 {
-    Node* node = code.node();
+    const Node* node = code.node();
     if (!node->get_ChildCount())
     {
         return false;
@@ -173,7 +190,7 @@ bool PageCtrlGenerator::ConstructionCode(Code& code)
                     (node->get_Parent()->as_bool(prop_display_images) ||
                      node->is_Parent(gen_wxToolbook)))
                 {
-                    auto* node_parent = node->get_Parent();
+                    const Node* node_parent = node->get_Parent();
                     int idx_image = -1;
                     for (size_t idx_child = 0; idx_child < node_parent->get_ChildCount();
                          ++idx_child)

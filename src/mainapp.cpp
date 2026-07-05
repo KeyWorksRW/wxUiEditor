@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <chrono>
 
@@ -114,7 +115,8 @@ static void ProcessFilename(wxString& filename)
     {
         wxDir dir;
         dir.Open("./");
-        if (!dir.GetFirst(&filename, filename, wxDIR_FILES))
+        const wxString filespec = filename;
+        if (!dir.GetFirst(&filename, filespec, wxDIR_FILES))
         {
             // No match found
             filename.clear();
@@ -208,9 +210,16 @@ int App::OnRun()
     // This must be done early, before any output attempts
     if (AttachConsole(ATTACH_PARENT_PROCESS))
     {
-        FILE* file_ptr {};  // NOLINT (cppcheck-suppress)
-        freopen_s(&file_ptr, "CONOUT$", "w", stdout);
-        freopen_s(&file_ptr, "CONOUT$", "w", stderr);
+        FILE* fp_out { nullptr };
+        FILE* fp_err { nullptr };
+        if (freopen_s(&fp_out, "CONOUT$", "w", stdout) != 0)
+        {
+            OutputDebugStringW(L"Failed to redirect stdout to console\n");
+        }
+        if (freopen_s(&fp_err, "CONOUT$", "w", stderr) != 0)
+        {
+            OutputDebugStringW(L"Failed to redirect stderr to console\n");
+        }
     }
     #else
     // On Unix/Mac, stdout/stderr are automatically connected when run from terminal
@@ -499,6 +508,20 @@ int App::OnRun()
         is_project_loaded = DisplayStartupDlg(nullptr);
     }
 
+    // If the user launched the documentation viewer from the startup dialog,
+    // switch to docview mode (same as the --docview command-line option).
+    if (m_docViewFrame)
+    {
+        // The MainFrame was created above but is no longer needed; destroy it
+        // before running the doc-viewer event loop.
+        if (m_frame)
+        {
+            m_frame->Destroy();
+            m_frame = nullptr;
+        }
+        return wxApp::OnRun();
+    }
+
     if (is_project_loaded)
     {
         m_frame->Show();
@@ -512,7 +535,7 @@ int App::OnRun()
         return wxApp::OnRun();
     }
 
-    if (!m_frame)
+    if (m_frame)
     {
         m_frame->Close();
         m_frame = nullptr;
@@ -522,6 +545,12 @@ int App::OnRun()
 
 int App::OnExit()
 {
+    if (g_pMsgLogging)
+    {
+        wxLog::SetActiveTarget(nullptr);
+        delete g_pMsgLogging;
+        g_pMsgLogging = nullptr;
+    }
     return wxApp::OnExit();
 }
 
@@ -680,7 +709,9 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
         { "gen_all", std::to_underlying(GenLang::cplusplus | GenLang::python | GenLang::ruby) },
         { "gen_quick", std::to_underlying(GenLang::python | GenLang::ruby) },
         { "gen_coverage",
-          std::to_underlying(GenLang::cplusplus | GenLang::python | GenLang::ruby) },
+          std::to_underlying(GenLang::cplusplus | GenLang::python | GenLang::ruby |
+                             GenLang::fortran | GenLang::go | GenLang::julia | GenLang::luajit |
+                             GenLang::typescript | GenLang::xrc) },
     };
 
     size_t generate_type = std::to_underlying(GenLang::none);

@@ -39,6 +39,7 @@ protected:
 
     // Virtual event handlers -- override them in your derived class
 
+    virtual void OnDocs(wxHyperlinkEvent& event) = 0;
     virtual void OnImport(wxHyperlinkEvent& event) = 0;
     virtual void OnInit(wxInitDialogEvent& event) = 0;
     virtual void OnNew(wxHyperlinkEvent& event) = 0;

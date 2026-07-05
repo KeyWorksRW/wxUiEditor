@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxWizard generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-04-2026]
@@ -25,6 +25,125 @@ wxObject* WizardFormGenerator::CreateMockup(Node* /* node */, wxObject* /* paren
     FAIL_MSG(
         "Do not call CreateMockup() for wxWizard -- you must use the MockupWizard class instead!");
     return nullptr;
+}
+
+// Static per-language FFI construction code helpers for the wizard form.
+// Each generates the class/module structure plus the wx_wizard_create call.
+static void WizardFormFfiConstructionCodeFortran(Code& code)
+{
+    // module NodeName_mod
+    //     use kwx_fortran
+    //     implicit none
+    //     type(wx_wizard_t) :: self
+    // contains
+    // subroutine create(parent)
+    //     type(c_ptr), intent(in) :: parent
+    //     call wx_wizard_create(self, parent)
+
+    code.Str("module ").NodeName().Str("_mod").Eol();
+    code.Tab().Str("use kwx_fortran").Eol();
+    code.Tab().Str("implicit none").Eol();
+    code.Tab().Str("type(wx_wizard_t) :: self").Eol();
+    code.Eol();
+    code.Str("contains").Eol();
+    code.Eol();
+    code.Str("subroutine create(parent)").Eol();
+    code.Tab().Str("type(c_ptr), intent(in) :: parent").Eol();
+    code.Eol();
+    code.Tab().Str("call wx_wizard_create(self, parent)").Eol();
+}
+
+static void WizardFormFfiConstructionCodeGo(Code& code)
+{
+    // type NodeName struct {
+    //     wizard *wx.Wizard
+    // }
+    //
+    // func NewNodeName(parent wx.Pointer) *NodeName {
+    //     self := &NodeName{}
+    //     self.wizard = wx_wizard_create(parent)
+
+    code.Str("type ").NodeName().Str(" struct {").Eol();
+    code.Tab().Str("wizard *wx.Wizard").Eol();
+    code.Str("}").Eol();
+    code.Eol();
+    code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
+    code.Tab().Str("self := &").NodeName().Str("{}").Eol();
+    code.Eol();
+    code.Tab().Str("self.wizard = wx_wizard_create(parent)").Eol();
+}
+
+static void WizardFormFfiConstructionCodeJulia(Code& code)
+{
+    // mutable struct NodeName
+    //     wizard::Ptr{Cvoid}
+    //
+    //     function NodeName(parent=nothing)
+    //         self = new()
+    //         self.wizard = wx_wizard_create(parent)
+
+    code.Str("mutable struct ").NodeName().Eol();
+    code.Indent();
+    code.Tab().Str("wizard::Ptr{Cvoid}").Eol();
+    code.Eol();
+    code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
+    code.Indent();
+    code.Tab().Str("self = new()").Eol();
+    code.Eol();
+    code.Tab().Str("self.wizard = wx_wizard_create(parent)").Eol();
+}
+
+static void WizardFormFfiConstructionCodeLuaJIT(Code& code)
+{
+    // local NodeName = {}
+    // NodeName.__index = NodeName
+    //
+    // function NodeName:new(parent)
+    //     local self = setmetatable({}, NodeName)
+    //     self.wizard = wx_wizard_create(parent)
+
+    code.Str("local ").NodeName().Str(" = {}").Eol();
+    code.NodeName().Str(".__index = ").NodeName().Eol();
+    code.Eol();
+    code.Str("function ").NodeName().Str(":new(parent)").Eol();
+    code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")").Eol();
+    code.Eol();
+    code.Tab().Str("self.wizard = wx_wizard_create(parent)").Eol();
+}
+
+static void WizardFormFfiConstructionCodeTypeScript(Code& code)
+{
+    // TypeScript wizard creation inside the constructor body.
+    // A wxString is created for the title, then wx_wizard_create is called.
+
+    const LanguageTraits& traits = code.get_traits();
+
+    code.Tab().Str("const title_wxstr = createWxString(").QuotedString(prop_title).Str(")");
+    code.Str(traits.stmt_end).Eol();
+
+    code.Tab().Str(traits.self_reference).Str(".wizard = wx_wizard_create(").Eol().Tab(2);
+    code.Str("parent").Comma();
+    if (code.HasValue(prop_id))
+    {
+        code.Add(prop_id);
+    }
+    else
+    {
+        code.Add("wxID_ANY");
+    }
+    code.Comma().Eol().Tab(2).Str("title_wxstr.ptr").Comma();
+    code.Str("WX_NULL_BITMAP").Comma();
+    code.Str("-1, -1").Comma();
+    if (code.HasValue(prop_style))
+    {
+        code.Add(prop_style);
+    }
+    else
+    {
+        code.Add("wxDEFAULT_DIALOG_STYLE");
+    }
+    code.Str(")!").Str(traits.stmt_end).Eol();
+    code.Tab().Str("title_wxstr.Delete()").Str(traits.stmt_end);
 }
 
 bool WizardFormGenerator::ConstructionCode(Code& code)
@@ -98,6 +217,32 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
 
         code.ResetIndent();
     }
+    else if (code.is_ffi())
+    {
+        switch (code.get_language())
+        {
+            case GenLang::fortran:
+                WizardFormFfiConstructionCodeFortran(code);
+                break;
+            case GenLang::go:
+                WizardFormFfiConstructionCodeGo(code);
+                break;
+            case GenLang::julia:
+                WizardFormFfiConstructionCodeJulia(code);
+                break;
+            case GenLang::luajit:
+                WizardFormFfiConstructionCodeLuaJIT(code);
+                break;
+            case GenLang::typescript:
+                WizardFormFfiConstructionCodeTypeScript(code);
+                break;
+            default:
+                code.AddComment("Unsupported FFI language", true);
+                break;
+        }
+        code.ResetIndent();
+        code.ResetBraces();
+    }
     else
     {
         code.AddComment("Unknown language", true);
@@ -115,61 +260,133 @@ bool WizardFormGenerator::SettingsCode(Code& code)
 
     if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
-        code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
-        if (code.node()->is_PropValue(prop_variant, "small"))
+        if (code.is_ffi())
         {
-            code.Add("wxWINDOW_VARIANT_SMALL");
-        }
-        else if (code.node()->is_PropValue(prop_variant, "mini"))
-        {
-            code.Add("wxWINDOW_VARIANT_MINI");
+            const LanguageTraits& traits = code.get_traits();
+            code.Eol(eol_if_empty).Str("wx_wizard_set_window_variant(self, ");
+            if (code.node()->is_PropValue(prop_variant, "small"))
+            {
+                code.Add("wxWINDOW_VARIANT_SMALL");
+            }
+            else if (code.node()->is_PropValue(prop_variant, "mini"))
+            {
+                code.Add("wxWINDOW_VARIANT_MINI");
+            }
+            else
+            {
+                code.Add("wxWINDOW_VARIANT_LARGE");
+            }
+            code.Str(")").Str(traits.stmt_end);
         }
         else
         {
-            code.Add("wxWINDOW_VARIANT_LARGE");
+            code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
+            if (code.node()->is_PropValue(prop_variant, "small"))
+            {
+                code.Add("wxWINDOW_VARIANT_SMALL");
+            }
+            else if (code.node()->is_PropValue(prop_variant, "mini"))
+            {
+                code.Add("wxWINDOW_VARIANT_MINI");
+            }
+            else
+            {
+                code.Add("wxWINDOW_VARIANT_LARGE");
+            }
+            code.EndFunction();
         }
-
-        code.EndFunction();
     }
 
     if (code.HasValue(prop_extra_style))
     {
-        code.Eol(eol_if_needed)
-            .FormFunction("SetExtraStyle(")
-            .FormFunction("GetExtraStyle() | ")
-            .Add(prop_extra_style);
-        code.EndFunction();
+        if (code.is_ffi())
+        {
+            const LanguageTraits& traits = code.get_traits();
+            code.Eol(eol_if_needed)
+                .Str("wx_wizard_set_extra_style(self, ")
+                .Add(prop_extra_style)
+                .Str(")")
+                .Str(traits.stmt_end);
+        }
+        else
+        {
+            code.Eol(eol_if_needed)
+                .FormFunction("SetExtraStyle(")
+                .FormFunction("GetExtraStyle() | ")
+                .Add(prop_extra_style);
+            code.EndFunction();
+        }
     }
 
     if (code.HasValue(prop_border) && !code.is_PropValue(prop_border, 5))
     {
-        code.Eol(eol_if_needed).FormFunction("SetBorder(").as_string(prop_border).EndFunction();
+        if (code.is_ffi())
+        {
+            const LanguageTraits& traits = code.get_traits();
+            code.Eol(eol_if_needed)
+                .Str("wx_wizard_set_border(self, ")
+                .as_string(prop_border)
+                .Str(")")
+                .Str(traits.stmt_end);
+        }
+        else
+        {
+            code.Eol(eol_if_needed).FormFunction("SetBorder(").as_string(prop_border).EndFunction();
+        }
     }
 
     if (code.IntValue(prop_bmp_placement))
     {
-        code.Eol(eol_if_needed)
-            .FormFunction("SetBitmapPlacement(")
-            .as_string(prop_bmp_placement)
-            .EndFunction();
-        if (code.IntValue(prop_bmp_min_width) > 0)
+        if (code.is_ffi())
         {
-            code.Eol()
-                .FormFunction("SetBitmapMinWidth(")
-                .as_string(prop_bmp_min_width)
-                .EndFunction();
+            const LanguageTraits& traits = code.get_traits();
+            code.Eol(eol_if_needed)
+                .Str("wx_wizard_set_bitmap_placement(self, ")
+                .as_string(prop_bmp_placement)
+                .Str(")")
+                .Str(traits.stmt_end);
+            if (code.IntValue(prop_bmp_min_width) > 0)
+            {
+                code.Eol()
+                    .Str("wx_wizard_set_bitmap_min_width(self, ")
+                    .as_string(prop_bmp_min_width)
+                    .Str(")")
+                    .Str(traits.stmt_end);
+            }
+            if (code.HasValue(prop_bmp_background_colour))
+            {
+                code.Eol()
+                    .Str("wx_wizard_set_bitmap_background_colour(self, ")
+                    .ColourCode(prop_bmp_background_colour)
+                    .Str(")")
+                    .Str(traits.stmt_end);
+            }
         }
-        if (code.HasValue(prop_bmp_background_colour))
+        else
         {
-            code.Eol()
-                .FormFunction("SetBitmapBackgroundColour(")
-                .ColourCode(prop_bmp_background_colour)
+            code.Eol(eol_if_needed)
+                .FormFunction("SetBitmapPlacement(")
+                .as_string(prop_bmp_placement)
                 .EndFunction();
+            if (code.IntValue(prop_bmp_min_width) > 0)
+            {
+                code.Eol()
+                    .FormFunction("SetBitmapMinWidth(")
+                    .as_string(prop_bmp_min_width)
+                    .EndFunction();
+            }
+            if (code.HasValue(prop_bmp_background_colour))
+            {
+                code.Eol()
+                    .FormFunction("SetBitmapBackgroundColour(")
+                    .ColourCode(prop_bmp_background_colour)
+                    .EndFunction();
+            }
         }
     }
 
-    // Ruby passed the bitmap via the constructor
-    if (code.HasValue(prop_bitmap) && !code.is_ruby())
+    // Ruby passed the bitmap via the constructor; FFI uses wx_wizard_create in ConstructionCode
+    if (code.HasValue(prop_bitmap) && !code.is_ruby() && !code.is_ffi())
     {
         const bool is_bitmaps_list = BitmapList(code, prop_bitmap);
         if (code.is_cpp())
@@ -231,7 +448,7 @@ bool WizardFormGenerator::SettingsCode(Code& code)
                 .Str("if not self.Create(parent, id, title, wx.BitmapBundle(), pos, style):");
             code.Eol().Tab().Str("return");
         }
-        // wxRuby3 code generation doesn't use 2-step construction.
+        // wxRuby3 and FFI code generation don't use 2-step construction here.
     }
 
     return true;
@@ -243,35 +460,88 @@ bool WizardFormGenerator::AfterChildrenCode(Code& code)
     {
         if (panes.size() > 1)
         {
-            code.Eol(eol_if_needed).Str(panes[0]->as_string(prop_var_name)).Function("Chain(");
-            code.Str(panes[1]->as_string(prop_var_name)) += ")";
-            for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
+            if (code.is_ffi())
             {
-                // In C++, Chain() returns a reference, so "." is used instead of "->"
-                // Python and Ruby both use "."
+                // FFI uses a standalone function for chaining consecutive wizard pages.
+                const LanguageTraits& ffi_chain_traits = code.get_traits();
+                for (size_t pos = 0; pos + 1 < panes.size(); ++pos)
+                {
+                    code.Eol(eol_if_needed);
+                    if (code.get_language() == GenLang::fortran)
+                    {
+                        code.Str("call ");
+                    }
+                    code.Str("wx_wizard_page_simple_chain(");
+                    code.Str(panes[pos]->as_string(prop_var_name)).Comma();
+                    code.Str(panes[pos + 1]->as_string(prop_var_name));
+                    code.Str(")").Str(ffi_chain_traits.stmt_end);
+                }
+            }
+            else
+            {
+                code.Eol(eol_if_needed).Str(panes[0]->as_string(prop_var_name)).Function("Chain(");
+                code.Str(panes[1]->as_string(prop_var_name)) += ")";
+                for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
+                {
+                    // In C++, Chain() returns a reference, so "." is used instead of "->"
+                    // Python and Ruby both use "."
+                    if (code.is_cpp())
+                    {
+                        code.Str(".").Add("Chain(");
+                    }
+                    else
+                    {
+                        code.Function("Chain(");
+                    }
+                    code.Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
+                }
                 if (code.is_cpp())
                 {
-                    code.Str(".").Add("Chain(");
+                    code += ";";
                 }
-                else
-                {
-                    code.Function("Chain(");
-                }
-                code.Str(panes[pos + 1]->as_string(prop_var_name)) += ")";
-            }
-            if (code.is_cpp())
-            {
-                code += ";";
             }
         }
-        code.Eol(eol_if_needed).FormFunction("GetPageAreaSizer()").Function("Add(");
-        code.Str(panes[0]->as_string(prop_var_name)).EndFunction();
+        if (code.is_ffi())
+        {
+            const LanguageTraits& ffi_sizer_traits = code.get_traits();
+            code.Eol(eol_if_needed);
+            if (code.get_language() == GenLang::fortran)
+            {
+                code.Str("call wx_sizer_add(wx_wizard_get_page_area_sizer(self), ");
+            }
+            else
+            {
+                code.Str("wx_sizer_add(wx_wizard_get_page_area_sizer(self), ");
+            }
+            code.Str(panes[0]->as_string(prop_var_name)).Str(")").Str(ffi_sizer_traits.stmt_end);
+        }
+        else
+        {
+            code.Eol(eol_if_needed).FormFunction("GetPageAreaSizer()").Function("Add(");
+            code.Str(panes[0]->as_string(prop_var_name)).EndFunction();
+        }
     }
 
     if (const auto& center = code.node()->as_string(prop_center);
         !center.empty() && !center.is_sameas("no"))
     {
-        code.Eol(eol_if_needed).FormFunction("Center(").Add(center).EndFunction();
+        if (code.is_ffi())
+        {
+            const LanguageTraits& ffi_center_traits = code.get_traits();
+            if (code.get_language() == GenLang::fortran)
+            {
+                code.Eol(eol_if_needed).Str("call wx_wizard_center(self, ").Add(center).Str(")");
+            }
+            else
+            {
+                code.Eol(eol_if_needed).Str("wx_wizard_center(self, ").Add(center).Str(")");
+            }
+            code.Str(ffi_center_traits.stmt_end);
+        }
+        else
+        {
+            code.Eol(eol_if_needed).FormFunction("Center(").Add(center).EndFunction();
+        }
     }
 
     return true;
@@ -529,6 +799,14 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             code << "self";
         }
+        else if (code.is_ffi())
+        {
+            const LanguageTraits& ffi_page_traits = code.get_traits();
+            if (!ffi_page_traits.self_reference.empty())
+            {
+                code << ffi_page_traits.self_reference;
+            }
+        }
         code.EndFunction();
     }
     else
@@ -543,6 +821,14 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         {
             code << "self";
         }
+        else if (code.is_ffi())
+        {
+            const LanguageTraits& ffi_bmp_page_traits = code.get_traits();
+            if (!ffi_bmp_page_traits.self_reference.empty())
+            {
+                code << ffi_bmp_page_traits.self_reference;
+            }
+        }
         if (code.is_cpp())
         {
             code.Comma().Str("nullptr, nullptr").Comma();
@@ -554,6 +840,15 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
         else if (code.is_ruby())
         {
             code.Comma().Str("nil, nil").Comma();
+        }
+        else if (code.is_ffi())
+        {
+            const LanguageTraits& ffi_null_traits = code.get_traits();
+            code.Comma()
+                .Str(ffi_null_traits.null_literal)
+                .Comma()
+                .Str(ffi_null_traits.null_literal)
+                .Comma();
         }
         if (is_bitmaps_list)
         {
@@ -568,6 +863,11 @@ bool WizardPageGenerator::ConstructionCode(Code& code)
             else if (code.is_ruby())
             {
                 code += "Wx::BitmapBundle.from_bitmaps(bitmaps)";
+            }
+            else if (code.is_ffi())
+            {
+                // BundleFfi always returns WX_NULL_BITMAP; use that constant directly.
+                code += "WX_NULL_BITMAP";
             }
         }
         else

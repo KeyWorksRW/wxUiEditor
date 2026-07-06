@@ -8,7 +8,6 @@
 #include "archive_handler.h"
 
 #include <cstddef>
-#include <filesystem>
 #include <span>
 #include <string>
 #include <vector>
@@ -26,7 +25,7 @@ ArchiveHandler& wxueArchive = ArchiveHandler::get_Instance();
 
 // ###################### OpenArchive #######################
 
-std::expected<void, std::string> ArchiveHandler::OpenArchive(const std::filesystem::path& zip_path)
+std::expected<void, std::string> ArchiveHandler::OpenArchive(const wxString& zip_path)
 {
     if (m_archive)
     {
@@ -34,7 +33,7 @@ std::expected<void, std::string> ArchiveHandler::OpenArchive(const std::filesyst
     }
 
     std::expected<std::shared_ptr<DocArchive>, std::string> archive_result =
-        OpenDocArchive(zip_path);
+        OpenDocArchive(zip_path.utf8_string());
     if (!archive_result)
     {
         return std::unexpected(std::move(archive_result.error()));

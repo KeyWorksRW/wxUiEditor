@@ -6,12 +6,12 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-04-2026]
 
-#include <filesystem>
 #include <sstream>
 #include <string>
 
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/filename.h>
 #include <wx/frame.h>
 #include <wx/fs_mem.h>
 #include <wx/listbox.h>
@@ -94,7 +94,7 @@ void DocViewPanel::InitPanel()
 //  OpenArchive
 // ---------------------------------------------------------------------------
 
-bool DocViewPanel::OpenArchive(const std::filesystem::path& zip_path)
+bool DocViewPanel::OpenArchive(const wxString& zip_path)
 {
     // Reset state for the new archive
     m_inherit_map.clear();
@@ -182,7 +182,8 @@ void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
     m_find_last_pos = 0;
 
     // Inject inheritance graph after </h1> if data is available for this page.
-    const std::string class_name = std::filesystem::path(archive_name).stem().string();
+    wxFileName fn(wxString::FromUTF8(archive_name));
+    const std::string class_name = fn.GetName().utf8_string();
     const std::string img_block = BuildInheritanceImage(class_name);
     if (!img_block.empty())
     {
@@ -479,7 +480,8 @@ void DocViewPanel::OnSearchTextChanged(wxCommandEvent& event)
         if (!archive_path.empty())
         {
             // Strip the .md extension for display
-            const std::string display_name = std::filesystem::path(archive_path).stem().string();
+            wxFileName fn(wxString::FromUTF8(archive_path));
+            const std::string display_name = fn.GetName().utf8_string();
             m_search_listbox->Append(wxString::FromUTF8(display_name));
         }
     }

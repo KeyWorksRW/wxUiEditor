@@ -13,8 +13,6 @@
 
 #include "startup_dlg.h"  // #include "../wxui/startup_dlg_base.h"
 
-#include <filesystem>
-
 #include "helptext/doc_view_frame.h"  // DocViewFrame
 
 #include "mainframe.h"                   // Main frame
@@ -265,8 +263,7 @@ bool DisplayStartupDlg(wxWindow* parent)
                 {
                     // Launch the documentation viewer as if --docview was passed on the
                     // command line. Path is hardcoded for now.
-                    const std::filesystem::path zip_path =
-                        "C:/rwCode/wxLanguages/wxUiEditor2/tests/wxWidgetsDocs.zip";
+                    const wxString zip_path = ResolveDocsZipPath();
                     auto* doc_frame = new DocViewFrame(nullptr, zip_path);
                     doc_frame->Show();
                     wxGetApp().setDocViewFrame(doc_frame);

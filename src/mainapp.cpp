@@ -371,7 +371,7 @@ int App::OnRun()
     // --docview: launch standalone documentation viewer, skipping MainFrame and project loading
     if (wxString zip_str; parser.Found("docview", &zip_str))
     {
-        const std::filesystem::path zip_path = zip_str.ToStdWstring();
+        const wxString zip_path = zip_str;
         m_docViewFrame = new DocViewFrame(nullptr, zip_path);
         m_docViewFrame->Show();
         SetTopWindow(m_docViewFrame);

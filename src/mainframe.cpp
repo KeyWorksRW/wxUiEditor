@@ -370,9 +370,7 @@ MainFrame::MainFrame() :
             }
             else
             {
-                const std::filesystem::path zip_path {
-                    "C:/rwCode/wxLanguages/wxUiEditor/tests/wxWidgetsDocs.zip"
-                };
+                const wxString zip_path = ResolveDocsZipPath();
                 doc_frame = new DocViewFrame(this, zip_path);
                 wxGetApp().setDocViewFrame(doc_frame);
                 doc_frame->Show();

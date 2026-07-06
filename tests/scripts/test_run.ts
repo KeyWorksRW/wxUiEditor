@@ -20,10 +20,8 @@ const repoRoot = path.resolve(scriptDir, "..", "..");
 
 const exe = path.join(
     repoRoot,
-    "tools",
-    "build_resources",
-    "build",
-    "Debug",
+    "bin",
+    "Release",
     "build_resources.exe",
 );
 const interfaceWx = path.join(
@@ -221,7 +219,15 @@ for (
 try
 {
     const zipSize = await fileSize(zipFile);
-    console.log(`[PASS] ${zipFile}  (${zipSize} bytes)`);
+    let megabytes = Math.floor(zipSize / 1_048_576);
+    let tenths = Math.ceil((zipSize % 1_048_576) / 104_857.6);
+    if (tenths === 10)
+    {
+        megabytes++;
+        tenths = 0;
+    }
+    const zipSizeDisplay = `${megabytes}.${tenths} MB`;
+    console.log(`[PASS] ${zipFile}  (${zipSizeDisplay})`);
 
     // List ZIP contents via PowerShell
     const psCmd = new Deno.Command("powershell", {

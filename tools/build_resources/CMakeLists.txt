@@ -111,12 +111,18 @@ add_subdirectory(../../src/helptext/data/ftsrch ${CMAKE_BINARY_DIR}/libs/ftsrch)
 add_subdirectory(../../src/helptext/data/cppmark ${CMAKE_BINARY_DIR}/libs/cppmark)
 add_subdirectory(../../src/helptext/data/parser ${CMAKE_BINARY_DIR}/libs/docparser)
 
+# Output binary alongside wxUiEditor in ${CMAKE_SOURCE_DIR}/../bin/<config>/
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../bin)
+
 ####################### Resource Builder Executable ######################
 
 add_executable(build_resources
     main.cpp
     # ${CMAKE_CURRENT_SOURCE_DIR}/../../src/pugixml/pugixml.cpp
 )
+
+# Debug builds produce build_resourcesD.exe / build_resourcesD
+set_target_properties(build_resources PROPERTIES DEBUG_POSTFIX "D")
 
 target_include_directories(build_resources PRIVATE
     # ${CMAKE_CURRENT_SOURCE_DIR}/../../src/pugixml

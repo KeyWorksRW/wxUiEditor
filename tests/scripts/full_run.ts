@@ -4,7 +4,7 @@
  *
  * Equivalent of full_run.ps1 but for build_resources.exe.
  *
- * Usage: deno run --allow-read --allow-write --allow-run tests/scripts/full_run.ts
+ * Usage: deno run --allow-read --allow-write --allow-run build/scripts/full_run.ts
  */
 
 import * as path from "@std/path";
@@ -18,10 +18,8 @@ const repoRoot = path.resolve(scriptDir, "..", "..");
 
 const exe = path.join(
     repoRoot,
-    "tools",
-    "build_resources",
-    "build",
-    "Debug",
+    "bin",
+    "Release",
     "build_resources.exe",
 );
 const interfaceWx = path.join(
@@ -33,9 +31,8 @@ const interfaceWx = path.join(
     "interface-src",
     "wx",
 );
-const testsDir = path.join(repoRoot, "tests");
-const outputDir = path.join(testsDir, "full_build");
-const zipFile = path.join(testsDir, "wxWidgetsDocs.zip");
+const outputDir = path.join(repoRoot, "build", "docs");
+const zipFile = path.join(repoRoot, "build", "archive", "wxWidgetsDocs.zip");
 
 // ---------------------------------------------------------------------------
 // Stage 0 – Sanity checks
@@ -76,6 +73,7 @@ await Deno.remove(outputDir, { recursive: true }).catch(() =>
 await Deno.remove(zipFile).catch(() =>
 {});
 await Deno.mkdir(outputDir, { recursive: true });
+await Deno.mkdir(path.join(repoRoot, "build", "archive"), { recursive: true });
 
 // ---------------------------------------------------------------------------
 // Stage 2 – Run parser
@@ -155,18 +153,24 @@ for await (const entry of Deno.readDir(outputDir))
 
 const zipSize = (await Deno.stat(zipFile)).size;
 
-// Format elapsed time as hh:mm:ss.fff
+// Format elapsed time as mm:ss
 const totalSeconds = elapsedMs / 1000;
-const hours = Math.floor(totalSeconds / 3600);
-const minutes = Math.floor((totalSeconds % 3600) / 60);
-const seconds = totalSeconds % 60;
-const elapsedStr = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${
-    seconds.toFixed(3).padStart(7, "0")
-}`;
+const minutes = Math.floor(totalSeconds / 60);
+const seconds = Math.floor(totalSeconds % 60);
+const elapsedStr = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+let megabytes = Math.floor(zipSize / 1_048_576);
+let tenths = Math.ceil((zipSize % 1_048_576) / 104_857.6);
+if (tenths === 10)
+{
+    megabytes++;
+    tenths = 0;
+}
+const zipSizeDisplay = `${megabytes}.${tenths} MB`;
 
 console.log(`Elapsed:        ${elapsedStr}`);
-console.log(`Markdown files: ${markdownCount}`);
-console.log(`ZIP size:       ${zipSize} bytes`);
+console.log(`Markdown files: ${markdownCount.toLocaleString("en-US")}`);
+console.log(`ZIP size:       ${zipSizeDisplay}`);
 console.log(`Output dir:     ${outputDir}`);
 console.log(`ZIP file:       ${zipFile}`);
 

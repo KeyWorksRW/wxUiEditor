@@ -131,6 +131,18 @@ bool StartupDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     box_sizer_2->Add(box_sizer_5, wxSizerFlags().Border(wxALL));
 
+    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* bmp2 = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_wxlogo_svg(24, 24));
+    box_sizer2->Add(bmp2, wxSizerFlags().Border(wxALL));
+
+    //  wxGenericHyperlinkCtrl is used in order to remove the underline from the font.
+    auto* hyperlink2 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Docs", wxEmptyString);
+    hyperlink2->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    box_sizer2->Add(hyperlink2, wxSizerFlags().Center().Border(wxALL));
+
+    box_sizer_2->Add(box_sizer2, wxSizerFlags().Border(wxALL));
+
     box_sizer_8->Add(box_sizer_2, wxSizerFlags().Border(wxLEFT|wxRIGHT, 15));
 
     dlg_sizer->Add(box_sizer_8, wxSizerFlags().Border(wxALL));
@@ -170,6 +182,7 @@ bool StartupDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     }
 
     // Event handlers
+    hyperlink2->Bind(wxEVT_HYPERLINK, &StartupDlgBase::OnDocs, this);
     hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlgBase::OnImport, this);
     hyperlink_3->Bind(wxEVT_HYPERLINK, &StartupDlgBase::OnNew, this);
     hyperlink_2->Bind(wxEVT_HYPERLINK, &StartupDlgBase::OnOpen, this);

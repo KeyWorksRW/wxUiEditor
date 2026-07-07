@@ -7826,6 +7826,23 @@
                 alignment="wxALIGN_CENTER_VERTICAL"
                 wxEVT_HYPERLINK="OnNew" />
             </node>
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer2">
+              <node
+                class="wxStaticBitmap"
+                bitmap="SVG;../art_src/wxlogo.svg;[24,24]"
+                var_name="bmp2" />
+              <node
+                class="wxHyperlinkCtrl"
+                class_access="none"
+                label="Docs"
+                sync_hover_colour="1"
+                underlined="0"
+                var_name="hyperlink2"
+                alignment="wxALIGN_CENTER_VERTICAL"
+                wxEVT_HYPERLINK="OnDocs" />
+            </node>
           </node>
         </node>
         <node

@@ -31,6 +31,7 @@ public:
         start_convert,
         start_open,
         start_empty,
+        start_docs,
     };
 
     [[nodiscard]] Command GetCommand() const { return m_command; }
@@ -39,6 +40,7 @@ public:
 protected:
     // Event handlers
 
+    void OnDocs(wxHyperlinkEvent& event) override;
     void OnImport(wxHyperlinkEvent& event) override;
     void OnInit(wxInitDialogEvent& event) override;
     void OnNew(wxHyperlinkEvent& event) override;

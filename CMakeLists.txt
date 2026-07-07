@@ -238,7 +238,6 @@ add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-
 endif()
 
 include(FetchContent)
@@ -541,6 +540,44 @@ target_link_libraries(wxUiEditor PRIVATE
     docparser
 )
 
+# ###################### Embedded wxWidgetsDocs.zip (CMakeRC) #######################
+# build_docs.cmake guarantees the zip exists before we embed it.
+
+# ###################### Build wxWidgetsDocs.zip if missing #######################
+# Ensure build/archive/wxWidgetsDocs.zip exists before we try to embed it.
+# The build_docs.cmake script runs at configure time and is a no-op if the zip
+# is already present.
+set(_wxwidgets_docs_zip "${CMAKE_CURRENT_SOURCE_DIR}/build/archive/wxWidgetsDocs.zip")
+if(NOT EXISTS "${_wxwidgets_docs_zip}")
+    include("${CMAKE_CURRENT_LIST_DIR}/cmake/build_docs.cmake")
+endif()
+# After build_docs.cmake returns (or if the zip pre-existed), verify it exists.
+if(NOT EXISTS "${_wxwidgets_docs_zip}")
+    message(FATAL_ERROR
+        "build/archive/wxWidgetsDocs.zip not found after running build_docs.cmake")
+endif()
+
+FetchContent_Declare(
+    cmrc
+    GIT_REPOSITORY https://github.com/vector-of-bool/cmrc.git
+    GIT_TAG master
+    GIT_SHALLOW TRUE
+    DOWNLOAD_NO_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(cmrc)
+# cmrc's top-level CMakeLists already includes the module, but include by full path to
+# guarantee cmrc_add_resource_library() is defined regardless of module-path resolution.
+include("${cmrc_SOURCE_DIR}/CMakeRC.cmake")
+
+message(STATUS "Embedding build/archive/wxWidgetsDocs.zip via CMakeRC")
+cmrc_add_resource_library(
+    wxuedocs
+    ALIAS wxuedocs::rc
+    NAMESPACE wxuedocs
+    WHENCE "${CMAKE_CURRENT_SOURCE_DIR}/build/archive"
+    "${_wxwidgets_docs_zip}")
+target_link_libraries(wxUiEditor PRIVATE wxuedocs::rc)
+target_compile_definitions(wxUiEditor PRIVATE HAS_EMBEDDED_WXWIDGETS_DOCS)
 # ###################### Packaging Instructions #######################
 if(UNIX AND NOT APPLE)
     INSTALL(FILES wxUiEditor.desktop DESTINATION share/applications)

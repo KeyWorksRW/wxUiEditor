@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include <filesystem>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -41,7 +40,7 @@ public:
 
     // Open (or re-open) a documentation ZIP archive.
     // Returns false when the archive could not be opened.
-    [[nodiscard]] bool OpenArchive(const std::filesystem::path& zip_path);
+    [[nodiscard]] bool OpenArchive(const wxString& zip_path);
 
     // True when an archive has been successfully opened.
     [[nodiscard]] bool IsArchiveOpen() const;

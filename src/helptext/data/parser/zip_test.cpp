@@ -19,7 +19,7 @@ int RunZipTest(const std::filesystem::path& zip_path)
 
     // Open the archive with the high-level DocArchive reader.
     std::expected<std::shared_ptr<DocArchive>, std::string> archive_result =
-        OpenDocArchive(zip_path);
+        OpenDocArchive(zip_path.string());
     if (!archive_result)
     {
         parser::AddErrorMessage("FAIL: " + archive_result.error());

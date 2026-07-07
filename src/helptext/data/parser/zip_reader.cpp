@@ -46,14 +46,13 @@ public:
     DocArchive(DocArchive&&) = delete;
     DocArchive& operator=(DocArchive&&) = delete;
 
-    [[nodiscard]] std::expected<void, std::string> Open(const std::filesystem::path& zip_path)
+    [[nodiscard]] std::expected<void, std::string> Open(const std::string& zip_path)
     {
         std::memset(&archive_, 0, sizeof(archive_));
-        const std::string path_str = zip_path.string();
-        if (!mz_zip_reader_init_file(&archive_, path_str.c_str(), 0))
+        if (!mz_zip_reader_init_file(&archive_, zip_path.c_str(), 0))
         {
             return std::unexpected(
-                std::format("Failed to open ZIP '{}': {}", path_str, MinizError(archive_)));
+                std::format("Failed to open ZIP '{}': {}", zip_path, MinizError(archive_)));
         }
         is_open_ = true;
         return {};
@@ -108,8 +107,7 @@ private:
     bool is_open_ { false };
 };
 
-std::expected<std::shared_ptr<DocArchive>, std::string>
-    OpenDocArchive(const std::filesystem::path& zip_path)
+std::expected<std::shared_ptr<DocArchive>, std::string> OpenDocArchive(const std::string& zip_path)
 {
     std::shared_ptr<DocArchive> archive = std::make_shared<DocArchive>();
     std::expected<void, std::string> result = archive->Open(zip_path);

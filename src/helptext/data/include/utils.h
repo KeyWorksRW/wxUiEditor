@@ -46,7 +46,7 @@ class DocArchive;
 // Open a .zip archive produced by the parser. On failure the unexpected
 // value contains a human-readable error message (including archive details).
 [[nodiscard]] std::expected<std::shared_ptr<DocArchive>, std::string>
-    OpenDocArchive(const std::filesystem::path& zip_path);
+    OpenDocArchive(const std::string& zip_path);
 
 // Read a markdown file from an open DocArchive by its archive-relative
 // name (for example, "docs/event.md"). On failure the unexpected value

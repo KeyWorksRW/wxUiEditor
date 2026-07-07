@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog to display if wxUiEditor is launched with no arguments
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/display.h>   // wxDisplay
 #include <wx/filedlg.h>   // wxFileDialog base header
@@ -11,6 +12,8 @@
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "startup_dlg.h"  // #include "../wxui/startup_dlg_base.h"
+
+#include "helptext/doc_view_frame.h"  // DocViewFrame
 
 #include "mainframe.h"                   // Main frame
 #include "project_handler.h"             // ProjectHandler class
@@ -114,7 +117,7 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
 
     wxFileHistory& history = wxGetMainFrame()->getFileHistory();
     bool file_added = false;
-    for (size_t idx = 0; idx < history.GetCount(); ++idx)
+    for (size_t idx = history.GetCount(); idx-- > 0;)
     {
         wxString const history_file = history.GetHistoryFile(idx);
         wxFileName const project_file(history_file);
@@ -130,7 +133,6 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
         {
             // Assume that if the file doesn't exist now, it won't exist later either
             history.RemoveFileFromHistory(idx);
-            --idx;  // Adjust index after removal
         }
     }
 
@@ -237,6 +239,17 @@ void StartupDlg::RemoveProjectFilename(wxCommandEvent& event)
 
     Fit();
     Refresh();
+
+    if (history.GetCount() == 0)
+    {
+        m_staticTextRecentProjects->Show();
+    }
+}
+
+void StartupDlg::OnDocs([[maybe_unused]] wxHyperlinkEvent& event)
+{
+    m_command = Command::start_docs;
+    EndModal(wxID_OK);
 }
 
 bool DisplayStartupDlg(wxWindow* parent)
@@ -246,13 +259,26 @@ bool DisplayStartupDlg(wxWindow* parent)
     {
         switch (start_dlg.GetCommand())
         {
+            case StartupDlg::Command::start_docs:
+                {
+                    // Launch the documentation viewer as if --docview was passed on the
+                    // command line. Path is hardcoded for now.
+                    const wxString zip_path = ResolveDocsZipPath();
+                    auto* doc_frame = new DocViewFrame(nullptr, zip_path);
+                    doc_frame->Show();
+                    wxGetApp().setDocViewFrame(doc_frame);
+                    wxGetApp().SetTopWindow(doc_frame);
+                    return false;
+                }
+
             case StartupDlg::Command::start_mru:
                 {
                     wxFileName const& project_file = start_dlg.GetProjectFile();
-                    std::string ext = project_file.GetExt().Lower().ToStdString();
-                    ext.insert(ext.begin(), '.');
+                    std::string extension = project_file.GetExt().Lower().ToStdString();
+                    extension.insert(extension.begin(), '.');
 
-                    if (ext != PROJECT_FILE_EXTENSION && ext != PROJECT_LEGACY_FILE_EXTENSION)
+                    if (extension != PROJECT_FILE_EXTENSION &&
+                        extension != PROJECT_LEGACY_FILE_EXTENSION)
                     {
                         return Project.ImportProject(project_file.GetFullPath().ToStdString());
                     }

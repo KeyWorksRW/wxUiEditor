@@ -8,12 +8,13 @@
 #pragma once
 
 #include <expected>
-#include <filesystem>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <unordered_map>
 #include <vector>
+
+#include <wx/string.h>
 
 #include "data/ftsrch/ftsrch.h"
 #include "data/include/utils.h"
@@ -50,8 +51,7 @@ public:
 
     // Open a documentation ZIP archive and prepare the in-memory file
     // system for embedded images.
-    [[nodiscard]] std::expected<void, std::string>
-        OpenArchive(const std::filesystem::path& zip_path);
+    [[nodiscard]] std::expected<void, std::string> OpenArchive(const wxString& zip_path);
 
     bool IsOpen() const noexcept { return m_archive != nullptr; }
 

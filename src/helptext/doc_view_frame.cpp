@@ -5,22 +5,26 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <filesystem>
+#include <fstream>
+#include <stdexcept>
 #include <string>
 
 #include <wx/filedlg.h>
+#include <wx/filename.h>
 
 #include "doc_view_frame.h"
 #include "doc_view_panel.h"
 
 #include "archive_handler.h"
 
+#include <cmrc/cmrc.hpp>
+CMRC_DECLARE(wxuedocs);
+
 // ---------------------------------------------------------------------------
 //  Constructor
 // ---------------------------------------------------------------------------
 
-DocViewFrame::DocViewFrame(wxWindow* parent, const std::filesystem::path& zip_path) :
-    DocViewFrame_base(parent)
+DocViewFrame::DocViewFrame(wxWindow* parent, const wxString& zip_path) : DocViewFrame_base(parent)
 {
     if (!zip_path.empty())
     {
@@ -32,7 +36,7 @@ DocViewFrame::DocViewFrame(wxWindow* parent, const std::filesystem::path& zip_pa
 //  OpenArchive
 // ---------------------------------------------------------------------------
 
-bool DocViewFrame::OpenArchive(const std::filesystem::path& zip_path)
+bool DocViewFrame::OpenArchive(const wxString& zip_path)
 {
     if (!m_DocViewPanel->OpenArchive(zip_path))
     {
@@ -40,7 +44,8 @@ bool DocViewFrame::OpenArchive(const std::filesystem::path& zip_path)
     }
 
     // Update the title bar to reflect the loaded archive.
-    const wxString archive_name = wxString::FromUTF8(zip_path.filename().string());
+    wxFileName fn(zip_path);
+    const wxString archive_name = fn.GetFullName();
     SetTitle(wxString::Format("Doc Viewer - %s", archive_name));
     SetStatusText(wxString::Format("Loaded %s", archive_name));
 
@@ -104,6 +109,37 @@ void DocViewFrame::OnOpenArchive([[maybe_unused]] wxCommandEvent& event)
         return;
     }
 
-    const std::filesystem::path zip_path(file_dlg.GetPath().ToStdWstring());
+    const wxString zip_path = file_dlg.GetPath();
     std::ignore = OpenArchive(zip_path);
+}
+
+// ---------------------------------------------------------------------------
+//  ResolveDocsZipPath
+// ---------------------------------------------------------------------------
+
+wxString ResolveDocsZipPath()
+{
+    try
+    {
+        cmrc::embedded_filesystem docs_fs = cmrc::wxuedocs::get_filesystem();
+        if (docs_fs.is_file("wxWidgetsDocs.zip"))
+        {
+            cmrc::file docs_rc = docs_fs.open("wxWidgetsDocs.zip");
+            wxFileName temp_fn(wxFileName::GetTempDir(), "wxueditor_wxWidgetsDocs.zip");
+            const wxString temp_path = temp_fn.GetFullPath();
+            {
+                std::ofstream out_file(temp_path.utf8_string(), std::ios::binary | std::ios::trunc);
+                out_file.write(docs_rc.begin(), static_cast<std::streamsize>(docs_rc.size()));
+            }
+            return temp_path;
+        }
+    }
+    catch (...)
+    {
+        // The embedded archive is guaranteed at build time — rethrow so the
+        // caller sees a genuine runtime_error rather than a silent bad path.
+        throw;
+    }
+    // Should be unreachable: archive guaranteed by build_docs.cmake.
+    throw std::runtime_error("wxWidgetsDocs.zip not found in embedded filesystem");
 }

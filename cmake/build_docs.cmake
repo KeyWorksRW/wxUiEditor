@@ -67,10 +67,13 @@ if(NOT _build_result EQUAL 0)
         "stderr:\n${_build_error}")
 endif()
 
-# Locate the built executable. Multi-config generators (Visual Studio) place
-# it in build/Release/, single-config generators place it in build/.
+# Locate the built executable. CMakeLists.txt sets CMAKE_RUNTIME_OUTPUT_DIRECTORY
+# to ${CMAKE_SOURCE_DIR}/../../bin, so the executable lands in <repo>/bin/ (or
+# bin/Release/ for multi-config). Fall back to the build dir for older builds.
 set(_br_exe "")
 foreach(_candidate
+    "${CMAKE_CURRENT_SOURCE_DIR}/bin/Release/build_resources${CMAKE_EXECUTABLE_SUFFIX}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bin/build_resources${CMAKE_EXECUTABLE_SUFFIX}"
     "${_br_build_dir}/Release/build_resources${CMAKE_EXECUTABLE_SUFFIX}"
     "${_br_build_dir}/build_resources${CMAKE_EXECUTABLE_SUFFIX}"
 )

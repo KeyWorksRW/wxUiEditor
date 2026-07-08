@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-06-2026]
 
 #include <wx/fontpicker.h>
 
@@ -21,9 +22,14 @@ wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
         wxStaticCast(parent, wxWindow), wxID_ANY, node->as_wxFont(prop_initial_font),
         DlgPoint(node, prop_pos), DlgSize(node, prop_size), GetStyleInt(node));
 
-    if (node->HasValue(prop_max_point_size))
+    if (node->as_int(prop_max_point_size) != 100)
     {
         widget->SetMaxPointSize(node->as_int(prop_max_point_size));
+    }
+
+    if (node->as_string(prop_min_point_size) != "0")
+    {
+        widget->SetMinPointSize(node->as_int(prop_min_point_size));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -37,10 +43,20 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
     code.ValidParentName().Comma().as_string(prop_id).Comma();
     if (code.HasValue(prop_initial_font))
     {
-        auto fontprop = code.node()->as_font_prop(prop_initial_font);
-        wxFont font = fontprop.GetFont();
+        const FontProperty fontprop = code.node()->as_font_prop(prop_initial_font);
+        const wxFont font = fontprop.GetFont();
 
-        code.Object("wxFont");
+        if (code.is_ffi())
+        {
+            // FFI uses a standalone creation function, not a constructor expression:
+            // wx_font_create(...) (Fortran) or wx.font_create(...) (Go/Julia/LuaJIT/TS)
+            const LanguageTraits& traits = code.get_traits();
+            code.Str(traits.wx_prefix).Str("font_create(");
+        }
+        else
+        {
+            code.Object("wxFont");
+        }
 
         if (fontprop.GetPointSize() <= 0)
         {
@@ -54,8 +70,8 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
         code.Comma()
             .Add(ConvertFontFamilyToString(fontprop.GetFamily()))
             .Comma()
-            .Add(font.GetStyleString().utf8_string());
-        code.Comma().Add(font.GetWeightString().utf8_string()).Comma();
+            .Add(font.GetStyleString().ToStdString());
+        code.Comma().Add(font.GetWeightString().ToStdString()).Comma();
 
         if (fontprop.IsUnderlined())
         {
@@ -66,9 +82,9 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
             code.False();
         }
         code.Comma();
-        if (fontprop.GetFaceName().size())
+        if (!fontprop.GetFaceName().empty())
         {
-            code.QuotedString(fontprop.GetFaceName().utf8_string());
+            code.QuotedString(fontprop.GetFaceName().ToStdString());
         }
         else
         {
@@ -96,7 +112,7 @@ bool FontPickerGenerator::ConstructionCode(Code& code)
 
 bool FontPickerGenerator::SettingsCode(Code& code)
 {
-    Node* node = code.node();
+    const Node* node = code.node();
     if (node->as_string(prop_min_point_size) != "0")
     {
         code.NodeName().Function("SetMinPointSize(").as_string(prop_min_point_size).EndFunction();
@@ -127,9 +143,9 @@ bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFontPickerCtrl");
 

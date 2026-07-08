@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-06-2026]
 
 #include <wx/datectrl.h>  // implements wxDatePickerCtrl
 
@@ -39,7 +40,6 @@ bool DatePickerCtrlGenerator::ConstructionCode(Code& code)
     {
         code.Str("DateTime.now");
     }
-
     else
     {
         code.Add("wxDefaultDateTime");
@@ -77,9 +77,9 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxDatePickerCtrl");
 

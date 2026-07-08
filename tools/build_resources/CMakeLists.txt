@@ -60,7 +60,7 @@ target_compile_definitions(miniz PRIVATE NDEBUG)
 
 # Match the parent project's CRT
 set_target_properties(miniz PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<CONFIG:Debug>DebugDLL"
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 )
 
 # ###################### Snowball stemmer #######################

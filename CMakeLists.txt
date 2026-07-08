@@ -307,7 +307,7 @@ endif()
 target_compile_definitions(miniz PRIVATE NDEBUG)
 
 set_target_properties(miniz PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<CONFIG:Debug>DebugDLL"
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 )
 
 add_subdirectory(src/helptext/data/ftsrch)

@@ -103,5 +103,5 @@ target_compile_definitions(libdeflate_static PRIVATE NDEBUG)
 
 # Match the parent project's CRT (MD/MDd)
 set_target_properties(libdeflate_static PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<CONFIG:Debug>DebugDLL"
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 )

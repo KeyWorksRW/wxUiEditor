@@ -4,17 +4,20 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-11-2026]
 
 #include <algorithm>              // std::clamp
 #include <wx/image.h>             // wxImage
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 #include <wx/ribbon/gallery.h>    // Ribbon control which displays a gallery of items to choose from
 
-#include "bitmaps.h"          // Contains various images handling functions
-#include "code.h"             // Code -- Helper class for generating code
-#include "gen_common.h"       // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"    // Common XRC generating functions
-#include "image_gen.h"        // Functions for generating embedded images
+#include "bitmaps.h"        // Contains various images handling functions
+#include "code.h"           // Code -- Helper class for generating code
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "image_gen.h"      // Functions for generating embedded images
+#include "image_handler.h"  // ImageHandler class
+#include "mainframe.h"
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
@@ -53,29 +56,25 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpa
             // No gallery items, so use a default size
             return;
         }
-        else
+        // Determine the common size based on the first gallery item image
+        for (const auto& child: node->get_ChildNodePtrs())
         {
-            // Determine the common size based on the first gallery item image
-            for (const auto& child: node->get_ChildNodePtrs())
+            if (child->is_Gen(gen_ribbonGalleryItem))
             {
-                if (child->is_Gen(gen_ribbonGalleryItem))
+                const wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
+                if (!bundle.IsOk())
                 {
-                    wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
-                    if (!bundle.IsOk())
+                    common_size = wxSize(MIN_GALLERY_IMAGE_DIM, MIN_GALLERY_IMAGE_DIM);
+                }
+                else
+                {
+                    common_size = bundle.GetBitmap(wxDefaultSize).GetSize();
+                    if (common_size == wxDefaultSize)
                     {
                         common_size = wxSize(MIN_GALLERY_IMAGE_DIM, MIN_GALLERY_IMAGE_DIM);
                     }
-                    else
-                    {
-                        common_size = bundle.GetBitmap(wxDefaultSize).GetSize();
-                        if (common_size != wxDefaultSize)
-                        {
-                            common_size = wxSize(MIN_GALLERY_IMAGE_DIM, MIN_GALLERY_IMAGE_DIM);
-                            ;
-                        }
-                    }
-                    break;
                 }
+                break;
             }
         }
     }
@@ -101,7 +100,6 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpa
             if (!bundle.IsOk())
             {
                 bundle = GetSvgImage("unknown", common_size);
-                const wxSize bitmap_size = bundle.GetBitmap(wxDefaultSize).GetSize();
             }
 
             // Gallery items all need to be the same size.
@@ -162,6 +160,52 @@ void RibbonGalleryGenerator::GenerateGalleryItems(Node* gallery_node, WriteCode*
         }
         source->writeLine(decl_code);
     }
+    else
+    {
+        // Scan for size inconsistency across gallery items before generating code.
+        wxSize first_size = wxDefaultSize;
+        bool found_first = false;
+        bool sizes_consistent = true;
+        for (const auto& child: gallery_node->get_ChildNodePtrs())
+        {
+            if (!child->is_Gen(gen_ribbonGalleryItem))
+            {
+                continue;
+            }
+            const wxBitmapBundle bundle = child->as_wxBitmapBundle(prop_bitmap);
+            if (!bundle.IsOk())
+            {
+                continue;
+            }
+            const wxSize child_size = bundle.GetBitmap(wxDefaultSize).GetSize();
+            if (!found_first)
+            {
+                first_size = child_size;
+                found_first = true;
+            }
+            else if (child_size != first_size)
+            {
+                sizes_consistent = false;
+                break;
+            }
+        }
+
+        if (!sizes_consistent)
+        {
+            if (language == GenLang::cplusplus)
+            {
+                if (auto* frame = wxGetMainFrame(); frame)
+                {
+                    frame->ShowInfoBarMsg("Not all images for wxRibbonGallery are the same size!");
+                }
+            }
+            Code warning_code(gallery_node, language);
+            warning_code.AddComment(
+                "WARNING: not all images for wxRibbonGallery are the same size!", true);
+
+            source->writeLine(warning_code);
+        }
+    }
 
     for (const auto& child: gallery_node->get_ChildNodePtrs())
     {
@@ -184,41 +228,93 @@ void RibbonGalleryGenerator::GenerateGalleryItems(Node* gallery_node, WriteCode*
         const wxue::StringVector parts(child->as_view(prop_bitmap), BMP_PROP_SEPARATOR,
                                        wxue::TRIM::both);
 
+        if (parts.empty())
+        {
+            continue;
+        }
+
         Code item_code(child.get(), language);
 
         if (item_code.is_cpp())
         {
-            // Assign the bitmap expression to bmp, wrapping in wxBitmap() to handle
-            // both wxBitmap and wxImage return types from GenerateBundleParameter.
-            item_code << "bmp = wxBitmap(";
-            if (Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
+            const wxue::string& img_type = parts[IndexType];
+            const ImageBundle* bundle = nullptr;
+            if (img_type.starts_with("Embed"))
             {
+                bundle = ProjectImages.GetPropertyImageBundle(&parts);
+            }
+
+            if (bundle && bundle->lst_filenames.size() > 1)
+            {
+                // Case A: Multi-image Embed bundle — generate a lambda that
+                // scales every bitmap individually before building the bundle.
+                item_code.ParentName().Function("Append(");
+                item_code << "[&]()";
+                item_code.OpenBrace();
+                item_code << "wxVector<wxBitmap> bitmaps;";
+
+                for (const wxue::string& filename: bundle->lst_filenames)
+                {
+                    EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(filename);
+                    if (!embed)
+                    {
+                        continue;
+                    }
+
+                    const wxue::string name = "wxue_img::" + embed->base_image().array_name;
+                    item_code.Eol()
+                        << "bmp = wxBitmap(wxueImage(" << name << ", sizeof(" << name << ")));";
+                    item_code.Eol() << "if (bmp.IsOk() && bmp.GetSize() != gallery_size)";
+                    item_code.OpenBrace();
+                    item_code << "wxImage img(bmp.ConvertToImage());";
+                    item_code.Eol()
+                        << "img.Rescale(gallery_size.GetWidth(), gallery_size.GetHeight(), "
+                           "wxIMAGE_QUALITY_HIGH);";
+                    item_code.Eol() << "bmp = wxBitmap(img);";
+                    item_code.CloseBrace();
+                    item_code.Eol() << "bitmaps.push_back(bmp);";
+                }
+                item_code.Eol() << "return wxBitmapBundle::FromBitmaps(bitmaps);";
+                item_code.CloseBrace() << "()";
+                item_code.Comma().Add("wxID_ANY").EndFunction();
+            }
+            else if (img_type.starts_with("SVG"))
+            {
+                // Case B: SVG — renders at the requested size; no rescale needed.
+                item_code << "bmp = ";
                 item_code.GenerateBundleParameter(parts, false);
-                item_code << ".GetBitmap(gallery_size)";
+                item_code << ".GetBitmap(gallery_size);";
+                item_code.Eol();
+                item_code.ParentName()
+                    .Function("Append(")
+                    .Str("bmp")
+                    .Comma()
+                    .Add("wxID_ANY")
+                    .EndFunction();
             }
             else
             {
+                // Case C/D/E: Single Embed, Art, or XPM — create bitmap, rescale if needed, append.
+                item_code << "bmp = wxBitmap(";
                 item_code.GenerateBundleParameter(parts, true);
+                item_code << ");";
+
+                item_code.Eol() << "if (bmp.IsOk() && bmp.GetSize() != gallery_size)";
+                item_code.OpenBrace();
+                item_code << "wxImage img(bmp.ConvertToImage());";
+                item_code.Eol() << "img.Rescale(gallery_size.GetWidth(), gallery_size.GetHeight(), "
+                                   "wxIMAGE_QUALITY_HIGH);";
+                item_code.Eol() << "bmp = wxBitmap(img);";
+                item_code.CloseBrace();
+
+                item_code.Eol();
+                item_code.ParentName()
+                    .Function("Append(")
+                    .Str("bmp")
+                    .Comma()
+                    .Add("wxID_ANY")
+                    .EndFunction();
             }
-            item_code << ");";
-
-            // Check if bitmap needs rescaling to match gallery_size
-            item_code.Eol() << "if (bmp.IsOk() && bmp.GetSize() != gallery_size)";
-            item_code.OpenBrace();
-            item_code << "wxImage img(bmp.ConvertToImage());";
-            item_code.Eol() << "img.Rescale(gallery_size.GetWidth(), gallery_size.GetHeight(), "
-                               "wxIMAGE_QUALITY_HIGH);";
-            item_code.Eol() << "bmp = wxBitmap(img);";
-            item_code.CloseBrace();
-
-            // Append the (possibly rescaled) bitmap to the gallery
-            item_code.Eol();
-            item_code.ParentName()
-                .Function("Append(")
-                .Str("bmp")
-                .Comma()
-                .Add("wxID_ANY")
-                .EndFunction();
         }
         else if (item_code.is_python())
         {

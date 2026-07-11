@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxPopupWindow/wxPopupTransientWindow generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/popupwin.h>  // wxBitmapComboBox base header
 
@@ -14,6 +15,115 @@
 #include "utils.h"          // Utility functions that work with properties
 
 #include "gen_popup_win.h"
+
+static void PopupFfiConstructionCodeFortran(Code& code)
+{
+    // module NodeName_mod
+    //     use kwx_fortran
+    //     implicit none
+    //     type(wx_popup_window_t) :: self
+    //         ...or type(wx_popup_transient_window_t) :: self
+    // contains
+    // subroutine create(parent)
+    //     type(c_ptr), intent(in) :: parent
+
+    const std::string_view decl_name = code.node()->get_DeclName();
+    const std::string_view fortran_type =
+        decl_name.contains("Transient") ? "wx_popup_transient_window_t" : "wx_popup_window_t";
+
+    code.Str("module ").NodeName().Str("_mod").Eol();
+    code.Tab().Str("use kwx_fortran").Eol();
+    code.Tab().Str("implicit none").Eol();
+    code.Tab().Str("type(").Str(fortran_type).Str(") :: self").Eol();
+    code.Eol();
+    code.Str("contains").Eol();
+    code.Eol();
+    code.Str("subroutine create(parent)").Eol();
+    code.Tab().Str("type(c_ptr), intent(in) :: parent");
+}
+
+static void PopupFfiConstructionCodeGo(Code& code)
+{
+    // type NodeName struct {
+    //     popup *wx.PopupWindow
+    //         ...or popup *wx.PopupTransientWindow
+    // }
+    //
+    // func NewNodeName(parent wx.Pointer) *NodeName {
+    //     self := &NodeName{}
+
+    const std::string_view decl_name = code.node()->get_DeclName();
+    const std::string_view go_type =
+        decl_name.contains("Transient") ? "*wx.PopupTransientWindow" : "*wx.PopupWindow";
+
+    code.Str("type ").NodeName().Str(" struct {").Eol();
+    code.Tab().Str("popup ").Str(go_type).Eol();
+    code.Str("}").Eol();
+    code.Eol();
+    code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
+    code.Tab().Str("self := &").NodeName().Str("{}");
+}
+
+static void PopupFfiConstructionCodeJulia(Code& code)
+{
+    // mutable struct NodeName
+    //     frame::Ptr{Cvoid}
+    //
+    //     function NodeName(parent=nothing)
+    //         self = new()
+
+    code.Str("mutable struct ").NodeName().Eol();
+    code.Indent();
+    code.Tab().Str("frame::Ptr{Cvoid}").Eol();
+    code.Eol();
+    code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
+    code.Indent();
+    code.Tab().Str("self = new()");
+}
+
+static void PopupFfiConstructionCodeLuaJIT(Code& code)
+{
+    // local NodeName = {}
+    // NodeName.__index = NodeName
+    //
+    // function NodeName:new(parent)
+    //     local self = setmetatable({}, NodeName)
+
+    code.Str("local ").NodeName().Str(" = {}").Eol();
+    code.NodeName().Str(".__index = ").NodeName().Eol();
+    code.Eol();
+    code.Str("function ").NodeName().Str(":new(parent)").Eol();
+    code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")");
+}
+
+static void PopupFfiConstructionCodeTypeScript(Code& code)
+{
+    // TypeScript popup window creation inside the constructor body.
+    // Popup windows take (parent, style) -- no title, pos, or size.
+
+    const LanguageTraits& traits = code.get_traits();
+    const std::string_view decl_name = code.node()->get_DeclName();
+    const std::string_view ts_class =
+        decl_name.contains("Transient") ? "wxPopupTransientWindow" : "wxPopupWindow";
+
+    code.Tab()
+        .Str(traits.self_reference)
+        .Str(".frame = ")
+        .Str(ts_class)
+        .Str(".Create(")
+        .Eol()
+        .Tab(2);
+    code.Str("parent").Comma().Eol().Tab(2);
+
+    // Style: border combined with any optional style flags.
+    code.Add(prop_border);
+    if (code.HasValue(prop_style))
+    {
+        code.Str(" | ").Add(prop_style);
+    }
+    code.Str(")!");
+    code.Str(traits.stmt_end);
+}
 
 bool PopupWinGenerator::ConstructionCode(Code& code)
 {
@@ -48,6 +158,32 @@ bool PopupWinGenerator::ConstructionCode(Code& code)
         }
         code.EndFunction();
         code.ResetIndent();
+    }
+    else if (code.is_ffi())
+    {
+        switch (code.get_language())
+        {
+            case GenLang::fortran:
+                PopupFfiConstructionCodeFortran(code);
+                break;
+            case GenLang::go:
+                PopupFfiConstructionCodeGo(code);
+                break;
+            case GenLang::julia:
+                PopupFfiConstructionCodeJulia(code);
+                break;
+            case GenLang::luajit:
+                PopupFfiConstructionCodeLuaJIT(code);
+                break;
+            case GenLang::typescript:
+                PopupFfiConstructionCodeTypeScript(code);
+                break;
+            default:
+                code.AddComment("Unsupported FFI language", true);
+                break;
+        }
+        code.ResetIndent();
+        code.ResetBraces();
     }
     else
     {
@@ -89,6 +225,32 @@ bool PopupTransientWinGenerator::ConstructionCode(Code& code)
         }
         code.EndFunction();
         code.ResetIndent();
+    }
+    else if (code.is_ffi())
+    {
+        switch (code.get_language())
+        {
+            case GenLang::fortran:
+                PopupFfiConstructionCodeFortran(code);
+                break;
+            case GenLang::go:
+                PopupFfiConstructionCodeGo(code);
+                break;
+            case GenLang::julia:
+                PopupFfiConstructionCodeJulia(code);
+                break;
+            case GenLang::luajit:
+                PopupFfiConstructionCodeLuaJIT(code);
+                break;
+            case GenLang::typescript:
+                PopupFfiConstructionCodeTypeScript(code);
+                break;
+            default:
+                code.AddComment("Unsupported FFI language", true);
+                break;
+        }
+        code.ResetIndent();
+        code.ResetBraces();
     }
     else
     {
@@ -184,11 +346,10 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
 {
     Node* form = code.node();
     Node* child_node = form;
-    ASSERT_MSG(form->is_Gen(gen_wxPopupWindow) || form->get_ChildCount(),
-               "Trying to generate code for wxPopup with no children.")
+    ASSERT_MSG(form->get_ChildCount(), "Trying to generate code for wxPopup with no children.")
     if (!form->get_ChildCount())
     {
-        return {};  // empty popup window, so nothing to do
+        return false;  // empty popup window, so nothing to do
     }
     ASSERT_MSG(form->get_Child(0)->is_Sizer(), "Expected first child of wxPopup to be a sizer.");
     if (form->get_Child(0)->is_Sizer())
@@ -199,8 +360,8 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
         child_node = form->get_Child(0);
     }
 
-    const auto min_size = form->as_wxSize(prop_minimum_size);
-    const auto max_size = form->as_wxSize(prop_maximum_size);
+    const wxSize min_size = form->as_wxSize(prop_minimum_size);
+    const wxSize max_size = form->as_wxSize(prop_maximum_size);
 
     if (min_size == wxDefaultSize && max_size == wxDefaultSize &&
         form->as_wxSize(prop_size) == wxDefaultSize)
@@ -236,37 +397,45 @@ bool PopupWinBaseGenerator::AfterChildrenCode(Code& code)
         }
         else
         {
-            code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
-            code.Eol().OpenBrace();
-
-            const auto size = form->as_wxSize(prop_size);
-
-            if (code.is_cpp())
+            if (code.is_ffi())
             {
-                code.Add("wxSize size = { ").itoa(size.x).Add(", ").itoa(size.y).Add(" };");
+                // FFI layer handles size and scaling differently; use SetSizerAndFit.
+                code.FormFunction("SetSizerAndFit(").NodeName(child_node).EndFunction();
             }
-            else if (code.is_python())
+            else
             {
-                code.Add("size = (").itoa(size.x).Add(", ").itoa(size.y).Add(")");
-            }
-            else if (code.is_ruby())
-            {
-                code.Add("size = Wx::Size.new(").itoa(size.x).Add(", ").itoa(size.y).Add(")");
-            }
+                code.FormFunction("SetSizer(").NodeName(child_node).EndFunction();
+                code.Eol().OpenBrace();
 
-            // If size != wxDefaultSize, it's more complicated because either the width or the
-            // height might still be set to wxDefaultCoord. In that case, we need to call Fit() to
-            // calculate the missing dimension
+                const wxSize size = form->as_wxSize(prop_size);
 
-            code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
-            code.AddConditionalOr().Str("size.y == ").Add("wxDefaultCoord");
-            code.EndConditional().OpenBrace(true);
-            code.AddComment("Use the sizer to calculate the missing dimension");
-            code.FormFunction("Fit(").EndFunction();
-            code.CloseBrace(true);
-            code.Eol().FormFunction("SetSize(").FormFunction("FromDIP(size)").EndFunction();
-            code.Eol().FormFunction("Layout(").EndFunction();
-            code.CloseBrace(false);
+                if (code.is_cpp())
+                {
+                    code.Add("wxSize size = { ").itoa(size.x).Add(", ").itoa(size.y).Add(" };");
+                }
+                else if (code.is_python())
+                {
+                    code.Add("size = (").itoa(size.x).Add(", ").itoa(size.y).Add(")");
+                }
+                else if (code.is_ruby())
+                {
+                    code.Add("size = Wx::Size.new(").itoa(size.x).Add(", ").itoa(size.y).Add(")");
+                }
+
+                // If size != wxDefaultSize, it's more complicated because either the width or the
+                // height might still be set to wxDefaultCoord. In that case, we need to call Fit()
+                // to calculate the missing dimension
+
+                code.Eol().BeginConditional().Str("size.x == ").Add("wxDefaultCoord");
+                code.AddConditionalOr().Str("size.y == ").Add("wxDefaultCoord");
+                code.EndConditional().OpenBrace(true);
+                code.AddComment("Use the sizer to calculate the missing dimension");
+                code.FormFunction("Fit(").EndFunction();
+                code.CloseBrace(true);
+                code.Eol().FormFunction("SetSize(").FormFunction("FromDIP(size)").EndFunction();
+                code.Eol().FormFunction("Layout(").EndFunction();
+                code.CloseBrace(false);
+            }
         }
     }
 
@@ -330,7 +499,8 @@ bool PopupWinBaseGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 std::pair<bool, wxue::string> PopupWinBaseGenerator::isLanguageVersionSupported(GenLang language)
 {
     if (language == GenLang::none ||
-        (language & (GenLang::cplusplus | GenLang::python | GenLang::ruby)))
+        (language & (GenLang::cplusplus | GenLang::python | GenLang::ruby | GenLang::fortran |
+                     GenLang::go | GenLang::julia | GenLang::luajit | GenLang::typescript)))
     {
         return { true, {} };
     }

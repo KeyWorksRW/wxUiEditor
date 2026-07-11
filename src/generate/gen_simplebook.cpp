@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/simplebook.h>  // wxBookCtrlBase-derived class without any controller.
 
@@ -38,7 +39,7 @@ wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void SimplebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto* book = wxDynamicCast(event.GetEventObject(), wxSimplebook);
+    const wxSimplebook* book = wxDynamicCast(event.GetEventObject(), wxSimplebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
     {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
@@ -84,9 +85,9 @@ bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSimplebook");
 
@@ -96,7 +97,7 @@ int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     if (xrc_flags & xrc::add_comments)
     {
         if (!node->is_PropValue(prop_show_effect, "no effects") ||
-            !node->is_PropValue(prop_show_effect, "no effects"))
+            !node->is_PropValue(prop_hide_effect, "no effects"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("SetEffects() are not supported in XRC");

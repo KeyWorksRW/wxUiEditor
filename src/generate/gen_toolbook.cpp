@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/toolbook.h>  // wxToolbook: wxToolBar and wxNotebook combination
 
@@ -29,7 +30,7 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         if (node->get_Child(idx_child)->HasValue(prop_bitmap))
         {
-            auto bundle = node->get_Child(idx_child)->as_wxBitmapBundle(prop_bitmap);
+            wxBitmapBundle bundle = node->get_Child(idx_child)->as_wxBitmapBundle(prop_bitmap);
             if (!bundle.IsOk())
             {
                 bundle = wxue_img::bundle_unknown_svg(24, 24);
@@ -38,7 +39,7 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
             bundle_list.push_back(bundle);
         }
     }
-    auto* book = wxStaticCast(widget, wxBookCtrlBase);
+    wxBookCtrlBase* book = wxStaticCast(widget, wxBookCtrlBase);
     book->SetImages(bundle_list);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -49,7 +50,7 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void ToolbookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto* book = wxDynamicCast(event.GetEventObject(), wxToolbook);
+    const wxToolbook* book = wxDynamicCast(event.GetEventObject(), wxToolbook);
     if (book && event.GetSelection() != wxNOT_FOUND)
     {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
@@ -80,9 +81,9 @@ bool ToolbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int ToolbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxToolbook");
     GenXrcStylePosSize(node, item);

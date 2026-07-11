@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxPropertySheetDialog generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2023-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2023-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
 #include <wx/choicebk.h>  // wxChoicebook: wxChoice and wxNotebook combination
@@ -25,11 +26,418 @@
 
 #include "gen_propsheet_dlg.h"
 
+// Static helper functions for ConstructionCode — extracted to reduce complexity and
+// to support all 8 language variants (C++, Python, Ruby, Fortran, Go, Julia, LuaJIT, TypeScript).
+
+static void ConstructionCodeCpp(Code& code)
+{
+    const Node* node = code.node();
+    code.Str("bool ").as_string(prop_class_name);
+    code += "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst "
+            "wxPoint& pos, const wxSize& size, long style, const wxString& name)\n";
+    code.OpenBrace();
+
+    if (code.HasValue(prop_extra_style))
+    {
+        code.Eol(eol_if_needed)
+            .FormFunction("SetExtraStyle(GetExtraStyle() | ")
+            .Add(prop_extra_style);
+        code.EndFunction();
+    }
+
+    code.Eol(eol_if_needed).FormFunction("SetSheetStyle(").Add(prop_book_type).EndFunction().Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
+    }
+
+    code.Eol(eol_if_needed) += "if (!";
+    if (code.node()->HasValue(prop_subclass))
+    {
+        code.as_string(prop_subclass);
+    }
+    else
+    {
+        code += "wxPropertySheetDialog";
+    }
+    code += "::Create(parent, id, title, pos, size, style, name))";
+    code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
+
+    code.Eol().Str("CreateButtons(").Add(prop_buttons).EndFunction();
+}
+
+static void ConstructionCodePython(Code& code)
+{
+    const Node* node = code.node();
+    code.Add("class ").NodeName().Str("(wx.adv.PropertySheetDialog):");
+    code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
+    code.Indent(3);
+    code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
+    code.Comma().Str("size=").WxSize(prop_size).Comma();
+    code.CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
+    code.Add("style=").Style().Comma();
+    const size_t name_len = code.HasValue(prop_window_name) ?
+                                code.node()->as_string(prop_window_name).size() :
+                                sizeof("wx.DialogNameStr");
+    code.CheckLineLength(sizeof("name=") + name_len + 4);
+    code.Str("name=");
+    if (code.HasValue(prop_window_name))
+    {
+        code.QuotedString(prop_window_name);
+    }
+    else
+    {
+        code.Str("wx.DialogNameStr");
+    }
+    code.Str("):");
+    code.Unindent();
+    code.Eol().Str("wx.adv.PropertySheetDialog.__init__(self)");
+    wxue::string book_type = node->as_string(prop_book_type);
+    book_type.erase(0, 2);  // Remove the "wx" from the front
+    code.Eol().FormFunction("SetSheetStyle(wx.adv.").Str(book_type).EndFunction().Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
+    }
+
+    code.Eol()
+        .Str("if not self.Create(parent, id, title, pos, size, style, name):")
+        .Eol()
+        .Tab()
+        .Str("return");
+    code.Eol().FormFunction("CreateButtons(").Add(prop_buttons).EndFunction().Eol();
+}
+
+static void ConstructionCodeRuby(Code& code)
+{
+    const Node* node = code.node();
+    code.Add("class ").NodeName().Add(" < Wx::PropertySheetDialog").Eol();
+    code.AddPublicRubyMembers();
+    code.Eol(eol_if_needed).Tab().Add("def initialize(parent");
+    // Indent any wrapped lines
+    code.Indent(3);
+    code.Str(", id = ");
+    if (code.HasValue(prop_id))
+    {
+        code.Add(prop_id);
+    }
+    else
+    {
+        code.Add("Wx::ID_ANY");
+    }
+    code.Comma().Str("title = ").QuotedString(prop_title);
+    // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
+    code.Comma().CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION")).Str("pos = ").Pos(prop_pos);
+    code.Comma()
+        .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
+        .Str("size = ")
+        .WxSize(prop_size);
+    code.Comma()
+        .CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE"))
+        .Str("style = ")
+        .Style();
+    if (code.HasValue(prop_window_name))
+    {
+        code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() +
+                                     2);
+        code.Str("name = ").QuotedString(prop_window_name);
+    }
+
+    code.EndFunction();
+    code.Unindent();
+
+    // Try to line up the parameters with the "parent" parameter
+    if (const size_t found_pos = code.GetCode().find("parent"); wxue::is_found(found_pos))
+    {
+        const size_t nl_pos = code.GetCode().rfind("\n", found_pos - 1);
+        if (wxue::is_found(nl_pos))
+        {
+            const size_t indent_size = found_pos - (nl_pos + 1);
+            const std::string spaces(indent_size, ' ');
+            code.GetCode().Replace("\t\t\t\t", spaces, true);
+        }
+    }
+
+    code.Eol().Str("super()");
+
+    code.Eol().FormFunction("SetSheetStyle(").Add(prop_book_type).EndFunction().Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
+    }
+
+    code.Eol().Str("create(parent, id, title, pos, size, style, name)").Eol();
+    code.Eol().FormFunction("CreateButtons(").Add(prop_buttons).EndFunction().Eol();
+}
+
+static void ConstructionCodeFortran(Code& code)
+{
+    const Node* node = code.node();
+    code.Str("module ").NodeName().Str("_mod").Eol();
+    code.Tab().Str("use kwx_fortran").Eol();
+    code.Tab().Str("implicit none").Eol();
+    code.Tab().Str("type(wx_property_sheet_dialog_t) :: self").Eol();
+    code.Eol();
+    code.Str("contains").Eol();
+    code.Eol();
+    code.Str("subroutine create(parent)").Eol();
+    code.Tab().Str("type(c_ptr), intent(in) :: parent").Eol();
+    code.Eol();
+    code.Tab()
+        .Str("call wx_property_sheet_dialog_set_sheet_style(self, ")
+        .Add(prop_book_type)
+        .Str(")")
+        .Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.Tab()
+            .Str("call wx_property_sheet_dialog_set_sheet_inner_border(self, ")
+            .Add(prop_inner_border)
+            .Str(")")
+            .Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.Tab()
+            .Str("call wx_property_sheet_dialog_set_sheet_outer_border(self, ")
+            .Add(prop_outer_border)
+            .Str(")")
+            .Eol();
+    }
+    code.Tab().Str("call wx_property_sheet_dialog_create(self, parent)").Eol();
+    code.Tab()
+        .Str("call wx_property_sheet_dialog_create_buttons(self, ")
+        .Add(prop_buttons)
+        .Str(")")
+        .Eol();
+}
+
+static void ConstructionCodeGo(Code& code)
+{
+    const Node* node = code.node();
+    code.Str("type ").NodeName().Str(" struct {").Eol();
+    code.Tab().Str("dialog *wx.PropertySheetDialog").Eol();
+    code.Str("}").Eol();
+    code.Eol();
+    code.Str("func New").NodeName().Str("(parent wx.Pointer) *").NodeName().Str(" {").Eol();
+    code.Tab().Str("self := &").NodeName().Str("{}").Eol();
+    code.Eol();
+    code.Tab()
+        .Str("wx_property_sheet_dialog_set_sheet_style(self.dialog, ")
+        .Add(prop_book_type)
+        .Str(")")
+        .Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_inner_border(self.dialog, ")
+            .Add(prop_inner_border)
+            .Str(")")
+            .Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_outer_border(self.dialog, ")
+            .Add(prop_outer_border)
+            .Str(")")
+            .Eol();
+    }
+    code.Tab().Str("self.dialog = wx_property_sheet_dialog_create(parent)").Eol();
+    code.Tab()
+        .Str("wx_property_sheet_dialog_create_buttons(self.dialog, ")
+        .Add(prop_buttons)
+        .Str(")")
+        .Eol();
+}
+
+static void ConstructionCodeJulia(Code& code)
+{
+    const Node* node = code.node();
+    code.Str("mutable struct ").NodeName().Eol();
+    code.Indent();
+    code.Tab().Str("dialog::Ptr{Cvoid}").Eol();
+    code.Eol();
+    code.Tab().Str("function ").NodeName().Str("(parent=nothing)").Eol();
+    code.Indent();
+    code.Tab().Str("self = new()").Eol();
+    code.Eol();
+    code.Tab()
+        .Str("wx_property_sheet_dialog_set_sheet_style(self.dialog, ")
+        .Add(prop_book_type)
+        .Str(")")
+        .Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_inner_border(self.dialog, ")
+            .Add(prop_inner_border)
+            .Str(")")
+            .Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_outer_border(self.dialog, ")
+            .Add(prop_outer_border)
+            .Str(")")
+            .Eol();
+    }
+    code.Tab().Str("self.dialog = wx_property_sheet_dialog_create(parent)").Eol();
+    code.Tab()
+        .Str("wx_property_sheet_dialog_create_buttons(self.dialog, ")
+        .Add(prop_buttons)
+        .Str(")")
+        .Eol();
+}
+
+static void ConstructionCodeLuaJIT(Code& code)
+{
+    const Node* node = code.node();
+    code.Str("local ").NodeName().Str(" = {}").Eol();
+    code.NodeName().Str(".__index = ").NodeName().Eol();
+    code.Eol();
+    code.Str("function ").NodeName().Str(":new(parent)").Eol();
+    code.Tab().Str("local self = setmetatable({}, ").NodeName().Str(")").Eol();
+    code.Eol();
+    code.Tab()
+        .Str("wx_property_sheet_dialog_set_sheet_style(self.dialog, ")
+        .Add(prop_book_type)
+        .Str(")")
+        .Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_inner_border(self.dialog, ")
+            .Add(prop_inner_border)
+            .Str(")")
+            .Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_outer_border(self.dialog, ")
+            .Add(prop_outer_border)
+            .Str(")")
+            .Eol();
+    }
+    code.Tab().Str("self.dialog = wx_property_sheet_dialog_create(parent)").Eol();
+    code.Tab()
+        .Str("wx_property_sheet_dialog_create_buttons(self.dialog, ")
+        .Add(prop_buttons)
+        .Str(")")
+        .Eol();
+}
+
+static void ConstructionCodeTypeScript(Code& code)
+{
+    const LanguageTraits& traits = code.get_traits();
+    const Node* node = code.node();
+
+    code.Tab().Str("const title_wxstr = createWxString(").QuotedString(prop_title).Str(")");
+    code.Str(traits.stmt_end).Eol();
+
+    code.Tab()
+        .Str(traits.self_reference)
+        .Str(".dialog = wx_property_sheet_dialog_create(")
+        .Eol()
+        .Tab(2);
+    code.Str("parent").Comma();
+
+    if (code.HasValue(prop_id))
+    {
+        code.Add(prop_id);
+    }
+    else
+    {
+        code.Add("wxID_ANY");
+    }
+    code.Comma().Eol().Tab(2).Str("title_wxstr.ptr").Comma();
+
+    code.Str("-1, -1").Comma();
+
+    const wxSize dialog_size = node->as_wxSize(prop_size);
+    if (dialog_size == wxDefaultSize)
+    {
+        code.itoa(-1).Comma().itoa(-1);
+    }
+    else
+    {
+        code.itoa(dialog_size.x).Comma().itoa(dialog_size.y);
+    }
+    code.Comma().Eol().Tab(2);
+
+    if (code.HasValue(prop_style))
+    {
+        code.Add(prop_style);
+    }
+    else
+    {
+        code.Add("wxDEFAULT_DIALOG_STYLE");
+    }
+
+    code.Str(")!");
+    code.Str(traits.stmt_end).Eol();
+
+    code.Tab().Str("title_wxstr.Delete()").Str(traits.stmt_end).Eol();
+
+    code.Eol()
+        .Tab()
+        .Str("wx_property_sheet_dialog_set_sheet_style(")
+        .Str(traits.self_reference)
+        .Str(".dialog, ")
+        .Add(prop_book_type)
+        .Str(")")
+        .Str(traits.stmt_end)
+        .Eol();
+    if (node->as_int(prop_inner_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_inner_border(")
+            .Str(traits.self_reference)
+            .Str(".dialog, ")
+            .Add(prop_inner_border)
+            .Str(")")
+            .Str(traits.stmt_end)
+            .Eol();
+    }
+    if (node->as_int(prop_outer_border) >= 0)
+    {
+        code.Tab()
+            .Str("wx_property_sheet_dialog_set_sheet_outer_border(")
+            .Str(traits.self_reference)
+            .Str(".dialog, ")
+            .Add(prop_outer_border)
+            .Str(")")
+            .Str(traits.stmt_end)
+            .Eol();
+    }
+    code.Tab()
+        .Str("wx_property_sheet_dialog_create_buttons(")
+        .Str(traits.self_reference)
+        .Str(".dialog, ")
+        .Add(prop_buttons)
+        .Str(")")
+        .Str(traits.stmt_end);
+}
+
 // This is only used for Mockup Preview and XrcCompare -- it is not used by the Mockup panel
 wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxWindow* widget = nullptr;
-    const auto& book_type = node->as_string(prop_book_type);
+    const std::string& book_type = node->as_string(prop_book_type);
     if (book_type == "wxPROPSHEET_CHOICEBOOK")
     {
         widget =
@@ -63,7 +471,7 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
         int ex_style = 0;
         // Can't use multiview because get_ConstantAsInt() searches an unordered_map which requires
         // a std::string to pass to it
-        wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
+        const wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -91,161 +499,56 @@ wxObject* PropSheetDlgGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool PropSheetDlgGenerator::ConstructionCode(Code& code)
 {
-    auto* node = code.node();  // for convenience
-    if (code.is_cpp())
+    const LanguageTraits& traits = code.get_traits();
+
+    if (traits.is_cpp_family())
     {
-        code.Str("bool ").as_string(prop_class_name);
-        code += "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\tconst "
-                "wxPoint& pos, const wxSize& size, long style, const wxString& name)\n";
-        code.OpenBrace();
-
-        if (code.HasValue(prop_extra_style))
-        {
-            code.Eol(eol_if_needed)
-                .FormFunction("SetExtraStyle(GetExtraStyle() | ")
-                .Add(prop_extra_style);
-            code.EndFunction();
-        }
-
-        code.Eol(eol_if_needed)
-            .FormFunction("SetSheetStyle(")
-            .Add(prop_book_type)
-            .EndFunction()
-            .Eol();
-        if (node->as_int(prop_inner_border) >= 0)
-        {
-            code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
-        }
-        if (node->as_int(prop_outer_border) >= 0)
-        {
-            code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
-        }
-
-        code.Eol(eol_if_needed) += "if (!";
-        if (code.node()->HasValue(prop_subclass))
-        {
-            code.as_string(prop_subclass);
-        }
-        else
-        {
-            code += "wxPropertySheetDialog";
-        }
-        code += "::Create(parent, id, title, pos, size, style, name))";
-        code.Eol().OpenBrace().Str("return false;").CloseBrace().Eol(eol_always);
-
-        code.Eol().Str("CreateButtons(").Add(prop_buttons).EndFunction();
+        ConstructionCodeCpp(code);
     }
-    else if (code.is_python())
+    else if (traits.is_binding_family())
     {
-        code.Add("class ").NodeName().Str("(wx.adv.PropertySheetDialog):");
-        code.Eol().Tab().Add("def __init__(self, parent, id=").as_string(prop_id);
-        code.Indent(3);
-        code.Comma().Str("title=").QuotedString(prop_title).Comma().Add("pos=").Pos(prop_pos);
-        code.Comma().Str("size=").WxSize(prop_size).Comma();
-        code.CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() + 4);
-        code.Add("style=").Style().Comma();
-        size_t name_len = code.HasValue(prop_window_name) ?
-                              code.node()->as_string(prop_window_name).size() :
-                              sizeof("wx.DialogNameStr");
-        code.CheckLineLength(sizeof("name=") + name_len + 4);
-        code.Str("name=");
-        if (code.HasValue(prop_window_name))
+        if (code.get_language() == GenLang::python)
         {
-            code.QuotedString(prop_window_name);
+            ConstructionCodePython(code);
+        }
+        else if (code.get_language() == GenLang::ruby)
+        {
+            ConstructionCodeRuby(code);
         }
         else
         {
-            code.Str("wx.DialogNameStr");
+            code.AddComment("Unsupported wxBinding language", true);
         }
-        code.Str("):");
-        code.Unindent();
-        code.Eol().Str("wx.adv.PropertySheetDialog.__init__(self)");
-        auto book_type = node->as_string(prop_book_type);
-        book_type.erase(0, 2);  // Remove the "wx" from the front
-        code.Eol().FormFunction("SetSheetStyle(wx.adv.").Str(book_type).EndFunction().Eol();
-        if (node->as_int(prop_inner_border) >= 0)
-        {
-            code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
-        }
-        if (node->as_int(prop_outer_border) >= 0)
-        {
-            code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
-        }
-
-        code.Eol()
-            .Str("if not self.Create(parent, id, title, pos, size, style, name):")
-            .Eol()
-            .Tab()
-            .Str("return");
-        code.Eol().FormFunction("CreateButtons(").Add(prop_buttons).EndFunction().Eol();
     }
-    else if (code.is_ruby())
+    else if (traits.is_ffi_family())
     {
-        code.Add("class ").NodeName().Add(" < Wx::PropertySheetDialog").Eol();
-        code.AddPublicRubyMembers();
-        code.Eol(eol_if_needed).Tab().Add("def initialize(parent");
-        // Indent any wrapped lines
-        code.Indent(3);
-        code.Str(", id = ");
-        if (code.HasValue(prop_id))
+        switch (code.get_language())
         {
-            code.Add(prop_id);
+            case GenLang::fortran:
+                ConstructionCodeFortran(code);
+                break;
+            case GenLang::go:
+                ConstructionCodeGo(code);
+                break;
+            case GenLang::julia:
+                ConstructionCodeJulia(code);
+                break;
+            case GenLang::luajit:
+                ConstructionCodeLuaJIT(code);
+                break;
+            case GenLang::typescript:
+                ConstructionCodeTypeScript(code);
+                break;
+            default:
+                code.AddComment("Unsupported FFI language", true);
+                break;
         }
-        else
-        {
-            code.Add("Wx::ID_ANY");
-        }
-        code.Comma().Str("title = ").QuotedString(prop_title);
-        // We have to break these out in order to add the variable assignment (pos=, size=, etc.)
-        code.Comma()
-            .CheckLineLength(sizeof("pos = Wx::DEFAULT_POSITION"))
-            .Str("pos = ")
-            .Pos(prop_pos);
-        code.Comma()
-            .CheckLineLength(sizeof("size = Wx::DEFAULT_SIZE"))
-            .Str("size = ")
-            .WxSize(prop_size);
-        code.Comma()
-            .CheckLineLength(sizeof("style = Wx::DEFAULT_DIALOG_STYLE"))
-            .Str("style = ")
-            .Style();
-        if (code.HasValue(prop_window_name))
-        {
-            code.Comma().CheckLineLength(sizeof("name = ") +
-                                         code.as_string(prop_window_name).size() + 2);
-            code.Str("name = ").QuotedString(prop_window_name);
-        }
-
-        code.EndFunction();
-        code.Unindent();
-
-        // Try to line up the parameters with the "parent" parameter
-        if (auto indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
-        {
-            indent_pos -= code.GetCode().find("\n");
-            std::string spaces(indent_pos, ' ');
-            code.GetCode().Replace("\t\t\t\t", spaces, true);
-        }
-
-        code.Eol().Str("super()");
-
-        code.Eol().FormFunction("SetSheetStyle(").Add(prop_book_type).EndFunction().Eol();
-        if (node->as_int(prop_inner_border) >= 0)
-        {
-            code.FormFunction("SetSheetInnerBorder(").Add(prop_inner_border).EndFunction().Eol();
-        }
-        if (node->as_int(prop_outer_border) >= 0)
-        {
-            code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
-        }
-
-        code.Eol().Str("create(parent, id, title, pos, size, style, name)").Eol();
-        code.Eol().FormFunction("CreateButtons(").Add(prop_buttons).EndFunction().Eol();
     }
     else
     {
         code.AddComment("Unknown language", true);
     }
+
     code.ResetIndent();
     code.ResetBraces();  // In C++, caller must close the final brace after all construction
 
@@ -279,22 +582,42 @@ bool PropSheetDlgGenerator::SettingsCode(Code& code)
     // was set after the variant modified the original font.
     if (!code.node()->is_PropValue(prop_variant, "normal"))
     {
-        // code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
-        code.Eol(eol_if_empty).FormFunction("GetBookCtrl()").Function("SetWindowVariant(");
-        if (code.node()->is_PropValue(prop_variant, "small"))
+        if (code.is_ffi())
         {
-            code.Add("wxWINDOW_VARIANT_SMALL");
-        }
-        else if (code.node()->is_PropValue(prop_variant, "mini"))
-        {
-            code.Add("wxWINDOW_VARIANT_MINI");
+            const LanguageTraits& traits = code.get_traits();
+            code.Eol(eol_if_empty).Str("wx_property_sheet_dialog_set_window_variant(self, ");
+            if (code.node()->is_PropValue(prop_variant, "small"))
+            {
+                code.Add("wxWINDOW_VARIANT_SMALL");
+            }
+            else if (code.node()->is_PropValue(prop_variant, "mini"))
+            {
+                code.Add("wxWINDOW_VARIANT_MINI");
+            }
+            else
+            {
+                code.Add("wxWINDOW_VARIANT_LARGE");
+            }
+            code.Str(")").Str(traits.stmt_end);
         }
         else
         {
-            code.Add("wxWINDOW_VARIANT_LARGE");
-        }
+            code.Eol(eol_if_empty).FormFunction("GetBookCtrl()").Function("SetWindowVariant(");
+            if (code.node()->is_PropValue(prop_variant, "small"))
+            {
+                code.Add("wxWINDOW_VARIANT_SMALL");
+            }
+            else if (code.node()->is_PropValue(prop_variant, "mini"))
+            {
+                code.Add("wxWINDOW_VARIANT_MINI");
+            }
+            else
+            {
+                code.Add("wxWINDOW_VARIANT_LARGE");
+            }
 
-        code.EndFunction();
+            code.EndFunction();
+        }
     }
 
     return true;
@@ -302,21 +625,32 @@ bool PropSheetDlgGenerator::SettingsCode(Code& code)
 
 bool PropSheetDlgGenerator::AfterChildrenCode(Code& code)
 {
-    code.FormFunction("LayoutDialog(").Add(prop_center).EndFunction();
+    if (code.is_ffi())
+    {
+        const LanguageTraits& traits = code.get_traits();
+        code.Str("wx_property_sheet_dialog_layout_dialog(self, ")
+            .Add(prop_center)
+            .Str(")")
+            .Str(traits.stmt_end);
+    }
+    else
+    {
+        code.FormFunction("LayoutDialog(").Add(prop_center).EndFunction();
+    }
 
     return true;
 }
 
 bool PropSheetDlgGenerator::HeaderCode(Code& code)
 {
-    auto* node = code.node();
+    const Node* node = code.node();
     code.NodeName() += "() {}";
     code.Eol().NodeName() += "(wxWindow *parent";
     code.Comma().Str("wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxString& title = ").QuotedString(prop_title);
     code.Comma().Str("const wxPoint& pos = ");
 
-    auto position = node->as_wxPoint(prop_pos);
+    const wxPoint position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
     {
         code.Str("wxDefaultPosition");
@@ -328,7 +662,7 @@ bool PropSheetDlgGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->as_wxSize(prop_size);
+    const wxSize size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
     {
         code.Str("wxDefaultSize");
@@ -442,7 +776,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 {
     // We use item so that the macros in base_generator.h work, and the code looks the same
     // as other widget XRC generatorsl
-    auto item = object;
+    pugi::xml_node item = object;
     GenXrcObjectAttributes(node, item, "wxPropertySheetDialog");
 
     ADD_ITEM_PROP(prop_title, "title")
@@ -485,7 +819,7 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
             {
                 item.append_child(pugi::node_comment)
                     .set_value((wxue::string(node->as_string(prop_center))
-                                << " cannot be be set in the XRC file."));
+                                << " cannot be set in the XRC file."));
             }
             item.append_child("centered").text().set(1);
         }
@@ -504,9 +838,12 @@ int PropSheetDlgGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         if (parts[IndexType].is_sameas("Art"))
         {
             wxue::StringVector art_parts(parts[IndexArtID], '|');
-            auto icon = item.append_child("icon");
-            icon.append_attribute("stock_id").set_value(art_parts[0]);
-            icon.append_attribute("stock_client").set_value(art_parts[1]);
+            if (art_parts.size() > 1)
+            {
+                pugi::xml_node icon = item.append_child("icon");
+                icon.append_attribute("stock_id").set_value(art_parts[0]);
+                icon.append_attribute("stock_client").set_value(art_parts[1]);
+            }
         }
         else
         {

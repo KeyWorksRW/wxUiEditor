@@ -25,9 +25,9 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
-    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags) override;
+    void RequiredHandlers(Node* node, std::set<std::string>& handlers) override;
 
-    wxue::string GetPythonHelpText(Node*) override { return "wx.Frame"; }
-    wxue::string GetPythonURL(Node*) override { return "wx.Frame.html"; }
+    wxue::string GetPythonHelpText([[maybe_unused]] Node* node) override { return "wx.Frame"; }
+    wxue::string GetPythonURL([[maybe_unused]] Node* node) override { return "wx.Frame.html"; }
 };

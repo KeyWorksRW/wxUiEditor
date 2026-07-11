@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/bookctrl.h>     // wxBookCtrlBase: common base class for wxList/Tree/Notebook
@@ -73,6 +74,12 @@ bool BookPageGenerator::AddTreebookSubPage(Node* node, wxPanel* widget, Node* no
     }
 
     wxTreebook* tree = wxDynamicCast(parent_obj, wxTreebook);
+    if (!tree)
+    {
+        FAIL_MSG("AddTreebookSubPage: parent_obj is not a wxTreebook");
+        return false;
+    }
+
     if (node->HasValue(prop_bitmap) && isBookDisplayImages(node))
     {
         int idx_image = 0;

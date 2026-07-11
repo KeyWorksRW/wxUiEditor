@@ -12,9 +12,9 @@
 class PopupWinBaseGenerator : public BaseGenerator
 {
 public:
-    bool SettingsCode(Code&) override;
-    bool AfterChildrenCode(Code&) override;
-    bool HeaderCode(Code&) override;
+    bool SettingsCode(Code& code) override;
+    bool AfterChildrenCode(Code& code) override;
+    bool HeaderCode(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
@@ -24,26 +24,35 @@ public:
 class PopupWinGenerator : public PopupWinBaseGenerator
 {
 public:
-    bool ConstructionCode(Code&) override;
-    bool BaseClassNameCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
+    bool BaseClassNameCode(Code& code) override;
 
-    wxue::string GetHelpText(Node*) override { return wxue::string("wxPopupWindow"); }
-    wxue::string GetHelpURL(Node*) override { return wxue::string("wx_popup_window.html"); }
+    wxue::string GetHelpText([[maybe_unused]] Node* node) override
+    {
+        return wxue::string("wxPopupWindow");
+    }
+    wxue::string GetHelpURL([[maybe_unused]] Node* node) override
+    {
+        return wxue::string("wx_popup_window.html");
+    }
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags) override;
 };
 
 class PopupTransientWinGenerator : public PopupWinBaseGenerator
 {
 public:
-    bool ConstructionCode(Code&) override;
-    bool BaseClassNameCode(Code&) override;
+    bool ConstructionCode(Code& code) override;
+    bool BaseClassNameCode(Code& code) override;
 
-    wxue::string GetHelpText(Node*) override { return wxue::string("wxPopupTransientWindow"); }
-    wxue::string GetHelpURL(Node*) override
+    wxue::string GetHelpText([[maybe_unused]] Node* node) override
+    {
+        return wxue::string("wxPopupTransientWindow");
+    }
+    wxue::string GetHelpURL([[maybe_unused]] Node* node) override
     {
         return wxue::string("wx_popup_transient_window.html");
     }
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags) override;
 };

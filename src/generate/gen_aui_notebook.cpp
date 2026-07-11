@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/bookctrl.h>     // wxBookCtrlBase: common base class for wxList/Tree/Notebook
@@ -42,7 +43,7 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
     for (size_t idx = 0; idx < node->get_ChildCount(); ++idx)
     {
-        auto* child = node->get_Child(idx);
+        const Node* child = node->get_Child(idx);
         if (child->HasValue(prop_tooltip))
         {
             widget->SetPageToolTip(idx, child->as_string(prop_tooltip));
@@ -78,7 +79,7 @@ void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
     {
         for (size_t idx = 0; idx < node->get_ChildCount(); ++idx)
         {
-            auto* child = node->get_Child(idx);
+            const Node* child = node->get_Child(idx);
             if (child->HasValue(prop_tooltip))
             {
                 notebook->SetPageToolTip(idx, child->as_string(prop_tooltip));
@@ -89,7 +90,7 @@ void AuiNotebookGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
 
 void AuiNotebookGenerator::OnPageChanged(wxNotebookEvent& event)
 {
-    auto* book = wxDynamicCast(event.GetEventObject(), wxNotebook);
+    const wxAuiNotebook* book = wxDynamicCast(event.GetEventObject(), wxAuiNotebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
     {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
@@ -160,7 +161,7 @@ bool AuiNotebookGenerator::AfterChildrenCode(Code& code)
     bool is_tooltip_set = false;
     for (size_t idx = 0; idx < code.node()->get_ChildCount(); ++idx)
     {
-        auto* child = code.node()->get_Child(idx);
+        const Node* child = code.node()->get_Child(idx);
         if (child->HasValue(prop_tooltip))
         {
             is_tooltip_set = true;
@@ -191,9 +192,9 @@ bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int AuiNotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAuiNotebook");
 

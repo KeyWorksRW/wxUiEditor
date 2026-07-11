@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/treebook.h>  // wxTreebook: wxNotebook-like control presenting pages in a tree
 
@@ -33,7 +34,7 @@ wxObject* TreebookGenerator::CreateMockup(Node* node, wxObject* parent)
 
 void TreebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto* book = wxDynamicCast(event.GetEventObject(), wxTreebook);
+    const wxTreebook* book = wxDynamicCast(event.GetEventObject(), wxTreebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
     {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
@@ -67,9 +68,9 @@ bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int TreebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxTreebook");
 

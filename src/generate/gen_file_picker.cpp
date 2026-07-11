@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-06-2026]
 
 #include <wx/filepicker.h>  // wxFilePickerCtrl, wxDirPickerCtrl base header
 
@@ -51,7 +52,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma();
 
-    if (const auto& path = code.node()->as_string(prop_initial_path); path.size())
+    if (const auto& path = code.node()->as_string(prop_initial_path); !path.empty())
     {
         code.QuotedString(path);
     }
@@ -61,7 +62,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (const auto& msg = code.node()->as_string(prop_message); msg.size())
+    if (const auto& msg = code.node()->as_string(prop_message); !msg.empty())
     {
         code.QuotedString(msg);
     }
@@ -71,7 +72,7 @@ bool FilePickerGenerator::ConstructionCode(Code& code)
     }
 
     code.Comma();
-    if (const auto& msg = code.node()->as_string(prop_wildcard); msg.size())
+    if (const auto& msg = code.node()->as_string(prop_wildcard); !msg.empty())
     {
         code.QuotedString(msg);
     }
@@ -89,7 +90,7 @@ bool FilePickerGenerator::SettingsCode(Code& code)
 {
     if (code.IsTrue(prop_focus))
     {
-        auto* form = code.node()->get_Form();
+        const Node* form = code.node()->get_Form();
         // wxDialog and wxFrame will set the focus to this control after all controls are created.
         if (!form->is_Gen(gen_wxDialog) && !form->is_Type(type_frame_form))
         {
@@ -122,9 +123,9 @@ std::optional<wxue::string> FilePickerGenerator::GetPropertyDescription(NodeProp
 
 int FilePickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxFilePickerCtrl");
 

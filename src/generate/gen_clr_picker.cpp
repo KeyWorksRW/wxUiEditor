@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-06-2026]
 
 #include <wx/clrpicker.h>  // wxColourPickerCtrl base header
 
@@ -62,14 +63,14 @@ bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int ColourPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxColourPickerCtrl");
 
     item.append_child("value").text().set(
-        node->as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+        node->as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToStdString());
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/choicebk.h>  // wxChoicebook: wxChoice and wxNotebook combination
 
@@ -29,7 +30,7 @@ wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 }
 void ChoicebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto* book = wxDynamicCast(event.GetEventObject(), wxChoicebook);
+    const wxChoicebook* book = wxDynamicCast(event.GetEventObject(), wxChoicebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
     {
         getMockup()->SelectNode(book->GetPage(event.GetSelection()));
@@ -62,16 +63,16 @@ bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 int ChoicebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxChoicebook");
 
     wxue::string styles(node->as_string(prop_style));
     if (node->as_string(prop_tab_position) != "wxCHB_DEFAULT")
     {
-        if (styles.size())
+        if (!styles.empty())
         {
             styles << '|';
         }

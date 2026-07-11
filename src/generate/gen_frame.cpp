@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/frame.h>              // wxFrame class interface
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
@@ -51,7 +52,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 {
     // We use item so that the macros in base_generator.h work, and the code looks the same as other
     // widget XRC generatorsl
-    auto item = object;
+    pugi::xml_node item = object;
 
     GenXrcObjectAttributes(node, item, "wxFrame");
     if (!node->is_PropValue(prop_variant, "normal"))
@@ -80,9 +81,12 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
         if (parts[IndexType].is_sameas("Art"))
         {
             wxue::StringVector art_parts(parts[IndexArtID], '|');
-            auto icon = object.append_child("icon");
-            icon.append_attribute("stock_id").set_value(art_parts[0]);
-            icon.append_attribute("stock_client").set_value(art_parts[1]);
+            if (art_parts.size() > 1)
+            {
+                pugi::xml_node icon = object.append_child("icon");
+                icon.append_attribute("stock_id").set_value(art_parts[0]);
+                icon.append_attribute("stock_client").set_value(art_parts[1]);
+            }
         }
         else
         {

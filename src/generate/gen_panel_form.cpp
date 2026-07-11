@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-04-2026]
 
 #include <wx/panel.h>  // Base header for wxPanel
 
@@ -23,12 +24,12 @@ wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto* widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(node, prop_pos),
                                DlgSize(node, prop_size), GetStyleInt(node));
-    if (!node->HasValue(prop_extra_style))
+    if (node->HasValue(prop_extra_style))
     {
         int ex_style = 0;
         // Can't use multiview because get_ConstantAsInt() searches an unordered_map which
         // requires a std::string to pass to it
-        wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
+        const wxue::StringVector mstr(node->as_string(prop_extra_style), '|');
         for (auto& iter: mstr)
         {
             // Friendly names will have already been converted, so normal lookup works fine.
@@ -75,9 +76,9 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Comma().CheckLineLength(sizeof("style=") + code.node()->as_string(prop_style).size() +
                                      4);
         code.Add("style=").Style().Comma();
-        size_t name_len = code.HasValue(prop_window_name) ?
-                              code.node()->as_string(prop_window_name).size() :
-                              sizeof("wx.DialogNameStr");
+        const size_t name_len = code.HasValue(prop_window_name) ?
+                                    code.node()->as_string(prop_window_name).size() :
+                                    sizeof("wx.DialogNameStr");
         code.CheckLineLength(sizeof("name=") + name_len + 4);
         code.Str("name=");
         if (code.HasValue(prop_window_name))
@@ -132,9 +133,13 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         code.Unindent();
         if (auto indent_pos = code.GetCode().find("parent"); wxue::is_found(indent_pos))
         {
-            indent_pos -= code.GetCode().find("\n");
-            std::string spaces(indent_pos, ' ');
-            code.GetCode().Replace("\t\t\t\t", spaces, true);
+            auto rfind_pos = code.GetCode().rfind("\n", indent_pos - 1);
+            if (wxue::is_found(rfind_pos))
+            {
+                indent_pos = indent_pos - (rfind_pos + 1);
+                const std::string spaces(indent_pos, ' ');
+                code.GetCode().Replace("\t\t\t\t", spaces, true);
+            }
         }
     }
     else
@@ -205,8 +210,8 @@ bool PanelFormGenerator::SettingsCode(Code& code)
 
 bool PanelFormGenerator::AfterChildrenCode(Code& code)
 {
-    Node* form = nullptr;
-    auto* node = code.node();
+    const Node* form = nullptr;
+    Node* node = code.node();
     Node* form_sizer = nullptr;
     if (node->is_Form())
     {
@@ -228,9 +233,9 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
         form = node->get_Form();
     }
 
-    const auto min_size = form->as_wxSize(prop_minimum_size);
-    const auto max_size = form->as_wxSize(prop_maximum_size);
-    const auto size = form->as_wxSize(prop_size);
+    const wxSize min_size = form->as_wxSize(prop_minimum_size);
+    const wxSize max_size = form->as_wxSize(prop_maximum_size);
+    const wxSize size = form->as_wxSize(prop_size);
 
     if (!form_sizer)
     {
@@ -297,7 +302,7 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
                 code_temp.FormFunction("SetSize(")
                     .WxSize(prop_size, code::force_scaling)
                     .EndFunction();
-                auto comment_column = code_temp.size() + 2;
+                const size_t comment_column = code_temp.size() + 2;
 
                 code_temp = code;
                 code_temp.clear();
@@ -354,13 +359,13 @@ bool PanelFormGenerator::AfterChildrenCode(Code& code)
 
 bool PanelFormGenerator::HeaderCode(Code& code)
 {
-    auto* node = code.node();
+    const Node* node = code.node();
 
     code.NodeName() += "() {}";
     code.Eol().NodeName().Str("(wxWindow* parent, wxWindowID id = ").as_string(prop_id);
     code.Comma().Str("const wxPoint& pos = ");
 
-    auto position = node->as_wxPoint(prop_pos);
+    const wxPoint position = node->as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
     {
         code.Str("wxDefaultPosition");
@@ -372,7 +377,7 @@ bool PanelFormGenerator::HeaderCode(Code& code)
 
     code.Comma().Str("const wxSize& size = ");
 
-    auto size = node->as_wxSize(prop_size);
+    const wxSize size = node->as_wxSize(prop_size);
     if (size == wxDefaultSize)
     {
         code.Str("wxDefaultSize");
@@ -382,8 +387,8 @@ bool PanelFormGenerator::HeaderCode(Code& code)
         code.WxSize(prop_size, no_dpi_scaling);
     }
 
-    const auto& style = node->as_string(prop_style);
-    const auto& win_style = node->as_string(prop_window_style);
+    const std::string& style = node->as_string(prop_style);
+    const std::string& win_style = node->as_string(prop_window_style);
     if (style.empty() && win_style.empty())
     {
         code.Comma().Str("long style = 0");
@@ -393,22 +398,22 @@ bool PanelFormGenerator::HeaderCode(Code& code)
         code.Comma();
         code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
         code.Str("long style = ");
-        if (style.size())
+        if (!style.empty())
         {
             code.CheckLineLength(style.size() + win_style.size());
             code += style;
-            if (win_style.size())
+            if (!win_style.empty())
             {
                 code << '|' << win_style;
             }
         }
-        else if (win_style.size())
+        else if (!win_style.empty())
         {
             code.Str(win_style);
         }
     }
 
-    if (node->as_string(prop_window_name).size())
+    if (!node->as_string(prop_window_name).empty())
     {
         code.Comma().Str("const wxString &name = ").QuotedString(prop_window_name);
     }
@@ -452,16 +457,16 @@ bool PanelFormGenerator::HeaderCode(Code& code)
         code.Comma();
         code.CheckLineLength(style.size() + win_style.size() + sizeof("long style = "));
         code.Str("long style = ");
-        if (style.size())
+        if (!style.empty())
         {
             code.CheckLineLength(style.size() + win_style.size());
             code += style;
-            if (win_style.size())
+            if (!win_style.empty())
             {
                 code << '|' << win_style;
             }
         }
-        else if (win_style.size())
+        else if (!win_style.empty())
         {
             code.Str(win_style);
         }
@@ -499,12 +504,12 @@ bool PanelFormGenerator::BaseClassNameCode(Code& code)
 
 int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = BaseGenerator::xrc_updated;
+    int result = BaseGenerator::xrc_updated;
     if (node->get_Parent() && node->get_Parent()->is_Sizer())
     {
         result = BaseGenerator::xrc_sizer_item_created;
     }
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     item.append_attribute("class").set_value("wxPanel");
     object.append_attribute("name").set_value(node->as_string(prop_class_name));

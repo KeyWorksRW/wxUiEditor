@@ -222,7 +222,7 @@ namespace xrc
     };
 }  // namespace xrc
 
-// When chaniging you also need to manually change it in wxUiEditor.exe.manifest
+// When chaniging you also need to manually change it in wxUiEditor.manifest
 
 // This is the highest project number supported by this build of wxUiEditor. It should be
 // updated after every release, if there are any changes to the project format that might

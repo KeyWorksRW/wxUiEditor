@@ -4,7 +4,7 @@ Updating the version of wxUiEditor means changing the version number in the foll
 
 - pch.h
 - wxUiEditor.rc
-- wxUiEditor.exe.manifest
+- wxUiEditor.manifest
 - CMakeLists.txt (change VERSION at the top of the file)
 - CHANGELOG.md
 

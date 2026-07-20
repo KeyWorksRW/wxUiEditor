@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include "wx/dc.h"                 // wxDC class
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
@@ -33,9 +34,9 @@ void EditColourProperty::OnCustomPaint(wxDC& device_context, const wxRect& rect,
 {
     if (m_prop->HasValue())
     {
-        if (auto clr = m_prop->as_color(); clr.IsOk())
+        if (const wxColour colour = m_prop->as_color(); colour.IsOk())
         {
-            device_context.SetBrush(clr);
+            device_context.SetBrush(colour);
             device_context.DrawRectangle(rect);
         }
     }
@@ -56,7 +57,8 @@ protected:
     void OnSetDefault(wxCommandEvent& event) override;
     void OnRadioCustomColour(wxCommandEvent& event) override;
 
-    void SetSampleColour(const wxColour& clr);
+    void SetSampleColour(const wxColour& colour);
+    void RefreshColourDisplay();
 
 private:
     Node* m_node;
@@ -69,10 +71,10 @@ private:
 bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
                                            wxPGProperty* /* property unused */)
 {
-    EditColourDialog dlg(propGrid->GetPanel(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    EditColourDialog colour_dialog(propGrid->GetPanel(), m_prop);
+    if (colour_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(colour_dialog.GetResults());
         return true;
     }
 
@@ -137,9 +139,14 @@ wxString EditColourDialog::GetResults()
 
 void EditColourDialog::OnColourChanged([[maybe_unused]] wxColourPickerEvent& event)
 {
-    auto clr = m_colourPicker->GetColour();
-    m_colour_rect->SetColour(clr);
-    SetSampleColour(clr);
+    RefreshColourDisplay();
+}
+
+void EditColourDialog::RefreshColourDisplay()
+{
+    const wxColour colour = m_colourPicker->GetColour();
+    m_colour_rect->SetColour(colour);
+    SetSampleColour(colour);
     Refresh();
 }
 
@@ -150,6 +157,7 @@ void EditColourDialog::OnSetDefault([[maybe_unused]] wxCommandEvent& event)
 
     m_colourPicker->Enable(false);
     m_radio_custom->SetValue(false);
+    m_radio_default->SetValue(true);
     Refresh();
 }
 
@@ -160,20 +168,19 @@ void EditColourDialog::OnRadioCustomColour(wxCommandEvent& event)
         m_radio_default->SetValue(false);
         m_colourPicker->Enable(true);
 
-        wxColourPickerEvent dummy;
-        OnColourChanged(dummy);
+        RefreshColourDisplay();
     }
     event.Skip();
 }
 
-void EditColourDialog::SetSampleColour(const wxColour& clr)
+void EditColourDialog::SetSampleColour(const wxColour& colour)
 {
     if (m_prop_name == prop_foreground_colour)
     {
-        m_static_sample_text->SetForegroundColour(clr);
+        m_static_sample_text->SetForegroundColour(colour);
     }
     else
     {
-        m_static_sample_text->SetBackgroundColour(clr);
+        m_static_sample_text->SetBackgroundColour(colour);
     }
 }

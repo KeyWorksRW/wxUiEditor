@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/dirdlg.h>             // wxDirDialog base class
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
@@ -36,10 +37,10 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
     }
 
     wxFileName path;
-    auto* node = m_prop->getNode();
+    const Node* node = m_prop->getNode();
     if (node->is_Gen(gen_wxFilePickerCtrl))
     {
-        if (m_prop->as_string().size())
+        if (!m_prop->as_string().empty())
         {
             path.AssignDir(m_prop->as_string());
         }
@@ -53,7 +54,7 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
     {
         path = *Project.get_wxFileName();
         path.SetFullName(wxEmptyString);  // clear the project filename
-        if (m_prop->as_string().size())
+        if (!m_prop->as_string().empty())
         {
             wxFileName prop_path;
             prop_path.AssignDir(m_prop->as_string());
@@ -74,16 +75,17 @@ bool DirectoryDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty
         path.SetFullName(wxEmptyString);  // clear the project filename
     }
 
-    auto style = wxDD_DEFAULT_STYLE | wxDD_CHANGE_DIR;
+    long style = wxDD_DEFAULT_STYLE;
     if (!node->is_Gen(gen_wxFilePickerCtrl))
     {
         style |= wxDD_DIR_MUST_EXIST;
     }
 
-    wxDirDialog dlg(propGrid, wxDirSelectorPromptStr, path.GetPath(), style, dlg_pos, dlg_sz);
-    if (dlg.ShowModal() == wxID_OK)
+    wxDirDialog dir_dialog(propGrid, wxDirSelectorPromptStr, path.GetPath(), style, dlg_pos,
+                           dlg_sz);
+    if (dir_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetPath());
+        SetValue(dir_dialog.GetPath());
         return true;
     }
     return false;

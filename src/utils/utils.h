@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
+// CR: [07-16-2026]
 #pragma once
 
 #include <optional>
@@ -40,80 +40,77 @@ namespace utils
 {
     // Look for search string in line, and if found, replace with replace_with string. If all
     // is true, replace all instances, otherwise only the first instance is replaced.
-    auto replace_in_line(std::string& line, std::string_view search, std::string_view replace_with,
-                         bool all) -> void;
+    void replace_in_line(std::string& line, std::string_view search, std::string_view replace_with,
+                         bool replace_all);
 }  // namespace utils
 
-auto ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string;
-auto ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentValue)
-    -> wxue::string;
-auto SetPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string;
+wxue::string ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue);
+wxue::string ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentValue);
+wxue::string SetPropFlag(wxue::string_view flag, wxue::string_view currentValue);
 
 // Convert a double to a string without needing to switch locales
-auto DoubleToStr(double val) -> wxue::string;
+wxue::string DoubleToStr(double val);
 
-[[nodiscard]] auto isPropFlagSet(wxue::string_view flag, wxue::string_view currentValue) -> bool;
+[[nodiscard]] bool isPropFlagSet(wxue::string_view flag, wxue::string_view currentValue);
 
-auto ConvertToSystemColour(wxue::string_view value) -> wxSystemColour;
+wxSystemColour ConvertToSystemColour(wxue::string_view value);
 
-auto ConvertFontFamilyToString(wxFontFamily family) -> const char*;
+const char* ConvertFontFamilyToString(wxFontFamily family);
 
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
-auto ConvertEscapeSlashes(wxue::string_view str) -> wxue::string;
+wxue::string ConvertEscapeSlashes(wxue::string_view str);
 
 // This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
-auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint;
+wxPoint DlgPoint(Node* node, GenEnum::PropName prop);
 
 // This will *always* call wxGetMainFrame()->getWindow()->FromDIP()
-auto DlgSize(Node* node, GenEnum::PropName prop) -> wxSize;
+wxSize DlgSize(Node* node, GenEnum::PropName prop);
 
 // Given a width this will convert it using wxGetMainFrame()->getWindow()->FromDIP()
-auto DlgPoint(int width) -> int;
+int DlgPoint(int width);
 
 // Convert a filename to a valid variable name. This will handle filenames with leading
 // numbers, utf8 characters, and other characters that are not valid in a variable name.
 //
 // If max_length is exceeded, the name will be have ""_name_truncated" as a suffix
-auto FileNameToVarName(wxue::string_view filename, size_t max_length = 256)
-    -> std::optional<wxue::string>;
+std::optional<wxue::string> FileNameToVarName(wxue::string_view filename, size_t max_length = 256);
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-auto GetSizeInfo(wxue::string_view size_description) -> wxSize;
+wxSize GetSizeInfo(wxue::string_view size_description);
 
 // Friendly name/wxSTC_WRAP_ constant
 extern std::map<std::string, const char*> g_stc_wrap_mode;  // NOLINT () // cppcheck-suppress
 
-[[nodiscard]] auto isConvertibleMime(const wxue::string& suffix) -> bool;
+[[nodiscard]] bool isConvertibleMime(const wxue::string& suffix);
 
 // Checks whether a string is a valid C++ variable name.
-[[nodiscard]] auto isValidVarName(const std::string& str, GenLang language = GenLang::cplusplus)
-    -> bool;
+[[nodiscard]] bool isValidVarName(const std::string& str, GenLang language = GenLang::cplusplus);
 
 // This takes the class_name of the form, converts it to lowercase, and if the class name
 // ends with Base, the a "_base" suffix is added.
 //
 // This does *not* check to see if the file already exists.
-auto CreateBaseFilename(Node* form_node, const wxue::string& class_name) -> wxue::string;
+wxue::string CreateBaseFilename(Node* form_node, const wxue::string& class_name);
 
-auto CreateDerivedFilename(Node* form_node, const wxue::string& class_name) -> wxue::string;
+wxue::string CreateDerivedFilename(Node* form_node, const wxue::string& class_name);
 
 // Typically called to convert a string into a Ruby string which prefers snake_case
-auto ConvertToSnakeCase(std::string_view str) -> std::string;
+std::string ConvertToSnakeCase(std::string_view str);
 
 // Converts string to snake_case, then converts to upper case
-auto ConvertToUpperSnakeCase(wxue::string_view str) -> wxue::string;
+wxue::string ConvertToUpperSnakeCase(wxue::string_view str);
 
 // Returns false if property contains a 'n', or language is C++ and wxWidgets 3.1 is being
 // used.
-[[nodiscard]] auto isScalingEnabled(Node* node, GenEnum::PropName prop_name,
-                                    GenLang m_language = GenLang::none) -> bool;
+[[nodiscard]] bool isScalingEnabled(Node* node, GenEnum::PropName prop_name,
+                                    GenLang m_language = GenLang::none);
 
 // Convert the GEN_LANG enum to a string
-auto GenLangToString(GenLang language) -> std::string_view;
+std::string_view GenLangToString(GenLang language);
 
-auto ConvertToGenLang(wxue::string_view language) -> GenLang;
+GenLang ConvertToGenLang(wxue::string_view language);
 
-auto GetLanguageExtension(GenLang language) -> std::string;
+std::string GetLanguageExtension(GenLang language);
 
 enum class ClassOverrideType : std::uint8_t
 {
@@ -121,20 +118,20 @@ enum class ClassOverrideType : std::uint8_t
     Subclass,  // User specified a subclass
     Generic,   // Use the wxGeneric version of the class
 };
-auto GetClassOverrideType(Node* node) -> ClassOverrideType;
+ClassOverrideType GetClassOverrideType(Node* node);
 
 // This will set the lexer and colors taking into account the user's preferences for dark
 // mode, and specific language colors
-auto SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true,
-                  bool add_keywords = true) -> void;
+void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true,
+                  bool add_keywords = true);
 
 // Call this after creating a wxRibbonBar tool in order to ensure that it has a unique ID/
 void SetUniqueRibbonToolID(Node* node);
 
 // Normally, wxMemoryInputStream inputStream, wxZlibOutputStream outputStream
-[[nodiscard]] auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
-                                  size_t compressed_size) -> bool;
+[[nodiscard]] bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream,
+                                  size_t compressed_size);
 
 // Show the Open/Import Project file dialog and return the selected filename.
 // Returns an empty string if the user cancels.
-auto ShowOpenProjectDialog(wxWindow* parent) -> wxString;
+wxString ShowOpenProjectDialog(wxWindow* parent);

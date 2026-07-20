@@ -46,7 +46,6 @@ public:
     void AllChildrenAdded();
 
 protected:
-    void extracted();
     void OnBackOrNext(wxCommandEvent& event);
     void CreateBmpPageRow();
     void CreateButtonRow();

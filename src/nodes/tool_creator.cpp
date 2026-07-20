@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 #include <algorithm>
 #include <format>
@@ -495,12 +496,11 @@ std::expected<bool, std::string> Node::CreateToolNode(GenName name, int pos)
         return valid_parent->CreateToolNode(name, pos);
     }
 
-    const std::pair<NodeSharedPtr, Node::Validity> result = CreateChildNode(name, true, pos);
-    if (result.second == Node::Validity::unsupported_language)
+    auto [new_node, validity] = CreateChildNode(name, true, pos);
+    if (validity == Node::Validity::unsupported_language)
     {
         return true;
     }
-    NodeSharedPtr new_node = result.first;
     if (!new_node)
     {
         switch (name)

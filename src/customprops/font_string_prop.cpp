@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -22,10 +23,10 @@ FontStringProperty::FontStringProperty(const wxString& label, NodeProperty* prop
 bool FontStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
                                            wxPGProperty* /* property unused */)
 {
-    FontPropDlg dlg(propGrid->GetPanel(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    FontPropDlg font_dialog(propGrid->GetPanel(), m_prop);
+    if (font_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(font_dialog.GetResults());
         return true;
     }
 

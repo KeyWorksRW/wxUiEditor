@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -25,7 +26,7 @@ GrowColumnsDialog::GrowColumnsDialog(wxWindow* parent, NodeProperty* prop) :
     m_prop = prop;
 };
 
-auto GrowColumnsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> void
+void GrowColumnsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event)
 {
     m_prop_label->SetLabel("Growable Columns");
     m_grid->SetColLabelValue(0, "Column");
@@ -61,7 +62,7 @@ auto GrowColumnsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> voi
     // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent
     // of the longest line including an additional space at the end solves the problem, at least
     // running on Windows 11.
-    auto text_width = m_grid->GetTextExtent(" Proportion ");
+    const wxSize text_width = m_grid->GetTextExtent(" Proportion ");
     m_grid->SetDefaultColSize(text_width.GetWidth(), true);
     for (int row = 0; auto& iter: entries)
     {
@@ -72,14 +73,15 @@ auto GrowColumnsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> voi
         m_grid->SetRowLabelValue(row, " ");
         ++row;
     }
+    m_grow_columns = entries;
 
     m_help_text->SetLabel(
-        "Proportion has the same meaning as the stretch factor for sizers (see wxBoxSizer)"
-        "except that if all proportions are 0, then all columns are resized equally"
+        "Proportion has the same meaning as the stretch factor for sizers (see wxBoxSizer) "
+        "except that if all proportions are 0, then all columns are resized equally "
         "(instead of not being resized at all).");
 
     // Force the width to get wrap in a way that makes the text the most clear.
-    auto width =
+    const int width =
         m_help_text
             ->GetTextExtent(
                 "Proportion has the same meaning as the stretch factor for sizers (see wxBoxSizer)")
@@ -92,7 +94,7 @@ auto GrowColumnsDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> voi
     Fit();
 }
 
-auto GrowColumnsDialog::OnOK(wxCommandEvent& event) -> void
+void GrowColumnsDialog::OnOK(wxCommandEvent& event)
 {
     m_grow_columns.clear();
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
@@ -108,7 +110,7 @@ auto GrowColumnsDialog::OnOK(wxCommandEvent& event) -> void
     {
         if (iter.column >= 0)
         {
-            if (m_value.size())
+            if (!m_value.empty())
             {
                 m_value += ",";
             }
@@ -124,16 +126,16 @@ auto GrowColumnsDialog::OnOK(wxCommandEvent& event) -> void
     event.Skip();
 }
 
-auto GrowColumnsDialog::OnUpdateUI([[maybe_unused]] wxUpdateUIEvent& event) -> void
+void GrowColumnsDialog::OnUpdateUI([[maybe_unused]] wxUpdateUIEvent& event)
 {
-    auto array = m_grid->GetSelectedRows();
-    m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
+    const wxArrayInt array = m_grid->GetSelectedRows();
+    m_toolBar->EnableTool(id_DeleteRow, !array.empty());
 }
 
-auto GrowColumnsDialog::OnNewRow([[maybe_unused]] wxCommandEvent& event) -> void
+void GrowColumnsDialog::OnNewRow([[maybe_unused]] wxCommandEvent& event)
 {
     m_grid->AppendRows(1);
-    auto new_row = m_grid->GetNumberRows() - 1;
+    const int new_row = m_grid->GetNumberRows() - 1;
 
     int new_column = 0;
     for (auto& iter: m_grow_columns)
@@ -152,16 +154,16 @@ auto GrowColumnsDialog::OnNewRow([[maybe_unused]] wxCommandEvent& event) -> void
     Fit();
 }
 
-auto GrowColumnsDialog::OnDeleteRow([[maybe_unused]] wxCommandEvent& event) -> void
+void GrowColumnsDialog::OnDeleteRow([[maybe_unused]] wxCommandEvent& event)
 {
-    auto array = m_grid->GetSelectedRows();
+    wxArrayInt array = m_grid->GetSelectedRows();
     if (array.empty())
     {
         wxMessageBox("No rows selected", "Error", wxOK | wxICON_ERROR);
         return;
     }
 
-    for (auto iter = array.rbegin(); iter != array.rend(); ++iter)
+    for (wxArrayInt::const_reverse_iterator iter = array.rbegin(); iter != array.rend(); ++iter)
     {
         m_grid->DeleteRows(*iter);
     }
@@ -169,14 +171,13 @@ auto GrowColumnsDialog::OnDeleteRow([[maybe_unused]] wxCommandEvent& event) -> v
     Fit();
 }
 
-[[nodiscard]] auto GrowColumnsDialogAdapter::DoShowDialog([[maybe_unused]] wxPropertyGrid* propGrid,
+[[nodiscard]] bool GrowColumnsDialogAdapter::DoShowDialog([[maybe_unused]] wxPropertyGrid* propGrid,
                                                           [[maybe_unused]] wxPGProperty* property)
-    -> bool
 {
-    GrowColumnsDialog dlg(wxGetFrame().getWindow(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    GrowColumnsDialog grow_dlg(wxGetFrame().getWindow(), m_prop);
+    if (grow_dlg.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(grow_dlg.GetResults());
         return true;
     }
 

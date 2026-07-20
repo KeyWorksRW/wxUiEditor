@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/filedlg.h>
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
@@ -30,13 +31,14 @@ ttFileProperty::ttFileProperty(const wxString& label, const wxString& name, cons
     SetValue(value);
 }
 
-bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* propGrid, wxVariant& value)
+bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg,  // NOLINT: matches base class
+                                         wxVariant& value)    // NOLINT: matches base class
 {
     wxFileName root_path;
     wxString wildcard;
     wxString title;
-    auto* form = m_prop->getNode()->get_Form();
-    auto* folder =
+    Node* form = m_prop->getNode()->get_Form();
+    const Node* folder =
         form ? form->get_Folder() : static_cast<Node*>(nullptr);  // this will usually be a nullptr
 
     switch (m_prop->get_name())
@@ -170,21 +172,21 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* propGrid, wxVariant& va
             break;
 
         case prop_data_file:
-            if (m_prop->as_string().size())
+            if (!m_prop->as_string().empty())
             {
                 root_path.Assign(m_prop->as_string());
             }
             else
             {
-                auto result =
+                auto [result_path, result_failed] =
                     Project.GetOutputPath(m_prop->getNode()->get_Form(), GenLang::cplusplus);
-                if (!result.second)
+                if (!result_failed)
                 {
-                    root_path.AssignDir(result.first);
+                    root_path.AssignDir(result_path);
                 }
                 else
                 {
-                    root_path.Assign(result.first);
+                    root_path.Assign(result_path);
                 }
             }
             if (m_prop->getNode()->is_Gen(gen_data_xml))
@@ -214,17 +216,17 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* propGrid, wxVariant& va
 
     wxFileName full_path;
     full_path.AssignDir(root_path.GetPath());
-    auto cur_path = value.GetString();
+    const wxString cur_path = value.GetString();
     if (cur_path.starts_with("./"))
     {
         full_path.Assign(cur_path);
     }
     full_path.MakeAbsolute();
-    wxFileDialog dlg(propGrid->GetPanel(), title, full_path.GetPath(), full_path.GetFullName(),
-                     wildcard, wxFD_SAVE);
-    if (dlg.ShowModal() == wxID_OK)
+    wxFileDialog file_dlg(pg->GetPanel(), title, full_path.GetPath(), full_path.GetFullName(),
+                          wildcard, wxFD_SAVE);
+    if (file_dlg.ShowModal() == wxID_OK)
     {
-        full_path.Assign(dlg.GetPath());
+        full_path.Assign(file_dlg.GetPath());
         full_path.MakeRelativeTo(Project.get_wxFileName()->GetPath());
         wxue::string final_path = full_path.GetFullPath().utf8_string();
         final_path.backslashestoforward();
@@ -270,7 +272,7 @@ bool ttFileProperty::DoSetAttribute(const wxString& name, wxVariant& value)
 
 wxValidator* ttFileProperty::GetClassValidator()
 {
-    static wxValidator* pValidator = nullptr;
+    static wxValidator* pValidator = nullptr;  // NOLINT: pointee modified below via SetCharExcludes
     if (pValidator)
     {
         return pValidator;

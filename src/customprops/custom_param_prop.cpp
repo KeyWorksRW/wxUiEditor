@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -30,9 +31,9 @@ void EditParamsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     m_grid->SetColLabelValue(0, "Parameter");
     // m_grid->SetColFormatCustom(0, wxGRID_VALUE_CHOICE);
 
-    auto fields = m_prop->as_ArrayString(',');
+    std::vector<wxue::string> fields = m_prop->as_ArrayString(',');
 
-    if ((to_int) fields.size() > m_grid->GetNumberRows())
+    if (to_int(fields.size()) > m_grid->GetNumberRows())
     {
         m_grid->AppendRows(to_int(fields.size()) - m_grid->GetNumberRows());
     }
@@ -40,7 +41,7 @@ void EditParamsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent
     // of the longest line including an additional space at the end solves the problem, at least
     // running on Windows 11.
-    auto col_width = m_grid->GetTextExtent("my_special_parameter_name_here ");
+    const wxSize col_width = m_grid->GetTextExtent("my_special_parameter_name_here ");
     m_grid->SetDefaultColSize(col_width.GetWidth(), true);
 
     // clang-format off
@@ -75,12 +76,12 @@ void EditParamsDialog::OnOK(wxCommandEvent& event)
     m_value.clear();
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
     {
-        if (m_value.size())
-        {
+        const wxString cell = m_grid->GetCellValue(row, 0).Trim();
+        if (cell.empty())
+            continue;
+        if (!m_value.empty())
             m_value += ", ";
-        }
-        m_value += m_grid->GetCellValue(row, 0);
-        m_value.Trim();
+        m_value += cell;
     }
 
     event.Skip();
@@ -88,15 +89,15 @@ void EditParamsDialog::OnOK(wxCommandEvent& event)
 
 void EditParamsDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
 {
-    auto array = m_grid->GetSelectedRows();
-    m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
-    m_toolBar->EnableTool(id_UndoDeleteRow, m_deleted_col_0.size() > 0);
+    const wxArrayInt array = m_grid->GetSelectedRows();
+    m_toolBar->EnableTool(id_DeleteRow, !array.empty());
+    m_toolBar->EnableTool(id_UndoDeleteRow, !m_deleted_col_0.empty());
 }
 
 void EditParamsDialog::OnNewRow(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
-    auto new_row = m_grid->GetNumberRows() - 1;
+    const int new_row = m_grid->GetNumberRows() - 1;
 
     // clang-format off
     const wxString choices[] = {
@@ -121,25 +122,29 @@ void EditParamsDialog::OnNewRow(wxCommandEvent& /* event unused */)
 
 void EditParamsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 {
-    auto array = m_grid->GetSelectedRows();
+    wxArrayInt array = m_grid->GetSelectedRows();
     if (array.empty())
     {
         wxMessageBox("No rows selected", "Error", wxOK | wxICON_ERROR);
         return;
     }
 
-    for (auto iter = array.rbegin(); iter != array.rend(); ++iter)
+    if (array.size() > 1)
     {
-        m_deleted_col_0 = m_grid->GetCellValue(*iter, 0);
-        m_grid->DeleteRows(*iter);
+        wxMessageBox("Only one row can be deleted at a time", "Delete Row",
+                     wxOK | wxICON_INFORMATION);
+        return;
     }
+
+    m_deleted_col_0 = m_grid->GetCellValue(array[0], 0);
+    m_grid->DeleteRows(array[0]);
     Fit();
 }
 
 void EditParamsDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
-    if (m_deleted_col_0.size())
+    if (!m_deleted_col_0.empty())
     {
         m_grid->SetCellValue(m_grid->GetNumberRows() - 1, 0, m_deleted_col_0);
         m_deleted_col_0.clear();
@@ -152,10 +157,10 @@ void EditParamsDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 bool EditParamsDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
                                            wxPGProperty* /* property unused */)
 {
-    EditParamsDialog dlg(wxGetFrame().getWindow(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    EditParamsDialog params_dialog(wxGetFrame().getWindow(), m_prop);
+    if (params_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(params_dialog.GetResults());
         return true;
     }
 

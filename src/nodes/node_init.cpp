@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-15-2026]
+// CR: [07-16-2026]
 
 #include <format>
 #include <functional>
@@ -481,6 +481,9 @@ void NodeCreator::Initialize()
     }
 
     {
+        // WARNING: m_pdoc_interface points to stack-local interface_doc. Must be
+        // cleared to nullptr before this block exits (see catch handler and lines
+        // 530-531). Any code added after this block must not access m_pdoc_interface.
         pugi::xml_document interface_doc;
         m_pdoc_interface = &interface_doc;
 
@@ -678,7 +681,7 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
     pugi::xml_node elem_base = elem_obj.child("inherits");
     while (elem_base)
     {
-        std::string_view base_name = elem_base.attribute("class").as_view();
+        const std::string_view base_name = elem_base.attribute("class").as_view();
         if (base_name == "Language Settings")
         {
             // NOLINTBEGIN(bugprone-unchecked-error-return)
@@ -698,14 +701,14 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
             continue;
         }
 
-        auto* base_info = get_NodeDeclaration(base_name);
+        NodeDeclaration* base_info = get_NodeDeclaration(base_name);
         if (!base_info)
         {
             elem_base = elem_base.next_sibling("inherits");
             continue;
         }
 
-        class_info->AddBaseClass(base_info);
+        std::ignore = class_info->AddBaseClass(base_info);
 
         pugi::xml_node inheritedProperty = elem_base.child("property");
         while (inheritedProperty)
@@ -776,7 +779,7 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
     pugi::xml_node generator = root.child("gen");
     while (generator)
     {
-        ParseGenerator(generator, is_interface);
+        std::ignore = ParseGenerator(generator, is_interface);
         generator = generator.next_sibling("gen");
     }
 

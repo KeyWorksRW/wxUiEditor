@@ -22,9 +22,8 @@ public:
     FormBuilder() = default;
     ~FormBuilder() = default;
 
-    auto Import(const std::string& filename, bool write_doc = true) -> bool override;
-    auto CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr)
-        -> NodeSharedPtr;
+    bool Import(const std::string& filename, bool write_doc = true) override;
+    NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 
 protected:
     void ConvertNameSpaceProp(NodeProperty* prop, std::string_view org_names);
@@ -42,14 +41,14 @@ private:
                               Node* parent);
     void ProcessXmlEvents(pugi::xml_node& xml_obj, Node* newobject, Node* parent);
     void ValidateAndFixNodeProperties(Node* newobject, Node* parent);
-    auto ProcessChildNodes(pugi::xml_node& xml_obj, NodeSharedPtr& newobject, Node* parent,
-                           Node* sizeritem) -> NodeSharedPtr;
+    NodeSharedPtr ProcessChildNodes(pugi::xml_node& xml_obj, NodeSharedPtr& newobject, Node* parent,
+                                    Node* sizeritem);
 
     // Helper methods for ProcessXmlProperties complexity reduction
-    auto HandleBitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop_ptr) -> void;
-    static auto ConvertLegacyWindowStyles(std::string_view text_value) -> std::string;
-    auto HandleNameProperty(pugi::xml_node& xml_prop, Node* newobject) -> void;
-    auto HandleIncludeProperty(pugi::xml_node& xml_prop, Node* newobject, Node* parent) -> void;
+    void HandleBitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop_ptr);
+    static std::string ConvertLegacyWindowStyles(std::string_view text_value);
+    void HandleNameProperty(pugi::xml_node& xml_prop, Node* newobject);
+    void HandleIncludeProperty(pugi::xml_node& xml_prop, Node* newobject, Node* parent);
 
     std::string m_embedPath;
     std::string m_eventGeneration;

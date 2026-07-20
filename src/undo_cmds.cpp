@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <array>
 #include <tuple>
@@ -244,7 +245,7 @@ void ModifyProperties::Revert()
 
 size_t ModifyProperties::GetMemorySize()
 {
-    size_t total = sizeof(*this) + m_properties.size();
+    size_t total = sizeof(*this) + m_properties.size() * sizeof(MULTI_PROP);
     for (auto& iter: m_properties)
     {
         // The +2 is to account for the trailing zero in each std::string value.
@@ -317,8 +318,8 @@ void ChangePositionAction::Revert()
 
 ///////////////////////////////// ChangeSizerType ////////////////////////////////////
 
-ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer) :
-    m_new_gen_sizer(new_gen_sizer)
+ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_sizer) :
+    m_new_gen_sizer(new_sizer)
 {
     m_undo_string << "change sizer type";
 
@@ -456,7 +457,7 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
         if (const NodeMapEvents::iterator event = map_old_events.find("wxEVT_COMBOBOX");
             event != map_old_events.end())
         {
-            if (event->second.get_value().size())
+            if (!event->second.get_value().empty())
             {
                 NodeEvent* new_event = new_node->get_Event("wxEVT_CHOICE");
                 if (new_event)
@@ -628,7 +629,6 @@ void ChangeParentAction::Revert()
 
 AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) :
     m_old_selected(wxGetFrame().getSelectedNodePtr()),
-    m_old_pos(m_parent->get_ChildPosition(node)),
     m_pos(pos)
 {
     m_node = node->get_SharedPtr();
@@ -797,6 +797,10 @@ static bool CompareClassNames(NodeSharedPtr node_a, NodeSharedPtr node_b)
     if (node_a->is_Gen(gen_folder) && !node_b->is_Gen(gen_folder))
     {
         return true;
+    }
+    if (!node_a->is_Gen(gen_folder) && node_b->is_Gen(gen_folder))
+    {
+        return false;
     }
     if (node_a->is_Gen(gen_folder) && node_b->is_Gen(gen_folder))
     {

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 #ifdef _MSC_VER
     #pragma warning(push)
@@ -83,7 +84,6 @@ void NodeCreator::AddAllConstants()
 
     ADD_CONSTANT(wxALL)
     ADD_CONSTANT(wxBOTTOM)
-    ADD_CONSTANT(wxBOTTOM)
     ADD_CONSTANT(wxLEFT)
     ADD_CONSTANT(wxRIGHT)
     ADD_CONSTANT(wxTOP)
@@ -107,7 +107,6 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxTE_CHARWRAP)
     ADD_CONSTANT(wxTE_DONTWRAP)
     ADD_CONSTANT(wxTE_LEFT)
-    ADD_CONSTANT(wxTE_LEFT);
     ADD_CONSTANT(wxTE_MULTILINE)
     ADD_CONSTANT(wxTE_NOHIDESEL)
     ADD_CONSTANT(wxTE_NO_VSCROLL)

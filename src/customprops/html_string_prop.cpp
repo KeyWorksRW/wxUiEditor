@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -24,37 +25,37 @@ EditHtmlProperty::EditHtmlProperty(const wxString& label, NodeProperty* prop) :
 
 EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlDialogBase(parent)
 {
-    SetTitle(wxString(prop->get_DeclName()) + " property editor");
+    SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
     m_value = prop->as_wxString();
 
     SetStcColors(m_scintilla, GenLang::xml, false, false);
 };
 
-auto EditHtmlDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event) -> void
+void EditHtmlDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event)
 {
     m_scintilla->AddText(m_value);
 }
 
-auto EditHtmlDialog::OnOK(wxCommandEvent& event) -> void
+void EditHtmlDialog::OnOK(wxCommandEvent& event)
 {
     m_value = m_scintilla->GetText();
 
     event.Skip();
 }
 
-auto EditHtmlDialog::OnTextChange([[maybe_unused]] wxStyledTextEvent& event) -> void
+void EditHtmlDialog::OnTextChange([[maybe_unused]] wxStyledTextEvent& event)
 {
-    auto content = m_scintilla->GetText();
+    const wxString content = m_scintilla->GetText();
     m_htmlWin->SetPage(content);
 }
 
-auto EditHtmlDialogAdapter::DoShowDialog([[maybe_unused]] wxPropertyGrid* propGrid,
-                                         [[maybe_unused]] wxPGProperty* property) -> bool
+bool EditHtmlDialogAdapter::DoShowDialog([[maybe_unused]] wxPropertyGrid* propGrid,
+                                         [[maybe_unused]] wxPGProperty* property)
 {
-    EditHtmlDialog dlg(wxGetFrame().getWindow(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    EditHtmlDialog html_dialog(wxGetFrame().getWindow(), m_prop);
+    if (html_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(html_dialog.GetResults());
         return true;
     }
 

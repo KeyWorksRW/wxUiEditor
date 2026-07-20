@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-15-2026]
 
 #include <filesystem>
 #include <format>
@@ -18,14 +19,14 @@
 
 WxSmith::WxSmith() = default;
 
-auto WxSmith::Import(const std::string& filename, bool write_doc) -> bool
+bool WxSmith::Import(const std::string& filename, bool write_doc)
 {
-    auto result = LoadDocFile(filename);
+    std::optional<pugi::xml_document> result = LoadDocFile(filename);
     if (!result)
     {
         return false;
     }
-    auto root = result.value().first_child();
+    const pugi::xml_node root = result.value().first_child();
 
     if (!wxue::is_sameas(root.name(), "wxsmith", wxue::CASE::either) &&
         !wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
@@ -79,18 +80,18 @@ auto WxSmith::Import(const std::string& filename, bool write_doc) -> bool
             errMsg += '\n';
         }
 
-        wxMessageDialog dlg(nullptr, wxString::FromUTF8(errMsg), "Import Project",
-                            wxICON_WARNING | wxOK);
-        dlg.ShowModal();
+        wxMessageDialog dlg_msg(nullptr, wxString::FromUTF8(errMsg), "Import Project",
+                                wxICON_WARNING | wxOK);
+        dlg_msg.ShowModal();
     }
 
     return true;
 }
 
-auto WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node,
-                                    Node* /* parent unused */) -> bool
+bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node,
+                                    Node* /* parent unused */)
 {
-    auto node_name = xml_obj.name();
+    std::string_view node_name = xml_obj.name();
 
     if (node_name == "id_arg" || node_name == "pos_arg" || node_name == "size_arg")
     {
@@ -100,7 +101,7 @@ auto WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node,
     {
         if (node->is_Gen(gen_wxGrid))
         {
-            node->set_value(prop_default_row_size, xml_obj.text().as_int());
+            std::ignore = node->set_value(prop_default_row_size, xml_obj.text().as_int());
             return true;
         }
     }
@@ -116,7 +117,7 @@ auto WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node,
     {
         if (node->is_Gen(gen_wxGrid))
         {
-            node->set_value(prop_default_col_size, xml_obj.text().as_int());
+            std::ignore = node->set_value(prop_default_col_size, xml_obj.text().as_int());
             return true;
         }
     }
@@ -141,19 +142,19 @@ auto WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node,
 
             if (!choices.empty())
             {
-                node->set_value(prop_col_label_values, choices);
+                std::ignore = node->set_value(prop_col_label_values, choices);
             }
             return true;
         }
     }
     else if (node_name == "col" && node->is_Gen(gen_gbsizeritem))
     {
-        node->set_value(prop_column, xml_obj.text().as_int());
+        std::ignore = node->set_value(prop_column, xml_obj.text().as_int());
         return true;
     }
     else if (node_name == "val")
     {
-        node->set_value(prop_validator_variable, xml_obj.text().as_view());
+        std::ignore = node->set_value(prop_validator_variable, xml_obj.text().as_view());
         return true;
     }
     return false;

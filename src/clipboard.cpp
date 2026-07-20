@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include "clipboard.h"
 
@@ -16,7 +17,7 @@
 
 #include "pugixml.hpp"
 
-auto isClipboardDataAvailable() -> bool
+bool isClipboardDataAvailable()
 {
     if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
     {
@@ -39,7 +40,7 @@ auto isClipboardDataAvailable() -> bool
     return false;
 }
 
-auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
+NodeSharedPtr GetClipboardNode(bool warn_if_problems)
 {
     SmartClipboard clip;
     if (clip.IsOpened())
@@ -58,8 +59,8 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
             }
         }
 
-        pugi::xml_document doc;
-        pugi::xml_parse_result result;
+        pugi::xml_document xml_doc;
+        pugi::xml_parse_result result {};
 
         if (wxTheClipboard->IsSupported(wxDF_TEXT))
         {
@@ -69,7 +70,7 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
 
             wxUtf8DataObject data;
             wxTheClipboard->GetData(data);
-            result = doc.load_string(data.GetText().c_str());
+            result = xml_doc.load_string(data.GetText().c_str());
         }
 
         if (!result)
@@ -81,7 +82,7 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
             return {};
         }
 
-        auto root = doc.first_child();
+        pugi::xml_node root = xml_doc.first_child();
 
         if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
         {
@@ -90,8 +91,8 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
         if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
         {
             FormBuilder formBuilder;
-            auto new_node = formBuilder.CreateFbpNode(root, nullptr);
-            if (formBuilder.GetErrors().size() && warn_if_problems)
+            NodeSharedPtr new_node = formBuilder.CreateFbpNode(root, nullptr);
+            if (!formBuilder.GetErrors().empty() && warn_if_problems)
             {
                 wxue::string errMsg(
                     "Not everything from the wxFormBuilder object could be converted:\n\n");
@@ -105,13 +106,13 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
             }
             return new_node;
         }
-        else if (wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
+        if (wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
         {
             // wxSmith encloses the object with "<resource>"
-            auto child = root.first_child();
+            pugi::xml_node child = root.first_child();
             WxSmith smith;
-            auto new_node = smith.CreateXrcNode(child, nullptr);
-            if (smith.GetErrors().size() && warn_if_problems)
+            NodeSharedPtr new_node = smith.CreateXrcNode(child, nullptr);
+            if (!smith.GetErrors().empty() && warn_if_problems)
             {
                 wxue::string errMsg(
                     "Not everything from the wxSmith object could be converted:\n\n");
@@ -130,7 +131,7 @@ auto GetClipboardNode(bool warn_if_problems) -> NodeSharedPtr
     return {};
 }
 
-auto wxUtf8DataObject::SetData(size_t len, const void* buf) -> bool
+bool wxUtf8DataObject::SetData(size_t len, const void* buf)
 {
     // We should never even come close to this amount. It's much more likely that a length this size
     // is an attempt by malware to crash any program attempting to paste clipboard data.
@@ -139,13 +140,11 @@ auto wxUtf8DataObject::SetData(size_t len, const void* buf) -> bool
         return false;
     }
 
-    m_text.reserve(len + 1);
-    memcpy(m_text.data(), buf, len);
-    m_text.data()[len] = 0;
+    m_text.assign(static_cast<const char*>(buf), len);
     return true;
 }
 
-auto wxUtf8DataObject::GetDataHere(void* buf) const -> bool
+bool wxUtf8DataObject::GetDataHere(void* buf) const
 {
     memcpy(buf, m_text.data(), m_text.size() + 1);
     return true;

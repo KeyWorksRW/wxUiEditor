@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include "undo_stack.h"  // UndoStack
 
@@ -92,7 +93,8 @@ void GroupUndoActions::Change()
 
 void GroupUndoActions::Revert()
 {
-    for (auto iter = m_actions.rbegin(); iter != m_actions.rend(); ++iter)
+    for (std::vector<UndoActionPtr>::reverse_iterator iter = m_actions.rbegin();
+         iter != m_actions.rend(); ++iter)
     {
         (*iter)->Revert();
     }

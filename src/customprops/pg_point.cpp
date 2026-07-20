@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/artprov.h>
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
@@ -40,7 +41,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         parts.SetString(std::string_view { prop->as_string() }, ';');
         if (parts.size() > IndexImage)
         {
-            auto* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            const EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 m_org_size = embed->get_wxSize();
@@ -78,10 +79,10 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     }
 }
 
-auto CustomPointProperty::RefreshChildren() -> void
+void CustomPointProperty::RefreshChildren()
 {
-    wxString value = m_value;
-    if (value.size())
+    const wxString value = m_value;
+    if (!value.empty())
     {
         InitValues(value.utf8_string());
         Item(0)->SetValue(m_point.x);
@@ -131,7 +132,7 @@ wxVariant CustomPointProperty::ChildChanged([[maybe_unused]] wxVariant& thisValu
     return value;
 }
 
-auto CustomPointProperty::InitValues(wxue::string_view value) -> void
+void CustomPointProperty::InitValues(wxue::string_view value)
 {
     if (value.empty())
     {
@@ -193,7 +194,7 @@ auto CustomPointProperty::InitValues(wxue::string_view value) -> void
     }
 }
 
-auto CustomPointProperty::CombineValues() -> wxue::string
+wxue::string CustomPointProperty::CombineValues()
 {
     wxue::string value;
     value << m_point.x << ',' << m_point.y;
@@ -208,7 +209,7 @@ auto CustomPointProperty::CombineValues() -> wxue::string
 // The wxWidgets version uses "Not" when the value is false. This version uses "No" instead.
 wxString CustomBoolProperty::ValueToString(wxVariant& value, wxPGPropValFormatFlags flags) const
 {
-    bool boolValue = value.GetBool();
+    const bool boolValue = value.GetBool();
 
     if (!!(flags & wxPGPropValFormatFlags::CompositeFragment))
     {

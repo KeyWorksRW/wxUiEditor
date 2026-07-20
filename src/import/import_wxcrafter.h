@@ -23,37 +23,35 @@ public:
     WxCrafter();
     ~WxCrafter() {};
 
-    auto Import(const std::string& filename, bool write_doc = true) -> bool override;
-    auto CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr)
-        -> NodeSharedPtr;
+    bool Import(const std::string& filename, bool write_doc = true) override;
+    NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
     // wxCrafter only supports C++ code generation
     GenLang GetLanguage() const override { return GenLang::cplusplus; }
 
 protected:
-    auto ProcessFont(Node* node, const glz::generic& object) -> bool;
-    auto ProcessScintillaProperty(Node* node, const glz::generic& object) -> bool;
-    auto ProcessBitmapProperty(Node* parent, const glz::generic& object) -> void;
-    auto ProcessChild(Node* parent, const glz::generic& object) -> void;
-    auto ProcessEvents(Node* parent, const glz::generic& array) -> void;
-    auto ProcessForm(const glz::generic& value) -> void;
-    auto ProcessProperties(Node* node, const glz::generic& array) -> void;
-    auto ProcessSizerFlags(Node* node, const glz::generic& array) -> void;
-    auto ProcessStdBtnChildren(Node* parent, const glz::generic& array) -> void;
-    auto ProcessStyles(Node* parent, const glz::generic& array) -> void;
+    bool ProcessFont(Node* node, const glz::generic& object);
+    bool ProcessScintillaProperty(Node* node, const glz::generic& object);
+    void ProcessBitmapProperty(Node* parent, const glz::generic& object);
+    void ProcessChild(Node* parent, const glz::generic& object);
+    void ProcessEvents(Node* parent, const glz::generic& array);
+    void ProcessForm(const glz::generic& value);
+    void ProcessProperties(Node* node, const glz::generic& array);
+    void ProcessSizerFlags(Node* node, const glz::generic& array);
+    void ProcessStdBtnChildren(Node* parent, const glz::generic& array);
+    void ProcessStyles(Node* parent, const glz::generic& array);
 
     // Called when the property isn't recognized. Will return prop_processed if it was
     // processed, or a valid prop_name if it was converted, but needs further handling.
-    auto UnknownProperty(Node* node, const glz::generic& value, std::string& name)
-        -> GenEnum::PropName;
+    GenEnum::PropName UnknownProperty(Node* node, const glz::generic& value, std::string& name);
 
     // Called when prop_name is a valid property. This will set the property's value after
     // any possible additional processing.
-    auto KnownProperty(Node* node, const glz::generic& value, GenEnum::PropName prop_name) -> void;
+    void KnownProperty(Node* node, const glz::generic& value, GenEnum::PropName prop_name);
 
     // Called to handle prop_value which may get converted to a different property before
     // saving.
-    auto ValueProperty(Node* node, const glz::generic& value) -> void;
+    void ValueProperty(Node* node, const glz::generic& value);
 
 private:
     std::string m_output_name;

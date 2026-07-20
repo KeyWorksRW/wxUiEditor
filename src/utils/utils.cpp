@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-
+// CR: [07-16-2026]
 #include <array>
 #include <charconv>
 #include <cstddef>
@@ -29,32 +29,26 @@
 
 // Look for search string in line, and if found, replace with replace_with string. If all
 // is true, replace all instances, otherwise only the first instance is replaced.
-auto utils::replace_in_line(std::string& line, std::string_view search,
-                            std::string_view replace_with, bool all) -> void
+void utils::replace_in_line(std::string& line, std::string_view search,
+                            std::string_view replace_with, bool replace_all)
 {
-    for (auto pos = line.find(search, 0); pos != std::string::npos;
+    for (size_t pos = line.find(search, 0); pos != std::string::npos;
          pos = line.find(search, pos + replace_with.length()))
     {
         line.replace(pos, search.length(), replace_with);
-        if (!all)
+        if (!replace_all)
         {
             break;
         }
     }
 }
 
-auto DoubleToStr(double val) -> wxue::string
+wxue::string DoubleToStr(double val)
 {
-    wxue::string result;
-    std::array<char, 20> str {};
-    if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), val); ec == std::errc())
-    {
-        result.assign(str.data(), ptr);
-    }
-    return result;
+    return wxue::string(std::format("{}", val));
 }
 
-auto ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string
+wxue::string ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue)
 {
     if (flag.empty() || currentValue.empty())
     {
@@ -62,12 +56,12 @@ auto ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wx
     }
 
     wxue::string result;
-    wxue::ViewVector mstr(currentValue, '|');
+    const wxue::ViewVector mstr(currentValue, '|');
     for (const auto& iter: mstr)
     {
         if (iter != flag)
         {
-            if (result.size())
+            if (!result.empty())
             {
                 result << '|';
             }
@@ -77,7 +71,7 @@ auto ClearPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wx
     return result;
 }
 
-auto ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentValue) -> wxue::string
+wxue::string ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentValue)
 {
     if (flags.empty() || currentValue.empty())
     {
@@ -86,9 +80,9 @@ auto ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentVa
 
     wxue::string result;
 
-    wxue::StringVector mflags(flags, '|');
+    const wxue::StringVector mflags(flags, '|');
 
-    wxue::StringVector mstr(currentValue, '|');
+    const wxue::StringVector mstr(currentValue, '|');
     for (const auto& iter: mstr)
     {
         bool isFlagged = false;
@@ -103,7 +97,7 @@ auto ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentVa
 
         if (!isFlagged)
         {
-            if (result.size())
+            if (!result.empty())
             {
                 result << '|';
             }
@@ -113,7 +107,7 @@ auto ClearMultiplePropFlags(wxue::string_view flags, wxue::string_view currentVa
     return result;
 }
 
-auto SetPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue::string
+wxue::string SetPropFlag(wxue::string_view flag, wxue::string_view currentValue)
 {
     wxue::string result(currentValue);
     if (flag.empty())
@@ -130,7 +124,7 @@ auto SetPropFlag(wxue::string_view flag, wxue::string_view currentValue) -> wxue
     {
         return result;  // flag has already been added
     }
-    if (result.size())
+    if (!result.empty())
     {
         result << '|';
     }
@@ -199,7 +193,7 @@ wxSystemColour ConvertToSystemColour(wxue::string_view value)
     // clang-format on
 }
 
-auto ConvertFontFamilyToString(wxFontFamily family) -> const char*
+const char* ConvertFontFamilyToString(wxFontFamily family)
 {
     switch (family)
     {
@@ -220,20 +214,20 @@ auto ConvertFontFamilyToString(wxFontFamily family) -> const char*
     }
 }
 
-auto ConvertEscapeSlashes(wxue::string_view str) -> wxue::string
+wxue::string ConvertEscapeSlashes(wxue::string_view str)
 {
     wxue::string result;
 
     for (size_t pos = 0; pos < str.size(); ++pos)
     {
-        auto current_char = str[pos];
+        const char current_char = str[pos];
         if (current_char == '\\')
         {
             // REVIEW: [KeyWorks - 06-07-2020] Like the original wxString version, this will not
             // save a backslash if it is at the end of a line. Is that intentional or just a bug?
             if (pos < str.length() - 1)
             {
-                auto next_char = str[pos + 1];
+                const char next_char = str[pos + 1];
 
                 switch (next_char)
                 {
@@ -274,7 +268,7 @@ auto ConvertEscapeSlashes(wxue::string_view str) -> wxue::string
     return result;
 }
 
-auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint
+wxPoint DlgPoint(Node* node, GenEnum::PropName prop)
 {
     if (!isScalingEnabled(node, prop))
     {
@@ -283,7 +277,7 @@ auto DlgPoint(Node* node, GenEnum::PropName prop) -> wxPoint
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxPoint(prop));
 }
 
-auto DlgSize(Node* node, GenEnum::PropName prop) -> wxSize
+wxSize DlgSize(Node* node, GenEnum::PropName prop)
 {
     if (!isScalingEnabled(node, prop))
     {
@@ -292,14 +286,12 @@ auto DlgSize(Node* node, GenEnum::PropName prop) -> wxSize
     return wxGetMainFrame()->getWindow()->FromDIP(node->as_wxSize(prop));
 }
 
-auto DlgPoint(int width) -> int
+int DlgPoint(int width)
 {
-    wxPoint dlg_point = { width, -1 };
-    wxGetMainFrame()->getWindow()->FromDIP(dlg_point);
-    return dlg_point.x;
+    return wxGetMainFrame()->getWindow()->FromDIP(wxPoint(width, -1)).x;
 }
 
-auto GetSizeInfo(wxue::string_view description) -> wxSize
+wxSize GetSizeInfo(wxue::string_view description)
 {
     wxSize size;
 
@@ -313,12 +305,12 @@ auto GetSizeInfo(wxue::string_view description) -> wxSize
         size_description.SetString(description, ',');
     }
 
-    ASSERT(size_description.size())
-    ASSERT(size_description[0].size())
+    ASSERT(!size_description.empty())
+    ASSERT(!size_description[0].empty())
 
-    if (size_description.size())
+    if (!size_description.empty())
     {
-        size_t start = size_description[0].front() == '[' ? 1 : 0;
+        const size_t start = size_description[0].front() == '[' ? 1 : 0;
         size.x = size_description[0].atoi(start);
         if (size_description.size() > 1)
         {
@@ -352,7 +344,7 @@ inline constexpr auto lst_no_png_conversion = std::to_array<const char*>({
 });
 // clang-format on
 
-auto isConvertibleMime(const wxue::string& suffix) -> bool
+bool isConvertibleMime(const wxue::string& suffix)
 {
     return std::ranges::all_of(lst_no_png_conversion,
                                [&](const char* iter)
@@ -370,8 +362,11 @@ std::set<std::string> g_set_julia_keywords;
 std::set<std::string> g_set_luajit_keywords;
 std::set<std::string> g_set_typescript_keywords;
 
-auto isValidVarName(const std::string& str, GenLang language) -> bool
+bool isValidVarName(const std::string& str, GenLang language)
 {
+    if (str.empty())
+        return false;
+
     // variable names must start with an alphabetic character or underscore character
     if ((str[0] < 'a' || str[0] > 'z') && (str[0] < 'A' || str[0] > 'Z') && str[0] != '_')
     {
@@ -429,10 +424,10 @@ auto isValidVarName(const std::string& str, GenLang language) -> bool
     return true;
 }
 
-auto CreateBaseFilename(Node* form_node, const wxue::string& class_name) -> wxue::string
+wxue::string CreateBaseFilename(Node* form_node, const wxue::string& class_name)
 {
     wxue::string filename;
-    if (class_name.size())
+    if (!class_name.empty())
     {
         filename = class_name;
     }
@@ -452,10 +447,10 @@ auto CreateBaseFilename(Node* form_node, const wxue::string& class_name) -> wxue
     return filename;
 }
 
-auto CreateDerivedFilename(Node* form_node, const wxue::string& class_name) -> wxue::string
+wxue::string CreateDerivedFilename(Node* form_node, const wxue::string& class_name)
 {
     wxue::string filename;
-    if (class_name.size())
+    if (!class_name.empty())
     {
         filename = class_name;
     }
@@ -478,7 +473,7 @@ auto CreateDerivedFilename(Node* form_node, const wxue::string& class_name) -> w
     return filename;
 }
 
-auto ConvertToSnakeCase(std::string_view str) -> std::string
+std::string ConvertToSnakeCase(std::string_view str)
 {
     std::string result(str);
     for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
@@ -508,7 +503,7 @@ auto ConvertToSnakeCase(std::string_view str) -> std::string
     return result;
 }
 
-auto ConvertToUpperSnakeCase(wxue::string_view str) -> wxue::string
+wxue::string ConvertToUpperSnakeCase(wxue::string_view str)
 {
     wxue::string result(str);
     for (size_t pos = 0, original_pos = 0; pos < result.size(); ++pos, ++original_pos)
@@ -535,7 +530,7 @@ auto ConvertToUpperSnakeCase(wxue::string_view str) -> wxue::string
     return result;
 }
 
-auto FileNameToVarName(wxue::string_view filename, size_t max_length) -> std::optional<wxue::string>
+std::optional<wxue::string> FileNameToVarName(wxue::string_view filename, size_t max_length)
 {
     ASSERT(max_length > sizeof("_name_truncated"))
 
@@ -566,7 +561,7 @@ auto FileNameToVarName(wxue::string_view filename, size_t max_length) -> std::op
                 // Always convert a period to an underscore in case it is preceding the extension
                 var_name += '_';
             }
-            else if (var_name.size() && var_name.back() != '_' && pos > 0 &&
+            else if (!var_name.empty() && var_name.back() != '_' && pos > 0 &&
                      static_cast<unsigned char>(filename[pos - 1]) < 128)
             {
                 var_name += '_';
@@ -589,13 +584,12 @@ auto FileNameToVarName(wxue::string_view filename, size_t max_length) -> std::op
     return var_name;
 }
 
-auto isScalingEnabled(Node* node, GenEnum::PropName prop_name, [[maybe_unused]] GenLang m_language)
-    -> bool
+bool isScalingEnabled(Node* node, GenEnum::PropName prop_name, [[maybe_unused]] GenLang m_language)
 {
     return !wxue::contains(node->as_string(prop_name), 'n', wxue::CASE::either);
 }
 
-auto GenLangToString(GenLang language) -> std::string_view
+std::string_view GenLangToString(GenLang language)
 {
     switch (language)
     {
@@ -623,7 +617,7 @@ auto GenLangToString(GenLang language) -> std::string_view
     }
 }
 
-auto ConvertToGenLang(wxue::string_view language) -> GenLang
+GenLang ConvertToGenLang(wxue::string_view language)
 {
     if (language.starts_with("C++") || language.starts_with("Folder C++"))
     {
@@ -673,7 +667,7 @@ auto ConvertToGenLang(wxue::string_view language) -> GenLang
                                 GenLang::xrc);
 }
 
-auto GetLanguageExtension(GenLang language) -> std::string
+std::string GetLanguageExtension(GenLang language)
 {
     switch (language)
     {
@@ -702,7 +696,7 @@ auto GetLanguageExtension(GenLang language) -> std::string
     }
 }
 
-auto GetClassOverrideType(Node* node) -> ClassOverrideType
+ClassOverrideType GetClassOverrideType(Node* node)
 {
     ASSERT(node != nullptr);
     if (node->HasValue(prop_subclass))
@@ -722,15 +716,15 @@ auto GetClassOverrideType(Node* node) -> ClassOverrideType
     return ClassOverrideType::None;  // No override specified
 }
 
-auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size) -> bool
+bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
 {
     constexpr size_t BUF_KB_SIZE = 1024;
     constexpr size_t BUF_SIZE = 64 * BUF_KB_SIZE;
 
-    size_t buf_size = (size > BUF_SIZE) ? BUF_SIZE : size;
+    const size_t buf_size = (size > BUF_SIZE) ? BUF_SIZE : size;
 
-    std::array<unsigned char, BUF_SIZE> read_buf {};
-    auto read_size = buf_size;
+    auto read_buf = std::make_unique<unsigned char[]>(BUF_SIZE);
+    size_t read_size = buf_size;
 
     size_t copied_data = 0;
     for (;;)
@@ -739,10 +733,10 @@ auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
         {
             read_size = size - copied_data;
         }
-        inputStream->Read(read_buf.data(), read_size);
+        inputStream->Read(read_buf.get(), read_size);
 
-        auto actually_read = inputStream->LastRead();
-        outputStream->Write(read_buf.data(), actually_read);
+        const size_t actually_read = inputStream->LastRead();
+        outputStream->Write(read_buf.get(), actually_read);
         if (outputStream->LastWrite() != actually_read)
         {
             return false;
@@ -768,7 +762,7 @@ auto CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
     return true;
 }
 
-auto ShowOpenProjectDialog(wxWindow* parent) -> wxString
+wxString ShowOpenProjectDialog(wxWindow* parent)
 {
     wxFileDialog dialog(parent, "Open or Import Project", wxEmptyString, wxEmptyString,
                         wxString(std::format("wxUiEditor Project File (*{})|*{}"

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 #include <array>
 #include <charconv>
@@ -26,18 +27,22 @@
 
 using namespace GenEnum;
 
-NodeProperty::NodeProperty(PropDeclaration* info, Node* node) : m_declaration(info), m_node(node) {}
+NodeProperty::NodeProperty(PropDeclaration* declaration, Node* node) :
+    m_declaration(declaration),
+    m_node(node)
+{
+}
 
 // The advantage of placing the one-line calls to PropDeclaration (m_declaration) here is that it
 // reduces the header-file dependency for other modules that need NodeProperty, and it allows for
 // changes to PropDeclaration that don't require recompiling every module that included prop_decl.h.
 
-auto NodeProperty::isDefaultValue() const -> bool
+bool NodeProperty::isDefaultValue() const
 {
     return m_value.is_sameas(m_declaration->getDefaultValue());
 }
 
-auto NodeProperty::as_int() const -> int
+int NodeProperty::as_int() const
 {
     switch (type())
     {
@@ -49,7 +54,7 @@ auto NodeProperty::as_int() const -> int
         case type_bitlist:
             {
                 int result = 0;
-                wxue::StringVector mstr(m_value, '|', wxue::TRIM::both);
+                const wxue::StringVector mstr(m_value, '|', wxue::TRIM::both);
                 for (const auto& iter: mstr)
                 {
                     result |= NodeCreation.get_ConstantAsInt(iter);
@@ -62,13 +67,13 @@ auto NodeProperty::as_int() const -> int
     }
 }
 
-auto NodeProperty::as_id() const -> int
+int NodeProperty::as_id() const
 {
     return NodeCreation.get_ConstantAsInt(m_value, wxID_ANY);
 }
 
 // Static class function
-auto NodeProperty::get_PropId(const wxue::string& complete_id) -> wxue::string
+wxue::string NodeProperty::get_PropId(const wxue::string& complete_id)
 {
     wxue::string identifier;
     if (auto pos = complete_id.find('='); pos != wxue::npos)
@@ -86,12 +91,12 @@ auto NodeProperty::get_PropId(const wxue::string& complete_id) -> wxue::string
     return identifier;
 }
 
-auto NodeProperty::get_PropId() const -> wxue::string
+wxue::string NodeProperty::get_PropId() const
 {
     return get_PropId(m_value);
 }
 
-auto NodeProperty::as_mockup(std::string_view prefix) const -> int
+int NodeProperty::as_mockup(std::string_view prefix) const
 {
     switch (type())
     {
@@ -102,7 +107,7 @@ auto NodeProperty::as_mockup(std::string_view prefix) const -> int
             {
                 return NodeCreation.get_ConstantAsInt(m_value, 0);
             }
-            if (prefix.size())
+            if (!prefix.empty())
             {
                 wxue::string name;
                 name << prefix << m_value;
@@ -129,7 +134,7 @@ auto NodeProperty::as_mockup(std::string_view prefix) const -> int
                     }
                     else
                     {
-                        if (prefix.size())
+                        if (!prefix.empty())
                         {
                             iter.insert(0, prefix);
                         }
@@ -148,7 +153,7 @@ auto NodeProperty::as_mockup(std::string_view prefix) const -> int
     }
 }
 
-auto NodeProperty::as_constant(std::string_view prefix) -> const wxue::string&
+const wxue::string& NodeProperty::as_constant(std::string_view prefix)
 {
     switch (type())
     {
@@ -159,7 +164,7 @@ auto NodeProperty::as_constant(std::string_view prefix) -> const wxue::string&
             {
                 return m_value;
             }
-            if (prefix.size())
+            if (!prefix.empty())
             {
                 m_constant.clear();
                 m_constant << prefix << m_value;
@@ -195,7 +200,7 @@ auto NodeProperty::as_constant(std::string_view prefix) -> const wxue::string&
                 {
                     if (iter.starts_with("wx"))
                     {
-                        if (m_constant.size())
+                        if (!m_constant.empty())
                         {
                             m_constant << '|';
                         }
@@ -203,14 +208,14 @@ auto NodeProperty::as_constant(std::string_view prefix) -> const wxue::string&
                     }
                     else
                     {
-                        if (prefix.size())
+                        if (!prefix.empty())
                         {
                             iter.insert(0, prefix);
                         }
                         if (auto result = g_friend_constant.find(iter);
                             result != g_friend_constant.end())
                         {
-                            if (m_constant.size())
+                            if (!m_constant.empty())
                             {
                                 m_constant << " | ";
                             }
@@ -226,20 +231,20 @@ auto NodeProperty::as_constant(std::string_view prefix) -> const wxue::string&
     }
 }
 
-auto NodeProperty::as_point() const -> wxPoint
+wxPoint NodeProperty::as_point() const
 {
     wxPoint result { -1, -1 };
-    if (m_value.size())
+    if (!m_value.empty())
     {
         wxue::ViewVector tokens(m_value, ',');
-        if (tokens.size())
+        if (!tokens.empty())
         {
-            if (tokens[0].size())
+            if (!tokens[0].empty())
             {
                 result.x = tokens[0].atoi();
             }
 
-            if (tokens.size() > 1 && tokens[1].size())
+            if (tokens.size() > 1 && !tokens[1].empty())
             {
                 result.y = tokens[1].atoi();
             }
@@ -248,20 +253,20 @@ auto NodeProperty::as_point() const -> wxPoint
     return result;
 }
 
-auto NodeProperty::as_size() const -> wxSize
+wxSize NodeProperty::as_size() const
 {
     wxSize result { -1, -1 };
-    if (m_value.size())
+    if (!m_value.empty())
     {
         wxue::ViewVector tokens(m_value, ',');
-        if (tokens.size())
+        if (!tokens.empty())
         {
-            if (tokens[0].size())
+            if (!tokens[0].empty())
             {
                 result.x = tokens[0].atoi();
             }
 
-            if (tokens.size() > 1 && tokens[1].size())
+            if (tokens.size() > 1 && !tokens[1].empty())
             {
                 result.y = tokens[1].atoi();
             }
@@ -275,7 +280,7 @@ extern const std::map<std::string, std::string, std::less<>> kw_css_colors;
 
 // Note that this is not only used to handle older wxUiEditor projects, but also some of the
 // imported projects such as wxFormBuilder.
-auto NodeProperty::as_color() const -> wxColour
+wxColour NodeProperty::as_color() const
 {
     if (m_value.empty())
     {
@@ -299,17 +304,17 @@ auto NodeProperty::as_color() const -> wxColour
         MSG_ERROR(wxue::string("Unknown CSS color: ") << m_value);
         return wxNullColour;
     }
-    wxue::ViewVector mstr(m_value, ',');
-    unsigned long rgb = 0;
+    const wxue::ViewVector mstr(m_value, ',');
+    unsigned long rgb_value = 0;
     size_t shift_value = 0;
     for (const auto& color: mstr)
     {
-        auto value = color.atoi();
-        if (value < 0 || value > 255)  // ensure value is in range
+        unsigned long value = color.atoi();
+        if (value > 255)  // ensure value is in range
         {
             value = 0;
         }
-        rgb |= (value << shift_value);
+        rgb_value |= (value << shift_value);
         shift_value += 8;
         if (shift_value > 24)  // limited to 4 values (RGBA)
         {
@@ -317,23 +322,23 @@ auto NodeProperty::as_color() const -> wxColour
         }
     }
 
-    return wxColour(rgb);
+    return wxColour(rgb_value);
 }
 
-auto NodeProperty::as_font() const -> wxFont
+wxFont NodeProperty::as_font() const
 {
     return FontProperty(m_value.subview()).GetFont();
 }
 
-auto NodeProperty::as_font_prop() const -> FontProperty
+FontProperty NodeProperty::as_font_prop() const
 {
     FontProperty font_prop(m_value.subview());
     return font_prop;
 }
 
-auto NodeProperty::as_bitmap() const -> wxBitmap
+wxBitmap NodeProperty::as_bitmap() const
 {
-    auto image = ProjectImages.GetImage(m_value);
+    wxBitmap image = ProjectImages.GetImage(m_value);
     if (!image.IsOk())
     {
         image = ProjectImages.GetImage(m_value);
@@ -346,9 +351,9 @@ auto NodeProperty::as_bitmap() const -> wxBitmap
     return image;
 }
 
-auto NodeProperty::as_bitmap_bundle() const -> wxBitmapBundle
+wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 {
-    auto bundle = ProjectImages.GetBitmapBundle(m_value);
+    const wxBitmapBundle bundle = ProjectImages.GetBitmapBundle(m_value);
     if (!bundle.IsOk())
     {
         return wxNullBitmap;
@@ -356,18 +361,18 @@ auto NodeProperty::as_bitmap_bundle() const -> wxBitmapBundle
     return bundle;
 }
 
-auto NodeProperty::as_animation(wxAnimation* p_animate) const -> void
+void NodeProperty::as_animation(wxAnimation* p_animation) const
 {
-    ProjectImages.GetPropertyAnimation(m_value, p_animate);
+    ProjectImages.GetPropertyAnimation(m_value, p_animation);
 }
 
-auto NodeProperty::as_escape_text() const -> wxue::string
+wxue::string NodeProperty::as_escape_text() const
 {
     wxue::string result;
 
-    for (auto chr: m_value)
+    for (auto character: m_value)
     {
-        switch (chr)
+        switch (character)
         {
             case '\n':
                 result += "\\n";
@@ -386,7 +391,7 @@ auto NodeProperty::as_escape_text() const -> wxue::string
                 break;
 
             default:
-                result += chr;
+                result += character;
                 break;
         }
     }
@@ -394,7 +399,7 @@ auto NodeProperty::as_escape_text() const -> wxue::string
     return result;
 }
 
-auto NodeProperty::as_vector() const -> std::vector<wxue::string>
+std::vector<wxue::string> NodeProperty::as_vector() const
 {
     std::vector<wxue::string> array;
     if (m_value.empty())
@@ -403,10 +408,10 @@ auto NodeProperty::as_vector() const -> std::vector<wxue::string>
     }
     wxue::string parse;
     std::string_view value = m_value;
-    auto pos = parse.ExtractSubString(value);
+    size_t pos = parse.ExtractSubString(value);
     array.emplace_back(parse);
 
-    for (value = wxue::stepover(std::string_view(value.data() + pos)); value.size();
+    for (value = wxue::stepover(std::string_view(value.data() + pos)); !value.empty();
          value = wxue::stepover(std::string_view(value.data() + pos)))
     {
         pos = parse.ExtractSubString(value);
@@ -416,13 +421,13 @@ auto NodeProperty::as_vector() const -> std::vector<wxue::string>
     return array;
 }
 
-auto NodeProperty::as_ArrayString(char separator) const -> std::vector<wxue::string>
+std::vector<wxue::string> NodeProperty::as_ArrayString(char separator) const
 {
     if (separator == 0)
     {
         wxue::StringVector result;
 
-        if (m_value.size())
+        if (!m_value.empty())
         {
             if (type() == type_stringlist_semi)
             {
@@ -430,8 +435,8 @@ auto NodeProperty::as_ArrayString(char separator) const -> std::vector<wxue::str
             }
             else if (type() == type_stringlist_escapes || m_value[0] == '"')
             {
-                auto view = m_value.view_substr(0, '"', '"');
-                while (view.size() > 0)
+                wxue::string_view view = m_value.view_substr(0, '"', '"');
+                while (!view.empty())
                 {
                     result.emplace_back(view);
                     view = wxue::stepover(std::string_view(view.data() + view.size()));
@@ -447,17 +452,17 @@ auto NodeProperty::as_ArrayString(char separator) const -> std::vector<wxue::str
     return result;
 }
 
-auto NodeProperty::as_wxArrayString() const -> wxArrayString
+wxArrayString NodeProperty::as_wxArrayString() const
 {
     wxArrayString result;
 
-    if (m_value.size())
+    if (!m_value.empty())
     {
         if (m_value[0] == '"' &&
             !(type() == type_stringlist_semi && Project.get_OriginalProjectVersion() >= 18))
         {
             wxue::string_view view = m_value.view_substr(0, '"', '"');
-            while (view.size() > 0)
+            while (!view.empty())
             {
                 result.Add(view.wx());
                 view = wxue::stepover(std::string_view(view.data() + view.size()));
@@ -478,12 +483,12 @@ auto NodeProperty::as_wxArrayString() const -> wxArrayString
     return result;
 }
 
-auto NodeProperty::as_float() const -> double
+double NodeProperty::as_float() const
 {
     return std::atof(m_value.c_str());
 }
 
-auto NodeProperty::set_value(double value) -> void
+void NodeProperty::set_value(double value)
 {
     std::array<char, 20> str;
     if (auto [ptr, ec] = std::to_chars(str.data(), str.data() + str.size(), value);
@@ -497,40 +502,40 @@ auto NodeProperty::set_value(double value) -> void
     }
 }
 
-auto NodeProperty::set_value(const wxColour& value) -> void
+void NodeProperty::set_value(const wxColour& colour)
 {
     m_value.clear();
-    m_value << value.Red() << ',' << value.Green() << ',' << value.Blue();
+    m_value << colour.Red() << ',' << colour.Green() << ',' << colour.Blue();
 }
 
-auto NodeProperty::set_value(const wxPoint& value) -> void
+void NodeProperty::set_value(const wxPoint& point)
 {
     m_value.clear();
-    m_value << value.x << ',' << value.y;
+    m_value << point.x << ',' << point.y;
 }
 
-auto NodeProperty::set_value(const wxSize& value) -> void
+void NodeProperty::set_value(const wxSize& size)
 {
     m_value.clear();
-    m_value << value.x << ',' << value.y;
+    m_value << size.x << ',' << size.y;
 }
 
-auto NodeProperty::set_value(const wxString& value) -> void
+void NodeProperty::set_value(const wxString& str)
 {
     m_value.clear();
-    m_value << value.utf8_string();
+    m_value << str.utf8_string();
 }
 
 // All but one of the std::vector properties contain text which could have commas in it, so we need
 // to use a '|' character as the separator.
 
-auto NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
-    -> wxue::string
+wxue::string
+    NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
 {
     wxue::string result;
     for (const auto& field: fields)
     {
-        if (result.size())
+        if (!result.empty())
         {
             result << ';';
         }
@@ -539,18 +544,18 @@ auto NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD
     return result;
 }
 
-auto NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& items) const
-    -> wxue::string
+wxue::string
+    NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& fields) const
 {
     wxue::string result;
-    for (auto& item: items)
+    for (auto& item: fields)
     {
-        if (result.size())
+        if (!result.empty())
         {
             result << ';';
         }
         result << item.label;
-        if (item.checked.size() || item.checked.atoi() != 0)
+        if (!item.checked.empty() || item.checked.atoi() != 0)
         {
             result << '|' << item.checked;
         }
@@ -558,19 +563,18 @@ auto NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>&
     return result;
 }
 
-auto NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& items) const
-    -> wxue::string
+wxue::string NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& fields) const
 {
     wxue::string result;
-    for (auto& item: items)
+    for (auto& item: fields)
     {
-        if (result.size())
+        if (!result.empty())
         {
             result << ';';
         }
         result << item.label;
-        if (item.enabled.atoi() != 1 || item.show.atoi() != 1 || item.tooltip.size() ||
-            item.helptext.size())
+        if (item.enabled.atoi() != 1 || item.show.atoi() != 1 || !item.tooltip.empty() ||
+            !item.helptext.empty())
         {
             result << '|' << item.enabled << '|' << item.show << '|' << item.tooltip << '|'
                    << item.helptext;
@@ -579,18 +583,18 @@ auto NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& i
     return result;
 }
 
-auto NodeProperty::convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& items) const
-    -> wxue::string
+wxue::string
+    NodeProperty::convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& fields) const
 {
     wxue::string result;
-    for (auto& item: items)
+    for (auto& item: fields)
     {
-        if (result.size())
+        if (!result.empty())
         {
             result << ';';
         }
         result << item.label;
-        if (item.bitmap.size())
+        if (!item.bitmap.empty())
         {
             result << '|' << item.bitmap;
         }
@@ -612,17 +616,17 @@ std::vector<NODEPROP_STATUSBAR_FIELD> NodeProperty::as_statusbar_fields() const
         return result;
     }
 
-    wxue::StringVector fields(m_value, ';');
+    const wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
         wxue::StringVector parts(field, '|');
-        auto& item = result.emplace_back();
+        NODEPROP_STATUSBAR_FIELD& item = result.emplace_back();
         if (parts.size() == 2)
         {
             item.style = parts[0];
             item.width = parts[1];
         }
-        else if (parts.size() > 0)
+        else if (!parts.empty())
         {
             item.style = parts[0];
             item.width = "-1";
@@ -641,9 +645,9 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
 {
     std::vector<NODEPROP_CHECKLIST_ITEM> result;
 
-    if (m_value.size() && m_value[0] == '"' && wxGetApp().get_ProjectVersion() <= minRequiredVer)
+    if (!m_value.empty() && m_value[0] == '"' && wxGetApp().get_ProjectVersion() <= minRequiredVer)
     {
-        auto array = as_ArrayString();
+        const std::vector<wxue::string> array = as_ArrayString();
         for (const auto& iter: array)
         {
             NODEPROP_CHECKLIST_ITEM item;
@@ -653,12 +657,12 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
         return result;
     }
 
-    wxue::StringVector fields(m_value, ';');
+    const wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
         NODEPROP_CHECKLIST_ITEM item;
         wxue::StringVector parts(field, '|');
-        if (parts.size())
+        if (!parts.empty())
         {
             item.label = parts[0];
             if (parts.size() > 1)
@@ -676,12 +680,12 @@ std::vector<NODEPROP_BMP_COMBO_ITEM> NodeProperty::as_bmp_combo_items() const
 {
     std::vector<NODEPROP_BMP_COMBO_ITEM> result;
 
-    wxue::StringVector fields(m_value, ';');
+    const wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
         NODEPROP_BMP_COMBO_ITEM item;
         wxue::StringVector parts(field, '|');
-        if (parts.size())
+        if (!parts.empty())
         {
             item.label = parts[0];
             if (parts.size() > 1)
@@ -699,12 +703,12 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
 {
     std::vector<NODEPROP_RADIOBOX_ITEM> result;
 
-    wxue::StringVector fields(m_value, ';');
+    const wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
         wxue::StringVector parts(field, '|');
         NODEPROP_RADIOBOX_ITEM item;
-        if (parts.size() > 0)
+        if (!parts.empty())
         {
             item.label = parts[0];
         }
@@ -730,7 +734,7 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
     return result;
 }
 
-auto NodeProperty::HasValue() const -> bool
+bool NodeProperty::HasValue() const
 {
     if (m_value.empty())
     {
@@ -750,14 +754,14 @@ auto NodeProperty::HasValue() const -> bool
             {
                 return (semicolonIndex != 0);
             }
-            return m_value.size();
+            return !m_value.empty();
 
         case type_image:
             if (auto semicolonIndex = m_value.find_first_of(";"); wxue::is_found(semicolonIndex))
             {
                 return (semicolonIndex != 0 && semicolonIndex + 2 < m_value.size());
             }
-            return m_value.size();
+            return !m_value.empty();
 
         case type_bitlist:
             if (isProp(prop_window_style))

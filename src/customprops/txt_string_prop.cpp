@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -55,10 +56,10 @@ public:
 bool EditStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
                                            wxPGProperty* /* property unused */)
 {
-    EditStringDialog dlg(propGrid->GetPanel(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    EditStringDialog edit_string_dlg(propGrid->GetPanel(), m_prop);
+    if (edit_string_dlg.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(edit_string_dlg.GetResults());
         return true;
     }
 

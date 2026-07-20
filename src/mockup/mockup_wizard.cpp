@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 // A wxWizard derives from wxDialog which makes it unusable as a child of the wxPanel used by our
 // Mockup panel. We emulate the functionality here, use similar methods to what that the real
@@ -36,6 +37,11 @@ MockupWizard::MockupWizard(wxWindow* parent, Node* node) :
     SetSizer(m_window_sizer);
 
     ASSERT(m_btn_prev)
+
+    if (!m_btn_prev)
+    {
+        return;
+    }
 
     m_btn_prev->Bind(wxEVT_BUTTON, &MockupWizard::OnBackOrNext, this);
     m_btn_next->Bind(wxEVT_BUTTON, &MockupWizard::OnBackOrNext, this);
@@ -161,18 +167,10 @@ void MockupWizard::SetSelection(size_t page_index)
 
         m_pages[old_page_index]->Hide();
         m_pages[page_index]->Show();
-        m_cur_page_index = page_index;
     }
 
     Fit();
     Layout();
-}
-
-// TODO: [Randalphwa - 04-16-2026] This function is called, but does nothing. Figure out what it's
-// supposed to do and implement it, or remove it and the call to it if it's not needed.
-void MockupWizard::extracted()
-{
-    return;
 }
 
 void MockupWizard::OnBackOrNext(wxCommandEvent& event)
@@ -195,7 +193,6 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
     {
         if (m_cur_page_index == 0)
         {
-            extracted();
             return;
         }
         new_index = m_cur_page_index - 1;

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/dcclient.h>  // wxClientDC base header
 
@@ -20,10 +21,10 @@ ColourRectCtrl::ColourRectCtrl(wxWindow* parent, wxWindowID id, const wxPoint& p
 
 void ColourRectCtrl::OnPaint(wxPaintEvent& /* event unused */)
 {
-    wxPaintDC dc(this);
-    auto size = GetSize();
+    wxPaintDC paint_dc(this);
+    const wxSize size = GetSize();
 
-    wxBrush brush(m_clr);
-    dc.SetBrush(brush);
-    dc.DrawRectangle(0, 0, size.GetWidth(), size.GetHeight());
+    const wxBrush brush(m_clr);
+    paint_dc.SetBrush(brush);
+    paint_dc.DrawRectangle(0, 0, size.GetWidth(), size.GetHeight());
 }

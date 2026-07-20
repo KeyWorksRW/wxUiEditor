@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/filedlg.h>            // wxFileDialog base header
 #include <wx/filename.h>           // wxFileName - encapsulates a file path
@@ -16,22 +17,22 @@
 #include "version.h"          // Version numbers and other constants
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
 
-[[nodiscard]] auto ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
-                                                    [[maybe_unused]] wxPGProperty* property) -> bool
+[[nodiscard]] bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
+                                                    [[maybe_unused]] wxPGProperty* property)
 {
     if (m_img_props.type.contains("Art"))
     {
-        ArtBrowserDialog dlg(propGrid->GetPanel(), m_img_props);
-        if (dlg.ShowModal() == wxID_OK)
+        ArtBrowserDialog art_dlg(propGrid->GetPanel(), m_img_props);
+        if (art_dlg.ShowModal() == wxID_OK)
         {
-            SetValue(dlg.GetResults());
+            SetValue(art_dlg.GetResults());
             return true;
         }
         return false;
     }
     if (m_img_props.type.contains("Embed"))
     {
-        wxue::SaveCwd cwd(wxue::restore_cwd);
+        wxue::SaveCwd const save_cwd(wxue::restore_cwd);
         if (Project.HasValue(prop_art_directory))
         {
             if (auto dir = Project.ArtDirectory(); dir.dir_exists())
@@ -47,7 +48,7 @@
         }
         else
         {
-#ifndef __WXOSX__
+#if !defined(__WXOSX__)
             pattern = "Bitmap "
                       "files|*.png;*.bmp;*.ico;*.webp;*.xpm|PNG|*.png|Tiff|*.tif;*.tiff|WEBP|*."
                       "webp|XPM|*.xpm|Bitmaps|"
@@ -80,13 +81,13 @@
             }
         }
 
-        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString,
-                         pattern, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-        if (dlg.ShowModal() == wxID_OK)
+        wxFileDialog file_dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(),
+                              wxEmptyString, pattern, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (file_dlg.ShowModal() == wxID_OK)
         {
-            wxFileName file(dlg.GetPath());
+            wxFileName file(file_dlg.GetPath());
             file.MakeRelativeTo(Project.get_ProjectPath().wx());
-            auto name = file.GetFullPath();
+            wxString name = file.GetFullPath();
             wxue::back_slashesto_forward(name);
             SetValue(name);
             return true;
@@ -95,7 +96,7 @@
     }
     if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
-        wxue::SaveCwd cwd(wxue::restore_cwd);
+        wxue::SaveCwd const save_cwd(wxue::restore_cwd);
         if (Project.HasValue(prop_art_directory))
         {
             if (const auto* dir = Project.get_ArtPath(); dir->DirExists())
@@ -114,11 +115,11 @@
             pattern = "XPM files (*.xpm)|*.xpm";
         }
 
-        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString,
-                         pattern, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-        if (dlg.ShowModal() == wxID_OK)
+        wxFileDialog file_dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(),
+                              wxEmptyString, pattern, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (file_dlg.ShowModal() == wxID_OK)
         {
-            wxue::string name = dlg.GetPath().utf8_string();
+            wxue::string name = file_dlg.GetPath().utf8_string();
             name.make_relative(Project.get_ProjectPath());
             name.backslashestoforward();
             SetValue(name.wx());

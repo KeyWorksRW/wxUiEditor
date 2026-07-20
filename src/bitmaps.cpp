@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <fstream>
 
@@ -155,8 +156,6 @@ const std::map<std::string_view, std::function<wxBitmapBundle(int width, int hei
         { "wxPropertyGrid", bundle_wxPropertyGrid_svg },
         { "wxPropertyGridManager", bundle_wxPropertyGrid_svg },
         { "xml_file", bundle_xml_file_svg },
-
-        { "unknown", bundle_unknown_svg },
     };
 
 // Images that may be accessed more than once (typically for popup menus) should be at the front for
@@ -170,7 +169,7 @@ static const ImageMap png_headers[] = {
 
 };
 
-auto GetInternalImage(wxue::string_view name) -> wxImage
+wxImage GetInternalImage(wxue::string_view name)
 {
     for (const auto& iter: png_headers)
     {
@@ -184,7 +183,7 @@ auto GetInternalImage(wxue::string_view name) -> wxImage
     return LoadHeaderImage(default_png, sizeof(default_png));
 }
 
-auto GetSvgImage(wxue::string_view name, int width, int height) -> wxBitmapBundle
+wxBitmapBundle GetSvgImage(wxue::string_view name, int width, int height)
 {
     if (auto bndl_function = GetSvgFunction(name); bndl_function)
     {
@@ -194,18 +193,18 @@ auto GetSvgImage(wxue::string_view name, int width, int height) -> wxBitmapBundl
     return bundle_unknown_svg(width, height);
 }
 
-auto GetSvgImage(wxue::string_view name, const wxSize& size) -> wxBitmapBundle
+wxBitmapBundle GetSvgImage(wxue::string_view name, const wxSize& size)
 {
     return GetSvgImage(name, size.GetWidth(), size.GetHeight());
 }
 
-auto GetIconImage(wxue::string_view name) -> wxIcon
+wxIcon GetIconImage(wxue::string_view name)
 {
     for (const auto& iter: png_headers)
     {
         if (name.is_sameas(iter.name))
         {
-            auto image = LoadHeaderImage(iter.data, iter.size_data);
+            wxImage image = LoadHeaderImage(iter.data, iter.size_data);
             image.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
             wxIcon icon;
             icon.CopyFromBitmap(image);
@@ -213,7 +212,7 @@ auto GetIconImage(wxue::string_view name) -> wxIcon
         }
     }
 
-    const auto image = GetInternalImage(name);
+    const wxImage image = GetInternalImage(name);
     wxIcon icon;
     icon.CopyFromBitmap(image);
     return icon;
@@ -222,8 +221,8 @@ auto GetIconImage(wxue::string_view name) -> wxIcon
 // [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will
 // be called during project loading, and there could be dozens of calls to the same problem file(s).
 
-auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::string* p_mime_type)
-    -> wxImage
+wxImage GetHeaderImage(wxue::string_view filename, size_t* p_original_size,
+                       wxue::string* p_mime_type)
 {
     wxImage image;
 
@@ -240,7 +239,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
         return image;
     }
     std::string in_buf(std::istreambuf_iterator<char>(fileOriginal), {});
-    if (in_buf.size() < 1)
+    if (in_buf.empty())
     {
         MSG_ERROR(wxue::string() << filename << " is empty!");
         return image;
@@ -253,13 +252,16 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
     size_t image_buffer_size = 0;
     size_t actual_size = 0;
 
-    auto buf_ptr = strchr(in_buf.c_str(), '[');
+    const char* buf_ptr = strchr(in_buf.c_str(), '[');
     if (buf_ptr)
     {
         image_buffer_size = wxue::atoi(++buf_ptr);
+        buf_ptr = strchr(buf_ptr, '{');
     }
-
-    buf_ptr = strchr(buf_ptr, '{');
+    else
+    {
+        buf_ptr = strchr(in_buf.c_str(), '{');
+    }
     if (!buf_ptr)
     {
         MSG_ERROR(wxue::string() << filename << " doesn't contain an opening brace");
@@ -275,7 +277,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
         // actually store the data in an image buffer.
         isUiditorFile = false;
 
-        const auto* save_ptr = buf_ptr;
+        const char* save_ptr = buf_ptr;
 
         do
         {
@@ -322,7 +324,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    auto* out_buffer = image_buffer.get();
+    unsigned char* out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -336,9 +338,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
                 {
                     value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
-                out_buffer[actual_size] = value;
-
-                if (++actual_size > image_buffer_size)
+                if (actual_size >= image_buffer_size)
                 {
                     MSG_ERROR(
                         wxue::string()
@@ -346,6 +346,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
                         << " actual image size is larger that the size specified in brackets");
                     return image;
                 }
+                out_buffer[actual_size++] = value;
             }
             else
             {
@@ -364,31 +365,43 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
             if (*buf_ptr >= '0' && *buf_ptr <= '9')
             {
                 if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
+                {
                     buf_ptr += 2;
+                }
 
                 unsigned char value = 0;
 
                 // Get the high value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
+                {
                     value = (to_uchar) (*buf_ptr - '0') * 16;
+                }
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
+                {
                     value = (to_uchar) ((*buf_ptr - 'A') + 10) * 16;
+                }
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
+                {
                     value = (to_uchar) ((*buf_ptr - 'a') + 10) * 16;
+                }
 
                 ++buf_ptr;
 
                 // Get the low value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
+                {
                     value += (to_uchar) (*buf_ptr - '0');
+                }
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
+                {
                     value += (to_uchar) ((*buf_ptr - 'A') + 10);
+                }
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
+                {
                     value += (to_uchar) ((*buf_ptr - 'a') + 10);
+                }
 
-                out_buffer[actual_size] = value;
-
-                if (++actual_size > image_buffer_size)
+                if (actual_size >= image_buffer_size)
                 {
                     MSG_ERROR(
                         wxue::string()
@@ -396,15 +409,16 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
                         << " actual image size is larger that the size specified in brackets");
                     return image;
                 }
+                out_buffer[actual_size++] = value;
             }
             ++buf_ptr;
         } while (*buf_ptr != '}' && *buf_ptr);
     }
     wxMemoryInputStream stream(image_buffer.get(), actual_size);
 
-    wxImageHandler* handler;
-    auto& list = wxImage::GetHandlers();
-    for (auto node = list.GetFirst(); node; node = node->GetNext())
+    wxImageHandler* handler = nullptr;
+    const wxList& list = wxImage::GetHandlers();
+    for (wxList::compatibility_iterator node = list.GetFirst(); node; node = node->GetNext())
     {
         handler = (wxImageHandler*) node->GetData();
         if (handler->CanRead(stream))
@@ -430,7 +444,7 @@ auto GetHeaderImage(wxue::string_view filename, size_t* p_original_size, wxue::s
 
 // This is almost identical to GetImageFromArray() -- the only difference is that this one
 // first tries to load the image via the PNG handler.
-auto LoadHeaderImage(const unsigned char* data, size_t size_data) -> wxImage
+wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream stream(data, size_data);
     wxImage image;
@@ -438,7 +452,7 @@ auto LoadHeaderImage(const unsigned char* data, size_t size_data) -> wxImage
     // Images are almost always in PNG format, so check that first. If it fails, then let wxWidgets
     // figure out the format.
 
-    auto* handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
+    wxImageHandler* handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
     if (handler && handler->CanRead(stream) && handler->LoadFile(&image, stream))
     {
         return image;
@@ -448,7 +462,7 @@ auto LoadHeaderImage(const unsigned char* data, size_t size_data) -> wxImage
     return image;
 }
 
-auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bool
+bool GetAnimationImage(wxAnimation& animation, wxue::string_view filename)
 {
     if (!filename.file_exists())
     {
@@ -463,7 +477,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
         return animation.IsOk();
     }
     std::string in_buf(std::istreambuf_iterator<char>(fileOriginal), {});
-    if (in_buf.size() < 1)
+    if (in_buf.empty())
     {
         MSG_ERROR(wxue::string() << filename << " is empty!");
         return animation.IsOk();
@@ -476,13 +490,16 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
     size_t image_buffer_size = 0;
     size_t actual_size = 0;
 
-    const auto* buf_ptr = strchr(in_buf.c_str(), '[');
+    const char* buf_ptr = strchr(in_buf.c_str(), '[');
     if (buf_ptr)
     {
         image_buffer_size = wxue::atoi(++buf_ptr);
+        buf_ptr = strchr(buf_ptr, '{');
     }
-
-    buf_ptr = strchr(buf_ptr, '{');
+    else
+    {
+        buf_ptr = strchr(in_buf.c_str(), '{');
+    }
     if (!buf_ptr)
     {
         MSG_ERROR(wxue::string() << filename << " doesn't contain an opening brace");
@@ -498,7 +515,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
         // actually store the data in an animation buffer.
         isUiditorFile = false;
 
-        const auto* save_ptr = buf_ptr;
+        const char* save_ptr = buf_ptr;
 
         do
         {
@@ -545,7 +562,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    auto* out_buffer = image_buffer.get();
+    unsigned char* out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -559,9 +576,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
                 {
                     value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
-                out_buffer[actual_size] = value;
-
-                if (++actual_size > image_buffer_size)
+                if (actual_size >= image_buffer_size)
                 {
                     MSG_ERROR(
                         wxue::string()
@@ -569,6 +584,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
                         << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
                 }
+                out_buffer[actual_size++] = value;
             }
             else
             {
@@ -623,9 +639,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
                     value += (to_uchar) ((*buf_ptr - 'a') + 10);
                 }
 
-                out_buffer[actual_size] = value;
-
-                if (++actual_size > image_buffer_size)
+                if (actual_size >= image_buffer_size)
                 {
                     MSG_ERROR(
                         wxue::string()
@@ -633,6 +647,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
                         << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
                 }
+                out_buffer[actual_size++] = value;
             }
             ++buf_ptr;
         } while (*buf_ptr != '}' && *buf_ptr);
@@ -642,7 +657,7 @@ auto GetAnimationImage(wxAnimation& animation, wxue::string_view filename) -> bo
     return animation.IsOk();
 }
 
-auto LoadAnimationImage(const unsigned char* data, size_t size_data) -> wxAnimation
+wxAnimation LoadAnimationImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream stream(data, size_data);
     wxAnimation animation;

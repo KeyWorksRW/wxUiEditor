@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #pragma once
 
@@ -14,7 +15,7 @@ private:
 
 public:
     Prefs(Prefs&&) = delete;
-    auto operator=(Prefs&&) -> Prefs& = delete;
+    Prefs& operator=(Prefs&&) = delete;
     Prefs(Prefs const&) = delete;
 
     void operator=(Prefs const&) = delete;
@@ -35,117 +36,114 @@ public:
     void ReadConfig();
     void WriteConfig();
     // Add borders around all new sizers
-    auto is_SizersAllBorders() const -> bool { return m_sizers_all_borders; }
+    bool is_SizersAllBorders() const { return m_sizers_all_borders; }
 
     // Add expand flag to all new sizers
-    auto is_SizersExpand() const -> bool { return m_sizers_always_expand; }
+    bool is_SizersExpand() const { return m_sizers_always_expand; }
 
     // Enable WakaTime support
-    auto is_WakaTimeEnabled() const -> bool { return m_enable_wakatime; }
+    bool is_WakaTimeEnabled() const { return m_enable_wakatime; }
 
-    auto is_DarkMode() const -> bool { return m_dark_mode; }
-    auto is_DarkModePending() const -> bool { return m_dark_mode_pending; }
+    bool is_DarkMode() const { return m_dark_mode; }
+    bool is_DarkModePending() const { return m_dark_mode_pending; }
     void set_DarkMode(bool value) { m_dark_mode = value; }
     void set_DarkModePending(size_t value) { m_dark_mode_pending = value; }
     // Only true if both dark mode and high contrast are enabled
-    auto is_HighContrast() const -> bool { return (m_dark_mode && m_high_contrast); }
+    bool is_HighContrast() const { return (m_dark_mode && m_high_contrast); }
     void set_HighContrast(bool value) { m_high_contrast = value; }
 
-    auto is_FullPathTitle() const -> bool { return m_fullpath_title; }
+    bool is_FullPathTitle() const { return m_fullpath_title; }
     void set_FullPathTitle(bool value) { m_fullpath_title = value; }
 
-    auto is_AddComments() const -> bool { return m_add_comments; }
+    bool is_AddComments() const { return m_add_comments; }
 
-    auto is_SvgImages() const -> bool { return m_svg_images; }
+    bool is_SvgImages() const { return m_svg_images; }
     void set_SvgImages(bool value) { m_svg_images = value; }
 
-    auto is_LoadLastProject() const -> bool { return m_is_load_last_project; }
+    bool is_LoadLastProject() const { return m_is_load_last_project; }
     void set_LoadLastProject(bool value) { m_is_load_last_project = value; }
 
-    auto is_RightPropGrid() const -> bool { return m_is_right_propgrid; }
+    bool is_RightPropGrid() const { return m_is_right_propgrid; }
     void set_RightPropGrid(bool value) { m_is_right_propgrid = value; }
 
-    auto is_CppSnakeCase() const -> bool { return m_is_cpp_snake_case; }
+    bool is_CppSnakeCase() const { return m_is_cpp_snake_case; }
     void set_CppSnakeCase(bool value) { m_is_cpp_snake_case = value; }
 
-    auto get_CppLineLength() const -> int { return m_cpp_line_length; }
+    int get_CppLineLength() const { return m_cpp_line_length; }
     void set_CppLineLength(int length) { m_cpp_line_length = length; }
 
-    auto get_PythonLineLength() const -> int { return m_python_line_length; }
+    int get_PythonLineLength() const { return m_python_line_length; }
     void set_PythonLineLength(int length) { m_python_line_length = length; }
 
-    auto get_RubyLineLength() const -> int { return m_ruby_line_length; }
+    int get_RubyLineLength() const { return m_ruby_line_length; }
     void set_RubyLineLength(int length) { m_ruby_line_length = length; }
 
-    auto get_PerlLineLength() const -> int { return m_perl_line_length; }
+    int get_PerlLineLength() const { return m_perl_line_length; }
     void set_PerlLineLength(int length) { m_perl_line_length = length; }
 
-    auto get_IconSize() const -> int { return m_icon_size; }
+    int get_IconSize() const { return m_icon_size; }
     void set_IconSize(int size) { m_icon_size = size; }
 
     // Use this string to construct a FontProperty() to get the values
-    auto get_CodeDisplayFont() const -> const wxue::string& { return m_code_display_font; }
+    const wxue::string& get_CodeDisplayFont() const { return m_code_display_font; }
 
     // This should be the string returned from FontProperty::as_string()
     void set_CodeDisplayFont(const wxue::string& font) { m_code_display_font = font; }
 
-    auto get_CppWidgetsVersion() const -> const wxue::string& { return m_cpp_widgets_version; }
+    const wxue::string& get_CppWidgetsVersion() const { return m_cpp_widgets_version; }
     void set_CppWidgetsVersion(const wxue::string& version) { m_cpp_widgets_version = version; }
-    auto get_PythonVersion() const -> const wxue::string& { return m_python_version; }
+    const wxue::string& get_PythonVersion() const { return m_python_version; }
     void set_PythonVersion(const wxue::string& version) { m_python_version = version; }
-    auto get_RubyVersion() const -> const wxue::string& { return m_ruby_version; }
+    const wxue::string& get_RubyVersion() const { return m_ruby_version; }
     void set_RubyVersion(const wxue::string& version) { m_ruby_version = version; }
 
-    auto get_CppColour() const -> const wxColour& { return m_colour_cpp; }  // wxWidgets keywords
+    const wxColour& get_CppColour() const { return m_colour_cpp; }  // wxWidgets keywords
     void set_CppColour(const wxColour& colour) { m_colour_cpp = colour; }
-    auto get_CppKeywordColour() const -> const wxColour&
-    {
-        return m_colour_cpp_keyword;
-    }  // C++ keywords
+    const wxColour& get_CppKeywordColour() const { return m_colour_cpp_keyword; }  // C++ keywords
     void set_CppKeywordColour(const wxColour& colour) { m_colour_cpp_keyword = colour; }
-    auto get_CppCommentColour() const -> const wxColour& { return m_colour_cpp_comment; }
+    const wxColour& get_CppCommentColour() const { return m_colour_cpp_comment; }
     void set_CppCommentColour(const wxColour& colour) { m_colour_cpp_comment = colour; }
-    auto get_CppNumberColour() const -> const wxColour& { return m_colour_cpp_number; }
+    const wxColour& get_CppNumberColour() const { return m_colour_cpp_number; }
     void set_CppNumberColour(const wxColour& colour) { m_colour_cpp_number = colour; }
-    auto get_CppStringColour() const -> const wxColour& { return m_colour_cpp_string; }
+    const wxColour& get_CppStringColour() const { return m_colour_cpp_string; }
     void set_CppStringColour(const wxColour& colour) { m_colour_cpp_string = colour; }
 
-    auto get_PythonColour() const -> const wxColour& { return m_colour_python; }
+    const wxColour& get_PythonColour() const { return m_colour_python; }
     void set_PythonColour(const wxColour& colour) { m_colour_python = colour; }
-    auto get_PythonKeywordColour() const -> const wxColour& { return m_colour_python_keyword; }
+    const wxColour& get_PythonKeywordColour() const { return m_colour_python_keyword; }
     void set_PythonKeywordColour(const wxColour& colour) { m_colour_python_keyword = colour; }
-    auto get_PythonNumberColour() const -> const wxColour& { return m_colour_python_number; }
+    const wxColour& get_PythonNumberColour() const { return m_colour_python_number; }
     void set_PythonNumberColour(const wxColour& colour) { m_colour_python_number = colour; }
-    auto get_PythonStringColour() const -> const wxColour& { return m_colour_python_string; }
+    const wxColour& get_PythonStringColour() const { return m_colour_python_string; }
     void set_PythonStringColour(const wxColour& colour) { m_colour_python_string = colour; }
-    auto get_PythonCommentColour() const -> const wxColour& { return m_colour_python_comment; }
+    const wxColour& get_PythonCommentColour() const { return m_colour_python_comment; }
     void set_PythonCommentColour(const wxColour& colour) { m_colour_python_comment = colour; }
 
-    auto get_RubyColour() const -> const wxColour& { return m_colour_ruby; }
+    const wxColour& get_RubyColour() const { return m_colour_ruby; }
     void set_RubyColour(const wxColour& colour) { m_colour_ruby = colour; }
-    auto get_RubyCommentColour() const -> const wxColour& { return m_colour_ruby_comment; }
+    const wxColour& get_RubyCommentColour() const { return m_colour_ruby_comment; }
     void set_RubyCommentColour(const wxColour& colour) { m_colour_ruby_comment = colour; }
-    auto get_RubyNumberColour() const -> const wxColour& { return m_colour_ruby_number; }
+    const wxColour& get_RubyNumberColour() const { return m_colour_ruby_number; }
     void set_RubyNumberColour(const wxColour& colour) { m_colour_ruby_number = colour; }
-    auto get_RubyStringColour() const -> const wxColour& { return m_colour_ruby_string; }
+    const wxColour& get_RubyStringColour() const { return m_colour_ruby_string; }
     void set_RubyStringColour(const wxColour& colour) { m_colour_ruby_string = colour; }
 
-    auto get_PerlColour() const -> const wxColour& { return m_colour_perl; }
+    const wxColour& get_PerlColour() const { return m_colour_perl; }
     void set_PerlColour(const wxColour& colour) { m_colour_perl = colour; }
-    auto get_PerlCommentColour() const -> const wxColour& { return m_colour_perl_comment; }
+    const wxColour& get_PerlCommentColour() const { return m_colour_perl_comment; }
     void set_PerlCommentColour(const wxColour& colour) { m_colour_perl_comment = colour; }
-    auto get_PerlKeywordColour() const -> const wxColour& { return m_colour_perl_keyword; }
+    const wxColour& get_PerlKeywordColour() const { return m_colour_perl_keyword; }
     void set_PerlKeywordColour(const wxColour& colour) { m_colour_perl_keyword = colour; }
-    auto get_PerlNumberColour() const -> const wxColour& { return m_colour_perl_number; }
+    const wxColour& get_PerlNumberColour() const { return m_colour_perl_number; }
     void set_PerlNumberColour(const wxColour& colour) { m_colour_perl_number = colour; }
-    auto get_PerlStringColour() const -> const wxColour& { return m_colour_perl_string; }
+    const wxColour& get_PerlStringColour() const { return m_colour_perl_string; }
     void set_PerlStringColour(const wxColour& colour) { m_colour_perl_string = colour; }
 
-    auto get_XrcAttributeColour() const -> const wxColour& { return m_colour_xrc_attribute; }
+    const wxColour& get_XrcAttributeColour() const { return m_colour_xrc_attribute; }
     void set_XrcAttributeColour(const wxColour& colour) { m_colour_xrc_attribute = colour; }
-    auto get_XrcDblStringColour() const -> const wxColour& { return m_colour_xrc_dblstring; }
+    const wxColour& get_XrcDblStringColour() const { return m_colour_xrc_dblstring; }
     void set_XrcDblStringColour(const wxColour& colour) { m_colour_xrc_dblstring = colour; }
-    auto get_XrcTagColour() const -> const wxColour& { return m_colour_xrc_tag; }
+    const wxColour& get_XrcTagColour() const { return m_colour_xrc_tag; }
     void set_XrcTagColour(const wxColour& colour) { m_colour_xrc_tag = colour; }
 
     void set_SizersAllBorders(bool setting) { m_sizers_all_borders = setting; }
@@ -153,25 +151,25 @@ public:
     void set_VarPrefix(bool setting) { m_var_prefix = setting; }
     void set_WakaTimeEnabled(bool setting) { m_enable_wakatime = setting; }
 
-    auto GetDebugFlags() const -> long { return m_flags; }
+    long GetDebugFlags() const { return m_flags; }
     void SetDebugFlags(long flags) { m_flags = flags; }
 
-    auto GetProjectFlags() const -> long { return m_project_flags; }
+    long GetProjectFlags() const { return m_project_flags; }
     void SetProjectFlags(long flags) { m_project_flags = flags; }
 
     // The following are used by the OptionsDlg class to efficiently update the preferences
 
-    auto RefVarPrefix() -> bool& { return m_var_prefix; }
-    auto RefSizersAllBorders() -> bool& { return m_sizers_all_borders; }
-    auto RefSizersExpand() -> bool& { return m_sizers_always_expand; }
-    auto RefWakaTimeEnabled() -> bool& { return m_enable_wakatime; }
+    bool& RefVarPrefix() { return m_var_prefix; }
+    bool& RefSizersAllBorders() { return m_sizers_all_borders; }
+    bool& RefSizersExpand() { return m_sizers_always_expand; }
+    bool& RefWakaTimeEnabled() { return m_enable_wakatime; }
 
-    auto GetPreviewType() const -> PREVIEW_TYPE { return m_preview_type; }
+    PREVIEW_TYPE GetPreviewType() const { return m_preview_type; }
     void SetPreviewType(PREVIEW_TYPE type) { m_preview_type = type; }
 
     // The returned colour will depend on whether dark mode (and high contrast) is enabled or
     // not.
-    auto GetColour(wxSystemColour index) -> wxColour;
+    wxColour GetColour(wxSystemColour index);
 
     // clang-format off
     enum : long
@@ -209,8 +207,6 @@ private:
     wxue::string m_cpp_widgets_version { "3.2" };
     wxue::string m_python_version { "4.2" };
     wxue::string m_ruby_version { "1.2" };
-    wxue::string m_perl_version { "3.2" };
-
     wxue::string m_code_display_font;
 
     wxColour m_colour_cpp { wxColour("#FF00FF") };
@@ -227,7 +223,7 @@ private:
 
     wxColour m_colour_ruby { wxColour("#FF00FF") };
     wxColour m_colour_ruby_comment { wxColour("#008000") };
-    wxColour m_colour_ruby_number { wxColour("#FF000000") };
+    wxColour m_colour_ruby_number { wxColour("#FF0000") };
     wxColour m_colour_ruby_string { wxColour("#008000") };
 
     wxColour m_colour_perl { wxColour("#FF00FF") };
@@ -273,7 +269,8 @@ extern Prefs& UserPrefs;
 
 // These are utility functions for converting colors
 
-void wxColourToHSL(const wxColour& colour, double& hue, double& saturation, double& luminance);
-auto HSLToWxColour(double hue, double saturation, double luminance) -> wxColour;
-auto wxColourToDarkForeground(const wxColour& colour) -> wxColour;
-auto wxColourToDarkBackground(const wxColour& colour) -> wxColour;
+void wxColourToHSL(const wxColour& colour, double& hue_value, double& saturation_value,
+                   double& luminance_value);
+wxColour HSLToWxColour(double hue_value, double saturation_value, double luminance_value);
+wxColour wxColourToDarkForeground(const wxColour& colour);
+wxColour wxColourToDarkBackground(const wxColour& colour);

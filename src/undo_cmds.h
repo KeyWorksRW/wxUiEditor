@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #pragma once
 
@@ -230,10 +231,6 @@ public:
 private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_old_selected;
-
-    // REVIEW: [Randalphwa - 06-13-2022] m_old_pos can be -1, so it really should either be an int
-    // or an int64_t.
-    size_t m_old_pos;
 
     int m_pos;
     bool m_fix_duplicate_names { true };

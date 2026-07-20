@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <array>
 
@@ -106,10 +107,10 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     Item(IndexSize)->SetHelpString("Default size -- ignored unless it's an SVG or ART file.");
 }
 
-auto PropertyGrid_Image::RefreshChildren() -> void
+void PropertyGrid_Image::RefreshChildren()
 {
-    wxString value = m_value;
-    if (value.size())
+    const wxString value = m_value;
+    if (!value.empty())
     {
         m_img_props.InitValues(value.utf8_string());
 
@@ -146,7 +147,7 @@ auto PropertyGrid_Image::RefreshChildren() -> void
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
         {
             wxBitmapBundle bundle;
-            if (m_img_props.image.size())
+            if (!m_img_props.image.empty())
             {
                 if (m_img_props.type != "XPM")
                 {
@@ -205,7 +206,7 @@ auto PropertyGrid_Image::RefreshChildren() -> void
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
 }
 
-auto PropertyGrid_Image::SetAutoComplete() -> void
+void PropertyGrid_Image::SetAutoComplete()
 {
     wxArrayString array_art_ids;
     if (m_img_props.type == "Art")
@@ -217,14 +218,14 @@ auto PropertyGrid_Image::SetAutoComplete() -> void
     }
     else
     {
-        auto art_dir = Project.as_string(prop_art_directory);
+        wxue::string art_dir = Project.as_string(prop_art_directory);
         if (art_dir.empty())
         {
             art_dir = "./";
         }
-        wxDir dir;
+        const wxDir dir;
         wxArrayString array_files;
-        wxBusyCursor hourglass;
+        const wxBusyCursor hourglass;
         if (m_img_props.type == "Embed")
         {
             // For auto-completion, we limit the array to the most common image types
@@ -243,7 +244,7 @@ auto PropertyGrid_Image::SetAutoComplete() -> void
 
         for (auto& iter: array_files)
         {
-            wxFileName name(iter);
+            const wxFileName name(iter);
             array_art_ids.Add(name.GetFullName());
         }
     }
@@ -263,8 +264,8 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
         img_props.SetHeight(24);
     }
 
-    auto value = thisValue.GetString();
-    if (value.size())
+    wxString value = thisValue.GetString();
+    if (!value.empty())
     {
         img_props.InitValues(value.utf8_string());
     }
@@ -303,11 +304,13 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             {
                 if (img_props.type == "Art")
                 {
-                    auto mstr = childValue.GetString().utf8_string();
+                    const std::string mstr = childValue.GetString().utf8_string();
                     wxue::ViewVector art_str(mstr, '|', wxue::TRIM::both);
-                    wxString art_id = art_str[0].wx();
-                    auto bmp = wxArtProvider::GetBitmap(
-                        art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_str[1].wx()));
+                    const wxString art_id = art_str[0].wx();
+                    const wxString art_client_id =
+                        art_str.size() > 1 ? art_str[1].wx() : wxString {};
+                    const wxBitmap bmp = wxArtProvider::GetBitmap(
+                        art_id, wxART_MAKE_CLIENT_ID_FROM_STR(art_client_id));
                     if (bmp.IsOk())
                     {
                         img_props.SetSize(bmp.GetSize());
@@ -321,7 +324,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 else
                 {
                     wxue::string name(childValue.GetString().utf8_string());
-                    if (name.size())
+                    if (!name.empty())
                     {
                         if (!name.file_exists())
                         {
@@ -338,10 +341,13 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
 
         case IndexSize:
             {
-                auto u8_value = childValue.GetString().utf8_string();
+                const std::string u8_value = childValue.GetString().utf8_string();
                 wxue::ViewVector mstr(u8_value, ',');
-                img_props.SetWidth(mstr[0].atoi());
-                img_props.SetHeight(mstr[1].atoi());
+                if (mstr.size() >= 2)
+                {
+                    img_props.SetWidth(mstr[0].atoi());
+                    img_props.SetHeight(mstr[1].atoi());
+                }
             }
             break;
     }

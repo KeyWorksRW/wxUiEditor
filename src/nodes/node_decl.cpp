@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 #include <format>
 
@@ -137,9 +138,9 @@ void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, boo
     }
 }
 
-bool NodeDeclaration::isSubclassOf(GenName get_GenName) const
+bool NodeDeclaration::isSubclassOf(GenName class_name) const
 {
-    if (get_GenName == m_gen_name)
+    if (class_name == m_gen_name)
     {
         return true;
     }
@@ -147,7 +148,7 @@ bool NodeDeclaration::isSubclassOf(GenName get_GenName) const
     GetBaseClasses(classes);
     for (const auto& iter: classes)
     {
-        if (iter->isSubclassOf(get_GenName))
+        if (iter->isSubclassOf(class_name))
         {
             return true;
         }

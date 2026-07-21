@@ -5,8 +5,7 @@
 // std::make_unique) Status: Phase 1.5 complete - removed cmark_mem allocator abstraction
 // Dependencies: buffer.hxx, chunk.hxx, cmark-gfm.hxx, inlines.hxx, references.hxx, footnotes.hxx
 
-#include <cstdlib>
-#include <cstring>
+#include <stdexcept>
 
 #include "node.hxx"
 #include "syntax_extension.hxx"
@@ -32,22 +31,18 @@ void cmark_register_node_flag(CMarkNodeInternalFlags* flags)
     // should only be called once to initialize its value.
     if (static_cast<uint16_t>(*flags))
     {
-        std::println(stderr, "flag initialization error in cmark_register_node_flag");
-        abort();
+        throw std::runtime_error("flag initialization error in cmark_register_node_flag");
     }
 
     // Check that we haven't run out of bits.
     if (static_cast<uint16_t>(nextflag) == 0)
     {
-        std::println(stderr, "too many flags in cmark_register_node_flag");
-        abort();
+        throw std::runtime_error("too many flags in cmark_register_node_flag");
     }
 
     *flags = nextflag;
     nextflag = static_cast<CMarkNodeInternalFlags>(static_cast<uint16_t>(nextflag) << 1);
 }
-
-void cmark_init_standard_node_flags() {}
 
 bool cmark_node_can_contain_type(cmark_node* node, cmark_node_type child_type)
 {

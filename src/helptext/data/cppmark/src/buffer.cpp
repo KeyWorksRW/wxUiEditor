@@ -1,10 +1,6 @@
-#include <algorithm>
-
 #include <cassert>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <print>
+#include <stdexcept>
 
 #include "buffer.hxx"
 #include "cmark_ctype.hxx"
@@ -30,10 +26,8 @@ void CMarkStringBuffer::Grow(size_t target_size)
 
     if (target_size > static_cast<size_t>(INT32_MAX / 2))
     {
-        std::print(stderr,
-                   "[cmark] CMarkStringBuffer::Grow requests buffer with size > {:L}, aborting\n",
-                   (INT32_MAX / 2));
-        abort();
+        throw std::length_error(
+            "[cmark] CMarkStringBuffer::Grow requests buffer with size > 1'073'741'823");
     }
 
     // Oversize the buffer by 50% to guarantee amortized linear time complexity on

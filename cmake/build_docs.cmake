@@ -36,6 +36,8 @@ execute_process(
         -B "${_br_build_dir}"
         -S "${_br_src_dir}"
         -DCMAKE_BUILD_TYPE=Release
+        "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
+        "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
     RESULT_VARIABLE _configure_result
     OUTPUT_VARIABLE _configure_output
     ERROR_VARIABLE _configure_error

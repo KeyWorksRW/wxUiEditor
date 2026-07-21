@@ -60,7 +60,10 @@ namespace ftsrch
         result.push_back(static_cast<std::uint8_t>((name_length >> 8) & 0xFFU));
         result.push_back(static_cast<std::uint8_t>((name_length >> 16) & 0xFFU));
         result.push_back(static_cast<std::uint8_t>((name_length >> 24) & 0xFFU));
-        result.insert(result.end(), meta.source_name.begin(), meta.source_name.end());
+        if (!meta.source_name.empty())
+        {
+            result.insert(result.end(), meta.source_name.begin(), meta.source_name.end());
+        }
         std::uint64_t time_value = meta.timestamp;
         for (int i = 0; i < 8; ++i)
         {
@@ -112,7 +115,10 @@ namespace ftsrch
             result.push_back(static_cast<std::uint8_t>((title_length >> 8) & 0xFFU));
             result.push_back(static_cast<std::uint8_t>((title_length >> 16) & 0xFFU));
             result.push_back(static_cast<std::uint8_t>((title_length >> 24) & 0xFFU));
-            result.insert(result.end(), title.begin(), title.end());
+            if (title_length > 0)
+            {
+                result.insert(result.end(), title.begin(), title.end());
+            }
         }
         return result;
     }

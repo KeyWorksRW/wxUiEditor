@@ -3359,17 +3359,15 @@
       </node>
       <node
         class="PanelForm"
-        class_name="LanguageDocs"
+        class_name="LanguageDocsBase"
         window_style="0"
-        base_file="..\panels\language_docs.cpp"
+        base_file="language_docs_base.cpp"
         initial_enum_string="START_DOCVIEW_IDS"
         local_src_includes="version.h"
         header_preamble="class CustomEvent;@@class wxWebView;@@class MainFrame;"
-        no_closing_brace="1"
-        derived_class_name="DocView"
-        derived_file="docview"
+        derived_class_name="LanguageDocs"
         private_members="1"
-        use_derived_class="0">
+        pure_virtual_functions="1">
         <node
           class="wxBoxSizer"
           class_access="protected:"
@@ -7831,7 +7829,7 @@
               var_name="box_sizer2">
               <node
                 class="wxStaticBitmap"
-                bitmap="SVG;../art_src/wxlogo.svg;[24,24]"
+                bitmap="SVG;wxlogo.svg;[24,24]"
                 var_name="bmp2" />
               <node
                 class="wxHyperlinkCtrl"

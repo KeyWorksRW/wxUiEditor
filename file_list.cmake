@@ -333,7 +333,7 @@ set( file_list
     src/panels/cstm_propgrid.cpp       # Derived wxPropertyGrid class
     src/panels/ribbon_tools.cpp        # Displays node creation tools in a wxRibbonBar
 
-    # (generated) panels/doc_view.cpp         # Panel for displaying docs in wxWebView
+    src/panels/language_docs.cpp         # Panel for displaying wxWidgets documentation for current language
     # (generated) panels/nav_toolbar.cpp
 
     # Project classes

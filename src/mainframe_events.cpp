@@ -15,7 +15,6 @@
 #include <wx/infobar.h>      // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/stc/stc.h>      // Scintilla
 
-#include "wx/msw/toplevel.h"
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
 #include "mainframe.h"

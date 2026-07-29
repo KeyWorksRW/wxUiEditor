@@ -772,7 +772,12 @@ int RunParser(const ParseOptions& opts)
     if (!opts.single_file)
     {
         const std::vector<fs::path> list_files = GenerateLists(results, symbols, output_dir);
+#if defined(_WIN32)
         all_generated_files.append_range(list_files);
+#else
+        // clang-20 on Ubuntu 24 (GitHub runner) does not support std::vector::append_range (C++23).
+        all_generated_files.insert(all_generated_files.end(), list_files.begin(), list_files.end());
+#endif
         if (opts.verbose)
         {
             parser::AddResultMessage("Generated list files: data/classes.md, data/events.md, "

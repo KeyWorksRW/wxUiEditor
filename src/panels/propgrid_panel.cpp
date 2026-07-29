@@ -9,6 +9,8 @@
 // See propgrid_events.cpp for event handlers for this class
 // See progrid_modify.cpp for functions that modify properties in the property grid
 
+#include <utility>  // std::to_underlying
+
 #include <wx/arrstr.h>             // wxArrayString class
 #include <wx/aui/auibook.h>        // wxaui: wx advanced user interface - notebook
 #include <wx/config.h>             // wxConfig base header

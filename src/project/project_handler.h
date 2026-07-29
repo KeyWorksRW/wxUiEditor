@@ -9,7 +9,7 @@
 
 #include <cstdint>        // for std::uint8_t
 #include <unordered_map>  // for std::unordered_map
-#include <utility>        // for pair<>
+#include <utility>        // for pair<>, to_underlying
 
 #include "gen_enums.h"                   // Enumerations for generators
 #include "node.h"                        // Node class

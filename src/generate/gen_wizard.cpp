@@ -6,6 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-04-2026]
 
+#include <utility>  // std::to_underlying
+
 #include <wx/wizard.h>  // wxWizard class: a GUI control presenting the user with a
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class

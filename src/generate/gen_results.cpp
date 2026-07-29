@@ -11,6 +11,7 @@
 #include <future>    // for std::async, std::future
 #include <memory>    // for std::shared_ptr, std::make_shared
 #include <optional>  // for std::optional
+#include <utility>   // std::to_underlying
 
 #include <wx/file.h>     // wxFile - raw file I/O
 #include <wx/progdlg.h>  // wxProgressDialog

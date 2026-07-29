@@ -14,6 +14,7 @@
 #include <span>
 #include <string>
 #include <string_view>
+#include <utility>  // std::to_underlying
 #include <vector>
 
 #include "utils.h"

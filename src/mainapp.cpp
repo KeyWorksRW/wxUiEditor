@@ -7,6 +7,7 @@
 // CR: [07-04-2026]
 
 #include <chrono>
+#include <utility>  // std::to_underlying
 
 #include <wx/arrstr.h>   // wxArrayString class
 #include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command

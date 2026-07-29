@@ -103,6 +103,7 @@
 
 #include <string>
 #include <string_view>  // IWYU pragma: keep
+#include <utility>      // std::to_underlying
 #include <vector>       // IWYU pragma: keep
 
 #include <frozen/set.h>  // IWYU pragma: keep

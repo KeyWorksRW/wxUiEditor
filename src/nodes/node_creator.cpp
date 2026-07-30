@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 #include <format>
 
@@ -20,7 +21,7 @@ NodeCreator& NodeCreation = NodeCreator::get_Instance();  // NOLINT (cppcheck-su
 using namespace GenEnum;
 using enum Node::Validity;
 
-auto NodeCreator::get_NodeDeclaration(std::string_view class_name) -> NodeDeclaration*
+NodeDeclaration* NodeCreator::get_NodeDeclaration(std::string_view class_name)
 {
     if (auto result = rmap_GenNames.find(class_name); result != rmap_GenNames.end())
     {
@@ -34,7 +35,7 @@ auto NodeCreator::get_NodeDeclaration(std::string_view class_name) -> NodeDeclar
     return nullptr;
 }
 
-auto NodeCreator::NewNode(NodeDeclaration* node_decl) -> NodeSharedPtr
+NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
 {
     auto node = std::make_shared<Node>(node_decl);
 
@@ -77,7 +78,7 @@ auto NodeCreator::NewNode(NodeDeclaration* node_decl) -> NodeSharedPtr
     return node;
 }
 
-auto NodeCreator::CountChildrenWithSameType(Node* parent, GenType type) -> size_t
+size_t NodeCreator::CountChildrenWithSameType(Node* parent, GenType type)
 {
     size_t count = 0;
     for (const auto& child: parent->get_ChildNodePtrs())
@@ -106,8 +107,8 @@ auto NodeCreator::CountChildrenWithSameType(Node* parent, GenType type) -> size_
 // The parent parameter is used to determine if the parent allows this type of child, and if so how
 // many of those children are allowed. The second part of the pair is a Node:: error code (see enum
 // in node.h).
-auto NodeCreator::CreateNode(GenName name, Node* parent, bool verify_language_support)
-    -> std::pair<NodeSharedPtr, Node::Validity>
+std::pair<NodeSharedPtr, Node::Validity> NodeCreator::CreateNode(GenName name, Node* parent,
+                                                                 bool verify_language_support)
 {
     ASSERT(name != gen_unknown);
     if (name == gen_unknown)
@@ -152,8 +153,8 @@ auto NodeCreator::CreateNode(GenName name, Node* parent, bool verify_language_su
 }
 
 // Called when the GenName isn't available
-auto NodeCreator::CreateNode(std::string_view name, Node* parent, bool verify_language_support)
-    -> std::pair<NodeSharedPtr, Node::Validity>
+std::pair<NodeSharedPtr, Node::Validity>
+    NodeCreator::CreateNode(std::string_view name, Node* parent, bool verify_language_support)
 {
     if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
     {
@@ -164,7 +165,7 @@ auto NodeCreator::CreateNode(std::string_view name, Node* parent, bool verify_la
     return { NodeSharedPtr(), unknown_gen_name };
 }
 
-auto NodeCreator::ResolveNodeDeclaration(GenName name) const -> NodeDeclaration*
+NodeDeclaration* NodeCreator::ResolveNodeDeclaration(GenName name) const
 {
     // This is a way for a ribbon panel button to indicate a wxBoxSizer with vertical orientation
     if (name == gen_VerticalBoxSizer)
@@ -191,8 +192,8 @@ auto NodeCreator::ResolveNodeDeclaration(GenName name) const -> NodeDeclaration*
     return nullptr;
 }
 
-auto NodeCreator::ValidateParentConstraints(GenName name, NodeDeclaration* node_decl, Node* parent)
-    -> Node::Validity
+Node::Validity NodeCreator::ValidateParentConstraints(GenName name, NodeDeclaration* node_decl,
+                                                      Node* parent)
 {
     // Check for widgets which can ONLY have a frame for a parent.
     if (node_decl->is_Type(type_statusbar) || node_decl->is_Type(type_menubar) ||
@@ -223,8 +224,7 @@ auto NodeCreator::ValidateParentConstraints(GenName name, NodeDeclaration* node_
     return valid_node;
 }
 
-auto NodeCreator::AllocateChildNode(GenName name, NodeDeclaration* node_decl, Node* parent)
-    -> NodeSharedPtr
+NodeSharedPtr NodeCreator::AllocateChildNode(GenName name, NodeDeclaration* node_decl, Node* parent)
 {
     auto max_children = parent->get_AllowableChildren(node_decl->get_GenType());
 
@@ -279,7 +279,7 @@ auto NodeCreator::AllocateChildNode(GenName name, NodeDeclaration* node_decl, No
     return {};
 }
 
-auto NodeCreator::VerifyLanguageSupport(NodeSharedPtr& node) -> Node::Validity
+Node::Validity NodeCreator::VerifyLanguageSupport(NodeSharedPtr& node)
 {
     auto* gen = node->get_Generator();
     if (!gen)
@@ -304,8 +304,7 @@ auto NodeCreator::VerifyLanguageSupport(NodeSharedPtr& node) -> Node::Validity
     return valid_node;
 }
 
-auto NodeCreator::is_ValidCreateParent(GenName name, Node* parent, bool use_recursion) const
-    -> Node*
+Node* NodeCreator::is_ValidCreateParent(GenName name, Node* parent, bool use_recursion) const
 {
     ASSERT(name != gen_unknown);
     if (name == gen_unknown)
@@ -368,7 +367,7 @@ auto NodeCreator::is_ValidCreateParent(GenName name, Node* parent, bool use_recu
     return nullptr;
 }
 
-auto NodeCreator::CanParentAcceptChild(NodeDeclaration* node_decl, Node* parent) -> bool
+bool NodeCreator::CanParentAcceptChild(NodeDeclaration* node_decl, Node* parent)
 {
     auto max_children = parent->get_AllowableChildren(node_decl->get_GenType());
 
@@ -399,7 +398,7 @@ auto NodeCreator::CanParentAcceptChild(NodeDeclaration* node_decl, Node* parent)
     return count < (to_size_t) max_children;
 }
 
-auto NodeCreator::MakeCopy(Node* node, Node* parent) -> NodeSharedPtr
+NodeSharedPtr NodeCreator::MakeCopy(Node* node, Node* parent)
 {
     ASSERT(node);
 
@@ -431,7 +430,7 @@ auto NodeCreator::MakeCopy(Node* node, Node* parent) -> NodeSharedPtr
     return copyObj;
 }
 
-auto NodeCreator::CreateToolCopy(Node* node, Node* parent) -> NodeSharedPtr
+NodeSharedPtr NodeCreator::CreateToolCopy(Node* node, Node* parent)
 {
     if (!parent)
     {
@@ -464,7 +463,7 @@ void NodeCreator::CopyProperties(Node* source, NodeSharedPtr& target)
     }
 }
 
-auto NodeCreator::ConvertFormToControl(NodesParentChild nodes) -> NodeSharedPtr
+NodeSharedPtr NodeCreator::ConvertFormToControl(NodesParentChild nodes)
 {
     NodeSharedPtr child_object;
 
@@ -510,7 +509,7 @@ void NodeCreator::CopyChildren(Node* source, NodeSharedPtr& target)
 }
 
 // auto NodeCreator::get_ConstantAsInt(const std::string& name, int defValue) const -> int
-auto NodeCreator::get_ConstantAsInt(std::string_view name, int defValue) const -> int
+int NodeCreator::get_ConstantAsInt(std::string_view name, int defValue) const
 {
     if (auto iter = m_map_constants.find(name); iter != m_map_constants.end())
     {

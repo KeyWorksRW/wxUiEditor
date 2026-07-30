@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -22,11 +23,11 @@ IncludeFilesProperty::IncludeFilesProperty(const wxString& label, NodeProperty* 
 bool IncludeFilesDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
                                              wxPGProperty* /* property unused */)
 {
-    IncludeFilesDialog dlg(propGrid->GetPanel());
-    dlg.Initialize(m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    IncludeFilesDialog include_files_dlg(propGrid->GetPanel());
+    include_files_dlg.Initialize(m_prop);
+    if (include_files_dlg.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(include_files_dlg.GetResults());
         return true;
     }
 

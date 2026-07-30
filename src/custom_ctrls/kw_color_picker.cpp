@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/settings.h>  // wxSystemColour enum
 
@@ -299,7 +300,7 @@ void kwColourPickerCtrl::UpdatePickerFromTextCtrl()
 {
     if (m_text)
     {
-        wxColour new_color = GetColorFromString(m_text->GetValue());
+        const wxColour new_color = GetColorFromString(m_text->GetValue());
         if (new_color.IsOk() && new_color != clr_picker->GetColour())
         {
             clr_picker->SetColour(new_color);
@@ -307,22 +308,28 @@ void kwColourPickerCtrl::UpdatePickerFromTextCtrl()
     }
 }
 
+static std::map<std::string, std::string, std::less<>> s_reverse_css_map;
+
 // This function is required when deriving from wxPickerBase
 void kwColourPickerCtrl::UpdateTextCtrlFromPicker()
 {
     if (m_text)
     {
-        auto hex_string = clr_picker->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
+        wxString hex_string = clr_picker->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
 
-        // find the value hex_string in the map
-        if (auto result = std::find_if(kw_css_colors.begin(), kw_css_colors.end(),
-                                       [&hex_string](const auto& pair)
-                                       {
-                                           return pair.second == hex_string;
-                                       });
-            result != kw_css_colors.end())
+        // Lazily build reverse map (hex -> name) on first use
+        if (s_reverse_css_map.empty())
         {
-            m_text->ChangeValue(result->first);
+            for (const auto& [name, hex]: kw_css_colors)
+            {
+                s_reverse_css_map.emplace(hex, name);
+            }
+        }
+
+        if (auto result = s_reverse_css_map.find(hex_string.ToStdString());
+            result != s_reverse_css_map.end())
+        {
+            m_text->ChangeValue(result->second);
         }
         else
         {

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/dir.h>                // wxDir is a class for enumerating the files in a directory
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
@@ -35,10 +36,10 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 }
 
-auto PropertyGrid_Animation::RefreshChildren() -> void
+void PropertyGrid_Animation::RefreshChildren()
 {
-    wxString value = m_value;
-    if (value.size())
+    const wxString value = m_value;
+    if (!value.empty())
     {
         m_img_props.InitValues(value.utf8_string());
 
@@ -60,12 +61,12 @@ auto PropertyGrid_Animation::RefreshChildren() -> void
     if (m_old_type != m_img_props.type)
     {
         wxArrayString array_art_ids;
-        auto art_dir = Project.ArtDirectory();
+        wxue::string art_dir = Project.ArtDirectory();
         if (art_dir.empty())
         {
             art_dir = "./";
         }
-        wxDir dir;
+        const wxDir dir;
         wxArrayString array_files;
         dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif",
                         wxDIR_FILES);
@@ -75,7 +76,7 @@ auto PropertyGrid_Animation::RefreshChildren() -> void
         }
         for (auto& iter: array_files)
         {
-            wxFileName name(iter);
+            const wxFileName name(iter);
             array_art_ids.Add(name.GetFullName());
         }
         Item(IndexImage)->SetAttribute(wxPG_ATTR_AUTOCOMPLETE, array_art_ids);
@@ -92,7 +93,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
     wxString value = thisValue;
 
     ImageProperties img_props;
-    if (value.size())
+    if (!value.empty())
     {
         img_props.InitValues(value.utf8_string());
     }
@@ -101,10 +102,10 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
     {
         case IndexType:
             {
-                auto index = childValue.GetLong();
+                const long index = childValue.GetLong();
                 if (index == 0)
                 {
-                    img_props.type = s_type_names[1];
+                    img_props.type = s_type_names[0];
                 }
 
                 if (index >= 0)

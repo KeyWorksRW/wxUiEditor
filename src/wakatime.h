@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #pragma once
 
@@ -15,15 +16,15 @@ public:
     // Call this to reset the heartbeat timer so that the next heartbeat won't get sent for
     // two minutes. This is used to prevent app switching from generating heartbeats even
     // though wxUiEditor wasn't being used.
-    auto ResetHeartbeat() -> void;
+    void ResetHeartbeat();
 
-    auto SendHeartbeat(bool FileSavedEvent = false) -> void;
+    void SendHeartbeat(bool FileSavedEvent = false);
 
-    [[nodiscard]] static auto IsWakaTimeAvailable() -> bool;
+    [[nodiscard]] static bool IsWakaTimeAvailable();
 
 protected:
     // Caution: It's possible that this function will fail and m_waka_cli will be empty.
-    auto SetWakaExePath() -> void;
+    void SetWakaExePath();
 
 private:
     wxue::string m_waka_cli;

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include "mainframe.h"
 
@@ -38,38 +39,42 @@ public:
         Create(parent, id, style, name);
     }
 
-    auto DoUpdateStatusText(int number) -> void override
+    void DoUpdateStatusText(int number) override
     {
         ASSERT(m_panes.size() > static_cast<size_t>(number));
-        const auto text = GetStatusText(number);
-        if (text.size() && number == 0)
+        const wxString text = GetStatusText(number);
+        if (!text.empty() && number == 0)
         {
+            // This triggers a bounded recursive call to DoUpdateStatusText(0) via
+            // SetStatusText(wxEmptyString, 0). The recursive call finds GetStatusText(0)
+            // empty and skips the body, so recursion terminates after one re-entry.
             SetStatusText(text, 2);
             SetStatusText(wxEmptyString, 0);
         }
         wxStatusBar::DoUpdateStatusText(number);
     }
 
-    auto setText(const wxString& txt, int pane = 1) -> void { SetStatusText(txt, pane); }
+    void setText(const wxString& text, int pane = 1) { SetStatusText(text, pane); }
 };
 
-auto MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name)
-    -> wxStatusBar*
+wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id,
+                                          const wxString& name)
 {
     m_statBar = new ueStatusBar(this, id, style, name);
+    ASSERT(number == STATUS_PANELS);
     m_statBar->SetFieldsCount(number);
     {
-        const std::array<int, STATUS_PANELS> styles = { wxSB_FLAT, wxSB_NORMAL, wxSB_NORMAL };
+        constexpr std::array<int, STATUS_PANELS> styles = { wxSB_FLAT, wxSB_NORMAL, wxSB_NORMAL };
         m_statBar->SetStatusStyles(STATUS_PANELS, styles.data());
     }
 
     return m_statBar;
 }
 
-auto MainFrame::setStatusText(const wxString& txt, int pane) -> void
+void MainFrame::setStatusText(const wxString& text, int pane)
 {
     if (m_statBar)
     {
-        m_statBar->setText(txt, pane);
+        m_statBar->setText(text, pane);
     }
 }

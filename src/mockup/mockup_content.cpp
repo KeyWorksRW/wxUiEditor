@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 // Note that for most forms, this is the top level wxPanel and we create the contents of the form as
 // if we were the form. The notable exception is a MockupWizard -- in this case we create a
@@ -274,7 +275,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
         if (parent_sizer)
         {
-            if (wxWindow* menu_window = dynamic_cast<wxWindow*>(created_object); menu_window)
+            if (wxWindow* menu_window = wxDynamicCast(created_object, wxWindow); menu_window)
             {
                 std::ignore = parent_sizer->Add(menu_window, wxSizerFlags().Expand().Border(0));
                 std::ignore =
@@ -389,7 +390,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                 if (created_window)
                 {
                     std::ignore = sizer->Add(created_window, position, span, sizer_flags.GetFlags(),
-                                             sizer_flags.GetBorderInPixels());
+                                             border_size);
                 }
                 else
                 {

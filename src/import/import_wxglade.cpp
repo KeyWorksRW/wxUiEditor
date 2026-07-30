@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-15-2026]
 
 #include "import_wxglade.h"
 
@@ -16,14 +17,14 @@
 
 WxGlade::WxGlade() {}
 
-auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
+bool WxGlade::Import(const std::string& filename, bool write_doc)
 {
-    auto result = LoadDocFile(filename);
+    std::optional<pugi::xml_document> result = LoadDocFile(filename);
     if (!result)
     {
         return false;
     }
-    auto root = result.value().first_child();
+    const pugi::xml_node root = result.value().first_child();
 
     if (!wxue::is_sameas(root.name(), "application", wxue::CASE::either))
     {
@@ -31,7 +32,7 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
         return false;
     }
 
-    if (auto language = root.attribute("language").as_view(); language.size())
+    if (const std::string_view language = root.attribute("language").as_view(); !language.empty())
     {
         if (language == "XRC")
         {
@@ -59,14 +60,16 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
     try
     {
         m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
-        if (auto src_ext = root.attribute("source_extension").as_view(); src_ext.size())
+        if (const std::string_view src_ext = root.attribute("source_extension").as_view();
+            !src_ext.empty())
         {
             if (src_ext == ".cpp" || src_ext == ".cc" || src_ext == ".cxx")
             {
                 m_project->set_value(prop_source_ext, src_ext);
             }
         }
-        if (auto hdr_ext = root.attribute("header_extension").as_view(); hdr_ext.size())
+        if (const std::string_view hdr_ext = root.attribute("header_extension").as_view();
+            !hdr_ext.empty())
         {
             if (hdr_ext == ".h" || hdr_ext == ".hh" || hdr_ext == ".hpp" || hdr_ext == ".hxx")
             {
@@ -80,50 +83,33 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
 
         for (auto& iter: root.children())
         {
-            auto new_node = CreateGladeNode(iter, m_project.get());
+            const NodeSharedPtr new_node = CreateGladeNode(iter, m_project.get());
             // In wxGlade, if option is true, then the class name is used for each individual
             // file name
-            if (auto single_files = root.attribute("option").as_bool())
+            if (const bool single_files = root.attribute("option").as_bool())
             {
-                /// TODO: The logic here is screwy since the above conditional only gets here if
-                /// single_files is true.
-                if (single_files)
+                // wxGlade uses the class name as the filename if each class has it's own file.
+                if (new_node->HasValue(prop_class_name))
                 {
-                    // wxGlade uses the class name as the filename if each class has it's own file.
-                    if (new_node->HasValue(prop_class_name))
+                    switch (m_language)
                     {
-                        switch (m_language)
-                        {
-                            case GenLang::cplusplus:
-                                new_node->set_value(prop_base_file,
-                                                    new_node->as_string(prop_class_name));
-                                break;
+                        case GenLang::cplusplus:
+                            new_node->set_value(prop_base_file,
+                                                new_node->as_string(prop_class_name));
+                            break;
 
-                            case GenLang::python:
-                                new_node->set_value(prop_python_file,
-                                                    new_node->as_string(prop_class_name));
-                                break;
+                        case GenLang::python:
+                            new_node->set_value(prop_python_file,
+                                                new_node->as_string(prop_class_name));
+                            break;
 
-                            case GenLang::xrc:
-                                new_node->set_value(prop_xrc_file,
-                                                    new_node->as_string(prop_class_name));
-                                break;
+                        case GenLang::xrc:
+                            new_node->set_value(prop_xrc_file,
+                                                new_node->as_string(prop_class_name));
+                            break;
 
-                            default:
-                                break;
-                        }
-                    }
-                }
-                else
-                {
-                    if (m_language == GenLang::python)
-                    {
-                        m_project->set_value(prop_python_combine_forms, true);
-                        wxString combined_filename = root.attribute("path").as_cstr();
-                        wxFileName file_name(combined_filename);
-                        file_name.MakeRelativeTo(wxString::FromUTF8(wxGetCwd()));
-                        combined_filename = file_name.GetFullPath();
-                        m_project->set_value(prop_python_combined_file, combined_filename);
+                        default:
+                            break;
                     }
                 }
             }
@@ -185,11 +171,11 @@ auto WxGlade::Import(const std::string& filename, bool write_doc) -> bool
     return true;
 }
 
-auto WxGlade::TryResolveUnknownGenerator(std::string_view object_name, pugi::xml_node& xml_obj,
-                                         Node* parent) -> GenEnum::GenName
+GenEnum::GenName WxGlade::TryResolveUnknownGenerator(std::string_view object_name,
+                                                     pugi::xml_node& xml_obj, Node* parent)
 {
     // If we don't recognize the class, then try the base= attribute
-    auto base = xml_obj.attribute("base").as_view();
+    const std::string_view base = xml_obj.attribute("base").as_view();
     if (base == "EditFrame")
     {
         return ConvertToGenName("wxFrame", parent);
@@ -218,24 +204,24 @@ auto WxGlade::TryResolveUnknownGenerator(std::string_view object_name, pugi::xml
     return gen_unknown;
 }
 
-auto WxGlade::HandleNotebookPageCreation(GenEnum::GenName get_GenName, pugi::xml_node& xml_obj,
-                                         Node* parent) -> NodeSharedPtr
+NodeSharedPtr WxGlade::HandleNotebookPageCreation(GenEnum::GenName get_GenName,
+                                                  pugi::xml_node& xml_obj, Node* parent)
 {
     if (get_GenName == gen_wxPanel)
     {
-        auto new_node = NodeCreation.CreateNode(gen_BookPage, parent).first;
+        NodeSharedPtr new_node = NodeCreation.CreateNode(gen_BookPage, parent).first;
         if (new_node && !xml_obj.attribute("name").empty())
         {
-            if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
-                tab != m_notebook_tabs.end())
+            if (auto notebook_tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
+                notebook_tab != m_notebook_tabs.end())
             {
-                new_node->set_value(prop_label, tab->second);
+                new_node->set_value(prop_label, notebook_tab->second);
             }
         }
         return new_node;
     }
 
-    auto page = NodeCreation.CreateNode(gen_PageCtrl, parent).first;
+    const NodeSharedPtr page = NodeCreation.CreateNode(gen_PageCtrl, parent).first;
     if (!page)
     {
         return {};
@@ -244,17 +230,17 @@ auto WxGlade::HandleNotebookPageCreation(GenEnum::GenName get_GenName, pugi::xml
     parent->AdoptChild(page);
     if (!xml_obj.attribute("name").empty())
     {
-        if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
-            tab != m_notebook_tabs.end())
+        if (auto notebook_tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
+            notebook_tab != m_notebook_tabs.end())
         {
-            page->set_value(prop_label, tab->second);
+            page->set_value(prop_label, notebook_tab->second);
         }
     }
 
     return NodeCreation.CreateNode(get_GenName, page.get()).first;
 }
 
-auto WxGlade::ProcessStdDialogButtonSizer(pugi::xml_node& xml_obj, Node* new_node) -> void
+void WxGlade::ProcessStdDialogButtonSizer(pugi::xml_node& xml_obj, Node* new_node)
 {
     std::string last_handler;
 
@@ -277,8 +263,11 @@ auto WxGlade::ProcessStdDialogButtonSizer(pugi::xml_node& xml_obj, Node* new_nod
             {
                 auto SetBtnAndHandler = [&](PropName prop_name, std::string_view event_name)
                 {
-                    new_node->get_PropPtr(prop_name)->set_value("1");
-                    if (last_handler.size())
+                    if (auto* btn_prop = new_node->get_PropPtr(prop_name); btn_prop)
+                    {
+                        btn_prop->set_value("1");
+                    }
+                    if (!last_handler.empty())
                     {
                         if (auto* event = new_node->get_Event(event_name); event)
                         {
@@ -338,7 +327,8 @@ auto WxGlade::ProcessStdDialogButtonSizer(pugi::xml_node& xml_obj, Node* new_nod
                 }
                 else if (btn_props.name() == "stockitem")
                 {
-                    if (auto stock_id = btn_props.text().as_view(); stock_id.size())
+                    if (const std::string_view stock_id = btn_props.text().as_view();
+                        !stock_id.empty())
                     {
                         if (stock_id == "OK")
                         {
@@ -378,20 +368,22 @@ auto WxGlade::ProcessStdDialogButtonSizer(pugi::xml_node& xml_obj, Node* new_nod
         }
     }
 
-    new_node->get_PropPtr(prop_alignment)->set_value("wxALIGN_RIGHT");
+    if (auto* align_prop = new_node->get_PropPtr(prop_alignment); align_prop)
+    {
+        align_prop->set_value("wxALIGN_RIGHT");
+    }
 }
 
-auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
-    -> NodeSharedPtr
+NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
 {
-    auto object_name = xml_obj.attribute("class").as_cstr();
+    const wxString object_name = xml_obj.attribute("class").as_cstr();
     if (object_name.empty())
     {
         return {};
     }
 
-    bool isBitmapButton = (object_name == "wxBitmapButton");
-    auto get_GenName = ConvertToGenName(object_name, parent);
+    const bool isBitmapButton = (object_name == "wxBitmapButton");
+    GenEnum::GenName get_GenName = ConvertToGenName(object_name.ToStdString(), parent);
     bool object_not_generator = false;
     if (get_GenName == gen_unknown)
     {
@@ -407,7 +399,7 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
     {
         for (const auto& iter: xml_obj.children())
         {
-            if (iter.value() == "style")
+            if (std::string_view(iter.name()) == "style")
             {
                 if (iter.text().as_sview().contains("wxCHK_3STATE"))
                 {
@@ -418,7 +410,7 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         }
     }
 
-    auto new_node = NodeCreation.CreateNode(get_GenName, parent).first;
+    NodeSharedPtr new_node = NodeCreation.CreateNode(get_GenName, parent).first;
     if (new_node && object_not_generator)
     {
         new_node->set_value(prop_class_name, object_name);
@@ -443,10 +435,10 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         {
             if (!xml_obj.attribute("name").empty())
             {
-                if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
-                    tab != m_notebook_tabs.end())
+                if (auto notebook_tab = m_notebook_tabs.find(xml_obj.attribute("name").as_view());
+                    notebook_tab != m_notebook_tabs.end())
                 {
-                    new_node->set_value(prop_label, tab->second);
+                    new_node->set_value(prop_label, notebook_tab->second);
                 }
             }
         }
@@ -474,9 +466,9 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
 
     if (auto* prop = new_node->get_PropPtr(prop_var_name); prop)
     {
-        auto original = prop->as_string();
-        auto new_name = parent->get_UniqueName(prop->as_string());
-        if (new_name.size() && new_name != prop->as_string())
+        const wxue::string original = prop->as_string();
+        const wxue::string new_name = parent->get_UniqueName(prop->as_string());
+        if (!new_name.empty() && new_name != original)
         {
             prop->set_value(new_name);
         }
@@ -491,7 +483,7 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         return new_node;
     }
 
-    auto child = xml_obj.child("object");
+    pugi::xml_node child = xml_obj.child("object");
     if (!child && new_node->is_Gen(gen_wxMenuBar))
     {
         child = xml_obj.child("menus");
@@ -508,7 +500,10 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         }
         if (new_node->is_Gen(gen_wxStdDialogButtonSizer))
         {
-            new_node->get_PropPtr(prop_static_line)->set_value(false);
+            if (auto* sl_prop = new_node->get_PropPtr(prop_static_line); sl_prop)
+            {
+                sl_prop->set_value(false);
+            }
         }
         child = child.next_sibling("object");
     }
@@ -516,7 +511,7 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
     {
         for (auto& iter: sizeritem->get_PropsVector())
         {
-            auto* prop = new_node->AddNodeProperty(iter.get_PropDeclaration());
+            NodeProperty* prop = new_node->AddNodeProperty(iter.get_PropDeclaration());
             prop->set_value(iter.as_string());
         }
         parent->AdoptChild(new_node);
@@ -548,16 +543,15 @@ auto WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
 }
 
 // Called by ImportXML -- return true if the property is processed.
-auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* /* parent */)
-    -> bool
+bool WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* /* parent */)
 {
-    auto node_name = xml_obj.name();
+    const std::string_view node_name = xml_obj.name();
     if (node_name == "attribute")
     {
         // Technically, this is a bool value, but currently wxGlade only outputs it if the
         // value is 1. It is used to indicate that the variable name should be prefixed with
         // "self." to make it a class member variable.
-        node->set_value(prop_class_access, "protected:");
+        std::ignore = node->set_value(prop_class_access, "protected:");
         return true;
     }
     if (node_name == "events")
@@ -589,9 +583,9 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
             parameters += param.ToStdString();
         }
 
-        if (parameters.size())
+        if (!parameters.empty())
         {
-            node->set_value(prop_parameters, parameters);
+            std::ignore = node->set_value(prop_parameters, parameters);
         }
 
         return true;
@@ -609,26 +603,26 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
     }
     else if (node_name == "option" && node->is_Gen(gen_sizeritem))
     {
-        node->set_value(prop_proportion, xml_obj.text().as_view());
+        std::ignore = node->set_value(prop_proportion, xml_obj.text().as_view());
         return true;
     }
     else if (node_name == "scroll_rate")
     {
-        wxString param = xml_obj.text().as_cstr();
+        const wxString param = xml_obj.text().as_cstr();
         wxue::ViewVector params(param.ToStdString(), ',');
-        node->set_value(prop_scroll_rate_x, params[0]);
-        node->set_value(prop_scroll_rate_y, params[1]);
+        std::ignore = node->set_value(prop_scroll_rate_x, params[0]);
+        std::ignore = node->set_value(prop_scroll_rate_y, params[1]);
         return true;
     }
     if (node_name == "extracode_post")
     {
         if (m_language == GenLang::python)
         {
-            node->set_value(prop_python_insert, xml_obj.text().as_view());
+            std::ignore = node->set_value(prop_python_insert, xml_obj.text().as_view());
         }
         else if (m_language == GenLang::cplusplus)
         {
-            node->set_value(prop_source_preamble, xml_obj.text().as_view());
+            std::ignore = node->set_value(prop_source_preamble, xml_obj.text().as_view());
         }
         return true;
     }
@@ -638,12 +632,12 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
         {
             std::string stock_id = "wxID_";
             stock_id += xml_obj.text().as_view();
-            node->set_value(prop_id, stock_id);
+            std::ignore = node->set_value(prop_id, stock_id);
 
             if (node->as_string(prop_label).empty() || node->as_string(prop_label) == "MyButton")
             {
                 // This is a stock button, so let wxWidgets set the label
-                node->set_value(prop_label, "");
+                std::ignore = node->set_value(prop_label, "");
             }
 
             return true;
@@ -689,7 +683,7 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
             return true;
         }
 
-        node->set_value(prop_construction, construction);
+        std::ignore = node->set_value(prop_construction, construction);
         return true;
     }
     return false;
@@ -698,8 +692,8 @@ auto WxGlade::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node, N
 // Called by ImportXML -- return true if the property is processed. Use this when the property
 // conversion is different in wxGlade then for other XML projects for the type of node being
 // processed.
-auto WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent,
-                                   GenEnum::PropName wxue_prop) -> bool
+bool WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent,
+                                   GenEnum::PropName wxue_prop)
 {
     if (node->is_Gen(gen_sizeritem))
     {
@@ -708,7 +702,7 @@ auto WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
         if (wxue_prop == prop_border)
         {
             // wxGlade uses border for border_size in a sizer
-            node->set_value(prop_border_size, xml_obj.text().as_view());
+            std::ignore = node->set_value(prop_border_size, xml_obj.text().as_view());
             return true;
         }
         if (wxue_prop == prop_flag)
@@ -720,23 +714,23 @@ auto WxGlade::HandleNormalProperty(const pugi::xml_node& xml_obj, Node* node, No
     if (wxue_prop == prop_id)
     {
         wxString id_value = xml_obj.text().as_cstr();
-        auto pos = id_value.find('=');
-        if (pos != wxString::npos)
+        const size_t find_pos = id_value.find('=');
+        if (find_pos != wxString::npos)
         {
-            id_value = id_value.substr(0, pos);
+            id_value = id_value.substr(0, find_pos);
         }
         id_value.Trim(true);
         id_value.Trim(false);
-        node->set_value(prop_id, id_value);
+        std::ignore = node->set_value(prop_id, id_value);
         return true;
     }
 
     return false;
 }
 
-auto WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent) -> void
+void WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent)
 {
-    auto menus = xml_obj.child("menus");
+    const pugi::xml_node menus = xml_obj.child("menus");
     ASSERT(menus);
     if (!menus)
     {
@@ -745,7 +739,7 @@ auto WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent) -> void
 
     for (auto& menu: menus.children("menu"))
     {
-        auto menu_node = NodeCreation.CreateNode(gen_wxMenu, parent).first;
+        const NodeSharedPtr menu_node = NodeCreation.CreateNode(gen_wxMenu, parent).first;
         parent->AdoptChild(menu_node);
         for (const auto& iter: menu.attributes())
         {
@@ -761,9 +755,9 @@ auto WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent) -> void
 
         for (auto& item: menu.children("item"))
         {
-            auto item_id = item.child("id");
+            const pugi::xml_node item_id = item.child("id");
 
-            auto new_item =
+            const NodeSharedPtr new_item =
                 NodeCreation
                     .CreateNode(item_id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem,
                                 menu_node.get())
@@ -815,9 +809,9 @@ auto WxGlade::CreateMenus(pugi::xml_node& xml_obj, Node* parent) -> void
     }
 }
 
-auto WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent) -> void
+void WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent)
 {
-    auto tools = xml_obj.child("tools");
+    const pugi::xml_node tools = xml_obj.child("tools");
     ASSERT(tools);
     if (!tools)
     {
@@ -826,9 +820,9 @@ auto WxGlade::CreateToolbar(pugi::xml_node& xml_obj, Node* parent) -> void
 
     for (auto& tool: tools.children("tool"))
     {
-        auto tool_id = tool.child("id");
+        const pugi::xml_node tool_id = tool.child("id");
 
-        auto new_tool =
+        const NodeSharedPtr new_tool =
             NodeCreation
                 .CreateNode(tool_id.text().as_view() == "---" ? gen_separator : gen_wxMenuItem,
                             parent)

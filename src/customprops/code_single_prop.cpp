@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -40,15 +41,15 @@ public:
 
     void UpdateStaticText(wxCommandEvent& /* event */)
     {
-        wxue::string static_text;
+        wxString static_text;
         if (m_prop->isProp(prop_cpp_conditional))
         {
-            auto text = m_textCtrl->GetValue().utf8_string();
-            if (!text.starts_with("#"))
+            const wxString val = m_textCtrl->GetValue();
+            if (!val.StartsWith("#"))
             {
                 static_text << "#if ";
             }
-            static_text << m_textCtrl->GetValue().ToStdString();
+            static_text << val;
         }
         else
         {
@@ -58,9 +59,9 @@ public:
             }
             static_text << m_node->as_string(prop_var_name) << " = new "
                         << m_node->as_string(prop_class_name);
-            static_text << m_textCtrl->GetValue().ToStdString() << ';';
+            static_text << m_textCtrl->GetValue() << ';';
         }
-        m_static_hdr_text->SetLabel(static_text.wx());
+        m_static_hdr_text->SetLabel(static_text);
     }
 
 private:
@@ -71,10 +72,10 @@ private:
 bool EditCodeSingleDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
                                                wxPGProperty* /* property unused */)
 {
-    EditCodeSingleDialog dlg(propGrid->GetPanel(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    EditCodeSingleDialog code_dialog(propGrid->GetPanel(), m_prop);
+    if (code_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(code_dialog.GetResults());
         return true;
     }
 

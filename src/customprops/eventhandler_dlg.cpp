@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <unordered_map>
 
@@ -296,7 +297,7 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& /* event unused */)
                     m_ruby_lambda_box->GetStaticBox()->Enable(true);
 
                     // remove leading and trailing brackets
-                    value.erase(pos_lambda, sizeof("[python:lambda]") - 1);
+                    value.erase(pos_lambda, sizeof("[ruby:lambda]") - 1);
 
                     // m_ruby_text_lambda->SetValue(value.wx());
                     m_is_ruby_lambda = true;
@@ -377,7 +378,7 @@ void EventHandlerDlg::OnUseRubyFunction(wxCommandEvent& /* event unused */)
         m_ruby_lambda_box->GetStaticBox()->Enable(false);
         m_ruby_function_box->GetStaticBox()->Enable(true);
 
-        wxue::string value = GetPythonValue(m_value.utf8_string());
+        wxue::string value = GetRubyValue(m_value.utf8_string());
 
         if (value.empty() || value.contains("["))
         {
@@ -420,11 +421,11 @@ void EventHandlerDlg::OnUsePythonLambda(wxCommandEvent& /* event unused */)
 
 void EventHandlerDlg::OnUseRubyLambda(wxCommandEvent& /* event unused */)
 {
-    if (m_cpp_radio_use_lambda->GetValue())
+    if (m_ruby_radio_use_lambda->GetValue())
     {
-        m_cpp_radio_use_function->SetValue(false);
-        m_cpp_function_box->GetStaticBox()->Enable(false);
-        m_cpp_lambda_box->GetStaticBox()->Enable(true);
+        m_ruby_radio_use_function->SetValue(false);
+        m_ruby_function_box->GetStaticBox()->Enable(false);
+        m_ruby_lambda_box->GetStaticBox()->Enable(true);
         FormatBindText();
     }
 }
@@ -532,8 +533,7 @@ void EventHandlerDlg::OnDefault(wxCommandEvent& /* event unused */)
     }
     else if (m_is_ruby_enabled && m_notebook->GetCurrentPage() == m_ruby_bookpage)
     {
-        m_ruby_text_function->SetValue(
-            wxString::FromUTF8(ConvertToSnakeCase(m_value.ToStdString())));
+        m_ruby_text_function->SetValue(wxString::FromUTF8(ConvertToSnakeCase(value)));
     }
 }
 
@@ -749,11 +749,11 @@ void EventHandlerDlg::Update_m_value()
             // We use \r\n because it allows us to convert them in place to @@
             m_cpp_stc_lambda->ConvertEOLs(wxSTC_EOL_CRLF);
 
-            auto len = m_cpp_stc_lambda->GetTextLength() + 1;
+            const int len = m_cpp_stc_lambda->GetTextLength() + 1;
             auto buf = std::make_unique<char[]>(len);
             m_cpp_stc_lambda->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) buf.get());
             handler << ")@@{@@" << std::string_view(buf.get(), len - 1);
-            handler.Replace("\r\n", "@@", wxue::REPLACE::all);
+            std::ignore = handler.Replace("\r\n", "@@", wxue::REPLACE::all);
             handler.RightTrim();
             handler << "@@}";
             cpp_value = handler;
@@ -812,11 +812,11 @@ void EventHandlerDlg::Update_m_value()
             // We use \r\n because it allows us to convert them in place to @@
             m_ruby_stc_lambda->ConvertEOLs(wxSTC_EOL_CRLF);
 
-            auto len = m_ruby_stc_lambda->GetTextLength() + 1;
+            const int len = m_ruby_stc_lambda->GetTextLength() + 1;
             auto buf = std::make_unique<char[]>(len);
             m_ruby_stc_lambda->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) buf.get());
             handler << ")@@{@@" << std::string_view(buf.get(), len - 1);
-            handler.Replace("\r\n", "@@", wxue::REPLACE::all);
+            std::ignore = handler.Replace("\r\n", "@@", wxue::REPLACE::all);
             handler.RightTrim();
             handler << "@@}";
             ruby_value = "[ruby:lambda]" + handler;
@@ -873,7 +873,7 @@ wxue::string EventHandlerDlg::GetPythonValue(wxue::string_view value)
     const size_t pos_python = value.find("[python:");
     if (pos_python == wxue::npos)
     {
-        if (value.front() == '[')
+        if (!value.empty() && value.front() == '[')
         {
             // Unfortunately, this is a static function, so we have no access to m_event.
             result = "OnEvent";
@@ -913,7 +913,7 @@ wxue::string EventHandlerDlg::GetRubyValue(wxue::string_view value)
     const size_t pos_ruby = value.find("[ruby:");
     if (pos_ruby == wxue::npos)
     {
-        if (value.front() == '[')
+        if (!value.empty() && value.front() == '[')
         {
             // Unfortunately, this is a static function, so we have no access to m_event.
             result = "OnEvent";
@@ -1044,7 +1044,6 @@ const std::unordered_map<std::string_view, const char*> s_EventNames = {
     { "wxEVT_LEFT_DCLICK", "OnLeftDClick" },
     { "wxEVT_LEFT_DOWN", "OnLeftDown" },
     { "wxEVT_LEFT_UP", "OnLeftUp" },
-    { "wxEVT_LISTBOX", "OnCheckListBox" },
     { "wxEVT_LISTBOX", "OnListBox" },
     { "wxEVT_LISTBOX_DCLICK", "OnListBoxDClick" },
     { "wxEVT_LIST_BEGIN_DRAG", "OnListBeginDrag" },
@@ -1099,7 +1098,6 @@ const std::unordered_map<std::string_view, const char*> s_EventNames = {
     { "wxEVT_RIBBONGALLERY_HOVER_CHANGED", "OnRibbonGalleryHoverChanged" },
     { "wxEVT_RIBBONGALLERY_SELECTED", "OnRibbonGallerySelected" },
     { "wxEVT_RIBBONPANEL_EXTBUTTON_ACTIVATED", "OnRibbonPanelExtbuttonActivated" },
-    { "wxEVT_RIBBONTOOL_DROPDOWN_CLICKED", "OnRibbonToolClicked" },
     { "wxEVT_RIBBONTOOL_DROPDOWN_CLICKED", "OnRibbonToolDropdownClicked" },
 
     { "wxEVT_RICHTEXT_LEFT_CLICK", "OnRichTextLeftClick" },
@@ -1126,23 +1124,14 @@ const std::unordered_map<std::string_view, const char*> s_EventNames = {
     { "wxEVT_RIGHT_DCLICK", "OnRightDClick" },
     { "wxEVT_RIGHT_DOWN", "OnRightDown" },
     { "wxEVT_RIGHT_UP", "OnRightUp" },
-    { "wxEVT_SCROLL_BOTTOM", "OnCommandScrollBottom" },
     { "wxEVT_SCROLL_BOTTOM", "OnScrollBottom" },
-    { "wxEVT_SCROLL_CHANGED", "OnCommandScrollChanged" },
     { "wxEVT_SCROLL_CHANGED", "OnScrollChanged" },
-    { "wxEVT_SCROLL_LINEDOWN", "OnCommandScrollLineDown" },
     { "wxEVT_SCROLL_LINEDOWN", "OnScrollLineDown" },
-    { "wxEVT_SCROLL_LINEUP", "OnCommandScrollLineUp" },
     { "wxEVT_SCROLL_LINEUP", "OnScrollLineUp" },
-    { "wxEVT_SCROLL_PAGEDOWN", "OnCommandScrollPageDown" },
     { "wxEVT_SCROLL_PAGEDOWN", "OnScrollPageDown" },
-    { "wxEVT_SCROLL_PAGEUP", "OnCommandScrollPageUp" },
     { "wxEVT_SCROLL_PAGEUP", "OnScrollPageUp" },
-    { "wxEVT_SCROLL_THUMBRELEASE", "OnCommandScrollThumbRelease" },
     { "wxEVT_SCROLL_THUMBRELEASE", "OnScrollThumbRelease" },
-    { "wxEVT_SCROLL_THUMBTRACK", "OnCommandScrollThumbTrack" },
     { "wxEVT_SCROLL_THUMBTRACK", "OnScrollThumbTrack" },
-    { "wxEVT_SCROLL_TOP", "OnCommandScrollTop" },
     { "wxEVT_SCROLL_TOP", "OnScrollTop" },
     { "wxEVT_SEARCHCTRL_CANCEL_BTN", "OnCancelButton" },
     { "wxEVT_SEARCHCTRL_SEARCH_BTN", "OnSearchButton" },

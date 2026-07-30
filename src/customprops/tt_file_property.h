@@ -17,7 +17,7 @@ class ttFileProperty : public wxEditorDialogProperty
 
 public:
     ttFileProperty(NodeProperty* prop);
-    ttFileProperty(const wxString& label = wxPG_LABEL, const wxString& name = wxPG_LABEL,
+    ttFileProperty(const wxString& label = wxPG_LABEL, const wxString& name = wxPG_LABEL,  // NOLINT
                    const wxString& value = wxString());
 
     ~ttFileProperty() = default;
@@ -35,7 +35,8 @@ public:
     virtual wxValidator* DoGetValidator() const override;
 
 protected:
-    bool DisplayEditorDialog(wxPropertyGrid* pg, wxVariant& value) override;
+    bool DisplayEditorDialog(wxPropertyGrid* pg,  // NOLINT: matches base class
+                             wxVariant& value) override;
 
 private:
     NodeProperty* m_prop;

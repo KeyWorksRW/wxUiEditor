@@ -16,11 +16,11 @@ class WxSmith : public ImportXML
 public:
     WxSmith();
 
-    auto Import(const std::string& filename, bool write_doc = true) -> bool override;
+    bool Import(const std::string& filename, bool write_doc = true) override;
 
     // wxSmith only supports C++ code generation
-    auto GetLanguage() const -> GenLang override { return GenLang::cplusplus; }
+    GenLang GetLanguage() const override { return GenLang::cplusplus; }
 
-    auto HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
-                               Node* /* parent */) -> bool override;
+    bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                               Node* /* parent */) override;
 };

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -22,10 +23,10 @@ EventStringProperty::EventStringProperty(const wxString& label, NodeEvent* event
 bool EventStringDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
                                             wxPGProperty* /* property unused */)
 {
-    EventHandlerDlg dlg(propGrid->GetPanel(), m_event);
-    if (dlg.ShowModal() == wxID_OK)
+    EventHandlerDlg event_dialog(propGrid->GetPanel(), m_event);
+    if (event_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(event_dialog.GetResults());
         return true;
     }
 

@@ -72,7 +72,11 @@ class SmartClipboard
 {
 public:
     SmartClipboard() { m_is_opened = wxTheClipboard->Open(); }
-    ~SmartClipboard() { wxTheClipboard->Close(); }
+    ~SmartClipboard()
+    {
+        if (m_is_opened)
+            wxTheClipboard->Close();
+    }
 
     [[nodiscard]] auto IsOpened() -> bool { return m_is_opened; }
 

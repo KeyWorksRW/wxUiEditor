@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -34,21 +35,21 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     m_grid->SetColFormatCustom(0, wxGRID_VALUE_CHOICE);
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_NUMBER);
 
-    auto fields = m_prop->as_statusbar_fields();
-    if (wxue::is_digit(m_prop->as_string()[0]))
+    std::vector<NODEPROP_STATUSBAR_FIELD> fields = m_prop->as_statusbar_fields();
+    if (!m_prop->as_string().empty() && wxue::is_digit(m_prop->as_string()[0]))
     {
         fields.clear();
-        auto total_fields = m_prop->as_int();
+        const int total_fields = m_prop->as_int();
         for (int idx = 0; idx < total_fields; ++idx)
         {
-            NODEPROP_STATUSBAR_FIELD field { "wxSB_NORMAL", "-1" };
+            NODEPROP_STATUSBAR_FIELD const field { "wxSB_NORMAL", "-1" };
             fields.push_back(field);
         }
     }
 
     if (fields.empty())
     {
-        NODEPROP_STATUSBAR_FIELD field { "wxSB_NORMAL", "-1" };
+        NODEPROP_STATUSBAR_FIELD const field { "wxSB_NORMAL", "-1" };
         fields.push_back(field);
     }
 
@@ -60,7 +61,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& /* event unused */)
     // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent
     // of the longest line including an additional space at the end solves the problem, at least
     // running on Windows 11.
-    auto col_width = m_grid->GetTextExtent("wxSB_NORMAL ");
+    const wxSize col_width = m_grid->GetTextExtent("wxSB_NORMAL ");
     m_grid->SetDefaultColSize(col_width.GetWidth(), true);
 
     const wxString choices[] = {
@@ -83,7 +84,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& /* event unused */)
                           "indicates a proportional field.");
 
     // Force the width to get wrap in a way that makes the text the most clear.
-    auto width =
+    const int width =
         m_help_text->GetTextExtent("A positive width indicates a fixed width field, ").GetWidth();
     m_help_text->Wrap(width);
 
@@ -126,15 +127,15 @@ void SBarFieldsDialog::OnCancel(wxCommandEvent& event)
 
 void SBarFieldsDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
 {
-    auto array = m_grid->GetSelectedRows();
-    m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
-    m_toolBar->EnableTool(id_UndoDeleteRow, m_deleted_col_0.size());
+    const wxArrayInt array = m_grid->GetSelectedRows();
+    m_toolBar->EnableTool(id_DeleteRow, !array.empty());
+    m_toolBar->EnableTool(id_UndoDeleteRow, !m_deleted_col_0.empty());
 }
 
 void SBarFieldsDialog::OnNewRow(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
-    auto new_row = m_grid->GetNumberRows() - 1;
+    const int new_row = m_grid->GetNumberRows() - 1;
     const wxString choices[] = {
         "wxSB_NORMAL",
         "wxSB_FLAT",
@@ -151,17 +152,18 @@ void SBarFieldsDialog::OnNewRow(wxCommandEvent& /* event unused */)
 
 void SBarFieldsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 {
-    auto array = m_grid->GetSelectedRows();
+    wxArrayInt array = m_grid->GetSelectedRows();
     if (array.empty())
     {
         wxMessageBox("No rows selected", "Error", wxOK | wxICON_ERROR);
         return;
     }
 
-    for (auto iter = array.rbegin(); iter != array.rend(); ++iter)
+    m_deleted_col_0 = m_grid->GetCellValue(array[0], 0);
+    m_deleted_col_1 = m_grid->GetCellValue(array[0], 1);
+
+    for (wxArrayInt::const_reverse_iterator iter = array.rbegin(); iter != array.rend(); ++iter)
     {
-        m_deleted_col_0 = m_grid->GetCellValue(*iter, 0);
-        m_deleted_col_1 = m_grid->GetCellValue(*iter, 1);
         m_grid->DeleteRows(*iter);
     }
     Fit();
@@ -170,7 +172,7 @@ void SBarFieldsDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 void SBarFieldsDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
-    if (m_deleted_col_0.size())
+    if (!m_deleted_col_0.empty())
     {
         m_grid->SetCellValue(m_grid->GetNumberRows() - 1, 0, m_deleted_col_0);
         m_deleted_col_0.clear();
@@ -184,10 +186,10 @@ void SBarFieldsDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 bool SBarFieldsDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
                                            wxPGProperty* /* property unused */)
 {
-    SBarFieldsDialog dlg(wxGetFrame().getWindow(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    SBarFieldsDialog sb_dlg(wxGetFrame().getWindow(), m_prop);
+    if (sb_dlg.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(sb_dlg.GetResults());
         return true;
     }
 

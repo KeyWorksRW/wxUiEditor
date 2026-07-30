@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
@@ -47,8 +48,10 @@ void MainFrame::FireProjectLoadedEvent()
         handler->ProcessEvent(event);
     }
 
+    // m_selected_node may be null -- handlers must check getNode() before dereference
     CustomEvent node_event(EVT_NodeSelected, m_selected_node.get());
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(node_event);
     }
@@ -58,16 +61,17 @@ void MainFrame::FireSelectedEvent(Node* node, size_t flags)
 {
     CustomEvent node_event(EVT_NodeSelected, node);
 
+    const auto handlers = m_custom_event_handlers;
     if (flags & evt_flags::queue_event)
     {
-        for (auto* handler: m_custom_event_handlers)
+        for (auto* handler: handlers)
         {
             handler->QueueEvent(node_event.Clone());
         }
     }
     else
     {
-        for (auto* handler: m_custom_event_handlers)
+        for (auto* handler: handlers)
         {
             handler->ProcessEvent(node_event);
         }
@@ -77,7 +81,8 @@ void MainFrame::FireSelectedEvent(Node* node, size_t flags)
 void MainFrame::FireCreatedEvent(Node* node)
 {
     CustomEvent node_event(EVT_NodeCreated, node);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(node_event);
     }
@@ -87,7 +92,8 @@ void MainFrame::FireCreatedEvent(Node* node)
 void MainFrame::FireDeletedEvent(Node* node)
 {
     CustomEvent node_event(EVT_NodeDeleted, node);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(node_event);
     }
@@ -97,7 +103,8 @@ void MainFrame::FireDeletedEvent(Node* node)
 void MainFrame::FirePropChangeEvent(NodeProperty* prop)
 {
     CustomEvent node_event(EVT_NodePropChange, prop);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(node_event);
     }
@@ -107,7 +114,8 @@ void MainFrame::FirePropChangeEvent(NodeProperty* prop)
 void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
 {
     CustomEvent node_event(EVT_MultiPropChange, undo_cmd);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(node_event);
     }
@@ -117,7 +125,8 @@ void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
 void MainFrame::FireProjectUpdatedEvent()
 {
     CustomEvent event(EVT_ProjectUpdated, Project.get_ProjectNode());
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(event);
     }
@@ -126,7 +135,8 @@ void MainFrame::FireProjectUpdatedEvent()
 void MainFrame::FireChangeEventHandler(NodeEvent* evt_node)
 {
     CustomEvent event(EVT_EventHandlerChanged, evt_node);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(event);
     }
@@ -135,7 +145,8 @@ void MainFrame::FireChangeEventHandler(NodeEvent* evt_node)
 void MainFrame::FireParentChangedEvent(ChangeParentAction* undo_cmd)
 {
     CustomEvent event(EVT_ParentChanged, undo_cmd);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(event);
     }
@@ -145,7 +156,8 @@ void MainFrame::FireParentChangedEvent(ChangeParentAction* undo_cmd)
 void MainFrame::FirePositionChangedEvent(ChangePositionAction* undo_cmd)
 {
     CustomEvent event(EVT_PositionChanged, undo_cmd);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(event);
     }
@@ -155,7 +167,8 @@ void MainFrame::FirePositionChangedEvent(ChangePositionAction* undo_cmd)
 void MainFrame::FireGridBagActionEvent(GridBagAction* undo_cmd)
 {
     CustomEvent event(EVT_GridBagAction, undo_cmd);
-    for (auto* handler: m_custom_event_handlers)
+    const auto handlers = m_custom_event_handlers;
+    for (auto* handler: handlers)
     {
         handler->ProcessEvent(event);
     }

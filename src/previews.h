@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #pragma once
 
@@ -11,9 +12,9 @@ class Node;
 
 extern const char* txt_dlg_name;  // "_wxue_temp_dlg"
 
-auto PreviewXrc(Node* form_node) -> void;
+void PreviewXrc(Node* form_node);
 
 // form_node is required for a wxWizard
-auto PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node = nullptr) -> void;
+void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node = nullptr);
 
-auto Preview(Node* form_node) -> void;
+void Preview(Node* form_node);

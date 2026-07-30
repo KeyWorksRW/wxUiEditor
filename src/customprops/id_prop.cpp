@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -23,11 +24,11 @@ ID_Property::ID_Property(const wxString& label, NodeProperty* prop) :
 bool ID_DialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
                                     wxPGProperty* /* property unused */)
 {
-    IDEditorDlg dlg(wxGetFrame().getWindow());
-    dlg.SetNode(m_prop->getNode());
-    if (dlg.ShowModal() == wxID_OK)
+    IDEditorDlg editor_dlg(wxGetFrame().getWindow());
+    editor_dlg.SetNode(m_prop->getNode());
+    if (editor_dlg.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(editor_dlg.GetResults());
         return true;
     }
 

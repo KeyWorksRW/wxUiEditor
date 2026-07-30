@@ -16,34 +16,32 @@ class WxGlade : public ImportXML
 public:
     WxGlade();
 
-    auto Import(const std::string& filename, bool write_doc = true) -> bool override;
+    bool Import(const std::string& filename, bool write_doc = true) override;
 
-    auto HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
-                               Node* /* parent */) -> bool override;
+    bool HandleUnknownProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                               Node* /* parent */) override;
 
-    auto HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
-                              Node* /* parent */, GenEnum::PropName /* wxue_prop */)
-        -> bool override;
+    bool HandleNormalProperty(const pugi::xml_node& /* xml_obj */, Node* /* node */,
+                              Node* /* parent */, GenEnum::PropName /* wxue_prop */) override;
 
 protected:
-    auto CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr)
-        -> NodeSharedPtr;
+    NodeSharedPtr CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 
     // parent should be a wxMenuBar
-    auto CreateMenus(pugi::xml_node& xml_obj, Node* parent) -> void;
+    void CreateMenus(pugi::xml_node& xml_obj, Node* parent);
 
     // parent should be a wxToolBar
-    auto CreateToolbar(pugi::xml_node& xml_obj, Node* parent) -> void;
+    void CreateToolbar(pugi::xml_node& xml_obj, Node* parent);
 
 private:
     // Helper for CreateGladeNode()
-    auto TryResolveUnknownGenerator(std::string_view object_name, pugi::xml_node& xml_obj,
-                                    Node* parent) -> GenEnum::GenName;
+    GenEnum::GenName TryResolveUnknownGenerator(std::string_view object_name,
+                                                pugi::xml_node& xml_obj, Node* parent);
 
     // Helper for CreateGladeNode()
-    auto HandleNotebookPageCreation(GenEnum::GenName get_GenName, pugi::xml_node& xml_obj,
-                                    Node* parent) -> NodeSharedPtr;
+    NodeSharedPtr HandleNotebookPageCreation(GenEnum::GenName get_GenName, pugi::xml_node& xml_obj,
+                                             Node* parent);
 
     // Helper for CreateGladeNode()
-    auto ProcessStdDialogButtonSizer(pugi::xml_node& xml_obj, Node* new_node) -> void;
+    void ProcessStdDialogButtonSizer(pugi::xml_node& xml_obj, Node* new_node);
 };

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include "font_prop_dlg.h"  // auto-generated: wxui/fontpropdlg_base.h and wxui/fontpropdlg_base.cpp
 
@@ -21,7 +22,7 @@ FontPropDlg::FontPropDlg(wxWindow* parent, const wxString& font_description) :
 }
 void FontPropDlg::Initialize()
 {
-    if (m_value.size())
+    if (!m_value.empty())
     {
         m_custom_font.Convert(m_value.utf8_string());
         if (m_custom_font.isDefGuiFont())
@@ -58,7 +59,7 @@ void FontPropDlg::Initialize()
     m_comboSystemWeight->SetStringSelection(font_weight_pairs.GetName(m_system_font.GetWeight()));
     m_comboCustomWeight->SetStringSelection(font_weight_pairs.GetName(m_custom_font.GetWeight()));
 
-    auto names = m_font_enum.GetFacenames();
+    const wxArrayString names = m_font_enum.GetFacenames();
     m_comboFacenames->Append(names);
 
     if (m_custom_font.IsUnderlined())
@@ -81,7 +82,7 @@ void FontPropDlg::Initialize()
         m_checkSystemStrikeThrough->SetValue(true);
     }
 
-    if (!m_custom_font.isDefGuiFont() && m_custom_font.GetFaceName().size())
+    if (!m_custom_font.isDefGuiFont() && !m_custom_font.GetFaceName().empty())
     {
         m_comboFacenames->SetStringSelection(m_custom_font.GetFaceName());
     }
@@ -183,9 +184,12 @@ void FontPropDlg::OnEditPointSize(wxCommandEvent& event)
     if (auto digit = std::atof(event.GetString().ToStdString().c_str());
         digit >= -1.0 && digit <= 72.0)
     {
-        auto* control = wxDynamicCast(event.GetEventObject(), wxSpinCtrlDouble);
-        control->SetValue(digit);
-        UpdateFontInfo();
+        if (wxSpinCtrlDouble* control = wxDynamicCast(event.GetEventObject(), wxSpinCtrlDouble);
+            control)
+        {
+            control->SetValue(digit);
+            UpdateFontInfo();
+        }
     }
 }
 
@@ -221,7 +225,7 @@ void FontPropDlg::UpdateFontInfo()
             (const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
         m_custom_font.Underlined(m_checkCustomUnderlined->GetValue());
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
-        auto facename = m_comboFacenames->GetStringSelection();
+        const wxString facename = m_comboFacenames->GetStringSelection();
         if (facename == "default")
         {
             m_custom_font.FaceName("");
@@ -280,7 +284,7 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
             (const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
         m_custom_font.Underlined(m_checkCustomUnderlined->GetValue());
         m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
-        auto facename = m_comboFacenames->GetStringSelection();
+        const wxString facename = m_comboFacenames->GetStringSelection();
         if (facename == "default")
         {
             m_custom_font.FaceName("");

@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2019-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 //////////////////////////////////////////////////////////////////////////
-
+// CR: [07-16-2026]
 #pragma once
 
 #include <algorithm>  // for std::max, std::min
@@ -28,24 +28,24 @@ public:
     FontProperty(const wxFont& font);
     FontProperty(wxue::string_view font);
     FontProperty(NodeProperty* prop);
-    FontProperty(wxVariant font);
+    FontProperty(const wxVariant& font);
 
-    [[nodiscard]] auto GetFont() const -> wxFont;
+    [[nodiscard]] wxFont GetFont() const;
 
     // If old_style is true, then assume:
     // face name, style, weight, point size, family, underlined
-    auto Convert(wxue::string_view font, bool old_style = false) -> void;
+    void Convert(wxue::string_view font, bool old_style = false);
 
-    [[nodiscard]] auto as_wxString() const -> wxString;
-    [[nodiscard]] auto as_string() const -> wxue::string;
+    [[nodiscard]] wxString as_wxString() const;
+    [[nodiscard]] wxue::string as_string() const;
 
-    [[nodiscard]] auto isDefGuiFont() const -> bool { return m_isDefGuiFont; }
-    auto setDefGuiFont(bool use_default = true) -> void { m_isDefGuiFont = use_default; }
+    [[nodiscard]] bool isDefGuiFont() const { return m_isDefGuiFont; }
+    void setDefGuiFont(bool use_default = true) { m_isDefGuiFont = use_default; }
 
-    [[nodiscard]] auto GetPointSize() const -> int { return std::lround(m_pointSize); }
-    [[nodiscard]] auto GetFractionalPointSize() const -> double { return m_pointSize; }
+    [[nodiscard]] int GetPointSize() const { return std::lround(m_pointSize); }
+    [[nodiscard]] double GetFractionalPointSize() const { return m_pointSize; }
 
-    [[nodiscard]] auto GetStyle() const -> wxFontStyle
+    [[nodiscard]] wxFontStyle GetStyle() const
     {
         if (m_flags & wxFONTFLAG_ITALIC)
         {
@@ -58,43 +58,34 @@ public:
         return wxFONTSTYLE_NORMAL;
     }
 
-    [[nodiscard]] auto GetWeight() const -> wxFontWeight { return m_weight; }
-    [[nodiscard]] auto GetNumericWeight() const -> wxFontWeight { return m_weight; }
+    [[nodiscard]] wxFontWeight GetWeight() const { return m_weight; }
+    [[nodiscard]] wxFontWeight GetNumericWeight() const { return m_weight; }
 
-    [[nodiscard]] auto GetSymbolSize() const -> wxFontSymbolicSize { return m_symbolic_size; }
+    [[nodiscard]] wxFontSymbolicSize GetSymbolSize() const { return m_symbolic_size; }
 
-    [[nodiscard]] auto HasFaceName() const -> bool { return m_faceName.size(); }
-    [[nodiscard]] auto GetFamily() const -> wxFontFamily { return m_family; }
-    [[nodiscard]] auto GetFaceName() const -> const wxString& { return m_faceName; }
+    [[nodiscard]] bool HasFaceName() const { return !m_faceName.empty(); }
+    [[nodiscard]] wxFontFamily GetFamily() const { return m_family; }
+    [[nodiscard]] const wxString& GetFaceName() const { return m_faceName; }
 
-    [[nodiscard]] auto IsAntiAliased() const -> bool
-    {
-        return (m_flags & wxFONTFLAG_ANTIALIASED) != 0;
-    }
-    [[nodiscard]] auto IsUnderlined() const -> bool
-    {
-        return (m_flags & wxFONTFLAG_UNDERLINED) != 0;
-    }
-    [[nodiscard]] auto IsStrikethrough() const -> bool
-    {
-        return (m_flags & wxFONTFLAG_STRIKETHROUGH) != 0;
-    }
+    [[nodiscard]] bool IsAntiAliased() const { return (m_flags & wxFONTFLAG_ANTIALIASED) != 0; }
+    [[nodiscard]] bool IsUnderlined() const { return (m_flags & wxFONTFLAG_UNDERLINED) != 0; }
+    [[nodiscard]] bool IsStrikethrough() const { return (m_flags & wxFONTFLAG_STRIKETHROUGH) != 0; }
 
-    // wxFontInfo uses this, be we don't support using pixel size
-    [[nodiscard]] static auto IsUsingSizeInPixels() -> bool { return false; }
+    // wxFontInfo uses this, but we don't support using pixel size
+    [[nodiscard]] static constexpr bool IsUsingSizeInPixels() { return false; }
 
-    [[nodiscard]] auto GetEncoding() const -> wxFontEncoding { return m_encoding; }
+    [[nodiscard]] wxFontEncoding GetEncoding() const { return m_encoding; }
 
     operator wxFont() const { return GetFont(); }
 
-    auto PointSize(double point_size) -> FontProperty&
+    FontProperty& PointSize(double point_size)
     {
         m_pointSize = point_size;
         m_isDefGuiFont = false;
         return *this;
     }
 
-    auto SymbolicSize(wxFontSymbolicSize symbolic_size) -> FontProperty&
+    FontProperty& SymbolicSize(wxFontSymbolicSize symbolic_size)
     {
         m_symbolic_size = symbolic_size;
         return *this;
@@ -103,7 +94,7 @@ public:
     // The following setters match the names in wxFontInfo so that code written for wxFontInfo or
     // FontProperty can be used interchangeably (at least for setters and getters)
 
-    auto Family(wxFontFamily family) -> FontProperty&
+    FontProperty& Family(wxFontFamily family)
     {
         m_family = family;
         if (m_family != wxFONTFAMILY_DEFAULT)
@@ -112,66 +103,66 @@ public:
         }
         return *this;
     }
-    auto FaceName(const wxString& faceName) -> FontProperty&
+    FontProperty& FaceName(const wxString& faceName)
     {
         m_faceName = faceName;
-        if (m_faceName.size())
+        if (!m_faceName.empty())
         {
             m_isDefGuiFont = false;
         }
         return *this;
     }
 
-    auto Weight(wxFontWeight weight) -> FontProperty&
+    FontProperty& Weight(wxFontWeight weight)
     {
         m_weight = weight;
         return *this;
     }
 
-    auto Bold(bool bold = true) -> FontProperty&
+    FontProperty& Bold(bool bold = true)
     {
         return Weight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
     }
-    auto Light(bool light = true) -> FontProperty&
+    FontProperty& Light(bool light = true)
     {
         return Weight(light ? wxFONTWEIGHT_LIGHT : wxFONTWEIGHT_NORMAL);
     }
-    auto Italic(bool italic = true) -> FontProperty&
+    FontProperty& Italic(bool italic = true)
     {
         SetFlag(wxFONTFLAG_ITALIC, italic);
         return *this;
     }
-    auto Slant(bool slant = true) -> FontProperty&
+    FontProperty& Slant(bool slant = true)
     {
         SetFlag(wxFONTFLAG_SLANT, slant);
         return *this;
     }
-    auto Style(wxFontStyle style) -> FontProperty&
+    FontProperty& Style(wxFontStyle style)
     {
         SetFlag(wxFONTFLAG_ITALIC, style == wxFONTSTYLE_ITALIC);
         SetFlag(wxFONTFLAG_SLANT, style == wxFONTSTYLE_SLANT);
         return *this;
     }
 
-    auto Underlined(bool underlined = true) -> FontProperty&
+    FontProperty& Underlined(bool underlined = true)
     {
         SetFlag(wxFONTFLAG_UNDERLINED, underlined);
         return *this;
     }
-    auto Strikethrough(bool strikethrough = true) -> FontProperty&
+    FontProperty& Strikethrough(bool strikethrough = true)
     {
         SetFlag(wxFONTFLAG_STRIKETHROUGH, strikethrough);
         return *this;
     }
 
-    auto Encoding(wxFontEncoding encoding) -> FontProperty&
+    FontProperty& Encoding(wxFontEncoding encoding)
     {
         m_encoding = encoding;
         return *this;
     }
 
 protected:
-    [[nodiscard]] static auto GetWeightClosestToNumericValue(int numWeight) -> wxFontWeight
+    [[nodiscard]] static wxFontWeight GetWeightClosestToNumericValue(int numWeight)
     {
         wxASSERT(numWeight > 0);
         wxASSERT(numWeight <= 1000);
@@ -187,7 +178,7 @@ protected:
         return static_cast<wxFontWeight>(weight);
     }
 
-    auto SetFlag(int flag, bool enable) -> void
+    void SetFlag(int flag, bool enable)
     {
         if (enable)
         {
@@ -231,7 +222,7 @@ struct FontSymbolPairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontSymbolicSize
+    [[nodiscard]] wxFontSymbolicSize GetValue(wxue::string_view name) const
     {
         if (name.empty())
         {
@@ -248,7 +239,7 @@ struct FontSymbolPairs
         return wxFONTSIZE_MEDIUM;
     }
 
-    [[nodiscard]] static auto GetValue(wxFontSymbolicSize symbol_size) -> std::string
+    [[nodiscard]] static std::string GetValue(wxFontSymbolicSize symbol_size)
     {
         switch (symbol_size)
         {
@@ -271,7 +262,7 @@ struct FontSymbolPairs
         }
     }
 
-    [[nodiscard]] auto HasName(wxue::string_view name) const -> bool
+    [[nodiscard]] bool HasName(wxue::string_view name) const
     {
         if (name.empty())
         {
@@ -285,7 +276,7 @@ struct FontSymbolPairs
                                    });
     }
 
-    [[nodiscard]] auto GetName(wxFontSymbolicSize symbol_size) const -> const std::string&
+    [[nodiscard]] const std::string& GetName(wxFontSymbolicSize symbol_size) const
     {
         for (const auto& [key, value]: pairs)
         {
@@ -316,7 +307,7 @@ struct FontFamilyPairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontFamily
+    [[nodiscard]] wxFontFamily GetValue(wxue::string_view name) const
     {
         if (name.empty())
         {
@@ -333,7 +324,7 @@ struct FontFamilyPairs
         return wxFONTFAMILY_DEFAULT;
     }
 
-    [[nodiscard]] static auto GetValue(wxFontFamily family) -> std::string
+    [[nodiscard]] static std::string GetValue(wxFontFamily family)
     {
         switch (family)
         {
@@ -356,7 +347,7 @@ struct FontFamilyPairs
         }
     }
 
-    [[nodiscard]] auto HasName(wxue::string_view name) const -> bool
+    [[nodiscard]] bool HasName(wxue::string_view name) const
     {
         if (name.empty())
         {
@@ -370,7 +361,7 @@ struct FontFamilyPairs
                                    });
     }
 
-    [[nodiscard]] auto GetName(wxFontFamily family) const -> const std::string&
+    [[nodiscard]] const std::string& GetName(wxFontFamily family) const
     {
         for (const auto& [key, value]: pairs)
         {
@@ -404,7 +395,7 @@ struct FontWeightPairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontWeight
+    [[nodiscard]] wxFontWeight GetValue(wxue::string_view name) const
     {
         if (name.empty())
         {
@@ -421,7 +412,7 @@ struct FontWeightPairs
         return wxFONTWEIGHT_NORMAL;
     }
 
-    [[nodiscard]] static auto GetValue(wxFontWeight weight) -> std::string
+    [[nodiscard]] static std::string GetValue(wxFontWeight weight)
     {
         switch (weight)
         {
@@ -450,7 +441,7 @@ struct FontWeightPairs
         }
     }
 
-    [[nodiscard]] auto GetName(wxFontWeight weight) const -> const std::string&
+    [[nodiscard]] const std::string& GetName(wxFontWeight weight) const
     {
         for (const auto& [key, value]: pairs)
         {
@@ -477,7 +468,7 @@ struct FontStylePairs
 
     auto GetPairs() const { return pairs; }
 
-    [[nodiscard]] auto GetValue(wxue::string_view name) const -> wxFontStyle
+    [[nodiscard]] wxFontStyle GetValue(wxue::string_view name) const
     {
         if (name.empty())
         {
@@ -494,7 +485,7 @@ struct FontStylePairs
         return wxFONTSTYLE_NORMAL;
     }
 
-    [[nodiscard]] static auto GetValue(wxFontStyle style) -> std::string
+    [[nodiscard]] static std::string GetValue(wxFontStyle style)
     {
         switch (style)
         {
@@ -510,7 +501,7 @@ struct FontStylePairs
         }
     }
 
-    [[nodiscard]] auto GetName(wxFontStyle style) const -> const std::string&
+    [[nodiscard]] const std::string& GetName(wxFontStyle style) const
     {
         for (const auto& [key, value]: pairs)
         {

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 // See also: ui/preferences_dlg.cpp and ui/preferences_dlg.h
 
@@ -15,14 +16,14 @@ Prefs& UserPrefs = Prefs::getInstance();
 
 void Prefs::ReadConfig()
 {
-    auto* config = wxConfig::Get();
+    wxConfigBase* config = wxConfig::Get();
     config->SetPath("/preferences");
 
     m_flags = config->ReadLong("flags", PREFS_MSG_WINDOW | PREFS_MSG_INFO | PREFS_MSG_EVENT |
                                             PREFS_MSG_WARNING);
     m_project_flags = config->ReadLong("project_flags", PREFS_PJT_MEMBER_PREFIX);
     m_preview_type = static_cast<PREVIEW_TYPE>(
-        config->ReadLong("preview_type", static_cast<long>(PREVIEW_TYPE::xrc)));
+        config->ReadLong("preview_type", std::to_underlying(PREVIEW_TYPE::xrc)));
 
     m_sizers_all_borders = config->ReadBool("all_borders", true);
     m_sizers_always_expand = config->ReadBool("always_expand", true);
@@ -87,7 +88,7 @@ void Prefs::ReadConfig()
 
 void Prefs::WriteConfig()
 {
-    auto* config = wxConfig::Get();
+    wxConfigBase* config = wxConfig::Get();
     config->SetPath("/preferences");
 
     config->Write("all_borders", m_sizers_all_borders);
@@ -107,6 +108,7 @@ void Prefs::WriteConfig()
     config->Write("cpp_widgets_version", m_cpp_widgets_version.wx());
     config->Write("python_version", m_python_version.wx());
     config->Write("ruby_version", m_ruby_version.wx());
+    config->Write("preview_type", std::to_underlying(m_preview_type));
 
     config->Write("cpp_colour", m_colour_cpp.GetAsString(wxC2S_HTML_SYNTAX));
     config->Write("cpp_comment_colour", m_colour_cpp_comment.GetAsString(wxC2S_HTML_SYNTAX));
@@ -262,144 +264,146 @@ wxColour Prefs::GetColour(wxSystemColour index)
     return wxColour();
 }
 
-void wxColourToHSL(const wxColour& colour, double& hue, double& saturation, double& luminance)
+void wxColourToHSL(const wxColour& colour, double& hue_value, double& saturation_value,
+                   double& luminance_value)
 {
-    double r = colour.Red() / 255.0;
-    double g = colour.Green() / 255.0;
-    double b = colour.Blue() / 255.0;
-    double cmax = std::max({ r, g, b });
-    double cmin = std::min({ r, g, b });
-    double delta = cmax - cmin;
+    const double red_val = colour.Red() / 255.0;
+    const double green_val = colour.Green() / 255.0;
+    const double blue_val = colour.Blue() / 255.0;
+    const double cmax = std::max({ red_val, green_val, blue_val });
+    const double cmin = std::min({ red_val, green_val, blue_val });
+    const double delta = cmax - cmin;
 
     // Calculate hue
     if (delta == 0)
     {
-        hue = 0;
+        hue_value = 0;
     }
-    else if (cmax == r)
+    else if (cmax == red_val)
     {
-        hue = fmod((g - b) / delta, 6);
+        hue_value = fmod((green_val - blue_val) / delta, 6);
     }
-    else if (cmax == g)
+    else if (cmax == green_val)
     {
-        hue = (b - r) / delta + 2;
+        hue_value = ((blue_val - red_val) / delta) + 2;
     }
     else
     {
-        hue = (r - g) / delta + 4;
+        hue_value = ((red_val - green_val) / delta) + 4;
     }
-    hue *= 60;
-    if (hue < 0)
+    hue_value *= 60;
+    if (hue_value < 0)
     {
-        hue += 360;
+        hue_value += 360;
     }
 
     // Calculate luminance
-    luminance = (cmax + cmin) / 2;
+    luminance_value = (cmax + cmin) / 2;
 
     // Calculate saturation
     if (delta == 0)
     {
-        saturation = 0;
+        saturation_value = 0;
     }
     else
     {
-        saturation = delta / (1 - fabs(2 * luminance - 1));
+        saturation_value = delta / (1 - fabs((2 * luminance_value) - 1));
     }
 }
 
-wxColour HSLToWxColour(double hue, double saturation, double luminance)
+wxColour HSLToWxColour(double hue_value, double saturation_value, double luminance_value)
 {
-    double c = (1 - fabs(2 * luminance - 1)) * saturation;
-    double x = c * (1 - fabs(fmod(hue / 60, 2) - 1));
-    double m = luminance - c / 2;
-    double r, g, b;
+    const double chroma = (1 - fabs((2 * luminance_value) - 1)) * saturation_value;
+    const double x_val = chroma * (1 - fabs(fmod(hue_value / 60, 2) - 1));
+    const double m_val = luminance_value - (chroma / 2);
+    double red_out = 0, green_out = 0, blue_out = 0;
 
-    if (hue < 60)
+    if (hue_value < 60)
     {
-        r = c;
-        g = x;
-        b = 0;
+        red_out = chroma;
+        green_out = x_val;
+        blue_out = 0;
     }
-    else if (hue < 120)
+    else if (hue_value < 120)
     {
-        r = x;
-        g = c;
-        b = 0;
+        red_out = x_val;
+        green_out = chroma;
+        blue_out = 0;
     }
-    else if (hue < 180)
+    else if (hue_value < 180)
     {
-        r = 0;
-        g = c;
-        b = x;
+        red_out = 0;
+        green_out = chroma;
+        blue_out = x_val;
     }
-    else if (hue < 240)
+    else if (hue_value < 240)
     {
-        r = 0;
-        g = x;
-        b = c;
+        red_out = 0;
+        green_out = x_val;
+        blue_out = chroma;
     }
-    else if (hue < 300)
+    else if (hue_value < 300)
     {
-        r = x;
-        g = 0;
-        b = c;
+        red_out = x_val;
+        green_out = 0;
+        blue_out = chroma;
     }
     else
     {
-        r = c;
-        g = 0;
-        b = x;
+        red_out = chroma;
+        green_out = 0;
+        blue_out = x_val;
     }
 
-    r += m;
-    g += m;
-    b += m;
+    red_out += m_val;
+    green_out += m_val;
+    blue_out += m_val;
 
-    r = std::clamp(r, 0.0, 1.0);
-    g = std::clamp(g, 0.0, 1.0);
-    b = std::clamp(b, 0.0, 1.0);
+    red_out = std::clamp(red_out, 0.0, 1.0);
+    green_out = std::clamp(green_out, 0.0, 1.0);
+    blue_out = std::clamp(blue_out, 0.0, 1.0);
 
-    return wxColour(static_cast<unsigned char>(r * 255), static_cast<unsigned char>(g * 255),
-                    static_cast<unsigned char>(b * 255));
+    return wxColour(static_cast<unsigned char>(red_out * 255),
+                    static_cast<unsigned char>(green_out * 255),
+                    static_cast<unsigned char>(blue_out * 255));
 }
 
 wxColour wxColourToDarkForeground(const wxColour& colour)
 {
-    double hue, saturation, luminance;
-    wxColourToHSL(colour, hue, saturation, luminance);
+    double hue_value = {}, saturation_value = {}, luminance_value = {};
+    wxColourToHSL(colour, hue_value, saturation_value, luminance_value);
 
     if (UserPrefs.is_HighContrast())
     {
-        if (luminance < 0.85)
+        if (luminance_value < 0.85)
         {
-            luminance = 0.85;
+            luminance_value = 0.85;
         }
     }
     else
     {
-        luminance = 0.75;
+        luminance_value = 0.75;
     }
 
-    return HSLToWxColour(hue, saturation, luminance);
+    return HSLToWxColour(hue_value, saturation_value, luminance_value);
 }
 
 wxColour wxColourToDarkBackground(const wxColour& colour)
 {
-    double hue, saturation, luminance;
-    wxColourToHSL(colour, hue, saturation, luminance);
+    double hue_value = {}, saturation_value = {}, luminance_value = {};
+    wxColourToHSL(colour, hue_value, saturation_value, luminance_value);
 
     if (UserPrefs.is_HighContrast())
     {
-        if (luminance > 0.05)
+        if (luminance_value > 0.05)
         {
-            luminance = 0.05;
+            luminance_value = 0.05;
         }
     }
     else
     {
-        luminance = 0.20;
+        luminance_value = 0.20;
     }
 
-    return HSLToWxColour(hue, saturation, luminance);
+    return HSLToWxColour(hue_value, saturation_value, luminance_value);
 }

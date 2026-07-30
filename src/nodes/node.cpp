@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 #include <sstream>
 
@@ -147,7 +148,7 @@ size_t Node::get_InUseEventCount() const
 
 NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
 {
-    auto& prop = m_properties.emplace_back(declaration, this);
+    const NodeProperty& prop = m_properties.emplace_back(declaration, this);
     m_prop_indices[prop.get_name()] = (m_properties.size() - 1);
     return &m_properties[m_properties.size() - 1];
 }
@@ -179,7 +180,7 @@ Node* Node::get_Form() noexcept
         return this;
     }
 
-    for (auto* parent = get_Parent(); parent; parent = parent->get_Parent())
+    for (Node* parent = get_Parent(); parent; parent = parent->get_Parent())
     {
         if (parent->is_Form())
         {
@@ -190,9 +191,9 @@ Node* Node::get_Form() noexcept
     return nullptr;
 }
 
-auto Node::get_Folder() noexcept -> Node*  // NOLINT (cppcheck-suppress)
+Node* Node::get_Folder() noexcept  // NOLINT (cppcheck-suppress)
 {
-    for (auto* parent = get_Parent(); parent; parent = parent->get_Parent())
+    for (Node* parent = get_Parent(); parent; parent = parent->get_Parent())
     {
         if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_data_folder))
         {
@@ -205,7 +206,7 @@ auto Node::get_Folder() noexcept -> Node*  // NOLINT (cppcheck-suppress)
 
 Node* Node::get_ValidFormParent() noexcept
 {
-    auto* parent = this;
+    Node* parent = this;
     while (parent)
     {
         if (parent->is_FormParent())
@@ -279,7 +280,7 @@ bool Node::is_ChildAllowed(NodeDeclaration* child)
 {
     ASSERT(child);
 
-    auto max_children = m_declaration->get_AllowableChildren(child->get_GenType());
+    const ptrdiff_t max_children = m_declaration->get_AllowableChildren(child->get_GenType());
 
     if (max_children == child_count::none)
     {
@@ -312,7 +313,7 @@ bool Node::is_ChildAllowed(NodeDeclaration* child)
     ptrdiff_t children = 0;
     for (size_t i = 0; i < m_children.size() && children <= max_children; ++i)
     {
-        auto child_type = get_Child(i)->get_GenType();
+        const GenType child_type = get_Child(i)->get_GenType();
         // treat type-sizer and type_gbsizer as the same since forms and contains can only have
         // one of them as the top level sizer.
         if (child_type == child->get_GenType() ||
@@ -351,7 +352,8 @@ void Node::RemoveChild(size_t index)
 {
     ASSERT(index < m_children.size());
 
-    auto iter = m_children.begin() + static_cast<ptrdiff_t>(index);
+    const std::vector<NodeSharedPtr>::iterator iter =
+        m_children.begin() + static_cast<ptrdiff_t>(index);
     m_children.erase(iter);
 }
 
@@ -377,7 +379,7 @@ bool Node::ChangeChildPosition(const NodeSharedPtr& node, size_t pos)
 {
     const size_t cur_pos = get_ChildPosition(node.get());
 
-    if (cur_pos == get_ChildCount() || pos >= get_ChildCount())
+    if (cur_pos >= get_ChildCount() || pos >= get_ChildCount() || get_Child(cur_pos) != node.get())
     {
         return false;
     }
@@ -388,7 +390,7 @@ bool Node::ChangeChildPosition(const NodeSharedPtr& node, size_t pos)
     }
 
     RemoveChild(node);
-    AddChild(pos, node);
+    std::ignore = AddChild(pos, node);
     return true;
 }
 
@@ -511,7 +513,7 @@ std::vector<NODEPROP_BMP_COMBO_ITEM> Node::as_bmp_combo_items(PropName name)
 
 std::string_view Node::get_PropDefaultValue(PropName name)
 {
-    auto* prop = get_PropPtr(name);
+    NodeProperty* prop = get_PropPtr(name);
 
     ASSERT_MSG(prop, wxue::string(get_NodeName())
                          << " doesn't have the property " << map_PropNames.at(name));
@@ -594,7 +596,7 @@ std::string_view Node::get_ParentName(GenLang lang, bool ignore_sizers) const
 {
     if (ignore_sizers)
     {
-        auto* parent = get_Parent();
+        Node* parent = get_Parent();
         while (parent && parent->is_Sizer())
         {
             parent = parent->get_Parent();
@@ -728,7 +730,7 @@ wxSizerFlags Node::getSizerFlags() const
     wxSizerFlags flags;
     flags.Proportion(as_int(prop_proportion));
 
-    auto border_size = as_int(prop_border_size);
+    const int border_size = as_int(prop_border_size);
     const int direction = GetBorderDirection(as_view(prop_borders));
     flags.Border(direction, border_size);
 
@@ -748,12 +750,13 @@ std::pair<NodeSharedPtr, Node::Validity> Node::TryCreateInSizerChild(GenName nam
         if (get_Child(0)->get_GenType() == type_sizer ||
             get_Child(0)->get_GenType() == type_gbsizer)
         {
-            auto result = NodeCreation.CreateNode(name, get_Child(0), verify_language_support);
-            if (!result.first || result.second != valid_node)
+            auto [child_result, child_code] =
+                NodeCreation.CreateNode(name, get_Child(0), verify_language_support);
+            if (!child_result || child_code != valid_node)
             {
-                return { nullptr, result.second };
+                return { nullptr, child_code };
             }
-            new_node = result.first;
+            new_node = child_result;
             parent = get_Child(0);
 
             if (parent->get_GenType() == type_gbsizer)
@@ -782,7 +785,7 @@ void Node::AdjustMemberNameForLanguage(Node* new_node)
         return;
     }
 
-    auto original_name = new_node->as_view(prop_var_name);
+    const std::string_view original_name = new_node->as_view(prop_var_name);
     std::string member_name;
 
     // Assign default name if empty
@@ -795,7 +798,7 @@ void Node::AdjustMemberNameForLanguage(Node* new_node)
         member_name = std::string(original_name);
     }
 
-    const auto language = Project.get_CodePreference(this);
+    const GenLang language = Project.get_CodePreference(this);
 
     // Apply C++ naming conventions
     if (language == GenLang::cplusplus && UserPrefs.is_CppSnakeCase())
@@ -824,7 +827,7 @@ void Node::AdjustMemberNameForLanguage(Node* new_node)
     // Update node if name changed and check for duplicates
     if (member_name != original_name)
     {
-        new_node->set_value(prop_var_name, member_name);
+        std::ignore = new_node->set_value(prop_var_name, member_name);
         new_node->FixDuplicateName();
     }
 }
@@ -833,12 +836,12 @@ std::pair<NodeSharedPtr, Node::Validity>
     Node::HandleRibbonButtonFallback([[maybe_unused]] GenName name, int pos)
 
 {
-    auto result = NodeCreation.CreateNode(gen_ribbonTool, this);
-    if (!result.first || result.second != valid_node)
+    auto [ribbon_result, ribbon_code] = NodeCreation.CreateNode(gen_ribbonTool, this);
+    if (!ribbon_result || ribbon_code != valid_node)
     {
-        return { nullptr, result.second };
+        return { nullptr, ribbon_code };
     }
-    auto new_node = result.first;
+    const NodeSharedPtr new_node = ribbon_result;
     const wxue::string undo_str = "insert ribbon tool";
     wxGetFrame().PushUndoAction(
         std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str, pos));
@@ -848,7 +851,7 @@ std::pair<NodeSharedPtr, Node::Validity>
 std::pair<NodeSharedPtr, Node::Validity> Node::TryCreateInParent(GenName name,
                                                                  [[maybe_unused]] int pos)
 {
-    auto* parent = get_Parent();
+    Node* parent = get_Parent();
     if (!parent)
     {
         wxMessageBox(wxue::string() << "You cannot add " << map_GenNames.at(name)
@@ -856,9 +859,10 @@ std::pair<NodeSharedPtr, Node::Validity> Node::TryCreateInParent(GenName name,
         return { nullptr, invalid_child };
     }
 
-    auto* decl = NodeCreation.get_declaration(name);
-    auto max_children = get_NodeDeclaration()->get_AllowableChildren(decl->get_GenType());
-    auto cur_children = NodeCreator::CountChildrenWithSameType(this, decl->get_GenType());
+    const NodeDeclaration* decl = NodeCreation.get_declaration(name);
+    const ptrdiff_t max_children =
+        get_NodeDeclaration()->get_AllowableChildren(decl->get_GenType());
+    const size_t cur_children = NodeCreator::CountChildrenWithSameType(this, decl->get_GenType());
     if (max_children > 0 && cur_children >= static_cast<size_t>(max_children))
     {
         if (is_Gen(gen_wxSplitterWindow))
@@ -875,7 +879,7 @@ std::pair<NodeSharedPtr, Node::Validity> Node::TryCreateInParent(GenName name,
         return { nullptr, invalid_child_count };
     }
 
-    auto new_node = NodeCreation.CreateNode(name, parent).first;
+    const NodeSharedPtr new_node = NodeCreation.CreateNode(name, parent).first;
     if (new_node)
     {
         if (parent->is_Gen(gen_wxGridBagSizer))
@@ -883,7 +887,7 @@ std::pair<NodeSharedPtr, Node::Validity> Node::TryCreateInParent(GenName name,
             return HandleGridBagInsertion(parent, new_node.get());
         }
 
-        auto insert_pos = parent->FindInsertionPos(this);
+        const ptrdiff_t insert_pos = parent->FindInsertionPos(this);
         wxue::string undo_str;
         undo_str << "insert " << map_GenNames.at(name);
         wxGetFrame().PushUndoAction(
@@ -897,24 +901,26 @@ std::pair<NodeSharedPtr, Node::Validity>
     Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
 
 {
-    auto& frame = wxGetFrame();
+    MainFrame& frame = wxGetFrame();
 
-    auto result = NodeCreation.CreateNode(name, this, verify_language_support);
-    if (!result.first || result.second != valid_node)
+    auto [new_node_result, new_node_code] =
+        NodeCreation.CreateNode(name, this, verify_language_support);
+    if (!new_node_result || new_node_code != valid_node)
     {
-        return { nullptr, result.second };
+        return { nullptr, new_node_code };
     }
-    auto new_node = result.first;
+    NodeSharedPtr new_node = new_node_result;
     Node* parent = this;
 
     // If node creation failed, try creating in a sizer child or via fallback mechanisms
     if (!new_node)
     {
         new_node = NodeCreation.CreateNode(name, this).first;
-        result = TryCreateInSizerChild(name, verify_language_support, parent, new_node);
-        if (result.second != valid_node)
+        auto [sizer_result, sizer_code] =
+            TryCreateInSizerChild(name, verify_language_support, parent, new_node);
+        if (sizer_code != valid_node)
         {
-            return result;
+            return std::pair<NodeSharedPtr, Node::Validity> { sizer_result, sizer_code };
         }
     }
 
@@ -931,7 +937,7 @@ std::pair<NodeSharedPtr, Node::Validity>
         // background color of the parent so we set it to the more normal Windows colour.
         if (name == gen_BookPage)
         {
-            if (auto* prop = new_node->get_PropPtr(prop_background_colour); prop)
+            if (NodeProperty* prop = new_node->get_PropPtr(prop_background_colour); prop)
             {
                 prop->set_value("wxSYS_COLOUR_BTNFACE");
             }
@@ -951,12 +957,12 @@ std::pair<NodeSharedPtr, Node::Validity>
     // Try creating in parent node
     else
     {
-        result = TryCreateInParent(name, pos);
-        if (result.second != valid_node)
+        auto [parent_result, parent_code] = TryCreateInParent(name, pos);
+        if (parent_code != valid_node)
         {
-            return result;
+            return { parent_result, parent_code };
         }
-        new_node = result.first;
+        new_node = parent_result;
     }
 
     // Adjust variable name for target language
@@ -972,8 +978,8 @@ std::pair<NodeSharedPtr, Node::Validity>
 
 Node* Node::CreateNode(GenName name)
 {
-    auto& frame = wxGetFrame();
-    auto* cur_selection = frame.getSelectedNode();
+    MainFrame& frame = wxGetFrame();
+    Node* cur_selection = frame.getSelectedNode();
     if (!cur_selection)
     {
         wxMessageBox("You need to select something first in order to properly place this widget.");
@@ -984,7 +990,7 @@ Node* Node::CreateNode(GenName name)
 
 void Node::ModifyProperty(PropName name, wxue::string_view value)
 {
-    auto* prop = get_PropPtr(name);
+    NodeProperty* prop = get_PropPtr(name);
     if (prop && value != prop->as_view())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
@@ -1091,6 +1097,11 @@ std::string Node::get_UniqueName(const std::string& proposed_name, PropName prop
             org_name.erase(org_name.size() - 1, 1);
         }
 
+        if (org_name.empty())
+        {
+            return proposed_name;
+        }
+
         for (int i = 2; iter != name_set.end(); iter = name_set.find(new_name), ++i)
         {
             if (org_name.back() == '_')
@@ -1154,6 +1165,10 @@ bool Node::FixDuplicateName()
                     // remove any trailing digits
                     org_name.erase(org_name.size() - 1, 1);
                 }
+                if (org_name.empty())
+                {
+                    org_name = "_";
+                }
                 if (org_name.back() == '_')
                 {
                     org_name.erase(org_name.size() - 1, 1);
@@ -1179,7 +1194,7 @@ bool Node::FixDuplicateName()
         form->CollectUniqueNames(name_set, this, prop_label);
 
         const std::string org_name(as_string(prop_label));
-        std::string result = get_UniqueName(org_name, prop_label);
+        const std::string result = get_UniqueName(org_name, prop_label);
         if (result != as_string(prop_label))
         {
             NodeProperty* fix_name = get_PropPtr(prop_label);
@@ -1246,6 +1261,10 @@ std::string Node::GenerateUniqueNameFromBase(const std::string& base_name,
         // remove any trailing digits
         org_name.erase(org_name.size() - 1, 1);
     }
+    if (org_name.empty())
+    {
+        return base_name;
+    }
     if (org_name.back() == '_')
     {
         org_name.erase(org_name.size() - 1, 1);
@@ -1270,7 +1289,7 @@ void Node::FixDuplicateVariableNames(const std::unordered_set<std::string>& name
             if (name_set.contains(name))
             {
                 // We get here if the name has already been used.
-                std::string new_name = GenerateUniqueNameFromBase(name, name_set);
+                const std::string new_name = GenerateUniqueNameFromBase(name, name_set);
                 NodeProperty* fix_name = get_PropPtr(iter);
                 fix_name->set_value(new_name);
             }
@@ -1305,10 +1324,10 @@ void Node::FixPropGridLabelIfNeeded()
         }
 
         const std::string org_name(as_string(prop_label));
-        std::string result = get_UniqueName(org_name, prop_label);
+        const std::string result = get_UniqueName(org_name, prop_label);
         if (result != as_string(prop_label))
         {
-            auto* fix_name = get_PropPtr(prop_label);
+            NodeProperty* fix_name = get_PropPtr(prop_label);
             fix_name->set_value(result);
         }
     }
@@ -1766,7 +1785,7 @@ void Node::ChangeAlignment(int align, bool vertical)
 
 bool Node::MoveNode(MoveDirection where, bool check_only)
 {
-    auto* parent = get_Parent();
+    Node* parent = get_Parent();
 
     ASSERT(parent || is_Gen(gen_Project));
     if (!parent)
@@ -1884,6 +1903,8 @@ bool Node::MoveNode(MoveDirection where, bool check_only)
                                                           "check would have failed.");
                             return false;
                         }
+                        --pos;
+                        new_parent = parent->get_Child(pos);
                     }
                     if (new_parent->is_Gen(gen_folder) || new_parent->is_Gen(gen_sub_folder))
                     {

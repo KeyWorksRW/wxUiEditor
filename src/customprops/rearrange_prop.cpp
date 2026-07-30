@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -33,7 +34,7 @@ void RearrangeDialog::OnInit(wxInitDialogEvent& /* event unused */)
     m_grid->SetColFormatCustom(0, wxGRID_VALUE_BOOL);
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_STRING);
 
-    auto contents = m_prop->as_checklist_items();
+    const std::vector<NODEPROP_CHECKLIST_ITEM> contents = m_prop->as_checklist_items();
     if ((to_int) contents.size() > m_grid->GetNumberRows())
     {
         m_grid->AppendRows(to_int(contents.size()) - m_grid->GetNumberRows());
@@ -45,7 +46,7 @@ void RearrangeDialog::OnInit(wxInitDialogEvent& /* event unused */)
     {
         m_grid->SetCellValue(row, 0, iter.checked);
         m_grid->SetCellValue(row, 1, iter.label);
-        int width = m_grid->GetTextExtent(iter.label).GetWidth();
+        int const width = m_grid->GetTextExtent(iter.label).GetWidth();
         if (width > m_label_width)
         {
             m_label_width = width;
@@ -92,15 +93,15 @@ void RearrangeDialog::OnCancel(wxCommandEvent& event)
 
 void RearrangeDialog::OnUpdateUI(wxUpdateUIEvent& /* event unused */)
 {
-    auto array = m_grid->GetSelectedRows();
-    m_toolBar->EnableTool(id_DeleteRow, array.size() > 0);
-    m_toolBar->EnableTool(id_UndoDeleteRow, m_deleted_col_0.size());
+    const wxArrayInt array = m_grid->GetSelectedRows();
+    m_toolBar->EnableTool(id_DeleteRow, !array.empty());
+    m_toolBar->EnableTool(id_UndoDeleteRow, !m_deleted_col_0.empty());
 }
 
 void RearrangeDialog::OnNewRow(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
-    auto new_row = m_grid->GetNumberRows() - 1;
+    const int new_row = m_grid->GetNumberRows() - 1;
     m_grid->SetRowLabelValue(new_row, " ");
     m_grid->SelectRow(new_row);
     Fit();
@@ -108,17 +109,18 @@ void RearrangeDialog::OnNewRow(wxCommandEvent& /* event unused */)
 
 void RearrangeDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 {
-    auto array = m_grid->GetSelectedRows();
+    wxArrayInt array = m_grid->GetSelectedRows();
     if (array.empty())
     {
         wxMessageBox("No rows selected", "Error", wxOK | wxICON_ERROR);
         return;
     }
 
-    for (auto iter = array.rbegin(); iter != array.rend(); ++iter)
+    m_deleted_col_0 = m_grid->GetCellValue(array[0], 0);
+    m_deleted_col_1 = m_grid->GetCellValue(array[0], 1);
+
+    for (wxArrayInt::const_reverse_iterator iter = array.rbegin(); iter != array.rend(); ++iter)
     {
-        m_deleted_col_0 = m_grid->GetCellValue(*iter, 0);
-        m_deleted_col_1 = m_grid->GetCellValue(*iter, 1);
         m_grid->DeleteRows(*iter);
     }
     Fit();
@@ -127,7 +129,7 @@ void RearrangeDialog::OnDeleteRow(wxCommandEvent& /* event unused */)
 void RearrangeDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 {
     m_grid->AppendRows(1);
-    if (m_deleted_col_0.size())
+    if (!m_deleted_col_0.empty())
     {
         m_grid->SetCellValue(m_grid->GetNumberRows() - 1, 0, m_deleted_col_0);
         m_deleted_col_0.clear();
@@ -141,10 +143,10 @@ void RearrangeDialog::OnUndoDelete(wxCommandEvent& /* event unused */)
 bool RearrangeDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
                                           wxPGProperty* /* property unused */)
 {
-    RearrangeDialog dlg(wxGetFrame().getWindow(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    RearrangeDialog re_dlg(wxGetFrame().getWindow(), m_prop);
+    if (re_dlg.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(re_dlg.GetResults());
         return true;
     }
 

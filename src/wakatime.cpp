@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2023 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <time.h>
 
@@ -16,18 +17,21 @@
 
 WakaTime::WakaTime()
 {
-    const auto result = time(nullptr);
+    const std::time_t result = time(nullptr);
     if (result != -1)
     {
         m_last_heartbeat = static_cast<intmax_t>(result);
     }
 
-    SetWakaExePath();
+    if (IsWakaTimeAvailable())
+    {
+        SetWakaExePath();
+    }
 }
 
-auto WakaTime::IsWakaTimeAvailable() -> bool
+bool WakaTime::IsWakaTimeAvailable()
 {
-    const auto result = wxFileName::GetHomeDir();
+    const wxString result = wxFileName::GetHomeDir();
     if (result.IsEmpty())
     {
         return false;
@@ -68,9 +72,9 @@ auto WakaTime::IsWakaTimeAvailable() -> bool
     return false;
 }
 
-auto WakaTime::SetWakaExePath() -> void
+void WakaTime::SetWakaExePath()
 {
-    const auto result = wxFileName::GetHomeDir();
+    const wxString result = wxFileName::GetHomeDir();
     ASSERT_MSG(!result.IsEmpty(),
                "IsWakaTimeAvailable() must have returned true before calling SetWakaExePath()!");
 
@@ -93,7 +97,7 @@ auto WakaTime::SetWakaExePath() -> void
 
         // append_filename uses forward slashes, but that might be a problem when running the
         // executable on Windows, so switch to backslash to be sure it works.
-        m_waka_cli.Replace("/", "\\", true);
+        std::ignore = m_waka_cli.Replace("/", "\\", true);
 
         return;
     }
@@ -121,7 +125,7 @@ auto WakaTime::SetWakaExePath() -> void
 
 constexpr const intmax_t waka_interval = 120;
 
-auto WakaTime::SendHeartbeat([[maybe_unused]] bool FileSavedEvent) -> void
+void WakaTime::SendHeartbeat([[maybe_unused]] bool FileSavedEvent)
 {
     if (!UserPrefs.is_WakaTimeEnabled())
     {
@@ -133,7 +137,7 @@ auto WakaTime::SendHeartbeat([[maybe_unused]] bool FileSavedEvent) -> void
         return;
     }
 
-    const auto result = time(nullptr);
+    const std::time_t result = time(nullptr);
     if (result != -1)
     {
         if (FileSavedEvent ||
@@ -146,7 +150,7 @@ auto WakaTime::SendHeartbeat([[maybe_unused]] bool FileSavedEvent) -> void
                    "--project ";
             wxue::string name = Project.get_ProjectFile().filename();
             name.remove_extension();
-            cmd << name;
+            cmd << "\"" << name << "\"";
             cmd << " --entity \"" << Project.get_ProjectFile() << "\"";
             if (FileSavedEvent)
             {
@@ -158,11 +162,11 @@ auto WakaTime::SendHeartbeat([[maybe_unused]] bool FileSavedEvent) -> void
     }
 }
 
-auto WakaTime::ResetHeartbeat() -> void
+void WakaTime::ResetHeartbeat()
 {
     if (UserPrefs.is_WakaTimeEnabled())
     {
-        const auto result = time(nullptr);
+        const std::time_t result = time(nullptr);
 
         if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))
         {

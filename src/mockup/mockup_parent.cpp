@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-16-2026]
 
 /*
 
@@ -49,13 +50,11 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     // Don't allow events to propagate any higher than this window.
     SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
 
-    // Make the background around the window darker to enhance the contrast with the form
-
-    // BUG: [Randalphwa - 04-16-2026] ChangeLightness(100) is a no-op. In addition, this is changing
-    // the alpha of the pixel. An alternative would be to convert to HSL, set the luminance to 100,
-    // and convert back to RGB.
-    SetOwnBackgroundColour(
-        wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE).ChangeLightness(100));
+    // Darken the background around the form to enhance contrast with the form.
+    // Previous ChangeLightness(100) was a no-op that only changed alpha.
+    auto bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE);
+    bgColour.Set(bgColour.Red() * 2 / 5, bgColour.Green() * 2 / 5, bgColour.Blue() * 2 / 5);
+    SetOwnBackgroundColour(bgColour);
 
     auto* mockup_sizer = new wxBoxSizer(wxVERTICAL);
     auto* form_sizer = new wxBoxSizer(wxVERTICAL);
@@ -530,13 +529,6 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             {
                 const wxSize size_title = m_panelTitleBar->GetSize();
                 new_size.y += size_title.y;
-            }
-
-            if (m_IsMagnifyWindow && !(m_form->is_Gen(gen_RibbonBar) ||
-                                       m_form->is_Gen(gen_ToolBar) || m_form->is_Gen(gen_MenuBar)))
-            {
-                // BUG: [Randalphwa - 04-16-2026] m_size_magnified is never used
-                new_size.IncTo(m_size_magnified);
             }
 
             // Need to be at least as large as any dimensions the user set.

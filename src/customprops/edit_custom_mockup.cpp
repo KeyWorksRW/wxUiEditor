@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
@@ -29,10 +30,10 @@ EditCustomMockupDialog::EditCustomMockupDialog(wxWindow* parent, NodeProperty* p
 bool EditCustomMockupDialogAdapter::DoShowDialog(wxPropertyGrid* /* propGrid unused */,
                                                  wxPGProperty* /* property unused */)
 {
-    EditCustomMockupDialog dlg(wxGetFrame().getWindow(), m_prop);
-    if (dlg.ShowModal() == wxID_OK)
+    EditCustomMockupDialog mockup_dialog(wxGetFrame().getWindow(), m_prop);
+    if (mockup_dialog.ShowModal() == wxID_OK)
     {
-        SetValue(dlg.GetResults());
+        SetValue(mockup_dialog.GetResults());
         return true;
     }
 

@@ -4,10 +4,11 @@
 // Copyright: Copyright (c) 2019-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 //////////////////////////////////////////////////////////////////////////
-
+// CR: [07-16-2026]
 #include <array>
 #include <charconv>  // for std::to_chars
 #include <cstdlib>   // for std::atof
+#include <tuple>     // for std::ignore
 
 #include "font_prop.h"
 
@@ -55,7 +56,7 @@ const FontStylePairs font_style_pairs;
 
 FontProperty::FontProperty()
 {
-    auto def_gui = wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT);
+    const wxFont def_gui = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     Family(def_gui.GetFamily())
         .FaceName(def_gui.GetFaceName())
         .Style(def_gui.GetStyle())
@@ -71,14 +72,14 @@ FontProperty::FontProperty(const wxFont& font)
             .Style(font.GetStyle())
             .Weight(font.GetWeight())
             .Underlined(font.GetUnderlined());
-        if (font.GetFaceName().size())
+        if (!font.GetFaceName().empty())
         {
             FaceName(font.GetFaceName());
         }
     }
 }
 
-FontProperty::FontProperty(wxVariant font)
+FontProperty::FontProperty(const wxVariant& font)
 {
     Convert(font.GetString().utf8_string());
 }
@@ -107,12 +108,12 @@ FontProperty::FontProperty(NodeProperty* prop)
 // facename font (point is a floating-point number)
 //     facename, point size, family, style, weight, underlined, strikethrough
 
-auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
+void FontProperty::Convert(wxue::string_view font, bool old_style)
 {
     if (font.empty())
     {
         m_isDefGuiFont = true;
-        auto def_gui = wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT);
+        const wxFont def_gui = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
         Family(def_gui.GetFamily())
             .FaceName(def_gui.GetFaceName())
             .Style(def_gui.GetStyle())
@@ -161,7 +162,10 @@ auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
         Family(font_family_pairs.GetValue(mstr[0]));
         if (mstr.size() > font::idx_family_point)
         {
-            m_pointSize = std::atof(std::string(mstr[font::idx_family_point]).c_str());
+            std::from_chars(mstr[font::idx_family_point].data(),
+                            mstr[font::idx_family_point].data() +
+                                mstr[font::idx_family_point].size(),
+                            m_pointSize);
         }
 
         if (mstr.size() > font::idx_family_style)
@@ -198,7 +202,10 @@ auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
 
     if (mstr.size() > font::idx_facename_style)
     {
-        auto value = std::atof(std::string(mstr[font::idx_facename_style]).c_str());
+        double value {};
+        std::from_chars(
+            mstr[font::idx_facename_style].data(),
+            mstr[font::idx_facename_style].data() + mstr[font::idx_facename_style].size(), value);
         if (!old_style &&
             value < static_cast<double>(wxFONTSTYLE_NORMAL))  // wxFONTSTYLE_NORMAL == 90, so too
                                                               // large to be a point size
@@ -229,14 +236,17 @@ auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
 
             return;
         }
-        m_pointSize = std::atof(std::string(mstr[font::idx_facename_point]).c_str());
+        std::from_chars(mstr[font::idx_facename_point].data(),
+                        mstr[font::idx_facename_point].data() +
+                            mstr[font::idx_facename_point].size(),
+                        m_pointSize);
     }
 
     // If we get here, this is an old-style and/or wxFormBuilder property
 
     if (mstr.size() > font::idx_facename_style)
     {
-        auto style = mstr[font::idx_facename_style].atoi();
+        const int style = mstr[font::idx_facename_style].atoi();
         if (style >= wxFONTSTYLE_NORMAL && style < wxFONTSTYLE_MAX)
         {
             Style(static_cast<wxFontStyle>(style));
@@ -245,7 +255,7 @@ auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
 
     if (mstr.size() > font::idx_facename_weight)
     {
-        auto weight = mstr[font::idx_facename_weight].atoi();
+        const int weight = mstr[font::idx_facename_weight].atoi();
         if (weight >= wxFONTWEIGHT_NORMAL && weight < wxFONTWEIGHT_MAX)
         {
             Weight(static_cast<wxFontWeight>(weight));
@@ -254,7 +264,7 @@ auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
 
     if (mstr.size() > font::idx_facename_family)
     {
-        auto value = mstr[font::idx_facename_family].atoi();
+        const int value = mstr[font::idx_facename_family].atoi();
         if (value >= wxFONTFAMILY_DEFAULT && value < wxFONTFAMILY_MAX)
         {
             Family(static_cast<wxFontFamily>(value));
@@ -272,7 +282,7 @@ auto FontProperty::Convert(wxue::string_view font, bool old_style) -> void
     }
 }
 
-auto FontProperty::as_wxString() const -> wxString
+wxString FontProperty::as_wxString() const
 {
     wxString str;
     if (m_isDefGuiFont)
@@ -280,12 +290,10 @@ auto FontProperty::as_wxString() const -> wxString
         // symbol size, style, weight, underlined, strikethrough
 
         wxue::string prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
-        prop_str << ","
-                 << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
-        prop_str << ","
-                 << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" :
-                                                          font_weight_pairs.GetName(GetWeight()));
-        prop_str.Replace(",normal", ",", true);
+        if (GetStyle() != wxFONTSTYLE_NORMAL)
+            prop_str << "," << font_style_pairs.GetName(GetStyle());
+        if (GetWeight() != wxFONTWEIGHT_NORMAL)
+            prop_str << "," << font_weight_pairs.GetName(GetWeight());
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')
@@ -305,7 +313,7 @@ auto FontProperty::as_wxString() const -> wxString
             str = prop_str;
             return str;
         }
-        prop_str.Replace(",normal", ",", true);
+        std::ignore = prop_str.Replace(",normal", ",", true);
         prop_str << ",strikethrough";
         str = prop_str;
     }
@@ -401,13 +409,13 @@ auto FontProperty::as_wxString() const -> wxString
     return str;
 }
 
-auto FontProperty::as_string() const -> wxue::string
+wxue::string FontProperty::as_string() const
 {
     wxue::string str(as_wxString().utf8_string());
     return str;
 }
 
-auto FontProperty::GetFont() const -> wxFont
+wxFont FontProperty::GetFont() const
 {
     if (m_isDefGuiFont)
     {
@@ -419,14 +427,9 @@ auto FontProperty::GetFont() const -> wxFont
         font.SetStrikethrough(IsStrikethrough());
         return font;
     }
-    else
-    {
-        wxFontInfo info(m_pointSize);
-        info.Family(GetFamily())
-            .Style(GetStyle())
-            .Weight(GetNumericWeight())
-            .FaceName(GetFaceName());
-        info.Underlined(IsUnderlined()).Strikethrough(IsStrikethrough());
-        return wxFont(info);
-    }
+
+    wxFontInfo info(m_pointSize);
+    info.Family(GetFamily()).Style(GetStyle()).Weight(GetNumericWeight()).FaceName(GetFaceName());
+    info.Underlined(IsUnderlined()).Strikethrough(IsStrikethrough());
+    return wxFont(info);
 }

@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-12-2026]
 
 #pragma once
 
@@ -118,13 +119,13 @@ public:
     void Unlock() { m_locked = false; }
     [[nodiscard]] bool IsLocked() const { return m_locked; }
 
-    [[nodiscard]] bool IsUndoAvailable() { return !m_undo.empty(); }
-    [[nodiscard]] bool IsRedoAvailable() { return !m_redo.empty(); }
+    [[nodiscard]] bool IsUndoAvailable() const { return !m_undo.empty(); }
+    [[nodiscard]] bool IsRedoAvailable() const { return !m_redo.empty(); }
 
     [[nodiscard]] wxString GetUndoString();
     [[nodiscard]] wxString GetRedoString();
 
-    [[nodiscard]] size_t size() { return m_undo.size(); }
+    [[nodiscard]] size_t size() const { return m_undo.size(); }
 
     [[nodiscard]] const std::vector<UndoActionPtr>& GetUndoVector() const { return m_undo; }
     [[nodiscard]] const std::vector<UndoActionPtr>& GetRedoVector() const { return m_redo; }
@@ -139,14 +140,24 @@ public:
     // last undo command, you have to get the last item in the redo stack. Redo works just the
     // opposite, pushing it's command to the last of the undo stack.
 
-    [[nodiscard]] bool wasUndoEventGenerated() { return m_redo.back()->wasUndoEventGenerated(); }
-    [[nodiscard]] bool wasRedoEventGenerated() { return m_undo.back()->wasRedoEventGenerated(); }
-    [[nodiscard]] bool wasUndoSelectEventGenerated()
+    [[nodiscard]] bool wasUndoEventGenerated() const
     {
+        ASSERT_MSG(!m_redo.empty(), "wasUndoEventGenerated() called with empty redo stack");
+        return m_redo.back()->wasUndoEventGenerated();
+    }
+    [[nodiscard]] bool wasRedoEventGenerated() const
+    {
+        ASSERT_MSG(!m_undo.empty(), "wasRedoEventGenerated() called with empty undo stack");
+        return m_undo.back()->wasRedoEventGenerated();
+    }
+    [[nodiscard]] bool wasUndoSelectEventGenerated() const
+    {
+        ASSERT_MSG(!m_redo.empty(), "wasUndoSelectEventGenerated() called with empty redo stack");
         return m_redo.back()->wasUndoSelectEventGenerated();
     }
-    [[nodiscard]] bool wasRedoSelectEventGenerated()
+    [[nodiscard]] bool wasRedoSelectEventGenerated() const
     {
+        ASSERT_MSG(!m_undo.empty(), "wasRedoSelectEventGenerated() called with empty undo stack");
         return m_undo.back()->wasRedoSelectEventGenerated();
     }
 

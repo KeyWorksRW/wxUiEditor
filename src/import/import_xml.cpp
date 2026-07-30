@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [07-15-2026]
 
 #include <filesystem>
 
@@ -28,6 +29,7 @@ using namespace GenEnum;
 
 namespace xrc_import
 {
+    // NOLINTNEXTLINE(readability-avoid-auto) -- N is size of initializer list
     constexpr auto map_import_prop_names = frozen::make_map<std::string_view, GenEnum::PropName>({
         { "accel", prop_shortcut },
         { "art-provider", prop_art_provider },
@@ -86,6 +88,7 @@ namespace xrc_import
         { "wrapmode", prop_stc_wrap_mode },
     });
 
+    // NOLINTNEXTLINE(readability-avoid-auto) -- N is size of initializer list
     constexpr auto import_GenNames = frozen::make_map<std::string_view, GenEnum::GenName>({
         { "Custom", gen_CustomControl },
         { "CustomWidget", gen_CustomControl },
@@ -109,6 +112,7 @@ namespace xrc_import
         { "wxToolBarButton", gen_tool },
     });
 
+    // NOLINTNEXTLINE(readability-avoid-auto) -- N is size of initializer list
     constexpr auto map_old_events = frozen::make_map<std::string_view, std::string_view>({
         { "wxEVT_COMMAND_BUTTON_CLICKED", "wxEVT_BUTTON" },
         { "wxEVT_COMMAND_CHECKBOX_CLICKED", "wxEVT_CHECKBOX" },
@@ -145,11 +149,11 @@ using namespace xrc_import;
 
 std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file)
 {
-    pugi::xml_document doc;
+    pugi::xml_document document;
 
-    if (auto result = doc.load_file_string(file); !result)
+    if (auto result = document.load_file_string(file); !result)
     {
-        std::string msg =
+        const std::string msg =
             std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                         result.description(), result.line, result.column, result.offset);
         wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR)
@@ -159,13 +163,12 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file
 
     m_importProjectFile = file;
 
-    return doc;
+    return document;
 }
 
-auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
-    -> void
+void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
 {
-    auto flag_value = xml_prop.text().as_sview();
+    const std::string_view flag_value = xml_prop.text().as_sview();
     std::string border_value;
 
     auto append_with_pipe = [](std::string& value, std::string_view val) -> void
@@ -202,7 +205,7 @@ auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
     }
 
     // Always set this even if it is empty
-    node->set_value(prop_borders, border_value);
+    std::ignore = node->set_value(prop_borders, border_value);
 
     bool is_VerticalSizer = false;
     bool is_HorizontalSizer = false;
@@ -239,18 +242,20 @@ auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
 
     if (flag_value.contains("wxALIGN_CENTER") || flag_value.contains("wxALIGN_CENTRE"))
     {
-        if (flag_value.contains("wxALIGN_CENTER_VERTICAL") ||
-            flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
+        const bool has_center_vert = flag_value.contains("wxALIGN_CENTER_VERTICAL") ||
+                                     flag_value.contains("wxALIGN_CENTRE_VERTICAL");
+        const bool has_center_horiz = flag_value.contains("wxALIGN_CENTER_HORIZONTAL") ||
+                                      flag_value.contains("wxALIGN_CENTRE_HORIZONTAL");
+
+        if (has_center_vert)
         {
             append_with_pipe(align_value, "wxALIGN_CENTER_VERTICAL");
+            if (has_center_horiz)
+            {
+                append_with_pipe(align_value, "wxALIGN_CENTER_HORIZONTAL");
+            }
         }
-        else if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") ||
-                 flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
-        {
-            append_with_pipe(align_value, "wxALIGN_CENTER_HORIZONTAL");
-        }
-        if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") ||
-            flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
+        else if (has_center_horiz)
         {
             append_with_pipe(align_value, "wxALIGN_CENTER_HORIZONTAL");
         }
@@ -267,14 +272,14 @@ auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
 
     if (!align_value.empty())
     {
-        node->set_value(prop_alignment, align_value);
+        std::ignore = node->set_value(prop_alignment, align_value);
     }
 
     std::string flags_value;
     if (flag_value.contains("wxEXPAND") || flag_value.contains("wxGROW"))
     {
         // You can't use wxEXPAND with any alignment flags
-        node->set_value(prop_alignment, "");
+        std::ignore = node->set_value(prop_alignment, "");
         flags_value = "wxEXPAND";
     }
     if (flag_value.contains("wxSHAPED"))
@@ -296,11 +301,11 @@ auto ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
 
     if (!flags_value.empty())
     {
-        node->set_value(prop_flags, flags_value);
+        std::ignore = node->set_value(prop_flags, flags_value);
     }
 }
 
-auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop) -> void
+void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop)
 {
     if (node->is_Gen(gen_wxListBox) || node->is_Gen(gen_wxCheckListBox))
     {
@@ -310,7 +315,7 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         wxString style(xml_prop.text().as_view());
         if (style.Contains("wxLB_SINGLE"))
         {
-            node->set_value(prop_type, "wxLB_SINGLE");
+            std::ignore = node->set_value(prop_type, "wxLB_SINGLE");
             if (style.Contains("wxLB_SINGLE|"))
             {
                 style.Replace("wxLB_SINGLE|", "");
@@ -322,7 +327,7 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         }
         else if (style.Contains("wxLB_MULTIPLE"))
         {
-            node->set_value(prop_type, "wxLB_MULTIPLE");
+            std::ignore = node->set_value(prop_type, "wxLB_MULTIPLE");
             if (style.Contains("wxLB_MULTIPLE|"))
             {
                 style.Replace("wxLB_MULTIPLE|", "");
@@ -334,7 +339,7 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         }
         else if (style.Contains("wxLB_EXTENDED"))
         {
-            node->set_value(prop_type, "wxLB_EXTENDED");
+            std::ignore = node->set_value(prop_type, "wxLB_EXTENDED");
             if (style.Contains("wxLB_EXTENDED|"))
             {
                 style.Replace("wxLB_EXTENDED|", "");
@@ -348,7 +353,7 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->is_Gen(gen_wxRadioBox))
     {
-        wxString style(xml_prop.text().as_view());
+        const wxString style(xml_prop.text().as_view());
         // It's a bug to specify both styles, we fix that here
         if (style.Contains("wxRA_SPECIFY_ROWS") && style.Contains("wxRA_SPECIFY_COLS"))
         {
@@ -367,8 +372,11 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         wxString style(xml_prop.text().as_view());
         if (style.Contains("wxGA_VERTICAL"))
         {
-            auto* prop_type = node->get_PropPtr(prop_orientation);
-            prop_type->set_value("wxGA_VERTICAL");
+            NodeProperty* prop_type = node->get_PropPtr(prop_orientation);
+            if (prop_type)
+            {
+                prop_type->set_value("wxGA_VERTICAL");
+            }
             if (style.Contains("wxGA_VERTICAL|"))
             {
                 style.Replace("wxGA_VERTICAL|", "");
@@ -390,9 +398,11 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         }
         else if (style.Contains("wxGA_HORIZONTAL"))
         {
-            auto* prop_type = node->get_PropPtr(prop_orientation);
-            prop_type->set_value("wxGA_HORIZONTAL");
-
+            NodeProperty* prop_type = node->get_PropPtr(prop_orientation);
+            if (prop_type)
+            {
+                prop_type->set_value("wxGA_HORIZONTAL");
+            }
             if (style.Contains("wxGA_HORIZONTAL|"))
             {
                 style.Replace("wxGA_HORIZONTAL|", "");
@@ -412,8 +422,11 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         wxString style(xml_prop.text().as_view());
         if (style.Contains("wxSL_HORIZONTAL"))
         {
-            auto* prop_type = node->get_PropPtr(prop_orientation);
-            prop_type->set_value("wxSL_HORIZONTAL");
+            NodeProperty* prop_type = node->get_PropPtr(prop_orientation);
+            if (prop_type)
+            {
+                prop_type->set_value("wxSL_HORIZONTAL");
+            }
             if (style.Contains("wxSL_HORIZONTAL|"))
             {
                 style.Replace("wxSL_HORIZONTAL|", "");
@@ -425,8 +438,11 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         }
         else if (style.Contains("wxSL_VERTICAL"))
         {
-            auto* prop_type = node->get_PropPtr(prop_orientation);
-            prop_type->set_value("wxSL_VERTICAL");
+            NodeProperty* prop_type = node->get_PropPtr(prop_orientation);
+            if (prop_type)
+            {
+                prop_type->set_value("wxSL_VERTICAL");
+            }
             if (style.Contains("wxSL_VERTICAL|"))
             {
                 style.Replace("wxSL_VERTICAL|", "");
@@ -440,22 +456,23 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else if (node->is_Gen(gen_wxFontPickerCtrl))
     {
-        wxue::string style(xml_prop.text().as_view());
+        const wxue::string style(xml_prop.text().as_view());
         if (style.contains("wxFNTP_DEFAULT_STYLE"))
         {
-            node->set_value(prop_style, "wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL");
+            std::ignore =
+                node->set_value(prop_style, "wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL");
         }
     }
     else if (node->is_Gen(gen_wxListView))
     {
         std::string style;
-        wxue::ViewVector mstr(xml_prop.text().as_view(), '|');
+        const wxue::ViewVector mstr(xml_prop.text().as_view(), '|');
         for (auto& iter: mstr)
         {
             if (iter.starts_with("wxLC_ICON") || iter.starts_with("wxLC_SMALL_ICON") ||
                 iter.starts_with("wxLC_LIST") || iter.starts_with("wxLC_REPORT"))
             {
-                node->set_value(prop_mode, iter);
+                std::ignore = node->set_value(prop_mode, iter);
             }
             else
             {
@@ -479,7 +496,6 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         style.Replace("wxAUI_TB_TEXT", "wxTB_TEXT");
         style.Replace("wxAUI_TB_VERTICAL", "wxTB_VERTICAL");
         style.Replace("wxAUI_TB_NO_TOOLTIPS", "wxTB_NO_TOOLTIPS");
-        style.Replace("wxAUI_TB_NO_TOOLTIPS", "wxTB_NO_TOOLTIPS");
         if (!style.empty())
         {
             prop->set_value(style);
@@ -487,17 +503,17 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else
     {
-        auto view_value = xml_prop.text().as_sview();
+        const std::string_view view_value = xml_prop.text().as_sview();
         if (view_value.contains("wxST_SIZEGRIP"))
         {
-            auto value = xml_prop.text().as_cstr();
-            value.Replace("wxST_SIZEGRIP", "wxSTB_SIZEGRIP");
+            wxue::string value = xml_prop.text().as_cstr();
+            std::ignore = value.Replace("wxST_SIZEGRIP", "wxSTB_SIZEGRIP");
             prop->set_value(value);
         }
         else if (view_value.contains("wxTE_CENTRE"))
         {
-            auto value = xml_prop.text().as_cstr();
-            value.Replace("wxTE_CENTRE", "wxTE_CENTER");
+            wxue::string value = xml_prop.text().as_cstr();
+            std::ignore = value.Replace("wxTE_CENTRE", "wxTE_CENTER");
             prop->set_value(value);
         }
 
@@ -505,36 +521,36 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
 
         else if (view_value.contains("wxBU_AUTODRAW"))
         {
-            auto value = xml_prop.text().as_cstr();
-            value.Replace("wxBU_AUTODRAW", "");  // this style is obsolete
-            if (value.size())
+            wxue::string value = xml_prop.text().as_cstr();
+            std::ignore = value.Replace("wxBU_AUTODRAW", "");  // this style is obsolete
+            if (!value.empty())
             {
                 prop->set_value(value);
             }
         }
         else if (view_value.contains("wxRA_USE_CHECKBOX"))
         {
-            auto value = xml_prop.text().as_cstr();
-            value.Replace("wxRA_USE_CHECKBOX", "");  // this style is obsolete
-            if (value.size())
+            wxue::string value = xml_prop.text().as_cstr();
+            std::ignore = value.Replace("wxRA_USE_CHECKBOX", "");  // this style is obsolete
+            if (!value.empty())
             {
                 prop->set_value(value);
             }
         }
         else if (view_value.contains("wxRB_USE_CHECKBOX"))
         {
-            auto value = xml_prop.text().as_cstr();
-            value.Replace("wxRB_USE_CHECKBOX", "");  // this style is obsolete
-            if (value.size())
+            wxue::string value = xml_prop.text().as_cstr();
+            std::ignore = value.Replace("wxRB_USE_CHECKBOX", "");  // this style is obsolete
+            if (!value.empty())
             {
                 prop->set_value(value);
             }
         }
         else if (view_value.contains("wxNB_FLAT"))
         {
-            auto value = xml_prop.text().as_cstr();
-            value.Replace("wxNB_FLAT", "");  // this style is obsolete
-            if (value.size())
+            wxue::string value = xml_prop.text().as_cstr();
+            std::ignore = value.Replace("wxNB_FLAT", "");  // this style is obsolete
+            if (!value.empty())
             {
                 prop->set_value(value);
             }
@@ -547,19 +563,23 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
 }
 
-[[nodiscard]] auto ImportXML::ConvertToGenName(const std::string& object_name, Node* parent)
-    -> GenEnum::GenName
+[[nodiscard]] GenEnum::GenName ImportXML::ConvertToGenName(const std::string& object_name,
+                                                           Node* parent)
 {
-    auto get_GenName = MapClassName(object_name);
+    GenEnum::GenName get_GenName = MapClassName(object_name);
 
     if (get_GenName == gen_wxPanel)
     {
         if (!parent)
         {
-            auto* owner = wxGetFrame().getSelectedNode();
-            while (owner->get_GenType() == type_sizer)
+            const Node* owner = wxGetFrame().getSelectedNode();
+            while (owner && owner->get_GenType() == type_sizer)
             {
                 owner = owner->get_Parent();
+            }
+            if (!owner)
+            {
+                return gen_PanelForm;
             }
             if (owner->get_DeclName().find("book") != std::string_view::npos)
             {
@@ -602,7 +622,7 @@ auto ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
 }
 
 // Call this AFTER the node has been hooked up to it's parent to prevent duplicate var_names.
-auto ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node) -> void
+void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
 {
     for (auto& iter: xml_obj.attributes())
     {
@@ -620,7 +640,7 @@ auto ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
             }
             else if (iter.as_view().starts_with("wxID_"))
             {
-                auto* prop = new_node->get_PropPtr(prop_id);
+                NodeProperty* prop = new_node->get_PropPtr(prop_id);
                 if (prop)
                 {
                     prop->set_value(iter.value());
@@ -645,8 +665,8 @@ auto ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
 
                 if (auto* prop = new_node->get_PropPtr(prop_var_name); prop)
                 {
-                    wxue::string org_name(iter.value());
-                    auto new_name = new_node->get_UniqueName(org_name);
+                    const wxue::string org_name(iter.value());
+                    const std::string new_name = new_node->get_UniqueName(org_name);
                     prop->set_value(new_name);
                 }
             }
@@ -655,19 +675,19 @@ auto ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
         {
             if (auto* prop = new_node->get_PropPtr(prop_var_name); prop)
             {
-                wxue::string org_name(iter.value());
-                auto new_name = new_node->get_UniqueName(org_name);
+                const wxue::string org_name(iter.value());
+                const std::string new_name = new_node->get_UniqueName(org_name);
                 prop->set_value(new_name);
             }
         }
         else if (iter.name() == "subclass")
         {
-            new_node->set_value(prop_subclass, iter.value());
+            std::ignore = new_node->set_value(prop_subclass, iter.value());
         }
     }
 }
 
-auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent) -> void
+void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent)
 {
     for (auto& iter: xml_obj.children())
     {
@@ -675,25 +695,25 @@ auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         {
             if (node->is_Gen(gen_wxListView))
             {
-                if (auto class_name = iter.attribute("class").value(); class_name.size())
+                if (auto class_name = iter.attribute("class").value(); !class_name.empty())
                 {
                     if (auto col_node = iter.child("text"); col_node)
                     {
-                        auto col_name = col_node.text().as_view();
+                        const std::string_view col_name = col_node.text().as_view();
                         std::string cur_col_names = node->as_string(prop_column_labels);
-                        if (cur_col_names.size())
+                        if (!cur_col_names.empty())
                         {
                             cur_col_names += ";";
                         }
                         cur_col_names += col_name;
-                        node->set_value(prop_column_labels, cur_col_names);
+                        std::ignore = node->set_value(prop_column_labels, cur_col_names);
                     }
                 }
             }
             continue;
         }
 
-        auto wxue_prop = MapPropName(iter.name());
+        const GenEnum::PropName wxue_prop = MapPropName(iter.name());
 
         if (wxue_prop == prop_unknown)
         {
@@ -729,7 +749,7 @@ auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
             case prop_value:
                 {
-                    auto escaped = ConvertEscapeSlashes(iter.text().as_view());
+                    const wxue::string escaped = ConvertEscapeSlashes(iter.text().as_view());
                     if (auto* prop = node->get_PropPtr(prop_value); prop)
                     {
                         prop->set_value(escaped);
@@ -741,11 +761,12 @@ auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 {
                     std::string label = ConvertEscapeSlashes(iter.text().as_view());
                     std::ranges::replace(label, '_', '&');
-                    auto pos = label.find("\\t");
+                    const size_t pos = label.find("\\t");
                     if (wxue::is_found(pos))
                     {
                         label[pos] = 0;
-                        node->set_value(prop_shortcut, std::string_view(label).substr(pos + 2));
+                        std::ignore =
+                            node->set_value(prop_shortcut, std::string_view(label).substr(pos + 2));
                     }
                     if (auto* prop = node->get_PropPtr(prop_label); prop)
                     {
@@ -759,7 +780,7 @@ auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     std::string accel_list;
                     for (const auto& accel: iter.children())
                     {
-                        if (accel_list.size())
+                        if (!accel_list.empty())
                         {
                             accel_list += " ";
                         }
@@ -767,7 +788,7 @@ auto ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                         accel_list += accel.text().as_view();
                         accel_list += '"';
                     }
-                    node->set_value(prop_extra_accels, accel_list);
+                    std::ignore = node->set_value(prop_extra_accels, accel_list);
                     continue;
                 }
 
@@ -847,7 +868,8 @@ namespace xrc_import
     };
 
     // clang-format off
-    std::map<std::string_view, int, std::less<>> unknown_properties = {
+    // NOLINTNEXTLINE(readability-avoid-auto) -- N is size of initializer list
+    constexpr auto unknown_properties = frozen::make_map<std::string_view, std::uint8_t>({
 
         { "border", xrc_border },
         { "cellpos", xrc_cellpos },
@@ -872,13 +894,12 @@ namespace xrc_import
         { "tabs", xrc_tabs },
         { "toggle", xrc_toggle },
 
-    };
+    });
     // clang-format on
 
 };  // namespace xrc_import
 
-auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
-    -> void
+void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
 {
     // Mapping the strings to an enum is purely for readability -- it's a lot easier to find
     // the unknown property in a switch statement than it is to find it in a long list of
@@ -889,33 +910,33 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
         switch (result->second)
         {
             case xrc_border:
-                node->set_value(prop_border_size, xml_obj.text().as_view());
+                std::ignore = node->set_value(prop_border_size, xml_obj.text().as_view());
                 return;
 
             case xrc_cellpos:
-                if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
+                if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; !mstr.empty())
                 {
-                    if (mstr[0].size())
+                    if (!mstr[0].empty())
                     {
-                        node->set_value(prop_column, mstr[0]);
+                        std::ignore = node->set_value(prop_column, mstr[0]);
                     }
-                    if (mstr.size() > 1 && mstr[1].size())
+                    if (mstr.size() > 1 && !mstr[1].empty())
                     {
-                        node->set_value(prop_row, mstr[1]);
+                        std::ignore = node->set_value(prop_row, mstr[1]);
                     }
                 }
                 return;
 
             case xrc_cellspan:
-                if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
+                if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; !mstr.empty())
                 {
-                    if (mstr[0].size() && wxue::atoi(mstr[0]) > 0)
+                    if (!mstr[0].empty() && wxue::atoi(mstr[0]) > 0)
                     {
-                        node->set_value(prop_rowspan, mstr[0]);
+                        std::ignore = node->set_value(prop_rowspan, mstr[0]);
                     }
-                    if (mstr.size() > 1 && mstr[1].size() && wxue::atoi(mstr[1]) > 0)
+                    if (mstr.size() > 1 && !mstr[1].empty() && wxue::atoi(mstr[1]) > 0)
                     {
-                        node->set_value(prop_colspan, mstr[1]);
+                        std::ignore = node->set_value(prop_colspan, mstr[1]);
                     }
                 }
                 return;
@@ -925,14 +946,14 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 {
                     if (!xml_obj.text().as_bool())
                     {
-                        node->set_value(prop_center, "no");
+                        std::ignore = node->set_value(prop_center, "no");
                     }
                     return;  // default is centered, so we don't need to set it
                 }
                 break;
 
             case xrc_checkable:
-                node->set_value(prop_kind, "wxITEM_CHECK");
+                std::ignore = node->set_value(prop_kind, "wxITEM_CHECK");
                 return;
 
             case xrc_creating_code:
@@ -989,14 +1010,14 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_enabled:
                 if (!xml_obj.text().as_bool())
                 {
-                    node->set_value(prop_disabled, true);
+                    std::ignore = node->set_value(prop_disabled, true);
                 }
                 return;
 
             case xrc_exstyle:
                 if (node->is_Gen(gen_wxDialog))
                 {
-                    node->set_value(prop_extra_style, xml_obj.text().as_view());
+                    std::ignore = node->set_value(prop_extra_style, xml_obj.text().as_view());
                     return;
                 }
                 break;
@@ -1048,7 +1069,7 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_option:
                 if (node->HasProp(prop_proportion))
                 {
-                    node->set_value(prop_proportion, xml_obj.text().as_view());
+                    std::ignore = node->set_value(prop_proportion, xml_obj.text().as_view());
                 }
                 else if (wxGetApp().isTestingMenuEnabled())
                 {
@@ -1082,25 +1103,25 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_orient:
                 if (node->HasProp(prop_orientation))
                 {
-                    node->set_value(prop_orientation, xml_obj.text().as_view());
+                    std::ignore = node->set_value(prop_orientation, xml_obj.text().as_view());
                     return;
                 }
                 break;
 
             case xrc_radio:
-                node->set_value(prop_kind, "wxITEM_RADIO");
+                std::ignore = node->set_value(prop_kind, "wxITEM_RADIO");
                 return;
 
             case xrc_selected:
                 if (node->is_Gen(gen_oldbookpage) || node->is_Gen(gen_BookPage))
                 {
-                    node->set_value(prop_select, xml_obj.text().as_bool());
+                    std::ignore = node->set_value(prop_select, xml_obj.text().as_bool());
                     return;
                 }
                 // else if (auto* prop = node->get_PropPtr(prop_checked); prop)
                 else if (node->HasProp(prop_checked))
                 {
-                    node->set_value(prop_checked, xml_obj.text().as_bool());
+                    std::ignore = node->set_value(prop_checked, xml_obj.text().as_bool());
                     return;
                 }
                 break;
@@ -1108,7 +1129,7 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_selection:
                 if (node->is_Gen(gen_wxChoice))
                 {
-                    node->set_value(prop_selection_int, xml_obj.text().as_int());
+                    std::ignore = node->set_value(prop_selection_int, xml_obj.text().as_int());
                     return;
                 }
                 break;
@@ -1117,15 +1138,15 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
             case xrc_size:
                 if (node->is_Gen(gen_spacer))
                 {
-                    if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; mstr.size())
+                    if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; !mstr.empty())
                     {
-                        if (mstr[0].size())
+                        if (!mstr[0].empty())
                         {
-                            node->set_value(prop_width, mstr[0]);
+                            std::ignore = node->set_value(prop_width, mstr[0]);
                         }
-                        if (mstr.size() > 1 && mstr[1].size())
+                        if (mstr.size() > 1 && !mstr[1].empty())
                         {
-                            node->set_value(prop_height, mstr[1]);
+                            std::ignore = node->set_value(prop_height, mstr[1]);
                         }
                     }
                     return;
@@ -1133,7 +1154,7 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 break;
 
             case xrc_subclass:
-                if (auto value = xml_obj.text().as_sview(); value.size())
+                if (auto value = xml_obj.text().as_sview(); !value.empty())
                 {
                     if (value.contains(";"))
                     {
@@ -1142,25 +1163,25 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         // doesn't properly handle an empty class name, so the header file can
                         // appear first.
                         wxue::StringVector parts { value, ';', wxue::TRIM::both };
-                        if (parts.size() > 0)
+                        if (!parts.empty())
                         {
                             if (parts[0].find(".h") != std::string::npos)
                             {
-                                node->set_value(prop_subclass_header, parts[0]);
+                                std::ignore = node->set_value(prop_subclass_header, parts[0]);
                             }
                             else if (parts.size() > 1)
                             {
-                                node->set_value(prop_subclass, parts[0]);
-                                if (parts[1].size())
+                                std::ignore = node->set_value(prop_subclass, parts[0]);
+                                if (!parts[1].empty())
                                 {
-                                    node->set_value(prop_subclass_header, parts[1]);
+                                    std::ignore = node->set_value(prop_subclass_header, parts[1]);
                                 }
                             }
                         }
                     }
                     else
                     {
-                        node->set_value(prop_subclass, value);
+                        std::ignore = node->set_value(prop_subclass, value);
                     }
                 }
                 return;
@@ -1170,7 +1191,7 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 return;
 
             case xrc_toggle:
-                node->set_value(prop_kind, "wxITEM_CHECK");
+                std::ignore = node->set_value(prop_kind, "wxITEM_CHECK");
                 return;
 
             default:
@@ -1203,16 +1224,16 @@ auto ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
     }
 }
 
-auto ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node) -> void
+void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
 {
     std::string choices;
     for (const auto& iter: xml_obj.children())
     {
         if (iter.name() == "item" || iter.name() == "choice")
         {
-            auto child = iter.child_as_cstr();
-            child.Replace("\"", "\\\"", true);
-            if (choices.size())
+            wxue::string child = iter.child_as_cstr();
+            std::ignore = child.Replace("\"", "\\\"", true);
+            if (!choices.empty())
             {
                 choices += " ";
             }
@@ -1222,13 +1243,13 @@ auto ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node) -> voi
         }
     }
 
-    if (choices.size())
+    if (!choices.empty())
     {
-        node->set_value(prop_contents, choices);
+        std::ignore = node->set_value(prop_contents, choices);
     }
 }
 
-auto ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */) -> void
+void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */)
 {
     m_notebook_tabs.clear();
     for (const auto& iter: xml_obj.children())
@@ -1243,8 +1264,8 @@ auto ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
     }
 }
 
-auto ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
-                              GenEnum::PropName node_prop) -> void
+void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
+                              GenEnum::PropName node_prop)
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
@@ -1286,7 +1307,7 @@ auto ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
                 prop->set_value(bitmap);
                 if (node->is_Gen(gen_wxButton))
                 {
-                    node->set_value(prop_markup, true);
+                    std::ignore = node->set_value(prop_markup, true);
                 }
             }
         }
@@ -1310,14 +1331,14 @@ auto ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
                 prop->set_value(bitmap);
                 if (node->is_Gen(gen_wxButton))
                 {
-                    node->set_value(prop_markup, true);
+                    std::ignore = node->set_value(prop_markup, true);
                 }
             }
         }
     }
 }
 
-auto ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node) -> void
+void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
 {
     if (xml_obj.attribute("function").empty() || xml_obj.attribute("entry").empty())
     {
@@ -1326,7 +1347,7 @@ auto ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node) -> voi
 
     std::string event_name("wx");
     event_name += xml_obj.attribute("entry").value();
-    auto* event = node->get_Event(event_name);
+    NodeEvent* event = node->get_Event(event_name);
     if (event)
     {
         event->set_value(xml_obj.attribute("function").value());
@@ -1334,18 +1355,143 @@ auto ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node) -> voi
     }
 }
 
-auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
-    -> NodeSharedPtr
+// Helper for removing alignment flags that conflict with the parent sizer's orientation
+// Called by: CreateXrcNode
+void ImportXML::FixupSizerAlignment(Node* new_node, Node* parent)
 {
-    auto object_name = xml_obj.attribute("class").as_cstr();
+    if (!parent || !parent->is_Sizer())
+    {
+        return;
+    }
+
+    const wxue::string& currentValue = new_node->as_string(prop_alignment);
+    if (currentValue.empty())
+    {
+        return;
+    }
+
+    if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
+    {
+        if (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
+            currentValue.contains("wxALIGN_CENTER_HORIZONTAL"))
+        {
+            const wxue::string fixed = ClearMultiplePropFlags(
+                "wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
+            std::ignore = new_node->set_value(prop_alignment, fixed);
+        }
+    }
+    else if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
+    {
+        if (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
+            currentValue.contains("wxALIGN_CENTER_VERTICAL"))
+        {
+            const wxue::string fixed = ClearMultiplePropFlags(
+                "wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
+            std::ignore = new_node->set_value(prop_alignment, fixed);
+        }
+    }
+}
+
+// Helper for processing wxStdDialogButtonSizer button children from XRC
+// Called by: CreateXrcNode
+void ImportXML::ProcessStdDialogButtonSizer(const pugi::xml_node& xml_obj, Node* new_node,
+                                            Node* parent)
+{
+    if (parent)
+    {
+        parent->AdoptChild(new_node->get_SharedPtr());
+    }
+    ProcessAttributes(xml_obj, new_node);
+    ProcessProperties(xml_obj, new_node);
+
+    for (auto& button: xml_obj.children())
+    {
+        for (auto& btn_id: button.children())
+        {
+            const std::string_view btn_id_value = btn_id.attribute("name").as_view();
+            if (btn_id_value == "wxID_OK")
+            {
+                new_node->get_PropPtr(prop_OK)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_YES")
+            {
+                new_node->get_PropPtr(prop_Yes)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_SAVE")
+            {
+                new_node->get_PropPtr(prop_Save)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_APPLY")
+            {
+                new_node->get_PropPtr(prop_Apply)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_NO")
+            {
+                new_node->get_PropPtr(prop_No)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_CANCEL")
+            {
+                new_node->get_PropPtr(prop_Cancel)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_CLOSE")
+            {
+                new_node->get_PropPtr(prop_Close)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_HELP")
+            {
+                new_node->get_PropPtr(prop_Help)->set_value("1");
+            }
+            else if (btn_id_value == "wxID_CONTEXT_HELP")
+            {
+                new_node->get_PropPtr(prop_ContextHelp)->set_value("1");
+            }
+        }
+    }
+
+    new_node->get_PropPtr(prop_alignment)->set_value("wxALIGN_RIGHT");
+}
+
+// Helper for logging an unrecognized XRC object with contextual info
+// Called by: CreateXrcNode
+void ImportXML::LogUnrecognizedObject(const wxue::string& object_name, Node* parent)
+{
+    if (!wxGetApp().isTestingMenuEnabled())
+    {
+        return;
+    }
+
+    std::string msg = std::filesystem::path(m_importProjectFile).filename().string();
+    msg += ": Unrecognized object: ";
+    msg += object_name;
+
+    if (parent)
+    {
+        msg += " in ";
+        msg += map_GenNames.at(parent->get_GenName());
+
+        const Node* form = parent->get_Form();
+        if (form && form->HasValue(prop_class_name))
+        {
+            msg += " (";
+            msg += form->as_string(prop_class_name);
+            msg += ")";
+        }
+    }
+
+    MSG_INFO(msg);
+}
+
+NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
+{
+    const wxue::string object_name = xml_obj.attribute("class").as_cstr();
     if (object_name.empty())
     {
         return NodeSharedPtr();
     }
 
-    bool isBitmapButton = (object_name == "wxBitmapButton");
+    const bool isBitmapButton = (object_name == "wxBitmapButton");
     bool is_generic_version = false;
-    auto get_GenName = ConvertToGenName(object_name.ToStdString(), parent);
+    GenEnum::GenName get_GenName = ConvertToGenName(object_name.ToStdString(), parent);
     if (get_GenName == gen_unknown)
     {
         if (object_name.ends_with("bookpage") || object_name == "propertysheetpage")
@@ -1371,44 +1517,7 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         }
         else
         {
-            if (wxGetApp().isTestingMenuEnabled())
-            {
-                if (parent)
-                {
-                    auto* form = parent->get_Form();
-                    if (form && form->HasValue(prop_class_name))
-                    {
-                        std::string msg =
-                            std::filesystem::path(m_importProjectFile).filename().string();
-                        msg += ": Unrecognized object: ";
-                        msg += object_name;
-                        msg += " in ";
-                        msg += map_GenNames.at(parent->get_GenName());
-                        msg += " (";
-                        msg += form->as_string(prop_class_name);
-                        msg += ")";
-                        MSG_INFO(msg);
-                    }
-                    else
-                    {
-                        std::string msg =
-                            std::filesystem::path(m_importProjectFile).filename().string();
-                        msg += ": Unrecognized object: ";
-                        msg += object_name;
-                        msg += " in ";
-                        msg += map_GenNames.at(parent->get_GenName());
-                        MSG_INFO(msg);
-                    }
-                }
-                else
-                {
-                    std::string msg =
-                        std::filesystem::path(m_importProjectFile).filename().string();
-                    msg += ": Unrecognized object: ";
-                    msg += object_name;
-                    MSG_INFO(msg);
-                }
-            }
+            LogUnrecognizedObject(object_name, parent);
             return {};
         }
     }
@@ -1450,7 +1559,7 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         get_GenName = gen_ToolBar;
     }
 
-    auto new_node = NodeCreation.CreateNode(get_GenName, parent).first;
+    NodeSharedPtr new_node = NodeCreation.CreateNode(get_GenName, parent).first;
     if (new_node && is_generic_version)
     {
         new_node->set_value(prop_use_generic, true);
@@ -1472,7 +1581,7 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         else if (parent && (parent->is_Gen(gen_wxPanel) || parent->is_Gen(gen_PanelForm) ||
                             parent->is_Gen(gen_wxDialog)))
         {
-            auto sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, parent).first;
+            const NodeSharedPtr sizer = NodeCreation.CreateNode(gen_VerticalBoxSizer, parent).first;
             if (sizer)
             {
                 new_node = NodeCreation.CreateNode(get_GenName, sizer.get()).first;
@@ -1505,8 +1614,8 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
             // to the user is wxPanel. GetHelpText() will give us something that makes sense to
             // the user.
 
-            auto name = parent->get_Generator()->GetHelpText(parent);
-            if (name.size() && name != "wxWidgets")
+            wxue::string name = parent->get_Generator()->GetHelpText(parent);
+            if (!name.empty() && name != "wxWidgets")
             {
 #if defined(_DEBUG)
                 // Currently, Debug builds also include the filename that gets passed to the
@@ -1530,7 +1639,7 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
 
     if (new_node->is_Form())
     {
-        if (auto class_name = xml_obj.attribute("name").as_view(); class_name.size())
+        if (auto class_name = xml_obj.attribute("name").as_view(); !class_name.empty())
         {
             new_node->set_value(prop_class_name, class_name);
         }
@@ -1540,9 +1649,9 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
     {
         if (auto* prop = new_node->get_PropPtr(prop_var_name); prop)
         {
-            auto original = prop->as_string();
-            auto new_name = parent->get_UniqueName(prop->as_string());
-            if (new_name.size() && new_name != prop->as_string())
+            const wxue::string& original = prop->as_string();
+            const std::string new_name = parent->get_UniqueName(prop->as_string());
+            if (!new_name.empty() && new_name != prop->as_string())
             {
                 prop->set_value(new_name);
             }
@@ -1551,62 +1660,11 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
 
     if (new_node->is_Gen(gen_wxStdDialogButtonSizer))
     {
-        if (parent)
-        {
-            parent->AdoptChild(new_node);
-        }
-        ProcessAttributes(xml_obj, new_node.get());
-        ProcessProperties(xml_obj, new_node.get());
-
-        for (auto& button: xml_obj.children())
-        {
-            for (auto& btn_id: button.children())
-            {
-                auto btn_id_value = btn_id.attribute("name").as_view();
-                if (btn_id_value == "wxID_OK")
-                {
-                    new_node->get_PropPtr(prop_OK)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_YES")
-                {
-                    new_node->get_PropPtr(prop_Yes)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_SAVE")
-                {
-                    new_node->get_PropPtr(prop_Save)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_APPLY")
-                {
-                    new_node->get_PropPtr(prop_Apply)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_NO")
-                {
-                    new_node->get_PropPtr(prop_No)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_CANCEL")
-                {
-                    new_node->get_PropPtr(prop_Cancel)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_CLOSE")
-                {
-                    new_node->get_PropPtr(prop_Close)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_HELP")
-                {
-                    new_node->get_PropPtr(prop_Help)->set_value("1");
-                }
-                else if (btn_id_value == "wxID_CONTEXT_HELP")
-                {
-                    new_node->get_PropPtr(prop_ContextHelp)->set_value("1");
-                }
-            }
-        }
-
-        new_node->get_PropPtr(prop_alignment)->set_value("wxALIGN_RIGHT");
+        ProcessStdDialogButtonSizer(xml_obj, new_node.get(), parent);
         return new_node;
     }
 
-    auto child = xml_obj.child("object");
+    pugi::xml_node child = xml_obj.child("object");
     if (NodeCreation.is_OldHostType(new_node->get_DeclName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
@@ -1627,7 +1685,7 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
     {
         for (auto& iter: sizeritem->get_PropsVector())
         {
-            auto* prop = new_node->AddNodeProperty(iter.get_PropDeclaration());
+            NodeProperty* prop = new_node->AddNodeProperty(iter.get_PropDeclaration());
             prop->set_value(iter.as_string());
         }
         if (parent)
@@ -1668,33 +1726,7 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
         }
     }
 
-    if (parent && parent->is_Sizer())
-    {
-        if (parent->as_string(prop_orientation).contains("wxHORIZONTAL"))
-        {
-            auto currentValue = new_node->as_string(prop_alignment);
-            if (currentValue.size() &&
-                (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
-                 currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
-            {
-                auto fixed = ClearMultiplePropFlags(
-                    "wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
-                new_node->set_value(prop_alignment, fixed);
-            }
-        }
-        else if (parent->as_string(prop_orientation).contains("wxVERTICAL"))
-        {
-            auto currentValue = new_node->as_string(prop_alignment);
-            if (currentValue.size() &&
-                (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
-                 currentValue.contains("wxALIGN_CENTER_VERTICAL")))
-            {
-                auto fixed = ClearMultiplePropFlags(
-                    "wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
-                new_node->set_value(prop_alignment, fixed);
-            }
-        }
-    }
+    FixupSizerAlignment(new_node.get(), parent);
 
     // XRC creates a bookpage with a few properties (label, style, etc.) and then it creates
     // a wxPanel object. We need to ignore the panel, and just process it's children. When we
@@ -1715,9 +1747,9 @@ auto ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizer
     return new_node;
 }
 
-auto ImportXML::MapPropName(std::string_view name) const -> GenEnum::PropName
+GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
 {
-    if (name.size())
+    if (!name.empty())
     {
         if (auto prop = FindProp(name); prop != prop_unknown)
         {
@@ -1733,7 +1765,7 @@ auto ImportXML::MapPropName(std::string_view name) const -> GenEnum::PropName
     return prop_unknown;
 }
 
-auto ImportXML::MapClassName(std::string_view name) const -> GenEnum::GenName
+GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
 {
     if (!name.empty())
     {
@@ -1749,7 +1781,7 @@ auto ImportXML::MapClassName(std::string_view name) const -> GenEnum::GenName
     return gen_unknown;
 }
 
-auto ImportXML::GetCorrectEventName(std::string_view name) -> std::string_view
+std::string_view ImportXML::GetCorrectEventName(std::string_view name)
 {
     if (const auto* result = map_old_events.find(name); result != map_old_events.end())
     {
@@ -1758,7 +1790,7 @@ auto ImportXML::GetCorrectEventName(std::string_view name) -> std::string_view
     return name;
 }
 
-auto ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node) -> void
+void ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node)
 {
     FontProperty font_info;
     if (auto size_child = xml_obj.child("size"); size_child)
@@ -1768,19 +1800,19 @@ auto ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node) -> void
     if (auto family_child = xml_obj.child("family");
         family_child && family_child.text().as_view() != "default")
     {
-        FontFamilyPairs family_pair;
+        const FontFamilyPairs family_pair;
         font_info.Family(family_pair.GetValue(family_child.text().as_view()));
     }
     if (auto style_child = xml_obj.child("style");
         style_child && style_child.text().as_view() != "normal")
     {
-        FontStylePairs style_pair;
+        const FontStylePairs style_pair;
         font_info.Style(style_pair.GetValue(style_child.text().as_view()));
     }
     if (auto weight_child = xml_obj.child("weight");
         weight_child && weight_child.text().as_view() != "normal")
     {
-        FontWeightPairs weight_pair;
+        const FontWeightPairs weight_pair;
         font_info.Weight(weight_pair.GetValue(weight_child.text().as_view()));
     }
     if (auto underline_child = xml_obj.child("underline"); underline_child)
@@ -1792,5 +1824,5 @@ auto ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node) -> void
         font_info.FaceName(face_child.text().as_cstr().wx());
     }
 
-    node->set_value(prop_font, font_info.as_string());
+    std::ignore = node->set_value(prop_font, font_info.as_string());
 }

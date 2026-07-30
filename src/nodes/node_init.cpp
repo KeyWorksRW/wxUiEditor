@@ -624,7 +624,7 @@ NodeDeclaration* NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_
             MSG_WARNING(std::format("{}{}",
                                     is_interface ? "Unrecognized interface name -- " :
                                                    "Unrecognized class name -- ",
-                                    class_name));
+                                    class_name.c_str()));
         }
     }
 
@@ -876,7 +876,7 @@ void NodeCreator::AddVarNameRelatedProperties(NodeDeclaration* node_declaration,
         rmap_PropNames.find(name);
     if (lookup_name == rmap_PropNames.end())
     {
-        MSG_ERROR(std::format("Unrecognized property name -- {}", name));
+        MSG_ERROR(std::format("Unrecognized property name -- {}", name.c_str()));
         return;
     }
     GenEnum::PropName const prop_name = lookup_name->second;

@@ -143,21 +143,37 @@ public:
     [[nodiscard]] bool wasUndoEventGenerated() const
     {
         ASSERT_MSG(!m_redo.empty(), "wasUndoEventGenerated() called with empty redo stack");
+        if (m_redo.empty())
+        {
+            return false;
+        }
         return m_redo.back()->wasUndoEventGenerated();
     }
     [[nodiscard]] bool wasRedoEventGenerated() const
     {
         ASSERT_MSG(!m_undo.empty(), "wasRedoEventGenerated() called with empty undo stack");
+        if (m_undo.empty())
+        {
+            return false;
+        }
         return m_undo.back()->wasRedoEventGenerated();
     }
     [[nodiscard]] bool wasUndoSelectEventGenerated() const
     {
         ASSERT_MSG(!m_redo.empty(), "wasUndoSelectEventGenerated() called with empty redo stack");
+        if (m_redo.empty())
+        {
+            return false;
+        }
         return m_redo.back()->wasUndoSelectEventGenerated();
     }
     [[nodiscard]] bool wasRedoSelectEventGenerated() const
     {
         ASSERT_MSG(!m_undo.empty(), "wasRedoSelectEventGenerated() called with empty undo stack");
+        if (m_undo.empty())
+        {
+            return false;
+        }
         return m_undo.back()->wasRedoSelectEventGenerated();
     }
 

@@ -1,10 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   FontProperty class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2019-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2019-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 //////////////////////////////////////////////////////////////////////////
 // CR: [07-16-2026]
+
 #include <array>
 #include <charconv>  // for std::to_chars
 #include <cstdlib>   // for std::atof
@@ -162,10 +163,14 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
         Family(font_family_pairs.GetValue(mstr[0]));
         if (mstr.size() > font::idx_family_point)
         {
-            std::from_chars(mstr[font::idx_family_point].data(),
-                            mstr[font::idx_family_point].data() +
-                                mstr[font::idx_family_point].size(),
-                            m_pointSize);
+            auto [ptr, err_code] = std::from_chars(mstr[font::idx_family_point].data(),
+                                                   mstr[font::idx_family_point].data() +
+                                                       mstr[font::idx_family_point].size(),
+                                                   m_pointSize);
+            if (err_code != std::errc {})
+            {
+                m_pointSize = 0.0;
+            }
         }
 
         if (mstr.size() > font::idx_family_style)
@@ -236,10 +241,14 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
 
             return;
         }
-        std::from_chars(mstr[font::idx_facename_point].data(),
-                        mstr[font::idx_facename_point].data() +
-                            mstr[font::idx_facename_point].size(),
-                        m_pointSize);
+        auto [ptr, err_code] = std::from_chars(mstr[font::idx_facename_point].data(),
+                                               mstr[font::idx_facename_point].data() +
+                                                   mstr[font::idx_facename_point].size(),
+                                               m_pointSize);
+        if (err_code != std::errc {})
+        {
+            m_pointSize = 0.0;
+        }
     }
 
     // If we get here, this is an old-style and/or wxFormBuilder property
@@ -326,10 +335,10 @@ wxString FontProperty::as_wxString() const
             // number without a decimal point.
 
             std::array<char, 10> float_str;
-            if (auto [ptr, ec] =
+            if (auto [ptr, err_code] =
                     std::to_chars(float_str.data(), float_str.data() + float_str.size(),
                                   GetFractionalPointSize());
-                ec == std::errc())
+                err_code == std::errc())
             {
                 prop_str << ',' << std::string_view(float_str.data(), ptr - float_str.data());
             }
@@ -367,10 +376,10 @@ wxString FontProperty::as_wxString() const
         wxue::string prop_str(GetFaceName());
         {
             std::array<char, 10> float_str;
-            if (auto [ptr, ec] =
+            if (auto [ptr, err_code] =
                     std::to_chars(float_str.data(), float_str.data() + float_str.size(),
                                   GetFractionalPointSize());
-                ec == std::errc())
+                err_code == std::errc())
             {
                 prop_str << ',' << std::string_view(float_str.data(), ptr - float_str.data());
             }

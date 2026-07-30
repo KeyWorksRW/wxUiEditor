@@ -68,7 +68,7 @@ jobs:
 
     - name: Configure CMake
       if: ${{ !inputs.enable-pgo }}
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}} -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20
+      run: cmake -B ${{github.workspace}}/build -G "Ninja Multi-Config" -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20
 
     - name: Build wxUiEditor
       if: ${{ !inputs.enable-pgo }}
@@ -80,6 +80,7 @@ jobs:
       if: ${{ inputs.enable-pgo }}
       run: >-
         cmake -B ${{github.workspace}}/build
+        -G "Ninja Multi-Config"
         -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_C_COMPILER=clang-20
         -DCMAKE_CXX_COMPILER=clang++-20
@@ -107,6 +108,7 @@ jobs:
       if: ${{ inputs.enable-pgo }}
       run: >-
         cmake -B ${{github.workspace}}/build
+        -G "Ninja Multi-Config"
         -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_C_COMPILER=clang-20
         -DCMAKE_CXX_COMPILER=clang++-20

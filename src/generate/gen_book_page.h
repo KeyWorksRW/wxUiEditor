@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <wx/panel.h>
+
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
 class wxBookCtrlBase;

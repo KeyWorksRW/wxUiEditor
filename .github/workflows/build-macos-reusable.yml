@@ -32,7 +32,7 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup Xcode
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}
@@ -55,7 +55,7 @@ jobs:
         cmake --version
 
     - name: Setup sccache
-      uses: mozilla-actions/sccache-action@v0.0.9
+      uses: mozilla-actions/sccache-action@v0.0.11
 
     # Note: FetchContent is intentionally NOT cached. The kwxFetch repo updates
     # weekly from wxWidgets master, and stale cache can cause build failures
@@ -130,7 +130,7 @@ jobs:
 
     - name: Create DMG Artifact
       if: ${{ inputs.create-setup }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: macOS-DMG-universal
         path: |

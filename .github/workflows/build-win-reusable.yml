@@ -24,7 +24,7 @@ jobs:
     runs-on: windows-2025-vs2026
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup CMake 4.2+
       uses: lukka/get-cmake@latest
@@ -34,7 +34,7 @@ jobs:
     - run: mkdir ${{github.workspace}}/build
 
     - name: Setup sccache
-      uses: mozilla-actions/sccache-action@v0.0.9
+      uses: mozilla-actions/sccache-action@v0.0.11
 
     # ── Non-PGO path: MSVC build ──────────────────────────────────────────
 
@@ -110,7 +110,7 @@ jobs:
         cpack -G NSIS -C ${{inputs.build-type}}
 
     - name: Create Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: ${{ inputs.create-setup && 'WindowsSetup' || 'WindowsExecutable' }}
         path: |

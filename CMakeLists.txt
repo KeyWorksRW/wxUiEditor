@@ -148,7 +148,9 @@ else()
         # check for merged.profdata and enable optimize automatically.
         # Most users cloning the repo won't have a profile; this silently
         # skips PGO for them while CI can drop in a profile for free perf.
-        if(NOT USE_PGO_INSTRUMENT AND NOT USE_PGO_OPTIMIZE)
+        # Debug builds never auto-apply PGO -- a stale merged.profdata must
+        # not slow down or complicate local debugging.
+        if(NOT USE_PGO_INSTRUMENT AND NOT USE_PGO_OPTIMIZE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
             if(EXISTS "${PGO_PROFILE_DIR}/merged.profdata")
                 message(STATUS "PGO: auto-detected profile at ${PGO_PROFILE_DIR}/merged.profdata")
                 set(USE_PGO_OPTIMIZE ON CACHE BOOL "Build optimized binary using PGO profile data (Clang)" FORCE)

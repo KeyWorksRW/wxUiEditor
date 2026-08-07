@@ -73,10 +73,6 @@ constexpr const size_t StatusPanels = 3;
 using namespace wxue_img;
 using namespace GenEnum;
 
-// Comment out the following line to change the UI back to the way it was in 1.1.2 and all earlier
-// versions.
-constexpr int NEW_LAYOUT = 1;
-
 enum class MenuIDs : int
 {
     IDM_IMPORT_WINRES = START_TESTING_IDS,
@@ -351,7 +347,7 @@ MainFrame::MainFrame() :
 
     Bind(
         wxEVT_MENU,
-        [this](wxCommandEvent&)
+        [](wxCommandEvent&)
         {
             ASSERT_MSG(false, wxue::string() << "Assertion test triggered");
         },
@@ -632,16 +628,6 @@ void MainFrame::CreateSplitters()
     // containing the property grid and notebook with mockup and code windows below it.
 
     m_panel_right->SetWindowStyle(wxBORDER_RAISED);
-
-    // auto parent_sizer = new wxBoxSizer(wxVERTICAL);
-
-#if !defined(NEW_LAYOUT)
-    m_ribbon_panel = new RibbonPanel(m_panel_right);
-    m_right_panel_sizer->Add(m_ribbon_panel, wxSizerFlags(0).Expand());
-#else
-    // auto main_toolbar = new MainToolBar(m_panel_right);
-    // m_right_panel_sizer->Add(main_toolbar, wxSizerFlags(0).Expand());
-#endif
 
     m_info_bar = new wxInfoBar(m_panel_right);
     m_right_panel_sizer->Add(m_info_bar, wxSizerFlags().Expand());

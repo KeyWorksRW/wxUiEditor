@@ -930,6 +930,7 @@ void ConvertImageDlg::SetOutputBitmap()
         if (has_mask)
         {
             rgb = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
+            (void) rgb;
         }
     #endif  // _DEBUG
     }

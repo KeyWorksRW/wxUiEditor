@@ -81,12 +81,14 @@ bool WxGlade::Import(const std::string& filename, bool write_doc)
             m_project->set_value(prop_internationalize, true);
         }
 
+        // In wxGlade, if option is true, then the class name is used for each individual
+        // file name
+        const bool single_file = root.attribute("option").as_bool();
+
         for (auto& iter: root.children())
         {
             const NodeSharedPtr new_node = CreateGladeNode(iter, m_project.get());
-            // In wxGlade, if option is true, then the class name is used for each individual
-            // file name
-            if (const bool single_files = root.attribute("option").as_bool())
+            if (single_file)
             {
                 // wxGlade uses the class name as the filename if each class has it's own file.
                 if (new_node->HasValue(prop_class_name))

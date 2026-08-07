@@ -148,7 +148,12 @@ else()
         # check for merged.profdata and enable optimize automatically.
         # Most users cloning the repo won't have a profile; this silently
         # skips PGO for them while CI can drop in a profile for free perf.
-        if(NOT USE_PGO_INSTRUMENT AND NOT USE_PGO_OPTIMIZE)
+        # Debug builds never auto-apply PGO -- a stale merged.profdata must
+        # not slow down or complicate local debugging.
+        # PGO flags below are additionally gated by $<CONFIG:Debug>, so a Debug
+        # config never receives PGO flags even on multi-config generators where
+        # CMAKE_BUILD_TYPE is empty at configure time.
+        if(NOT USE_PGO_INSTRUMENT AND NOT USE_PGO_OPTIMIZE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
             if(EXISTS "${PGO_PROFILE_DIR}/merged.profdata")
                 message(STATUS "PGO: auto-detected profile at ${PGO_PROFILE_DIR}/merged.profdata")
                 set(USE_PGO_OPTIMIZE ON CACHE BOOL "Build optimized binary using PGO profile data (Clang)" FORCE)
@@ -157,9 +162,9 @@ else()
 
         if(USE_PGO_INSTRUMENT)
             message(STATUS "PGO: instrumenting → profiles written to ${PGO_PROFILE_DIR}")
-            add_compile_options(-fprofile-generate=${PGO_PROFILE_DIR})
-            add_compile_options(-fno-omit-frame-pointer)
-            add_link_options(-fprofile-generate=${PGO_PROFILE_DIR})
+            add_compile_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-generate=${PGO_PROFILE_DIR}>)
+            add_compile_options($<$<NOT:$<CONFIG:Debug>>:-fno-omit-frame-pointer>)
+            add_link_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-generate=${PGO_PROFILE_DIR}>)
         elseif(USE_PGO_OPTIMIZE)
             set(PGO_PROFDATA "${PGO_PROFILE_DIR}/merged.profdata")
             if(NOT EXISTS "${PGO_PROFDATA}")
@@ -170,10 +175,10 @@ else()
             endif()
             message(STATUS "PGO: optimizing with profile ${PGO_PROFDATA}")
             add_compile_options(
-                -fprofile-use=${PGO_PROFDATA}
-                -Wno-backend-plugin
+                $<$<NOT:$<CONFIG:Debug>>:-fprofile-use=${PGO_PROFDATA}>
+                $<$<NOT:$<CONFIG:Debug>>:-Wno-backend-plugin>
             )
-            add_link_options(-fprofile-use=${PGO_PROFDATA})
+            add_link_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-use=${PGO_PROFDATA}>)
         endif()
     endif()
 endif()
@@ -462,22 +467,24 @@ endif()
 if(MSVC)
     # /FC -- Full path to source code file in diagnostics
     target_compile_options(wxUiEditor PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
-
-    # Manifest is in the resource file
+    # Manifest is embedded in the resource file, so tell MSVC's link.exe not to add one
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
-    target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR})
-
-    set_target_properties(wxUiEditor PROPERTIES
-        VS_DEBUGGER_NATIVE_VISUALIZER "${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis"
-        DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+else()
+    target_compile_options(wxUiEditor PRIVATE
+        -finput-charset=UTF-8 -fexec-charset=UTF-8
+        -Wall     # Warn on a broad set of common issues (unused vars, missing returns)
+        -Wextra   # Additional warnings beyond -Wall (sign-compare, unused parameters)
+        -Wshadow  # Warn when a local variable shadows a parameter or member
     )
+endif()
+
+if(WIN32)
+    target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR})
 elseif(APPLE)
     target_compile_definitions(wxUiEditor PRIVATE __WXOSX_COCOA__)
-    target_compile_options(wxUiEditor PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR})
 elseif(UNIX)
     target_compile_definitions(wxUiEditor PRIVATE __WXGTK__)
-    target_compile_options(wxUiEditor PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR} ${GTK3_LIBRARY_DIRS})
 endif()
 

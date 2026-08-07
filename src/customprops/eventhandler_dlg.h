@@ -105,8 +105,8 @@ private:
     bool m_is_cpp_enabled { false };
     bool m_is_python_enabled { false };
     bool m_is_ruby_enabled { false };
-    bool m_is_go_enabled { false };
     bool m_is_fortran_enabled { false };
+    bool m_is_go_enabled { false };
     bool m_is_julia_enabled { false };
     bool m_is_luajit_enabled { false };
     bool m_is_typescript_enabled { false };
@@ -114,8 +114,8 @@ private:
     bool m_is_cpp_lambda { false };
     bool m_is_python_lambda { false };
     bool m_is_ruby_lambda { false };
-    bool m_is_go_lambda { false };
     bool m_is_fortran_lambda { false };
+    bool m_is_go_lambda { false };
     bool m_is_julia_lambda { false };
     bool m_is_luajit_lambda { false };
 };

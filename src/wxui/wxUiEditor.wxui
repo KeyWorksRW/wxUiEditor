@@ -6467,7 +6467,8 @@
                 <node
                   class="wxAuiToolBar"
                   var_name="m_aui_tool_bar"
-                  flags="wxEXPAND">
+                  flags="wxEXPAND"
+                  wxEVT_UPDATE_UI="OnUpdateUI">
                   <node
                     class="auitool"
                     bitmap="Art;wxART_GO_HOME|wxART_TOOLBAR;[24,24]"
@@ -6479,14 +6480,18 @@
                     class="auitool"
                     bitmap="Art;wxART_GO_BACK|wxART_TOOLBAR;[24,24]"
                     class_access="protected:"
+                    initial_state="wxAUI_BUTTON_STATE_DISABLED"
                     label=""
-                    var_name="m_back" />
+                    var_name="m_back"
+                    wxEVT_TOOL="OnNavBack" />
                   <node
                     class="auitool"
                     bitmap="Art;wxART_GO_FORWARD|wxART_TOOLBAR;[24,24]"
                     class_access="protected:"
+                    initial_state="wxAUI_BUTTON_STATE_DISABLED"
                     label=""
-                    var_name="m_forward" />
+                    var_name="m_forward"
+                    wxEVT_TOOL="OnNavForward" />
                   <node
                     class="auitool"
                     bitmap="Art;wxART_FIND|wxART_TOOLBAR;[30,30]"

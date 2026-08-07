@@ -11,6 +11,7 @@
 // cppcheck-suppress-begin *
 
 #include <wx/artprov.h>
+#include <wx/aui/framemanager.h>
 #include <wx/persist/splitter.h>
 #include <wx/sizer.h>
 
@@ -126,8 +127,10 @@ bool DocViewPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
         wxSize(24, 24)));
     m_back = m_aui_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_TOOLBAR,
         wxSize(24, 24)));
+    m_back->SetState(wxAUI_BUTTON_STATE_DISABLED);
     m_forward = m_aui_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD,
         wxART_TOOLBAR, wxSize(24, 24)));
+    m_forward->SetState(wxAUI_BUTTON_STATE_DISABLED);
     m_aui_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_TOOLBAR,
         wxSize(30, 30)));
     m_aui_tool_bar->Realize();
@@ -166,6 +169,9 @@ bool DocViewPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     m_functions_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
     m_overviews_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
     Bind(wxEVT_TOOL, &DocViewPanelBase::OnHome, this, m_home->GetId());
+    Bind(wxEVT_TOOL, &DocViewPanelBase::OnNavBack, this, m_back->GetId());
+    Bind(wxEVT_TOOL, &DocViewPanelBase::OnNavForward, this, m_forward->GetId());
+    m_aui_tool_bar->Bind(wxEVT_UPDATE_UI, &DocViewPanelBase::OnUpdateUI, this);
 
     return true;
 }

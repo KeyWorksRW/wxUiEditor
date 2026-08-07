@@ -19,6 +19,7 @@
 #include <wx/textctrl.h>
 
 #include <glaze/glaze.hpp>
+#include <utility>
 
 #include "doc_view_panel.h"
 
@@ -56,7 +57,7 @@ DocViewPanel::DocViewPanel(wxWindow* parent) : DocViewPanelBase(parent)
 
 void DocViewPanel::InitPanel()
 {
-    for (int idx = 0; idx < static_cast<int>(m_aui_tool_bar->GetToolCount()); ++idx)
+    for (int idx = 0; std::cmp_less(idx, m_aui_tool_bar->GetToolCount()); ++idx)
     {
         const wxAuiToolBarItem* const item = m_aui_tool_bar->FindToolByIndex(idx);
         if (item != nullptr)
@@ -88,6 +89,8 @@ void DocViewPanel::InitPanel()
              }
              key_event.Skip();
          });
+
+    Bind(wxEVT_UPDATE_UI, &DocViewPanel::OnUpdateUI, this);
 }
 
 // ---------------------------------------------------------------------------
@@ -142,6 +145,7 @@ bool DocViewPanel::OpenArchive(const wxString& zip_path)
 
     // Display home page
     std::ignore = wxueArchive.DisplayHomePage(*m_html_win);
+    RecordNavigation("index.md");
 
     m_archive_open = true;
     return true;
@@ -156,6 +160,7 @@ void DocViewPanel::NavigateHome()
 {
     if (wxueArchive.is_open())
     {
+        RecordNavigation("index.md");
         std::ignore = wxueArchive.DisplayHomePage(*m_html_win);
         SetStatusMessage("index.md");
     }
@@ -167,6 +172,11 @@ void DocViewPanel::NavigateHome()
 
 void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
 {
+    if (!m_is_history_nav)
+    {
+        RecordNavigation(archive_name);
+    }
+
     if (!wxueArchive.is_open())
     {
         return;
@@ -182,7 +192,7 @@ void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
     m_find_last_pos = 0;
 
     // Inject inheritance graph after </h1> if data is available for this page.
-    wxFileName fn(wxString::FromUTF8(archive_name));
+    const wxFileName fn(wxString::FromUTF8(archive_name));
     const std::string class_name = fn.GetName().utf8_string();
     const std::string img_block = BuildInheritanceImage(class_name);
     if (!img_block.empty())
@@ -215,6 +225,7 @@ void DocViewPanel::OnHtmlLink(wxHtmlLinkEvent& event)
     const std::string& current_page = wxueArchive.GetCurrentPage();
     if (!current_page.empty())
     {
+        RecordNavigation(current_page);
         SetStatusMessage(wxString::FromUTF8(current_page));
     }
 }
@@ -403,11 +414,7 @@ void DocViewPanel::OnTextKeyDown(wxKeyEvent& event)
     if (key_code == WXK_DOWN)
     {
         const int selection = listbox->GetSelection();
-        if (selection == wxNOT_FOUND)
-        {
-            listbox->SetSelection(0);
-        }
-        else if (selection + 1 < static_cast<int>(listbox->GetCount()))
+        if (selection != wxNOT_FOUND && selection + 1 < static_cast<int>(listbox->GetCount()))
         {
             listbox->SetSelection(selection + 1);
         }
@@ -422,11 +429,7 @@ void DocViewPanel::OnTextKeyDown(wxKeyEvent& event)
     if (key_code == WXK_UP)
     {
         const int selection = listbox->GetSelection();
-        if (selection == wxNOT_FOUND)
-        {
-            listbox->SetSelection(static_cast<int>(listbox->GetCount()) - 1);
-        }
-        else if (selection > 0)
+        if (selection != wxNOT_FOUND && selection > 0)
         {
             listbox->SetSelection(selection - 1);
         }
@@ -480,7 +483,7 @@ void DocViewPanel::OnSearchTextChanged(wxCommandEvent& event)
         if (!archive_path.empty())
         {
             // Strip the .md extension for display
-            wxFileName fn(wxString::FromUTF8(archive_path));
+            const wxFileName fn(wxString::FromUTF8(archive_path));
             const std::string display_name = fn.GetName().utf8_string();
             m_search_listbox->Append(wxString::FromUTF8(display_name));
         }
@@ -787,4 +790,58 @@ void DocViewPanel::SetStatusMessage(const wxString& msg)
     {
         frame->SetStatusText(msg);
     }
+}
+
+void DocViewPanel::RecordNavigation(const std::string& destination)
+{
+    if (!m_current_history_page.empty())
+    {
+        m_back_history.push_back(m_current_history_page);
+    }
+    m_forward_history.clear();
+    m_current_history_page = destination;
+}
+
+void DocViewPanel::OnNavBack([[maybe_unused]] wxCommandEvent& event)
+{
+    if (m_back_history.empty())
+    {
+        return;
+    }
+
+    m_forward_history.push_back(m_current_history_page);
+
+    const std::string target = m_back_history.back();
+    m_back_history.pop_back();
+
+    m_current_history_page = target;
+
+    m_is_history_nav = true;
+    DisplayArchivePage(target);
+    m_is_history_nav = false;
+}
+
+void DocViewPanel::OnNavForward([[maybe_unused]] wxCommandEvent& event)
+{
+    if (m_forward_history.empty())
+    {
+        return;
+    }
+
+    m_back_history.push_back(m_current_history_page);
+
+    const std::string target = m_forward_history.back();
+    m_forward_history.pop_back();
+
+    m_current_history_page = target;
+
+    m_is_history_nav = true;
+    DisplayArchivePage(target);
+    m_is_history_nav = false;
+}
+
+void DocViewPanel::OnUpdateUI([[maybe_unused]] wxUpdateUIEvent& event)
+{
+    m_aui_tool_bar->EnableTool(m_back->GetId(), !m_back_history.empty());
+    m_aui_tool_bar->EnableTool(m_forward->GetId(), !m_forward_history.empty());
 }

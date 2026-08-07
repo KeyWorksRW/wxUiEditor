@@ -246,7 +246,7 @@ auto resCtrl::GetLabel(wxue::string_view line) -> wxue::string_view
         line.remove_prefix(pos);
     }
 
-    label = std::move(m_pWinResource->ConvertCodePageString(label));
+    label = m_pWinResource->ConvertCodePageString(label);
 
     if (m_node->is_Gen(gen_wxHyperlinkCtrl))
     {

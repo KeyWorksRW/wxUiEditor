@@ -472,7 +472,15 @@ if(MSVC)
     set_target_properties(wxUiEditor PROPERTIES
         VS_DEBUGGER_NATIVE_VISUALIZER "${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis"
         DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+else()
+    target_compile_options(wxUiEditor PRIVATE
+        -finput-charset=UTF-8 -fexec-charset=UTF-8
+        -Wall     # Warn on a broad set of common issues (unused vars, missing returns)
+        -Wextra   # Additional warnings beyond -Wall (sign-compare, unused parameters)
+        -Wshadow  # Warn when a local variable shadows a parameter or member
     )
+endif()
+
 elseif(APPLE)
     target_compile_definitions(wxUiEditor PRIVATE __WXOSX_COCOA__)
     target_compile_options(wxUiEditor PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)

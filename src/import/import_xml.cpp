@@ -1649,7 +1649,6 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         if (auto* prop = new_node->get_PropPtr(prop_var_name); prop)
         {
-            const wxue::string& original = prop->as_string();
             const std::string new_name = parent->get_UniqueName(prop->as_string());
             if (!new_name.empty() && new_name != prop->as_string())
             {

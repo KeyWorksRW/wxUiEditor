@@ -46,6 +46,7 @@ protected:
 
     virtual void OnDblClickListBox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDisplaySearchListItem(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHome(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHtmlLink(wxHtmlLinkEvent& event) { event.Skip(); }
     virtual void OnIndexTextChange(wxCommandEvent& event) { event.Skip(); }

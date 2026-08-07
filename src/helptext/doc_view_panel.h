@@ -14,6 +14,7 @@
 
 #include "doc_view_panel_base.h"
 
+class wxKeyEvent;
 class wxListBox;
 class wxObject;
 class wxTextCtrl;
@@ -70,6 +71,7 @@ protected:
     void OnNavBack(wxCommandEvent& event) override;
     void OnNavForward(wxCommandEvent& event) override;
     void OnUpdateUI(wxUpdateUIEvent& event) override;
+    void OnFind(wxCommandEvent& event) override;
 
 private:
     // Display an archive page (e.g. "wxTextCtrl.md"). Injects an inheritance
@@ -106,7 +108,9 @@ private:
     wxListBox* GetActiveIndexListbox(const wxObject* source) const;
 
     // Show the find-in-page dialog.
-    void OnFind(wxCommandEvent& event);
+
+    // Advance to the next find match (F3), wrapping to the start when the end is reached.
+    void OnFindNext(wxKeyEvent& event);
 
     // Update the parent frame's status bar text.
     void SetStatusMessage(const wxString& msg);

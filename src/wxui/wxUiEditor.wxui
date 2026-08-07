@@ -6286,7 +6286,8 @@
         class_name="DocViewPanelBase"
         base_file="doc_view_panel_base"
         derived_class_name="DocViewPanel"
-        derived_file="../helptext/doc_view_panel.cpp">
+        derived_file="../helptext/doc_view_panel.cpp"
+        wxEVT_UPDATE_UI="OnUpdateUI">
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL">
@@ -6496,7 +6497,8 @@
                     class="auitool"
                     bitmap="Art;wxART_FIND|wxART_TOOLBAR;[30,30]"
                     label=""
-                    var_name="find" />
+                    var_name="find"
+                    wxEVT_TOOL="OnFind" />
                 </node>
                 <node
                   class="wxHtmlWindow"

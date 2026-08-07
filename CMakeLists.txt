@@ -150,6 +150,9 @@ else()
         # skips PGO for them while CI can drop in a profile for free perf.
         # Debug builds never auto-apply PGO -- a stale merged.profdata must
         # not slow down or complicate local debugging.
+        # PGO flags below are additionally gated by $<CONFIG:Debug>, so a Debug
+        # config never receives PGO flags even on multi-config generators where
+        # CMAKE_BUILD_TYPE is empty at configure time.
         if(NOT USE_PGO_INSTRUMENT AND NOT USE_PGO_OPTIMIZE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
             if(EXISTS "${PGO_PROFILE_DIR}/merged.profdata")
                 message(STATUS "PGO: auto-detected profile at ${PGO_PROFILE_DIR}/merged.profdata")
@@ -159,9 +162,9 @@ else()
 
         if(USE_PGO_INSTRUMENT)
             message(STATUS "PGO: instrumenting → profiles written to ${PGO_PROFILE_DIR}")
-            add_compile_options(-fprofile-generate=${PGO_PROFILE_DIR})
-            add_compile_options(-fno-omit-frame-pointer)
-            add_link_options(-fprofile-generate=${PGO_PROFILE_DIR})
+            add_compile_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-generate=${PGO_PROFILE_DIR}>)
+            add_compile_options($<$<NOT:$<CONFIG:Debug>>:-fno-omit-frame-pointer>)
+            add_link_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-generate=${PGO_PROFILE_DIR}>)
         elseif(USE_PGO_OPTIMIZE)
             set(PGO_PROFDATA "${PGO_PROFILE_DIR}/merged.profdata")
             if(NOT EXISTS "${PGO_PROFDATA}")
@@ -172,10 +175,10 @@ else()
             endif()
             message(STATUS "PGO: optimizing with profile ${PGO_PROFDATA}")
             add_compile_options(
-                -fprofile-use=${PGO_PROFDATA}
-                -Wno-backend-plugin
+                $<$<NOT:$<CONFIG:Debug>>:-fprofile-use=${PGO_PROFDATA}>
+                $<$<NOT:$<CONFIG:Debug>>:-Wno-backend-plugin>
             )
-            add_link_options(-fprofile-use=${PGO_PROFDATA})
+            add_link_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-use=${PGO_PROFDATA}>)
         endif()
     endif()
 endif()

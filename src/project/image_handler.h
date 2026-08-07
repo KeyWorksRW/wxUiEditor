@@ -64,12 +64,12 @@ private:
 public:
     ImageHandler(ImageHandler const&) = delete;
     ImageHandler(ImageHandler&&) = delete;
-    auto operator=(ImageHandler const&) -> ImageHandler& = delete;
-    auto operator=(ImageHandler&&) -> ImageHandler& = delete;
+    ImageHandler& operator=(ImageHandler const&) = delete;
+    ImageHandler& operator=(ImageHandler&&) = delete;
 
     ~ImageHandler() = default;
 
-    static auto getInstance() -> ImageHandler&
+    static ImageHandler& getInstance()
     {
         static ImageHandler instance;
         return instance;
@@ -81,19 +81,19 @@ public:
     // with the form node of the form it first appears in.
     //
     // Returns true if an associated node changed
-    auto UpdateEmbedNodes() -> bool;
+    bool UpdateEmbedNodes();
 
-    auto GetImage(const wxue::string& description) -> wxImage;
+    wxImage GetImage(const wxue::string& description);
 
-    auto GetBitmapBundle(const wxue::string& description) -> wxBitmapBundle;
+    wxBitmapBundle GetBitmapBundle(const wxue::string& description);
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
     //
     // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
-    auto GetPropertyBitmap(const wxue::StringVector* parts, bool check_image = true) -> wxImage;
+    wxImage GetPropertyBitmap(const wxue::StringVector* parts, bool check_image = true);
 
-    auto GetPropertyBitmap(const wxue::string& description, bool check_image = true) -> wxImage;
+    wxImage GetPropertyBitmap(const wxue::string& description, bool check_image = true);
 
     wxBitmapBundle GetPropertyBitmapBundle(wxue::string_view description);
 
@@ -101,25 +101,23 @@ public:
     // code for the bundle.
     //
     // Returns nullptr if there is no ImageBundle
-    auto GetPropertyImageBundle(const wxue::StringVector* parts, Node* node = nullptr)
-        -> const ImageBundle*;
-    auto GetPropertyImageBundle(wxue::string_view description, Node* node = nullptr)
-        -> const ImageBundle*;
+    const ImageBundle* GetPropertyImageBundle(const wxue::StringVector* parts,
+                                              Node* node = nullptr);
+    const ImageBundle* GetPropertyImageBundle(wxue::string_view description, Node* node = nullptr);
 
     // If there is an Image form containing this bundle, return it's function name
     // This can NOT be made static in spite of what Lint says
-    auto GetBundleFuncName(const wxue::string& description) -> wxue::string;
+    wxue::string GetBundleFuncName(const wxue::string& description);
 
     // If there is an Images List containing this bundle, return it's function name
-    auto GetBundleFuncName(const wxue::StringVector* parts) -> wxue::string;
+    wxue::string GetBundleFuncName(const wxue::StringVector* parts);
 
     // If there is an Images List containing this image, return it's function name
-    auto GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size = wxDefaultSize)
-        -> wxue::string;
+    wxue::string GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size = wxDefaultSize);
 
-    auto ProcessBundleProperty(const wxue::StringVector* parts, Node* node) -> ImageBundle*;
+    ImageBundle* ProcessBundleProperty(const wxue::StringVector* parts, Node* node);
 
-    auto ProcessBundleProperty(const wxue::string& description, Node* node) -> ImageBundle*;
+    ImageBundle* ProcessBundleProperty(const wxue::string& description, Node* node);
 
     // This adds the bundle if new, or updates the embed->form if the node has changed
     void UpdateBundle(const wxue::StringVector* parts, Node* node);
@@ -128,60 +126,58 @@ public:
     // to load. The image is cached for as long as the project is open.
     void GetPropertyAnimation(const wxue::string& description, wxAnimation* p_animation);
 
-    auto AddEmbeddedImage(wxue::string path, Node* form, bool is_animation = false) -> bool;
-    auto GetEmbeddedImage(wxue::string_view path) -> EmbeddedImage*;
+    bool AddEmbeddedImage(wxue::string path, Node* form, bool is_animation = false);
+    EmbeddedImage* GetEmbeddedImage(wxue::string_view path);
 
     // This will collect bundles for the entire project -- it initializes m_bundles and
     // m_map_embedded for every image.
     void CollectBundles();
 
     // Returns nullptr if the image is not found
-    auto FindEmbedded(std::string_view) -> EmbeddedImage*;
+    EmbeddedImage* FindEmbedded(std::string_view);
 
     // Returns false if the new art folder does not exist.
-    auto ArtFolderChanged() -> bool;
+    bool ArtFolderChanged();
 
 protected:
-    auto CheckNode(Node* node) -> bool;
+    bool CheckNode(Node* node);
 
     void CollectNodeBundles(Node* node, Node* form);
 
     // This will update both m_bundles and m_map_embedded
-    auto AddNewEmbeddedImage(const wxue::string& path, Node* form) -> bool;
+    bool AddNewEmbeddedImage(const wxue::string& path, Node* form);
 
     // Reads the image and stores it in m_map_embedded
-    auto AddEmbeddedBundleImage(wxue::string& path, Node* form, EmbeddedImage* embed = nullptr)
-        -> EmbeddedImage*;
+    EmbeddedImage* AddEmbeddedBundleImage(wxue::string& path, Node* form,
+                                          EmbeddedImage* embed = nullptr);
     // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
     // depending on the type of the image file.
-    auto AddNewEmbeddedBundle(const wxue::StringVector* parts, std::string_view org_path,
-                              Node* form) -> bool;
+    bool AddNewEmbeddedBundle(const wxue::StringVector* parts, std::string_view org_path,
+                              Node* form);
 
-    auto AddNewEmbeddedBundle(const wxue::string& description, std::string_view org_path,
-                              Node* form) -> bool;
+    bool AddNewEmbeddedBundle(const wxue::string& description, std::string_view org_path,
+                              Node* form);
 
     // Reads the image, remove unused metadata, compresses it and stores it in m_map_embedded
-    auto AddSvgBundleImage(wxue::string& path, Node* form) -> bool;
+    bool AddSvgBundleImage(wxue::string& path, Node* form);
 
     // Read the image, compresses it and stores it in m_map_embedded
-    auto AddXpmBundleImage(const wxue::string& path, Node* form) -> bool;
+    bool AddXpmBundleImage(const wxue::string& path, Node* form);
 
 private:
     // Helper functions
-    static auto ConvertToLookup(const wxue::string& description) -> wxue::string;
-    static auto ConvertToLookup(const wxue::StringVector* parts) -> wxue::string;
+    static wxue::string ConvertToLookup(const wxue::string& description);
+    static wxue::string ConvertToLookup(const wxue::StringVector* parts);
 
-    auto ResolveBundlePath(wxue::string& path) -> bool;
-    auto AddFixedSizeBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
-                                    ImageBundle& img_bundle) -> void;
-    auto AddScalableBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
-                                   ImageBundle& img_bundle) -> void;
+    bool ResolveBundlePath(wxue::string& path);
+    void AddFixedSizeBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
+                                    ImageBundle& img_bundle);
+    void AddScalableBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
+                                   ImageBundle& img_bundle);
 
-    auto TryResolvePathWithArtDir(wxue::string& path) -> bool;
-    auto AddNonEmbeddedFixedSizeVariants(const wxue::StringVector* parts, ImageBundle& img_bundle)
-        -> void;
-    auto AddNonEmbeddedScalableVariants(const wxue::StringVector* parts, ImageBundle& img_bundle)
-        -> void;
+    bool TryResolvePathWithArtDir(wxue::string& path);
+    void AddNonEmbeddedFixedSizeVariants(const wxue::StringVector* parts, ImageBundle& img_bundle);
+    void AddNonEmbeddedScalableVariants(const wxue::StringVector* parts, ImageBundle& img_bundle);
 
     // Members
     NodeSharedPtr m_project_node { nullptr };

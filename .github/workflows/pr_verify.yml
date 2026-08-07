@@ -94,7 +94,7 @@ jobs:
         run: bash ./scripts/check_eol.sh
 
   buildUnix:
-    if: ${{ true }}  # temporarily disabled
+    if: ${{ github.event.pull_request.stack == null || github.event.pull_request.stack.position == github.event.pull_request.stack.size }}
     uses: ./.github/workflows/build-unix-reusable.yml
     with:
       create-setup: false

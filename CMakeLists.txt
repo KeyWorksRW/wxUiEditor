@@ -464,8 +464,7 @@ endif()
 if(MSVC)
     # /FC -- Full path to source code file in diagnostics
     target_compile_options(wxUiEditor PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
-
-    # Manifest is in the resource file
+    # Manifest is embedded in the resource file, so tell MSVC's link.exe not to add one
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
     target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR})
 

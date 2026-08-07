@@ -466,11 +466,6 @@ if(MSVC)
     target_compile_options(wxUiEditor PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
     # Manifest is embedded in the resource file, so tell MSVC's link.exe not to add one
     target_link_options(wxUiEditor PRIVATE "/manifest:no")
-    target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR})
-
-    set_target_properties(wxUiEditor PROPERTIES
-        VS_DEBUGGER_NATIVE_VISUALIZER "${CMAKE_CURRENT_LIST_DIR}/src/wxui.natvis"
-        DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
 else()
     target_compile_options(wxUiEditor PRIVATE
         -finput-charset=UTF-8 -fexec-charset=UTF-8
@@ -480,13 +475,13 @@ else()
     )
 endif()
 
+if(WIN32)
+    target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR})
 elseif(APPLE)
     target_compile_definitions(wxUiEditor PRIVATE __WXOSX_COCOA__)
-    target_compile_options(wxUiEditor PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR})
 elseif(UNIX)
     target_compile_definitions(wxUiEditor PRIVATE __WXGTK__)
-    target_compile_options(wxUiEditor PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_link_directories(wxUiEditor PRIVATE ${WX_LIB_DIR} ${GTK3_LIBRARY_DIRS})
 endif()
 

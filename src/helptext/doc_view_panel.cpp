@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-04-2026]
 
+#include <cctype>
 #include <sstream>
 #include <string>
 
@@ -190,6 +191,9 @@ void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
     // Reset find-in-page state for the new page
     m_find_last_query.clear();
     m_find_last_pos = 0;
+    m_find_highlight_active = false;
+    m_find_highlight_occurrence = 0;
+    m_find_highlight_query.clear();
 
     // Inject inheritance graph after </h1> if data is available for this page.
     const wxFileName fn(wxString::FromUTF8(archive_name));
@@ -599,45 +603,205 @@ void DocViewPanel::OnFind([[maybe_unused]] wxCommandEvent& event)
 
     m_find_last_pos = found_pos + query.size();
 
-    // Extract heading IDs from the cached HTML
-    std::vector<std::pair<std::string, std::string>> heading_ids;
-    std::ignore = AddHeadingIds(wxueArchive.GetCurrentHtml(), &heading_ids);
+    // Count which occurrence this is (0-based)
+    const int occurrence_index = CountOccurrencesBefore(markdown, query, found_pos);
 
-    const std::string section_id = FindSectionForMarkdownPos(markdown, found_pos, heading_ids);
+    // Get the clean HTML and apply highlight
+    const std::string clean_html = wxueArchive.GetCurrentHtml();
+    const std::string highlighted_html = ApplyFindHighlight(clean_html, query, occurrence_index);
 
-    if (section_id.empty())
+    if (highlighted_html == clean_html)
     {
+        // Highlight application failed (e.g., occurrence not found in HTML)
         SetStatusMessage(
-            wxString::Format("Found \"%s\" but could not determine section", search_text));
+            wxString::Format("Found \"%s\" but could not highlight in HTML", search_text));
         return;
     }
 
-    // Navigate to that section
-    const wxString anchor_href = wxString::FromUTF8("#" + section_id);
-    const bool loaded = m_html_win->LoadPage(anchor_href);
-    if (loaded)
+    // Set the highlighted page
+    const bool page_set = m_html_win->SetPage(wxString::FromUTF8(highlighted_html));
+    if (!page_set)
     {
-        if (wrapped)
+        SetStatusMessage(
+            wxString::Format("Found \"%s\" but failed to set highlighted page", search_text));
+        return;
+    }
+
+    // Scroll to the match anchor
+    const bool scrolled = m_html_win->LoadPage(wxT("#find-match"));
+    if (!scrolled)
+    {
+        SetStatusMessage(
+            wxString::Format("Found \"%s\" but failed to scroll to match", search_text));
+        return;
+    }
+
+    // Center the match vertically: scroll up by ~1/3 of client height
+    {
+        int view_x = 0, view_y = 0;
+        m_html_win->GetViewStart(&view_x, &view_y);
+        int px_per_unit_x = 1, px_per_unit_y = 1;
+        m_html_win->GetScrollPixelsPerUnit(&px_per_unit_x, &px_per_unit_y);
+        if (px_per_unit_y < 1)
         {
-            SetStatusMessage(wxString::Format("Wrapped; found \"%s\" in section #%s", search_text,
-                                              wxString::FromUTF8(section_id)));
+            px_per_unit_y = 1;
         }
-        else
-        {
-            SetStatusMessage(wxString::Format("Found \"%s\" in section #%s", search_text,
-                                              wxString::FromUTF8(section_id)));
-        }
+        const int client_height = m_html_win->GetClientSize().GetHeight();
+        const int scroll_up_pixels = client_height / 3;
+        const int scroll_up_units = scroll_up_pixels / px_per_unit_y;
+        const int new_scroll_y = std::max(0, view_y - scroll_up_units);
+        m_html_win->Scroll(view_x, new_scroll_y);
+    }
+
+    // Update highlight tracking state
+    m_find_highlight_active = true;
+    m_find_highlight_occurrence = occurrence_index;
+    m_find_highlight_query = query;
+
+    // Status message
+    if (wrapped)
+    {
+        SetStatusMessage(wxString::Format("Wrapped; found \"%s\"", search_text));
     }
     else
     {
-        SetStatusMessage(
-            wxString::Format("Found \"%s\" but section anchor failed to load", search_text));
+        SetStatusMessage(wxString::Format("Found \"%s\"", search_text));
     }
 }
 
 // ---------------------------------------------------------------------------
 //  Private helpers
 // ---------------------------------------------------------------------------
+
+std::string DocViewPanel::RemoveFindHighlight(const std::string& html)
+{
+    constexpr std::string_view ANCHOR_PREFIX =
+        "<a id=\"find-match\"></a><span style=\"background-color: #FFFF00; color: #000000;\">";
+    const std::size_t start_pos = html.find(ANCHOR_PREFIX);
+    if (start_pos == std::string::npos)
+    {
+        return html;
+    }
+    const std::size_t content_start = start_pos + ANCHOR_PREFIX.size();
+    const std::size_t span_close_pos = html.find("</span>", content_start);
+    if (span_close_pos == std::string::npos)
+    {
+        return html;
+    }
+    const std::string inner_text = html.substr(content_start, span_close_pos - content_start);
+    constexpr std::size_t CLOSE_TAG_LEN = 7;  // length of "</span>"
+    std::string cleaned = html;
+    cleaned.erase(start_pos, span_close_pos + CLOSE_TAG_LEN - start_pos);
+    cleaned.insert(start_pos, inner_text);
+    return cleaned;
+}
+
+int DocViewPanel::CountOccurrencesBefore(std::string_view text, std::string_view query,
+                                         std::size_t pos)
+{
+    if (query.empty())
+    {
+        return 0;
+    }
+    int count = 0;
+    const std::size_t limit = std::min(pos, text.size());
+    for (std::size_t idx = 0; idx + query.size() <= limit; ++idx)
+    {
+        if (std::tolower(static_cast<unsigned char>(text[idx])) ==
+            std::tolower(static_cast<unsigned char>(query[0])))
+        {
+            bool match = true;
+            for (std::size_t jdx = 1; jdx < query.size(); ++jdx)
+            {
+                if (std::tolower(static_cast<unsigned char>(text[idx + jdx])) !=
+                    std::tolower(static_cast<unsigned char>(query[jdx])))
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+            {
+                ++count;
+            }
+        }
+    }
+    return count;
+}
+
+std::string DocViewPanel::ApplyFindHighlight(const std::string& html, const std::string& query,
+                                             int occurrence_index)
+{
+    const std::string cleaned = RemoveFindHighlight(html);
+    if (query.empty() || occurrence_index < 0)
+    {
+        return cleaned;
+    }
+
+    constexpr std::string_view ANCHOR_PREFIX = "<a id=\"find-match\"></a>";
+    constexpr std::string_view SPAN_PREFIX =
+        "<span style=\"background-color: #FFFF00; color: #000000;\">";
+
+    const std::size_t query_len = query.size();
+    int match_index = 0;
+    std::size_t idx = 0;
+    const std::size_t len = cleaned.size();
+
+    while (idx < len)
+    {
+        if (cleaned[idx] == '<')
+        {
+            const std::size_t gt_pos = cleaned.find('>', idx);
+            if (gt_pos == std::string::npos)
+            {
+                break;
+            }
+            idx = gt_pos + 1;
+            continue;
+        }
+        if (idx + query_len > len)
+        {
+            break;
+        }
+        if (std::tolower(static_cast<unsigned char>(cleaned[idx])) ==
+            std::tolower(static_cast<unsigned char>(query[0])))
+        {
+            bool match = true;
+            for (std::size_t jdx = 1; jdx < query_len; ++jdx)
+            {
+                if (std::tolower(static_cast<unsigned char>(cleaned[idx + jdx])) !=
+                    std::tolower(static_cast<unsigned char>(query[jdx])))
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+            {
+                if (match_index == occurrence_index)
+                {
+                    const std::string matched_text = cleaned.substr(idx, query_len);
+                    std::string result = cleaned;
+                    result.erase(idx, query_len);
+                    std::string replacement;
+                    replacement.reserve(ANCHOR_PREFIX.size() + SPAN_PREFIX.size() + query_len + 7);
+                    replacement += ANCHOR_PREFIX;
+                    replacement += SPAN_PREFIX;
+                    replacement += matched_text;
+                    replacement += "</span>";
+                    result.insert(idx, replacement);
+                    return result;
+                }
+                ++match_index;
+                idx += query_len;
+                continue;
+            }
+        }
+        ++idx;
+    }
+
+    return cleaned;
+}
 
 std::string DocViewPanel::BuildInheritanceImage(const std::string& class_name)
 {

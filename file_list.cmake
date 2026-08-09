@@ -59,7 +59,7 @@ set( file_list
     src/customprops/pg_animation.cpp     # PropertyGrid_Animation -- Custom property grid class for animations
     src/customprops/pg_point.cpp         # CustomPointProperty -- Custom wxPGProperty for wxPoint
 
-    # (generated) customprops/art_prop_dlg.cpp        # Art Property Dialog for image property
+    src/customprops/art_prop_dlg.cpp       # ArtPropertyDlg -- derived class (base is art_prop_dlg_gen.cpp)
     # (generated) customprops/include_files_dlg.cpp
     # (generated) customprops/id_editor_dlg.cpp
     src/custom_ctrls/colour_rect_ctrl.cpp # ColourRectCtrl -- Control that displays a solid color

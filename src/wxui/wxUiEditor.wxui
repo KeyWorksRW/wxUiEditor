@@ -3753,12 +3753,10 @@
         class="wxDialog"
         class_name="ArtBrowserDialog"
         title="Art Provider Image"
-        base_file="..\customprops\art_prop_dlg"
-        local_hdr_includes="img_props.h"
+        base_file="art_prop_dlg_gen"
         no_closing_brace="1"
         derived_class_name="ArtPropertyDlg"
-        private_members="1"
-        use_derived_class="0"
+        pure_virtual_functions="1"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"

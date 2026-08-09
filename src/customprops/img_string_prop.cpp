@@ -12,9 +12,9 @@
 
 #include "img_string_prop.h"
 
-#include "art_prop_dlg.h"     // ArtBrowserDialog -- Art Property Dialog for image property
-#include "project_handler.h"  // ProjectHandler class
-#include "version.h"          // Version numbers and other constants
+#include "art_prop_dlg.h"                // ArtPropertyDlg -- Art Property Dialog for image property
+#include "project_handler.h"             // ProjectHandler class
+#include "version.h"                     // Version numbers and other constants
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::SaveCwd
 
 [[nodiscard]] bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid,
@@ -22,7 +22,7 @@
 {
     if (m_img_props.type.contains("Art"))
     {
-        ArtBrowserDialog art_dlg(propGrid->GetPanel(), m_img_props);
+        ArtPropertyDlg art_dlg(propGrid->GetPanel(), m_img_props);
         if (art_dlg.ShowModal() == wxID_OK)
         {
             SetValue(art_dlg.GetResults());

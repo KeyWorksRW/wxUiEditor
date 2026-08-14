@@ -55,8 +55,7 @@ protected:
 
 // Adds a project hyperlink and path to the grid
 // use_standard_colors: true for main history (uses RemovableProjectHyperlinkCtrl with remove
-// option),
-//                      false for testing imports (uses wxGenericHyperlinkCtrl with inverted colors)
+// option), false for testing imports (uses wxGenericHyperlinkCtrl with inverted colors)
 void StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& url,
                                   const wxFileName& project_file, bool use_standard_colors)
 {
@@ -117,7 +116,7 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
 
     wxFileHistory& history = wxGetMainFrame()->getFileHistory();
     bool file_added = false;
-    for (size_t idx = history.GetCount(); idx-- > 0;)
+    for (size_t idx = 0; idx < history.GetCount();)
     {
         wxString const history_file = history.GetHistoryFile(idx);
         wxFileName const project_file(history_file);
@@ -128,10 +127,12 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
 
             AddProjectToGrid(shortname.GetName(), history_file, project_file, true);
             file_added = true;
+            ++idx;
         }
         else
         {
             // Assume that if the file doesn't exist now, it won't exist later either
+            // Do NOT increment idx -- removal shifts subsequent entries down one slot
             history.RemoveFileFromHistory(idx);
         }
     }

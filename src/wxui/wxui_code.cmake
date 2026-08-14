@@ -5,7 +5,6 @@
 set (wxue_generated_code
 
     # Non-base classes
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/edit_custom_mockup_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/include_files_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/sys_header_dlg.cpp
@@ -31,7 +30,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../ui/generate_xrc_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/preferences_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/xrccompare.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/art_prop_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp
     ${CMAKE_CURRENT_LIST_DIR}/insert_widget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar.cpp
@@ -51,11 +49,13 @@ set (wxue_generated_code
     # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/art_prop_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/doc_view_frame_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/doc_view_panel_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/edit_custom_mockup_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp

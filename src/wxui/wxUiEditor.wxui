@@ -5215,11 +5215,12 @@
         class="wxDialog"
         class_name="EditCustomMockupBase"
         title="Mockup Widget Settings"
-        base_file="..\customprops\edit_custom_mockup_base"
+        base_file="edit_custom_mockup_base"
+        derived_class_name="EditCustomMockup"
+        derived_file="../customprops/edit_custom_mockup.cpp"
         class_members="&quot;wxString m_result;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot;"
         private_members="0"
-        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"

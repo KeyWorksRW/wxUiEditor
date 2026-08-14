@@ -7,9 +7,13 @@
 
 #include "gen_go.h"
 
+#include <set>
+
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_common.h"       // Common component functions
+#include "image_gen.h"        // Functions for generating embedded images
+#include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
 #include "project_handler.h"  // ProjectHandler class
 #include "write_code.h"       // Write code to Scintilla or file
@@ -28,6 +32,12 @@ void GoCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_panel_type = panel_type;
     ASSERT(m_language == GenLang::go);
     Code code(m_form_node, m_language);
+
+    m_embedded_images.clear();
+    SetImagesForm();
+    std::set<std::string> img_include_set;
+    CollectImageHeaders(m_form_node, img_include_set);
+    ParseImageProperties(m_form_node);
 
     if (m_header)
     {
@@ -76,6 +86,13 @@ void GoCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_source->writeLine();
 
     GenerateConstructionCode(code);
+
+    // Write any embedded images that aren't declared in any gen_Images List.
+    if (m_embedded_images.size())
+    {
+        WriteImageConstruction(code);
+        m_source->writeLine();
+    }
 
     m_source->writeLine();
     m_source->writeLine("return form");

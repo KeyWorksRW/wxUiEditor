@@ -674,6 +674,10 @@ public:
     void GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap);
     void GenerateXpmBitmap(const wxue::StringVector& parts, bool get_bitmap);
 
+    // FFI-language helpers for emitting wxBitmapBundle / builder creation from base64.
+    void EmitFfiBundleFromBase64(const wxue::string& b64_name, const wxue::string& bitmap_type);
+    void EmitFfiBitmapFromBase64(const wxue::string& b64_name, const wxue::string& bitmap_type);
+
 protected:
     void InsertLineBreak(size_t cur_pos);
     // Prefix with a period, lowercase for wxRuby, and add open parenthesis

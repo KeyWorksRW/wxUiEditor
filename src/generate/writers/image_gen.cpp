@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for generating embedded images
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-30-2026]
@@ -34,14 +34,65 @@
 constexpr size_t ARRAY_SIZE_MASK = 0xFFFFFFFF;
 constexpr int SVG_SIZE_SHIFT = 32;
 
-// Prefix sizes for base64-encoded lines (tab + quote characters)
-constexpr size_t PYTHON_PREFIX_SIZE = 7;  // 4 for tab, 2 for quotes, 1 for 'b' prefix
-constexpr size_t RUBY_PREFIX_SIZE = 6;    // 2 for tab, 2 for quotes, 2 for " \" suffix
+// Total overhead for base64-encoded lines: the line prefix (indent + opening quote) plus
+// the line suffix (closing quote + continuation operator). Subtracting this from the
+// language's *_line_length property keeps every emitted line within the property.
+constexpr size_t PYTHON_PREFIX_SIZE = 7;      // 4 for tab, 2 for quotes, 1 for 'b' prefix
+constexpr size_t RUBY_PREFIX_SIZE = 6;        // 2 for spaces, 2 for quotes, 2 for " \" suffix
+constexpr size_t FORTRAN_PREFIX_SIZE = 9;     // 2 for spaces, 1 for quote, 6 for " // & suffix
+constexpr size_t GO_PREFIX_SIZE = 5;          // 1 for tab, 1 for quote, 3 for " + suffix
+constexpr size_t JULIA_PREFIX_SIZE = 8;       // 4 for spaces, 1 for quote, 3 for " * suffix
+constexpr size_t LUAJIT_PREFIX_SIZE = 7;      // 2 for spaces, 1 for quote, 4 for " .. suffix
+constexpr size_t TYPESCRIPT_PREFIX_SIZE = 5;  // 1 for tab, 1 for quote, 3 for " + suffix
 constexpr size_t RESERVE_PADDING = 4;
 
 // Base64 encoding: 3 input bytes produce 4 output characters
 constexpr size_t BASE64_INPUT_GROUP = 3;
 constexpr size_t BASE64_OUTPUT_GROUP = 4;
+
+// Default SVG fallback size when the SVG has no intrinsic dimensions recorded
+constexpr int FFI_DEFAULT_IMG_SIZE = 32;
+
+// Returns the kwxFFI `expwxBITMAP_TYPE_*()` function name for the given bitmap type.
+// These are runtime constants exposed by the kwxFFI C API (see src/kwx_defs.cpp).
+static wxue::string ffi_bitmap_type_name(wxBitmapType type)
+{
+    switch (type)
+    {
+        case wxBITMAP_TYPE_BMP:
+            return "expwxBITMAP_TYPE_BMP()";
+
+        case wxBITMAP_TYPE_ICO:
+            return "expwxBITMAP_TYPE_ICO()";
+
+        case wxBITMAP_TYPE_CUR:
+            return "expwxBITMAP_TYPE_CUR()";
+
+        case wxBITMAP_TYPE_XPM:
+            return "expwxBITMAP_TYPE_XPM()";
+
+        case wxBITMAP_TYPE_GIF:
+            return "expwxBITMAP_TYPE_GIF()";
+
+        case wxBITMAP_TYPE_JPEG:
+            return "expwxBITMAP_TYPE_JPEG()";
+
+        case wxBITMAP_TYPE_PNM:
+            return "expwxBITMAP_TYPE_PNM()";
+
+        case wxBITMAP_TYPE_ANI:
+            return "expwxBITMAP_TYPE_ANI()";
+
+        case wxBITMAP_TYPE_WEBP:
+            return "expwxBITMAP_TYPE_WEBP()";
+
+        case wxBITMAP_TYPE_TIFF:
+            return "expwxBITMAP_TYPE_TIFF()";
+
+        default:
+            return "expwxBITMAP_TYPE_PNG()";
+    }
+}
 
 // Generate code after the constructor for embedded images not defined in the gen_Images node.
 void BaseCodeGenerator::WriteImageConstruction(Code& code)
@@ -174,6 +225,76 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 m_source->writeLine(encoded);
             }
         }
+        else if (code.is_ffi())
+        {
+            if (iter_array->get_Form()->is_Gen(gen_Images))
+            {
+                continue;
+            }
+
+            // Base64 constant for FFI languages. The decode + apply happens later in
+            // GenerateSVGBundle / GenerateEmbedBundle / GenerateXpmBitmap, which reference
+            // this constant by name (`<array_name>_b64`).
+            const wxue::string b64_name = iter_array->base_image().array_name + "_b64";
+
+            if (!iter_array->base_image().filename.empty())
+            {
+                code.Eol()
+                    .Str(GetLanguageTraits(m_language)->line_comment)
+                    .Str(iter_array->base_image().filename);
+            }
+
+            std::vector<std::string> encoded =
+                base64_encode(iter_array->base_image().array_data.data(),
+                              iter_array->base_image().array_size & ARRAY_SIZE_MASK, m_language);
+
+            // The base64_encode() helper prefixes every data line with a quote and suffixes
+            // every line (including the last) with a continuation operator. The header line is
+            // responsible for the assignment, and the trailing continuation is stripped from
+            // the final data line.
+            std::string_view suffix_to_strip;
+            if (code.is_fortran())
+            {
+                code.Eol()
+                    .Str("character(kind=c_char, len=:), allocatable, target :: ")
+                    .Str(b64_name);
+                m_source->writeLine(code);
+                code.clear();
+                // Assignment with Fortran `&` continuation: the base64_encode data lines
+                // use a trailing " // &" continuation, stripped from the final line.
+                code.Eol().Str(b64_name).Str(" = &");
+                suffix_to_strip = " // &";
+            }
+            else if (code.is_go() || code.is_typescript())
+            {
+                code.Eol().Str("const ").Str(b64_name).Str(" = ");
+                suffix_to_strip = " +";
+            }
+            else if (code.is_julia())
+            {
+                code.Eol().Str("const ").Str(b64_name).Str(" = ");
+                suffix_to_strip = " *";
+            }
+            else if (code.is_luajit())
+            {
+                code.Eol().Str("local ").Str(b64_name).Str(" = ");
+                suffix_to_strip = " ..";
+            }
+
+            if (!encoded.empty())
+            {
+                // Join the final continuation onto the header/assignment so the constant is a
+                // single logical statement.
+                if (!suffix_to_strip.empty() && encoded.back().ends_with(suffix_to_strip))
+                {
+                    encoded.back().erase(encoded.back().size() - suffix_to_strip.size());
+                }
+            }
+            m_source->writeLine(code);
+            code.clear();
+            m_source->writeLine(encoded);
+            m_source->writeLine();
+        }
     }
 
     if (code.is_cpp() && is_namespace_written)
@@ -190,7 +311,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
 // clang-format off
 
-constexpr auto map_lang_to_prop = frozen::make_map<GenLang, GenEnum::PropName>({
+constexpr frozen::map<GenLang, GenEnum::PropName, 8> map_lang_to_prop = frozen::make_map<GenLang, GenEnum::PropName>({
     { GenLang::cplusplus,  prop_cpp_line_length        },
     { GenLang::python,     prop_python_line_length     },
     { GenLang::ruby,       prop_ruby_line_length       },
@@ -207,9 +328,34 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
                                        GenLang language)
 {
     size_t tab_quote_prefix = PYTHON_PREFIX_SIZE;
-    if (language == GenLang::ruby)
+    switch (language)
     {
-        tab_quote_prefix = RUBY_PREFIX_SIZE;
+        case GenLang::ruby:
+            tab_quote_prefix = RUBY_PREFIX_SIZE;
+            break;
+
+        case GenLang::fortran:
+            tab_quote_prefix = FORTRAN_PREFIX_SIZE;
+            break;
+
+        case GenLang::go:
+            tab_quote_prefix = GO_PREFIX_SIZE;
+            break;
+
+        case GenLang::julia:
+            tab_quote_prefix = JULIA_PREFIX_SIZE;
+            break;
+
+        case GenLang::luajit:
+            tab_quote_prefix = LUAJIT_PREFIX_SIZE;
+            break;
+
+        case GenLang::typescript:
+            tab_quote_prefix = TYPESCRIPT_PREFIX_SIZE;
+            break;
+
+        default:
+            break;
     }
     GenEnum::PropName prop = prop_python_line_length;
     if (const auto result = map_lang_to_prop.find(language); result != map_lang_to_prop.end())
@@ -217,7 +363,7 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
         prop = result->second;
     }
 
-    const size_t line_length = (Project.as_size_t(prop) > tab_quote_prefix + 4) ?
+    const size_t line_length = (Project.as_size_t(prop) > tab_quote_prefix + BASE64_OUTPUT_GROUP) ?
                                    Project.as_size_t(prop) - tab_quote_prefix :
                                    76;
 
@@ -256,15 +402,41 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
     std::string_view line_begin;
     std::string_view line_end;
-    if (language == GenLang::python)
+    switch (language)
     {
-        line_begin = "\tb\"";
-        line_end = "\"";
-    }
-    else if (language == GenLang::ruby)
-    {
-        line_begin = "  '";
-        line_end = "' \\";
+        case GenLang::python:
+            line_begin = "\tb\"";
+            line_end = "\"";
+            break;
+
+        case GenLang::ruby:
+            line_begin = "  '";
+            line_end = "' \\";
+            break;
+
+        case GenLang::fortran:
+            line_begin = "  \"";
+            line_end = "\" // &";
+            break;
+
+        case GenLang::go:
+        case GenLang::typescript:
+            line_begin = "\t\"";
+            line_end = "\" +";
+            break;
+
+        case GenLang::julia:
+            line_begin = "    \"";
+            line_end = "\" *";
+            break;
+
+        case GenLang::luajit:
+            line_begin = "  \"";
+            line_end = "\" ..";
+            break;
+
+        default:
+            break;
     }
 
     line = line_begin;
@@ -285,7 +457,7 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
             a3_pos = 0;
             line_pos += BASE64_OUTPUT_GROUP;
-            if (line_pos >= line_length)
+            if (line_pos + BASE64_OUTPUT_GROUP > line_length)
             {
                 line += line_end;
                 result.emplace_back(line);
@@ -411,6 +583,71 @@ void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap)
                       << svg_name << "))\n");
         *this += "Wx::BitmapBundle.from_svg(_svg_string_";
         Comma().Str("Wx::Size.new(").itoa(svg_size.x).Comma().itoa(svg_size.y) += "))";
+    }
+    else if (is_ffi())
+    {
+        // The embedded SVG is stored as gzip-compressed array_data, base64-encoded to
+        // <array_name>_b64. kwxFFI's wxBitmapBundle_CreateFromSVGBase64() base64-decodes,
+        // gzip-decompresses, and builds the vector bundle.
+        const wxue::string b64_name = embed->base_image().array_name + "_b64";
+        const int default_w = (svg_size.x > 0) ? svg_size.x : FFI_DEFAULT_IMG_SIZE;
+        const int default_h = (svg_size.y > 0) ? svg_size.y : FFI_DEFAULT_IMG_SIZE;
+
+        if (is_fortran())
+        {
+            Str("wxBitmapBundle_CreateFromSVGBase64(c_loc(")
+                .Str(b64_name)
+                .Str("), int(len(")
+                .Str(b64_name)
+                .Str(", kind=c_size_t), kind=c_size_t), ")
+                .itoa(default_w)
+                .Comma()
+                .itoa(default_h) += ")";
+        }
+        else if (is_go())
+        {
+            Str("wx.NewBitmapBundleFromSVGBase64(unsafe.Pointer(unsafe.StringData(")
+                .Str(b64_name)
+                .Str(")), len(")
+                .Str(b64_name)
+                .Str("), ")
+                .itoa(default_w)
+                .Str(", ")
+                .itoa(default_h) += ")";
+        }
+        else if (is_julia())
+        {
+            Str("BitmapBundle(; base64=")
+                .Str(b64_name)
+                .Str(", width=")
+                .itoa(default_w)
+                .Str(", height=")
+                .itoa(default_h) += ")";
+        }
+        else if (is_luajit())
+        {
+            Str("ffi.C.wxBitmapBundle_CreateFromSVGBase64(")
+                .Str(b64_name)
+                .Str(", #")
+                .Str(b64_name)
+                .Str(", ")
+                .itoa(default_w)
+                .Str(", ")
+                .itoa(default_h) += ")";
+        }
+        else if (is_typescript())
+        {
+            Str("kwx.wxBitmapBundle_CreateFromSVGBase64(")
+                .Str("getPtr(")
+                .Str(b64_name)
+                .Str("), BigInt(len(")
+                .Str(b64_name)
+                .Str(")), ")
+                .itoa(default_w)
+                .Str(", ")
+                .itoa(default_h) += ")";
+        }
+        return;
     }
 
     if (get_bitmap)
@@ -563,6 +800,19 @@ void Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
             // it. However, the only embedded images we support are bundles, so this probably
             // isn't practical.
         }
+        return;
+    }
+
+    if (is_ffi())
+    {
+        // FFI-language bundles are emitted as a single expression. For a multi-resolution
+        // bundle, decode the first (base) image through the base64 API; kwxFFI's bundle is
+        // a value type that wxWidgets copies into the widget setter. Emitting a full
+        // wxBitmapBundleBuilder sequence would require statement-level code, which does not
+        // fit the inline expression model used by GenerateBundleParameter.
+        const wxue::string b64_name = embed->base_image().array_name + "_b64";
+        const wxue::string bitmap_type = ffi_bitmap_type_name(embed->base_image().type);
+        EmitFfiBundleFromBase64(b64_name, bitmap_type);
         return;
     }
 
@@ -755,6 +1005,96 @@ void Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
     }
 }
 
+// Emits a call to wxBitmapBundle_CreateFromBase64 (or the language wrapper) for a single
+// embedded image whose base64 constant is `b64_name`.
+void Code::EmitFfiBundleFromBase64(const wxue::string& b64_name, const wxue::string& bitmap_type)
+{
+    if (is_fortran())
+    {
+        Str("wxBitmapBundle_CreateFromBase64(c_loc(")
+            .Str(b64_name)
+            .Str("), int(len(")
+            .Str(b64_name)
+            .Str(", kind=c_size_t), kind=c_size_t), ")
+            .Str(bitmap_type) += ")";
+    }
+    else if (is_go())
+    {
+        Str("wx.NewBitmapBundleFromBase64(unsafe.Pointer(unsafe.StringData(")
+            .Str(b64_name)
+            .Str(")), len(")
+            .Str(b64_name)
+            .Str("), ")
+            .Str(bitmap_type) += ")";
+    }
+    else if (is_julia())
+    {
+        Str("BitmapBundle(; base64=").Str(b64_name).Str(", bitmap_type=").Str(bitmap_type) += ")";
+    }
+    else if (is_luajit())
+    {
+        Str("ffi.C.wxBitmapBundle_CreateFromBase64(")
+            .Str(b64_name)
+            .Str(", #")
+            .Str(b64_name)
+            .Str(", ")
+            .Str(bitmap_type) += ")";
+    }
+    else if (is_typescript())
+    {
+        Str("kwx.wxBitmapBundle_CreateFromBase64(getPtr(")
+            .Str(b64_name)
+            .Str("), BigInt(len(")
+            .Str(b64_name)
+            .Str(")), ")
+            .Str(bitmap_type) += ")";
+    }
+}
+
+void Code::EmitFfiBitmapFromBase64(const wxue::string& b64_name, const wxue::string& bitmap_type)
+{
+    if (is_fortran())
+    {
+        Str("wxBitmap_CreateFromBase64(c_loc(")
+            .Str(b64_name)
+            .Str("), int(len(")
+            .Str(b64_name)
+            .Str(", kind=c_size_t), kind=c_size_t), ")
+            .Str(bitmap_type) += ")";
+    }
+    else if (is_go())
+    {
+        Str("wx.NewBitmapFromBase64(unsafe.Pointer(unsafe.StringData(")
+            .Str(b64_name)
+            .Str(")), len(")
+            .Str(b64_name)
+            .Str("), ")
+            .Str(bitmap_type) += ")";
+    }
+    else if (is_julia())
+    {
+        Str("Bitmap(; base64=").Str(b64_name).Str(", bitmap_type=").Str(bitmap_type) += ")";
+    }
+    else if (is_luajit())
+    {
+        Str("ffi.C.wxBitmap_CreateFromBase64(")
+            .Str(b64_name)
+            .Str(", #")
+            .Str(b64_name)
+            .Str(", ")
+            .Str(bitmap_type) += ")";
+    }
+    else if (is_typescript())
+    {
+        Str("kwx.wxBitmap_CreateFromBase64(getPtr(")
+            .Str(b64_name)
+            .Str("), BigInt(len(")
+            .Str(b64_name)
+            .Str(")), ")
+            .Str(bitmap_type) += ")";
+    }
+}
+
 void Code::GenerateXpmBitmap(const wxue::StringVector& parts, bool /* get_bitmap */)
 {
     // We only marginally support XPM files -- we only allow a single file, and we don't attempt
@@ -800,6 +1140,22 @@ void Code::GenerateXpmBitmap(const wxue::StringVector& parts, bool /* get_bitmap
         CheckLineLength(name.size() + 2);
         QuotedString(name);
         Comma().Str("Wx::BITMAP_TYPE_XPM)");
+    }
+    else if (is_ffi())
+    {
+        // XPM files are stored gzip-compressed in the embedded array. For FFI languages,
+        // decode them through wxBitmap_CreateFromBase64. The XPM data is tiny so the
+        // base64 constant stays readable.
+        if (EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]); embed)
+        {
+            const wxue::string b64_name = embed->base_image().array_name + "_b64";
+            const wxue::string bitmap_type = ffi_bitmap_type_name(embed->base_image().type);
+            EmitFfiBitmapFromBase64(b64_name, bitmap_type);
+        }
+        else
+        {
+            Add("WX_NULL_BITMAP");
+        }
     }
 }
 

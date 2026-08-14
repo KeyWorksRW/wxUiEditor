@@ -1,9 +1,10 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStaticBitmap generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [08-09-2026]
 
 #include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
 #include <wx/statbmp.h>           // wxStaticBitmap class interface
@@ -56,11 +57,11 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
     {
         if (code.HasValue(prop_bitmap))
         {
-            bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
+            const bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
 
             if (code.is_python())
             {
-                bool is_list_created = PythonBitmapList(code, prop_bitmap);
+                const bool is_list_created = PythonBitmapList(code, prop_bitmap);
                 if (!use_generic_version)
                 {
                     code.NodeName()
@@ -112,6 +113,11 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
 
                 code.Bundle(prop_bitmap);
             }
+            else if (code.is_ffi())
+            {
+                code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
+                code.Bundle(prop_bitmap);
+            }
             code.PosSizeFlags();
         }
         else
@@ -128,7 +134,7 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
 void StaticBitmapGenerator::GenCppConstruction(Code& code)
 {
     Node* node = code.node();  // for convenience
-    auto class_override_type = GetClassOverrideType(node);
+    ClassOverrideType class_override_type = GetClassOverrideType(node);
     if (class_override_type == ClassOverrideType::None &&
         node->as_string(prop_scale_mode) != "None")
     {
@@ -138,9 +144,9 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
 
     if (node->HasValue(prop_bitmap))
     {
-        const auto& description = node->as_string(prop_bitmap);
+        const wxue::string& description = node->as_string(prop_bitmap);
         wxue::string bundle_code;
-        bool is_vector_code = GenerateBundleCode(description, bundle_code);
+        const bool is_vector_code = GenerateBundleCode(description, bundle_code);
         code.UpdateBreakAt();
 
         if (is_vector_code)
@@ -149,6 +155,10 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
             {
                 bundle_code.erase(0, 3);
                 code.OpenBrace();
+                // Do NOT call CloseBrace() here. The closing brace emitted via
+                // need_closing_brace by BaseCodeGenerator after SettingsCode and
+                // the sizer Add() call -- closing it here would strand
+                // SetScaleMode(...) and Add(...) outside the vector scope.
                 code += bundle_code;
             }
             code.Tab();
@@ -304,9 +314,9 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticBitmap");
     GenXrcBitmap(node, item, xrc_flags);
@@ -319,7 +329,7 @@ int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         if (node->HasValue(prop_scale_mode) && node->as_string(prop_scale_mode) != "None")
         {
             item.append_child(pugi::node_comment)
-                .set_value(" scale mode cannot be be set in the XRC file. ");
+                .set_value(" scale mode cannot be set in the XRC file. ");
         }
 
         GenXrcComments(node, item);

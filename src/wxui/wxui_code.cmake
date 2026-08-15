@@ -5,7 +5,6 @@
 set (wxue_generated_code
 
     # Non-base classes
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/id_editor_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/include_files_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../customprops/sys_header_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../import/import_winres_dlg.cpp
@@ -64,6 +63,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/html_find_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/id_editor_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/language_docs_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp

@@ -34,12 +34,13 @@ set( file_list
     src/customprops/code_single_prop.cpp      # EditCodeSingleProperty -- Derived wxStringProperty class for single line code
     src/customprops/code_string_prop.cpp      # EditCodeProperty --Derived wxStringProperty class for code
     src/customprops/custom_colour_prop.cpp    # EditColourProperty -- Property editor for colour
-    src/customprops/custom_param_prop.cpp     # EditParamProperty -- Derived wxStringProperty class for custom control parameters
+    src/customprops/custom_param_prop.cpp     # EditParamProperty -- Derived wxStringProperty for custom control parameters
     src/customprops/directory_prop.cpp        # DirectoryProperty -- Derived wxStringProperty class for choosing a directory
     src/customprops/edit_custom_mockup.cpp    # Custom Property editor for pop_custom_mockup
     src/customprops/evt_string_prop.cpp       # EventStringProperty -- Derived wxStringProperty class for event function
     src/customprops/font_string_prop.cpp      # FontStringProperty -- Derived wxStringProperty class for font property
     src/customprops/html_string_prop.cpp      # EditHtmlProperty - Derived wxStringProperty class for HTML
+    src/customprops/id_editor_dlg.cpp         # Dialog for editing a ID name and optional value
     src/customprops/id_prop.cpp               # ID_Property -- Uses IDEditorDlg to edit a custom ID
     src/customprops/img_string_prop.cpp       # ImageDialogAdapter -- used by ImageStringProperty (img_string_prop.h)
     src/customprops/include_files_prop.cpp    # IncludeFilesProperty -- Derived wxStringProperty class for Include Files

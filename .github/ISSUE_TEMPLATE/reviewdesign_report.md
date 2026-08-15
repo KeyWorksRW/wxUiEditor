@@ -3,9 +3,10 @@ name: Design change
 about: Underlying design needs changing
 title: ''
 labels: design change
-assignees: ''
+type: Task
+assignees: 'Randalphwa'
 
 ---
 
 ### Description:
-<!-- Provide a description of what you want to happen here -->
+<!-- Provide a description of the suggest design change -->

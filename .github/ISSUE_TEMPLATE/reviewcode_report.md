@@ -3,9 +3,10 @@ name: Code review/refactor
 about: Code needs to be reviewed or refactored
 title: ''
 labels: code review/refactor
-assignees: ''
+type: Task
+assignees: 'Randalphwa'
 
 ---
 
 ### Description:
-<!-- Provide a description of of what you want to happen here -->
+<!-- Provide a description of of what code needs to be reviewed or refactored -->

@@ -4,10 +4,12 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-20-2026]
 
 #include <array>
 #include <format>
 #include <sstream>  // For std::ostringstream
+#include <tuple>    // for std::ignore
 #include <utility>
 #include <vector>
 
@@ -38,7 +40,7 @@ namespace wxue_img
     extern const unsigned char pulsing_unknown_gif[377];
 }
 
-auto ImageHandler::ConvertToLookup(const wxue::string& description) -> wxue::string
+wxue::string ImageHandler::ConvertToLookup(const wxue::string& description)
 {
     wxue::ViewVector parts(description, ';', wxue::TRIM::both);
     ASSERT(parts.size() > 1)
@@ -48,8 +50,9 @@ auto ImageHandler::ConvertToLookup(const wxue::string& description) -> wxue::str
     return lookup_str;
 }
 
-auto ImageHandler::ConvertToLookup(const wxue::StringVector* parts) -> wxue::string
+wxue::string ImageHandler::ConvertToLookup(const wxue::StringVector* parts)
 {
+    ASSERT(parts->size() > 1)
     wxue::string lookup_str;
     lookup_str << (*parts)[0] << ';' << (*parts)[1].filename();
     return lookup_str;
@@ -65,7 +68,7 @@ void ImageHandler::Initialize(NodeSharedPtr project, bool allow_ui)
     m_map_embedded.clear();
 }
 
-auto ImageHandler::UpdateEmbedNodes() -> bool
+bool ImageHandler::UpdateEmbedNodes()
 {
     bool is_changed = false;
     std::vector<Node*> forms;
@@ -81,7 +84,7 @@ auto ImageHandler::UpdateEmbedNodes() -> bool
     return is_changed;
 }
 
-auto ImageHandler::FindEmbedded(std::string_view filename) -> EmbeddedImage*
+EmbeddedImage* ImageHandler::FindEmbedded(std::string_view filename)
 {
     if (auto result = m_map_embedded.find(filename); result != m_map_embedded.end())
     {
@@ -90,7 +93,7 @@ auto ImageHandler::FindEmbedded(std::string_view filename) -> EmbeddedImage*
     return nullptr;
 }
 
-auto ImageHandler::CheckNode(Node* node) -> bool
+bool ImageHandler::CheckNode(Node* node)
 {
     if (node->is_FormParent())
     {
@@ -101,7 +104,7 @@ auto ImageHandler::CheckNode(Node* node) -> bool
 
     Node* node_form = node->get_Form();
 
-    auto node_position = m_project_node->get_ChildPosition(node_form);
+    const size_t node_position = m_project_node->get_ChildPosition(node_form);
     std::string art_directory;
     if (Project.get_ProjectNode()->HasValue(prop_art_directory))
     {
@@ -113,7 +116,7 @@ auto ImageHandler::CheckNode(Node* node) -> bool
         if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
         {
             wxue::ViewVector parts(iter.as_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
-            if (parts[IndexType] != "Embed" || parts.size() <= IndexImage ||
+            if (parts.size() <= IndexImage || parts[IndexType] != "Embed" ||
                 parts[IndexImage].filename().empty() || parts[IndexImage] == art_directory)
             {
                 continue;
@@ -189,30 +192,28 @@ wxBitmapBundle ImageHandler::GetBitmapBundle(const wxue::string& description)
 // Wrapper functions that convert string descriptions to wxue::StringVector and call pointer
 // versions
 
-auto ImageHandler::GetPropertyBitmap(const wxue::string& description, bool check_image) -> wxImage
+wxImage ImageHandler::GetPropertyBitmap(const wxue::string& description, bool check_image)
 {
-    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+    const wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     return GetPropertyBitmap(&parts, check_image);
 }
 
-auto ImageHandler::GetPropertyImageBundle(wxue::string_view description, Node* node)
-    -> const ImageBundle*
+const ImageBundle* ImageHandler::GetPropertyImageBundle(wxue::string_view description, Node* node)
 {
-    wxue::StringVector parts(description, ';', wxue::TRIM::both);
+    const wxue::StringVector parts(description, ';', wxue::TRIM::both);
     return GetPropertyImageBundle(&parts, node);
 }
 
-auto ImageHandler::ProcessBundleProperty(const wxue::string& description, Node* node)
-    -> ImageBundle*
+ImageBundle* ImageHandler::ProcessBundleProperty(const wxue::string& description, Node* node)
 {
-    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+    const wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     return ProcessBundleProperty(&parts, node);
 }
 
-auto ImageHandler::AddNewEmbeddedBundle(const wxue::string& description, std::string_view org_path,
-                                        Node* form) -> bool
+bool ImageHandler::AddNewEmbeddedBundle(const wxue::string& description, std::string_view org_path,
+                                        Node* form)
 {
-    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+    const wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     return AddNewEmbeddedBundle(&parts, org_path, form);
 }
 
@@ -220,7 +221,7 @@ auto ImageHandler::AddNewEmbeddedBundle(const wxue::string& description, std::st
 // is encountered.
 //
 // Primary caller is ProcessBundleProperty() for retrieving all the images in a bundle.
-auto ImageHandler::GetPropertyBitmap(const wxue::StringVector* parts, bool check_image) -> wxImage
+wxImage ImageHandler::GetPropertyBitmap(const wxue::StringVector* parts, bool check_image)
 {
     if (parts->size() <= IndexImage || (*parts)[IndexImage].empty())
     {
@@ -264,9 +265,12 @@ auto ImageHandler::GetPropertyBitmap(const wxue::StringVector* parts, bool check
         EmbeddedImage* embed = GetEmbeddedImage(path);
         if (!embed)
         {
-            if (bool added = AddEmbeddedImage(path, wxGetFrame().getSelectedForm()); added)
+            if (auto* const selected_form = wxGetFrame().getSelectedForm(); selected_form)
             {
-                embed = GetEmbeddedImage(path);
+                if (const bool added = AddEmbeddedImage(path, selected_form); added)
+                {
+                    embed = GetEmbeddedImage(path);
+                }
             }
         }
 
@@ -357,7 +361,7 @@ bool ImageHandler::AddEmbeddedImage(wxue::string path, Node* form, bool is_anima
         return false;
     }
 
-    auto final_result = AddNewEmbeddedImage(path, form);
+    const bool final_result = AddNewEmbeddedImage(path, form);
     if (is_animation || !final_result)
     {
         return final_result;
@@ -369,28 +373,28 @@ bool ImageHandler::AddEmbeddedImage(wxue::string path, Node* form, bool is_anima
     {
         if (path.contains("_16x16."))
         {
-            path.Replace("_16x16.", "_24x24.");
+            std::ignore = path.Replace("_16x16.", "_24x24.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
-            path.Replace("_24x24.", "_32x32.");
+            std::ignore = path.Replace("_24x24.", "_32x32.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
         }
         else if (path.contains("_24x24."))
         {
-            path.Replace("_24x24.", "_36x36.");
+            std::ignore = path.Replace("_24x24.", "_36x36.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
-            path.Replace("_36x36.", "_48x48.");
+            std::ignore = path.Replace("_36x36.", "_48x48.");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
         }
         else
@@ -398,22 +402,22 @@ bool ImageHandler::AddEmbeddedImage(wxue::string path, Node* form, bool is_anima
             path.insert(pos, "_1_25x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
-            path.Replace("_1_25x", "_1_5x");
+            std::ignore = path.Replace("_1_25x", "_1_5x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
-            path.Replace("_1_5x", "_1_75x");
+            std::ignore = path.Replace("_1_5x", "_1_75x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
-            path.Replace("_1_75x", "_2x");
+            std::ignore = path.Replace("_1_75x", "_2x");
             if (path.file_exists())
             {
-                AddNewEmbeddedImage(path, form);
+                std::ignore = AddNewEmbeddedImage(path, form);
             }
         }
     }
@@ -421,7 +425,7 @@ bool ImageHandler::AddEmbeddedImage(wxue::string path, Node* form, bool is_anima
     return final_result;
 }
 
-auto ImageHandler::AddNewEmbeddedImage(const wxue::string& path, Node* form) -> bool
+bool ImageHandler::AddNewEmbeddedImage(const wxue::string& path, Node* form)
 {
     wxFFileInputStream stream(path.wx());
     if (!stream.IsOk())
@@ -430,8 +434,8 @@ auto ImageHandler::AddNewEmbeddedImage(const wxue::string& path, Node* form) -> 
     }
 
     wxImageHandler* handler = nullptr;
-    auto& list = wxImage::GetHandlers();
-    for (auto node = list.GetFirst(); node; node = node->GetNext())
+    const wxList& list = wxImage::GetHandlers();
+    for (wxList::compatibility_iterator node = list.GetFirst(); node; node = node->GetNext())
     {
         handler = dynamic_cast<wxImageHandler*>(node->GetData());
         if (handler->CanRead(stream))
@@ -439,7 +443,7 @@ auto ImageHandler::AddNewEmbeddedImage(const wxue::string& path, Node* form) -> 
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                auto filename = path.filename().as_str();
+                const wxue::string filename = path.filename().as_str();
                 m_map_embedded[filename] = std::make_unique<EmbeddedImage>(path, form);
                 auto* embed = m_map_embedded[filename].get();
 
@@ -469,11 +473,11 @@ auto ImageHandler::AddNewEmbeddedImage(const wxue::string& path, Node* form) -> 
                     else
                     {
 #if defined(_DEBUG)
-                        size_t org_size = (to_size_t) stream.GetLength();
-                        auto png_size = read_stream->GetBufferSize();
-                        auto size_comparison = std::format(
+                        const size_t org_size = (to_size_t) stream.GetLength();
+                        const size_t png_size = read_stream->GetBufferSize();
+                        const std::string size_comparison = std::format(
                             std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
-                        (void) size_comparison;
+                        std::ignore = size_comparison;
 #endif  // _DEBUG
 
                         embed->base_image().type = handler->GetType();
@@ -507,10 +511,10 @@ void ImageHandler::CollectBundles()
 {
     if (m_allow_ui)
     {
-        wxBusyCursor wait;
+        const wxBusyCursor wait;
     }
 
-    wxue::SaveCwd save_cwd(wxue::restore_cwd);
+    const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.get_ProjectPath().ChangeDir();
 
     std::vector<Node*> forms;
@@ -548,11 +552,11 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
         }
         else if (iter.type() == type_animation)
         {
-            const auto& value = iter.as_string();
+            const wxue::string& value = iter.as_string();
             if (value.starts_with("Embed"))
             {
                 wxue::ViewVector parts(value, BMP_PROP_SEPARATOR, wxue::TRIM::both);
-                if (parts[IndexImage].size())
+                if (!parts[IndexImage].empty())
                 {
                     if (!m_map_embedded.contains(parts[IndexImage].filename()))
                     {
@@ -571,8 +575,8 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
 
 // This will call AddSvgBundleImage(), AddXpmBundleImage() or AddEmbeddedBundleImage()
 // depending on the type of the image file.
-auto ImageHandler::AddNewEmbeddedBundle(const wxue::StringVector* parts, std::string_view org_path,
-                                        Node* form) -> bool
+bool ImageHandler::AddNewEmbeddedBundle(const wxue::StringVector* parts, std::string_view org_path,
+                                        Node* form)
 {
     ASSERT(parts->size() > 1)
 
@@ -616,7 +620,7 @@ auto ImageHandler::AddNewEmbeddedBundle(const wxue::StringVector* parts, std::st
         return false;  // presumably an invalid XPM file
     }
 
-    auto* embed = AddEmbeddedBundleImage(path, form);
+    EmbeddedImage* embed = AddEmbeddedBundleImage(path, form);
     if (!embed)
     {
         return false;
@@ -632,7 +636,7 @@ auto ImageHandler::AddNewEmbeddedBundle(const wxue::StringVector* parts, std::st
             any, @1_5x, @1_75, x@2x
     */
 
-    if (wxue::string extension = path.extension(); extension.size())
+    if (const wxue::string extension = path.extension(); !extension.empty())
     {
         if (path.contains("_16x16.") || path.contains("_24x24."))
         {
@@ -648,7 +652,7 @@ auto ImageHandler::AddNewEmbeddedBundle(const wxue::StringVector* parts, std::st
     return true;
 }
 
-auto ImageHandler::ResolveBundlePath(wxue::string& path) -> bool
+bool ImageHandler::ResolveBundlePath(wxue::string& path)
 {
     if (path.file_exists())
     {
@@ -671,12 +675,12 @@ auto ImageHandler::ResolveBundlePath(wxue::string& path) -> bool
     return true;
 }
 
-auto ImageHandler::AddFixedSizeBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
-                                              ImageBundle& img_bundle) -> void
+void ImageHandler::AddFixedSizeBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
+                                              ImageBundle& img_bundle)
 {
     if (path.contains("_16x16."))
     {
-        path.Replace("_16x16.", "_24x24.");
+        std::ignore = path.Replace("_16x16.", "_24x24.");
         if (path.file_exists())
         {
             if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
@@ -684,7 +688,7 @@ auto ImageHandler::AddFixedSizeBundleVariants(wxue::string& path, Node* form, Em
                 img_bundle.lst_filenames.emplace_back(path);
             }
         }
-        path.Replace("_24x24.", "_32x32.");
+        std::ignore = path.Replace("_24x24.", "_32x32.");
         if (path.file_exists())
         {
             if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
@@ -695,7 +699,7 @@ auto ImageHandler::AddFixedSizeBundleVariants(wxue::string& path, Node* form, Em
     }
     else if (path.contains("_24x24."))
     {
-        path.Replace("_24x24.", "_36x36.");
+        std::ignore = path.Replace("_24x24.", "_36x36.");
         if (path.file_exists())
         {
             if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
@@ -703,7 +707,7 @@ auto ImageHandler::AddFixedSizeBundleVariants(wxue::string& path, Node* form, Em
                 img_bundle.lst_filenames.emplace_back(path);
             }
         }
-        path.Replace("_36x36.", "_48x48.");
+        std::ignore = path.Replace("_36x36.", "_48x48.");
         if (path.file_exists())
         {
             if (auto* added = AddEmbeddedBundleImage(path, form, embed); added)
@@ -714,11 +718,12 @@ auto ImageHandler::AddFixedSizeBundleVariants(wxue::string& path, Node* form, Em
     }
 }
 
-auto ImageHandler::AddScalableBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
-                                             ImageBundle& img_bundle) -> void
+void ImageHandler::AddScalableBundleVariants(wxue::string& path, Node* form, EmbeddedImage* embed,
+                                             ImageBundle& img_bundle)
 {
     wxue::string additional_path = path;
-    auto map_pos = map_bundle_extensions.begin();
+    std::array<std::pair<std::string_view, std::string_view>, 6>::const_iterator map_pos =
+        map_bundle_extensions.begin();
     for (; map_pos != map_bundle_extensions.end(); ++map_pos)
     {
         if (path.contains(map_pos->first))
@@ -732,7 +737,7 @@ auto ImageHandler::AddScalableBundleVariants(wxue::string& path, Node* form, Emb
     {
         wxue::string file_extension = additional_path.extension();
         additional_path.remove_extension();
-        auto erase_pos = additional_path.size();
+        const size_t erase_pos = additional_path.size();
         for (map_pos = map_bundle_extensions.begin(); map_pos != map_bundle_extensions.end();
              ++map_pos)
         {
@@ -752,12 +757,13 @@ auto ImageHandler::AddScalableBundleVariants(wxue::string& path, Node* form, Emb
         }
     }
 
-    bool is_at_suffix = (map_pos != map_bundle_extensions.end() && map_pos->first.starts_with('@'));
+    const bool is_at_suffix =
+        (map_pos != map_bundle_extensions.end() && map_pos->first.starts_with('@'));
     while (map_pos != map_bundle_extensions.end())
     {
         // If we have a map position, then we have found a suffix, so we now try to find the
         // next matching filename.
-        additional_path.Replace(map_pos->first, map_pos->second);
+        std::ignore = additional_path.Replace(map_pos->first, map_pos->second);
         if (additional_path.file_exists())
         {
             if (auto* added = AddEmbeddedBundleImage(additional_path, form, embed); added)
@@ -784,9 +790,9 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
     {
         return nullptr;
     }
-    wxImageHandler* handler;
-    auto& list = wxImage::GetHandlers();
-    for (auto node = list.GetFirst(); node; node = node->GetNext())
+    wxImageHandler* handler = nullptr;
+    const wxList& list = wxImage::GetHandlers();
+    for (wxList::compatibility_iterator node = list.GetFirst(); node; node = node->GetNext())
     {
         handler = dynamic_cast<wxImageHandler*>(node->GetData());
         if (handler->CanRead(stream))
@@ -798,7 +804,7 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
                 {
                     embed->add_ImageInfo();
                 }
-                size_t idx = embed ? embed->get_ImageInfos().size() - 1 : 0;
+                const size_t idx = embed ? embed->get_ImageInfos().size() - 1 : 0;
                 if (!embed)
                 {
                     m_map_embedded[path.filename().as_str()] =
@@ -849,11 +855,11 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
                     else
                     {
 #if defined(_DEBUG)
-                        size_t org_size = (to_size_t) stream.GetLength();
-                        auto png_size = read_stream->GetBufferSize();
-                        auto size_comparison = std::format(
+                        const size_t org_size = (to_size_t) stream.GetLength();
+                        const size_t png_size = read_stream->GetBufferSize();
+                        const std::string size_comparison = std::format(
                             std::locale(""), "Original: {:L}, new: {:L}", org_size, png_size);
-                        (void) size_comparison;
+                        std::ignore = size_comparison;
 #endif
 
                         embed->get_ImageInfo(idx).type = handler->GetType();
@@ -876,10 +882,14 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
                                 embed->get_ImageInfo(idx).array_size);
                 }
 
-                // TODO: [Randalphwa - 03-14-2024] Remove this once m_bundles is no longer used
+                // REVIEW: [Randalphwa - 03-14-2024] Recursive call ensures m_bundles entry
+                // is created for multi-image embeds. The call overwrites the entry with the
+                // EmbeddedImage from the recursive AddNewEmbeddedBundleImage, then the outer
+                // return accesses the now-populated m_bundles[lookup_str]. Safe because
+                // GetEmbeddedImage(path) in the recursive call returns the same map entry.
                 if (embed->get_ImageInfos().size() > 1)
                 {
-                    AddEmbeddedBundleImage(path, form);
+                    std::ignore = AddEmbeddedBundleImage(path, form);
                 }
 
                 return embed;
@@ -889,8 +899,7 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
     return nullptr;
 }
 
-auto ImageHandler::ProcessBundleProperty(const wxue::StringVector* parts, Node* node)
-    -> ImageBundle*
+ImageBundle* ImageHandler::ProcessBundleProperty(const wxue::StringVector* parts, Node* node)
 {
     ASSERT(parts->size() > 1)
 
@@ -958,43 +967,11 @@ auto ImageHandler::ProcessBundleProperty(const wxue::StringVector* parts, Node* 
     ASSERT_MSG(img_bundle.lst_filenames.size() > 0,
                "image_first must always have it's filename added.")
 
-    if (img_bundle.lst_filenames.size() == 1)
-    {
-        // img_bundle.bundle = wxBitmapBundle::FromBitmap(image_first);
-    }
-    else
-    {
-        wxVector<wxBitmap> bitmaps;
-        bitmaps.emplace_back(image_first);
-        wxue::string new_description;
-        new_description << (*parts)[IndexType] << ';';
-        new_description << img_bundle.lst_filenames[1];
-        auto image_second = GetPropertyBitmap(new_description, false);
-        if (image_second.IsOk())
-        {
-            bitmaps.push_back(image_second);
-        }
-
-        if (img_bundle.lst_filenames.size() > 2)
-        {
-            new_description.clear();
-            new_description << (*parts)[IndexType] << ';';
-            new_description << img_bundle.lst_filenames[1];
-            auto image_third = GetPropertyBitmap(new_description, false);
-            if (image_third.IsOk())
-            {
-                bitmaps.push_back(image_third);
-            }
-        }
-
-        // img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
-    }
-
     m_bundles[lookup_str] = std::move(img_bundle);
     return &m_bundles[lookup_str];
 }
 
-auto ImageHandler::TryResolvePathWithArtDir(wxue::string& path) -> bool
+bool ImageHandler::TryResolvePathWithArtDir(wxue::string& path)
 {
     if (path.file_exists())
     {
@@ -1017,8 +994,8 @@ auto ImageHandler::TryResolvePathWithArtDir(wxue::string& path) -> bool
     return false;
 }
 
-auto ImageHandler::AddNonEmbeddedFixedSizeVariants(const wxue::StringVector* parts,
-                                                   ImageBundle& img_bundle) -> void
+void ImageHandler::AddNonEmbeddedFixedSizeVariants(const wxue::StringVector* parts,
+                                                   ImageBundle& img_bundle)
 {
     if ((*parts)[IndexImage].contains("_16x16."))
     {
@@ -1054,8 +1031,8 @@ auto ImageHandler::AddNonEmbeddedFixedSizeVariants(const wxue::StringVector* par
     }
 }
 
-auto ImageHandler::AddNonEmbeddedScalableVariants(const wxue::StringVector* parts,
-                                                  ImageBundle& img_bundle) -> void
+void ImageHandler::AddNonEmbeddedScalableVariants(const wxue::StringVector* parts,
+                                                  ImageBundle& img_bundle)
 {
     wxue::string path;
     auto pos = (*parts)[IndexImage].find_last_of('.');
@@ -1106,7 +1083,7 @@ void ImageHandler::UpdateBundle(const wxue::StringVector* parts, Node* node)
     }
 }
 
-auto ImageHandler::GetPropertyBitmapBundle(wxue::string_view description) -> wxBitmapBundle
+wxBitmapBundle ImageHandler::GetPropertyBitmapBundle(wxue::string_view description)
 {
     wxue::StringVector parts(description, ';', wxue::TRIM::both);
     if (parts.size() < 2)
@@ -1205,7 +1182,7 @@ void ImageHandler::GetPropertyAnimation(const wxue::string& description, wxAnima
     }
 }
 
-auto ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form) -> bool
+bool ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form)
 {
     // Run the file through an XML parser so that we can remove content that isn't used, as well as
     // removing line breaks, leading spaces, etc.
@@ -1308,7 +1285,11 @@ auto ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form) -> bool
     {
         auto file_size = file_original.Length();
         wxue::string size_comparison;
-        int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
+        int percent = 0;
+        if (compressed_size > 0 && file_size >= compressed_size)
+        {
+            percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
+        }
         size_comparison =
             std::format(std::locale(""), "{} -- Original: {:L}, compressed: {:L}, {} percent",
                         path.filename().ToStdString(), file_size, compressed_size, percent);
@@ -1320,7 +1301,7 @@ auto ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form) -> bool
     return true;
 }
 
-auto ImageHandler::AddXpmBundleImage(const wxue::string& path, Node* form) -> bool
+bool ImageHandler::AddXpmBundleImage(const wxue::string& path, Node* form)
 {
     wxFFileInputStream stream(path.wx());
     if (!stream.IsOk())
@@ -1444,6 +1425,10 @@ wxue::string ImageHandler::GetBundleFuncName(const wxue::StringVector* parts)
                         bundle && bundle->lst_filenames.size())
                     {
                         auto* embed = GetEmbeddedImage(bundle->lst_filenames[0]);
+                        if (!embed)
+                        {
+                            break;
+                        }
                         if (embed->base_image().type == wxBITMAP_TYPE_SVG)
                         {
                             name << "wxue_img::bundle_" << embed->base_image().array_name << "(";
@@ -1470,8 +1455,8 @@ wxue::string ImageHandler::GetBundleFuncName(const wxue::StringVector* parts)
     return name;
 }
 
-auto ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size)
-    -> wxue::string  // NOLINT (cppcheck-suppress)
+wxue::string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size)
+// NOLINT (cppcheck-suppress)
 {
     wxue::string name;
     if (!embed || embed->get_Form() != Project.get_ImagesForm())
@@ -1490,7 +1475,7 @@ auto ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size
     return name;
 }
 
-auto ImageHandler::ArtFolderChanged() -> bool
+bool ImageHandler::ArtFolderChanged()
 {
     wxFileName path;
     path.Assign(Project.as_string(prop_art_directory));

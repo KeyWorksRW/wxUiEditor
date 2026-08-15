@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [06-20-2026]
 
 #include <wx/image.h>
 #include <wx/mstream.h>   // For wxMemoryInputStream
@@ -11,6 +12,7 @@
 #include <wx/zstream.h>   // For wxZlibInputStream
 
 #include <sstream>  // For std::ostringstream
+#include <tuple>    // for std::ignore
 
 #include "embed_image.h"
 
@@ -21,49 +23,53 @@
 
 EmbeddedImage::EmbeddedImage(wxue::string_view path, Node* form)
 {
-    ASSERT(path.size());
+    ASSERT(!path.empty());
     ASSERT(m_images.empty());
     m_form = form;
-    m_images.push_back(ImageInfo());
+    m_images.emplace_back();
     base_image().filename = path;
     base_image().file_time = base_image().filename.last_write_time();
-    auto result = FileNameToVarName(path.filename());
+    const std::optional<wxue::string> result = FileNameToVarName(path.filename());
     base_image().array_name = result.value_or("image_");
 
-    wxue::string check_filename(path.filename());
-    check_filename.Replace(".", "_");
-
-    for (size_t idx = 0; idx < base_image().array_name.size(); ++idx)
+    for (char& idx: base_image().array_name)
     {
-        if (wxue::is_alnum(base_image().array_name[idx]) || base_image().array_name[idx] == '_')
+        if (wxue::is_alnum(idx) || idx == '_')
         {
             continue;
         }
-        base_image().array_name[idx] = '_';
+        idx = '_';
     }
 }
 
-auto EmbeddedImage::SetEmbedSize(const wxImage& image) -> void
+void EmbeddedImage::SetEmbedSize(const wxImage& image)
 {
     m_size = image.GetSize();
 }
 
 // size parameter is only used for SVG files
-auto EmbeddedImage::get_bundle(wxSize override_size) -> wxBitmapBundle
+wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
 {
     if (base_image().type == wxBITMAP_TYPE_SVG || base_image().type == wxBITMAP_TYPE_XPM)
     {
-        auto file_time = base_image().filename.last_write_time();
+        const wxDateTime file_time = base_image().filename.last_write_time();
         if (file_time != base_image().file_time)
         {
-            UpdateImage(base_image());
+            if (!UpdateImage(base_image()))
+            {
+                return wxBitmapBundle();
+            }
         }
-        uint64_t org_size = (base_image().array_size >> 32);
+        const uint64_t org_size = (base_image().array_size >> 32);
         std::vector<char> str(org_size);
         wxMemoryInputStream stream_in(base_image().array_data.data(),
                                       base_image().array_size & 0xFFFFFFFF);
         wxZlibInputStream zlib_strm(stream_in);
-        zlib_strm.Read(str.data(), org_size);
+        const size_t bytes_read = zlib_strm.Read(str.data(), org_size).LastRead();
+        if (bytes_read != org_size)
+        {
+            return wxBitmapBundle();
+        }
         if (base_image().type == wxBITMAP_TYPE_SVG)
         {
             return wxBitmapBundle::FromSVG(str.data(),
@@ -81,10 +87,13 @@ auto EmbeddedImage::get_bundle(wxSize override_size) -> wxBitmapBundle
     wxVector<wxBitmap> bitmaps;
     for (auto& iter: m_images)
     {
-        auto file_time = iter.filename.last_write_time();
+        const wxDateTime file_time = iter.filename.last_write_time();
         if (file_time != iter.file_time)
         {
-            UpdateImage(iter);
+            if (!UpdateImage(iter))
+            {
+                continue;
+            }
         }
         wxMemoryInputStream stream(iter.array_data.data(), iter.array_size);
         wxImage image;
@@ -98,7 +107,7 @@ auto EmbeddedImage::get_bundle(wxSize override_size) -> wxBitmapBundle
     return wxBitmapBundle::FromBitmaps(bitmaps);
 }
 
-auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
+bool EmbeddedImage::UpdateImage(ImageInfo& image_info)
 {
     if (base_image().type == wxBITMAP_TYPE_SVG)
     {
@@ -106,43 +115,44 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
                    "Embedded SVG images should only have a single image")
         // Run the file through an XML parser so that we can remove content that isn't used, as well
         // as removing line breaks, leading spaces, etc.
-        pugi::xml_document doc;
-        auto result = doc.load_file_string(base_image().filename);
+        pugi::xml_document xml_doc;
+        const pugi::xml_parse_result result = xml_doc.load_file_string(base_image().filename);
         if (!result)
         {
             wxMessageDialog(wxGetMainFrame()->getWindow(), result.detailed_msg, "Parsing Error",
                             wxOK | wxICON_ERROR)
                 .ShowModal();
-            return;
+            return false;
         }
 
-        auto root = doc.first_child();  // this should be the <svg> element.
-        root.remove_attributes();       // we don't need any of the attributes
+        pugi::xml_node root = xml_doc.first_child();  // this should be the <svg> element.
+        std::ignore = root.remove_attributes();       // we don't need any of the attributes
 
         // Remove some inkscape nodes that we don't need
-        root.remove_child("sodipodi:namedview");
-        root.remove_child("metadata");
+        std::ignore = root.remove_child("sodipodi:namedview");
+        std::ignore = root.remove_child("metadata");
 
         // Security: Remove all script tags to prevent potential malware execution
         // Use XPath translate() to convert element names to lowercase for case-insensitive
         // matching. This is more thorough than explicit case enumeration and handles all 32
         // possible case combinations. Performance impact is negligible since this runs once per SVG
         // file load.
-        auto script_nodes = doc.select_nodes("//*[translate(name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', "
-                                             "'abcdefghijklmnopqrstuvwxyz') = 'script']");
+        const pugi::xpath_node_set script_nodes =
+            xml_doc.select_nodes("//*[translate(name(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', "
+                                 "'abcdefghijklmnopqrstuvwxyz') = 'script']");
         for (const auto& xpath_node: script_nodes)
         {
-            auto script_node = xpath_node.node();
-            auto parent = script_node.parent();
+            const pugi::xml_node script_node = xpath_node.node();
+            pugi::xml_node parent = script_node.parent();
             if (!parent.empty())
             {
-                parent.remove_child(script_node);
+                std::ignore = parent.remove_child(script_node);
             }
         }
 
         std::ostringstream xml_stream;
-        doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);
-        std::string str = xml_stream.str();
+        xml_doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);
+        const std::string str = xml_stream.str();
 
         // Include the trailing zero -- we need to read this back as a string, not a data array
         wxMemoryInputStream stream(str.c_str(), str.size() + 1);
@@ -150,33 +160,67 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
         wxMemoryOutputStream memory_stream;
         wxZlibOutputStream save_stream(memory_stream, wxZ_BEST_COMPRESSION);
 
-        uint64_t org_size = (stream.GetLength() & 0xFFFFFFFF);
-
-        if (!CopyStreamData(&stream, &save_stream, stream.GetLength()))
+        const wxFileOffset stream_length = stream.GetLength();
+        if (stream_length <= 0)
         {
-            return;
+            return false;
+        }
+        const size_t raw_size = static_cast<size_t>(stream_length);
+        const uint64_t org_size = raw_size;
+
+        if (raw_size > 250 * 1024 * 1024)
+        {
+            wxMessageDialog(wxGetMainFrame()->getWindow(),
+                            wxString::Format("The SVG file is %zu MB. wxUiEditor cannot embed "
+                                             "images larger than 250 MB.",
+                                             raw_size / (1024 * 1024)),
+                            "Image Too Large", wxOK | wxICON_ERROR)
+                .ShowModal();
+            return false;
+        }
+
+        if (raw_size > 25 * 1024 * 1024)
+        {
+            const int confirm =
+                wxMessageDialog(
+                    wxGetMainFrame()->getWindow(),
+                    wxString::Format(
+                        "The SVG file is %zu MB. Are you sure you want to embed this image?",
+                        raw_size / (1024 * 1024)),
+                    "Confirm Embed", wxYES_NO | wxICON_WARNING)
+                    .ShowModal();
+            if (confirm != wxID_YES)
+            {
+                return false;
+            }
+        }
+
+        if (!CopyStreamData(&stream, &save_stream, stream_length))
+        {
+            return false;
         }
         save_stream.Close();
         auto compressed_size = static_cast<uint64_t>(memory_stream.TellO());
 
-        auto* read_stream = memory_stream.GetOutputStreamBuffer();
+        const wxStreamBuffer* read_stream = memory_stream.GetOutputStreamBuffer();
         base_image().array_size = (compressed_size | (org_size << 32));
         base_image().array_data.resize(compressed_size);
         memcpy(base_image().array_data.data(), read_stream->GetBufferStart(), compressed_size);
-        return;
+        base_image().file_time = base_image().filename.last_write_time();
+        return true;
     }
 
     wxFFileInputStream stream(image_info.filename);
     if (!stream.IsOk())
     {
-        return;
+        return false;
     }
 
-    wxImageHandler* handler;
-    auto& list = wxImage::GetHandlers();
-    for (auto node = list.GetFirst(); node; node = node->GetNext())
+    wxImageHandler* handler = nullptr;
+    const wxList& list = wxImage::GetHandlers();
+    for (wxList::compatibility_iterator node = list.GetFirst(); node; node = node->GetNext())
     {
-        handler = (wxImageHandler*) node->GetData();
+        handler = wxStaticCast(node->GetData(), wxImageHandler);
         if (handler->CanRead(stream))
         {
             wxImage image;
@@ -198,7 +242,7 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
                     image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
                     image.SaveFile(save_stream, "image/png");
 
-                    auto* read_stream = save_stream.GetOutputStreamBuffer();
+                    const wxStreamBuffer* read_stream = save_stream.GetOutputStreamBuffer();
                     stream.SeekI(0);
                     if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
@@ -209,7 +253,17 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
                     }
                     else
                     {
-                        image_info.array_size = stream.GetSize();
+                        const wxFileOffset file_size = stream.GetSize();
+                        if (file_size < 0)
+                        {
+                            wxMessageDialog(wxGetMainFrame()->getWindow(),
+                                            "The image file cannot be read and appears to be "
+                                            "invalid.",
+                                            "Invalid Image File", wxOK | wxICON_ERROR)
+                                .ShowModal();
+                            return false;
+                        }
+                        image_info.array_size = static_cast<uint64_t>(file_size);
                         image_info.array_data.resize(image_info.array_size);
                         stream.Read(image_info.array_data.data(), image_info.array_size);
                     }
@@ -222,8 +276,9 @@ auto EmbeddedImage::UpdateImage(ImageInfo& image_info) -> void
                     stream.Read(image_info.array_data.data(), image_info.array_size);
                 }
 
-                return;
+                return true;
             }
         }
     }
+    return false;
 }

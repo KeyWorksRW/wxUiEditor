@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-16-2026]
+
 #pragma once
 
 #include <optional>
@@ -124,6 +125,15 @@ ClassOverrideType GetClassOverrideType(Node* node);
 // mode, and specific language colors
 void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true,
                   bool add_keywords = true);
+
+// If the string is a filename without an extension, append the project's header file
+// extension. If force is true, any existing extension is replaced with the project's
+// header file extension.
+void AddHeaderExtension(wxue::string& filename, bool force);
+
+// wxFileName-based version of AddHeaderExtension. Only the filename+extension portion of
+// the string is modified.
+void AddHeaderExtension(wxString& filename, bool force);
 
 // Call this after creating a wxRibbonBar tool in order to ensure that it has a unique ID/
 void SetUniqueRibbonToolID(Node* node);

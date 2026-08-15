@@ -432,9 +432,14 @@ void Code::BundleRuby(const wxue::StringVector& parts)
     }
 }
 
-void Code::BundleFfi(const wxue::StringVector& /*parts*/)
+void Code::BundleFfi(const wxue::StringVector& parts)
 {
-    // Stub: FFI bitmap bundle support is not yet implemented.
-    // WX_NULL_BITMAP is the correct FFI null bitmap constant (UPPER_SNAKE_CASE naming).
+    // FFI bitmap bundle support emits the kwxFFI decode + apply calls directly.
+    if (parts.size() > 1 && !parts[IndexImage].empty())
+    {
+        GenerateBundleParameter(parts);
+        return;
+    }
+
     Str("WX_NULL_BITMAP");
 }

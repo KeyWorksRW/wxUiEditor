@@ -477,3 +477,135 @@ std::size_t FindInMarkdown(std::string_view markdown, std::string_view query, st
 
     return std::string::npos;
 }
+
+// ---------------------------------------------------------------------------
+//  Highlight helpers (shared by the find dialog and the doc viewer panel)
+// ---------------------------------------------------------------------------
+
+std::string RemoveFindHighlight(std::string_view html)
+{
+    constexpr std::string_view ANCHOR_PREFIX =
+        "<a id=\"find-match\"></a><span style=\"background-color: #FFFF00; color: #000000;\">";
+    const std::size_t start_pos = html.find(ANCHOR_PREFIX);
+    if (start_pos == std::string::npos)
+    {
+        return std::string(html);
+    }
+    const std::size_t content_start = start_pos + ANCHOR_PREFIX.size();
+    const std::size_t span_close_pos = html.find("</span>", content_start);
+    if (span_close_pos == std::string::npos)
+    {
+        return std::string(html);
+    }
+    const std::string inner_text(html.substr(content_start, span_close_pos - content_start));
+    constexpr std::size_t CLOSE_TAG_LEN = 7;  // length of "</span>"
+    std::string cleaned(html);
+    cleaned.erase(start_pos, span_close_pos + CLOSE_TAG_LEN - start_pos);
+    cleaned.insert(start_pos, inner_text);
+    return cleaned;
+}
+
+int CountOccurrencesBefore(std::string_view text, std::string_view query, std::size_t pos)
+{
+    if (query.empty())
+    {
+        return 0;
+    }
+    int count = 0;
+    const std::size_t limit = std::min(pos, text.size());
+    for (std::size_t idx = 0; idx + query.size() <= limit; ++idx)
+    {
+        if (std::tolower(static_cast<unsigned char>(text[idx])) ==
+            std::tolower(static_cast<unsigned char>(query[0])))
+        {
+            bool match = true;
+            for (std::size_t jdx = 1; jdx < query.size(); ++jdx)
+            {
+                if (std::tolower(static_cast<unsigned char>(text[idx + jdx])) !=
+                    std::tolower(static_cast<unsigned char>(query[jdx])))
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+            {
+                ++count;
+            }
+        }
+    }
+    return count;
+}
+
+std::string ApplyFindHighlight(std::string_view html, std::string_view query, int occurrence_index)
+{
+    const std::string cleaned = RemoveFindHighlight(html);
+    if (query.empty() || occurrence_index < 0)
+    {
+        return cleaned;
+    }
+
+    constexpr std::string_view ANCHOR_PREFIX = "<a id=\"find-match\"></a>";
+    constexpr std::string_view SPAN_PREFIX =
+        "<span style=\"background-color: #FFFF00; color: #000000;\">";
+
+    const std::size_t query_len = query.size();
+    int match_index = 0;
+    std::size_t idx = 0;
+    const std::size_t len = cleaned.size();
+
+    while (idx < len)
+    {
+        if (cleaned[idx] == '<')
+        {
+            const std::size_t gt_pos = cleaned.find('>', idx);
+            if (gt_pos == std::string::npos)
+            {
+                break;
+            }
+            idx = gt_pos + 1;
+            continue;
+        }
+        if (idx + query_len > len)
+        {
+            break;
+        }
+        if (std::tolower(static_cast<unsigned char>(cleaned[idx])) ==
+            std::tolower(static_cast<unsigned char>(query[0])))
+        {
+            bool match = true;
+            for (std::size_t jdx = 1; jdx < query_len; ++jdx)
+            {
+                if (std::tolower(static_cast<unsigned char>(cleaned[idx + jdx])) !=
+                    std::tolower(static_cast<unsigned char>(query[jdx])))
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+            {
+                if (match_index == occurrence_index)
+                {
+                    const std::string matched_text = cleaned.substr(idx, query_len);
+                    std::string result = cleaned;
+                    result.erase(idx, query_len);
+                    std::string replacement;
+                    replacement.reserve(ANCHOR_PREFIX.size() + SPAN_PREFIX.size() + query_len + 7);
+                    replacement += ANCHOR_PREFIX;
+                    replacement += SPAN_PREFIX;
+                    replacement += matched_text;
+                    replacement += "</span>";
+                    result.insert(idx, replacement);
+                    return result;
+                }
+                ++match_index;
+                idx += query_len;
+                continue;
+            }
+        }
+        ++idx;
+    }
+
+    return cleaned;
+}

@@ -7,12 +7,9 @@
 // CR: [07-04-2026]
 
 #include <algorithm>
-#include <cctype>
 #include <sstream>
 #include <string>
 
-#include <wx/button.h>
-#include <wx/dialog.h>
 #include <wx/filename.h>
 #include <wx/frame.h>
 #include <wx/fs_mem.h>
@@ -26,7 +23,7 @@
 #include "doc_view_panel.h"
 
 #include "archive_handler.h"
-#include "find_in_page.h"
+#include "html_find_dlg.h"
 #include "inherit_graph.h"  // docparser::InheritGraphNode, RenderInheritanceSvg
 
 // ---------------------------------------------------------------------------
@@ -101,6 +98,10 @@ void DocViewPanel::InitPanel()
              }
              key_event.Skip();
          });
+
+    // Create the find-in-page dialog (modeless) and attach the HTML window.
+    m_find_dlg = new HtmlFindDlg(this);
+    m_find_dlg->SetHtmlWindow(m_html_win);
 }
 
 // ---------------------------------------------------------------------------
@@ -198,11 +199,10 @@ void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
     }
 
     // Reset find-in-page state for the new page
-    m_find_last_query.clear();
-    m_find_last_pos = 0;
-    m_find_highlight_active = false;
-    m_find_highlight_occurrence = 0;
-    m_find_highlight_query.clear();
+    if (m_find_dlg != nullptr)
+    {
+        m_find_dlg->ResetForNewPage();
+    }
 
     // Inject inheritance graph after </h1> if data is available for this page.
     const wxFileName fn(wxString::FromUTF8(archive_name));
@@ -533,399 +533,40 @@ void DocViewPanel::OnFind([[maybe_unused]] wxCommandEvent& event)
         return;
     }
 
-    const std::string& markdown = wxueArchive.GetCurrentMarkdown();
-    if (markdown.empty())
+    if (wxueArchive.GetCurrentMarkdown().empty())
     {
         SetStatusMessage("No page loaded");
         return;
     }
 
-    // Create a simple modal find dialog
-    wxDialog find_dlg(this, wxID_ANY, wxT("Find in page"), wxDefaultPosition);
-    wxBoxSizer* const find_sizer = new wxBoxSizer(wxVERTICAL);
-
-    wxTextCtrl* const text_ctrl = new wxTextCtrl(
-        &find_dlg, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(300, -1), wxTE_PROCESS_ENTER);
-    find_sizer->Add(text_ctrl, wxSizerFlags().Expand().Border(wxALL, 8));
-
-    wxBoxSizer* const btn_sizer = new wxBoxSizer(wxHORIZONTAL);
-    wxButton* const find_next_btn = new wxButton(&find_dlg, wxID_FORWARD, wxT("&Find Next"));
-    wxButton* const cancel_btn = new wxButton(&find_dlg, wxID_CANCEL, wxT("&Close"));
-    btn_sizer->Add(find_next_btn, wxSizerFlags().Border(wxRIGHT, 8));
-    btn_sizer->Add(cancel_btn, wxSizerFlags());
-    find_sizer->Add(btn_sizer, wxSizerFlags().Center().Border(wxBOTTOM, 8));
-
-    find_dlg.SetSizerAndFit(find_sizer);
-
-    wxString search_text;
-    bool search_requested = false;
-
-    text_ctrl->Bind(wxEVT_TEXT_ENTER,
-                    [&]([[maybe_unused]] wxCommandEvent& event_arg)
-                    {
-                        search_text = text_ctrl->GetValue();
-                        search_requested = true;
-                        find_dlg.EndModal(wxID_OK);
-                    });
-
-    find_next_btn->Bind(wxEVT_BUTTON,
-                        [&]([[maybe_unused]] wxCommandEvent& event_arg)
-                        {
-                            search_text = text_ctrl->GetValue();
-                            search_requested = true;
-                            find_dlg.EndModal(wxID_OK);
-                        });
-
-    find_dlg.ShowModal();
-
-    if (!search_requested || search_text.empty())
+    // The find dialog is normally created in InitPanel; create it on demand
+    // for the default-constructor path where InitPanel may not have run.
+    if (m_find_dlg == nullptr)
     {
-        return;
+        m_find_dlg = new HtmlFindDlg(this);
+        m_find_dlg->SetHtmlWindow(m_html_win);
     }
 
-    const std::string query = search_text.utf8_string();
-
-    // Reset position when the query changes
-    if (query != m_find_last_query)
-    {
-        m_find_last_query = query;
-        m_find_last_pos = 0;
-    }
-
-    // Search the raw markdown for the query, starting from the last position
-    std::size_t found_pos = FindInMarkdown(markdown, query, m_find_last_pos);
-    bool wrapped = false;
-    if (found_pos == std::string::npos && m_find_last_pos > 0)
-    {
-        // Wrap around: retry from the beginning
-        found_pos = FindInMarkdown(markdown, query, 0);
-        if (found_pos != std::string::npos)
-        {
-            wrapped = true;
-        }
-    }
-    if (found_pos == std::string::npos)
-    {
-        SetStatusMessage(wxString::Format("Not found: %s", search_text));
-        return;
-    }
-
-    m_find_last_pos = found_pos + query.size();
-
-    // Count which occurrence this is (0-based)
-    const int occurrence_index = CountOccurrencesBefore(markdown, query, found_pos);
-
-    // Get the clean HTML and apply highlight
-    const std::string clean_html = wxueArchive.GetCurrentHtml();
-    const std::string highlighted_html = ApplyFindHighlight(clean_html, query, occurrence_index);
-
-    if (highlighted_html == clean_html)
-    {
-        // Highlight application failed (e.g., occurrence not found in HTML)
-        SetStatusMessage(
-            wxString::Format("Found \"%s\" but could not highlight in HTML", search_text));
-        return;
-    }
-
-    // Set the highlighted page
-    const bool page_set = m_html_win->SetPage(wxString::FromUTF8(highlighted_html));
-    if (!page_set)
-    {
-        SetStatusMessage(
-            wxString::Format("Found \"%s\" but failed to set highlighted page", search_text));
-        return;
-    }
-
-    // Scroll to the match anchor
-    const bool scrolled = m_html_win->LoadPage(wxT("#find-match"));
-    if (!scrolled)
-    {
-        SetStatusMessage(
-            wxString::Format("Found \"%s\" but failed to scroll to match", search_text));
-        return;
-    }
-
-    // Center the match vertically: scroll up by ~1/3 of client height
-    {
-        int view_x = 0, view_y = 0;
-        m_html_win->GetViewStart(&view_x, &view_y);
-        int px_per_unit_x = 1, px_per_unit_y = 1;
-        m_html_win->GetScrollPixelsPerUnit(&px_per_unit_x, &px_per_unit_y);
-        if (px_per_unit_y < 1)
-        {
-            px_per_unit_y = 1;
-        }
-        const int client_height = m_html_win->GetClientSize().GetHeight();
-        const int scroll_up_pixels = client_height / 3;
-        const int scroll_up_units = scroll_up_pixels / px_per_unit_y;
-        const int new_scroll_y = std::max(0, view_y - scroll_up_units);
-        m_html_win->Scroll(view_x, new_scroll_y);
-    }
-
-    // Update highlight tracking state
-    m_find_highlight_active = true;
-    m_find_highlight_occurrence = occurrence_index;
-    m_find_highlight_query = query;
-
-    // Status message
-    if (wrapped)
-    {
-        SetStatusMessage(wxString::Format("Wrapped; found \"%s\"", search_text));
-    }
-    else
-    {
-        SetStatusMessage(wxString::Format("Found \"%s\"", search_text));
-    }
+    m_find_dlg->Show();
+    m_find_dlg->Raise();
 }
 
 void DocViewPanel::OnFindNext(wxKeyEvent& event)
 {
-    // 1. Guard: if no active find highlight, skip the event and return
-    if (!m_find_highlight_active || m_find_highlight_query.empty())
+    // If the find dialog exists, let it advance the match — whether the dialog
+    // is shown (forwarding the keystroke) or hidden with an active highlight
+    // (preserving the old F3-after-close behavior).
+    if (m_find_dlg != nullptr && m_find_dlg->FindNextFromPanel())
     {
-        event.Skip();
         return;
     }
 
-    // 2. Get current markdown
-    const std::string& markdown = wxueArchive.GetCurrentMarkdown();
-    if (markdown.empty())
-    {
-        event.Skip();
-        return;
-    }
-
-    const std::string& query = m_find_highlight_query;
-
-    // 3. Search markdown starting from m_find_last_pos (right after current match)
-    std::size_t found_pos = FindInMarkdown(markdown, query, m_find_last_pos);
-    bool wrapped = false;
-
-    // 4. If not found, wrap around: search from beginning
-    if (found_pos == std::string::npos)
-    {
-        found_pos = FindInMarkdown(markdown, query, 0);
-        if (found_pos != std::string::npos)
-        {
-            // Check if this is the SAME match we're already on (only one occurrence)
-            // Current match starts at m_find_last_pos - query.size()
-            const std::size_t current_match_start = m_find_last_pos - query.size();
-            if (found_pos == current_match_start)
-            {
-                SetStatusMessage(wxString::Format("Only one occurrence of \"%s\" found",
-                                                  wxString::FromUTF8(query)));
-                return;
-            }
-            wrapped = true;
-        }
-    }
-
-    // 5. If still not found (shouldn't happen if we have an active highlight, but be safe)
-    if (found_pos == std::string::npos)
-    {
-        SetStatusMessage(wxString::Format("Not found: \"%s\"", wxString::FromUTF8(query)));
-        return;
-    }
-
-    // 6. Update position
-    m_find_last_pos = found_pos + query.size();
-
-    // 7. Count which occurrence this is (0-based)
-    const int occurrence_index = CountOccurrencesBefore(markdown, query, found_pos);
-
-    // 8. Get clean HTML and apply highlight (ApplyFindHighlight internally removes old highlight)
-    const std::string clean_html = wxueArchive.GetCurrentHtml();
-    const std::string highlighted_html = ApplyFindHighlight(clean_html, query, occurrence_index);
-
-    if (highlighted_html == clean_html)
-    {
-        SetStatusMessage(wxString::Format("Found \"%s\" but could not highlight in HTML",
-                                          wxString::FromUTF8(query)));
-        return;
-    }
-
-    // 9. Set the highlighted page
-    const bool page_set = m_html_win->SetPage(wxString::FromUTF8(highlighted_html));
-    if (!page_set)
-    {
-        SetStatusMessage(wxString::Format("Found \"%s\" but failed to set highlighted page",
-                                          wxString::FromUTF8(query)));
-        return;
-    }
-
-    // 10. Scroll to the match anchor
-    const bool scrolled = m_html_win->LoadPage(wxT("#find-match"));
-    if (!scrolled)
-    {
-        SetStatusMessage(wxString::Format("Found \"%s\" but failed to scroll to match",
-                                          wxString::FromUTF8(query)));
-        return;
-    }
-
-    // 11. Center the match vertically (same offset logic as OnFind)
-    {
-        int view_x = 0, view_y = 0;
-        m_html_win->GetViewStart(&view_x, &view_y);
-        int px_per_unit_x = 1, px_per_unit_y = 1;
-        m_html_win->GetScrollPixelsPerUnit(&px_per_unit_x, &px_per_unit_y);
-        if (px_per_unit_y < 1)
-        {
-            px_per_unit_y = 1;
-        }
-        const int client_height = m_html_win->GetClientSize().GetHeight();
-        const int scroll_up_pixels = client_height / 3;
-        const int scroll_up_units = scroll_up_pixels / px_per_unit_y;
-        const int new_scroll_y = std::max(0, view_y - scroll_up_units);
-        m_html_win->Scroll(view_x, new_scroll_y);
-    }
-
-    // 12. Update highlight tracking state
-    m_find_highlight_occurrence = occurrence_index;
-
-    // 13. Status message
-    if (wrapped)
-    {
-        SetStatusMessage(wxString::Format("Wrapped; found \"%s\"", wxString::FromUTF8(query)));
-    }
-    else
-    {
-        SetStatusMessage(wxString::Format("Found \"%s\"", wxString::FromUTF8(query)));
-    }
+    event.Skip();
 }
 
 // ---------------------------------------------------------------------------
 //  Private helpers
 // ---------------------------------------------------------------------------
-
-std::string DocViewPanel::RemoveFindHighlight(const std::string& html)
-{
-    constexpr std::string_view ANCHOR_PREFIX =
-        "<a id=\"find-match\"></a><span style=\"background-color: #FFFF00; color: #000000;\">";
-    const std::size_t start_pos = html.find(ANCHOR_PREFIX);
-    if (start_pos == std::string::npos)
-    {
-        return html;
-    }
-    const std::size_t content_start = start_pos + ANCHOR_PREFIX.size();
-    const std::size_t span_close_pos = html.find("</span>", content_start);
-    if (span_close_pos == std::string::npos)
-    {
-        return html;
-    }
-    const std::string inner_text = html.substr(content_start, span_close_pos - content_start);
-    constexpr std::size_t CLOSE_TAG_LEN = 7;  // length of "</span>"
-    std::string cleaned = html;
-    cleaned.erase(start_pos, span_close_pos + CLOSE_TAG_LEN - start_pos);
-    cleaned.insert(start_pos, inner_text);
-    return cleaned;
-}
-
-int DocViewPanel::CountOccurrencesBefore(std::string_view text, std::string_view query,
-                                         std::size_t pos)
-{
-    if (query.empty())
-    {
-        return 0;
-    }
-    int count = 0;
-    const std::size_t limit = std::min(pos, text.size());
-    for (std::size_t idx = 0; idx + query.size() <= limit; ++idx)
-    {
-        if (std::tolower(static_cast<unsigned char>(text[idx])) ==
-            std::tolower(static_cast<unsigned char>(query[0])))
-        {
-            bool match = true;
-            for (std::size_t jdx = 1; jdx < query.size(); ++jdx)
-            {
-                if (std::tolower(static_cast<unsigned char>(text[idx + jdx])) !=
-                    std::tolower(static_cast<unsigned char>(query[jdx])))
-                {
-                    match = false;
-                    break;
-                }
-            }
-            if (match)
-            {
-                ++count;
-            }
-        }
-    }
-    return count;
-}
-
-std::string DocViewPanel::ApplyFindHighlight(const std::string& html, const std::string& query,
-                                             int occurrence_index)
-{
-    const std::string cleaned = RemoveFindHighlight(html);
-    if (query.empty() || occurrence_index < 0)
-    {
-        return cleaned;
-    }
-
-    constexpr std::string_view ANCHOR_PREFIX = "<a id=\"find-match\"></a>";
-    constexpr std::string_view SPAN_PREFIX =
-        "<span style=\"background-color: #FFFF00; color: #000000;\">";
-
-    const std::size_t query_len = query.size();
-    int match_index = 0;
-    std::size_t idx = 0;
-    const std::size_t len = cleaned.size();
-
-    while (idx < len)
-    {
-        if (cleaned[idx] == '<')
-        {
-            const std::size_t gt_pos = cleaned.find('>', idx);
-            if (gt_pos == std::string::npos)
-            {
-                break;
-            }
-            idx = gt_pos + 1;
-            continue;
-        }
-        if (idx + query_len > len)
-        {
-            break;
-        }
-        if (std::tolower(static_cast<unsigned char>(cleaned[idx])) ==
-            std::tolower(static_cast<unsigned char>(query[0])))
-        {
-            bool match = true;
-            for (std::size_t jdx = 1; jdx < query_len; ++jdx)
-            {
-                if (std::tolower(static_cast<unsigned char>(cleaned[idx + jdx])) !=
-                    std::tolower(static_cast<unsigned char>(query[jdx])))
-                {
-                    match = false;
-                    break;
-                }
-            }
-            if (match)
-            {
-                if (match_index == occurrence_index)
-                {
-                    const std::string matched_text = cleaned.substr(idx, query_len);
-                    std::string result = cleaned;
-                    result.erase(idx, query_len);
-                    std::string replacement;
-                    replacement.reserve(ANCHOR_PREFIX.size() + SPAN_PREFIX.size() + query_len + 7);
-                    replacement += ANCHOR_PREFIX;
-                    replacement += SPAN_PREFIX;
-                    replacement += matched_text;
-                    replacement += "</span>";
-                    result.insert(idx, replacement);
-                    return result;
-                }
-                ++match_index;
-                idx += query_len;
-                continue;
-            }
-        }
-        ++idx;
-    }
-
-    return cleaned;
-}
 
 std::string DocViewPanel::BuildInheritanceImage(const std::string& class_name)
 {

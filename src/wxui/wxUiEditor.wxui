@@ -6582,6 +6582,47 @@
         <node
           class="wxStatusBar" />
       </node>
+      <node
+        class="wxDialog"
+        class_name="HtmlFindDlgBase"
+        title="Find in page"
+        base_file="html_find_dlg_base"
+        derived_class_name="HtmlFindDlg"
+        derived_file="../helptext/html_find_dlg.cpp"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="m_topSizer">
+          <node
+            class="wxTextCtrl"
+            style="wxTE_PROCESS_ENTER"
+            var_name="m_findTextCtrl"
+            size="200,-1"
+            flags="wxEXPAND"
+            wxEVT_TEXT_ENTER="OnFindTextEnter"
+            wxEVT_TEXT="OnText" />
+          <node
+            class="wxBoxSizer"
+            var_name="m_btnSizer"
+            alignment="wxALIGN_RIGHT"
+            border_size="8"
+            borders="wxBOTTOM">
+            <node
+              class="wxButton"
+              default="1"
+              label="&amp;Find Next"
+              var_name="m_findNextBtn"
+              id="wxID_FORWARD"
+              wxEVT_BUTTON="OnFindNext" />
+            <node
+              class="wxButton"
+              label=""
+              var_name="m_cancelBtn"
+              id="wxID_CANCEL" />
+          </node>
+        </node>
+      </node>
     </node>
     <node
       class="folder"

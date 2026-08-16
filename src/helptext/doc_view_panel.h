@@ -14,6 +14,7 @@
 
 #include "doc_view_panel_base.h"
 
+class HtmlFindDlg;
 class wxKeyEvent;
 class wxListBox;
 class wxObject;
@@ -73,6 +74,13 @@ protected:
     void OnUpdateUI(wxUpdateUIEvent& event) override;
     void OnFind(wxCommandEvent& event) override;
 
+    void SetStatusMessage(const wxString& msg);
+
+    // Record a navigation event: push current page to back history, clear forward,
+    // and set destination as the new current page. Must be called BEFORE the
+    // actual page display.
+    void RecordNavigation(const std::string& destination);
+
 private:
     // Display an archive page (e.g. "wxTextCtrl.md"). Injects an inheritance
     // graph after the first <h1> when available.
@@ -91,34 +99,11 @@ private:
     static void ApplyFilter(wxListBox* listbox, const std::vector<std::string>& all_items,
                             const wxString& filter_text);
 
-    // Remove any existing find highlight span+anchor from HTML, restoring plain text.
-    static std::string RemoveFindHighlight(const std::string& html);
-
-    // Find the nth (0-based) case-insensitive occurrence of query in HTML
-    // (skipping content inside angle brackets) and wrap the match with a
-    // highlight span and anchor. Always removes any existing highlight first.
-    static std::string ApplyFindHighlight(const std::string& html, const std::string& query,
-                                          int occurrence_index);
-
-    // Count case-insensitive occurrences of query in text before position pos (exclusive).
-    static int CountOccurrencesBefore(std::string_view text, std::string_view query,
-                                      std::size_t pos);
-
     // Return the listbox paired with the textctrl that fired the event, or nullptr.
     wxListBox* GetActiveIndexListbox(const wxObject* source) const;
 
-    // Show the find-in-page dialog.
-
     // Advance to the next find match (F3), wrapping to the start when the end is reached.
     void OnFindNext(wxKeyEvent& event);
-
-    // Update the parent frame's status bar text.
-    void SetStatusMessage(const wxString& msg);
-
-    // Record a navigation event: push current page to back history, clear forward,
-    // and set destination as the new current page. Must be called BEFORE the
-    // actual page display.
-    void RecordNavigation(const std::string& destination);
 
     bool m_archive_open { false };
 
@@ -136,14 +121,8 @@ private:
     // Toolbar tool ID for the Find button (assigned dynamically in InitPanel)
     int m_find_tool_id { wxID_NONE };
 
-    // Find-in-page state (persists across dialog invocations for "Find Next")
-    std::string m_find_last_query;
-    std::size_t m_find_last_pos { 0 };
-
-    // Find-in-page highlight tracking
-    bool m_find_highlight_active { false };
-    int m_find_highlight_occurrence { 0 };
-    std::string m_find_highlight_query;
+    // Find-in-page dialog (modeless, created in InitPanel)
+    HtmlFindDlg* m_find_dlg { nullptr };
 
     // Navigation history (browser-style back/forward)
     std::vector<std::string> m_back_history;

@@ -34,7 +34,10 @@ public:
                  const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL,
                  const wxString& name = wxPanelNameStr)
     {
-        Create(parent, id, pos, size, style, name);
+        if (!Create(parent, id, pos, size, style, name))
+        {
+            return;
+        }
         InitPanel();
     };
 
@@ -64,6 +67,9 @@ protected:
     void OnSearchCancel(wxCommandEvent& event) override;
     void OnSearchTextChanged(wxCommandEvent& event) override;
     void OnTextKeyDown(wxKeyEvent& event) override;
+    void OnNavBack(wxCommandEvent& event) override;
+    void OnNavForward(wxCommandEvent& event) override;
+    void OnUpdateUI(wxUpdateUIEvent& event) override;
 
 private:
     // Display an archive page (e.g. "wxTextCtrl.md"). Injects an inheritance
@@ -75,13 +81,13 @@ private:
     std::string BuildInheritanceImage(const std::string& class_name);
 
     // Lazy-load index items from archive_file on first tab visit.
-    void PopulateIndexListbox(const std::string& index_file, wxListBox* listbox,
-                              wxTextCtrl* filter_ctrl, const wxString& default_filter,
-                              std::vector<std::string>& item_store);
+    static void PopulateIndexListbox(const std::string& index_file, wxListBox* listbox,
+                                     wxTextCtrl* filter_ctrl, const wxString& default_filter,
+                                     std::vector<std::string>& item_store);
 
     // Apply filter_text to listbox (incremental filter on the full item list).
-    void ApplyFilter(wxListBox* listbox, const std::vector<std::string>& all_items,
-                     const wxString& filter_text);
+    static void ApplyFilter(wxListBox* listbox, const std::vector<std::string>& all_items,
+                            const wxString& filter_text);
 
     // Return the listbox paired with the textctrl that fired the event, or nullptr.
     wxListBox* GetActiveIndexListbox(const wxObject* source) const;
@@ -91,6 +97,11 @@ private:
 
     // Update the parent frame's status bar text.
     void SetStatusMessage(const wxString& msg);
+
+    // Record a navigation event: push current page to back history, clear forward,
+    // and set destination as the new current page. Must be called BEFORE the
+    // actual page display.
+    void RecordNavigation(const std::string& destination);
 
     bool m_archive_open { false };
 
@@ -111,4 +122,10 @@ private:
     // Find-in-page state (persists across dialog invocations for "Find Next")
     std::string m_find_last_query;
     std::size_t m_find_last_pos { 0 };
+
+    // Navigation history (browser-style back/forward)
+    std::vector<std::string> m_back_history;
+    std::vector<std::string> m_forward_history;
+    std::string m_current_history_page;
+    bool m_is_history_nav { false };
 };

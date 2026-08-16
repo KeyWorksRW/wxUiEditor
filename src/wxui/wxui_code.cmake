@@ -24,7 +24,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_propsheet.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_ribbon.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_wizard.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../panels/language_docs.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../panels/nav_toolbar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg.cpp
@@ -65,6 +64,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/language_docs_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/new_mdi_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp

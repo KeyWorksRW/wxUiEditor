@@ -50,10 +50,13 @@ protected:
     virtual void OnHtmlLink(wxHtmlLinkEvent& event) { event.Skip(); }
     virtual void OnIndexTextChange(wxCommandEvent& event) { event.Skip(); }
     virtual void OnIndexTextEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNavBack(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNavForward(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
     virtual void OnSearchCancel(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSearchTextChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTextKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
 
     // Class member variables
 

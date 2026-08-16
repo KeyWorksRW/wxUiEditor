@@ -189,7 +189,7 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
             continue;
         }
 
-        if (prop_set.find(prop_name) == prop_set.end())
+        if (!prop_set.contains(prop_name))
         {
             if (!IsPropAllowed(node, prop))
             {
@@ -283,13 +283,12 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
         }
         else
         {
-            std::string_view decl_name = node->get_DeclName();
             if (const auto prop_it = map_PropNames.find(prop_name); prop_it != map_PropNames.end())
             {
                 MSG_WARNING((wxString("The property ")
                              << wxString(prop_it->second.data(), prop_it->second.size())
                              << " appears more than once in "
-                             << wxString(decl_name.data(), decl_name.size()))
+                             << wxString(node->get_DeclName().data(), node->get_DeclName().size()))
                                 .ToStdString());
             }
         }
@@ -393,12 +392,11 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
         const NodeEventInfo* eventInfo = event->get_EventInfo();
 
         {
-            auto decl_name = node->get_DeclName();
             ASSERT_MSG(event_set.find(eventName) == event_set.end(),
                        wxString("Encountered a duplicate event in ")
-                           << wxString(decl_name.data(), decl_name.size()));
+                           << wxString(node->get_DeclName().data(), node->get_DeclName().size()));
         }
-        if (event_set.find(eventName) == event_set.end())
+        if (!event_set.contains(eventName))
         {
             auto* grid_property = new EventStringProperty(event->get_name(), event);
 
@@ -671,7 +669,7 @@ void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
 
 void PropGridPanel::ReplaceDerivedFile(const wxue::string& newValue, NodeProperty* propType)
 {
-    wxue::string derived_filename =
+    const wxue::string derived_filename =
         CreateDerivedFilename(propType->getNode()->get_Form(), newValue);
     wxPGProperty* grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
     ASSERT(grid_property);

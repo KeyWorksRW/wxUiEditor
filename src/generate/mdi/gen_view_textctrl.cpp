@@ -108,7 +108,7 @@ auto TextViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                 wxString hdr_file = iter->as_string(prop_base_file).wx();
                 if (!hdr_file.empty())
                 {
-                    AddHeaderExtension(hdr_file, false);
+                    AddHeaderExtension(hdr_file, true);
                     set_src.insert(std::string("#include \"") + hdr_file.ToStdString() + "\"");
                 }
                 else

@@ -1,25 +1,27 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Utility functions that work with properties
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-16-2026]
+
 #include <array>
-#include <charconv>
 #include <cstddef>
 #include <cstdio>  // For snprintf
 #include <format>
 #include <set>
 
-#include <wx/filedlg.h>  // wxFileDialog base header
-#include <wx/gdicmn.h>   // Common GDI classes, types and declarations
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/filedlg.h>   // wxFileDialog base header
+#include <wx/filename.h>  // wxFileName class
+#include <wx/gdicmn.h>    // Common GDI classes, types and declarations
+#include <wx/mstream.h>   // Memory stream classes
 
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "utils.h"         // Utility functions that work with properties
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
+#include "project_handler.h"  // ProjectHandler class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "wxue_namespace/wxue_string.h"         // wxue::string -- std::string with utility methods
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
@@ -760,6 +762,45 @@ bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, si
     }
 
     return true;
+}
+
+void AddHeaderExtension(wxue::string& filename, bool force)
+{
+    if (Project.as_string(prop_header_ext).empty())
+    {
+        return;
+    }
+
+    if (filename.extension().empty() || force)
+    {
+        filename.replace_extension(Project.as_string(prop_header_ext));
+    }
+}
+
+void AddHeaderExtension(wxString& filename, bool force)
+{
+    wxFileName file_name(filename);
+    if (file_name.HasExt() && !force)
+    {
+        return;
+    }
+
+    const wxue::string& header_ext = Project.as_string(prop_header_ext);
+    if (header_ext.empty())
+    {
+        return;
+    }
+
+    // wxFileName::SetExt() expects the extension without a leading dot
+    const wxString new_ext =
+        header_ext.starts_with('.') ? header_ext.subview(1).wx() : header_ext.wx();
+    file_name.SetExt(new_ext);
+
+    // Replace only the filename+extension portion of the original string, preserving
+    // any path prefix exactly as it was.
+    const size_t sep_pos = filename.find_last_of("\\/");
+    const size_t name_start = (sep_pos == wxString::npos) ? 0 : sep_pos + 1;
+    filename.replace(name_start, filename.length() - name_start, file_name.GetFullName());
 }
 
 wxString ShowOpenProjectDialog(wxWindow* parent)

@@ -43,6 +43,7 @@ set( file_list
     src/customprops/id_editor_dlg.cpp         # Dialog for editing a ID name and optional value
     src/customprops/id_prop.cpp               # ID_Property -- Uses IDEditorDlg to edit a custom ID
     src/customprops/img_string_prop.cpp       # ImageDialogAdapter -- used by ImageStringProperty (img_string_prop.h)
+    src/customprops/include_files_dlg.cpp     # Dialog for editing a list of include files
     src/customprops/include_files_prop.cpp    # IncludeFilesProperty -- Derived wxStringProperty class for Include Files
     src/customprops/rearrange_prop.cpp        # RearrangeProperty -- wxRearangeList contents editor
     src/customprops/sb_fields_prop.cpp        # SBarFieldsProperty -- Property editor for status bar fields

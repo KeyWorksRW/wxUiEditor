@@ -5040,13 +5040,12 @@
         class_name="IDEditorDlgBase"
         title="ID Editor"
         base_file="id_editor_dlg_base"
-        derived_class_name="IDEditorDlg"
-        derived_file="..\customprops\id_editor_dlg.cpp"
         header_preamble="class Node;"
         class_members="&quot;Node* m_node;&quot; &quot;wxString m_result;&quot; &quot;bool m_prefix_selected { false };&quot; &quot;bool m_suffix_selected { false };&quot; &quot;&quot; &quot;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot; &quot;void SetNode(Node* node) { m_node = node; }&quot; &quot;bool SelectPrefixSuffix(Node* node);&quot;"
+        derived_class_name="IDEditorDlg"
+        derived_file="..\customprops\id_editor_dlg.cpp"
         private_members="1"
-        use_derived_class="1"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -5218,10 +5217,10 @@
         class_name="EditCustomMockupBase"
         title="Mockup Widget Settings"
         base_file="edit_custom_mockup_base"
-        derived_class_name="EditCustomMockup"
-        derived_file="../customprops/edit_custom_mockup.cpp"
         class_members="&quot;wxString m_result;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot;"
+        derived_class_name="EditCustomMockup"
+        derived_file="../customprops/edit_custom_mockup.cpp"
         private_members="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
@@ -5312,16 +5311,15 @@
       </node>
       <node
         class="wxDialog"
-        class_name="IncludeFilesDialog"
+        class_name="IncludeFilesDialogBase"
         title="Include Files"
-        base_file="..\customprops\include_files_dlg.cpp"
+        base_file="include_files_dlg_base"
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h;wx/tokenzr.h"
         header_preamble="class NodeProperty;"
-        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GenLang::cplusplus;&quot;"
-        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
+        derived_class_name="IncludeFilesDialog"
+        derived_file="..\customprops\include_files_dlg.cpp"
         private_members="1"
-        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"

@@ -7,6 +7,7 @@
 // CR: [06-20-2026]
 
 #include <array>
+#include <cstdint>
 #include <format>
 #include <sstream>  // For std::ostringstream
 #include <tuple>    // for std::ignore
@@ -1280,15 +1281,17 @@ bool ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form)
     embed->set_wxSize(size);
 
 #if defined(_DEBUG)
-    wxFile file_original(path.wx(), wxFile::read);
+    const wxFile file_original(path.wx(), wxFile::read);
     if (file_original.IsOpened())
     {
-        auto file_size = file_original.Length();
+        const wxFileOffset file_size = file_original.Length();
         wxue::string size_comparison;
         int percent = 0;
-        if (compressed_size > 0 && file_size >= compressed_size)
+        const auto original_size = static_cast<uint64_t>(file_size);
+        if (compressed_size > 0 && original_size >= compressed_size)
         {
-            percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
+            const uint64_t ratio = original_size / compressed_size;
+            percent = (100 - (100 / static_cast<int>(ratio)));
         }
         size_comparison =
             std::format(std::locale(""), "{} -- Original: {:L}, compressed: {:L}, {} percent",

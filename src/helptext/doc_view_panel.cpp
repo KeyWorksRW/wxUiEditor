@@ -6,11 +6,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-04-2026]
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 
-#include <wx/button.h>
-#include <wx/dialog.h>
 #include <wx/filename.h>
 #include <wx/frame.h>
 #include <wx/fs_mem.h>
@@ -24,7 +23,7 @@
 #include "doc_view_panel.h"
 
 #include "archive_handler.h"
-#include "find_in_page.h"
+#include "html_find_dlg.h"
 #include "inherit_graph.h"  // docparser::InheritGraphNode, RenderInheritanceSvg
 
 // ---------------------------------------------------------------------------
@@ -71,10 +70,6 @@ void DocViewPanel::InitPanel()
             }
         }
     }
-    if (m_find_tool_id != wxID_NONE)
-    {
-        Bind(wxEVT_TOOL, &DocViewPanel::OnFind, this, m_find_tool_id);
-    }
 
     // Ctrl+F via CHAR_HOOK — more reliable than an accelerator table with
     // controls that capture keystrokes at a low level (wxHtmlWindow, etc.)
@@ -90,7 +85,23 @@ void DocViewPanel::InitPanel()
              key_event.Skip();
          });
 
-    Bind(wxEVT_UPDATE_UI, &DocViewPanel::OnUpdateUI, this);
+    // F3 via CHAR_HOOK — advance to the next find match (same rationale as Ctrl+F
+    // above: controls that capture keystrokes at a low level, such as wxHtmlWindow).
+    Bind(wxEVT_CHAR_HOOK,
+         [this](wxKeyEvent& key_event)
+         {
+             if (key_event.GetKeyCode() == WXK_F3 && !key_event.ControlDown() &&
+                 !key_event.AltDown())
+             {
+                 OnFindNext(key_event);
+                 return;
+             }
+             key_event.Skip();
+         });
+
+    // Create the find-in-page dialog (modeless) and attach the HTML window.
+    m_find_dlg = new HtmlFindDlg(this);
+    m_find_dlg->SetHtmlWindow(m_html_win);
 }
 
 // ---------------------------------------------------------------------------
@@ -188,8 +199,10 @@ void DocViewPanel::DisplayArchivePage(const std::string& archive_name)
     }
 
     // Reset find-in-page state for the new page
-    m_find_last_query.clear();
-    m_find_last_pos = 0;
+    if (m_find_dlg != nullptr)
+    {
+        m_find_dlg->ResetForNewPage();
+    }
 
     // Inject inheritance graph after </h1> if data is available for this page.
     const wxFileName fn(wxString::FromUTF8(archive_name));
@@ -520,119 +533,35 @@ void DocViewPanel::OnFind([[maybe_unused]] wxCommandEvent& event)
         return;
     }
 
-    const std::string& markdown = wxueArchive.GetCurrentMarkdown();
-    if (markdown.empty())
+    if (wxueArchive.GetCurrentMarkdown().empty())
     {
         SetStatusMessage("No page loaded");
         return;
     }
 
-    // Create a simple modal find dialog
-    wxDialog find_dlg(this, wxID_ANY, wxT("Find in page"), wxDefaultPosition);
-    wxBoxSizer* const find_sizer = new wxBoxSizer(wxVERTICAL);
+    // The find dialog is normally created in InitPanel; create it on demand
+    // for the default-constructor path where InitPanel may not have run.
+    if (m_find_dlg == nullptr)
+    {
+        m_find_dlg = new HtmlFindDlg(this);
+        m_find_dlg->SetHtmlWindow(m_html_win);
+    }
 
-    wxTextCtrl* const text_ctrl = new wxTextCtrl(
-        &find_dlg, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(300, -1), wxTE_PROCESS_ENTER);
-    find_sizer->Add(text_ctrl, wxSizerFlags().Expand().Border(wxALL, 8));
+    m_find_dlg->Show();
+    m_find_dlg->Raise();
+}
 
-    wxBoxSizer* const btn_sizer = new wxBoxSizer(wxHORIZONTAL);
-    wxButton* const find_next_btn = new wxButton(&find_dlg, wxID_FORWARD, wxT("&Find Next"));
-    wxButton* const cancel_btn = new wxButton(&find_dlg, wxID_CANCEL, wxT("&Close"));
-    btn_sizer->Add(find_next_btn, wxSizerFlags().Border(wxRIGHT, 8));
-    btn_sizer->Add(cancel_btn, wxSizerFlags());
-    find_sizer->Add(btn_sizer, wxSizerFlags().Center().Border(wxBOTTOM, 8));
-
-    find_dlg.SetSizerAndFit(find_sizer);
-
-    wxString search_text;
-    bool search_requested = false;
-
-    text_ctrl->Bind(wxEVT_TEXT_ENTER,
-                    [&]([[maybe_unused]] wxCommandEvent& event_arg)
-                    {
-                        search_text = text_ctrl->GetValue();
-                        search_requested = true;
-                        find_dlg.EndModal(wxID_OK);
-                    });
-
-    find_next_btn->Bind(wxEVT_BUTTON,
-                        [&]([[maybe_unused]] wxCommandEvent& event_arg)
-                        {
-                            search_text = text_ctrl->GetValue();
-                            search_requested = true;
-                            find_dlg.EndModal(wxID_OK);
-                        });
-
-    find_dlg.ShowModal();
-
-    if (!search_requested || search_text.empty())
+void DocViewPanel::OnFindNext(wxKeyEvent& event)
+{
+    // If the find dialog exists, let it advance the match — whether the dialog
+    // is shown (forwarding the keystroke) or hidden with an active highlight
+    // (preserving the old F3-after-close behavior).
+    if (m_find_dlg != nullptr && m_find_dlg->FindNextFromPanel())
     {
         return;
     }
 
-    const std::string query = search_text.utf8_string();
-
-    // Reset position when the query changes
-    if (query != m_find_last_query)
-    {
-        m_find_last_query = query;
-        m_find_last_pos = 0;
-    }
-
-    // Search the raw markdown for the query, starting from the last position
-    std::size_t found_pos = FindInMarkdown(markdown, query, m_find_last_pos);
-    bool wrapped = false;
-    if (found_pos == std::string::npos && m_find_last_pos > 0)
-    {
-        // Wrap around: retry from the beginning
-        found_pos = FindInMarkdown(markdown, query, 0);
-        if (found_pos != std::string::npos)
-        {
-            wrapped = true;
-        }
-    }
-    if (found_pos == std::string::npos)
-    {
-        SetStatusMessage(wxString::Format("Not found: %s", search_text));
-        return;
-    }
-
-    m_find_last_pos = found_pos + query.size();
-
-    // Extract heading IDs from the cached HTML
-    std::vector<std::pair<std::string, std::string>> heading_ids;
-    std::ignore = AddHeadingIds(wxueArchive.GetCurrentHtml(), &heading_ids);
-
-    const std::string section_id = FindSectionForMarkdownPos(markdown, found_pos, heading_ids);
-
-    if (section_id.empty())
-    {
-        SetStatusMessage(
-            wxString::Format("Found \"%s\" but could not determine section", search_text));
-        return;
-    }
-
-    // Navigate to that section
-    const wxString anchor_href = wxString::FromUTF8("#" + section_id);
-    const bool loaded = m_html_win->LoadPage(anchor_href);
-    if (loaded)
-    {
-        if (wrapped)
-        {
-            SetStatusMessage(wxString::Format("Wrapped; found \"%s\" in section #%s", search_text,
-                                              wxString::FromUTF8(section_id)));
-        }
-        else
-        {
-            SetStatusMessage(wxString::Format("Found \"%s\" in section #%s", search_text,
-                                              wxString::FromUTF8(section_id)));
-        }
-    }
-    else
-    {
-        SetStatusMessage(
-            wxString::Format("Found \"%s\" but section anchor failed to load", search_text));
-    }
+    event.Skip();
 }
 
 // ---------------------------------------------------------------------------

@@ -131,7 +131,7 @@ bool DocViewPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     m_forward = m_aui_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_FORWARD,
         wxART_TOOLBAR, wxSize(24, 24)));
     m_forward->SetState(wxAUI_BUTTON_STATE_DISABLED);
-    m_aui_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_TOOLBAR,
+    auto* find = m_aui_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_TOOLBAR,
         wxSize(30, 30)));
     m_aui_tool_bar->Realize();
     box_sizer3->Add(m_aui_tool_bar, wxSizerFlags().Expand().Border(wxALL));
@@ -168,9 +168,11 @@ bool DocViewPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     m_events_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
     m_functions_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
     m_overviews_textctrl->Bind(wxEVT_TEXT_ENTER, &DocViewPanelBase::OnIndexTextEnter, this);
+    Bind(wxEVT_TOOL, &DocViewPanelBase::OnFind, this, find->GetId());
     Bind(wxEVT_TOOL, &DocViewPanelBase::OnHome, this, m_home->GetId());
     Bind(wxEVT_TOOL, &DocViewPanelBase::OnNavBack, this, m_back->GetId());
     Bind(wxEVT_TOOL, &DocViewPanelBase::OnNavForward, this, m_forward->GetId());
+    Bind(wxEVT_UPDATE_UI, &DocViewPanelBase::OnUpdateUI, this);
     m_aui_tool_bar->Bind(wxEVT_UPDATE_UI, &DocViewPanelBase::OnUpdateUI, this);
 
     return true;

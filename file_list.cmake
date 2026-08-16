@@ -365,7 +365,7 @@ set( file_list
     src/tools/compare/code_compare.cpp  # Code Generation Comparison
     src/tools/compare/diff.cpp          # Simple diff algorithm for comparing text files
     src/tools/compare/diff_viewer.cpp   # Dialog for displaying file differences
-    src/tools/generate_dlg.cpp         # Dialog for choosing and generating specific language file(s)
+    src/tools/generate_dlg.cpp          # Dialog for choosing and generating specific language file(s)
 
     # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
     # tools/preview_settings.cpp    # Dialog for setting preview options
@@ -396,13 +396,14 @@ set( file_list
     src/ui/xrccompare.cpp               # C++/XRC UI Comparison dialog
     src/ui/viewdetails_dlg.cpp          # Dialog to display details about a node in the Mockup
 
-    src/helptext/archive_handler.cpp                # Handles doc archive: open, search, display
-    src/helptext/find_in_page.cpp    # Find-in-page utilities for DocViewPane
-    src/helptext/doc_view_panel.cpp                 # Reusable doc viewer panel (wxHtmlWindow + index tabs)
-    src/helptext/doc_view_frame.cpp  # wxFrame host for DocViewPane (menu bar, status bar)
+    src/helptext/archive_handler.cpp    # Handles doc archive: open, search, display
+    src/helptext/find_in_page.cpp       # Find-in-page utilities for DocViewPane
+    src/helptext/doc_view_panel.cpp     # Reusable doc viewer panel (wxHtmlWindow + index tabs)
+    src/helptext/doc_view_frame.cpp     # wxFrame host for DocViewPane (menu bar, status bar)
+    src/helptext/html_find_dlg.cpp      # Reusable Find dialog for wxHtmlWindow
 
     # (generated) ui/preferences_dlg.cpp  # Preferences dialog
-    $<$<CONFIG:Debug>:src/internal/convert_img.cpp> # Convert image
+    $<$<CONFIG:Debug>:src/internal/convert_img.cpp>  # Convert image
     $<$<CONFIG:Debug>:src/tests/test_xrc_import.cpp> # XRC Import tests
 )
 set(parser_sources

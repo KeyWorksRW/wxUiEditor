@@ -33,3 +33,14 @@ std::string
 // Returns std::string::npos if not found.
 std::size_t FindInMarkdown(std::string_view markdown, std::string_view query,
                            std::size_t start_pos = 0);
+
+// Remove any existing find highlight span+anchor from HTML, restoring plain text.
+std::string RemoveFindHighlight(std::string_view html);
+
+// Find the nth (0-based) case-insensitive occurrence of query in HTML
+// (skipping content inside angle brackets) and wrap the match with a
+// highlight span and anchor. Always removes any existing highlight first.
+std::string ApplyFindHighlight(std::string_view html, std::string_view query, int occurrence_index);
+
+// Count case-insensitive occurrences of query in text before position pos (exclusive).
+int CountOccurrencesBefore(std::string_view text, std::string_view query, std::size_t pos);

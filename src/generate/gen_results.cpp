@@ -717,8 +717,8 @@ bool GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
                 m_created_files.emplace_back(src_path);
             }
 
-            // Capture detailed diff information if file exists on disk
-            if (result == code::write_needed && src_path.file_exists())
+            // Capture detailed diff information, including for newly-created files
+            if (result == code::write_needed)
             {
                 auto content = std::make_shared<std::string>(src_cw->GetString());
                 ProcessFileDiff(src_path, content, form);
@@ -827,8 +827,8 @@ bool GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
             }
             any_updated = true;
 
-            // Capture detailed diff information if file exists on disk
-            if (hdr_result == code::write_needed && hdr_path.file_exists())
+            // Capture detailed diff information, including for newly-created files
+            if (hdr_result == code::write_needed)
             {
                 auto content = std::make_shared<std::string>(hdr_cw->GetString());
                 ProcessFileDiff(hdr_path, content, form);
@@ -881,8 +881,8 @@ bool GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
             }
             any_updated = true;
 
-            // Capture detailed diff information if file exists on disk
-            if (src_result == code::write_needed && src_path.file_exists())
+            // Capture detailed diff information, including for newly-created files
+            if (src_result == code::write_needed)
             {
                 auto content = std::make_shared<std::string>(src_cw->GetString());
                 ProcessFileDiff(src_path, content, form);
@@ -1153,6 +1153,8 @@ bool GenResults::GenerateCombinedXrcFile(bool comparison_only)
         if (!file_existed)
         {
             m_created_files.emplace_back(output_path);
+            auto content = std::make_shared<std::string>(xml_content);
+            ProcessFileDiff(output_path, content, nullptr);
             return true;
         }
 
@@ -1273,11 +1275,15 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
                            return file_diff;
                        }
 
+                       // If the file doesn't exist on disk (e.g. the output file was just
+                       // given a new name), leave disk_content empty so it is treated as a
+                       // new file. Diff::Compare will then report every generated line as added.
+                       // Do not attempt to open a missing file: wxFile::Open logs a system error
+                       // when opening fails, which would popup an unwanted warning during Compare.
                        wxue::ViewVector disk_content;
-                       if (!disk_content.ReadFile(std::string_view(path)))
+                       if (path.file_exists())
                        {
-                           // File doesn't exist or can't be read - skip diff
-                           return std::nullopt;
+                           std::ignore = disk_content.ReadFile(std::string_view(path));
                        }
 
                        wxue::ViewVector gen_content;

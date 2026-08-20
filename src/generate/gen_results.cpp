@@ -1259,50 +1259,61 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
     }
 
     // Launch async task to perform diff computation
-    m_pending_diffs.emplace_back(
-        std::async(std::launch::async,
-                   [path = std::move(path), content, form]() -> std::optional<FileDiff>
-                   {
-                       // Check if generated file is too large to process diff efficiently
-                       // Files larger than max_diff_file_size are flagged as too large to avoid
-                       // performance issues
-                       if (content->size() > max_diff_file_size)
-                       {
-                           FileDiff file_diff;
-                           file_diff.filename = path.filename();
-                           file_diff.form = form;
-                           file_diff.is_too_large_to_display = true;
-                           return file_diff;
-                       }
+    m_pending_diffs.emplace_back(std::async(
+        std::launch::async,
+        [path = std::move(path), content, form]() -> std::optional<FileDiff>
+        {
+            // Check if generated file is too large to process diff efficiently
+            // Files larger than max_diff_file_size are flagged as too large to avoid
+            // performance issues
+            if (content->size() > max_diff_file_size)
+            {
+                FileDiff file_diff;
+                file_diff.filename = path.filename();
+                file_diff.form = form;
+                file_diff.is_too_large_to_display = true;
+                return file_diff;
+            }
 
-                       // If the file doesn't exist on disk (e.g. the output file was just
-                       // given a new name), leave disk_content empty so it is treated as a
-                       // new file. Diff::Compare will then report every generated line as added.
-                       // Do not attempt to open a missing file: wxFile::Open logs a system error
-                       // when opening fails, which would popup an unwanted warning during Compare.
-                       wxue::ViewVector disk_content;
-                       if (path.file_exists())
-                       {
-                           std::ignore = disk_content.ReadFile(std::string_view(path));
-                       }
+            // If the file doesn't exist on disk (e.g. the output file was just
+            // given a new name), leave disk_content empty so it is treated as a
+            // new file. Diff::Compare will then report every generated line as added.
+            // Do not attempt to open a missing file: wxFile::Open logs a system error
+            // when opening fails, which would popup an unwanted warning during Compare.
+            wxue::ViewVector disk_content;
+            if (path.file_exists())
+            {
+                // If the file exists but cannot be read (permissions, transient IO
+                // error, etc.), report the failure instead of treating the file as
+                // brand-new (which would show every line as added).
+                if (!disk_content.ReadFile(std::string_view(path)))
+                {
+                    FileDiff file_diff;
+                    file_diff.filename = path.filename();
+                    file_diff.form = form;
+                    file_diff.error_message = std::format("Unable to read the existing file: {}",
+                                                          static_cast<std::string>(path));
+                    return file_diff;
+                }
+            }
 
-                       wxue::ViewVector gen_content;
-                       gen_content.ReadString(std::string_view(*content));
+            wxue::ViewVector gen_content;
+            gen_content.ReadString(std::string_view(*content));
 
-                       DiffResult diff_result = Diff::Compare(disk_content, gen_content);
-                       if (diff_result.has_differences)
-                       {
-                           FileDiff file_diff;
-                           file_diff.filename = path.filename();
-                           file_diff.original_content = disk_content.GetBuffer();
-                           file_diff.new_content = *content;
-                           file_diff.diff_result = std::move(diff_result);
-                           file_diff.form = form;
-                           return file_diff;
-                       }
+            DiffResult diff_result = Diff::Compare(disk_content, gen_content);
+            if (diff_result.has_differences)
+            {
+                FileDiff file_diff;
+                file_diff.filename = path.filename();
+                file_diff.original_content = disk_content.GetBuffer();
+                file_diff.new_content = *content;
+                file_diff.diff_result = std::move(diff_result);
+                file_diff.form = form;
+                return file_diff;
+            }
 
-                       return std::nullopt;
-                   }));
+            return std::nullopt;
+        }));
 }
 
 void GenResults::WaitForPendingDiffs()

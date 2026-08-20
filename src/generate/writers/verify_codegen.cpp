@@ -141,6 +141,13 @@ namespace
             log.emplace_back(std::format("File: {}", diff.filename));
             log.emplace_back(std::string(80, '-'));
 
+            if (!diff.error_message.empty())
+            {
+                log.emplace_back(diff.error_message);
+                log.emplace_back("");
+                continue;
+            }
+
             // Write diff details from left side (original/disk)
             for (const auto& line_diff: diff.diff_result.left_lines)
             {

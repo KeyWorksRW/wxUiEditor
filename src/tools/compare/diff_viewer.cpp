@@ -199,6 +199,19 @@ void DiffViewer::DisplayDiff(size_t index)
         return;
     }
 
+    // Handle files that could not be read from disk
+    if (!diff.error_message.empty())
+    {
+        wxue::string info;
+        info << "File " << (index + 1) << " of " << m_diffs.size() << " - " << diff.error_message;
+        m_diff_info->SetLabel(info.wx());
+
+        m_original_text->AppendText(diff.error_message);
+        m_original_text->SetReadOnly(true);
+        m_modified_text->SetReadOnly(true);
+        return;
+    }
+
     // Update info text
     if (diff.diff_result.has_differences)
     {

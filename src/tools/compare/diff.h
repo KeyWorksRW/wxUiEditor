@@ -50,6 +50,10 @@ struct FileDiff
     DiffResult diff_result;
     Node* form { nullptr };                  // The form node that generated this file
     bool is_too_large_to_display { false };  // Indicates diff is too large to process/display
+    // Set when the file exists on disk but could not be read (permissions, transient
+    // IO error, etc.). When set, no diff is available and the message should be shown
+    // instead of a misleading empty-original comparison.
+    std::string error_message;
 };
 
 class Diff

@@ -5387,20 +5387,20 @@
       </node>
       <node
         class="wxDialog"
-        class_name="SysHeaderDlg"
+        class_name="SysHeaderDlgBase"
+        derived_class_name="SysHeaderDlg"
+        derived_file="..\customprops\sys_header_dlg.cpp"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Add System Header(s)"
         minimum_size="-1,-1"
-        base_file="..\customprops\sys_header_dlg.cpp"
+        base_file="sys_header_dlg_base"
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h"
         header_preamble="class NodeProperty;"
         system_hdr_includes="wx/filehistory.h"
-        class_members="&quot;wxue::string m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GenLang::cplusplus;&quot; &quot;wxFileHistory m_FileHistory;&quot;"
-        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxue::string&amp; GetResults() const { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
+
         private_members="1"
-        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"

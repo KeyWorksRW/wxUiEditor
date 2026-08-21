@@ -49,6 +49,7 @@ set( file_list
     src/customprops/sb_fields_prop.cpp        # SBarFieldsProperty -- Property editor for status bar fields
     src/customprops/sizer_grow_columns.cpp    # GrowColumnsProperty -- Property editor for Growable Sizer Columns
     src/customprops/sizer_grow_rows.cpp       # GrowRowsProperty -- Property editor for Growable Sizer Rows
+    src/customprops/sys_header_dlg.cpp        # SysHeaderDlg for adding system header files to a list
     src/customprops/txt_string_prop.cpp       # EditStringProperty -- Derived wxStringProperty class for single-line text
 
     src/customprops/eventhandler_dlg.cpp      # EventHandlerDlg -- Dialog for editing event handlers

@@ -5,7 +5,6 @@
 set (wxue_generated_code
 
     # Non-base classes
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/sys_header_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../import/import_winres_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/debugsettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/node_info.cpp
@@ -70,6 +69,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/new_mdi_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sys_header_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/viewdetails_base.cpp
 
 )

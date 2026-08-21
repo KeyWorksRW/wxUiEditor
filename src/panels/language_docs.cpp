@@ -73,7 +73,7 @@ void LanguageDocs::ActivatePage()
     }
 }
 
-void LanguageDocs::OnNodeSelected(CustomEvent& /* event unused */)
+void LanguageDocs::OnNodeSelected([[maybe_unused]] CustomEvent& event)
 {
     if (!IsShown())
     {
@@ -199,12 +199,12 @@ void LanguageDocs::OnRuby(wxCommandEvent& /* event */)
 #endif
 }
 
-void LanguageDocs::OnHome(wxCommandEvent& /* event unused */)
+void LanguageDocs::OnHome([[maybe_unused]] wxCommandEvent& event)
 {
     ActivatePage();
 }
 
-void LanguageDocs::OnBack(wxCommandEvent& /* event unused */)
+void LanguageDocs::OnBack([[maybe_unused]] wxCommandEvent& event)
 {
 #if wxUSE_WEBVIEW
     if (!m_webview)
@@ -215,7 +215,7 @@ void LanguageDocs::OnBack(wxCommandEvent& /* event unused */)
 #endif
 }
 
-void LanguageDocs::OnForward(wxCommandEvent& /* event unused */)
+void LanguageDocs::OnForward([[maybe_unused]] wxCommandEvent& event)
 {
 #if wxUSE_WEBVIEW
     if (!m_webview)
@@ -225,7 +225,7 @@ void LanguageDocs::OnForward(wxCommandEvent& /* event unused */)
 #endif
 }
 
-void LanguageDocs::OnUpdateBack(wxUpdateUIEvent& /* event unused */)
+void LanguageDocs::OnUpdateBack([[maybe_unused]] wxUpdateUIEvent& event)
 {
 #if wxUSE_WEBVIEW
     if (!m_webview)
@@ -251,7 +251,7 @@ void LanguageDocs::OnUpdateBack(wxUpdateUIEvent& /* event unused */)
 #endif
 }
 
-void LanguageDocs::OnUpdateForward(wxUpdateUIEvent& /* event unused */)
+void LanguageDocs::OnUpdateForward([[maybe_unused]] wxUpdateUIEvent& event)
 {
 #if wxUSE_WEBVIEW
     if (!m_webview)

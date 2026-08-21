@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "..\..\wxui\html_find_dlg_base.h"
+#include "html_find_dlg_base.h"
 
 class wxHtmlWindow;
 

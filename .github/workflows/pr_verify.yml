@@ -99,6 +99,7 @@ jobs:
     with:
       create-setup: false
       build-type: Release
+      create-dummy-docs: true
       runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}
 
   buildMacOS:
@@ -107,4 +108,5 @@ jobs:
     with:
       create-setup: false
       build-type: Release
+      create-dummy-docs: true
       runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}

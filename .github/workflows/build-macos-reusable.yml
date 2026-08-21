@@ -23,6 +23,11 @@ on:
         required: false
         type: boolean
         default: false
+      create-dummy-docs:
+        description: 'Pre-create dummy wxWidgetsDocs.zip to skip docs generation (build/link verification only)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   buildMacOS:
@@ -57,6 +62,13 @@ jobs:
     - name: Setup sccache
       uses: mozilla-actions/sccache-action@v0.0.11
 
+    - name: Create dummy wxWidgetsDocs.zip (skip docs build)
+      if: ${{ inputs.create-dummy-docs }}
+      run: |
+        mkdir -p ${{github.workspace}}/build/archive
+        # Non-empty file: build_docs.cmake only checks existence, and CMakeRC
+        # embeds the bytes without parsing them, so any content is fine for linking.
+        echo "Dummy wxWidgets docs archive for link-time verification" > ${{github.workspace}}/build/archive/wxWidgetsDocs.zip
     # Note: FetchContent is intentionally NOT cached. The kwxFetch repo updates
     # weekly from wxWidgets master, and stale cache can cause build failures
     # due to partial/mismatched source files.

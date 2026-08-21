@@ -60,7 +60,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/eventhandler_dlg_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/find_in_page_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/fontpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp

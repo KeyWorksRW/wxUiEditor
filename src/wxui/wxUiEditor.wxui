@@ -7254,16 +7254,16 @@
     </node>
     <node
       class="wxDialog"
-      class_name="GenerateXrcDlg"
+      class_name="GenerateXrcDlgBase"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Generate XRC File(s)"
-      base_file="..\ui\generate_xrc_dlg"
+      base_file="generate_xrc_dlg_base"
       no_closing_brace="1"
       derived_class_name="GenerateXrcDlg"
-      derived_file="../ui/generate_xrc_dlg"
+      derived_file="../ui/generate_xrc_dlg.cpp"
       private_members="1"
-      use_derived_class="0"
+      use_derived_class="1"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

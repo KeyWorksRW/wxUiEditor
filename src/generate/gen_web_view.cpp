@@ -17,7 +17,7 @@
 
 #include "gen_web_view.h"
 
-wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
+wxObject* WebViewGenerator::CreateMockup(Node* /* node unused */, wxObject* parent)
 {
     if (Project.get_CodePreference() == GenLang::ruby ||
         Project.get_CodePreference() == GenLang::xrc)

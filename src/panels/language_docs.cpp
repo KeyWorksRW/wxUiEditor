@@ -225,7 +225,7 @@ void LanguageDocs::OnForward(wxCommandEvent& /* event unused */)
 #endif
 }
 
-void LanguageDocs::OnUpdateBack(wxUpdateUIEvent& event)
+void LanguageDocs::OnUpdateBack(wxUpdateUIEvent& /* event unused */)
 {
 #if wxUSE_WEBVIEW
     if (!m_webview)
@@ -251,7 +251,7 @@ void LanguageDocs::OnUpdateBack(wxUpdateUIEvent& event)
 #endif
 }
 
-void LanguageDocs::OnUpdateForward(wxUpdateUIEvent& event)
+void LanguageDocs::OnUpdateForward(wxUpdateUIEvent& /* event unused */)
 {
 #if wxUSE_WEBVIEW
     if (!m_webview)

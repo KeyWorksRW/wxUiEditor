@@ -61,7 +61,7 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
+bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* /* node unused */, NodeProperty* prop)
 {
     if (prop->isProp(prop_value))
     {

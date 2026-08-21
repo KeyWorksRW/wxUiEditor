@@ -3509,14 +3509,12 @@
       </node>
       <node
         class="wxDialog"
-        class_name="GlobalCustomIDS"
+        class_name="GlobalCustomIDSBase"
         title="Globally Add Prefix/Suffix to Custom IDs"
-        base_file="..\tools\global_ids_dlg"
+        base_file="global_ids_dlg_base"
         system_hdr_includes="map"
-        class_members="&quot;bool m_committed { true };&quot;"
         derived_class_name="GlobalCustomIDS"
-        derived_file="../tools/global_ids_dlg"
-        use_derived_class="0"
+        derived_file="../tools/global_ids_dlg.cpp"
         wxEVT_INIT_DIALOG="OnInit[python:OnInit]">
         <node
           class="wxBoxSizer"

@@ -21,7 +21,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_wizard.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../panels/nav_toolbar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg_gen.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/generate_xrc_dlg.cpp
@@ -46,6 +45,7 @@ set (wxue_generated_code
     # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/art_prop_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp

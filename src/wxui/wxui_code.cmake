@@ -24,7 +24,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/preferences_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../ui/xrccompare.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp
     ${CMAKE_CURRENT_LIST_DIR}/insert_widget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar.cpp
@@ -71,6 +70,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/sys_header_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/viewdetails_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/xrccompare_base.cpp
 
 )
 

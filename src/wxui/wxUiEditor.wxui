@@ -7908,15 +7908,14 @@
     </node>
     <node
       class="wxDialog"
-      class_name="XrcCompare"
+      class_name="XrcCompareBase"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Compare C++/XRC Generated UI"
-      base_file="..\ui\xrccompare.cpp"
+      base_file="xrccompare_base"
+      derived_file="..\ui\xrccompare.cpp"
       header_preamble="class Node;"
-      no_closing_brace="1"
       derived_class_name="XrcCompare"
-      private_members="1"
-      use_derived_class="0">
+      >
       <node
         class="wxGridBagSizer"
         class_access="protected:"

@@ -25,7 +25,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../ui/code_preference_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/preferences_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/insert_widget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_bartools.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menubutton.cpp
@@ -63,6 +62,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/id_editor_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/include_files_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/insert_widget_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/language_docs_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/new_mdi_base.cpp

@@ -24,12 +24,12 @@
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 
-class InsertWidget : public wxDialog
+class InsertWidgetBase : public wxDialog
 {
 public:
-    InsertWidget() {}
-    InsertWidget(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget", const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    InsertWidgetBase() {}
+    InsertWidgetBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget",
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
@@ -38,20 +38,16 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    wxue::string GetWidget() { return m_widget; }
-
 protected:
 
-    // Event handlers
+    // Virtual event handlers -- override them in your derived class
 
-    void OnChangeLimit(wxCommandEvent& event);
-    void OnInit(wxInitDialogEvent& event);
-    void OnKeyDown(wxKeyEvent& event);
-    void OnListBoxDblClick(wxCommandEvent& event);
-    void OnNameText(wxCommandEvent& event);
-    void OnOK(wxCommandEvent& event);
-
-private:
+    virtual void OnChangeLimit(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnListBoxDblClick(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNameText(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
     // Class member variables
 
@@ -59,8 +55,6 @@ private:
     wxListBox* m_listbox;
     wxStdDialogButtonSizer* m_stdBtn;
     wxTextCtrl* m_text_name;
-
-    wxue::string m_widget;
 };
 
 // ************* End of generated code ***********

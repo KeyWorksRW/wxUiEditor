@@ -397,6 +397,7 @@ set( file_list
     src/ui/generate_xrc_dlg.cpp         # Dialog for generating XRC file(s)
     src/ui/gridbag_item.cpp             # Dialog for inserting an item into a wxGridBagSizer node
     src/ui/import_dlg.cpp               # Dialog to import one or more projects
+    src/ui/insert_widget.cpp            # Dialog to insert a new widget
     src/ui/xrccompare.cpp               # C++/XRC UI Comparison dialog
     src/ui/viewdetails_dlg.cpp          # Dialog to display details about a node in the Mockup
 

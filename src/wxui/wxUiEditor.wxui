@@ -7620,16 +7620,15 @@
     </node>
     <node
       class="wxDialog"
-      class_name="InsertWidget"
+      class_name="InsertWidgetBase"
       icon="Art;wxART_EDIT|wxART_MENU"
       title="Insert Widget"
       minimum_size="-1,-1"
-      base_file="insert_widget"
-      inserted_hdr_code="wxue::string GetWidget() { return m_widget; }"
-      class_members="&quot;wxue::string m_widget;&quot;"
+      base_file="insert_widget_base"
+      derived_file="insert_widget.cpp"
       derived_class_name="InsertWidget"
       private_members="1"
-      use_derived_class="0"
+      use_derived_class="1"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

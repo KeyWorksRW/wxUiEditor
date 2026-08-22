@@ -34,19 +34,22 @@ set( file_list
     src/customprops/code_single_prop.cpp      # EditCodeSingleProperty -- Derived wxStringProperty class for single line code
     src/customprops/code_string_prop.cpp      # EditCodeProperty --Derived wxStringProperty class for code
     src/customprops/custom_colour_prop.cpp    # EditColourProperty -- Property editor for colour
-    src/customprops/custom_param_prop.cpp     # EditParamProperty -- Derived wxStringProperty class for custom control parameters
+    src/customprops/custom_param_prop.cpp     # EditParamProperty -- Derived wxStringProperty for custom control parameters
     src/customprops/directory_prop.cpp        # DirectoryProperty -- Derived wxStringProperty class for choosing a directory
     src/customprops/edit_custom_mockup.cpp    # Custom Property editor for pop_custom_mockup
     src/customprops/evt_string_prop.cpp       # EventStringProperty -- Derived wxStringProperty class for event function
     src/customprops/font_string_prop.cpp      # FontStringProperty -- Derived wxStringProperty class for font property
     src/customprops/html_string_prop.cpp      # EditHtmlProperty - Derived wxStringProperty class for HTML
+    src/customprops/id_editor_dlg.cpp         # Dialog for editing a ID name and optional value
     src/customprops/id_prop.cpp               # ID_Property -- Uses IDEditorDlg to edit a custom ID
     src/customprops/img_string_prop.cpp       # ImageDialogAdapter -- used by ImageStringProperty (img_string_prop.h)
+    src/customprops/include_files_dlg.cpp     # Dialog for editing a list of include files
     src/customprops/include_files_prop.cpp    # IncludeFilesProperty -- Derived wxStringProperty class for Include Files
     src/customprops/rearrange_prop.cpp        # RearrangeProperty -- wxRearangeList contents editor
     src/customprops/sb_fields_prop.cpp        # SBarFieldsProperty -- Property editor for status bar fields
     src/customprops/sizer_grow_columns.cpp    # GrowColumnsProperty -- Property editor for Growable Sizer Columns
     src/customprops/sizer_grow_rows.cpp       # GrowRowsProperty -- Property editor for Growable Sizer Rows
+    src/customprops/sys_header_dlg.cpp        # SysHeaderDlg for adding system header files to a list
     src/customprops/txt_string_prop.cpp       # EditStringProperty -- Derived wxStringProperty class for single-line text
 
     src/customprops/eventhandler_dlg.cpp      # EventHandlerDlg -- Dialog for editing event handlers
@@ -59,7 +62,7 @@ set( file_list
     src/customprops/pg_animation.cpp     # PropertyGrid_Animation -- Custom property grid class for animations
     src/customprops/pg_point.cpp         # CustomPointProperty -- Custom wxPGProperty for wxPoint
 
-    # (generated) customprops/art_prop_dlg.cpp        # Art Property Dialog for image property
+    src/customprops/art_prop_dlg.cpp       # ArtPropertyDlg -- derived class (base is art_prop_dlg_gen.cpp)
     # (generated) customprops/include_files_dlg.cpp
     # (generated) customprops/id_editor_dlg.cpp
     src/custom_ctrls/colour_rect_ctrl.cpp # ColourRectCtrl -- Control that displays a solid color
@@ -366,6 +369,7 @@ set( file_list
     src/tools/compare/diff.cpp          # Simple diff algorithm for comparing text files
     src/tools/compare/diff_viewer.cpp   # Dialog for displaying file differences
     src/tools/generate_dlg.cpp          # Dialog for choosing and generating specific language file(s)
+    src/tools/global_ids_dlg.cpp        # Dialog to Globally edit Custom IDs
 
     # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
     # tools/preview_settings.cpp    # Dialog for setting preview options
@@ -393,6 +397,7 @@ set( file_list
     src/ui/generate_xrc_dlg.cpp         # Dialog for generating XRC file(s)
     src/ui/gridbag_item.cpp             # Dialog for inserting an item into a wxGridBagSizer node
     src/ui/import_dlg.cpp               # Dialog to import one or more projects
+    src/ui/insert_widget.cpp            # Dialog to insert a new widget
     src/ui/xrccompare.cpp               # C++/XRC UI Comparison dialog
     src/ui/viewdetails_dlg.cpp          # Dialog to display details about a node in the Mockup
 

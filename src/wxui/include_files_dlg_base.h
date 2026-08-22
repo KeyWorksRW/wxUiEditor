@@ -14,53 +14,51 @@
 
 #include <wx/bitmap.h>
 #include <wx/button.h>
-#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/listbox.h>
-#include <wx/sizer.h>
-#include <wx/textctrl.h>
+#include <wx/stattext.h>
 
-class InsertWidget : public wxDialog
+class NodeProperty;
+
+class IncludeFilesDialogBase : public wxDialog
 {
 public:
-    InsertWidget() {}
-    InsertWidget(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget", const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    IncludeFilesDialogBase() {}
+    IncludeFilesDialogBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Include Files",
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert Widget", const wxPoint& pos =
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Include Files", const wxPoint& pos =
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-    wxue::string GetWidget() { return m_widget; }
-
 protected:
 
-    // Event handlers
+    // Virtual event handlers -- override them in your derived class
 
-    void OnChangeLimit(wxCommandEvent& event);
-    void OnInit(wxInitDialogEvent& event);
-    void OnKeyDown(wxKeyEvent& event);
-    void OnListBoxDblClick(wxCommandEvent& event);
-    void OnNameText(wxCommandEvent& event);
-    void OnOK(wxCommandEvent& event);
-
-private:
+    virtual void OnAdd(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMoveDown(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMoveUp(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRemove(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSort(wxCommandEvent& event) { event.Skip(); }
 
     // Class member variables
 
-    wxCheckBox* m_limit_to_children;
+    wxButton* m_btn_move_down;
+    wxButton* m_btn_move_up;
+    wxButton* m_btn_remove;
+    wxButton* m_btn_sort;
     wxListBox* m_listbox;
-    wxStdDialogButtonSizer* m_stdBtn;
-    wxTextCtrl* m_text_name;
-
-    wxue::string m_widget;
+    wxStaticText* m_staticText;
 };
 
 // ************* End of generated code ***********

@@ -5,11 +5,6 @@
 set (wxue_generated_code
 
     # Non-base classes
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/art_prop_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/edit_custom_mockup_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/id_editor_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/include_files_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../customprops/sys_header_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../import/import_winres_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/debugsettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/node_info.cpp
@@ -26,14 +21,10 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_wizard.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../panels/nav_toolbar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg_gen.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/preview_settings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/code_preference_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../ui/generate_xrc_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../ui/preferences_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../ui/xrccompare.cpp
     ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/insert_widget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_auibar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menu_bartools.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menubutton.cpp
@@ -51,26 +42,35 @@ set (wxue_generated_code
     # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/art_prop_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/doc_view_frame_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/doc_view_panel_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/edit_custom_mockup_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/eventhandler_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/fontpropdlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/generate_xrc_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/html_find_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/id_editor_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/include_files_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/insert_widget_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/language_docs_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/new_mdi_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sys_header_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/viewdetails_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/xrccompare_base.cpp
 
 )
 

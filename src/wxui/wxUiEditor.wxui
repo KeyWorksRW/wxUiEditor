@@ -3509,14 +3509,12 @@
       </node>
       <node
         class="wxDialog"
-        class_name="GlobalCustomIDS"
+        class_name="GlobalCustomIDSBase"
         title="Globally Add Prefix/Suffix to Custom IDs"
-        base_file="..\tools\global_ids_dlg"
+        base_file="global_ids_dlg_base"
         system_hdr_includes="map"
-        class_members="&quot;bool m_committed { true };&quot;"
         derived_class_name="GlobalCustomIDS"
-        derived_file="../tools/global_ids_dlg"
-        use_derived_class="0"
+        derived_file="../tools/global_ids_dlg.cpp"
         wxEVT_INIT_DIALOG="OnInit[python:OnInit]">
         <node
           class="wxBoxSizer"
@@ -3753,12 +3751,10 @@
         class="wxDialog"
         class_name="ArtBrowserDialog"
         title="Art Provider Image"
-        base_file="..\customprops\art_prop_dlg"
-        local_hdr_includes="img_props.h"
+        base_file="art_prop_dlg_gen"
         no_closing_brace="1"
         derived_class_name="ArtPropertyDlg"
-        private_members="1"
-        use_derived_class="0"
+        pure_virtual_functions="1"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -5039,14 +5035,15 @@
       </node>
       <node
         class="wxDialog"
-        class_name="IDEditorDlg"
+        class_name="IDEditorDlgBase"
         title="ID Editor"
-        base_file="..\customprops\id_editor_dlg"
+        base_file="id_editor_dlg_base"
         header_preamble="class Node;"
         class_members="&quot;Node* m_node;&quot; &quot;wxString m_result;&quot; &quot;bool m_prefix_selected { false };&quot; &quot;bool m_suffix_selected { false };&quot; &quot;&quot; &quot;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot; &quot;void SetNode(Node* node) { m_node = node; }&quot; &quot;bool SelectPrefixSuffix(Node* node);&quot;"
+        derived_class_name="IDEditorDlg"
+        derived_file="..\customprops\id_editor_dlg.cpp"
         private_members="1"
-        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -5217,11 +5214,12 @@
         class="wxDialog"
         class_name="EditCustomMockupBase"
         title="Mockup Widget Settings"
-        base_file="..\customprops\edit_custom_mockup_base"
+        base_file="edit_custom_mockup_base"
         class_members="&quot;wxString m_result;&quot;"
         class_methods="&quot;wxString GetResults() { return m_result; }&quot;"
+        derived_class_name="EditCustomMockup"
+        derived_file="../customprops/edit_custom_mockup.cpp"
         private_members="0"
-        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -5311,16 +5309,15 @@
       </node>
       <node
         class="wxDialog"
-        class_name="IncludeFilesDialog"
+        class_name="IncludeFilesDialogBase"
         title="Include Files"
-        base_file="..\customprops\include_files_dlg.cpp"
+        base_file="include_files_dlg_base"
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h;wx/tokenzr.h"
         header_preamble="class NodeProperty;"
-        class_members="&quot;wxString m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GenLang::cplusplus;&quot;"
-        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxString&amp; GetResults() { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
+        derived_class_name="IncludeFilesDialog"
+        derived_file="..\customprops\include_files_dlg.cpp"
         private_members="1"
-        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -5388,20 +5385,20 @@
       </node>
       <node
         class="wxDialog"
-        class_name="SysHeaderDlg"
+        class_name="SysHeaderDlgBase"
+        derived_class_name="SysHeaderDlg"
+        derived_file="..\customprops\sys_header_dlg.cpp"
         persist="1"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
         title="Add System Header(s)"
         minimum_size="-1,-1"
-        base_file="..\customprops\sys_header_dlg.cpp"
+        base_file="sys_header_dlg_base"
         local_src_includes="node.h;node_prop.h;project_handler.h"
         system_src_includes="wx/filedlg.h"
         header_preamble="class NodeProperty;"
         system_hdr_includes="wx/filehistory.h"
-        class_members="&quot;wxue::string m_value;&quot; &quot;NodeProperty* m_prop { nullptr };&quot; &quot;GenLang m_language = GenLang::cplusplus;&quot; &quot;wxFileHistory m_FileHistory;&quot;"
-        class_methods="&quot;void Initialize(NodeProperty* prop);&quot; &quot;const wxue::string&amp; GetResults() const { return m_value; }&quot; &quot;void SetButtonsEnableState(bool set_ok_btn = true);&quot;"
+
         private_members="1"
-        use_derived_class="0"
         wxEVT_INIT_DIALOG="OnInit">
         <node
           class="wxBoxSizer"
@@ -7257,16 +7254,16 @@
     </node>
     <node
       class="wxDialog"
-      class_name="GenerateXrcDlg"
+      class_name="GenerateXrcDlgBase"
       persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Generate XRC File(s)"
-      base_file="..\ui\generate_xrc_dlg"
+      base_file="generate_xrc_dlg_base"
       no_closing_brace="1"
       derived_class_name="GenerateXrcDlg"
-      derived_file="../ui/generate_xrc_dlg"
+      derived_file="../ui/generate_xrc_dlg.cpp"
       private_members="1"
-      use_derived_class="0"
+      use_derived_class="1"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -7623,16 +7620,15 @@
     </node>
     <node
       class="wxDialog"
-      class_name="InsertWidget"
+      class_name="InsertWidgetBase"
       icon="Art;wxART_EDIT|wxART_MENU"
       title="Insert Widget"
       minimum_size="-1,-1"
-      base_file="insert_widget"
-      inserted_hdr_code="wxue::string GetWidget() { return m_widget; }"
-      class_members="&quot;wxue::string m_widget;&quot;"
+      base_file="insert_widget_base"
+      derived_file="insert_widget.cpp"
       derived_class_name="InsertWidget"
       private_members="1"
-      use_derived_class="0"
+      use_derived_class="1"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -7911,15 +7907,14 @@
     </node>
     <node
       class="wxDialog"
-      class_name="XrcCompare"
+      class_name="XrcCompareBase"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Compare C++/XRC Generated UI"
-      base_file="..\ui\xrccompare.cpp"
+      base_file="xrccompare_base"
+      derived_file="..\ui\xrccompare.cpp"
       header_preamble="class Node;"
-      no_closing_brace="1"
       derived_class_name="XrcCompare"
-      private_members="1"
-      use_derived_class="0">
+      >
       <node
         class="wxGridBagSizer"
         class_access="protected:"

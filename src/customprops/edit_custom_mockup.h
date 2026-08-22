@@ -10,7 +10,7 @@
 #include <wx/propgrid/editors.h>  // wxPropertyGrid editors
 #include <wx/propgrid/props.h>    // wxPropertyGrid Property Classes
 
-#include "edit_custom_mockup_base.h"
+#include "../wxui/edit_custom_mockup_base.h"
 
 class Node;
 class NodeEvent;
@@ -46,10 +46,15 @@ private:
     NodeProperty* m_prop;
 };
 
-class EditCustomMockupDialog : public EditCustomMockupBase
+class EditCustomMockup : public EditCustomMockupBase
 {
 public:
-    EditCustomMockupDialog(wxWindow* parent, NodeProperty* prop);
+    EditCustomMockup() {}  // If you use this constructor, you must call Create(parent)
+    EditCustomMockup(wxWindow* parent) { Create(parent); }
+    EditCustomMockup(wxWindow* parent, NodeProperty* prop);
 
 protected:
+    void OnInit(wxInitDialogEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
+    void OnSelect(wxCommandEvent& event) override;
 };

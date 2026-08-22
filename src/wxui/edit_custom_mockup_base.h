@@ -47,11 +47,11 @@ public:
 
 protected:
 
-    // Event handlers
+    // Virtual event handlers -- override them in your derived class
 
-    void OnInit(wxInitDialogEvent& event);
-    void OnOK(wxCommandEvent& event);
-    void OnSelect(wxCommandEvent& event);
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSelect(wxCommandEvent& event) { event.Skip(); }
 
     // Validator variables
 

@@ -902,6 +902,7 @@ static const std::initializer_list<GenType> parentless_types = {
     type_ribbonpanel,
     type_ribbontool,
     type_ribbontoolbar,
+    type_infobarbtn,
     type_tool,
     type_wizardpagesimple
 

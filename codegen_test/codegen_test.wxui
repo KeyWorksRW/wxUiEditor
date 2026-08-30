@@ -1037,7 +1037,16 @@
           <node
             class="wxInfoBar"
             show_effect="expand"
-            flags="wxEXPAND" />
+            flags="wxEXPAND">
+            <node
+              class="infobar_btn"
+              id="wxID_SAVE"
+              label="Save"
+              wxEVT_BUTTON="OnInfoBarSave" />
+            <node
+              class="infobar_btn"
+              id="wxID_CLOSE" />
+          </node>
         </node>
         <node
           class="wxBoxSizer"

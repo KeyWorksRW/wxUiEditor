@@ -125,6 +125,8 @@ public:
         AddRibbonButton,
         AddRibbonGalleryItem,
 
+        AddInfobarButton,
+
         AddPropgridPage,
         AddPropgridItem,
         AddPropgridCategory,

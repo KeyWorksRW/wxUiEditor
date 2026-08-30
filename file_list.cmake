@@ -161,6 +161,7 @@ set( file_list
     src/generate/gen_html_window.cpp       # wxHtmlWindow generator
     src/generate/gen_hyperlink.cpp         # wxHyperlinkCtrl generator
     src/generate/gen_infobar.cpp           # wxInfoBar generator
+    src/generate/gen_infobar_btn.cpp       # wxInfoBar button generator
     src/generate/gen_listbox.cpp           # wxListBox generator
     src/generate/gen_listview.cpp          # wxListView generator
     src/generate/gen_radio_box.cpp         # wxRadioBox generator

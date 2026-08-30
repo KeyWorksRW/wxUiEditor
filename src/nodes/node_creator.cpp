@@ -226,6 +226,14 @@ Node::Validity NodeCreator::ValidateParentConstraints(GenName name, NodeDeclarat
 
 NodeSharedPtr NodeCreator::AllocateChildNode(GenName name, NodeDeclaration* node_decl, Node* parent)
 {
+    // type_infobarbtn pseudo-children are only allowed as children of a wxInfoBar. This check is
+    // required here because AllocateChildNode is called directly by CreateNode, bypassing
+    // CanParentAcceptChild().
+    if (node_decl->is_Type(type_infobarbtn) && !parent->is_Gen(gen_wxInfoBar))
+    {
+        return {};
+    }
+
     auto max_children = parent->get_AllowableChildren(node_decl->get_GenType());
 
     if (max_children == child_count::infinite)
@@ -369,6 +377,11 @@ Node* NodeCreator::is_ValidCreateParent(GenName name, Node* parent, bool use_rec
 
 bool NodeCreator::CanParentAcceptChild(NodeDeclaration* node_decl, Node* parent)
 {
+    if (node_decl->is_Type(type_infobarbtn) && !parent->is_Gen(gen_wxInfoBar))
+    {
+        return false;
+    }
+
     auto max_children = parent->get_AllowableChildren(node_decl->get_GenType());
 
     if (max_children == child_count::infinite)

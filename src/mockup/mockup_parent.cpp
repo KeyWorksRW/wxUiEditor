@@ -441,6 +441,27 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     }
 
     NodeProperty* prop = event.GetNodeProperty();
+
+    // If a button's id is a stock id, then wxWidgets will auto-populate the label from the
+    // id whenever the label is left empty. Changing the id of such a widget requires
+    // recreating the Mockup so the new auto-generated label is displayed. wxInfoBar buttons
+    // must also be recreated whenever their label changes since wxInfoBar has no API to
+    // update a button's label in place.
+    if (prop->isProp(prop_id) &&
+        (prop->getNode()->is_Gen(GenEnum::gen_wxButton) ||
+         prop->getNode()->is_Gen(GenEnum::gen_infobar_btn)) &&
+        prop->getNode()->as_string(prop_label).empty())
+    {
+        CreateContent();
+        return;
+    }
+
+    if (prop->isProp(prop_label) && prop->getNode()->is_Gen(GenEnum::gen_infobar_btn))
+    {
+        CreateContent();
+        return;
+    }
+
     if (prop->isProp(prop_tooltip))
     {
         if (Node* node = wxGetFrame().getSelectedNode(); node)
@@ -484,7 +505,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     }
 
     // Some properties can be changed after the widget is created. We call the generator to update
-    // the widget, and if returns true then we resize and repaint the entire Mockup window. There
+    // the widget, and if it returns true then we resize and repaint the entire Mockup window. There
     // are cases where the resize isn't necessary, but since the updating happens in a Freeze/Thaw
     // section, there shouldn't be any noticeable effect to the user with a resize that doesn't
     // actually change the size.

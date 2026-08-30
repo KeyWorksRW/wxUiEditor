@@ -56,6 +56,7 @@
 #include "gen_html_window.h"     // HtmlWindowGenerator -- wxHtmlWindow generator
 #include "gen_hyperlink.h"       // HyperlinkGenerator -- wxHyperlinkCtrl generator
 #include "gen_infobar.h"         // InfoBarGenerator -- wxInfoBar generator
+#include "gen_infobar_btn.h"     // InfoBarBtnGenerator -- wxInfoBar button generator
 #include "gen_listbook.h"        // ListbookGenerator -- wxListbook generator
 #include "gen_listbox.h"         // ListBoxGenerator -- wxListBox generator
 #include "gen_listview.h"        // ListViewGenerator -- wxListView generator
@@ -167,6 +168,7 @@ void NodeCreator::InitGenerators()
     SetGenerator<HyperlinkGenerator>(gen_wxHyperlinkCtrl);
     SetGenerator<WebViewGenerator>(gen_wxWebView);
     SetGenerator<InfoBarGenerator>(gen_wxInfoBar);
+    SetGenerator<InfoBarBtnGenerator>(gen_infobar_btn);
     SetGenerator<ListBoxGenerator>(gen_wxListBox);
     SetGenerator<HtmlListBoxGenerator>(gen_wxSimpleHtmlListBox);
     SetGenerator<AuiNotebookGenerator>(gen_wxAuiNotebook);

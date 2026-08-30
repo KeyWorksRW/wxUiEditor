@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxInfoBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -44,6 +44,49 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
     m_infobar->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return m_infobar;
+}
+
+void InfoBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
+                                     bool /* is_preview */)
+{
+    wxInfoBar* infobar = wxDynamicCast(wxobject, wxInfoBar);
+
+    // The wxRuby3 mockup for this node is a wxStaticText, not a wxInfoBar.
+    if (infobar == nullptr)
+    {
+        return;
+    }
+
+    int next_free_id = wxID_HIGHEST + 1;
+    for (const auto& child_node: node->get_ChildNodePtrs())
+    {
+        int button_id = child_node->as_int(prop_id);
+        if (button_id == wxID_ANY)
+        {
+            // wxID_ANY is not valid; assign a unique id so each mockup button can be
+            // distinguished (e.g. by OnButton when re-showing the message).
+            button_id = next_free_id;
+            ++next_free_id;
+        }
+
+        infobar->AddButton(button_id, child_node->as_wxString(prop_label));
+    }
+}
+
+bool InfoBarGenerator::OnPropertyChange(wxObject* /* widget */, Node* /* node */,
+                                        NodeProperty* prop)
+{
+    // The buttons displayed by the wxInfoBar are created from each child infobar_btn node's id
+    // and label in AfterCreation(). Changing either property requires a full Mockup rebuild so
+    // that the buttons are redrawn with the new values -- there is no wxInfoBar API to update a
+    // button's id or label in place.
+
+    if (prop && (prop->isProp(prop_id) || prop->isProp(prop_label)))
+    {
+        return false;
+    }
+
+    return BaseGenerator::OnPropertyChange(nullptr, nullptr, prop);
 }
 
 bool InfoBarGenerator::ConstructionCode(Code& code)

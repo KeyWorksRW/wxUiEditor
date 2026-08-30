@@ -427,6 +427,14 @@
         <property name="duration" type="int"
             help="Set the duration of the animation (in milliseconds) used when showing or hiding the bar.">500</property>
     </gen>
+    <gen class="infobar_btn" image="close_btn" type="infobarbtn">
+        <property name="id" type="id"
+            help="The button identifier (stock or custom).">wxID_ANY</property>
+        <property name="label" type="string_escapes"
+            help="Button text (leave empty for stock id label)"/>
+        <event name="wxEVT_BUTTON" class="wxCommandEvent"
+            help="Generated when the button is clicked"/>
+    </gen>
     <gen class="MenuBar" image="wxMenuBar" type="menubar_form">
         <inherits class="Language Settings"/>
         <inherits class="XRC Settings"/>

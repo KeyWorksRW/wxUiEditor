@@ -280,6 +280,11 @@ bool Node::is_ChildAllowed(NodeDeclaration* child)
 {
     ASSERT(child);
 
+    if (child->get_GenType() == type_infobarbtn && !is_Gen(gen_wxInfoBar))
+    {
+        return false;
+    }
+
     const ptrdiff_t max_children = m_declaration->get_AllowableChildren(child->get_GenType());
 
     if (max_children == child_count::none)

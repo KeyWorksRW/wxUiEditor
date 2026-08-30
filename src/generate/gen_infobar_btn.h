@@ -1,0 +1,28 @@
+///////////////////////////////////////////////////////////////////////////////
+// Purpose:   wxInfoBar button generator
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+///////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "base_generator.h"  // BaseGenerator -- Base Generator class
+
+class Code;
+class Node;
+class NodeEvent;
+
+class InfoBarBtnGenerator : public BaseGenerator
+{
+public:
+    bool ConstructionCode(Code& code) override;
+
+    void GenEvent(Code& code, NodeEvent* event, const std::string& class_name) override;
+
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
+                     GenLang /* language */) override;
+
+    int GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    void RequiredHandlers(Node* /* node */, std::set<std::string>& /* handlers */) override;
+};

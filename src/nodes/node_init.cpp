@@ -419,6 +419,11 @@ constexpr auto lstParentChild = std::to_array<ParentChild>({
     ParentChild {
         .parent = type_treelistctrl, .child = type_treelistctrlcolumn, .max_children = infinite },
 
+    // This must be gated by gen_wxInfoBar: NodeCreator::CanParentAcceptChild, Node::is_ChildAllowed
+    // and NodeCreator::AllocateChildNode all reject type_infobarbtn unless the parent is a
+    // wxInfoBar. The parent remains type_widget for wxInfoBar compatibility.
+    ParentChild { .parent = type_widget, .child = type_infobarbtn, .max_children = infinite },
+
     ParentChild { .parent = type_wx_document,
                   .child = type_mdi_menubar,
                   .max_children = one },  // default menu bar when no document is loaded

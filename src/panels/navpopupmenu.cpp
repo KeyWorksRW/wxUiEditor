@@ -810,6 +810,19 @@ void NavPopupMenu::MenuAddCommands()
                 std::to_underlying(Menu::AddRibbonButton));
             break;
 
+        case gen_wxInfoBar:
+        case gen_infobar_btn:
+            add_sizer = false;
+            Append(std::to_underlying(Menu::AddInfobarButton), "Add Button");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_infobar_btn);
+                },
+                std::to_underlying(Menu::AddInfobarButton));
+            break;
+
         case gen_wxRibbonGallery:
         case gen_ribbonGalleryItem:
             add_sizer = false;

@@ -110,6 +110,12 @@ private:
     NodeTreeMap m_node_tree_map;
     TreeNodeMap m_tree_node_map;
 
+    // Preserves expansion state across a full tree rebuild (Undo/Redo). Keyed by Node* so
+    // identity survives in-place mutations (the stale wxTreeItemId's are discarded).
+    using ExpansionMap = std::map<Node*, bool>;
+    ExpansionMap m_saved_expansion_state;
+    Node* m_expansion_root { nullptr };  // :project root captured when state was saved
+
     IconIndexMap m_icon_index;
 
     wxTreeCtrl* m_tree_ctrl { nullptr };
@@ -118,4 +124,7 @@ private:
     NavToolbar* m_toolbar { nullptr };
 
     bool m_isSelChangeSuspended { false };
+
+    void SaveExpansionState(Node* root);
+    void RestoreExpansionState();
 };

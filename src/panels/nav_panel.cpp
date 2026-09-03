@@ -207,6 +207,8 @@ void NavigationPanel::OnProjectUpdated()
     }
 #endif  // _DEBUG
 
+    SaveExpansionState(Project.get_ProjectNode());
+
     m_tree_ctrl->DeleteAllItems();
     m_tree_node_map.clear();
     m_node_tree_map.clear();
@@ -218,31 +220,38 @@ void NavigationPanel::OnProjectUpdated()
 
     AddAllChildren(Project.get_ProjectNode());
 
-    // First we expand everything, then we collapse all forms and folders
-    ExpandAllNodes(Project.get_ProjectNode());
-
-    std::vector<Node*> forms;
-    Project.CollectForms(forms);
-
-    for (const auto& form: forms)
+    if (m_saved_expansion_state.empty() || m_expansion_root != Project.get_ProjectNode())
     {
-        if (const NodeTreeMap::iterator result = m_node_tree_map.find(form);
-            result != m_node_tree_map.end())
-        {
-            m_tree_ctrl->Collapse(result->second);
-        }
-    }
+        // New project, or nothing to restore: use the default expansion.
+        ExpandAllNodes(Project.get_ProjectNode());
 
-    for (const auto& folder: Project.get_ChildNodePtrs())
-    {
-        if (folder->is_Gen(gen_folder))
+        std::vector<Node*> forms;
+        Project.CollectForms(forms);
+
+        for (const auto& form: forms)
         {
-            if (const NodeTreeMap::iterator result = m_node_tree_map.find(folder.get());
+            if (const NodeTreeMap::iterator result = m_node_tree_map.find(form);
                 result != m_node_tree_map.end())
             {
                 m_tree_ctrl->Collapse(result->second);
             }
         }
+
+        for (const auto& folder: Project.get_ChildNodePtrs())
+        {
+            if (folder->is_Gen(gen_folder))
+            {
+                if (const NodeTreeMap::iterator result = m_node_tree_map.find(folder.get());
+                    result != m_node_tree_map.end())
+                {
+                    m_tree_ctrl->Collapse(result->second);
+                }
+            }
+        }
+    }
+    else
+    {
+        RestoreExpansionState();
     }
 }
 
@@ -695,6 +704,62 @@ void NavigationPanel::ExpandAllNodes(Node* node)
     {
         ExpandAllNodes(child.get());
     }
+}
+
+void NavigationPanel::SaveExpansionState(Node* root)
+{
+    const wxWindowUpdateLocker freeze(this);
+    m_saved_expansion_state.clear();
+    m_expansion_root = root;
+
+    const auto save_recursive = [this](auto&& self, wxTreeItemId item) -> void
+    {
+        if (!item.IsOk())
+        {
+            return;
+        }
+
+        if (m_tree_ctrl->ItemHasChildren(item))
+        {
+            if (Node* node = GetNode(item))
+            {
+                m_saved_expansion_state[node] = m_tree_ctrl->IsExpanded(item);
+            }
+        }
+
+        wxTreeItemIdValue cookie;
+        for (auto child = m_tree_ctrl->GetFirstChild(item, cookie); child.IsOk();
+             child = m_tree_ctrl->GetNextChild(item, cookie))
+        {
+            self(self, child);
+        }
+    };
+    save_recursive(save_recursive, m_tree_ctrl->GetRootItem());
+}
+
+void NavigationPanel::RestoreExpansionState()
+{
+    const wxWindowUpdateLocker freeze(this);
+    for (const auto& [node, is_expanded]: m_saved_expansion_state)
+    {
+        if (const NodeTreeMap::iterator result = m_node_tree_map.find(node);
+            result != m_node_tree_map.end())
+        {
+            if (m_tree_ctrl->ItemHasChildren(result->second))
+            {
+                if (is_expanded)
+                {
+                    m_tree_ctrl->Expand(result->second);
+                }
+                else
+                {
+                    m_tree_ctrl->Collapse(result->second);
+                }
+            }
+        }
+    }
+    m_saved_expansion_state.clear();
+    m_expansion_root = nullptr;
 }
 
 void NavigationPanel::DeleteNode(Node* node)

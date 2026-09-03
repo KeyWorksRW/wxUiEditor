@@ -22,6 +22,7 @@
 #include <ranges>
 #include <string>
 #include <string_view>
+#include <tuple>
 
 namespace wxue
 {
@@ -58,17 +59,17 @@ namespace wxue
     // These functions are provided for convenience since they cast a char to unsigned char before
     // calling the std:: library function.
 
-    inline auto is_alnum(char character) -> bool { return std::isalnum(static_cast<unsigned char>(character)); }
-    inline auto is_alpha(char character) -> bool { return std::isalpha(static_cast<unsigned char>(character)); }
-    inline auto is_blank(char character) -> bool { return std::isblank(static_cast<unsigned char>(character)); }
-    inline auto is_cntrl(char character) -> bool { return std::iscntrl(static_cast<unsigned char>(character)); }
-    inline auto is_digit(char character) -> bool { return std::isdigit(static_cast<unsigned char>(character)); }
-    inline auto is_graph(char character) -> bool { return std::isgraph(static_cast<unsigned char>(character)); }
-    inline auto is_lower(char character) -> bool { return std::islower(static_cast<unsigned char>(character)); }
-    inline auto is_print(char character) -> bool { return std::isprint(static_cast<unsigned char>(character)); }
-    inline auto is_punctuation(char character) -> bool { return std::ispunct(static_cast<unsigned char>(character)); }
-    inline auto is_upper(char character) -> bool { return std::isupper(static_cast<unsigned char>(character)); }
-    inline auto is_whitespace(char character) -> bool { return std::isspace(static_cast<unsigned char>(character)); }
+    inline bool is_alnum(char character) { return std::isalnum(static_cast<unsigned char>(character)); }
+    inline bool is_alpha(char character) { return std::isalpha(static_cast<unsigned char>(character)); }
+    inline bool is_blank(char character) { return std::isblank(static_cast<unsigned char>(character)); }
+    inline bool is_cntrl(char character) { return std::iscntrl(static_cast<unsigned char>(character)); }
+    inline bool is_digit(char character) { return std::isdigit(static_cast<unsigned char>(character)); }
+    inline bool is_graph(char character) { return std::isgraph(static_cast<unsigned char>(character)); }
+    inline bool is_lower(char character) { return std::islower(static_cast<unsigned char>(character)); }
+    inline bool is_print(char character) { return std::isprint(static_cast<unsigned char>(character)); }
+    inline bool is_punctuation(char character) { return std::ispunct(static_cast<unsigned char>(character)); }
+    inline bool is_upper(char character) { return std::isupper(static_cast<unsigned char>(character)); }
+    inline bool is_whitespace(char character) { return std::isspace(static_cast<unsigned char>(character)); }
 
     // clang-format on
 
@@ -88,38 +89,38 @@ namespace wxue
 
     template <typename T>
     // Compares result against -1 -- use with returns from find, contains, locate, etc.
-    constexpr auto is_found(T result) -> bool
+    constexpr bool is_found(T result)
     {
         return (static_cast<ptrdiff_t>(result)) != -1;
     }
 
     // Find any one of the characters in a group. Returns offset from the beginning of the
     // src string if found, npos if not.
-    auto find_oneof(const wxString& src, const std::string& group, size_t src_start = 0) -> size_t;
+    size_t find_oneof(const wxString& src, const std::string& group, size_t src_start = 0);
 
     // Returns view to the next whitespace character. View is empty if there are no more
     // whitespaces.
-    auto find_space(std::string_view str) noexcept -> std::string_view;
-    inline auto find_space(const wxString& str) noexcept -> std::string_view
+    std::string_view find_space(std::string_view str) noexcept;
+    inline std::string_view find_space(const wxString& str) noexcept
     {
         return find_space(std::string_view(str.ToStdString()));
     }
 
-    auto find_nonspace(std::string_view str) noexcept -> std::string_view;
-    inline auto find_nonspace(const wxString& str) noexcept -> std::string_view
+    std::string_view find_nonspace(std::string_view str) noexcept;
+    inline std::string_view find_nonspace(const wxString& str) noexcept
     {
         return find_nonspace(std::string_view(str.ToStdString()));
     }
 
     // Equivalent to find_nonspace(find_space(str)).
-    auto stepover(std::string_view str) noexcept -> std::string_view;
-    inline auto stepover(const wxString& str) noexcept -> std::string_view
+    std::string_view stepover(std::string_view str) noexcept;
+    inline std::string_view stepover(const wxString& str) noexcept
     {
         return stepover(std::string_view(str.ToStdString()));
     }
 
     // Only use for non-UTF-8 strings -- otherwise use wxString::MakeLower()
-    auto MakeLower(std::string& str) -> std::string&;
+    std::string& MakeLower(std::string& str);
 
     // Unlike std::stoi, wxue::atoi accepts a std::string_view, returns 0 instead of throwing
     // exceptions, and handles hexadecimal numbers beginning with 0x or 0X.
@@ -129,11 +130,11 @@ namespace wxue
     // If string begins with '0x' it is assumed to be hexadecimal and is converted.
     // String may begin with a '-' or '+' to indicate the sign of the integer.
     // Returns 0 if the string is empty or doesn't contain any digits.
-    auto atoi(std::string_view str) noexcept -> int;
+    int atoi(std::string_view str) noexcept;
 
     template <typename T>
     // Converts a numeric value into a string.
-    auto itoa(T value) -> std::string
+    std::string itoa(T value)
     {
         return std::to_string(value);
     }
@@ -158,7 +159,7 @@ namespace wxue
         }
     }
 
-    inline auto get_View(const wxString& str) -> std::string_view
+    inline std::string_view get_View(const wxString& str)
     {
         return std::string_view(str.ToStdString());
     }
@@ -198,34 +199,33 @@ namespace wxue
     //
     // The return position is to the character in src that ended the string, or
     // **std::string::npos** if no ending character was found.
-    auto extract_substring(std::string_view src, wxString& dest, size_t start) -> size_t;
+    size_t extract_substring(std::string_view src, wxString& dest, size_t start);
 
     // Identical to extract_substring only it returns a wxString instead of a size_t
-    inline auto create_substring(std::string_view src, size_t offset = 0) -> wxString
+    inline wxString create_substring(std::string_view src, size_t offset = 0)
     {
         wxString dest;
         extract_substring(src, dest, offset);
         return dest;
     }
 
-    auto contains(std::string_view haystack, char character, CASE checkcase) -> bool;
+    bool contains(std::string_view haystack, char character, CASE checkcase);
 
     // Returns true if strings are identical
-    auto is_sameas(std::string_view str1, std::string_view str2, CASE checkcase = CASE::exact)
-        -> bool;
+    bool is_sameas(std::string_view str1, std::string_view str2, CASE checkcase = CASE::exact);
 
     // Returns true if the sub-string is identical to the first part of main
-    auto is_sameprefix(std::string_view main, std::string_view sub, CASE checkcase = CASE::exact)
-        -> bool;
+    bool is_sameprefix(std::string_view main, std::string_view substr,
+                       CASE checkcase = CASE::exact);
 
     // **************** File/path related functions ****************
 
     // wxWidgets normally uses wxFileName for path manipulations. These functions allow you to
     // use a wxString for a file/path name while still allowing some common path manipulations.
 
-    auto find_extension(std::string_view str) -> std::string_view;
+    std::string_view find_extension(std::string_view str);
     template <typename T>
-    auto find_extension(const T& str) -> std::string_view
+    std::string_view find_extension(const T& str)
         requires(std::is_same_v<T, wxString>)
     {
         return find_extension(std::string_view(str));
@@ -234,9 +234,9 @@ namespace wxue
     // name doesn't currently have an extension.
     void replace_extension(wxString& str, std::string_view new_extension);
 
-    auto find_filename(std::string_view str) noexcept -> std::string_view;
+    std::string_view find_filename(std::string_view str) noexcept;
     template <typename T>
-    auto find_filename(const T& str) -> std::string_view
+    std::string_view find_filename(const T& str)
         requires(std::is_same_v<T, wxString>)
     {
         return find_filename(std::string_view(str.ToStdString()));
@@ -247,9 +247,9 @@ namespace wxue
     //
     // Note that if the string ends with a filename, and you call this function, the original
     // filename will be converted into a folder name followed by the new filename.
-    auto append_filename(wxString& path, const wxString& filename) -> wxString&;
+    wxString& append_filename(wxString& path, const wxString& filename);
 
-    auto append_folder_name(wxString& path, const wxString& folder_name) -> wxString&;
+    wxString& append_folder_name(wxString& path, const wxString& folder_name);
 
     ////////////////////////// SaveCwd class and related constants ////////////////
 
@@ -271,10 +271,10 @@ namespace wxue
 
         SaveCwd(const SaveCwd&) = default;
         SaveCwd(SaveCwd&&) = delete;
-        auto operator=(const SaveCwd&) -> SaveCwd& = default;
-        auto operator=(SaveCwd&&) -> SaveCwd& = delete;
+        SaveCwd& operator=(const SaveCwd&) = default;
+        SaveCwd& operator=(SaveCwd&&) = delete;
 
-        [[nodiscard]] auto get_SavedCwd() const -> const wxString& { return m_saved_cwd; }
+        [[nodiscard]] const wxString& get_SavedCwd() const { return m_saved_cwd; }
 
         ~SaveCwd()
         {
@@ -282,7 +282,7 @@ namespace wxue
             {
                 // Deliberately ignoring the return value because there's nothing we can do about it
                 // here.
-                (void) wxSetWorkingDirectory(m_saved_cwd);
+                std::ignore = wxSetWorkingDirectory(m_saved_cwd);
             }
         }
 

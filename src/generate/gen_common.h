@@ -28,7 +28,7 @@ class FontProperty;
 // characters (e.g. "123", "%%", "1,000").
 //
 // Will return "wxEmptyString" if prop_name is empty.
-auto GenerateQuotedString(const wxue::string& str) -> wxue::string;
+wxue::string GenerateQuotedString(const wxue::string& str);
 
 // Insert a required include file into either src or hdr set (depending on prop_class_access)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
@@ -36,45 +36,45 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 
 // This is *NOT* the same as get_NodeName() -- this will handle wxStaticBox and
 // wxCollapsiblePane parents as well as "normal" parents
-auto get_ParentName(Node* node, GenLang language) -> wxue::string;
+wxue::string get_ParentName(Node* node, GenLang language);
 
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //
 // Set is_single to true for a non-button control.
-auto GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single = false) -> bool;
+bool GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single = false);
 
 // Converts bitmap property into code. Code is set to wxNullBitmap if no bitmap. Art will
 // return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
 // returns wxueImage() (which is a wxImage). pDpiWindow is the name of the window
 // to use for wxBitmapBundle::GetBitmapFrom()
-auto GenerateBitmapCode(const wxue::string& description) -> wxue::string;
+wxue::string GenerateBitmapCode(const wxue::string& description);
 
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
 // Returns true if the returned string contains a wxVector.
-auto GenerateBundleCode(const wxue::string& description, wxue::string& code) -> bool;
+bool GenerateBundleCode(const wxue::string& description, wxue::string& code);
 
 // Returns the integer value of all style properties for the node. Includes style,
 // window_style, tab_position etc.
 //
 // If style is a friendly name, add the prefix parameter to prefix lookups.
-auto GetStyleInt(Node* node, const char* prefix = nullptr) -> int;
+int GetStyleInt(Node* node, const char* prefix = nullptr);
 
 // Returns the integer value of the type_bitlist property for the node.
 //
 // Note: requires each bitlist option to have been added to node_constants.cpp
-auto GetBitlistInt(Node* node, GenEnum::PropName prop_name) -> int;
+int GetBitlistInt(Node* node, GenEnum::PropName prop_name);
 
 // This generates code for the header file for Get() and Set() functions using function names
 // specified by the user in the project file.
-auto GenGetSetCode(Node* node) -> std::optional<wxue::string>;
+std::optional<wxue::string> GenGetSetCode(Node* node);
 
 void GenValidatorSettings(Code& code);
 
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate
 // everything needed to set the window's icon.
-auto GenerateIconCode(const wxue::string& description) -> wxue::string;
+wxue::string GenerateIconCode(const wxue::string& description);
 
 class GenResults;
 
@@ -91,16 +91,16 @@ void GenToolCode(Code& code);
 // Returns true if a bitmaps vector was created (C++ or Python)
 //
 // C++ Caller should add the function that uses the bitmaps, add the closing brace
-auto BitmapList(Code& code, GenEnum::PropName prop) -> bool;
+bool BitmapList(Code& code, GenEnum::PropName prop);
 
 /////////////////////////////////////// wxPython Functions ///////////////////////////////////////
 
 // Returns true if a list was created. List name will be called "bitmaps".
-auto PythonBitmapList(Code& code, GenEnum::PropName prop) -> bool;
+bool PythonBitmapList(Code& code, GenEnum::PropName prop);
 
 // Deterimes where the python code will be written to, and returns an absolute path to that
 // location.
-auto MakePythonPath(Node* node) -> wxue::string;
+wxue::string MakePythonPath(Node* node);
 
 // Python version of GenBtnBitmapCode()
 void PythonBtnBitmapCode(Code& code, bool is_single = false);
@@ -109,4 +109,4 @@ void PythonBtnBitmapCode(Code& code, bool is_single = false);
 
 // Deterimes where the ruby code will be written to, and returns an absolute path to that
 // location.
-auto MakeRubyPath(Node* node) -> wxue::string;
+wxue::string MakeRubyPath(Node* node);

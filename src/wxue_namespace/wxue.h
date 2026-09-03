@@ -72,6 +72,20 @@ namespace wxue
 
     // clang-format on
 
+    // Returns true if the string contains any alphabetic character. Non-ASCII bytes (which are
+    // part of UTF-8 sequences) are treated as alphabetic so that localized text still gets
+    // translated. Used to decide whether a generated quoted string should be wrapped in _() or
+    // wxGetTranslation().
+    [[nodiscard]] inline bool has_alpha(std::string_view text)
+    {
+        return std::ranges::any_of(text,
+                                   [](char character)
+                                   {
+                                       return is_alpha(character) ||
+                                              static_cast<unsigned char>(character) > 127;
+                                   });
+    }
+
     template <typename T>
     // Compares result against -1 -- use with returns from find, contains, locate, etc.
     constexpr auto is_found(T result) -> bool

@@ -136,7 +136,8 @@ Code& Code::QuotedString(wxue::string_view text)
 {
     const size_t cur_pos = this->size();
 
-    if (Project.as_bool(prop_internationalize))
+    const bool internationalize = Project.as_bool(prop_internationalize) && wxue::has_alpha(text);
+    if (internationalize)
     {
         if (is_cpp())
         {
@@ -173,7 +174,7 @@ Code& Code::QuotedString(wxue::string_view text)
 
     AddQuoteClosing(has_escape, begin_quote, has_utf_char);
 
-    if (Project.as_bool(prop_internationalize))
+    if (internationalize)
     {
         *this += ')';
     }

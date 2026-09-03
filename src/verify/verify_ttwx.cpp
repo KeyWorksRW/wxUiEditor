@@ -81,6 +81,23 @@ auto VerifyTTwx() -> bool  // NOLINT (cppcheck-suppress)
         ASSERT(wxue::is_cntrl(' ') == false);
     }
 
+    // Test has_alpha
+    {
+        ASSERT(wxue::has_alpha("Hello") == true);
+        ASSERT(wxue::has_alpha("hello") == true);
+        ASSERT(wxue::has_alpha("5") == false);
+        ASSERT(wxue::has_alpha("42") == false);
+        ASSERT(wxue::has_alpha("123-456") == false);
+        ASSERT(wxue::has_alpha("1.5") == false);
+        ASSERT(wxue::has_alpha("!!") == false);
+        ASSERT(wxue::has_alpha("   ") == false);
+        ASSERT(wxue::has_alpha("Hello 123") == true);
+        // UTF-8 multibyte sequences must count as alpha so accented/non-Latin text still gets
+        // wrapped in _() or wxGetTranslation().
+        ASSERT(wxue::has_alpha("\xC3\xA9") == true);       // é
+        ASSERT(wxue::has_alpha("5\xE2\x82\xAC") == true);  // 5 + Euro sign
+    }
+
     // Test is_found template function
     {
         ASSERT(wxue::is_found(0) == true);

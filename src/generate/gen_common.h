@@ -24,7 +24,8 @@ class FontProperty;
 
 // Places the string in wxString::FromUTF8(), adds C++ escapes around any characters the
 // compiler wouldn't accept as a normal part of a string, and wraps it all in _() if
-// prop_internationalize is true.
+// prop_internationalize is set. The _() wrapper is omitted if the string contains no alphabetic
+// characters (e.g. "123", "%%", "1,000").
 //
 // Will return "wxEmptyString" if prop_name is empty.
 auto GenerateQuotedString(const wxue::string& str) -> wxue::string;

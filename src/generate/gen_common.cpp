@@ -94,7 +94,7 @@ wxue::string GenerateQuotedString(const wxue::string& str)
         {
             // While this may not be necessary for non-Windows systems, it does ensure the code
             // compiles on all platforms.
-            if (Project.as_bool(prop_internationalize))
+            if (Project.as_bool(prop_internationalize) && wxue::has_alpha(str))
             {
                 code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
             }
@@ -105,7 +105,7 @@ wxue::string GenerateQuotedString(const wxue::string& str)
         }
         else
         {
-            if (Project.as_bool(prop_internationalize))
+            if (Project.as_bool(prop_internationalize) && wxue::has_alpha(str))
             {
                 code << "_(\"" << str_with_escapes << "\")";
             }

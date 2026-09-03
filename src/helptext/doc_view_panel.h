@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "doc_view_panel_base.h"
+#include "generated/doc_view_panel_base.h"
 
 class HtmlFindDlg;
 class wxKeyEvent;

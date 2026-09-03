@@ -9,7 +9,7 @@
 
 #include <wx/string.h>
 
-#include "doc_view_frame_base.h"
+#include "generated/doc_view_frame_base.h"
 
 // Resolve the path to the wxWidgets docs ZIP. Materializes the CMakeRC-embedded
 // archive to a temp file and returns its path. Throws on failure (archive is

@@ -429,12 +429,14 @@ FetchContent_MakeAvailable(glaze)
 # didn't change any time one of the files it specifies changes.
 include(src/wxui/wxui_code.cmake) # This will set ${wxue_generated_code} with list of generated files
 include(src/wxui/art_files.cmake) # This will set ${art_files} with the list of src/art_src/image files
+include(src/helptext/docview.cmake) # This will set ${docview_files} with the list of src/helptext files
 include(file_list.cmake) # This will set ${file_list} with a list of source files
 
 # Note the requirement that --config Debug is used to get the additional debug files
 add_executable(wxUiEditor WIN32
     ${file_list}
     ${wxue_generated_code}
+    ${docview_files}
     ${wxui_internal_files} # This will be empty unless INTERNAL_BLD_TESTING is set
 )
 

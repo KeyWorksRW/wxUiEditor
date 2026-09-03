@@ -46,8 +46,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/doc_view_frame_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/doc_view_panel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_custom_mockup_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
@@ -57,7 +55,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/generate_xrc_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/html_find_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/id_editor_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/include_files_dlg_base.cpp

@@ -23,12 +23,6 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 
-namespace wxue_img
-{
-    // ../art_src/julia_logo.svg
-    extern const unsigned char julia_logo_svg[167];
-}
-
 class PreferencesDlg : public wxDialog
 {
 public:

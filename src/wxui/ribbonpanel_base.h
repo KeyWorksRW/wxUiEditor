@@ -12,8 +12,11 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/panel.h>
 #include <wx/ribbon/art.h>
 #include <wx/ribbon/bar.h>

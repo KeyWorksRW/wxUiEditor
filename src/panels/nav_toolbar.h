@@ -15,16 +15,6 @@
 #include <wx/gdicmn.h>
 #include <wx/toolbar.h>
 
-namespace wxue_img
-{
-    // ../art_src/nav_coll_expand.svg
-    extern const unsigned char nav_coll_expand_svg[291];
-    // ../art_src/nav_collapse.svg
-    extern const unsigned char nav_collapse_svg[214];
-    // ../art_src/nav_expand.svg
-    extern const unsigned char nav_expand_svg[270];
-}
-
 class NavToolbar : public wxToolBar
 {
 public:

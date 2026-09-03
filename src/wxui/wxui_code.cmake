@@ -36,7 +36,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/menuspin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menustaticsizer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/optionsdlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui_images.cpp
     ${CMAKE_CURRENT_LIST_DIR}/wxue_data.cpp
 
     # Base classes

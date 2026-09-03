@@ -1,0 +1,536 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project"
+    art_directory="../art_src/"
+    cmake_file="art_files.cmake"
+    cmake_varname="art_files"
+    cpp_line_length="125"
+    generate_cmake="1">
+    <node
+      class="Images"
+      add_externs="1"
+      base_file="ui_images">
+      <node
+        class="embedded_image"
+        bitmap="SVG;CustomControl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;DialogBlocks.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;Go-Logo_Blue.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;alignbottom.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;aligncenter.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;alignleft.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;alignright.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;aligntop.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;alignvertcenter.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;auitoolbar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;bitmap.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;bitmap_toggle_button.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;bmp_combo_box.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;book_page.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;bottom.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;calendar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;check3state.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;clear.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;close_btn.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;colourPickerIcon.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;cpp_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ctx_help_btn.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;data_list.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;dataview_column.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;dataview_ctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;dataviewlist_column.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;dataviewlist_ctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;dataviewtree_ctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;datepicker.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;debug_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;default.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;dirPicker.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;doc_mdi_parent_frame.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;duplicate.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;empty.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;filePicker.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;flex_grid_sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;folder.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;fontPicker.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;fortran_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;gauge.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;generate.svg;[20,16]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;genericdir_ctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;grid.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;grid_bag_sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;grid_sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;hide.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;htmlwin.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;hyperlink_ctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;images.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;import.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;infobar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;left.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;lua-logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;menu.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;menuitem.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;new-project.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;notebook.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;notebook_aui.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;notebook_choice.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;notebook_list.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;pagectrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;perl-logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;php-logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;popup_transient.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;popup_window.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;preferences.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;project.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;prop_sheet_dlg.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;propgrid_cat.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;propgriditem.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;propgridpage.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;python-logo-only.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;radio_box.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;redo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_bar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_button.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_buttonbar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_gallery.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_gallery_item.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/ribbon_gallery_item.svt.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_page.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_panel.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_separator.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ribbon_toolbar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;richtextctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;right.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ruby_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;saveas.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;scintilla.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;scrollbar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;search.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;separator.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;sizer_horizontal.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;slider.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;spacer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;spin_ctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;spin_ctrl_double.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;spinbtn.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;static_line.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;statusbar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;stddialogbuttonsizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;submenu.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;svg.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;text_file.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;text_sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;timepicker.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;title_close.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;toggle_button.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;tool.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;toolStretchable.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;tool_dropdown.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;toolseparator.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;toolspacer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;top.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;tree_ctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;treelistctrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;treelistctrlcolumn.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;ts-logo-round-128.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;undo.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;unknown.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;unknown.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;webview.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wrap_sizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxAnimation.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxBannerWindow.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxButton.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxCheckBox.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxCheckListBox.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxChoice.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxCollapsiblePane.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxComboBox.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxCommandLinkButton.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxDialog.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxEditListBox.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wxFB.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxFileCtrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxFrame.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wxGlade.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxListBox.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxListView.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxMenuBar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxPanel.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxPropertyGrid.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxPropertyGridManager.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxPython.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxRadioButton.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxRearrangeCtrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxScrolledWindow.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxSimpleHtmlListBox.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxSimplebook.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wxSmith.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxSplitterWindow.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxStaticBoxSizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxStaticCheckBoxSizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxStaticRadioBtnSizer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxStaticText.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxTextCtrl.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxTimer.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxToolBar.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxToolbook.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxTreebook.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxUiEditor.svg;[64,64]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxWizard.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxWizardPageSimple.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxactivityIndicator.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;wxcrafter.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;wxlogo.svg;[20,16]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;xml_file.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;xrc_compare.svg;[24,24]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;xrc_preview.svg;[20,16]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;xrc_tests.svg;[24,24]" />
+    </node>
+  </node>
+</wxUiEditorData>

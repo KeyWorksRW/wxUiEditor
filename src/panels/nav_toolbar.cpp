@@ -15,8 +15,6 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 
-#include "../wxui/ui_images.h"
-
 #include "nav_toolbar.h"
 
 #include "mainframe.h"

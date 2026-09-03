@@ -428,6 +428,7 @@ FetchContent_MakeAvailable(glaze)
 # Specifying the full path and extension means ninja sees this as a normal dependency that
 # didn't change any time one of the files it specifies changes.
 include(src/wxui/wxui_code.cmake) # This will set ${wxue_generated_code} with list of generated files
+include(src/wxui/art_files.cmake) # This will set ${art_files} with the list of src/art_src/image files
 include(file_list.cmake) # This will set ${file_list} with a list of source files
 
 # Note the requirement that --config Debug is used to get the additional debug files
@@ -436,6 +437,9 @@ add_executable(wxUiEditor WIN32
     ${wxue_generated_code}
     ${wxui_internal_files} # This will be empty unless INTERNAL_BLD_TESTING is set
 )
+
+# Static library containing art/image source files; always linked into the main project.
+add_library(art_files STATIC ${art_files})
 
 # This will get passed to the resource compiler as well
 target_compile_definitions(wxUiEditor PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
@@ -533,11 +537,17 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
 )
 
+
 foreach(component ${wxWidgets_REQUIRED_COMPONENTS})
     list(APPEND wxWidgets_LIBRARIES wx${component})
 endforeach()
 
+# Link the wx targets so art_files gets their include directories (including
+# wx/setup.h) transitively -- wxWidgets_BUILD_DIR is not set by FetchContent.
+target_link_libraries(art_files PRIVATE ${wxWidgets_LIBRARIES})
+
 target_link_libraries(wxUiEditor PRIVATE
+    art_files
     ${wxWidgets_LIBRARIES}
     ${SYSTEM_LIBS}
     glaze::glaze
@@ -585,6 +595,7 @@ cmrc_add_resource_library(
     "${_wxwidgets_docs_zip}")
 target_link_libraries(wxUiEditor PRIVATE wxuedocs::rc)
 target_compile_definitions(wxUiEditor PRIVATE HAS_EMBEDDED_WXWIDGETS_DOCS)
+
 # ###################### Packaging Instructions #######################
 if(UNIX AND NOT APPLE)
     INSTALL(FILES wxUiEditor.desktop DESTINATION share/applications)

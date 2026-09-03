@@ -11,9 +11,6 @@
 // cppcheck-suppress-begin *
 
 #include <wx/artprov.h>
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 
 #include "../panels/nav_panel.h"
 #include "ui_images.h"

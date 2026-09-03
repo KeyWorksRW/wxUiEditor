@@ -10,6 +10,10 @@
 // NOLINTBEGIN
 // cppcheck-suppress-begin *
 
+#include <wx/bitmap.h>
+#include <wx/icon.h>
+#include <wx/image.h>
+
 #include "ui_images.h"
 
 #include "ribbon_ids.h"

@@ -12,12 +12,15 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
 #include <wx/checkbox.h>
 #include <wx/choicebk.h>
 #include <wx/colour.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/panel.h>
 #include <wx/radiobut.h>
 #include <wx/settings.h>

@@ -24,7 +24,8 @@ std::string JuliaStrategy::MapClassName(std::string_view wx_class_name)
     return std::string(wx_class_name.substr(2));
 }
 
-void JuliaStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void JuliaStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                      std::string_view conditional)
 {
     // Julia: Sys.iswindows(), Sys.islinux(), Sys.isapple()
     bool has_prior = false;
@@ -49,6 +50,25 @@ void JuliaStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
     emit_condition("Windows", "Sys.iswindows()");
     emit_condition("Unix", "Sys.islinux()");
     emit_condition("Mac", "Sys.isapple()");
+
+    if (!conditional.empty())
+    {
+        if (has_prior)
+        {
+            code << m_traits.logical_and;
+        }
+        else
+        {
+            code.Eol() << "if ";
+            has_prior = true;
+        }
+        code << conditional;
+    }
+}
+
+void JuliaStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << "if " << conditional;
 }
 
 void JuliaStrategy::EmitImport(Code& code, std::string_view module)

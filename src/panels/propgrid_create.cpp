@@ -242,6 +242,53 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
     }
 }
 
+// A wxFlagsProperty with an additional string child for the user's conditional. The extra
+// child is used ONLY for display/editing of the prop_conditional value; it must not
+// participate in the bitmask logic of wxFlagsProperty (ChildChanged / RefreshChildren are
+// overridden to ignore it). See wxFlagsProperty::ChildChanged() and ::RefreshChildren() in
+// wxWidgets props.cpp — both index children by m_choices, so any child beyond the choices
+// count must be guarded.
+class ConditionalFlagsProperty : public wxFlagsProperty
+{
+public:
+    ConditionalFlagsProperty(const wxString& label, wxPGChoices& choices, long value = 0) :
+        wxFlagsProperty(label, wxPG_LABEL, choices, value)
+    {
+    }
+
+    // The first GetItemCount() children are the flag bools; anything beyond that is the
+    // conditional string child and must not change the bitmask.
+    wxVariant ChildChanged(wxVariant& thisValue, int childIndex,
+                           wxVariant& childValue) const override
+    {
+        if (childIndex >= 0 && static_cast<size_t>(childIndex) < GetItemCount())
+        {
+            return wxFlagsProperty::ChildChanged(thisValue, childIndex, childValue);
+        }
+        // Conditional string child — do not touch the flags value.
+        return thisValue;
+    }
+
+    // Only refresh the flag bool children; leave the conditional string child alone.
+    void RefreshChildren() override
+    {
+        if (!m_choices.IsOk() || !HasAnyChild())
+            return;
+        int flags = m_value.GetLong();
+        const wxPGChoices& choices = m_choices;
+        for (unsigned int i = 0; i < GetItemCount(); ++i)
+        {
+            long flag = choices.GetValue(i);
+            long subVal = flags & flag;
+            wxPGProperty* p = Item(i);
+            if (subVal != (m_oldValue & flag))
+                p->ChangeFlag(wxPGFlags::Modified, true);
+            p->SetValue(subVal == flag ? true : false);
+        }
+        m_oldValue = flags;
+    }
+};
+
 wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 {
     auto type = prop->type();
@@ -384,8 +431,17 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 const int val = GetBitlistValue(prop->as_wxString(), bit_flags);
                 ASSERT_MSG(!prop->get_DeclName().empty(),
                            "Property with empty name found in CreatePGProperty()");
-                new_pg_property =
-                    new wxFlagsProperty(wxString(prop->get_DeclName()), wxPG_LABEL, bit_flags, val);
+
+                if (prop->get_name() == prop_platforms)
+                {
+                    new_pg_property = new ConditionalFlagsProperty(wxString(prop->get_DeclName()),
+                                                                   bit_flags, val);
+                }
+                else
+                {
+                    new_pg_property = new wxFlagsProperty(wxString(prop->get_DeclName()),
+                                                          wxPG_LABEL, bit_flags, val);
+                }
 
                 auto* flagsProp = dynamic_cast<wxFlagsProperty*>(new_pg_property);
                 if (flagsProp)
@@ -406,6 +462,26 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                                 }
                                 break;
                             }
+                        }
+                    }
+
+                    // Add the conditional string as a child of the platforms property. It is
+                    // only visible when the platforms property is expanded.
+                    if (prop->get_name() == prop_platforms)
+                    {
+                        if (NodeProperty* cond_prop =
+                                prop->getNode()->get_PropPtr(prop_conditional);
+                            cond_prop)
+                        {
+                            // wxFlagsProperty::Init() adds its flag children via AddPrivateChild(),
+                            // which locks the property into Aggregate mode.
+                            // AppendChild()/InsertChild() would trigger the "Do not mix up
+                            // AddPrivateChild() calls with other property adders" assertion, so the
+                            // conditional child must also use AddPrivateChild().
+                            wxStringProperty* cond_child = new wxStringProperty(
+                                "conditional", wxPG_LABEL, cond_prop->as_wxString());
+                            flagsProp->AddPrivateChild(cond_child);
+                            m_property_map[cond_child] = cond_prop;
                         }
                     }
                 }

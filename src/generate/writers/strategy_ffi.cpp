@@ -36,7 +36,8 @@ bool FFIStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop
     return true;
 }
 
-void FFIStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void FFIStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                    std::string_view conditional)
 {
     // Default FFI platform conditional — uses kwxFFI runtime platform check.
     // Per-language strategies override with language-appropriate syntax.
@@ -63,10 +64,29 @@ void FFIStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
     emit_condition("Unix", "WX_PLATFORM_UNIX");
     emit_condition("Mac", "WX_PLATFORM_MAC");
 
+    if (!conditional.empty())
+    {
+        if (has_prior)
+        {
+            code << m_traits.logical_and;
+        }
+        else
+        {
+            code.Eol() << m_traits.conditional_begin;
+            has_prior = true;
+        }
+        code << conditional;
+    }
+
     if (has_prior)
     {
         code << m_traits.conditional_end;
     }
+}
+
+void FFIStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << m_traits.conditional_begin << conditional << m_traits.conditional_end;
 }
 
 void FFIStrategy::EmitPlatformEnd(WriteCode* writer)

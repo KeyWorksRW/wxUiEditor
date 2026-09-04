@@ -175,7 +175,13 @@ public:
     // ---- Platform conditionals ----
 
     // Emit platform-conditional begin (e.g., #if defined(__WINDOWS__), if wx.Platform == "msw")
-    virtual void EmitPlatformBegin(Code& code, std::string_view platforms) = 0;
+    // If conditional is non-empty, it is AND-ed with the platform expression (per-language syntax).
+    virtual void EmitPlatformBegin(Code& code, std::string_view platforms,
+                                   std::string_view conditional = {}) = 0;
+
+    // Emit a block gated only by the user condition (no platform check).
+    // Used when all platforms are enabled but a conditional is specified.
+    virtual void EmitConditionalOnly(Code& code, std::string_view conditional) {}
 
     // Emit platform-conditional end (e.g., #endif, unindent, "end")
     virtual void EmitPlatformEnd(WriteCode* writer) = 0;

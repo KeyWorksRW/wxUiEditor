@@ -30,6 +30,32 @@ class EmbeddedImage;
 
 #include "language_traits.h"  // LanguageTraits, LanguageStrategy
 
+// The maps of platform-specific code (m_map_conditional_events, m_map_public_members,
+// m_map_protected) are keyed by this composite string: the platform spec, optionally followed
+// by '\x1f' and the user condition. SplitCondKey() reverses it.
+inline wxue::string MakeCondKey(std::string_view platforms, std::string_view conditional)
+{
+    if (conditional.empty())
+    {
+        return wxue::string(platforms);
+    }
+    return wxue::string(platforms) << '\x1f' << conditional;
+}
+
+inline void SplitCondKey(std::string_view key, wxue::string& platforms, wxue::string& conditional)
+{
+    if (auto pos = key.find('\x1f'); pos != std::string_view::npos)
+    {
+        platforms = wxue::string(key.substr(0, pos));
+        conditional = wxue::string(key.substr(pos + 1));
+    }
+    else
+    {
+        platforms = key;
+        conditional.clear();
+    }
+}
+
 // The NodeEvent class is used to store event information specific to what the user has
 // requested (node containing the event, name of the event handler) along with a pointer to
 // the fixed event information.
@@ -143,7 +169,8 @@ protected:
     // Call this to set m_ImagesForm
     void SetImagesForm();
 
-    void BeginPlatformCode(Code& code, const wxue::string& platforms);
+    void BeginPlatformCode(Code& code, const wxue::string& platforms,
+                           std::string_view conditional = {});
     void EndPlatformCode();
     bool GenAfterChildren(Node* node, bool need_closing_brace);
 

@@ -24,7 +24,8 @@ std::string TypeScriptStrategy::MapClassName(std::string_view wx_class_name)
     return std::string(wx_class_name.substr(2));
 }
 
-void TypeScriptStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void TypeScriptStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                           std::string_view conditional)
 {
     // TypeScript: process.platform checks
     bool has_prior = false;
@@ -50,10 +51,29 @@ void TypeScriptStrategy::EmitPlatformBegin(Code& code, std::string_view platform
     emit_condition("Unix", "linux");
     emit_condition("Mac", "darwin");
 
+    if (!conditional.empty())
+    {
+        if (has_prior)
+        {
+            code << " && ";
+        }
+        else
+        {
+            code.Eol() << "if (";
+            has_prior = true;
+        }
+        code << conditional;
+    }
+
     if (has_prior)
     {
         code << ") {";
     }
+}
+
+void TypeScriptStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << "if (" << conditional << ") {";
 }
 
 void TypeScriptStrategy::EmitImport(Code& code, std::string_view module)

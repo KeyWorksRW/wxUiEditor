@@ -13,7 +13,8 @@
 
 PythonStrategy::PythonStrategy(const LanguageTraits& traits) : WxBindingStrategy(traits) {}
 
-void PythonStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void PythonStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                       std::string_view conditional)
 {
     bool has_prior = false;
 
@@ -48,10 +49,30 @@ void PythonStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         }
         code << "wx.Platform == \"mac\"";
     }
+
+    if (!conditional.empty())
+    {
+        if (has_prior)
+        {
+            code << " and ";
+        }
+        else
+        {
+            code.Eol() << "if ";
+            has_prior = true;
+        }
+        code << conditional;
+    }
+
     if (has_prior)
     {
         code << ':';
     }
+}
+
+void PythonStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << "if " << conditional << ':';
 }
 
 void PythonStrategy::EmitPlatformEnd(WriteCode* writer)

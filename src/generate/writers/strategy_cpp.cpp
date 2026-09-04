@@ -44,7 +44,8 @@ bool CppStrategy::IsFeatureSupported(Node* /* node */, GenEnum::PropName /* prop
     return true;
 }
 
-void CppStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void CppStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                    std::string_view conditional)
 {
     bool has_prior = false;
 
@@ -79,6 +80,25 @@ void CppStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         }
         code << "defined(__WXOSX__)";
     }
+
+    if (!conditional.empty())
+    {
+        if (!has_prior)
+        {
+            code.Eol() << "#if ";
+            has_prior = true;
+        }
+        else
+        {
+            code << " && ";
+        }
+        code << conditional;
+    }
+}
+
+void CppStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << "#if " << conditional;
 }
 
 void CppStrategy::EmitPlatformEnd(WriteCode* writer)

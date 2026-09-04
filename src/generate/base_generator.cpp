@@ -933,7 +933,8 @@ int BaseGenerator::GetRequiredVersion(Node* node)
     {
         return minRequiredVer + 1;
     }
-    if (node->HasValue(prop_cpp_conditional) || node->HasValue(prop_python_conditional))
+    if (node->HasValue(prop_cpp_conditional) || node->HasValue(prop_python_conditional) ||
+        (node->HasValue(prop_conditional) && !node->as_string(prop_conditional).empty()))
     {
         return minRequiredVer + 2;  // 1.1.1 release
     }

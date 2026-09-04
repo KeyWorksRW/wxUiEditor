@@ -407,6 +407,7 @@ static constexpr std::array lst_common_properties = {
     prop_max_size,
     prop_min_size,
     prop_platforms,
+    prop_conditional,
     prop_pos,
     prop_proportion,
     prop_size,

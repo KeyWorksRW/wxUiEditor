@@ -963,6 +963,8 @@
 				help="Create this control when running on Unix."/>
 			<option name="Mac"
 				help="Create this control when running on Mac."/> Windows|Unix|Mac </property>
+		<property name="conditional" type="string" hide="1"
+			help="If non-empty, this condition is added to the platform check when generating code for this item. Example: MY_FEATURE_ENABLED."/>
 		<property name="disable_language" type="bitlist">
 			<option name="C++"
 				help="Disable C++ code for this control (ignored if project doesn't generate C++ code)."/>

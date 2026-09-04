@@ -14,7 +14,9 @@ class PythonStrategy : public WxBindingStrategy
 public:
     explicit PythonStrategy(const LanguageTraits& traits);
 
-    void EmitPlatformBegin(Code& code, std::string_view platforms) override;
+    void EmitPlatformBegin(Code& code, std::string_view platforms,
+                           std::string_view conditional = {}) override;
+    void EmitConditionalOnly(Code& code, std::string_view conditional) override;
     void EmitPlatformEnd(WriteCode* writer) override;
     [[nodiscard]] auto MapClassName(std::string_view wx_class_name) -> std::string override;
 };

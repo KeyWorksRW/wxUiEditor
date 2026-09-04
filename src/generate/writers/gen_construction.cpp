@@ -80,9 +80,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     bool need_closing_brace = false;
     Code gen_code(node, m_language);
 
-    if (node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    bool has_platform_limit =
+        node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac";
+    bool has_conditional =
+        node->HasValue(prop_conditional) && !node->as_string(prop_conditional).empty();
+
+    if (has_platform_limit || has_conditional)
     {
-        BeginPlatformCode(gen_code, node->as_string(prop_platforms));
+        BeginPlatformCode(gen_code, node->as_string(prop_platforms),
+                          node->as_string(prop_conditional));
         if (m_language != GenLang::python)
         {
             gen_code.Eol();
@@ -329,17 +335,25 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
     }
 
-    if (node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    if (has_platform_limit || has_conditional)
     {
         EndPlatformCode();
     }
 }
 
-void BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platforms)
+void BaseCodeGenerator::BeginPlatformCode(Code& code, const wxue::string& platforms,
+                                          std::string_view conditional)
 {
     if (m_strategy)
     {
-        m_strategy->EmitPlatformBegin(code, std::string_view(platforms));
+        if (!conditional.empty() && platforms == "Windows|Unix|Mac")
+        {
+            m_strategy->EmitConditionalOnly(code, conditional);
+        }
+        else
+        {
+            m_strategy->EmitPlatformBegin(code, std::string_view(platforms), conditional);
+        }
         return;
     }
 

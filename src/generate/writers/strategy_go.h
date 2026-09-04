@@ -14,7 +14,9 @@ class GoStrategy : public FFIStrategy
 public:
     explicit GoStrategy(const LanguageTraits& traits);
 
-    void EmitPlatformBegin(Code& code, std::string_view platforms) override;
+    void EmitPlatformBegin(Code& code, std::string_view platforms,
+                           std::string_view conditional = {}) override;
+    void EmitConditionalOnly(Code& code, std::string_view conditional) override;
     void EmitImport(Code& code, std::string_view module) override;
     void EmitVarDecl(Code& code, std::string_view type, std::string_view name) override;
 

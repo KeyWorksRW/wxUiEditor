@@ -578,8 +578,8 @@ endif()
 
 FetchContent_Declare(
     cmrc
-    GIT_REPOSITORY https://github.com/vector-of-bool/cmrc.git
-    GIT_TAG master
+    GIT_REPOSITORY https://github.com/KeyWorksRW/CMakeRC2.git
+    GIT_TAG main
     GIT_SHALLOW TRUE
     DOWNLOAD_NO_PROGRESS TRUE
 )

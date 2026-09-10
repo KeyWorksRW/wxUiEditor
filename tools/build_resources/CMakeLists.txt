@@ -33,61 +33,23 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_subdirectory(../../cmake/libdeflate ${CMAKE_BINARY_DIR}/libs/libdeflate)
 
 # ##################### miniz ######################
-# ZIP archive reading/writing — always Release, size-optimized, no debug symbols
-FetchContent_Declare(
-    miniz
-    URL https://github.com/richgel999/miniz/archive/refs/tags/3.1.1.zip
-    DOWNLOAD_NO_PROGRESS TRUE
-)
+# ZIP archive reading/writing — always Release, size-optimized, no debug symbols.
+# Vendored source (see 3rdparty/miniz/README.md); built as a static library.
+# The shared miniz target already sets POSITION_INDEPENDENT_CODE,
+# MINIZ_NO_ZLIB_COMPATIBLE_NAMES, size optimization, NDEBUG and the MSVC CRT.
 
-FetchContent_MakeAvailable(miniz)
+add_subdirectory(../../3rdparty/miniz ${CMAKE_BINARY_DIR}/libs/miniz)
 
 # Use libdeflate's CRC-32 instead of miniz's built-in
-set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
-# Don't define zlib-compatible static inline stubs — we use mz_ names directly
-target_compile_definitions(miniz INTERFACE MINIZ_NO_ZLIB_COMPATIBLE_NAMES)
 target_compile_definitions(miniz PRIVATE USE_EXTERNAL_MZCRC)
 target_link_libraries(miniz PRIVATE libdeflate_static)
 target_sources(miniz PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../../src/helptext/data/miniz_crc32_wrapper.c)
 
-# Always optimize for size, never debug
-if(MSVC)
-    target_compile_options(miniz PRIVATE /O1)
-else()
-    target_compile_options(miniz PRIVATE -Os)
-endif()
-target_compile_definitions(miniz PRIVATE NDEBUG)
-
-# Match the parent project's CRT
-set_target_properties(miniz PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-)
-
 # ###################### Snowball stemmer #######################
-# Snowball C stemming library — word normalization for full-text search
-FetchContent_Declare(
-    snowball
-    URL https://snowballstem.org/dist/libstemmer_c-2.2.0.tar.gz
-)
-FetchContent_MakeAvailable(snowball)
+# Snowball C stemming library — word normalization for full-text search.
+# Vendored source (see 3rdparty/Snowball/README.md); built as a static library.
 
-file(GLOB SNOWBALL_RUNTIME_SOURCES "${snowball_SOURCE_DIR}/runtime/*.c")
-file(GLOB SNOWBALL_LIBSTEMMER_SOURCES "${snowball_SOURCE_DIR}/libstemmer/libstemmer.c")
-file(GLOB SNOWBALL_SRC_C_SOURCES "${snowball_SOURCE_DIR}/src_c/*.c")
-
-add_library(snowball_stemmer STATIC
-    ${SNOWBALL_RUNTIME_SOURCES}
-    ${SNOWBALL_LIBSTEMMER_SOURCES}
-    ${SNOWBALL_SRC_C_SOURCES}
-)
-
-target_include_directories(snowball_stemmer PUBLIC "${snowball_SOURCE_DIR}/include")
-
-if(MSVC)
-    target_compile_options(snowball_stemmer PRIVATE /W0)
-else()
-    target_compile_options(snowball_stemmer PRIVATE -w)
-endif()
+add_subdirectory(../../3rdparty/Snowball ${CMAKE_BINARY_DIR}/libs/Snowball)
 
 # ###################### wxWidgets interface #######################
 # These are the wxWidgets header files that parser will convert into markdown

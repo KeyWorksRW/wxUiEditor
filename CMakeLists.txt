@@ -443,6 +443,20 @@ else()
         -Wextra   # Additional warnings beyond -Wall (sign-compare, unused parameters)
         -Wshadow  # Warn when a local variable shadows a parameter or member
     )
+    # The manifest is embedded by src/wxUiEditor.rc (RT_MANIFEST). Clang's GNU driver
+    # targeting the MSVC ABI (the LLVM-build compiler used by the PGO job) gets a CMake
+    # link rule that unconditionally passes `-Xlinker /MANIFEST:EMBED`, which adds a
+    # second manifest and makes lld-link abort with "duplicate resource: type MANIFEST".
+    # Linker options are last-wins, so appending /MANIFEST:NO *after* CMake's flag stops
+    # the linker-generated manifest -- matching the MSVC branch that passes /manifest:no.
+    # The string check keeps toolchains whose rule has no such flag (e.g. MinGW/clang64)
+    # untouched.
+    foreach(_lang C CXX)
+        if(CMAKE_${_lang}_LINK_EXECUTABLE MATCHES "/MANIFEST:EMBED")
+            string(APPEND CMAKE_${_lang}_LINK_EXECUTABLE " -Xlinker /MANIFEST:NO")
+        endif()
+    endforeach()
+    unset(_lang)
 endif()
 
 if(WIN32)

@@ -45,12 +45,6 @@ jobs:
       with:
         xcode-version: 'latest'
 
-    - name: Setup CMake 4.2+ and Ninja
-      uses: lukka/get-cmake@latest
-      with:
-        cmakeVersion: 'latest'
-        ninjaVersion: 'latest'
-
     - run: mkdir ${{github.workspace}}/build
 
     - name: Install dependencies
@@ -98,10 +92,10 @@ jobs:
       if: ${{ inputs.enable-pgo }}
       run: |
         clang++ --version
-        cmake -B ${{github.workspace}}/build -GNinja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-          -DUSE_PGO_INSTRUMENT=ON
+        cmake -B ${{github.workspace}}/build -GNinja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+          -DUSE_PGO_INSTRUMENT=ON \
           -DUSE_PGO_OPTIMIZE=OFF
 
     - name: Build — Instrumented (PGO)
@@ -124,10 +118,10 @@ jobs:
     - name: Configure CMake — Optimized (PGO)
       if: ${{ inputs.enable-pgo }}
       run: |
-        cmake -B ${{github.workspace}}/build -GNinja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-          -DUSE_PGO_OPTIMIZE=ON
+        cmake -B ${{github.workspace}}/build -GNinja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+          -DUSE_PGO_OPTIMIZE=ON \
           -DUSE_PGO_INSTRUMENT=OFF
 
     - name: Build — PGO Optimized

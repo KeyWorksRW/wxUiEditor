@@ -251,30 +251,10 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET ON)
 
 # ###################### Snowball stemmer #######################
-# Snowball C stemming library — word normalization for full-text search
-FetchContent_Declare(
-    snowball
-    URL https://snowballstem.org/dist/libstemmer_c-2.2.0.tar.gz
-)
-FetchContent_MakeAvailable(snowball)
+# Vendored Snowball C stemming library — word normalization for full-text search.
+# Upstream: https://snowballstem.org  (see 3rdparty/Snowball/README.md)
 
-file(GLOB SNOWBALL_RUNTIME_SOURCES "${snowball_SOURCE_DIR}/runtime/*.c")
-file(GLOB SNOWBALL_LIBSTEMMER_SOURCES "${snowball_SOURCE_DIR}/libstemmer/libstemmer.c")
-file(GLOB SNOWBALL_SRC_C_SOURCES "${snowball_SOURCE_DIR}/src_c/*.c")
-
-add_library(snowball_stemmer STATIC
-    ${SNOWBALL_RUNTIME_SOURCES}
-    ${SNOWBALL_LIBSTEMMER_SOURCES}
-    ${SNOWBALL_SRC_C_SOURCES}
-)
-
-target_include_directories(snowball_stemmer PUBLIC "${snowball_SOURCE_DIR}/include")
-
-if(MSVC)
-    target_compile_options(snowball_stemmer PRIVATE /W0)
-else()
-    target_compile_options(snowball_stemmer PRIVATE -w)
-endif()
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdparty/Snowball)
 
 # ###################### Library subdirectories #######################
 # ftsrch, cppmark, and docparser are built as separate static libraries
@@ -291,29 +271,10 @@ endif()
 add_subdirectory(cmake/libdeflate)
 
 # ##################### miniz ######################
-# ZIP archive reading/writing — always Release, size-optimized, no debug symbols
+# ZIP archive reading/writing — always Release, size-optimized, no debug symbols.
+# Vendored source (see 3rdparty/miniz/README.md); built as a static library.
 
-FetchContent_Declare(
-    miniz
-    URL https://github.com/richgel999/miniz/archive/refs/tags/3.1.1.zip
-    DOWNLOAD_NO_PROGRESS TRUE
-)
-
-FetchContent_MakeAvailable(miniz)
-
-set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_compile_definitions(miniz INTERFACE MINIZ_NO_ZLIB_COMPATIBLE_NAMES)
-
-if(MSVC)
-    target_compile_options(miniz PRIVATE /O1)
-else()
-    target_compile_options(miniz PRIVATE -Os)
-endif()
-target_compile_definitions(miniz PRIVATE NDEBUG)
-
-set_target_properties(miniz PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdparty/miniz)
 
 add_subdirectory(src/helptext/data/ftsrch)
 add_subdirectory(src/helptext/data/cppmark)
@@ -482,6 +443,20 @@ else()
         -Wextra   # Additional warnings beyond -Wall (sign-compare, unused parameters)
         -Wshadow  # Warn when a local variable shadows a parameter or member
     )
+    # The manifest is embedded by src/wxUiEditor.rc (RT_MANIFEST). Clang's GNU driver
+    # targeting the MSVC ABI (the LLVM-build compiler used by the PGO job) gets a CMake
+    # link rule that unconditionally passes `-Xlinker /MANIFEST:EMBED`, which adds a
+    # second manifest and makes lld-link abort with "duplicate resource: type MANIFEST".
+    # Linker options are last-wins, so appending /MANIFEST:NO *after* CMake's flag stops
+    # the linker-generated manifest -- matching the MSVC branch that passes /manifest:no.
+    # The string check keeps toolchains whose rule has no such flag (e.g. MinGW/clang64)
+    # untouched.
+    foreach(_lang C CXX)
+        if(CMAKE_${_lang}_LINK_EXECUTABLE MATCHES "/MANIFEST:EMBED")
+            string(APPEND CMAKE_${_lang}_LINK_EXECUTABLE " -Xlinker /MANIFEST:NO")
+        endif()
+    endforeach()
+    unset(_lang)
 endif()
 
 if(WIN32)
@@ -578,8 +553,8 @@ endif()
 
 FetchContent_Declare(
     cmrc
-    GIT_REPOSITORY https://github.com/vector-of-bool/cmrc.git
-    GIT_TAG master
+    GIT_REPOSITORY https://github.com/KeyWorksRW/CMakeRC2.git
+    GIT_TAG main
     GIT_SHALLOW TRUE
     DOWNLOAD_NO_PROGRESS TRUE
 )

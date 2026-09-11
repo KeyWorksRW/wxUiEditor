@@ -78,19 +78,26 @@ jobs:
     # due to partial/mismatched source files.
 
     # ── Non-PGO path: standard build ───────────────────────────────────────
+    #
+    # TEMPORARY: PGO on Unix is disabled. Profile collection runs wxUiEditor,
+    # which is a GUI app and cannot start on a headless GitHub runner
+    # ("Error: Unable to initialize GTK+, is DISPLAY set properly?"). The
+    # non-PGO path below is therefore forced to always run, while every PGO
+    # step is hard-disabled with `if: false`. To re-enable PGO, restore the
+    # original conditions (non-PGO: `!inputs.enable-pgo`, PGO: `inputs.enable-pgo`).
 
     - name: Configure CMake
-      if: ${{ !inputs.enable-pgo }}
+      if: true
       run: cmake -B ${{github.workspace}}/build -G "Ninja Multi-Config" -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20
 
     - name: Build wxUiEditor
-      if: ${{ !inputs.enable-pgo }}
+      if: true
       run: cmake --build ${{github.workspace}}/build -j$(nproc) --config ${{inputs.build-type}} --target wxUiEditor
 
     # ── PGO path: instrument → profile → optimize ──────────────────────────
 
     - name: Configure CMake — Instrumented (PGO)
-      if: ${{ inputs.enable-pgo }}
+      if: false
       run: >-
         cmake -B ${{github.workspace}}/build
         -G "Ninja Multi-Config"
@@ -101,24 +108,24 @@ jobs:
         -DUSE_PGO_OPTIMIZE=OFF
 
     - name: Build — Instrumented (PGO)
-      if: ${{ inputs.enable-pgo }}
+      if: false
       run: cmake --build ${{github.workspace}}/build -j$(nproc) --config Release
 
     - name: Collect PGO Profiles
-      if: ${{ inputs.enable-pgo }}
+      if: false
       run: ${{github.workspace}}/bin/Release/wxUiEditor --verify_all ${{github.workspace}}/src/wxui/wxUiEditor.wxui
       env:
         LLVM_PROFILE_FILE: ${{github.workspace}}/build/pgo_profiles/%p_%m.profraw
 
     - name: Merge PGO Profiles
-      if: ${{ inputs.enable-pgo }}
+      if: false
       run: >-
         llvm-profdata-20 merge
         -output=${{github.workspace}}/build/pgo_profiles/merged.profdata
         ${{github.workspace}}/build/pgo_profiles/*.profraw
 
     - name: Configure CMake — Optimized (PGO)
-      if: ${{ inputs.enable-pgo }}
+      if: false
       run: >-
         cmake -B ${{github.workspace}}/build
         -G "Ninja Multi-Config"
@@ -129,7 +136,7 @@ jobs:
         -DUSE_PGO_INSTRUMENT=OFF
 
     - name: Build — PGO Optimized
-      if: ${{ inputs.enable-pgo }}
+      if: false
       run: cmake --build ${{github.workspace}}/build -j$(nproc) --config Release
 
     - name: Build Setup

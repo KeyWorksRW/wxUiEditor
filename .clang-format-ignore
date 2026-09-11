@@ -1,4 +1,5 @@
 ./src/pugixml
+./3rdparty
 ./src/xml
 ./src/art_src
 ./src/generate/archived

@@ -33,7 +33,7 @@ class PropGridPanel : public wxPanel
 public:
     PropGridPanel(wxWindow* parent, MainFrame* frame);
 
-    auto IsEventPageShowing() -> bool;
+    bool IsEventPageShowing();
 
     void RestoreDescBoxHeight();
     void SaveDescBoxHeight();
@@ -50,11 +50,11 @@ public:
     void OnNodePropChange(CustomEvent& event);
 
 protected:
-    auto GetPropHelp(NodeProperty* prop) const -> wxue::string;
-    auto GetCategoryDisplayName(const wxString& original) -> wxString;
+    wxue::string GetPropHelp(NodeProperty* prop) const;
+    wxString GetCategoryDisplayName(const wxString& original);
 
     // Called to determine if a property should be displayed or not
-    auto IsPropAllowed(Node* node, NodeProperty* prop) -> bool;
+    bool IsPropAllowed(Node* node, NodeProperty* prop);
 
     // Called after a property has been changed. Used to display info-bar notification if
     // needed.
@@ -77,7 +77,7 @@ protected:
     // file is empty, then create a suggested file name based on the class name.
     void CheckOutputFile(const wxue::string& formName, Node* node);
 
-    auto CreatePGProperty(NodeProperty* prop) -> wxPGProperty*;
+    wxPGProperty* CreatePGProperty(NodeProperty* prop);
 
     // Called after a property has been modified, this checks to see if various property
     // items need to be enabled or disabled based on the current value of the changed
@@ -94,7 +94,7 @@ protected:
     void ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
     void ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty* grid_prop);
 
-    static auto GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags) -> int;
+    static int GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags);
 
     void AllowIdChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
 

@@ -42,8 +42,9 @@
 
 extern std::map<GenLang, std::string> s_lang_category_prefix;
 
-static constexpr auto supported_languages = frozen::make_set<std::string_view>(
-    { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Python", "Ruby", "TypeScript", "XRC" });
+static constexpr frozen::set<std::string_view, 9> supported_languages =
+    frozen::make_set<std::string_view>(
+        { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Python", "Ruby", "TypeScript", "XRC" });
 
 void PropGridPanel::Create()
 {
@@ -57,7 +58,7 @@ void PropGridPanel::Create()
         const wxWindowUpdateLocker freeze(this);
 
 #if defined(_DEBUG)
-        if (wxGetApp().isFireCreationMsgs())
+        if (App::isFireCreationMsgs())
         {
             MSG_INFO("Property window recreated.");
         }
@@ -113,9 +114,9 @@ void PropGridPanel::Create()
 }
 
 void PropGridPanel::CreateEventCategory(wxue::string_view name, Node* node,
-                                        NodeDeclaration* declaration, EventSet& event_set)
+                                        NodeDeclaration* obj_info, EventSet& event_set)
 {
-    NodeCategory& category = declaration->GetCategory();
+    NodeCategory& category = obj_info->GetCategory();
 
     if ((category.getCategoryCount() == 0U) && (category.get_EventCount() == 0U))
     {
@@ -131,7 +132,7 @@ void PropGridPanel::CreateEventCategory(wxue::string_view name, Node* node,
         }
     }
 
-    wxPGProperty* id_prop =
+    const wxPGProperty* id_prop =
         m_event_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
 
     AddEvents(name, node, category, event_set);
@@ -177,7 +178,7 @@ static constexpr std::initializer_list<PropName> lst_GridBagProps = {
 
 void PropGridPanel::CreateLayoutCategory(Node* node)
 {
-    wxPGProperty* category_id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
+    const wxPGProperty* category_id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
     if (!node->is_Parent(gen_wxGridBagSizer))
     {
@@ -189,9 +190,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
                 continue;
             }
 
-            wxPGProperty* id_prop = m_prop_grid->Append(CreatePGProperty(prop));
+            wxPGProperty* const id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            wxString description = GetPropHelp(prop);
+            const wxString description = GetPropHelp(prop);
             m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
@@ -203,9 +204,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
         if (NodeProperty* prop = node->get_PropPtr(prop_proportion); prop)
         {
-            wxPGProperty* id_prop = m_prop_grid->Append(CreatePGProperty(prop));
+            wxPGProperty* const id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            wxString description = GetPropHelp(prop);
+            const wxString description = GetPropHelp(prop);
             m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
@@ -221,9 +222,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
                 continue;
             }
 
-            wxPGProperty* id_prop = m_prop_grid->Append(CreatePGProperty(prop));
+            wxPGProperty* const id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            wxString description = GetPropHelp(prop);
+            const wxString description = GetPropHelp(prop);
             m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
@@ -273,17 +274,21 @@ public:
     void RefreshChildren() override
     {
         if (!m_choices.IsOk() || !HasAnyChild())
+        {
             return;
-        int flags = m_value.GetLong();
+        }
+        const int flags = m_value.GetLong();
         const wxPGChoices& choices = m_choices;
         for (unsigned int i = 0; i < GetItemCount(); ++i)
         {
-            long flag = choices.GetValue(i);
-            long subVal = flags & flag;
-            wxPGProperty* p = Item(i);
+            const long flag = choices.GetValue(i);
+            const long subVal = flags & flag;
+            wxPGProperty* const item = Item(i);
             if (subVal != (m_oldValue & flag))
-                p->ChangeFlag(wxPGFlags::Modified, true);
-            p->SetValue(subVal == flag ? true : false);
+            {
+                item->ChangeFlag(wxPGFlags::Modified, true);
+            }
+            item->SetValue(subVal == flag ? true : false);
         }
         m_oldValue = flags;
     }
@@ -291,7 +296,7 @@ public:
 
 wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 {
-    auto type = prop->type();
+    const PropType type = prop->type();
 
     switch (type)
     {
@@ -448,7 +453,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 {
                     for (size_t i = 0; i < flagsProp->GetItemCount(); ++i)
                     {
-                        wxPGProperty* item = flagsProp->Item(static_cast<unsigned int>(i));
+                        const wxPGProperty* item = flagsProp->Item(static_cast<unsigned int>(i));
                         const wxString& label = item->GetLabel();
                         for (auto& iter: propInfo->getOptions())
                         {
@@ -493,7 +498,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             {
                 PropDeclaration* propInfo = prop->get_PropDeclaration();
 
-                std::string value = prop->as_string();
+                const std::string value = prop->as_string();
                 std::string_view help_text = {};
 
                 wxPGChoices constants;
@@ -562,7 +567,9 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         case type_wxColour:
             {
-                std::string value = prop->as_string();
+#if defined(_DEBUG)
+                [[maybe_unused]] const std::string value = prop->as_string();
+#endif  // _DEBUG
                 return new EditColourProperty(wxString(prop->get_DeclName()), prop);
             }
 
@@ -744,16 +751,16 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 }
 
 void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
-                                       NodeDeclaration* declaration, PropNameSet& prop_set)
+                                       NodeDeclaration* obj_info, PropNameSet& prop_set)
 {
-    NodeCategory& category = declaration->GetCategory();
+    NodeCategory& category = obj_info->GetCategory();
 
     if (!category.getCategoryCount() && !category.get_PropNameCount())
     {
         return;
     }
 
-    auto generate_languages = Project.get_GenerateLanguages();
+    const GenLang generate_languages = Project.get_GenerateLanguages();
 
     // Ignore if the user doesn't want to generate this language
     if (!(ConvertToGenLang(name) & generate_languages))
@@ -764,7 +771,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     if (name.contains("CheckBoxState Validator") || name.contains("Colour Validator"))
     {
         // These two validators were added to wxWidgets 3.3
-        GenLang preferred_language = Project.get_CodePreference();
+        const GenLang preferred_language = Project.get_CodePreference();
         if (preferred_language == GenLang::cplusplus &&
             Project.get_LangVersion(preferred_language) < CPP_WIDGETS_VERSION_3_3_0)
         {
@@ -781,7 +788,7 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
         // to be sure.
     }
 
-    auto* category_id =
+    const wxPGProperty* category_id =
         m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);
 
@@ -1006,8 +1013,8 @@ void PropGridPanel::InitializePropertyGrids(const wxString& current_page_name)
 void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* declaration,
                                                   PropNameSet& prop_set, EventSet& event_set)
 {
-    auto num_base_classes = declaration->GetBaseClassCount();
-    auto lang_prefix = GenLangToString(Project.get_CodePreference());
+    const size_t num_base_classes = declaration->GetBaseClassCount();
+    const std::string_view lang_prefix = GenLangToString(Project.get_CodePreference());
 
     bool lang_found = false;
     size_t lang_start = 0;
@@ -1015,7 +1022,7 @@ void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* d
     // First pass: Create pre-language categories and preferred language category
     for (size_t i = 0; i < num_base_classes; ++i)
     {
-        auto* info_base = declaration->GetBaseClass(i);
+        NodeDeclaration* info_base = declaration->GetBaseClass(i);
         if (info_base->is_Gen(gen_sizer_child))
         {
             continue;
@@ -1085,7 +1092,7 @@ void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* d
     // Second pass: Create any remaining categories
     for (; lang_start < num_base_classes; ++lang_start)
     {
-        auto* info_base = declaration->GetBaseClass(lang_start);
+        NodeDeclaration* const info_base = declaration->GetBaseClass(lang_start);
         if (info_base->is_Gen(gen_sizer_child))
         {
             continue;
@@ -1111,12 +1118,12 @@ void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* d
 void PropGridPanel::ProcessStandardBaseClasses(Node* node, NodeDeclaration* declaration,
                                                PropNameSet& prop_set, EventSet& event_set)
 {
-    auto num_base_classes = declaration->GetBaseClassCount();
-    auto lang_prefix = GenLangToString(Project.get_CodePreference());
+    const size_t num_base_classes = declaration->GetBaseClassCount();
+    const std::string_view lang_prefix = GenLangToString(Project.get_CodePreference());
 
     for (size_t i = 0; i < num_base_classes; ++i)
     {
-        auto* info_base = declaration->GetBaseClass(i);
+        NodeDeclaration* const info_base = declaration->GetBaseClass(i);
         if (info_base->is_Gen(gen_sizer_child))
         {
             continue;

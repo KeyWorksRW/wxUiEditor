@@ -349,6 +349,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_persist_name, "persist_name" },
     { prop_pin_button, "pin_button" },
     { prop_platforms, "platforms" },
+    { prop_conditional, "conditional" },
     { prop_play, "play" },
     { prop_pos, "pos" },
     { prop_position, "position" },
@@ -946,6 +947,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropHelp = {
     { prop_persist, "Use wxPersistentRegisterAndRestore to save/restore the size and position of the form.\\n\\nOnly available for C++ code." },
     { prop_window_name, "The name of the window. This parameter is used to associate a name with the item, allowing the application user to set Motif resource values for individual windows." },
     { prop_platforms, "Specifies the platforms to create this item on. If a platform is unchecked, the code to create the item will be placed in a conditional block." },
+    { prop_conditional, "If specified (non-empty), the generated code for this item will be additionally gated by this condition. This is combined with the platforms setting." },
 
 };
 

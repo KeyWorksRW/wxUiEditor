@@ -118,8 +118,9 @@ void CppCodeGenerator::ProcessCheckboxRadioVariables(Node* node, std::set<std::s
 
     if (node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
-        InsertPlatformSpecificVariable(node->as_string(prop_platforms), code,
-                                       Permission::Protected);
+        InsertPlatformSpecificVariable(
+            MakeCondKey(node->as_string(prop_platforms), node->as_string(prop_conditional)), code,
+            Permission::Protected);
     }
     else
     {
@@ -178,15 +179,24 @@ void CppCodeGenerator::ProcessClassAccessProperty(Node* node, Permission perm,
 
 void CppCodeGenerator::InsertMemberVariable(Node* node, const wxue::string& code, Permission perm)
 {
-    if (node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    auto has_platform_limit =
+        node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac";
+    auto has_conditional =
+        node->HasProp(prop_conditional) && !node->as_string(prop_conditional).empty();
+
+    if (has_platform_limit || has_conditional)
     {
-        InsertPlatformSpecificVariable(node->as_string(prop_platforms), code, perm);
+        InsertPlatformSpecificVariable(
+            MakeCondKey(node->as_string(prop_platforms), node->as_string(prop_conditional)), code,
+            perm);
     }
     // If node_container is non-null, it means the current node is within a
     // container that has a conditional.
     else if (auto* node_container = node->get_PlatformContainer(); node_container)
     {
-        InsertPlatformSpecificVariable(node_container->as_string(prop_platforms), code, perm);
+        InsertPlatformSpecificVariable(MakeCondKey(node_container->as_string(prop_platforms),
+                                                   node_container->as_string(prop_conditional)),
+                                       code, perm);
     }
 }
 
@@ -294,17 +304,24 @@ void CppCodeGenerator::InsertValidatorVariable(Node* node, const wxue::string& c
     // Validator variables are always written to the protected: section even if the
     // node variable is marked as public:
 
-    if (node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    auto has_platform_limit =
+        node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac";
+    auto has_conditional =
+        node->HasProp(prop_conditional) && !node->as_string(prop_conditional).empty();
+
+    if (has_platform_limit || has_conditional)
     {
-        InsertPlatformSpecificVariable(node->as_string(prop_platforms), code,
-                                       Permission::Protected);
+        InsertPlatformSpecificVariable(
+            MakeCondKey(node->as_string(prop_platforms), node->as_string(prop_conditional)), code,
+            Permission::Protected);
     }
     // If node_container is non-null, it means the current node is within a container
     // that has a conditional.
     else if (auto* node_container = node->get_PlatformContainer(); node_container)
     {
-        InsertPlatformSpecificVariable(node_container->as_string(prop_platforms), code,
-                                       Permission::Protected);
+        InsertPlatformSpecificVariable(MakeCondKey(node_container->as_string(prop_platforms),
+                                                   node_container->as_string(prop_conditional)),
+                                       code, Permission::Protected);
     }
     else
     {

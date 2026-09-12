@@ -277,16 +277,24 @@ void BaseCodeGenerator::AddEventToProperContainer(Node* node, NodeEvent* event, 
 void BaseCodeGenerator::ProcessEventHandler(Node* node, NodeEvent* event, EventVector& events)
 {
     // Check if node has platform-specific constraint
-    if (node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
+    const bool has_platform_limit =
+        node->HasProp(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac";
+    const bool has_conditional =
+        node->HasProp(prop_conditional) && !node->as_string(prop_conditional).empty();
+
+    if (has_platform_limit || has_conditional)
     {
-        AddConditionalEvent(node->as_string(prop_platforms), event);
+        AddConditionalEvent(
+            MakeCondKey(node->as_string(prop_platforms), node->as_string(prop_conditional)), event);
         return;
     }
 
     // Check if node is within a platform container
     if (auto* node_container = node->get_PlatformContainer(); node_container)
     {
-        AddConditionalEvent(node_container->as_string(prop_platforms), event);
+        AddConditionalEvent(MakeCondKey(node_container->as_string(prop_platforms),
+                                        node_container->as_string(prop_conditional)),
+                            event);
         return;
     }
 

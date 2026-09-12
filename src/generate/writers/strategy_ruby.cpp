@@ -13,7 +13,8 @@
 
 RubyStrategy::RubyStrategy(const LanguageTraits& traits) : WxBindingStrategy(traits) {}
 
-void RubyStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void RubyStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                     std::string_view conditional)
 {
     bool has_prior = false;
 
@@ -48,6 +49,25 @@ void RubyStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         }
         code << "Wx::PLATFORM == 'WXOSX'";
     }
+
+    if (!conditional.empty())
+    {
+        if (has_prior)
+        {
+            code << " && ";
+        }
+        else
+        {
+            code.Eol() << "if ";
+            has_prior = true;
+        }
+        code << conditional;
+    }
+}
+
+void RubyStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << "if " << conditional;
 }
 
 void RubyStrategy::EmitPlatformEnd(WriteCode* writer)

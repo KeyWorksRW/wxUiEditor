@@ -457,7 +457,12 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, EventVector& events)
         std::sort(conditional_events.begin(), conditional_events.end(), sort_by_event_name);
 
         code.clear();
-        BeginPlatformCode(code, map_entry.first);
+        {
+            wxue::string cond_platforms;
+            wxue::string cond_conditional;
+            SplitCondKey(std::string_view(map_entry.first), cond_platforms, cond_conditional);
+            BeginPlatformCode(code, cond_platforms, cond_conditional);
+        }
         code.Eol();
         m_source->writeLine(code);
         if (m_language == GenLang::python || m_language == GenLang::ruby)

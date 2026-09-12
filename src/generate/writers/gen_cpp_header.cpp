@@ -215,8 +215,13 @@ void CppCodeGenerator::ProcessConditionalEvents(Code& code)
         auto& events = iter.second;
         std::sort(events.begin(), events.end(), sort_events_by_handler);
         code.clear();
-        BeginPlatformCode(code, iter.first);
-        code.Eol();
+        {
+            wxue::string cond_platforms;
+            wxue::string cond_conditional;
+            SplitCondKey(std::string_view(iter.first), cond_platforms, cond_conditional);
+            BeginPlatformCode(code, cond_platforms, cond_conditional);
+            code.Eol();
+        }
 
         for (auto& event: events)
         {
@@ -591,7 +596,12 @@ void CppCodeGenerator::WritePublicMemberVariables(Code& code)
     for (auto& member: m_map_public_members)
     {
         code.clear();
-        BeginPlatformCode(code, member.first);
+        {
+            wxue::string cond_platforms;
+            wxue::string cond_conditional;
+            SplitCondKey(std::string_view(member.first), cond_platforms, cond_conditional);
+            BeginPlatformCode(code, cond_platforms, cond_conditional);
+        }
         m_header->writeLine(code);
         for (const auto& member_code: member.second)
         {
@@ -709,7 +719,12 @@ void CppCodeGenerator::WriteValidatorVariables(Code& code, std::set<std::string>
         for (auto& member: m_map_protected)
         {
             code.clear();
-            BeginPlatformCode(code, member.first);
+            {
+                wxue::string cond_platforms;
+                wxue::string cond_conditional;
+                SplitCondKey(std::string_view(member.first), cond_platforms, cond_conditional);
+                BeginPlatformCode(code, cond_platforms, cond_conditional);
+            }
             m_header->writeLine(code);
             for (const auto& code_line: member.second)
             {
@@ -741,7 +756,12 @@ void CppCodeGenerator::WriteProtectedMemberVariables(Code& code, BaseGenerator* 
     for (auto& member: m_map_protected)
     {
         code.clear();
-        BeginPlatformCode(code, member.first);
+        {
+            wxue::string cond_platforms;
+            wxue::string cond_conditional;
+            SplitCondKey(std::string_view(member.first), cond_platforms, cond_conditional);
+            BeginPlatformCode(code, cond_platforms, cond_conditional);
+        }
         m_header->writeLine(code);
         for (const auto& code_line: member.second)
         {

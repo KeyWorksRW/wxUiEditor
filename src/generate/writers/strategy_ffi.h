@@ -21,7 +21,9 @@ public:
     [[nodiscard]] bool IsFeatureSupported(Node* node, GenEnum::PropName prop) override;
 
     // Default FFI platform conditional (per-language strategies override for syntax)
-    void EmitPlatformBegin(Code& code, std::string_view platforms) override;
+    void EmitPlatformBegin(Code& code, std::string_view platforms,
+                           std::string_view conditional = {}) override;
+    virtual void EmitConditionalOnly(Code& code, std::string_view conditional) override;
 
     // Default FFI platform end (per-language strategies override for syntax)
     void EmitPlatformEnd(WriteCode* writer) override;

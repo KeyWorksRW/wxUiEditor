@@ -18,14 +18,15 @@ InsertWidget::InsertWidget(wxWindow* parent)
     std::ignore = Create(parent);
 }
 
-void MainFrame::OnInsertWidget(wxCommandEvent& event)
+void MainFrame::OnInsertWidget(wxCommandEvent& /* event unused */)
 {
     InsertWidget dialog(this);
     if (dialog.ShowModal() == wxID_OK)
     {
         if (auto result = rmap_GenNames.find(dialog.GetWidget()); result != rmap_GenNames.end())
         {
-            return CreateToolNode(result->second);
+            CreateToolNode(result->second);
+            return;
         }
         FAIL_MSG(wxue::string() << "No property enum type exists for " << dialog.GetWidget()
                                 << "! This should be impossible...")

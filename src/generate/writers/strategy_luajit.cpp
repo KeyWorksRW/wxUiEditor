@@ -24,7 +24,8 @@ std::string LuaJITStrategy::MapClassName(std::string_view wx_class_name)
     return std::string(wx_class_name.substr(2));
 }
 
-void LuaJITStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void LuaJITStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                       std::string_view conditional)
 {
     // LuaJIT: ffi.os check
     bool has_prior = false;
@@ -50,10 +51,29 @@ void LuaJITStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
     emit_condition("Unix", "Linux");
     emit_condition("Mac", "OSX");
 
+    if (!conditional.empty())
+    {
+        if (has_prior)
+        {
+            code << m_traits.logical_and;
+        }
+        else
+        {
+            code.Eol() << "if ";
+            has_prior = true;
+        }
+        code << conditional;
+    }
+
     if (has_prior)
     {
         code << " then";
     }
+}
+
+void LuaJITStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << "if " << conditional << " then";
 }
 
 void LuaJITStrategy::EmitImport(Code& code, std::string_view module)

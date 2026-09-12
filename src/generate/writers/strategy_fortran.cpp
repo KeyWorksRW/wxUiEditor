@@ -26,7 +26,8 @@ std::string FortranStrategy::MapClassName(std::string_view wx_class_name)
     return result;
 }
 
-void FortranStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
+void FortranStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
+                                        std::string_view conditional)
 {
     // Fortran uses preprocessor directives for platform conditionals
     bool has_prior = false;
@@ -62,6 +63,25 @@ void FortranStrategy::EmitPlatformBegin(Code& code, std::string_view platforms)
         }
         code << "defined(__APPLE__)";
     }
+
+    if (!conditional.empty())
+    {
+        if (has_prior)
+        {
+            code << " && ";
+        }
+        else
+        {
+            code.Eol() << "#if ";
+            has_prior = true;
+        }
+        code << conditional;
+    }
+}
+
+void FortranStrategy::EmitConditionalOnly(Code& code, std::string_view conditional)
+{
+    code.Eol() << "#if " << conditional;
 }
 
 void FortranStrategy::EmitPlatformEnd(WriteCode* writer)

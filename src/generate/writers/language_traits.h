@@ -181,7 +181,10 @@ public:
 
     // Emit a block gated only by the user condition (no platform check).
     // Used when all platforms are enabled but a conditional is specified.
-    virtual void EmitConditionalOnly(Code& code, std::string_view conditional) {}
+    virtual void EmitConditionalOnly([[maybe_unused]] Code& code,
+                                     [[maybe_unused]] std::string_view conditional)
+    {
+    }
 
     // Emit platform-conditional end (e.g., #endif, unindent, "end")
     virtual void EmitPlatformEnd(WriteCode* writer) = 0;

@@ -5,14 +5,14 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "xrcpreview.h"
-
 #include <format>
 
 #include <wx/filedlg.h>     // wxFileDialog base header
 #include <wx/mstream.h>     // Memory stream classes
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
 #include <wx/xrc/xmlres.h>  // XML resources
+
+#include "generated/xrcpreview.h"
 
 // The following handlers must be explicitly added
 

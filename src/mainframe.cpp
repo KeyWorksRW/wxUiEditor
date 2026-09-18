@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
@@ -513,10 +514,6 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
 
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg,
                              wxSize def_size);
-
-#if defined(_DEBUG)
-    #include "internal/debugsettings.h"
-#endif
 
 void MainFrame::ProjectLoaded()
 {

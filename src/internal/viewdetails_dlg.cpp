@@ -5,7 +5,7 @@
 // License:   Apache License -- see ..\..\LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "viewdetails_dlg.h"  // auto-generated: ../wxui/viewdetails_base.h and ..//wxui/viewdetails_base.cpp
+#include "viewdetails_dlg.h"  // auto-generated: generated/viewdetails_base.h and generated/viewdetails_base.cpp
 
 // If this constructor is used, the caller must call Create(parent)
 ViewDetails::ViewDetails() {}

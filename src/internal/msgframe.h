@@ -11,7 +11,7 @@
 
 #include <wx/log.h>
 
-#include "msgframe_base.h"
+#include "generated/msgframe_base.h"
 
 class MsgFrame : public MsgFrameBase
 {

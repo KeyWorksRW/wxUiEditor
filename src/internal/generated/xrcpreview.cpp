@@ -15,15 +15,33 @@
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 
-#include "../wxui/ui_images.h"
-
 #include "xrcpreview.h"
+
+#include <wx/bmpbndl.h>  // wxBitmapBundle class
+#include <wx/mstream.h>  // memory stream classes
+#include <wx/zstream.h>  // zlib stream classes
+
+#include <memory>  // for std::make_unique
+
+// Convert compressed SVG string into a wxBitmapBundle
+#ifdef __cpp_inline_variables
+inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#else
+static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+#endif
+{
+    auto str = std::make_unique<char[]>(size_svg);
+    wxMemoryInputStream stream_in(data, size_data);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), size_svg);
+    return wxBitmapBundle::FromSVG(str.get(), def_size);
+};
 
 bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    // Scaling of pos and size are handled after the dialog
-    // has been created and controls added.
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
     {
         return false;
@@ -51,17 +69,17 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
 
     auto* btn_3 = new wxButton(this, wxID_ANY, "&Generate...");
-        btn_3->SetBitmap(wxue_img::bundle_generate_svg(16, 16));
+        btn_3->SetBitmap(wxNullBitmap);
     btn_3->SetToolTip("Choose a form then generate the XRC code");
     box_sizer_2->Add(btn_3, wxSizerFlags().Border(wxALL));
 
     m_btn_preview = new wxButton(this, wxID_ANY, "&Preview...");
-        m_btn_preview->SetBitmap(wxue_img::bundle_xrc_preview_svg(16, 16));
+        m_btn_preview->SetBitmap(wxNullBitmap);
     m_btn_preview->SetToolTip("Use wxXmlResource to load and display the contents");
     box_sizer_2->Add(m_btn_preview, wxSizerFlags().Border(wxALL));
 
     m_btn_import = new wxButton(this, wxID_ANY, "&Verify");
-        m_btn_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
+        m_btn_import->SetBitmap(wxNullBitmap);
     m_btn_import->SetToolTip("Verify that the current contents can be imported");
     box_sizer_2->Add(m_btn_import, wxSizerFlags().Border(wxALL));
 
@@ -108,9 +126,6 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     {
         m_scintilla->SetLexer(wxSTC_LEX_XML);
         m_scintilla->SetEOLMode(wxSTC_EOL_LF);
-        // Sets text margin scaled appropriately for the current DPI on Windows,
-        // 5 on wxGTK or wxOSX
-
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetProperty("fold", "1");
@@ -140,13 +155,10 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     SetMinSize(FromDIP(wxSize(1200, 1250)));
     if (pos != wxDefaultPosition)
     {
-        // Now that the dialog is created, set the scaled position
         SetPosition(FromDIP(pos));
     }
     if (size == wxDefaultSize)
     {
-        // If default size let the sizer set the dialog's size
-        // so that it is large enough to fit it's child controls.
         SetSizerAndFit(dlg_sizer);
     }
     else
@@ -154,7 +166,6 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         SetSizer(dlg_sizer);
         if (size.x == wxDefaultCoord || size.y == wxDefaultCoord)
         {
-            // Use the sizer to calculate the missing dimension
             Fit();
         }
         SetSize(FromDIP(size));
@@ -188,4 +199,3 @@ bool XrcPreview::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // cppcheck-suppress-end *
 // ***********************************************
 // </auto-generated>
-// Handler code is in xrcpreview_handlers.cpp

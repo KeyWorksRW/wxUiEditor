@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "viewdetails_base.h"
+#include "generated/viewdetails_base.h"
 
 class ViewDetails : public ViewDetails_base
 {

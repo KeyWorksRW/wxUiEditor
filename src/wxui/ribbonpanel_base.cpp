@@ -44,20 +44,17 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* forms_bar_windows = new wxRibbonToolBar(panel_form_windows, wxID_ANY);
     {
         forms_bar_windows->AddTool(CreateNewDialog,
-            wxue_img::bundle_wxDialog_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxDialog", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxDialog_svg(24, 24), "wxDialog", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(CreateNewFrame,
-            wxue_img::bundle_wxFrame_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxFrame", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxFrame_svg(24, 24), "wxFrame", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(CreateNewPanel,
-            wxue_img::bundle_wxPanel_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPanel", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxPanel_svg(24, 24), "wxPanel", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(CreateNewPropertySheet,
-            wxue_img::bundle_prop_sheet_dlg_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPropertySheetDialog",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_prop_sheet_dlg_svg(24, 24), "wxPropertySheetDialog", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupTransientWindow,
-            wxue_img::bundle_popup_transient_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPopupTransientWindow",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_popup_transient_svg(24, 24), "wxPopupTransientWindow", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupWindow,
-            wxue_img::bundle_popup_window_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPopupWindow",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_popup_window_svg(24, 24), "wxPopupWindow", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_windows->Realize();
 
@@ -66,10 +63,9 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* forms_bar_wizard = new wxRibbonToolBar(panel_wizard, wxID_ANY);
     {
         forms_bar_wizard->AddTool(CreateNewWizard,
-            wxue_img::bundle_wxWizard_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxWizard", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxWizard_svg(24, 24), "wxWizard", wxRIBBON_BUTTON_NORMAL);
         forms_bar_wizard->AddTool(gen_wxWizardPageSimple,
-            wxue_img::bundle_wxWizardPageSimple_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxWizardPageSimple",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxWizardPageSimple_svg(24, 24), "wxWizardPageSimple", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_wizard->Realize();
 
@@ -78,13 +74,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* forms_bar_bars = new wxRibbonToolBar(panel_bars, wxID_ANY);
     {
         forms_bar_bars->AddTool(gen_ToolBar,
-            wxue_img::bundle_wxToolBar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxToolBar_svg(24, 24), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(gen_AuiToolBar,
-            wxue_img::bundle_auitoolbar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxAuiToolBar",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_auitoolbar_svg(24, 24), "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(CreateNewFormRibbon,
-            wxue_img::bundle_ribbon_bar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRibbonBar",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_ribbon_bar_svg(24, 24), "wxRibbonBar", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_bars->Realize();
 
@@ -93,12 +87,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* forms_bar_bars_2 = new wxRibbonToolBar(panel_menu, wxID_ANY);
     {
         forms_bar_bars_2->AddTool(gen_MenuBar,
-            wxue_img::bundle_wxMenuBar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxMenuBar_svg(24, 24), "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars_2->AddTool(gen_PopupMenu,
-            wxue_img::bundle_menu_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxMenu", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_menu_svg(24, 24), "wxMenu", wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars_2->AddTool(gen_wxContextMenuEvent,
-            wxue_img::bundle_menuitem_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxContextMenuEvent",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_menuitem_svg(24, 24), "wxContextMenuEvent", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_bars_2->Realize();
 
@@ -107,25 +100,19 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* forms_bar_images = new wxRibbonToolBar(panel_wizard_2, wxID_ANY);
     {
         forms_bar_images->AddTool(gen_folder,
-            wxue_img::bundle_folder_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
-            "Create a folder that can be used to organize forms.", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_folder_svg(24, 24), "Create a folder that can be used to organize forms.", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddSeparator();
         forms_bar_images->AddTool(gen_Images,
-            wxue_img::bundle_images_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
-            "Create a file containing embedded images", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_images_svg(24, 24), "Create a file containing embedded images", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddTool(gen_embedded_image,
-            wxue_img::bundle_bitmap_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
-            "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_bitmap_svg(24, 24), "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddSeparator();
         forms_bar_images->AddTool(gen_Data,
-            wxue_img::bundle_data_list_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
-            "Create a file containing embedded data files", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_data_list_svg(24, 24), "Create a file containing embedded data files", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddTool(gen_data_string,
-            wxue_img::bundle_text_file_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Embed a string or binary file",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_text_file_svg(24, 24), "Embed a string or binary file", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddTool(gen_data_xml,
-            wxue_img::bundle_xml_file_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Embed an XML file",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_xml_file_svg(24, 24), "Embed an XML file", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_images->Realize();
 
@@ -136,17 +123,13 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* sizer_bar_basic = new wxRibbonToolBar(panel_basic, wxID_ANY);
     {
         sizer_bar_basic->AddTool(gen_wxBoxSizer,
-            wxue_img::bundle_sizer_horizontal_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Horizontal wxBoxSizer",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_sizer_horizontal_svg(24, 24), "Horizontal wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_basic->AddTool(gen_VerticalBoxSizer,
-            wxue_img::bundle_sizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Vertical wxBoxSizer",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_sizer_svg(24, 24), "Vertical wxBoxSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_basic->AddTool(NewStaticSizer,
-            wxue_img::bundle_wxStaticBoxSizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStaticBoxSizer",
-            wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_wxStaticBoxSizer_svg(24, 24), "wxStaticBoxSizer", wxRIBBON_BUTTON_DROPDOWN);
         sizer_bar_basic->AddTool(gen_wxWrapSizer,
-            wxue_img::bundle_wrap_sizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxWrapSizer",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wrap_sizer_svg(24, 24), "wxWrapSizer", wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_basic->Realize();
 
@@ -155,14 +138,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* sizer_bar_grids = new wxRibbonToolBar(sizer_panel_grids, wxID_ANY);
     {
         sizer_bar_grids->AddTool(gen_wxGridSizer,
-            wxue_img::bundle_grid_sizer_svg(FromDIP(22), FromDIP(22)).GetBitmap(wxDefaultSize), "wxGridSizer",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_grid_sizer_svg(22, 22), "wxGridSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_grids->AddTool(gen_wxFlexGridSizer,
-            wxue_img::bundle_flex_grid_sizer_svg(FromDIP(22), FromDIP(22)).GetBitmap(wxDefaultSize), "wxFlexGridSizer",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_flex_grid_sizer_svg(22, 22), "wxFlexGridSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_grids->AddTool(gen_wxGridBagSizer,
-            wxue_img::bundle_grid_bag_sizer_svg(FromDIP(22), FromDIP(22)).GetBitmap(wxDefaultSize), "wxGridBagSizer",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_grid_bag_sizer_svg(22, 22), "wxGridBagSizer", wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_grids->Realize();
 
@@ -171,13 +151,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* sizer_bar_other = new wxRibbonToolBar(sizer_panel_other, wxID_ANY);
     {
         sizer_bar_other->AddTool(gen_wxStdDialogButtonSizer,
-            wxue_img::bundle_stddialogbuttonsizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStdDialogButtonSizer",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_stddialogbuttonsizer_svg(24, 24), "wxStdDialogButtonSizer", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_other->AddTool(gen_TextSizer,
-            wxue_img::bundle_text_sizer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTextSizerWrapper",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_text_sizer_svg(24, 24), "wxTextSizerWrapper", wxRIBBON_BUTTON_NORMAL);
         sizer_bar_other->AddTool(gen_spacer,
-            wxue_img::bundle_spacer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "spacer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_spacer_svg(24, 24), "spacer", wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_other->Realize();
 
@@ -188,21 +166,17 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* common_bar_controls = new wxRibbonToolBar(panel_common_controls, wxID_ANY);
     {
         common_bar_controls->AddTool(gen_wxStaticText,
-            wxue_img::bundle_wxStaticText_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStaticText",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxStaticText_svg(24, 24), "wxStaticText", wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(gen_wxTextCtrl,
-            wxue_img::bundle_wxTextCtrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTextCtrl", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxTextCtrl_svg(24, 24), "wxTextCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewCheckbox,
-            wxue_img::bundle_wxCheckBox_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Check Boxes",
-            wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_wxCheckBox_svg(24, 24), "Check Boxes", wxRIBBON_BUTTON_DROPDOWN);
         common_bar_controls->AddTool(gen_wxRadioButton,
-            wxue_img::bundle_wxRadioButton_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRadioButton",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxRadioButton_svg(24, 24), "wxRadioButton", wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewButton,
-            wxue_img::bundle_wxButton_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Buttons", wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_wxButton_svg(24, 24), "Buttons", wxRIBBON_BUTTON_DROPDOWN);
         common_bar_controls->AddTool(NewSpin,
-            wxue_img::bundle_spin_ctrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Spin controls",
-            wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_spin_ctrl_svg(24, 24), "Spin controls", wxRIBBON_BUTTON_DROPDOWN);
     }
     common_bar_controls->Realize();
 
@@ -211,12 +185,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* common_bar_choices = new wxRibbonToolBar(panel_choices, wxID_ANY);
     {
         common_bar_choices->AddTool(NewCombobox,
-            wxue_img::bundle_wxComboBox_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Combos & Choice",
-            wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_wxComboBox_svg(24, 24), "Combos & Choice", wxRIBBON_BUTTON_DROPDOWN);
         common_bar_choices->AddTool(NewListbox,
-            wxue_img::bundle_wxListBox_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Lists", wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_wxListBox_svg(24, 24), "Lists", wxRIBBON_BUTTON_DROPDOWN);
         common_bar_choices->AddTool(gen_wxRadioBox,
-            wxue_img::bundle_radio_box_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRadioBox", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_radio_box_svg(24, 24), "wxRadioBox", wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_choices->Realize();
 
@@ -225,23 +198,17 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* common_bar_pickers = new wxRibbonToolBar(panel_pickkers, wxID_ANY);
     {
         common_bar_pickers->AddTool(gen_wxFilePickerCtrl,
-            wxue_img::bundle_filePicker_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxFilePickerCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_filePicker_svg(24, 24), "wxFilePickerCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_pickers->AddTool(gen_wxDirPickerCtrl,
-            wxue_img::bundle_dirPicker_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxDirPickerCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_dirPicker_svg(24, 24), "wxDirPickerCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_pickers->AddTool(gen_wxFontPickerCtrl,
-            wxue_img::bundle_fontPicker_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxFontPickerCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_fontPicker_svg(24, 24), "wxFontPickerCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_pickers->AddTool(gen_wxColourPickerCtrl,
-            wxue_img::bundle_colourPickerIcon_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxColourPickerCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_colourPickerIcon_svg(24, 24), "wxColourPickerCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_pickers->AddTool(gen_wxDatePickerCtrl,
-            wxue_img::bundle_datepicker_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxDatePickerCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_datepicker_svg(24, 24), "wxDatePickerCtrl", wxRIBBON_BUTTON_NORMAL);
         common_bar_pickers->AddTool(gen_wxTimePickerCtrl,
-            wxue_img::bundle_timepicker_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTimePickerCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_timepicker_svg(24, 24), "wxTimePickerCtrl", wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_pickers->Realize();
 
@@ -250,14 +217,13 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* common_bar_other = new wxRibbonToolBar(panel_other, wxID_ANY);
     {
         common_bar_other->AddTool(gen_wxStaticBitmap,
-            wxue_img::bundle_bitmap_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStaticBitmap", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_bitmap_svg(24, 24), "wxStaticBitmap", wxRIBBON_BUTTON_NORMAL);
         common_bar_other->AddTool(gen_wxStaticLine,
-            wxue_img::bundle_static_line_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStaticLine",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_static_line_svg(24, 24), "wxStaticLine", wxRIBBON_BUTTON_NORMAL);
         common_bar_other->AddTool(gen_wxSlider,
-            wxue_img::bundle_slider_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxSlider", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_slider_svg(24, 24), "wxSlider", wxRIBBON_BUTTON_NORMAL);
         common_bar_other->AddTool(gen_wxGauge,
-            wxue_img::bundle_gauge_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxGauge", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_gauge_svg(24, 24), "wxGauge", wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_other->Realize();
 
@@ -268,16 +234,13 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* container_bar_windows = new wxRibbonToolBar(panel_windows, wxID_ANY);
     {
         container_bar_windows->AddTool(gen_wxPanel,
-            wxue_img::bundle_wxPanel_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPanel", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxPanel_svg(24, 24), "wxPanel", wxRIBBON_BUTTON_NORMAL);
         container_bar_windows->AddTool(gen_wxSplitterWindow,
-            wxue_img::bundle_wxSplitterWindow_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxSplitterWindow",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxSplitterWindow_svg(24, 24), "wxSplitterWindow", wxRIBBON_BUTTON_NORMAL);
         container_bar_windows->AddTool(NewScrolled,
-            wxue_img::bundle_wxScrolledWindow_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxScrolled (Panel or Window)",
-            wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_wxScrolledWindow_svg(24, 24), "wxScrolled (Panel or Window)", wxRIBBON_BUTTON_DROPDOWN);
         container_bar_windows->AddTool(gen_wxCollapsiblePane,
-            wxue_img::bundle_wxCollapsiblePane_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxCollapsiblePane",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxCollapsiblePane_svg(24, 24), "wxCollapsiblePane", wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_windows->Realize();
 
@@ -286,23 +249,19 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* container_bar_books = new wxRibbonToolBar(panel_books, wxID_ANY);
     {
         container_bar_books->AddTool(gen_wxAuiNotebook,
-            wxue_img::bundle_notebook_aui_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxAuiNotebook",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_notebook_aui_svg(24, 24), "wxAuiNotebook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxChoicebook,
-            wxue_img::bundle_notebook_choice_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxChoicebook",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_notebook_choice_svg(24, 24), "wxChoicebook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxListbook,
-            wxue_img::bundle_notebook_list_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxListbook",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_notebook_list_svg(24, 24), "wxListbook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxNotebook,
-            wxue_img::bundle_notebook_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxNotebook", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_notebook_svg(24, 24), "wxNotebook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxSimplebook,
-            wxue_img::bundle_wxSimplebook_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxSimplebook",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxSimplebook_svg(24, 24), "wxSimplebook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxToolbook,
-            wxue_img::bundle_wxToolbook_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxToolbook", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxToolbook_svg(24, 24), "wxToolbook", wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxTreebook,
-            wxue_img::bundle_wxTreebook_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTreebook", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxTreebook_svg(24, 24), "wxTreebook", wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_books->Realize();
 
@@ -311,11 +270,9 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* container_bar_page = new wxRibbonToolBar(panel_page, wxID_ANY);
     {
         container_bar_page->AddTool(gen_BookPage,
-            wxue_img::bundle_book_page_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize),
-            "Adds a wxPanel, allowing for multiple controls", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_book_page_svg(24, 24), "Adds a wxPanel, allowing for multiple controls", wxRIBBON_BUTTON_NORMAL);
         container_bar_page->AddTool(gen_PageCtrl,
-            wxue_img::bundle_pagectrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Adds a single control as the page",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_pagectrl_svg(24, 24), "Adds a single control as the page", wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_page->Realize();
 
@@ -326,7 +283,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* data_bar_grid = new wxRibbonToolBar(panel_misc, wxID_ANY);
     {
         data_bar_grid->AddTool(gen_wxGrid,
-            wxue_img::bundle_grid_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxGrid", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_grid_svg(24, 24), "wxGrid", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_grid->Realize();
 
@@ -335,20 +292,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* data_bar_properties = new wxRibbonToolBar(panel_properties, wxID_ANY);
     {
         data_bar_properties->AddTool(gen_wxPropertyGrid,
-            wxue_img::bundle_wxPropertyGrid_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPropertyGrid",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxPropertyGrid_svg(24, 24), "wxPropertyGrid", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_wxPropertyGridManager,
-            wxue_img::bundle_wxPropertyGridManager_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPropertyGridManager",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxPropertyGridManager_svg(24, 24), "wxPropertyGridManager", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_propGridPage,
-            wxue_img::bundle_propgridpage_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPropertyGrid Page",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_propgridpage_svg(24, 24), "wxPropertyGrid Page", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_propGridCategory,
-            wxue_img::bundle_propgrid_cat_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPropertyGrid Category",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_propgrid_cat_svg(24, 24), "wxPropertyGrid Category", wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(gen_propGridItem,
-            wxue_img::bundle_propgriditem_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxPropertyGrid Item",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_propgriditem_svg(24, 24), "wxPropertyGrid Item", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_properties->Realize();
 
@@ -357,13 +309,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* data_bar_trees = new wxRibbonToolBar(panel_data_trees, wxID_ANY);
     {
         data_bar_trees->AddTool(gen_wxTreeCtrl,
-            wxue_img::bundle_tree_ctrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTreeCtrl", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_tree_ctrl_svg(24, 24), "wxTreeCtrl", wxRIBBON_BUTTON_NORMAL);
         data_bar_trees->AddTool(gen_wxTreeListCtrl,
-            wxue_img::bundle_treelistctrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTreeListCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_treelistctrl_svg(24, 24), "wxTreeListCtrl", wxRIBBON_BUTTON_NORMAL);
         data_bar_trees->AddTool(gen_TreeListCtrlColumn,
-            wxue_img::bundle_treelistctrlcolumn_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTreeListCtrl Column",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_treelistctrlcolumn_svg(24, 24), "wxTreeListCtrl Column", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_trees->Realize();
 
@@ -372,14 +322,11 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* data_bar_dataview = new wxRibbonToolBar(panel_trees, wxID_ANY);
     {
         data_bar_dataview->AddTool(NewDataCtrl,
-            wxue_img::bundle_dataview_ctrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Data Control",
-            wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_dataview_ctrl_svg(24, 24), "Data Control", wxRIBBON_BUTTON_DROPDOWN);
         data_bar_dataview->AddTool(gen_dataViewColumn,
-            wxue_img::bundle_dataview_column_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "DataView Column",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_dataview_column_svg(24, 24), "DataView Column", wxRIBBON_BUTTON_NORMAL);
         data_bar_dataview->AddTool(gen_dataViewListColumn,
-            wxue_img::bundle_dataviewlist_column_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "DataViewList Column",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_dataviewlist_column_svg(24, 24), "DataViewList Column", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_dataview->Realize();
 
@@ -390,15 +337,15 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* bars_bar_menu = new wxRibbonToolBar(panel_bars_menu, wxID_ANY);
     {
         bars_bar_menu->AddTool(gen_wxMenuBar,
-            wxue_img::bundle_wxMenuBar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxMenuBar_svg(24, 24), "wxMenuBar", wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_wxMenu,
-            wxue_img::bundle_menu_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxMenu", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_menu_svg(24, 24), "wxMenu", wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_wxMenuItem,
-            wxue_img::bundle_menuitem_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxMenuItem", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_menuitem_svg(24, 24), "wxMenuItem", wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_submenu,
-            wxue_img::bundle_submenu_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "submenu", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_submenu_svg(24, 24), "submenu", wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_separator,
-            wxue_img::bundle_separator_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "separator", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_separator_svg(24, 24), "separator", wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_menu->Realize();
 
@@ -407,15 +354,14 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
         bars_bar_tool->AddTool(gen_wxToolBar,
-            wxue_img::bundle_wxToolBar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxToolBar_svg(24, 24), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(BarTools,
-            wxue_img::bundle_tool_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_tool_svg(24, 24), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_tool->AddSeparator();
         bars_bar_tool->AddTool(gen_wxAuiToolBar,
-            wxue_img::bundle_auitoolbar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxAuiToolBar",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_auitoolbar_svg(24, 24), "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(AuiBarTools,
-            wxue_img::bundle_tool_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_tool_svg(24, 24), wxEmptyString, wxRIBBON_BUTTON_DROPDOWN);
     }
     bars_bar_tool->Realize();
 
@@ -424,26 +370,19 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* bars_bar_ribbon = new wxRibbonToolBar(panel_bars_ribbon, wxID_ANY);
     {
         bars_bar_ribbon->AddTool(CreateNewRibbon,
-            wxue_img::bundle_ribbon_bar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRibbonBar",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_ribbon_bar_svg(24, 24), "wxRibbonBar", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_wxRibbonPage,
-            wxue_img::bundle_ribbon_page_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRibbonPage",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_ribbon_page_svg(24, 24), "wxRibbonPage", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_wxRibbonPanel,
-            wxue_img::bundle_ribbon_panel_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRibbonPanel",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_ribbon_panel_svg(24, 24), "wxRibbonPanel", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(NewRibbonType,
-            wxue_img::bundle_ribbon_toolbar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Ribbon Bar Type",
-            wxRIBBON_BUTTON_DROPDOWN);
+            wxue_img::bundle_ribbon_toolbar_svg(24, 24), "Ribbon Bar Type", wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_ribbon->AddTool(gen_ribbonButton,
-            wxue_img::bundle_ribbon_button_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Ribbon Button",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_ribbon_button_svg(24, 24), "Ribbon Button", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_ribbonSeparator,
-            wxue_img::bundle_ribbon_separator_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Tool Separator",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_ribbon_separator_svg(24, 24), "Tool Separator", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_ribbonGalleryItem,
-            wxue_img::bundle_ribbon_gallery_item_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "Ribbon Gallery Item",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_ribbon_gallery_item_svg(24, 24), "Ribbon Gallery Item", wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_ribbon->Realize();
 
@@ -452,9 +391,9 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* bars_bar_other = new wxRibbonToolBar(panel_bars_rother, wxID_ANY);
     {
         bars_bar_other->AddTool(gen_wxStatusBar,
-            wxue_img::bundle_statusbar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStatusBar", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_statusbar_svg(24, 24), "wxStatusBar", wxRIBBON_BUTTON_NORMAL);
         bars_bar_other->AddTool(gen_wxInfoBar,
-            wxue_img::bundle_infobar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxInfoBar", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_infobar_svg(24, 24), "wxInfoBar", wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_other->Realize();
 
@@ -465,11 +404,9 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* other_bar_editors = new wxRibbonToolBar(panel_editors, wxID_ANY);
     {
         other_bar_editors->AddTool(gen_wxRichTextCtrl,
-            wxue_img::bundle_richtextctrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxRichTextCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_richtextctrl_svg(24, 24), "wxRichTextCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_editors->AddTool(gen_wxStyledTextCtrl,
-            wxue_img::bundle_scintilla_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxStyledTextCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_scintilla_svg(24, 24), "wxStyledTextCtrl", wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_editors->Realize();
 
@@ -478,34 +415,27 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* other_bar_ctrls = new wxRibbonToolBar(panel_controls, wxID_ANY);
     {
         other_bar_ctrls->AddTool(gen_wxHyperlinkCtrl,
-            wxue_img::bundle_hyperlink_ctrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxHyperlinkCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_hyperlink_ctrl_svg(24, 24), "wxHyperlinkCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxSearchCtrl,
-            wxue_img::bundle_search_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxSearchCtrl", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_search_svg(24, 24), "wxSearchCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxCalendarCtrl,
-            wxue_img::bundle_calendar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxCalendarCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_calendar_svg(24, 24), "wxCalendarCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxFileCtrl,
-            wxue_img::bundle_wxFileCtrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxFileCtrl", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxFileCtrl_svg(24, 24), "wxFileCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxGenericDirCtrl,
-            wxue_img::bundle_genericdir_ctrl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxGenericDirCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_genericdir_ctrl_svg(24, 24), "wxGenericDirCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxScrollBar,
-            wxue_img::bundle_scrollbar_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxScrollBar", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_scrollbar_svg(24, 24), "wxScrollBar", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxActivityIndicator,
-            wxue_img::bundle_wxactivityIndicator_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxActivityIndicator",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxactivityIndicator_svg(24, 24), "wxActivityIndicator", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxAnimationCtrl,
-            wxue_img::bundle_wxAnimation_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxAnimationCtrl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxAnimation_svg(24, 24), "wxAnimationCtrl", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxBannerWindow,
-            wxue_img::bundle_wxBannerWindow_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxBannerWindow",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxBannerWindow_svg(24, 24), "wxBannerWindow", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxTimer,
-            wxue_img::bundle_wxTimer_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxTimer", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_wxTimer_svg(24, 24), "wxTimer", wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_CustomControl,
-            wxue_img::bundle_CustomControl_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "CustomControl",
-            wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_CustomControl_svg(24, 24), "CustomControl", wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_ctrls->Realize();
 
@@ -514,9 +444,9 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* other_bar_html = new wxRibbonToolBar(panel_html, wxID_ANY);
     {
         other_bar_html->AddTool(gen_wxHtmlWindow,
-            wxue_img::bundle_htmlwin_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxHtmlWindow", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_htmlwin_svg(24, 24), "wxHtmlWindow", wxRIBBON_BUTTON_NORMAL);
         other_bar_html->AddTool(gen_wxWebView,
-            wxue_img::bundle_webview_svg(FromDIP(24), FromDIP(24)).GetBitmap(wxDefaultSize), "wxWebView", wxRIBBON_BUTTON_NORMAL);
+            wxue_img::bundle_webview_svg(24, 24), "wxWebView", wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_html->Realize();
 

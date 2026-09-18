@@ -214,3 +214,4 @@ ipch/
 
 # MSBuild Binary and Structured Log
 *.binlog
+.grepai/

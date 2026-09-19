@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include <wx/fdrepdlg.h>  // wxFindReplaceDialog class
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
@@ -77,7 +78,12 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
     if (!m_view.ReadFile(std::string_view(file)) &&
         !m_view.ReadFile(std::string_view(file.filename())))
     {
-        FAIL_MSG(wxue::string("Can't read ") << file);
+        MSG_ERROR(wxue::string("Can't read ") << file);
+        m_lexer = -1;
+        m_import_file.clear();
+        m_scintilla->SetReadOnly(false);
+        m_scintilla->ClearAll();
+        m_scintilla->SetReadOnly(true);
         return;
     }
 
@@ -94,7 +100,9 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
 
             {
                 pugi::xml_document xml_doc;
-                if (auto result = xml_doc.load_file_string(file); result)
+                const pugi::xml_parse_result parse_result =
+                    xml_doc.load_buffer(m_view.GetBuffer().data(), m_view.GetBuffer().size());
+                if (parse_result)
                 {
                     std::set<wxue::string> keywords;
                     const pugi::xml_node root = xml_doc.first_child();
@@ -218,16 +226,17 @@ void ImportPanel::OnFind(wxFindDialogEvent& event)
 void ImportPanel::Clear()
 {
     m_view.clear();
+    m_lexer = -1;
+    m_import_file.clear();
 
     m_scintilla->SetReadOnly(false);
     m_scintilla->ClearAll();
+    m_scintilla->SetReadOnly(true);
 }
 
 void ImportPanel::OnNodeSelected(Node* node)
 {
     // Find where the node is created.
-    wxue::string name(" ");
-    name << node->as_string(prop_var_name);
     int line = 0;
 
     wxue::string search;
@@ -242,10 +251,6 @@ void ImportPanel::OnNodeSelected(Node* node)
     if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
         search << node->as_string(prop_id);
-        if (auto pos = search.find('='); wxue::is_found(pos))
-        {
-            search.erase(pos - 1, search.size() - pos + 1);
-        }
     }
     else if (node->HasValue(prop_var_name))
     {

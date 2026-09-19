@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include "msg_logging.h"
 
@@ -24,6 +25,9 @@ wxDEFINE_EVENT(EVT_SHOW_MSG_LOGGER, wxThreadEvent);
 // code that can log again (a nested assertion or wxLog call), and an emplace_back() from such a
 // re-entrant call can reallocate the vector, leaving that reference dangling. Build the entry in
 // a local wxString and push a copy instead -- the copy is deliberate.
+//
+// Every MSG_*() function and MsgLogging::DoLogRecord() runs on the main (GUI) thread only, and
+// MsgFrame iterates this vector from that same thread, so g_log_msgs needs no lock.
 MsgLogging* g_pMsgLogging { nullptr };  // NOLINT (cppcheck-suppress)
 std::vector<wxString> g_log_msgs;       // NOLINT (cppcheck-suppress)
 
@@ -79,7 +83,10 @@ void MsgLogging::ShowLogger()
         return;
     }
 
-    m_msgFrame->Show();
+    if (m_msgFrame)
+    {
+        m_msgFrame->Show();
+    }
 }
 
 void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
@@ -91,7 +98,7 @@ void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
         return;  // don't create a window while the application is shutting down
     }
 
-    if (!m_bDestroyed)
+    if (!m_bDestroyed && m_msgFrame)
     {
         // A ShowLogger() call made after this event was queued already created the window.
         m_msgFrame->Show();
@@ -100,6 +107,11 @@ void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
 
     // Everything added while this event was queued is already in g_log_msgs, and MsgFrame
     // displays the entire vector, so no message added before now is lost.
+    //
+    // Lifetime contract: MsgFrame stores the pointers passed here -- g_log_msgs and m_bDestroyed
+    // (a MsgLogging member). Both must outlive the frame, so CloseLogger() must close the frame
+    // before this MsgLogging object and before g_log_msgs are destroyed. See MsgFrame's
+    // constructor for its side of the contract.
     m_msgFrame = new MsgFrame(&g_log_msgs, &m_bDestroyed);
     m_bDestroyed = false;
     m_msgFrame->Show();
@@ -107,7 +119,7 @@ void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
 
 void MsgLogging::CloseLogger()
 {
-    if (!m_bDestroyed)
+    if (!m_bDestroyed && m_msgFrame)
     {
         m_msgFrame->Close(true);
     }
@@ -152,7 +164,7 @@ void MsgLogging::AddInfoMsg(std::string_view msg)
     MainFrame* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
-        frame->setRightStatusField(wxString(msg.data(), msg.size()));
+        frame->setRightStatusField(wxString::FromUTF8(msg.data(), msg.size()));
     }
 }
 
@@ -311,13 +323,6 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
     log_entry << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
     g_log_msgs.emplace_back(log_entry);
 
-    // [Randalphwa - 03-04-2024]
-    // If AddErrorMsg is called during an event handler then FAIL_MSG can be called multiple
-    // times. While std::unique_lock prevents re-entrance, it can still result in a crash. If
-    // you really need to stop in this call, set a breakpoint and stop in the debugger. Do
-    // *not* call FAIL_MSG(log_entry);
-    // FAIL_MSG(log_entry);
-
     if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
     {
         return;
@@ -337,7 +342,8 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
     MainFrame* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
-        frame->setRightStatusField(log_entry);
+        // log_entry ends in '\n' for the message window; the status field must not.
+        frame->setRightStatusField(log_entry.Left(log_entry.length() - 1));
     }
 }
 
@@ -379,7 +385,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 MainFrame* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
-                    frame->setRightStatusField(log_entry);
+                    frame->setRightStatusField(log_entry.Left(log_entry.length() - 1));
                 }
             }
 
@@ -413,7 +419,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 MainFrame* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
-                    frame->setRightStatusField(log_entry);
+                    frame->setRightStatusField(log_entry.Left(log_entry.length() - 1));
                 }
             }
 
@@ -448,13 +454,14 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                 MainFrame* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
-                    frame->setRightStatusField(log_entry);
+                    frame->setRightStatusField(log_entry.Left(log_entry.length() - 1));
                 }
             }
 
             // Following is for wxLogGui
             m_aMessages.Add(msg);
-            m_aSeverity.Add(wxLOG_Message);
+            m_aSeverity.Add((int) level);
+            m_aTimes.Add((long) (info.timestampMS / 1000));
             m_bHasMessages = true;
             break;
 
@@ -476,6 +483,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
         case wxLOG_FatalError:
         case wxLOG_Max:
             // This should never occur...
+            wxLog::DoLogRecord(level, msg, info);
             break;
 
         case wxLOG_Progress:
@@ -483,6 +491,10 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             // just ignore those: passing them to the base class would result in asserts from
             // DoLogText() because DoLogTextAtLevel() would call it as it doesn't know how to handle
             // these levels otherwise
+            break;
+
+        default:
+            wxLog::DoLogRecord(level, msg, info);
             break;
     }
 }

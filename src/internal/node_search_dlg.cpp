@@ -5,6 +5,7 @@
 // Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include "node_search_dlg.h"
 #include <tuple>  // for std::ignore
@@ -99,8 +100,14 @@ void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
 
         if (search_dlg.isSearchGenerators())
         {
+            if (!rmap_GenNames.contains(search_dlg.GetNameChoice()))
+            {
+                wxMessageBox(wxString() << "Unknown generator " << search_dlg.GetNameChoice());
+                return;
+            }
+
             Node* node = FindNodeByGenerator(search_dlg.GetForm(),
-                                             rmap_GenNames[search_dlg.GetNameChoice()]);
+                                             rmap_GenNames.at(search_dlg.GetNameChoice()));
             if (node)
             {
                 SelectNode(node);
@@ -169,32 +176,39 @@ void NodeSearchDlg::FindGenerators(Node* node)
 
     if (!node->is_Gen(gen_folder) && !node->is_Gen(gen_sub_folder))
     {
-        if (!m_map_found.contains(std::string(map_GenNames.at(node->get_GenName()))))
+        // A GenName with no display name has nothing to search on, so skip the node.
+        if (map_GenNames.contains(node->get_GenName()))
         {
-            std::set<Node*> list;
-            if (!node->is_Form())
+            const std::string gen_display_name { map_GenNames.at(node->get_GenName()) };
+            if (!m_map_found.contains(gen_display_name))
             {
-                list.emplace(node->get_Form());
-            }
-            else
-            {
-                const Node* parent = node->get_Parent();
-                if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
+                std::set<Node*> list;
+                if (!node->is_Form())
                 {
                     list.emplace(node->get_Form());
+                }
+                else if (const Node* parent = node->get_Parent())
+                {
+                    if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
+                    {
+                        list.emplace(node->get_Form());
+                    }
+                    else
+                    {
+                        list.emplace(Project.get_ProjectNode());
+                    }
                 }
                 else
                 {
                     list.emplace(Project.get_ProjectNode());
                 }
+                m_map_found[gen_display_name] = list;
             }
-            m_map_found[std::string(map_GenNames.at(node->get_GenName()))] = list;
-        }
-        else if (!node->is_Form())
-        {
-            std::set<Node*>& list =
-                m_map_found.at(std::string(map_GenNames.at(node->get_GenName())));
-            list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
+            else if (!node->is_Form())
+            {
+                std::set<Node*>& list = m_map_found.at(gen_display_name);
+                list.emplace(node->get_Form());
+            }
         }
     }
 
@@ -224,9 +238,8 @@ void NodeSearchDlg::FindVariables(Node* node)
             {
                 form_list.emplace(node->get_Form());
             }
-            else
+            else if (const Node* parent = node->get_Parent())
             {
-                const Node* parent = node->get_Parent();
                 if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
                 {
                     form_list.emplace(node->get_Form());
@@ -236,12 +249,16 @@ void NodeSearchDlg::FindVariables(Node* node)
                     form_list.emplace(Project.get_ProjectNode());
                 }
             }
+            else
+            {
+                form_list.emplace(Project.get_ProjectNode());
+            }
             m_map_found[node->as_string(prop_var_name)] = form_list;
         }
         else if (!node->is_Form())
         {
             std::set<Node*>& form_list = m_map_found.at(node->as_string(prop_var_name));
-            form_list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
+            form_list.emplace(node->get_Form());
         }
     }
 
@@ -271,9 +288,8 @@ void NodeSearchDlg::FindLabels(Node* node)
             {
                 form_list.emplace(node->get_Form());
             }
-            else
+            else if (const Node* parent = node->get_Parent())
             {
-                const Node* parent = node->get_Parent();
                 if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
                 {
                     form_list.emplace(node->get_Form());
@@ -283,12 +299,16 @@ void NodeSearchDlg::FindLabels(Node* node)
                     form_list.emplace(Project.get_ProjectNode());
                 }
             }
+            else
+            {
+                form_list.emplace(Project.get_ProjectNode());
+            }
             m_map_found[node->as_string(prop_label)] = form_list;
         }
         else if (!node->is_Form())
         {
             std::set<Node*>& form_list = m_map_found.at(node->as_string(prop_label));
-            form_list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
+            form_list.emplace(node->get_Form());
         }
     }
 
@@ -405,9 +425,8 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& /* event unused */)
                 {
                     form_list.emplace(node->get_Form());
                 }
-                else
+                else if (const Node* parent = node->get_Parent())
                 {
-                    const Node* parent = node->get_Parent();
                     if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
                     {
                         form_list.emplace(node->get_Form());
@@ -417,12 +436,16 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& /* event unused */)
                         form_list.emplace(Project.get_ProjectNode());
                     }
                 }
+                else
+                {
+                    form_list.emplace(Project.get_ProjectNode());
+                }
                 m_map_found[node->as_string(prop_id)] = form_list;
             }
             else if (!node->is_Form())
             {
                 std::set<Node*>& form_list = m_map_found.at(node->as_string(prop_id));
-                form_list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
+                form_list.emplace(node->get_Form());
             }
         }
 
@@ -470,26 +493,31 @@ void NodeSearchDlg::OnOK(wxCommandEvent& event)
 {
     if (m_listbox->GetCount() > 0)
     {
-        m_name = m_listbox->GetStringSelection().ToStdString();
+        m_name = m_listbox->GetStringSelection().utf8_string();
         if (m_listbox_forms->GetCount() > 0)
         {
-            if (auto class_name = m_listbox_forms->GetStringSelection().ToStdString();
+            if (std::string class_name = m_listbox_forms->GetStringSelection().utf8_string();
                 !class_name.empty())
             {
                 m_form = FindNodeByClassName(Project.get_ProjectNode(), class_name);
             }
             else
             {
-                m_form = wxGetFrame().getSelectedNode();
+                // Top-level form: the forms list has no class name, so search the whole project
+                // rather than silently searching only the currently selected subtree.
+                m_form = Project.get_ProjectNode();
             }
         }
-        else if (wxGetFrame().getSelectedNode()->is_Form())
+        else if (Node* cur_sel = wxGetFrame().getSelectedNode(); cur_sel)
         {
-            m_form = wxGetFrame().getSelectedNode();
-        }
-        else
-        {
-            m_form = wxGetFrame().getSelectedNode()->get_Form();
+            if (cur_sel->is_Form())
+            {
+                m_form = cur_sel;
+            }
+            else
+            {
+                m_form = cur_sel->get_Form();
+            }
         }
     }
 
@@ -527,7 +555,13 @@ void NodeSearchDlg::OnSearchText(wxCommandEvent& /* event unused */)
     {
         if (iter.first.starts_with(search_text))
         {
-            m_listbox->SetSelection(m_listbox->FindString(iter.first));
+            const int form_index = m_listbox->FindString(iter.first);
+            if (form_index == wxNOT_FOUND)
+            {
+                continue;
+            }
+
+            m_listbox->SetSelection(form_index);
             wxCommandEvent dummy_event;
             OnSelectLocated(dummy_event);
             break;

@@ -4,8 +4,11 @@
 // Copyright: Copyright (c) 2023-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include <format>
+#include <locale>
+#include <stdexcept>
 #include <tuple>  // for std::ignore
 
 #include "undo_info.h"
@@ -22,6 +25,14 @@ UndoInfo::UndoInfo(wxWindow* parent)
 {
     std::ignore = Create(parent);
 }
+
+// Baseline reference counts used to decide whether a Node is only being held by the UndoStack.
+// These encode the UndoStack baseline refs, each child's back-pointer to its parent, and the
+// temporary parameter copies made while recursing. A change to Node's ownership model would
+// silently invalidate these values.
+static constexpr long k_project_always_counted = 9999;
+static constexpr long k_orphan_base_refs = 2;
+static constexpr long k_child_base_refs = 3;
 
 void UndoInfo::OnInit(wxInitDialogEvent& event)
 {
@@ -42,6 +53,11 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
     auto CalcMemory = [&node_memory](const NodeSharedPtr node, long ref_count,
                                      auto&& CalcMemory) -> void
     {
+        if (!node)
+        {
+            return;
+        }
+
         ++node_memory.children;
         if (node.use_count() <= ref_count)
         {
@@ -56,7 +72,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
 
             // An orphaned node will have a ref count of 1 -- add one to pass this to the
             // CalcMemory function.
-            CalcMemory(iter, add_ref_count + 2, CalcMemory);
+            CalcMemory(iter, add_ref_count + k_orphan_base_refs, CalcMemory);
         }
     };
 
@@ -75,7 +91,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                 if (old_node->is_Gen(gen_Project))
                 {
                     // Every form in the project will increase the project's ref count
-                    CalcMemory(old_node, 9999, CalcMemory);
+                    CalcMemory(old_node, k_project_always_counted, CalcMemory);
                 }
                 else
                 {
@@ -83,7 +99,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                     // increase it's reference count by 1.
                     const long add_ref_count = static_cast<long>(old_node->get_ChildCount());
 
-                    CalcMemory(old_node, add_ref_count + 3, CalcMemory);
+                    CalcMemory(old_node, add_ref_count + k_child_base_refs, CalcMemory);
                 }
                 node_memory.size += iter->GetMemorySize();
             }
@@ -91,8 +107,10 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
             {
                 // An orphaned node will have an additional 2 reference counts at this point. 1 for
                 // iter->getNode() in the function that called us, and one for passing the parameter
-                // to this function. An additional ref count is added by calling CalcMemory.
-                CalcMemory(node, 3, CalcMemory);
+                // to this function. The child back-pointer refs plus the base refs added by calling
+                // CalcMemory are counted as well.
+                CalcMemory(node, static_cast<long>(node->get_ChildCount()) + k_child_base_refs,
+                           CalcMemory);
                 node_memory.size += iter->GetMemorySize();
             }
             else if (const auto* prop = iter->GetProperty(); prop)
@@ -101,20 +119,25 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
             }
         }
 
-        const std::string txt_items = std::format(std::locale(""), "{:L}", actions.size());
+        // Constructing a locale from the user environment can throw; fall back to the global
+        // locale so a bad environment can't escape OnInit.
+        std::locale user_locale;
+        try
+        {
+            user_locale = std::locale("");
+        }
+        catch (const std::runtime_error&)
+        {
+            user_locale = std::locale();
+        }
+
+        const std::string txt_items = std::format(user_locale, "{:L}", actions.size());
         ptxt_items->SetLabel(txt_items);
 
-        if (node_memory.size > 0)
-        {
-            const std::string txt_totals =
-                std::format(std::locale(""), "{:L} ({:L} node{})", node_memory.size,
-                            node_memory.children, node_memory.children == 1 ? "" : "s");
-            ptxt_memory->SetLabel(txt_totals);
-        }
-        else
-        {
-            ptxt_memory->SetLabel("0");
-        }
+        const std::string txt_totals =
+            std::format(user_locale, "{:L} ({:L} node{})", node_memory.size, node_memory.children,
+                        node_memory.children == 1 ? "" : "s");
+        ptxt_memory->SetLabel(txt_totals);
     };
 
     const UndoStack& undo_stack = wxGetMainFrame()->getUndoStack();

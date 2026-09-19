@@ -4,13 +4,18 @@
 // Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include <cstdlib>
 #include <mutex>
+#include <string>
+#include <tuple>
 
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
+#include <wx/log.h>
 #include <wx/msgdlg.h>
+#include <wx/thread.h>
 
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
@@ -68,6 +73,23 @@ private:
     bool m_is_nested { false };
 };
 
+// RAII scope for writing an assertion to the message log. The destructor always clears
+// is_logging_assert, so an exception raised while logging (or a message window construction that
+// trips an assert) cannot leave the flag set and permanently suppress later assertions on this
+// thread.
+class LoggingScope
+{
+public:
+    LoggingScope() { is_logging_assert = true; }
+
+    ~LoggingScope() { is_logging_assert = false; }
+
+    LoggingScope(const LoggingScope&) = delete;
+    LoggingScope& operator=(const LoggingScope&) = delete;
+    LoggingScope(LoggingScope&&) = delete;
+    LoggingScope& operator=(LoggingScope&&) = delete;
+};
+
 // Builds the text shown in the assertion dialog and written to the message log.
 static wxString BuildAssertionText(const wxString& filename, const wxString& function, int line,
                                    const wxString& cond, const wxString& msg)
@@ -116,13 +138,23 @@ static void LogAssertion(const wxString& assert_text)
     const MainFrame* frame = wxGetApp().getMainFrame();
     if (!frame || !frame->IsShown())
     {
+        // There is no message window to write to, but the assertion must not be silently
+        // discarded -- send it to the debugger/stdout sink instead.
+        wxLogDebug("Assertion: %s", assert_text);
         return;
     }
 
-    is_logging_assert = true;
+    const LoggingScope logging_scope;
 
     wxue::string log_msg = assert_text.ToStdString();
-    const size_t press_yes = log_msg.find("\n\nPress Yes");
+    // The trailer text differs between _DEBUG and release builds, so both trailers are matched
+    // explicitly rather than relying on the wording of either one.
+    size_t press_yes = log_msg.find("\n\nPress Yes");
+    if (!wxue::is_found(press_yes))
+    {
+        // _DEBUG trailer: "...then press Yes to break into debugger."
+        press_yes = log_msg.find("\n\nRun 'Attach to wxUiEditor'");
+    }
     if (wxue::is_found(press_yes))
     {
         log_msg.erase(press_yes, std::string::npos);
@@ -130,8 +162,6 @@ static void LogAssertion(const wxString& assert_text)
     std::ignore = log_msg.Replace("\n\n", "\n", true);
     log_msg += '\n';
     MSG_ASSERTION(log_msg);
-
-    is_logging_assert = false;
 }
 
 // Saves assertion/crash details to a user-chosen log file via wxFileDialog.
@@ -143,14 +173,25 @@ void SaveAssertionInfo(const wxString& content)
 
     if (file_dlg.ShowModal() == wxID_CANCEL)
     {
+        // Nothing is saved, but the assertion text must still be recorded somewhere.
+        LogAssertion(content);
         return;
     }
 
     const wxString filepath = file_dlg.GetPath();
     wxFFile file(filepath, "w");
-    if (file.IsOpened())
+    if (!file.IsOpened())
     {
-        file.Write(content);
+        wxLogError("Unable to open %s for writing.", filepath);
+        LogAssertion(content);
+        return;
+    }
+
+    const size_t written = file.Write(content);
+    if (written != content.length())
+    {
+        wxLogError("Failed to write the assertion log to %s.", filepath);
+        LogAssertion(content);
     }
 }
 
@@ -161,8 +202,9 @@ void SaveAssertionInfo(const wxString& content)
 bool AssertionDlg(const char* filename, const char* function, int line, const char* cond,
                   const wxString& msg)
 {
-    const wxString str =
-        BuildAssertionText(filename, function, line, cond ? wxString(cond) : wxString(), msg);
+    const wxString str = BuildAssertionText(filename ? wxString(filename) : wxString(),
+                                            function ? wxString(function) : wxString(), line,
+                                            cond ? wxString(cond) : wxString(), msg);
 
     // Must stay in scope for the entire function: the message logging at the end runs code that can
     // raise another assertion.
@@ -171,6 +213,14 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
     {
         // A second dialog would cascade, and the caller cannot be trapped from here, but the
         // assertion must not be silently discarded.
+        LogAssertion(str);
+        return false;
+    }
+
+    // Showing a dialog from a worker thread is undefined in wxWidgets, so an off-thread assertion
+    // is only logged.
+    if (!wxIsMainThread())
+    {
         LogAssertion(str);
         return false;
     }
@@ -206,6 +256,8 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
 
     if (answer == wxID_CANCEL)
     {
+        // Deliberate hard exit: std::quick_exit skips static destructors, atexit handlers and
+        // stream flushing -- no cleanup or state preservation is guaranteed on this path.
         std::quick_exit(2);
     }
 
@@ -225,6 +277,14 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     if (assert_scope.IsNested())
     {
         // A second dialog would cascade, but the assertion must not be silently discarded.
+        LogAssertion(str);
+        return;
+    }
+
+    // Showing a dialog from a worker thread is undefined in wxWidgets, so an off-thread assertion
+    // is only logged.
+    if (!wxIsMainThread())
+    {
         LogAssertion(str);
         return;
     }
@@ -252,6 +312,8 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
     }
     else if (answer == wxID_CANCEL)
     {
+        // Deliberate hard exit: std::quick_exit skips static destructors, atexit handlers and
+        // stream flushing -- no cleanup or state preservation is guaranteed on this path.
         std::quick_exit(2);
     }
     else

@@ -4,13 +4,18 @@
 // Copyright: Copyright (c) 2023-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include "unused_gen_dlg.h"  // auto-generated: unused_gen_dlg_base.h and unused_gen_dlg_base.cpp
 
 #include <wx/filedlg.h>
+#include <wx/log.h>
 
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
+#include <map>
+#include <string>
+#include <string_view>
 #include <tuple>  // for std::ignore
 #include <unordered_set>
 
@@ -22,7 +27,10 @@ UnusedGenerators::UnusedGenerators() {}
 
 UnusedGenerators::UnusedGenerators(wxWindow* parent)
 {
-    std::ignore = Create(parent);
+    if (!Create(parent))
+    {
+        return;
+    }
 }
 
 void FindGenerators(Node* node,
@@ -80,10 +88,12 @@ const std::initializer_list<GenEnum::GenName> gen_ignore_list = {
     gen_XRC,
     gen_XrcSettings,
     gen_flexgridsizerbase,
+    gen_folder,
     gen_folder_Code,
     gen_folder_XRC,
     gen_folder_wxPython,
     gen_folder_wxRuby,
+    gen_sub_folder,
     gen_sizer_child,
     gen_sizeritem_settings,
     gen_wxMdiWindow,
@@ -106,14 +116,24 @@ const std::initializer_list<GenEnum::GenName> gen_ignore_list = {
 
 void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 {
+    Node* root = Project.get_ProjectNode();
+    if (root == nullptr)
+    {
+        event.Skip();
+        return;
+    }
+
     std::unordered_set<std::string, str_view_hash, std::equal_to<>> used;
 
-    for (const auto& child: Project.get_ProjectNode()->get_ChildNodePtrs())
+    for (const auto& child: root->get_ChildNodePtrs())
     {
         FindGenerators(child.get(), used);
     }
 
     bool skipping = true;
+
+    // Clear in case the init event fires more than once for this dialog instance.
+    m_listbox->Clear();
     for (auto& iter: rmap_GenNames)
     {
         bool ignored_gen = false;
@@ -144,6 +164,13 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
         {
             m_listbox->Append(wxString::FromUTF8Unchecked(iter.first.data(), iter.first.size()));
         }
+    }
+
+    if (skipping)
+    {
+        // Every entry was skipped because rmap_GenNames never yielded gen_BookPage, so the
+        // dialog would otherwise silently list nothing.
+        wxLogWarning("UnusedGenerators: gen_BookPage missing from rmap_GenNames.");
     }
 
     event.Skip();

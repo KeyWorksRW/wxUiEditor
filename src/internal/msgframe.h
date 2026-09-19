@@ -16,7 +16,10 @@
 class MsgFrame : public MsgFrameBase
 {
 public:
+    /// The host owns pMsgs and pDestroyed and must keep both alive for this frame's lifetime;
+    /// neither may be null. This frame sets *pDestroyed when it is destroyed.
     MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
+    ~MsgFrame();
 
     void OnNodeSelected();
 

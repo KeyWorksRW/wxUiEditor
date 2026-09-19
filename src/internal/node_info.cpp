@@ -4,8 +4,10 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include <format>
+#include <stdexcept>
 #include <tuple>  // for std::ignore
 
 #include "mainframe.h"                   // Main window frame
@@ -23,6 +25,17 @@ NodeInfo::NodeInfo(wxWindow* parent)
 
 void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 {
+    // std::locale("") throws std::runtime_error when the environment locale is unavailable.
+    std::locale display_locale = std::locale::classic();
+    try
+    {
+        display_locale = std::locale("");
+    }
+    catch (const std::runtime_error&)
+    {
+        // Keep the classic locale as the fallback.
+    }
+
     struct NodeMemory
     {
         size_t size { 0 };
@@ -50,20 +63,34 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         label << "Generator: gen_" << cur_sel->get_DeclName();
         m_txt_generator->SetLabel(label);
         label.clear();
-        label << "Type: type_" << GenEnum::map_GenTypes.at(cur_sel->get_GenType());
+        label << "Type: type_";
+        decltype(GenEnum::map_GenTypes.find(cur_sel->get_GenType())) iter_type =
+            GenEnum::map_GenTypes.find(cur_sel->get_GenType());
+        if (iter_type != GenEnum::map_GenTypes.end())
+        {
+            label << iter_type->second;
+        }
+        else
+        {
+            label << "unknown";
+        }
         m_txt_type->SetLabel(label);
 
         node_memory.size = 0;
         node_memory.children = 0;
         calc_node_memory(cur_sel, node_memory);
-        label = std::format(std::locale(""), "Memory: {:L} ({:L} node{})", node_memory.size,
+        label = std::format(display_locale, "Memory: {:L} ({:L} node{})", node_memory.size,
                             node_memory.children, node_memory.children == 1 ? "" : "s");
         m_txt_memory->SetLabel(label);
     }
 
-    calc_node_memory(Project.get_ProjectNode(), node_memory);
+    node_memory = {};
+    if (Node* project = Project.get_ProjectNode(); project)
+    {
+        calc_node_memory(project, node_memory);
+    }
 
-    label = std::format(std::locale(""), "Project: {:L} ({:L} nodes)", node_memory.size,
+    label = std::format(display_locale, "Project: {:L} ({:L} nodes)", node_memory.size,
                         node_memory.children);
     m_txt_project->SetLabel(label);
 
@@ -73,7 +100,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
         node_memory.size = 0;
         node_memory.children = 0;
         calc_node_memory(clipboard, node_memory);
-        label = std::format(std::locale(""), "Clipboard: {:L} ({:L} nodes)", node_memory.size,
+        label = std::format(display_locale, "Clipboard: {:L} ({:L} nodes)", node_memory.size,
                             node_memory.children);
         m_txt_clipboard->SetLabel(label);
     }

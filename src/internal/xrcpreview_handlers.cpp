@@ -4,8 +4,12 @@
 // Copyright: Copyright (c) 2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
+#include <algorithm>
 #include <format>
+#include <iterator>
+#include <locale>
 
 #include <wx/filedlg.h>     // wxFileDialog base header
 #include <wx/mstream.h>     // Memory stream classes
@@ -88,6 +92,12 @@ void XrcPreview::OnClear(wxCommandEvent& /* event unused */)
 void XrcPreview::OnGenerate(wxCommandEvent& /* event unused */)
 {
     m_form_node = wxGetMainFrame()->getSelectedNode();
+    if (!m_form_node)
+    {
+        wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
+        return;
+    }
+
     if (!m_form_node->is_Form())
     {
         XrcListDlg list_dlg(this);
@@ -97,12 +107,11 @@ void XrcPreview::OnGenerate(wxCommandEvent& /* event unused */)
         }
 
         m_form_node = list_dlg.get_form();
-    }
-
-    if (!m_form_node)
-    {
-        wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
-        return;
+        if (!m_form_node)
+        {
+            wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
+            return;
+        }
     }
 
     if (!m_form_node->is_Form())
@@ -118,7 +127,12 @@ void XrcPreview::Generate(Node* form_node)
     if (!form_node)
     {
         form_node = m_form_node;
-        ASSERT_MSG(form_node, "Generate() called without a form_node and m_form_node is nullptr");
+    }
+
+    if (!form_node)
+    {
+        MSG_ERROR("Generate() called without a form node");
+        return;
     }
 
     const std::string doc_str =
@@ -131,7 +145,7 @@ void XrcPreview::Generate(Node* form_node)
     wxue::ViewVector m_view;
     m_view.ReadString(std::string_view(doc_str));
 
-    std::string search("name=\"");
+    std::string search;
 
     if (form_node->HasProp(prop_id) && form_node->as_string(prop_id) != "wxID_ANY")
     {
@@ -144,6 +158,11 @@ void XrcPreview::Generate(Node* form_node)
     else
     {
         search = form_node->as_string(prop_class_name);
+    }
+
+    if (search.empty())
+    {
+        return;
     }
 
     m_contents->SetLabelText("Contents: " + search);
@@ -171,6 +190,12 @@ void XrcPreview::Generate(Node* form_node)
 
 void XrcPreview::OnPreview(wxCommandEvent& /* event unused */)
 {
+    if (!m_form_node)
+    {
+        wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
+        return;
+    }
+
     std::string xrc_text = m_scintilla->GetText().utf8_string();
     PreviewXrc(xrc_text, m_form_node->get_GenName(), nullptr);
 }
@@ -186,9 +211,9 @@ void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
         const std::string xrc_text = m_scintilla->GetText().utf8_string();
         if (auto result = xml_doc.load_string(xrc_text); !result)
         {
-            const std::string msg = std::format(
-                std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                result.description(), result.line, result.column, result.offset);
+            const std::string msg =
+                std::format("Parsing error: {}\n Line: {}, Column: {}, Offset: {}\n",
+                            result.description(), result.line, result.column, result.offset);
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
                             wxOK | wxICON_ERROR)
                 .ShowModal();
@@ -223,9 +248,9 @@ void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
         pugi::xml_document xml_doc;
         if (auto result = xml_doc.load_string(xrc_text); !result)
         {
-            const std::string msg = std::format(
-                std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                result.description(), result.line, result.column, result.offset);
+            const std::string msg =
+                std::format("Parsing error: {}\n Line: {}, Column: {}, Offset: {}\n",
+                            result.description(), result.line, result.column, result.offset);
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
                             wxOK | wxICON_ERROR)
                 .ShowModal();
@@ -250,9 +275,9 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
         const std::string xrc_text = m_scintilla->GetText().utf8_string();
         if (auto result = xml_doc.load_string(xrc_text); !result)
         {
-            const std::string msg = std::format(
-                std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
-                result.description(), result.line, result.column, result.offset);
+            const std::string msg =
+                std::format("Parsing error: {}\n Line: {}, Column: {}, Offset: {}\n",
+                            result.description(), result.line, result.column, result.offset);
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
                             wxOK | wxICON_ERROR)
                 .ShowModal();
@@ -271,6 +296,13 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
     WxSmith doc_import;
 
     pugi::xml_node first_child = root.first_child();
+    if (!first_child ||
+        !wxue::string_view(first_child.name()).is_sameas("object", wxue::CASE::either))
+    {
+        MSG_ERROR("Invalid XRC -- no exported object in the resource");
+        return;
+    }
+
     const NodeSharedPtr new_node = doc_import.CreateXrcNode(first_child, nullptr);
     if (new_node)
     {
@@ -290,6 +322,12 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
 
 void XrcPreview::OnCompare(wxCommandEvent& /* event unused */)
 {
+    if (!m_form_node)
+    {
+        wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
+        return;
+    }
+
     if (!m_form_node->is_Gen(gen_wxDialog) && !m_form_node->is_Gen(gen_PanelForm))
     {
         wxMessageBox("You can only compare dialogs and panels", "Compare");

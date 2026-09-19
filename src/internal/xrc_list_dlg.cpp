@@ -4,11 +4,13 @@
 // Copyright: Copyright (c) 2024-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include "xrc_list_dlg.h"     // XrcListDlg (derived class)
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
 #include <tuple>              // for std::ignore
+#include <vector>             // for std::vector
 
 XrcListDlg::XrcListDlg() {}
 
@@ -38,7 +40,7 @@ void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
                 {
                     const int index = m_listbox->Append(form->as_string(prop_class_name),
                                                         static_cast<void*>(form));
-                    if (m_form == wxGetMainFrame()->getSelectedNode())
+                    if (form == wxGetMainFrame()->getSelectedNode())
                     {
                         idx_cur_sel = index;
                     }
@@ -66,5 +68,11 @@ void XrcListDlg::OnOK(wxCommandEvent& /* event unused */)
     }
 
     m_form = static_cast<Node*>(m_listbox->GetClientData(idx));
+    if (!m_form)
+    {
+        EndModal(wxID_CANCEL);
+        return;
+    }
+
     EndModal(wxID_OK);
 }

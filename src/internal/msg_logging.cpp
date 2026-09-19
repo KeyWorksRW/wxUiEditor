@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Message logging class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -149,7 +149,7 @@ void MsgLogging::AddInfoMsg(std::string_view msg)
         return;
     }
 
-    auto* frame = wxGetMainFrame();
+    MainFrame* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
         frame->setRightStatusField(wxString(msg.data(), msg.size()));
@@ -200,7 +200,7 @@ void MsgLogging::AddEventMsg(std::string_view msg)
         return;
     }
 
-    auto* frame = wxGetMainFrame();
+    MainFrame* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
         frame->setRightStatusField(wxString("Event: ")
@@ -246,7 +246,7 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
         return;
     }
 
-    auto* frame = wxGetMainFrame();
+    MainFrame* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
         frame->setRightStatusField(wxString("Warning: ")
@@ -334,7 +334,7 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
         m_msgFrame->AddErrorMsg(wxue::stepover(log_entry));
     }
 
-    auto* frame = wxGetMainFrame();
+    MainFrame* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
         frame->setRightStatusField(log_entry);
@@ -376,7 +376,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                     m_msgFrame->Add_wxErrorMsg(wxue::stepover(log_entry));
                 }
 
-                auto* frame = wxGetMainFrame();
+                MainFrame* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
                     frame->setRightStatusField(log_entry);
@@ -410,7 +410,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                     m_msgFrame->Add_wxWarningMsg(wxue::stepover(log_entry));
                 }
 
-                auto* frame = wxGetMainFrame();
+                MainFrame* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
                     frame->setRightStatusField(log_entry);
@@ -445,7 +445,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
                     m_msgFrame->Add_wxInfoMsg(wxue::stepover(log_entry));
                 }
 
-                auto* frame = wxGetMainFrame();
+                MainFrame* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
                     frame->setRightStatusField(log_entry);
@@ -460,7 +460,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
         case wxLOG_Status:
             {
-                auto* frame = wxGetMainFrame();
+                MainFrame* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
                     frame->setRightStatusField(msg);

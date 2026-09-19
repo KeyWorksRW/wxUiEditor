@@ -44,11 +44,11 @@ const int node_marker = 1;
 
 void MainFrame::OnXrcPreview(wxCommandEvent& /* event */)
 {
-    XrcPreview dlg(this);
-    dlg.ShowModal();
+    XrcPreview preview_dlg(this);
+    preview_dlg.ShowModal();
 }
 
-#ifndef SCI_SETKEYWORDS
+#if !defined(SCI_SETKEYWORDS)
     #define SCI_SETKEYWORDS 4005
     #define SCI_GETTEXT_MSG 2182
 #endif
@@ -61,7 +61,7 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
 
     m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
 
-    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    const FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
@@ -72,7 +72,7 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     OnGenerate(dummy);
 
 #if defined(INTERNAL_TESTING)
-    const auto& import_file = wxGetFrame().getImportPanel()->GetImportFile();
+    const wxue::string& import_file = wxGetFrame().getImportPanel()->GetImportFile();
     if (wxue::string(import_file.extension()).MakeLower() != ".xrc")
     {
         m_btnCompare->Disable();
@@ -90,13 +90,13 @@ void XrcPreview::OnGenerate(wxCommandEvent& /* event unused */)
     m_form_node = wxGetMainFrame()->getSelectedNode();
     if (!m_form_node->is_Form())
     {
-        XrcListDlg dlg(this);
-        if (dlg.ShowModal() != wxID_OK)
+        XrcListDlg list_dlg(this);
+        if (list_dlg.ShowModal() != wxID_OK)
         {
             return;
         }
 
-        m_form_node = dlg.get_form();
+        m_form_node = list_dlg.get_form();
     }
 
     if (!m_form_node)
@@ -121,7 +121,7 @@ void XrcPreview::Generate(Node* form_node)
         ASSERT_MSG(form_node, "Generate() called without a form_node and m_form_node is nullptr");
     }
 
-    auto doc_str =
+    const std::string doc_str =
         GenerateXrcStr(form_node, form_node->is_Gen(gen_PanelForm) ? xrc::previewing : 0);
 
     m_scintilla->ClearAll();
@@ -148,12 +148,14 @@ void XrcPreview::Generate(Node* form_node)
 
     m_contents->SetLabelText("Contents: " + search);
 
-    auto iter = std::ranges::find_if(m_view,
-                                     [&search](const wxue::string_view& line)
-                                     {
-                                         return line.contains(search);
-                                     });
-    int line = (iter != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), iter)) : -1;
+    const wxue::ViewVector::iterator iter =
+        std::ranges::find_if(m_view,
+                             [&search](const wxue::string_view& line)
+                             {
+                                 return line.contains(search);
+                             });
+    const int line =
+        (iter != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), iter)) : -1;
 
     if (!wxue::is_found(line))
     {
@@ -169,22 +171,22 @@ void XrcPreview::Generate(Node* form_node)
 
 void XrcPreview::OnPreview(wxCommandEvent& /* event unused */)
 {
-    auto xrc_text = m_scintilla->GetText().utf8_string();
+    std::string xrc_text = m_scintilla->GetText().utf8_string();
     PreviewXrc(xrc_text, m_form_node->get_GenName(), nullptr);
 }
 
 void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
 {
-    pugi::xml_document doc;
+    pugi::xml_document xml_doc;
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
 
         // Verify that the XML in the Scintilla control ia valid by parsing it with PugiXML.
-        auto xrc_text = m_scintilla->GetText().utf8_string();
-        if (auto result = doc.load_string(xrc_text); !result)
+        const std::string xrc_text = m_scintilla->GetText().utf8_string();
+        if (auto result = xml_doc.load_string(xrc_text); !result)
         {
-            std::string msg = std::format(
+            const std::string msg = std::format(
                 std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                 result.description(), result.line, result.column, result.offset);
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
@@ -195,7 +197,7 @@ void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
         }
     }
 
-    auto root = doc.first_child();
+    const pugi::xml_node root = xml_doc.first_child();
     if (!wxue::string_view(root.name()).is_sameas("resource", wxue::CASE::either))
     {
         wxMessageBox("Invalid XML -- no resource object", "XML Verification Test",
@@ -208,20 +210,20 @@ void XrcPreview::OnVerify(wxCommandEvent& /* event unused */)
 
 void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
 {
-    wxue::string path = Project.get_ProjectPath();
+    const wxue::string path = Project.get_ProjectPath();
     wxFileDialog dialog(this, "Export Project As XRC", path.wx(), "preview_test.xrc",
                         "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        wxue::string filename = dialog.GetPath().utf8_string();
+        const wxue::string filename = dialog.GetPath().utf8_string();
 
-        auto xrc_text = m_scintilla->GetText().utf8_string();
+        const std::string xrc_text = m_scintilla->GetText().utf8_string();
 
-        pugi::xml_document doc;
-        if (auto result = doc.load_string(xrc_text); !result)
+        pugi::xml_document xml_doc;
+        if (auto result = xml_doc.load_string(xrc_text); !result)
         {
-            std::string msg = std::format(
+            const std::string msg = std::format(
                 std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                 result.description(), result.line, result.column, result.offset);
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
@@ -231,7 +233,7 @@ void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
             return;
         }
 
-        if (!doc.save_file(filename))
+        if (!xml_doc.save_file(filename))
         {
             wxMessageBox(wxString("An unexpected error occurred exporting ") << filename.wx(),
                          "Export XRC");
@@ -241,14 +243,14 @@ void XrcPreview::OnExport(wxCommandEvent& /* event unused */)
 
 void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
 {
-    pugi::xml_document doc;
+    pugi::xml_document xml_doc;
     {
         // Place this in a block so that the string is destroyed before we process the XML
         // document (to save allocated memory).
-        auto xrc_text = m_scintilla->GetText().utf8_string();
-        if (auto result = doc.load_string(xrc_text); !result)
+        const std::string xrc_text = m_scintilla->GetText().utf8_string();
+        if (auto result = xml_doc.load_string(xrc_text); !result)
         {
-            std::string msg = std::format(
+            const std::string msg = std::format(
                 std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                 result.description(), result.line, result.column, result.offset);
             wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
@@ -259,7 +261,7 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
         }
     }
 
-    auto root = doc.first_child();
+    const pugi::xml_node root = xml_doc.first_child();
     if (!wxue::string_view(root.name()).is_sameas("resource", wxue::CASE::either))
     {
         wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
@@ -268,8 +270,8 @@ void XrcPreview::OnDuplicate(wxCommandEvent& /* event unused */)
 
     WxSmith doc_import;
 
-    auto first_child = root.first_child();
-    auto new_node = doc_import.CreateXrcNode(first_child, nullptr);
+    pugi::xml_node first_child = root.first_child();
+    const NodeSharedPtr new_node = doc_import.CreateXrcNode(first_child, nullptr);
     if (new_node)
     {
         Project.FixupDuplicatedNode(new_node.get());
@@ -294,7 +296,7 @@ void XrcPreview::OnCompare(wxCommandEvent& /* event unused */)
         return;
     }
 
-    wxue::SaveCwd cwd(wxue::restore_cwd);
+    const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     wxSetWorkingDirectory(Project.ArtDirectory().wx());
 
     XrcCompare dlg_compare;
@@ -312,7 +314,7 @@ void XrcPreview::OnSearch(wxCommandEvent& event)
 {
     m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
     m_scintilla->SearchAnchor();
-    auto result = m_scintilla->SearchNext(0, event.GetString());
+    const int result = m_scintilla->SearchNext(0, event.GetString());
 
     if (result == wxSTC_INVALID_POSITION)
     {

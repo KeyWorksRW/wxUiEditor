@@ -47,4 +47,4 @@ private:
 };
 
 // Find a form by its class_name property, searching recursively through folders
-[[nodiscard]] auto FindNodeByClassName(Node* node_start, const std::string& classname) -> Node*;
+[[nodiscard]] Node* FindNodeByClassName(Node* node_start, const std::string& classname);

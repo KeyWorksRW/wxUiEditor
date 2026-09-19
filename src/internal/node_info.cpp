@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <format>
+#include <tuple>  // for std::ignore
 
 #include "mainframe.h"                   // Main window frame
 #include "node.h"                        // Node class
@@ -17,7 +18,7 @@ NodeInfo::NodeInfo() {}
 
 NodeInfo::NodeInfo(wxWindow* parent)
 {
-    Create(parent);
+    std::ignore = Create(parent);
 }
 
 void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
@@ -42,7 +43,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
     wxue::string label;
     NodeMemory node_memory;
 
-    auto* cur_sel = m_node ? m_node : wxGetFrame().getSelectedNode();
+    Node* cur_sel = m_node ? m_node : wxGetFrame().getSelectedNode();
     if (cur_sel)
     {
         label.clear();
@@ -66,7 +67,7 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
                         node_memory.children);
     m_txt_project->SetLabel(label);
 
-    auto* clipboard = wxGetFrame().getClipboard();
+    Node* clipboard = wxGetFrame().getClipboard();
     if (clipboard)
     {
         node_memory.size = 0;

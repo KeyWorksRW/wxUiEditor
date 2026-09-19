@@ -10,8 +10,8 @@
 // Note that while it is considered more "modern" there's nothing in the current code base for
 // wxUiEditor that would benefit from using std::source_location.
 
-auto AssertionDlg(const char* filename, const char* function, int line, const char* cond,
-                  const wxString& msg) -> bool;
+bool AssertionDlg(const char* filename, const char* function, int line, const char* cond,
+                  const wxString& msg);
 void ttAssertionHandler(const wxString& filename, int line, const wxString& function,
                         const wxString& cond, const wxString& msg);
 

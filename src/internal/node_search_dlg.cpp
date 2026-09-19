@@ -7,6 +7,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "node_search_dlg.h"
+#include <tuple>  // for std::ignore
 
 #include "../panels/nav_panel.h"
 #include "mainframe.h"
@@ -18,7 +19,7 @@ NodeSearchDlg::NodeSearchDlg() {}
 
 NodeSearchDlg::NodeSearchDlg(wxWindow* parent)
 {
-    Create(parent);
+    std::ignore = Create(parent);
 }
 
 Node* FindNodeByClassName(Node* node_start, const std::string& classname)
@@ -26,11 +27,15 @@ Node* FindNodeByClassName(Node* node_start, const std::string& classname)
     for (const auto& child_form: node_start->get_ChildNodePtrs())
     {
         if (child_form->is_Gen(gen_Images) || child_form->is_Gen(gen_Data))
+        {
             continue;
+        }
 
         if (child_form->HasValue(prop_class_name) &&
             child_form->as_string(prop_class_name) == classname)
+        {
             return child_form.get();
+        }
 
         if (child_form->is_Gen(gen_folder) || child_form->is_Gen(gen_sub_folder) ||
             child_form->is_Type(type_DocViewApp) || child_form->is_Type(GenEnum::type_wx_document))
@@ -50,13 +55,17 @@ Node* FindNodeByClassName(Node* node_start, const std::string& classname)
 Node* FindNodeByGenerator(Node* node, GenEnum::GenName get_GenName)
 {
     if (node->is_Gen(get_GenName))
+    {
         return node;
+    }
 
     for (auto& child: node->get_ChildNodePtrs())
     {
-        auto result = FindNodeByGenerator(child.get(), get_GenName);
+        Node* result = FindNodeByGenerator(child.get(), get_GenName);
         if (result)
+        {
             return result;
+        }
     }
 
     return nullptr;
@@ -64,29 +73,34 @@ Node* FindNodeByGenerator(Node* node, GenEnum::GenName get_GenName)
 
 void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
 {
-    NodeSearchDlg dlg(this);
-    if (dlg.ShowModal() == wxID_OK && dlg.GetForm())
+    NodeSearchDlg search_dlg(this);
+    if (search_dlg.ShowModal() == wxID_OK && search_dlg.GetForm())
     {
         // Recursively search for the first Node* containing a property with a specific value.
         auto FindNodeByProp = [&](Node* node, GenEnum::PropName prop, const std::string& label_name,
                                   auto&& FindNodeByProp) -> Node*
         {
             if (node->HasValue(prop) && node->as_string(prop) == label_name)
+            {
                 return node;
+            }
 
             for (auto& child: node->get_ChildNodePtrs())
             {
-                auto result = FindNodeByProp(child.get(), prop, label_name, FindNodeByProp);
+                Node* result = FindNodeByProp(child.get(), prop, label_name, FindNodeByProp);
                 if (result)
+                {
                     return result;
+                }
             }
 
             return nullptr;
         };
 
-        if (dlg.isSearchGenerators())
+        if (search_dlg.isSearchGenerators())
         {
-            auto* node = FindNodeByGenerator(dlg.GetForm(), rmap_GenNames[dlg.GetNameChoice()]);
+            Node* node = FindNodeByGenerator(search_dlg.GetForm(),
+                                             rmap_GenNames[search_dlg.GetNameChoice()]);
             if (node)
             {
                 SelectNode(node);
@@ -94,13 +108,13 @@ void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.GetName());
+                wxMessageBox(wxString() << "Unable to find " << search_dlg.GetName());
             }
         }
-        else if (dlg.isSearchVarnames())
+        else if (search_dlg.isSearchVarnames())
         {
-            auto node =
-                FindNodeByProp(dlg.GetForm(), prop_var_name, dlg.GetNameChoice(), FindNodeByProp);
+            Node* node = FindNodeByProp(search_dlg.GetForm(), prop_var_name,
+                                        search_dlg.GetNameChoice(), FindNodeByProp);
             if (node)
             {
                 SelectNode(node);
@@ -108,13 +122,13 @@ void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.GetNameChoice());
+                wxMessageBox(wxString() << "Unable to find " << search_dlg.GetNameChoice());
             }
         }
-        else if (dlg.isSearchLabels())
+        else if (search_dlg.isSearchLabels())
         {
-            auto node =
-                FindNodeByProp(dlg.GetForm(), prop_label, dlg.GetNameChoice(), FindNodeByProp);
+            Node* node = FindNodeByProp(search_dlg.GetForm(), prop_label,
+                                        search_dlg.GetNameChoice(), FindNodeByProp);
             if (node)
             {
                 SelectNode(node);
@@ -122,12 +136,13 @@ void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.GetNameChoice());
+                wxMessageBox(wxString() << "Unable to find " << search_dlg.GetNameChoice());
             }
         }
-        else if (dlg.isSearchIDs())
+        else if (search_dlg.isSearchIDs())
         {
-            auto node = FindNodeByProp(dlg.GetForm(), prop_id, dlg.GetNameChoice(), FindNodeByProp);
+            Node* node = FindNodeByProp(search_dlg.GetForm(), prop_id, search_dlg.GetNameChoice(),
+                                        FindNodeByProp);
             if (node)
             {
                 SelectNode(node);
@@ -135,7 +150,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
             }
             else
             {
-                wxMessageBox(wxString() << "Unable to find " << dlg.GetNameChoice());
+                wxMessageBox(wxString() << "Unable to find " << search_dlg.GetNameChoice());
             }
         }
         else
@@ -148,7 +163,9 @@ void MainFrame::OnFindWidget(wxCommandEvent& /* event unused */)
 void NodeSearchDlg::FindGenerators(Node* node)
 {
     if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data))
+    {
         return;
+    }
 
     if (!node->is_Gen(gen_folder) && !node->is_Gen(gen_sub_folder))
     {
@@ -161,7 +178,7 @@ void NodeSearchDlg::FindGenerators(Node* node)
             }
             else
             {
-                auto* parent = node->get_Parent();
+                const Node* parent = node->get_Parent();
                 if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
                 {
                     list.emplace(node->get_Form());
@@ -175,7 +192,8 @@ void NodeSearchDlg::FindGenerators(Node* node)
         }
         else if (!node->is_Form())
         {
-            auto& list = m_map_found.at(std::string(map_GenNames.at(node->get_GenName())));
+            std::set<Node*>& list =
+                m_map_found.at(std::string(map_GenNames.at(node->get_GenName())));
             list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
         }
     }
@@ -192,7 +210,9 @@ void NodeSearchDlg::FindGenerators(Node* node)
 void NodeSearchDlg::FindVariables(Node* node)
 {
     if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data))
+    {
         return;
+    }
 
     if (node->HasProp(prop_var_name) && node->HasValue(prop_var_name) &&
         !node->is_Gen(gen_folder) && !node->is_Gen(gen_sub_folder))
@@ -206,7 +226,7 @@ void NodeSearchDlg::FindVariables(Node* node)
             }
             else
             {
-                auto* parent = node->get_Parent();
+                const Node* parent = node->get_Parent();
                 if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
                 {
                     form_list.emplace(node->get_Form());
@@ -220,7 +240,7 @@ void NodeSearchDlg::FindVariables(Node* node)
         }
         else if (!node->is_Form())
         {
-            auto& form_list = m_map_found.at(node->as_string(prop_var_name));
+            std::set<Node*>& form_list = m_map_found.at(node->as_string(prop_var_name));
             form_list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
         }
     }
@@ -237,7 +257,9 @@ void NodeSearchDlg::FindVariables(Node* node)
 void NodeSearchDlg::FindLabels(Node* node)
 {
     if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data))
+    {
         return;
+    }
 
     if (node->HasProp(prop_label) && node->HasValue(prop_label) && !node->is_Gen(gen_folder) &&
         !node->is_Gen(gen_sub_folder))
@@ -251,7 +273,7 @@ void NodeSearchDlg::FindLabels(Node* node)
             }
             else
             {
-                auto* parent = node->get_Parent();
+                const Node* parent = node->get_Parent();
                 if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
                 {
                     form_list.emplace(node->get_Form());
@@ -265,7 +287,7 @@ void NodeSearchDlg::FindLabels(Node* node)
         }
         else if (!node->is_Form())
         {
-            auto& form_list = m_map_found.at(node->as_string(prop_label));
+            std::set<Node*>& form_list = m_map_found.at(node->as_string(prop_label));
             form_list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
         }
     }
@@ -369,7 +391,9 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& /* event unused */)
     auto FindIDs = [&](Node* node, auto&& FindIDs) -> void
     {
         if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data))
+        {
             return;
+        }
 
         if (!node->is_NonWidget() && node->HasProp(prop_id) && node->HasValue(prop_id) &&
             !node->as_string(prop_id).starts_with("wxID_ANY"))
@@ -383,7 +407,7 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& /* event unused */)
                 }
                 else
                 {
-                    auto* parent = node->get_Parent();
+                    const Node* parent = node->get_Parent();
                     if (parent->is_Gen(gen_folder) || parent->is_Gen(gen_sub_folder))
                     {
                         form_list.emplace(node->get_Form());
@@ -397,7 +421,7 @@ void NodeSearchDlg::OnIDs(wxCommandEvent& /* event unused */)
             }
             else if (!node->is_Form())
             {
-                auto& form_list = m_map_found.at(node->as_string(prop_id));
+                std::set<Node*>& form_list = m_map_found.at(node->as_string(prop_id));
                 form_list.emplace(node->is_Form() ? node->get_Parent() : node->get_Form());
             }
         }
@@ -450,7 +474,7 @@ void NodeSearchDlg::OnOK(wxCommandEvent& event)
         if (m_listbox_forms->GetCount() > 0)
         {
             if (auto class_name = m_listbox_forms->GetStringSelection().ToStdString();
-                class_name.size())
+                !class_name.empty())
             {
                 m_form = FindNodeByClassName(Project.get_ProjectNode(), class_name);
             }
@@ -474,10 +498,10 @@ void NodeSearchDlg::OnOK(wxCommandEvent& event)
 
 void NodeSearchDlg::OnSelectLocated(wxCommandEvent& /* event unused */)
 {
-    auto name = m_listbox->GetStringSelection().utf8_string();
+    const std::string name = m_listbox->GetStringSelection().utf8_string();
     if (m_map_found.contains(name))
     {
-        auto& list = m_map_found.at(name);
+        const std::set<Node*>& list = m_map_found.at(name);
         m_listbox_forms->Clear();
         for (auto& iter: list)
         {
@@ -492,13 +516,13 @@ void NodeSearchDlg::OnSelectLocated(wxCommandEvent& /* event unused */)
 
 void NodeSearchDlg::OnUnused(wxCommandEvent& /* event unused */)
 {
-    UnusedGenerators dlg(this);
-    dlg.ShowModal();
+    UnusedGenerators unused_dlg(this);
+    unused_dlg.ShowModal();
 }
 
 void NodeSearchDlg::OnSearchText(wxCommandEvent& /* event unused */)
 {
-    auto search_text = m_text_search->GetValue().ToStdString();
+    const std::string search_text = m_text_search->GetValue().ToStdString();
     for (auto& iter: m_map_found)
     {
         if (iter.first.starts_with(search_text))

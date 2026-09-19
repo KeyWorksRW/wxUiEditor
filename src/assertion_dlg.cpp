@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Assertion Dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License ( see ../LICENSE )
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,127 +15,124 @@
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
 
-namespace
+static std::mutex mutex_assert;  // NOLINT (cppcheck-suppress)
+
+// True while this thread is handling an assertion -- from just before the dialog is shown until
+// the assertion has been written to the message log.
+//
+// Handling an assertion runs code that can raise another assertion: writing the assertion to
+// the message log creates or shows the message window, and building the dialog itself can trip
+// a wxWidgets assert. The nested assertion must never be handled as well -- handling it
+// re-enters this file and re-locks mutex_assert on a thread that already owns it, and
+// std::mutex is not recursive, so that hangs the application. LogAssertion() records it in the
+// message log instead.
+static thread_local bool is_handling_assert = false;
+
+// True while this thread is writing an assertion to the message log. An assertion raised by
+// that code cannot itself be logged -- doing so would recurse.
+static thread_local bool is_logging_assert = false;
+
+// RAII scope for a single assertion. IsNested() is true when this thread is already handling an
+// assertion, in which case the caller must log it instead of showing a dialog.
+class AssertionScope
 {
-    std::mutex mutex_assert;  // NOLINT (cppcheck-suppress)
-
-    // True while this thread is handling an assertion -- from just before the dialog is shown until
-    // the assertion has been written to the message log.
-    //
-    // Handling an assertion runs code that can raise another assertion: writing the assertion to
-    // the message log creates or shows the message window, and building the dialog itself can trip
-    // a wxWidgets assert. The nested assertion must never be handled as well -- handling it
-    // re-enters this file and re-locks mutex_assert on a thread that already owns it, and
-    // std::mutex is not recursive, so that hangs the application. LogAssertion() records it in the
-    // message log instead.
-    thread_local bool is_handling_assert = false;
-
-    // True while this thread is writing an assertion to the message log. An assertion raised by
-    // that code cannot itself be logged -- doing so would recurse.
-    thread_local bool is_logging_assert = false;
-
-    // RAII scope for a single assertion. IsNested() is true when this thread is already handling an
-    // assertion, in which case the caller must log it instead of showing a dialog.
-    class AssertionScope
+public:
+    AssertionScope()
     {
-    public:
-        AssertionScope()
+        if (is_handling_assert)
         {
-            if (is_handling_assert)
-            {
-                m_is_nested = true;
-            }
-            else
-            {
-                is_handling_assert = true;
-            }
+            m_is_nested = true;
         }
-
-        ~AssertionScope()
+        else
         {
-            if (!m_is_nested)
-            {
-                is_handling_assert = false;
-            }
+            is_handling_assert = true;
         }
+    }
 
-        AssertionScope(const AssertionScope&) = delete;
-        AssertionScope& operator=(const AssertionScope&) = delete;
-        AssertionScope(AssertionScope&&) = delete;
-        AssertionScope& operator=(AssertionScope&&) = delete;
-
-        bool IsNested() const { return m_is_nested; }
-
-    private:
-        bool m_is_nested { false };
-    };
-
-    // Builds the text shown in the assertion dialog and written to the message log.
-    wxString BuildAssertionText(const wxString& filename, const wxString& function, int line,
-                                const wxString& cond, const wxString& msg)
+    ~AssertionScope()
     {
-        wxString str;
-
-        if (!cond.empty())
+        if (!m_is_nested)
         {
-            str << "Expression: " << cond << "\n\n";
+            is_handling_assert = false;
         }
-        if (!msg.empty())
-        {
-            str << "Comment: " << msg << "\n\n";
-        }
+    }
 
-        str << "File: " << filename << '\n';
-        str << "Function: " << function << '\n';
-        str << "Line: " << line << "\n\n";
+    AssertionScope(const AssertionScope&) = delete;
+    AssertionScope& operator=(const AssertionScope&) = delete;
+    AssertionScope(AssertionScope&&) = delete;
+    AssertionScope& operator=(AssertionScope&&) = delete;
+
+    bool IsNested() const { return m_is_nested; }
+
+private:
+    bool m_is_nested { false };
+};
+
+// Builds the text shown in the assertion dialog and written to the message log.
+static wxString BuildAssertionText(const wxString& filename, const wxString& function, int line,
+                                   const wxString& cond, const wxString& msg)
+{
+    wxString str;
+
+    if (!cond.empty())
+    {
+        str << "Expression: " << cond << "\n\n";
+    }
+    if (!msg.empty())
+    {
+        str << "Comment: " << msg << "\n\n";
+    }
+
+    str << "File: " << filename << '\n';
+    str << "Function: " << function << '\n';
+    str << "Line: " << line << "\n\n";
 
 #if defined(_DEBUG)
-        str << "Run 'Attach to wxUiEditor' in VSCode, then press Yes to break into debugger.\n"
-            << "No to continue, Cancel to exit program.";
+    str << "Run 'Attach to wxUiEditor' in VSCode, then press Yes to break into debugger.\n"
+        << "No to continue, Cancel to exit program.";
 #else  // INTERNAL_TESTING without _DEBUG
-        str << "Press Yes to save details to log file, No to continue, Cancel to exit program.";
+    str << "Press Yes to save details to log file, No to continue, Cancel to exit program.";
 #endif
 
-        return str;
-    }
+    return str;
+}
 
-    // Adds an assertion to the message window. Used for any assertion that cannot be shown in the
-    // dialog: a nested one (showing it would cascade dialogs) or one the user chose to continue
-    // past.
-    //
-    // The status bar is deliberately left alone. AddWarningMsg() and friends update it, and that
-    // update asserts when the number of panes doesn't match -- which is what made pressing
-    // "Continue" hang the application.
-    void LogAssertion(const wxString& assert_text)
+// Adds an assertion to the message window. Used for any assertion that cannot be shown in the
+// dialog: a nested one (showing it would cascade dialogs) or one the user chose to continue
+// past.
+//
+// The status bar is deliberately left alone. AddWarningMsg() and friends update it, and that
+// update asserts when the number of panes doesn't match -- which is what made pressing
+// "Continue" hang the application.
+static void LogAssertion(const wxString& assert_text)
+{
+    // An assertion raised while logging an assertion cannot be logged as well without
+    // recursing, so drop it.
+    if (is_logging_assert)
     {
-        // An assertion raised while logging an assertion cannot be logged as well without
-        // recursing, so drop it.
-        if (is_logging_assert)
-        {
-            return;
-        }
-
-        const MainFrame* frame = wxGetApp().getMainFrame();
-        if (!frame || !frame->IsShown())
-        {
-            return;
-        }
-
-        is_logging_assert = true;
-
-        wxue::string log_msg = assert_text.ToStdString();
-        const size_t press_yes = log_msg.find("\n\nPress Yes");
-        if (wxue::is_found(press_yes))
-        {
-            log_msg.erase(press_yes, std::string::npos);
-        }
-        std::ignore = log_msg.Replace("\n\n", "\n", true);
-        log_msg += '\n';
-        MSG_ASSERTION(log_msg);
-
-        is_logging_assert = false;
+        return;
     }
-}  // namespace
+
+    const MainFrame* frame = wxGetApp().getMainFrame();
+    if (!frame || !frame->IsShown())
+    {
+        return;
+    }
+
+    is_logging_assert = true;
+
+    wxue::string log_msg = assert_text.ToStdString();
+    const size_t press_yes = log_msg.find("\n\nPress Yes");
+    if (wxue::is_found(press_yes))
+    {
+        log_msg.erase(press_yes, std::string::npos);
+    }
+    std::ignore = log_msg.Replace("\n\n", "\n", true);
+    log_msg += '\n';
+    MSG_ASSERTION(log_msg);
+
+    is_logging_assert = false;
+}
 
 // Saves assertion/crash details to a user-chosen log file via wxFileDialog.
 void SaveAssertionInfo(const wxString& content)
@@ -161,8 +158,8 @@ void SaveAssertionInfo(const wxString& content)
 // than trapping in this function and then having to step out of this function to get to the
 // function that threw the assert.
 
-auto AssertionDlg(const char* filename, const char* function, int line, const char* cond,
-                  const wxString& msg) -> bool
+bool AssertionDlg(const char* filename, const char* function, int line, const char* cond,
+                  const wxString& msg)
 {
     const wxString str =
         BuildAssertionText(filename, function, line, cond ? wxString(cond) : wxString(), msg);
@@ -178,11 +175,11 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
         return false;
     }
 
-    wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    wxMessageDialog message_dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
 #if defined(_DEBUG)
-    dlg.SetYesNoCancelLabels("DebugBreak", "Continue", "Exit program");
+    message_dlg.SetYesNoCancelLabels("DebugBreak", "Continue", "Exit program");
 #else  // INTERNAL_TESTING without _DEBUG
-    dlg.SetYesNoCancelLabels("Save to log", "Continue", "Exit program");
+    message_dlg.SetYesNoCancelLabels("Save to log", "Continue", "Exit program");
 #endif
 
     int answer = wxID_NO;
@@ -191,7 +188,7 @@ auto AssertionDlg(const char* filename, const char* function, int line, const ch
         // logged below, so that creating or showing the message window never runs while it is
         // held.
         const std::scoped_lock<std::mutex> lock(mutex_assert);
-        answer = dlg.ShowModal();
+        answer = message_dlg.ShowModal();
     }
 
 #if defined(_DEBUG)
@@ -232,17 +229,17 @@ void ttAssertionHandler(const wxString& filename, int line, const wxString& func
         return;
     }
 
-    wxMessageDialog dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    wxMessageDialog message_dlg(nullptr, str, "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
 #if defined(_DEBUG)
-    dlg.SetYesNoCancelLabels("DebugBreak", "Continue", "Exit program");
+    message_dlg.SetYesNoCancelLabels("DebugBreak", "Continue", "Exit program");
 #else  // INTERNAL_TESTING without _DEBUG
-    dlg.SetYesNoCancelLabels("Save to log", "Continue", "Exit program");
+    message_dlg.SetYesNoCancelLabels("Save to log", "Continue", "Exit program");
 #endif
 
     int answer = wxID_NO;
     {
         const std::scoped_lock<std::mutex> lock(mutex_assert);
-        answer = dlg.ShowModal();
+        answer = message_dlg.ShowModal();
     }
 
     if (answer == wxID_YES)

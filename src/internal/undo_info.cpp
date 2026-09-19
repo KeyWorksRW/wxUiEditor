@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <format>
+#include <tuple>  // for std::ignore
 
 #include "undo_info.h"
 
@@ -19,7 +20,7 @@ UndoInfo::UndoInfo() {}
 
 UndoInfo::UndoInfo(wxWindow* parent)
 {
-    Create(parent);
+    std::ignore = Create(parent);
 }
 
 void UndoInfo::OnInit(wxInitDialogEvent& event)
@@ -51,7 +52,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         {
             // Assume that each child will have a shared ptr to the parent which will increase
             // it's reference count by 1.
-            long add_ref_count = static_cast<long>(iter->get_ChildCount());
+            const long add_ref_count = static_cast<long>(iter->get_ChildCount());
 
             // An orphaned node will have a ref count of 1 -- add one to pass this to the
             // CalcMemory function.
@@ -80,7 +81,7 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
                 {
                     // Assume that each child will have a shared ptr to the parent which will
                     // increase it's reference count by 1.
-                    long add_ref_count = static_cast<long>(old_node->get_ChildCount());
+                    const long add_ref_count = static_cast<long>(old_node->get_ChildCount());
 
                     CalcMemory(old_node, add_ref_count + 3, CalcMemory);
                 }
@@ -100,12 +101,12 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
             }
         }
 
-        auto txt_items = std::format(std::locale(""), "{:L}", actions.size());
+        const std::string txt_items = std::format(std::locale(""), "{:L}", actions.size());
         ptxt_items->SetLabel(txt_items);
 
         if (node_memory.size > 0)
         {
-            auto txt_totals =
+            const std::string txt_totals =
                 std::format(std::locale(""), "{:L} ({:L} node{})", node_memory.size,
                             node_memory.children, node_memory.children == 1 ? "" : "s");
             ptxt_memory->SetLabel(txt_totals);
@@ -116,9 +117,9 @@ void UndoInfo::OnInit(wxInitDialogEvent& event)
         }
     };
 
-    const auto& undo_stack = wxGetMainFrame()->getUndoStack();
-    const auto& undo_vector = undo_stack.GetUndoVector();
-    const auto& redo_vector = undo_stack.GetRedoVector();
+    const UndoStack& undo_stack = wxGetMainFrame()->getUndoStack();
+    const std::vector<UndoActionPtr>& undo_vector = undo_stack.GetUndoVector();
+    const std::vector<UndoActionPtr>& redo_vector = undo_stack.GetRedoVector();
 
     ParseActions(undo_vector, m_txt_undo_items, m_txt_undo_memory);
     ParseActions(redo_vector, m_txt_redo_items, m_txt_redo_memory);

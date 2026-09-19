@@ -6,13 +6,14 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "viewdetails_dlg.h"  // auto-generated: generated/viewdetails_base.h and generated/viewdetails_base.cpp
+#include <tuple>              // for std::ignore
 
 // If this constructor is used, the caller must call Create(parent)
 ViewDetails::ViewDetails() {}
 
 ViewDetails::ViewDetails(wxWindow* parent)
 {
-    (void) Create(parent);
+    std::ignore = Create(parent);
 }
 
 void ViewDetails::OnInit(wxInitDialogEvent& event)

@@ -8,19 +8,20 @@
 #include "xrc_list_dlg.h"     // XrcListDlg (derived class)
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "project_handler.h"  // ProjectHandler class
+#include <tuple>              // for std::ignore
 
 XrcListDlg::XrcListDlg() {}
 
 XrcListDlg::XrcListDlg(wxWindow* parent)
 {
-    Create(parent);
+    std::ignore = Create(parent);
 }
 
 void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
 {
     std::vector<Node*> forms;
     Project.CollectForms(forms);
-    auto idx_cur_sel = 0;
+    int idx_cur_sel = 0;
     for (auto& form: forms)
     {
         // THis list should be synchronized with the list of forms in previews.cpp
@@ -35,8 +36,8 @@ void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
             case gen_RibbonBar:
             case gen_ToolBar:
                 {
-                    auto index = m_listbox->Append(form->as_string(prop_class_name),
-                                                   static_cast<void*>(form));
+                    const int index = m_listbox->Append(form->as_string(prop_class_name),
+                                                        static_cast<void*>(form));
                     if (m_form == wxGetMainFrame()->getSelectedNode())
                     {
                         idx_cur_sel = index;
@@ -57,7 +58,7 @@ void XrcListDlg::OnInit(wxInitDialogEvent& /* event unused */)
 
 void XrcListDlg::OnOK(wxCommandEvent& /* event unused */)
 {
-    auto idx = m_listbox->GetSelection();
+    const int idx = m_listbox->GetSelection();
     if (idx == wxNOT_FOUND)
     {
         EndModal(wxID_CANCEL);

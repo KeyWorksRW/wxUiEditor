@@ -10,6 +10,7 @@
 #include <wx/persist/toplevel.h>  // persistence support for wxTLW
 
 #include <format>
+#include <string>
 #include <string_view>
 #include <unordered_map>
 
@@ -34,19 +35,16 @@ struct NodeMemory
     size_t children { 0 };
 };
 
-namespace
+static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
-    void CalcNodeMemory(Node* node, NodeMemory& node_memory)
-    {
-        node_memory.size += node->get_NodeSize();
-        ++node_memory.children;
+    node_memory.size += node->get_NodeSize();
+    ++node_memory.children;
 
-        for (auto& iter: node->get_ChildNodePtrs())
-        {
-            CalcNodeMemory(iter.get(), node_memory);
-        }
+    for (auto& iter: node->get_ChildNodePtrs())
+    {
+        CalcNodeMemory(iter.get(), node_memory);
     }
-}  // namespace
+}
 
 // Assertions get their own color so that they stand out from warnings and errors.
 static wxColor AssertionColour()
@@ -60,13 +58,13 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
     m_pDestroyed(pDestroyed)
 {
     // These will adjust for both dark mode and high contrast mode if needed
-    const auto clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    const auto clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+    const wxColor clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    const wxColor clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
 
     m_textCtrl->SetBackgroundColour(clr_bg);
     m_textCtrl->SetForegroundColour(clr_fg);
 
-    FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
+    const FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
     m_textCtrl->SetFont(font_prop.GetFont());
 
@@ -148,8 +146,8 @@ void MsgFrame::AddWarningMsg(std::string_view msg)
 {
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
-        const auto clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
-        const auto clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        const wxColor clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        const wxColor clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
         wxTextAttr textAttr(clr_fg, clr_bg);
         textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
         textAttr.SetBackgroundColour(clr_bg);
@@ -187,8 +185,8 @@ void MsgFrame::Add_wxWarningMsg(std::string_view msg)
 {
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
-        const auto clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
-        const auto clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        const wxColor clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        const wxColor clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
         wxTextAttr textAttr(clr_fg, clr_bg);
         textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
         textAttr.SetBackgroundColour(clr_bg);
@@ -206,8 +204,8 @@ void MsgFrame::Add_wxInfoMsg(std::string_view msg)
 {
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
     {
-        const auto clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
-        const auto clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        const wxColor clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        const wxColor clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
         wxTextAttr textAttr(clr_fg, clr_bg);
         textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
         textAttr.SetBackgroundColour(clr_bg);
@@ -226,8 +224,8 @@ void MsgFrame::AddErrorMsg(std::string_view msg)
 {
     // Note that we always display error messages
 
-    const auto clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
-    const auto clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    const wxColor clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+    const wxColor clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxTextAttr textAttr(clr_fg, clr_bg);
     textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
     textAttr.SetBackgroundColour(clr_bg);
@@ -244,8 +242,8 @@ void MsgFrame::Add_wxErrorMsg(std::string_view msg)
 {
     // Note that we always display error messages
 
-    const auto clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
-    const auto clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    const wxColor clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+    const wxColor clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxTextAttr textAttr(clr_fg, clr_bg);
     textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
     textAttr.SetBackgroundColour(clr_bg);
@@ -267,7 +265,7 @@ void MsgFrame::OnClose(wxCloseEvent& event)
 
 void MsgFrame::OnSaveAs(wxCommandEvent& /* event unused */)
 {
-    auto filename = wxSaveFileSelector("Save messages", "txt", wxEmptyString, this);
+    const wxString filename = wxSaveFileSelector("Save messages", "txt", wxEmptyString, this);
     if (filename.empty())
     {
         return;
@@ -275,7 +273,7 @@ void MsgFrame::OnSaveAs(wxCommandEvent& /* event unused */)
 
     wxue::StringVector file;
 
-    auto totalLines = m_textCtrl->GetNumberOfLines();
+    const int totalLines = m_textCtrl->GetNumberOfLines();
     for (int curLine = 0; curLine < totalLines; ++curLine)
     {
         file.emplace_back(m_textCtrl->GetLineText(curLine).utf8_string());
@@ -378,12 +376,13 @@ void MsgFrame::UpdateNodeInfo()
     wxString label;
     NodeMemory node_memory;
 
-    auto* cur_sel = wxGetFrame().getSelectedNode();
+    Node* cur_sel = wxGetFrame().getSelectedNode();
     if (cur_sel)
     {
         if (m_isXrcPage)
         {
-            auto doc_str = GenerateXrcStr(cur_sel, xrc::add_comments | xrc::use_xrc_dir);
+            const std::string doc_str =
+                GenerateXrcStr(cur_sel, xrc::add_comments | xrc::use_xrc_dir);
 
             m_scintilla->SetReadOnly(false);
             m_scintilla->ClearAll();
@@ -397,7 +396,7 @@ void MsgFrame::UpdateNodeInfo()
               << wxString::FromUTF8(cur_sel->get_DeclName().data(), cur_sel->get_DeclName().size());
         m_txt_generator->SetLabel(label);
         label.clear();
-        const auto gen_type = GenEnum::map_GenTypes.at(cur_sel->get_GenType());
+        const std::string_view gen_type = GenEnum::map_GenTypes.at(cur_sel->get_GenType());
         label << "Type: " << wxString::FromUTF8(gen_type.data(), gen_type.size());
         m_txt_type->SetLabel(label);
 
@@ -410,15 +409,15 @@ void MsgFrame::UpdateNodeInfo()
 
         if (auto* generator = cur_sel->get_Generator(); generator)
         {
-            auto gen_label = generator->GetHelpText(cur_sel);
+            wxue::string gen_label = generator->GetHelpText(cur_sel);
             if (gen_label.empty())
             {
                 gen_label << "wxWidgets";
             }
             m_hyperlink->SetLabel(gen_label.wx());
             wxString url("https://docs.wxwidgets.org/latest/");
-            auto file = generator->GetHelpURL(cur_sel);
-            if (file.size())
+            const wxue::string file = generator->GetHelpURL(cur_sel);
+            if (!file.empty())
             {
                 url << "class" << file.wx();
             }
@@ -433,7 +432,7 @@ void MsgFrame::UpdateNodeInfo()
                             node_memory.children);
         m_txt_project->SetLabel(label);
 
-        auto* clipboard = wxGetFrame().getClipboard();
+        Node* clipboard = wxGetFrame().getClipboard();
         if (clipboard)
         {
             node_memory.size = 0;
@@ -448,19 +447,19 @@ void MsgFrame::UpdateNodeInfo()
 
 void MsgFrame::OnParent(wxCommandEvent& /* event unused */)
 {
-    auto* cur_sel = wxGetFrame().getSelectedNode();
+    const Node* cur_sel = wxGetFrame().getSelectedNode();
     if (cur_sel)
     {
-        auto* parent = cur_sel->get_Parent();
+        Node* parent = cur_sel->get_Parent();
         if (!parent)
         {
             wxMessageBox("Current node doesn't have a parent!");
         }
         else
         {
-            NodeInfo dlg(this);
-            dlg.SetNode(parent);
-            dlg.ShowModal();
+            NodeInfo node_info_dlg(this);
+            node_info_dlg.SetNode(parent);
+            node_info_dlg.ShowModal();
         }
     }
 }

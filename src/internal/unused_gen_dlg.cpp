@@ -11,6 +11,7 @@
 
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
+#include <tuple>  // for std::ignore
 #include <unordered_set>
 
 #include "gen_enums.h"        // GenName, map_GenNames, rmap_GenNames
@@ -21,17 +22,20 @@ UnusedGenerators::UnusedGenerators() {}
 
 UnusedGenerators::UnusedGenerators(wxWindow* parent)
 {
-    Create(parent);
+    std::ignore = Create(parent);
 }
 
 void FindGenerators(Node* node,
                     std::unordered_set<std::string, str_view_hash, std::equal_to<>>& used)
 {
     if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data))
+    {
         return;
+    }
     if (!node->is_Gen(gen_folder) && !node->is_Gen(gen_sub_folder))
     {
-        auto genNameIter = map_GenNames.find(node->get_GenName());
+        const std::map<GenEnum::GenName, std::string_view>::const_iterator genNameIter =
+            map_GenNames.find(node->get_GenName());
         if (genNameIter != map_GenNames.end() && !used.contains(genNameIter->second))
         {
             used.emplace(genNameIter->second);
@@ -48,7 +52,7 @@ void FindGenerators(Node* node,
 
 // clang-format off
 
-const auto gen_ignore_list = {
+const std::initializer_list<GenEnum::GenName> gen_ignore_list = {
 
     gen_VerticalBoxSizer,
     gen_gbsizeritem,
@@ -147,7 +151,7 @@ void UnusedGenerators::OnInit(wxInitDialogEvent& event)
 
 void UnusedGenerators::OnSave(wxCommandEvent& /* event unused */)
 {
-    auto filename = wxSaveFileSelector("Save unused", "txt", wxEmptyString, this);
+    const wxString filename = wxSaveFileSelector("Save unused", "txt", wxEmptyString, this);
     if (filename.empty())
     {
         return;

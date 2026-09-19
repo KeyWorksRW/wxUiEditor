@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Panel to display original imported file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +38,7 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
 
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
     // which is not cross-platform. See issue #597.
-    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    const wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     // These are settings used in codedisplay_base
@@ -93,11 +93,11 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
             // wxGlade. wxFormBuilder could probably use some extra keywords...
 
             {
-                pugi::xml_document doc;
-                if (auto result = doc.load_file_string(file); result)
+                pugi::xml_document xml_doc;
+                if (auto result = xml_doc.load_file_string(file); result)
                 {
                     std::set<wxue::string> keywords;
-                    auto root = doc.first_child();
+                    const pugi::xml_node root = xml_doc.first_child();
                     keywords.insert(root.name());
                     for (auto& iter: root.attributes())
                     {
@@ -178,7 +178,7 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
 
 void ImportPanel::OnFind(wxFindDialogEvent& event)
 {
-    auto wxflags = event.GetFlags();
+    const int wxflags = event.GetFlags();
     int sciflags = 0;
 
     if (wxflags & wxFR_WHOLEWORD)
@@ -190,7 +190,7 @@ void ImportPanel::OnFind(wxFindDialogEvent& event)
         sciflags |= wxSTC_FIND_MATCHCASE;
     }
 
-    int result;
+    int result = 0;
     if (wxflags & wxFR_DOWN)
     {
         m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
@@ -259,11 +259,12 @@ void ImportPanel::OnNodeSelected(Node* node)
     // Helper lambda to find line containing a string
     auto find_line_containing = [this](const wxue::string& str) -> int
     {
-        auto iter = std::ranges::find_if(m_view,
-                                         [&str](const wxue::string_view& line)
-                                         {
-                                             return line.contains(str);
-                                         });
+        const wxue::ViewVector::iterator iter =
+            std::ranges::find_if(m_view,
+                                 [&str](const wxue::string_view& line)
+                                 {
+                                     return line.contains(str);
+                                 });
         return (iter != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), iter)) : -1;
     };
 

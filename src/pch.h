@@ -252,6 +252,7 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 void MSG_INFO(const std::string& msg);
 void MSG_WARNING(const std::string& msg);
 void MSG_ERROR(const std::string& msg);
+void MSG_ASSERTION(const std::string& msg);
 
 //////////////////////////////////////// macros ////////////////////////////////////////
 

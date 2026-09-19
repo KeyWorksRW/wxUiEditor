@@ -43,26 +43,24 @@ auto resForm::ParseDialog(WinResource* pWinResource, wxue::StringVector& txtfile
     m_form_type = isDialog ? form_dialog : form_panel;
     m_form_node = NodeCreation.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        wxue::string fullpath;
-        fullpath.assignCwd();
-        fullpath.append_filename(wxFileName(txtfile.get_ReadFilename()).GetName().ToStdString());
-#ifdef _WIN32
-        // VSCode File Open dialog can't handle forward slashes on Windows
-        fullpath.forwardslashestoback();
-#endif  // _WIN32
-        m_form_node->set_value(prop_base_src_includes, wxue::string() << "// " << fullpath);
-    }
+#if defined(INTERNAL_TESTING)
+    wxue::string fullpath;
+    fullpath.assignCwd();
+    fullpath.append_filename(wxFileName(txtfile.get_ReadFilename()).GetName().ToStdString());
+    #ifdef _WIN32
+    // VSCode File Open dialog can't handle forward slashes on Windows
+    fullpath.forwardslashestoback();
+    #endif  // _WIN32
+    m_form_node->set_value(prop_base_src_includes, wxue::string() << "// " << fullpath);
+#endif
 
     wxue::string value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
     m_form_node->set_value(prop_class_name, ConvertFormID(value));
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        m_form_id = m_form_node->as_string(prop_class_name);
-    }
+#if defined(INTERNAL_TESTING)
+    m_form_id = m_form_node->as_string(prop_class_name);
+#endif
 
     line.remove_prefix(end);
     line.moveto_digit();

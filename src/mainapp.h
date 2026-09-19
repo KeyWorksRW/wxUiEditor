@@ -80,14 +80,6 @@ public:
     bool isDarkMode() const noexcept { return m_isDarkMode; }
     bool isDarkHighContrast() const noexcept { return m_isDarkHighContrast; }
 
-    // Determines whether the testing menu is enabled
-    [[nodiscard]] bool isTestingMenuEnabled() const noexcept { return m_TestingMenuEnabled; }
-    void set_TestingMenuEnabled(bool value) noexcept { m_TestingMenuEnabled = value; }
-
-    // Determines whether the testing switch is enabled
-    [[nodiscard]] bool isTestingSwitch() const noexcept { return m_is_testing_switch; }
-    void setTestingSwitch(bool value) noexcept { m_is_testing_switch = value; }
-
     // TODO: [Randalphwa - 12-09-2025] Verify() sets this, but no code generation functions check
     // it. This might be a good candidate for using wxMessageOutputDebug(), or just expanded
     // messages for the log file if we are creating one.
@@ -163,9 +155,6 @@ private:
 
     int m_ProjectVersion { 15 };
     bool m_isMainFrameClosing { false };
-    // bool m_isProject_updated { false };
-    bool m_TestingMenuEnabled { false };
-    bool m_is_testing_switch { false };
     bool m_is_generating { false };       // true if generating code from the command line
     bool m_is_verbose_codegen { false };  // true if verbose code generation is enabled (--verbose)
     bool m_is_coverage_testing {
@@ -192,36 +181,3 @@ private:
 };
 
 DECLARE_APP(App)  // NOLINT (cppcheck-suppress)
-
-// Temporarily disables the testing menu for the scope of this object.
-// Restores the previous state in the destructor.
-class DisableTestingMenuScope
-{
-public:
-    DisableTestingMenuScope() : m_was_enabled(wxGetApp().isTestingMenuEnabled())
-    {
-        wxGetApp().set_TestingMenuEnabled(false);
-    }
-
-    ~DisableTestingMenuScope() { wxGetApp().set_TestingMenuEnabled(m_was_enabled); }
-
-    // Delete copy and move constructors
-    DisableTestingMenuScope(const DisableTestingMenuScope&) = delete;
-    DisableTestingMenuScope& operator=(const DisableTestingMenuScope&) = delete;
-    DisableTestingMenuScope(DisableTestingMenuScope&&) = delete;
-    DisableTestingMenuScope& operator=(DisableTestingMenuScope&&) = delete;
-
-private:
-    bool m_was_enabled;
-};
-
-// Do *NOT* use this before wxGetApp() has been initialized.
-// This test is available in release builds with the testing menu enabled.
-#define TEST_CONDITION(cond, msg)                                              \
-    if (wxGetApp().isTestingMenuEnabled())                                     \
-    {                                                                          \
-        if (!(cond) && AssertionDlg(__FILE__, __func__, __LINE__, #cond, msg)) \
-        {                                                                      \
-            wxTrap();                                                          \
-        }                                                                      \
-    }

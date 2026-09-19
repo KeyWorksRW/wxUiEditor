@@ -24,6 +24,7 @@ public:
     void Add_wxErrorMsg(std::string_view msg);
 
     void AddWarningMsg(std::string_view msg);
+    void AddAssertionMsg(std::string_view msg);
     void Add_wxWarningMsg(std::string_view msg);
 
     void AddInfoMsg(std::string_view msg)

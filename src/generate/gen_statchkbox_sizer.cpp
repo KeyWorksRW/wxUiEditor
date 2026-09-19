@@ -30,8 +30,11 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     // display the checkbox since Python doesn't support it.
     // Note: macOS doesn't support using a control as a wxStaticBox label
 #if !defined(__WXOSX__)
-    if (Project.get_CodePreference() != GenLang::python ||
-        (Project.HasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
+    #if defined(INTERNAL_TESTING)
+    if (Project.get_CodePreference() != GenLang::python || Project.HasValue(prop_code_preference))
+    #else
+    if (Project.get_CodePreference() != GenLang::python)
+    #endif
     {
         long style_value = 0;
         if (node->as_string(prop_style).contains("wxALIGN_RIGHT"))

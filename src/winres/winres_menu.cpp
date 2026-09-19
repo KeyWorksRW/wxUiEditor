@@ -66,22 +66,19 @@ void resForm::ParseMenu(WinResource* pWinResource, wxue::StringVector& txtfile, 
     m_form_type = form_menu;
     m_form_node = NodeCreation.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        m_form_node->set_value(
-            prop_base_src_includes,
-            wxue::string() << "// "
-                           << wxFileName(txtfile.get_ReadFilename()).GetName().ToStdString());
-    }
+#if defined(INTERNAL_TESTING)
+    m_form_node->set_value(
+        prop_base_src_includes,
+        wxue::string() << "// " << wxFileName(txtfile.get_ReadFilename()).GetName().ToStdString());
+#endif
     wxue::string value;  // General purpose string we can use throughout this function
 
     value = line.substr(0, end);
     m_form_node->set_value(prop_class_name, ConvertFormID(value));
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        m_form_id = m_form_node->as_string(prop_class_name);
-    }
+#if defined(INTERNAL_TESTING)
+    m_form_id = m_form_node->as_string(prop_class_name);
+#endif
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
     {
         line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());

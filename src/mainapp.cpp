@@ -350,8 +350,6 @@ int App::OnRun()
     parser.AddLongSwitch("test_xrc", "generate XRC code and exit", wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("test_all", "generate all code and exit", wxCMD_LINE_HIDDEN);
 
-    parser.AddLongSwitch("test_menu", "create test menu to the right of the Help menu",
-                         wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
     parser.AddLongSwitch("load_last", "Load last opened project",
                          wxCMD_LINE_HIDDEN | wxCMD_LINE_SWITCH_NEGATABLE);
 
@@ -380,19 +378,7 @@ int App::OnRun()
     }
 
 #if defined(INTERNAL_TESTING)
-    m_TestingMenuEnabled = true;
-#endif
-    if (const wxCmdLineSwitchState result = parser.FoundSwitch("test_menu");
-        result != wxCMD_SWITCH_NOT_FOUND)
-    {
-        m_TestingMenuEnabled = (result == wxCMD_SWITCH_ON);
-    }
-#if defined(_DEBUG)
-    m_TestingMenuEnabled = true;
-    m_is_testing_switch = true;
-#endif  // _DEBUG
-
-    if (wxGetApp().isTestingMenuEnabled() && !g_pMsgLogging)
+    if (!g_pMsgLogging)
     {
         g_pMsgLogging = new MsgLogging();
         wxLog::SetActiveTarget(g_pMsgLogging);
@@ -403,6 +389,7 @@ int App::OnRun()
         // instead of calling App::OnAssertFailure().
         wxSetAssertHandler(ttAssertionHandler);
     }
+#endif
 
     /*
         Command-line options are categorized into three types for non-interactive operation:
@@ -969,10 +956,9 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 
     m_is_generating = true;
     GenResults results;
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        results.StartClock();
-    }
+#if defined(INTERNAL_TESTING)
+    results.StartClock();
+#endif
 
     LoadProjectFile(filename, generate_type, is_project_loaded);
     if (!is_project_loaded)

@@ -103,30 +103,29 @@ static constexpr auto lst_name_gen = std::to_array<ClassGenPair>({
 
 void resCtrl::ParseDirective(WinResource* pWinResource, wxue::string_view line)
 {
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    // Create a copy of the original line without the extra spaces that can be used to send to
+    // our log window if there are problems processing it.
+
+    m_original_line.clear();
+    auto temp_view = line.subview();
+
+    // First copy the directive name without the leading whitespace
+    temp_view.moveto_nonspace();
+    auto pos_space = temp_view.find_space();
+    if (!wxue::is_found(pos_space))
     {
-        // Create a copy of the original line without the extra spaces that can be used to send to
-        // our log window if there are problems processing it.
-
-        m_original_line.clear();
-        auto temp_view = line.subview();
-
-        // First copy the directive name without the leading whitespace
-        temp_view.moveto_nonspace();
-        auto pos_space = temp_view.find_space();
-        if (!wxue::is_found(pos_space))
-        {
-            MSG_ERROR(wxue::string() << "Invalid directive: " << line);
-            return;
-        }
-
-        m_original_line.assign(temp_view, temp_view.find_space());
-
-        // Now copy the rest of the line after skipping over all the alignment whitespace used after
-        // the directive
-        temp_view.moveto_nextword();
-        m_original_line << ' ' << temp_view;
+        MSG_ERROR(wxue::string() << "Invalid directive: " << line);
+        return;
     }
+
+    m_original_line.assign(temp_view, temp_view.find_space());
+
+    // Now copy the rest of the line after skipping over all the alignment whitespace used after
+    // the directive
+    temp_view.moveto_nextword();
+    m_original_line << ' ' << temp_view;
+#endif
 
     m_pWinResource = pWinResource;
     bool is_control = line.starts_with("CONTROL");
@@ -249,15 +248,14 @@ void resCtrl::ParseDirective(WinResource* pWinResource, wxue::string_view line)
 
         else
         {
-            if (wxGetApp().isTestingMenuEnabled())
-            {
-                wxue::string msg("Unrecognized CONTROL: ");
-                auto pos = line.find_space();
-                msg << line.subview(0, pos);
-                line.moveto_nextword();
-                msg << ' ' << line;
-                MSG_WARNING(msg);
-            }
+#if defined(INTERNAL_TESTING)
+            wxue::string msg("Unrecognized CONTROL: ");
+            auto pos = line.find_space();
+            msg << line.subview(0, pos);
+            line.moveto_nextword();
+            msg << ' ' << line;
+            MSG_WARNING(msg);
+#endif
             return;
         }
     }
@@ -342,15 +340,14 @@ void resCtrl::ParseDirective(WinResource* pWinResource, wxue::string_view line)
             // 05/31/2018, which as of 6/01/2021 is still the current documentation. So, if we get
             // here the control is unrecognizable.
 
-            if (wxGetApp().isTestingMenuEnabled())
-            {
-                wxue::string msg("Unrecognized resource directive: ");
-                auto pos = line.find_space();
-                msg << line.subview(0, pos);
-                line.moveto_nextword();
-                msg << ' ' << line;
-                MSG_WARNING(msg);
-            }
+#if defined(INTERNAL_TESTING)
+            wxue::string msg("Unrecognized resource directive: ");
+            auto pos = line.find_space();
+            msg << line.subview(0, pos);
+            line.moveto_nextword();
+            msg << ' ' << line;
+            MSG_WARNING(msg);
+#endif
             return;
         }
         line.moveto_nextword();

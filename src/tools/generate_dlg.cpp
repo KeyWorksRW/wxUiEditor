@@ -171,10 +171,9 @@ bool MainFrame::GenerateFromDialog(GenResults& results)
         code_generated = true;
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        SaveGenerationPreferences();
-    }
+#if defined(INTERNAL_TESTING)
+    SaveGenerationPreferences();
+#endif
 
     return code_generated;
 }

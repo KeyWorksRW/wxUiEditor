@@ -42,7 +42,9 @@
 
 extern std::map<GenLang, std::string> s_lang_category_prefix;
 
-static constexpr frozen::set<std::string_view, 9> supported_languages =
+// Languages wxUiEditor can actually generate code for. Only searched in a non-testing build -- an
+// INTERNAL_TESTING build offers every declared language -- hence [[maybe_unused]].
+[[maybe_unused]] static constexpr frozen::set<std::string_view, 9> supported_languages =
     frozen::make_set<std::string_view>(
         { "C++", "Fortran", "GO", "Julia", "LuaJIT", "Python", "Ruby", "TypeScript", "XRC" });
 
@@ -410,27 +412,23 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     {
         case type_bitlist:
             {
-                PropDeclaration* propInfo = prop->get_PropDeclaration();
-
                 wxPGChoices bit_flags;
+                PropDeclaration* propInfo = prop->get_PropDeclaration();
                 int index = 0;
-                if (prop->get_name() == prop_generate_languages && !wxGetApp().isTestingSwitch())
+
+                for (auto& iter: propInfo->getOptions())
                 {
-                    for (auto& iter: propInfo->getOptions())
+#if !defined(INTERNAL_TESTING)
+                    // A non-testing build only offers the languages wxUiEditor can actually
+                    // generate code for. An INTERNAL_TESTING build offers every declared language
+                    // so that each generator can be exercised.
+                    if (prop->get_name() == prop_generate_languages &&
+                        !supported_languages.contains(iter.name))
                     {
-                        if (!supported_languages.contains(iter.name))
-                        {
-                            continue;
-                        }
-                        bit_flags.Add(wxString(iter.name), 1 << index++);
+                        continue;
                     }
-                }
-                else
-                {
-                    for (auto& iter: propInfo->getOptions())
-                    {
-                        bit_flags.Add(wxString(iter.name), 1 << index++);
-                    }
+#endif  // !defined(INTERNAL_TESTING)
+                    bit_flags.Add(wxString(iter.name), 1 << index++);
                 }
 
                 const int val = GetBitlistValue(prop->as_wxString(), bit_flags);
@@ -503,30 +501,20 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 wxPGChoices constants;
                 int i = 0;
-                if (prop->get_name() == prop_code_preference && !wxGetApp().isTestingSwitch())
+                for (auto& iter: propInfo->getOptions())
                 {
-                    for (auto& iter: propInfo->getOptions())
+#if !defined(INTERNAL_TESTING)
+                    // See the type_bitlist case above.
+                    if (prop->get_name() == prop_code_preference &&
+                        !supported_languages.contains(iter.name))
                     {
-                        if (!supported_languages.contains(iter.name))
-                        {
-                            continue;
-                        }
-                        constants.Add(wxString(iter.name), i++);
-                        if (iter.name == value)
-                        {
-                            help_text = iter.help;
-                        }
+                        continue;
                     }
-                }
-                else
-                {
-                    for (auto& iter: propInfo->getOptions())
+#endif  // !defined(INTERNAL_TESTING)
+                    constants.Add(wxString(iter.name), i++);
+                    if (iter.name == value)
                     {
-                        constants.Add(wxString(iter.name), i++);
-                        if (iter.name == value)
-                        {
-                            help_text = iter.help;
-                        }
+                        help_text = iter.help;
                     }
                 }
 
@@ -732,19 +720,18 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING,
                                               wxVariant(true, "true"));
 
-                if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+                for (const auto& iter: umap_PropTypes)
                 {
-                    for (const auto& iter: umap_PropTypes)
+                    if (iter.second == type)
                     {
-                        if (iter.second == type)
-                        {
-                            MSG_ERROR((wxString("NodeProperty type is unsupported: ")
-                                       << wxString(iter.first.data(), iter.first.size()))
-                                          .ToStdString());
-                            break;
-                        }
+                        MSG_ERROR((wxString("NodeProperty type is unsupported: ")
+                                   << wxString(iter.first.data(), iter.first.size()))
+                                      .ToStdString());
+                        break;
                     }
                 }
+#endif
             }
             return new_pg_property;
     }  // end switch (type)

@@ -271,8 +271,8 @@ namespace
         GenLang::typescript,
     });
 
-    // Testing menu is disabled here so that VerifyLanguageGeneration() does not start/end a timer.
-    DisableTestingMenuScope scope;
+    // TODO: [Randalphwa - 09-18-2026] Testing menu was removed -- need to add another way to
+    // disable timing DisableTestingMenuScope scope;
 
     for (auto lang: languages)
     {
@@ -285,5 +285,3 @@ namespace
 
     return verify_codegen::VERIFY_SUCCESS;
 }
-
-// Testing menu is automatically restored in the DisableTestingMenuScope destructor

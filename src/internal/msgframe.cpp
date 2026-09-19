@@ -48,6 +48,12 @@ namespace
     }
 }  // namespace
 
+// Assertions get their own color so that they stand out from warnings and errors.
+static wxColor AssertionColour()
+{
+    return UserPrefs.is_HighContrast() ? wxColor("#E1A0FF") : wxColor("#A020F0");
+}
+
 MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent),
     m_pMsgs(pMsgs),
@@ -71,13 +77,11 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
     const wxColor clrError(UserPrefs.is_HighContrast() ? "#FF0000" : *wxRED);
     const wxColor clrWarning(UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
     const wxColor clrInfo(UserPrefs.is_HighContrast() ? "#1cc462" : *wxCYAN);
+    const wxColor clrAssertion = AssertionColour();
 
     const std::unordered_map<std::string_view, wxColor> prefix_colors = {
-        { "Error:", clrError },
-        { "wxError:", clrError },
-        { "Warning:", clrWarning },
-        { "wxWarning:", clrWarning },
-        { "wxInfo:", clrInfo }
+        { "Error:", clrError },       { "wxError:", clrError }, { "Warning:", clrWarning },
+        { "wxWarning:", clrWarning }, { "wxInfo:", clrInfo },   { "Assertion:", clrAssertion }
     };
 
     auto append_message =
@@ -91,14 +95,25 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
         m_textCtrl->AppendText(wxString(remaining));
     };
 
-    for (const auto& iter: *m_pMsgs)
+    // Render by index, re-reading size() on every pass, and copy each entry before rendering it.
+    //
+    // Rendering runs wxWidgets code, and an assertion raised from it is logged -- which appends
+    // to *m_pMsgs. That vector is never shrunk, only appended to, so indices stay valid while a
+    // reallocation invalidates the cached end() of a range-for and any reference into the vector.
+    // Indexing also means the newly appended entries get rendered here instead of being missed.
+    for (size_t index = 0; index < m_pMsgs->size(); ++index)
     {
+        const wxString msg_text = (*m_pMsgs)[index];
         bool handled = false;
         for (const auto& [prefix, color]: prefix_colors)
         {
-            if (iter.starts_with(wxString(prefix)))
+            if (msg_text.starts_with(wxString(prefix)))
             {
-                const auto remaining = wxue::stepover(iter);
+                // Skip exactly the prefix itself. stepover() would also swallow the whitespace
+                // that separates the prefix from the message, and the keys in prefix_colors have
+                // no trailing space (unlike the strings the AddXxxMsg() functions write), so the
+                // separating space has to come from msg_text.
+                const std::string_view remaining = wxue::get_View(msg_text).substr(prefix.size());
                 append_message(prefix, color, remaining);
                 handled = true;
                 break;
@@ -106,7 +121,7 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
         }
         if (!handled)
         {
-            m_textCtrl->AppendText(iter);
+            m_textCtrl->AppendText(msg_text);
         }
     }
 
@@ -141,6 +156,26 @@ void MsgFrame::AddWarningMsg(std::string_view msg)
         textAttr.SetTextColour(UserPrefs.is_HighContrast() ? "#569CD6" : *wxBLUE);
         m_textCtrl->SetDefaultStyle(textAttr);
         m_textCtrl->AppendText("Warning: ");
+
+        textAttr.SetTextColour(clr_fg);
+        m_textCtrl->SetDefaultStyle(textAttr);
+        m_textCtrl->AppendText(wxString::FromUTF8(msg.data(), msg.size()));
+    }
+}
+
+void MsgFrame::AddAssertionMsg(std::string_view msg)
+{
+    if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
+    {
+        const wxColor clr_bg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOW);
+        const wxColor clr_fg = UserPrefs.GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        wxTextAttr textAttr(clr_fg, clr_bg);
+        textAttr.SetFlags(wxTEXT_ATTR_TEXT_COLOUR | wxTEXT_ATTR_BACKGROUND_COLOUR);
+        textAttr.SetBackgroundColour(clr_bg);
+
+        textAttr.SetTextColour(AssertionColour());
+        m_textCtrl->SetDefaultStyle(textAttr);
+        m_textCtrl->AppendText("Assertion: ");
 
         textAttr.SetTextColour(clr_fg);
         m_textCtrl->SetDefaultStyle(textAttr);

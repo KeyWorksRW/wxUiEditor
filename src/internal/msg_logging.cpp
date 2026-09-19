@@ -12,41 +12,96 @@
 #include "msgframe.h"     // MsgFrame -- Stores messages
 #include "preferences.h"  // Set/Get wxUiEditor preferences
 
+// Posted -- not sent -- when the message window has to be created. Creating the window runs
+// wxWidgets code that can raise an assertion, and ShowLogger() is reached from the assertion
+// handler, so the window has to be built from a clean stack rather than from inside an assertion.
+wxDEFINE_EVENT(EVT_SHOW_MSG_LOGGER, wxThreadEvent);
+
+// Message history -- MsgFrame replays the entire vector when the window is created.
+//
+// Never hold a reference to an element of g_log_msgs across a call that can re-enter the logging
+// functions below. MsgFrame methods, setRightStatusField() and ShowLogger() all run wxWidgets
+// code that can log again (a nested assertion or wxLog call), and an emplace_back() from such a
+// re-entrant call can reallocate the vector, leaving that reference dangling. Build the entry in
+// a local wxString and push a copy instead -- the copy is deliberate.
 MsgLogging* g_pMsgLogging { nullptr };  // NOLINT (cppcheck-suppress)
 std::vector<wxString> g_log_msgs;       // NOLINT (cppcheck-suppress)
 
 void MSG_INFO(const std::string& msg)
 {
-    if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+    if (g_pMsgLogging)
     {
         g_pMsgLogging->AddInfoMsg(msg);
     }
 }
 
-void MSG_WARNING(const std::string& msg)
+void MSG_WARNING([[maybe_unused]] const std::string& msg)
 {
-    if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+    if (g_pMsgLogging)
     {
         g_pMsgLogging->AddWarningMsg(msg);
     }
 }
 
-void MSG_ERROR(const std::string& msg)
+void MSG_ASSERTION([[maybe_unused]] const std::string& msg)
 {
-    if (wxGetApp().isTestingMenuEnabled() && g_pMsgLogging)
+    if (g_pMsgLogging)
+    {
+        g_pMsgLogging->AddAssertionMsg(msg);
+    }
+}
+
+void MSG_ERROR([[maybe_unused]] const std::string& msg)
+{
+    if (g_pMsgLogging)
     {
         g_pMsgLogging->AddErrorMsg(msg);
     }
+}
+
+MsgLogging::MsgLogging()
+{
+    m_show_logger_handler.Bind(EVT_SHOW_MSG_LOGGER, &MsgLogging::OnShowLoggerEvent, this);
 }
 
 void MsgLogging::ShowLogger()
 {
     if (m_bDestroyed)
     {
-        m_msgFrame = new MsgFrame(&g_log_msgs, &m_bDestroyed);
-        m_bDestroyed = false;
+        // Defer creating the window to the event loop. ShowLogger() is called by the assertion
+        // handler, and building the window runs wxWidgets code that can raise another assertion --
+        // which would then have to be handled while the current assertion is still in progress.
+        if (!m_isPostPending && !wxGetApp().isMainFrameClosing())
+        {
+            m_isPostPending = true;
+            wxQueueEvent(&m_show_logger_handler, new wxThreadEvent(EVT_SHOW_MSG_LOGGER));
+        }
+        return;
     }
 
+    m_msgFrame->Show();
+}
+
+void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
+{
+    m_isPostPending = false;
+
+    if (wxGetApp().isMainFrameClosing())
+    {
+        return;  // don't create a window while the application is shutting down
+    }
+
+    if (!m_bDestroyed)
+    {
+        // A ShowLogger() call made after this event was queued already created the window.
+        m_msgFrame->Show();
+        return;
+    }
+
+    // Everything added while this event was queued is already in g_log_msgs, and MsgFrame
+    // displays the entire vector, so no message added before now is lost.
+    m_msgFrame = new MsgFrame(&g_log_msgs, &m_bDestroyed);
+    m_bDestroyed = false;
     m_msgFrame->Show();
 }
 
@@ -67,8 +122,10 @@ void MsgLogging::AddInfoMsg(std::string_view msg)
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
     {
-        auto& str = g_log_msgs.emplace_back(wxString::FromUTF8(msg.data(), msg.size()));
-        str << '\n';
+        // Deliberate copy: a reference into g_log_msgs can dangle if logging re-enters.
+        wxString log_entry = wxString::FromUTF8(msg.data(), msg.size());
+        log_entry << '\n';
+        g_log_msgs.emplace_back(log_entry);
 
         if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
         {
@@ -83,7 +140,7 @@ void MsgLogging::AddInfoMsg(std::string_view msg)
 
         else if (!m_bDestroyed)
         {
-            m_msgFrame->AddInfoMsg(str.ToStdString());
+            m_msgFrame->AddInfoMsg(log_entry.ToStdString());
         }
     }
 
@@ -116,8 +173,10 @@ void MsgLogging::AddEventMsg(std::string_view msg)
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_EVENT)
     {
-        auto& str = g_log_msgs.emplace_back("Event: ");
-        str << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
+        // Deliberate copy: a reference into g_log_msgs can dangle if logging re-enters.
+        wxString log_entry("Event: ");
+        log_entry << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
+        g_log_msgs.emplace_back(log_entry);
 
         if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
         {
@@ -132,7 +191,7 @@ void MsgLogging::AddEventMsg(std::string_view msg)
 
         else if (!m_bDestroyed)
         {
-            m_msgFrame->AddEventMsg(str.ToStdString());
+            m_msgFrame->AddEventMsg(log_entry.ToStdString());
         }
     }
 
@@ -158,8 +217,10 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
 
     if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
     {
-        auto& str = g_log_msgs.emplace_back("Warning: ");
-        str << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
+        // Deliberate copy: a reference into g_log_msgs can dangle if logging re-enters.
+        wxString log_entry("Warning: ");
+        log_entry << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
+        g_log_msgs.emplace_back(log_entry);
 
         if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
         {
@@ -176,7 +237,7 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
         {
             // Only add the message if the window was already displayed. Otherwise, it will have
             // already added the message from g_log_msgs.
-            m_msgFrame->AddWarningMsg(wxue::stepover(str));
+            m_msgFrame->AddWarningMsg(wxue::stepover(log_entry));
         }
     }
 
@@ -193,6 +254,51 @@ void MsgLogging::AddWarningMsg(std::string_view msg)
     }
 }
 
+void MsgLogging::AddAssertionMsg(std::string_view msg)
+{
+    if (wxGetApp().isMainFrameClosing())
+    {
+        return;  // no point in adding messages if we are shutting down
+    }
+
+    if (!(UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING))
+    {
+        return;
+    }
+
+    wxString assert_body = wxString::FromUTF8(msg.data(), msg.size());
+    assert_body << '\n';
+
+    wxString log_entry("Assertion: ");
+    log_entry << assert_body;
+    g_log_msgs.emplace_back(log_entry);
+
+    if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
+    {
+        return;
+    }
+
+    if (!m_isFirstShown)
+    {
+        m_isFirstShown = true;
+        ShowLogger();
+    }
+
+    else if (!m_bDestroyed)
+    {
+        // Only add the message if the window was already displayed. Otherwise, it will have
+        // already added the message from g_log_msgs.
+        //
+        // MsgFrame::AddAssertionMsg() prepends the colored "Assertion: " prefix itself, so only
+        // the message body is passed to it.
+        m_msgFrame->AddAssertionMsg(assert_body.utf8_string());
+    }
+
+    // The status bar is deliberately left untouched. This runs while an assertion is being
+    // handled, and ueStatusBar::DoUpdateStatusText() asserts when the number of panes doesn't
+    // match -- updating it here is what made pressing "Continue" hang the application.
+}
+
 void MsgLogging::AddErrorMsg(std::string_view msg)
 {
     if (wxGetApp().isMainFrameClosing())
@@ -200,15 +306,17 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
         return;  // no point in adding messages if we are shutting down
     }
 
-    auto& str = g_log_msgs.emplace_back("Error: ");
-    str << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
+    // Deliberate copy: a reference into g_log_msgs can dangle if logging re-enters.
+    wxString log_entry("Error: ");
+    log_entry << wxString::FromUTF8(msg.data(), msg.size()) << '\n';
+    g_log_msgs.emplace_back(log_entry);
 
     // [Randalphwa - 03-04-2024]
     // If AddErrorMsg is called during an event handler then FAIL_MSG can be called multiple
     // times. While std::unique_lock prevents re-entrance, it can still result in a crash. If
     // you really need to stop in this call, set a breakpoint and stop in the debugger. Do
-    // *not* call FAIL_MSG(str);
-    // FAIL_MSG(str);
+    // *not* call FAIL_MSG(log_entry);
+    // FAIL_MSG(log_entry);
 
     if (!g_pMsgLogging)  // g_pMsgLogging doesn't get created until the main window is created
     {
@@ -223,13 +331,13 @@ void MsgLogging::AddErrorMsg(std::string_view msg)
 
     else if (!m_bDestroyed)
     {
-        m_msgFrame->AddErrorMsg(wxue::stepover(str));
+        m_msgFrame->AddErrorMsg(wxue::stepover(log_entry));
     }
 
     auto* frame = wxGetMainFrame();
     if (frame && frame->IsShown())
     {
-        frame->setRightStatusField(str);
+        frame->setRightStatusField(log_entry);
     }
 }
 
@@ -252,8 +360,10 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
     {
         case wxLOG_Error:
             {
-                auto& str = g_log_msgs.emplace_back("wxError: ");
-                str << msg.utf8_string() << '\n';
+                // Deliberate copy: a reference into g_log_msgs can dangle if logging re-enters.
+                wxString log_entry("wxError: ");
+                log_entry << msg.utf8_string() << '\n';
+                g_log_msgs.emplace_back(log_entry);
 
                 if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
@@ -263,13 +373,13 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxErrorMsg(wxue::stepover(str));
+                    m_msgFrame->Add_wxErrorMsg(wxue::stepover(log_entry));
                 }
 
                 auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
-                    frame->setRightStatusField(str);
+                    frame->setRightStatusField(log_entry);
                 }
             }
 
@@ -284,8 +394,10 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
         case wxLOG_Warning:
             if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WARNING)
             {
-                auto& str = g_log_msgs.emplace_back("wxWarning: ");
-                str << msg.utf8_string() << '\n';
+                // Deliberate copy: a reference into g_log_msgs can dangle if logging re-enters.
+                wxString log_entry("wxWarning: ");
+                log_entry << msg.utf8_string() << '\n';
+                g_log_msgs.emplace_back(log_entry);
 
                 if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
@@ -295,13 +407,13 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxWarningMsg(wxue::stepover(str));
+                    m_msgFrame->Add_wxWarningMsg(wxue::stepover(log_entry));
                 }
 
                 auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
-                    frame->setRightStatusField(str);
+                    frame->setRightStatusField(log_entry);
                 }
             }
 
@@ -317,8 +429,10 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
         case wxLOG_Message:
             if (UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_INFO)
             {
-                auto& str = g_log_msgs.emplace_back("wxInfo: ");
-                str << msg.utf8_string() << '\n';
+                // Deliberate copy: a reference into g_log_msgs can dangle if logging re-enters.
+                wxString log_entry("wxInfo: ");
+                log_entry << msg.utf8_string() << '\n';
+                g_log_msgs.emplace_back(log_entry);
 
                 if ((UserPrefs.GetDebugFlags() & Prefs::PREFS_MSG_WINDOW) && !m_isFirstShown)
                 {
@@ -328,13 +442,13 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 
                 else if (!m_bDestroyed)
                 {
-                    m_msgFrame->Add_wxInfoMsg(wxue::stepover(str));
+                    m_msgFrame->Add_wxInfoMsg(wxue::stepover(log_entry));
                 }
 
                 auto* frame = wxGetMainFrame();
                 if (frame && frame->IsShown())
                 {
-                    frame->setRightStatusField(str);
+                    frame->setRightStatusField(log_entry);
                 }
             }
 

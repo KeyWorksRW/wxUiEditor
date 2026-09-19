@@ -71,14 +71,13 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     wxCommandEvent dummy;
     OnGenerate(dummy);
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    const auto& import_file = wxGetFrame().getImportPanel()->GetImportFile();
+    if (wxue::string(import_file.extension()).MakeLower() != ".xrc")
     {
-        const auto& import_file = wxGetFrame().getImportPanel()->GetImportFile();
-        if (wxue::string(import_file.extension()).MakeLower() != ".xrc")
-        {
-            m_btnCompare->Disable();
-        }
+        m_btnCompare->Disable();
     }
+#endif
 }
 
 void XrcPreview::OnClear(wxCommandEvent& /* event unused */)

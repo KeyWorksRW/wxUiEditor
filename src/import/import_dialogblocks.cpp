@@ -1973,45 +1973,45 @@ void DialogBlocks::ProcessMiscBoolChildren(pugi::xml_node& node_xml, const NodeS
     }
 }
 
-wxString DialogBlocks::GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName)
+wxString DialogBlocks::GatherErrorDetails([[maybe_unused]] pugi::xml_node& xml_node,
+                                          [[maybe_unused]] GenEnum::GenName get_GenName)
 {
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    wxString msg = "Name: ";
+    if (get_GenName != gen_unknown)
     {
-        wxString msg = "Name: ";
-        if (get_GenName != gen_unknown)
+        msg << wxString(map_GenNames.at(get_GenName));
+    }
+    else
+    {
+        msg << "Unknown gen_name";
+    }
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)
+    {
+        if (auto str = ExtractQuotedString(value); !str.empty())
         {
-            msg << wxString(map_GenNames.at(get_GenName));
+            msg << ", Label: " << str;
         }
-        else
-        {
-            msg << "Unknown gen_name";
-        }
-        if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Label"); value)
-        {
-            if (auto str = ExtractQuotedString(value); !str.empty())
-            {
-                msg << ", Label: " << str;
-            }
-        }
-
-        if (auto value =
-                xml_node.find_child_by_attribute("string", "name", "proxy-Member variable name");
-            value)
-        {
-            if (auto str = ExtractQuotedString(value); !str.empty())
-            {
-                msg << ", VarName: " << str;
-            }
-        }
-        if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Id name"); value)
-        {
-            if (auto str = ExtractQuotedString(value); !str.empty())
-            {
-                msg << ", Id: " << str;
-            }
-        }
-        return msg;
     }
 
+    if (auto value =
+            xml_node.find_child_by_attribute("string", "name", "proxy-Member variable name");
+        value)
+    {
+        if (auto str = ExtractQuotedString(value); !str.empty())
+        {
+            msg << ", VarName: " << str;
+        }
+    }
+    if (auto value = xml_node.find_child_by_attribute("string", "name", "proxy-Id name"); value)
+    {
+        if (auto str = ExtractQuotedString(value); !str.empty())
+        {
+            msg << ", Id: " << str;
+        }
+    }
+    return msg;
+#else
     return {};
+#endif
 }

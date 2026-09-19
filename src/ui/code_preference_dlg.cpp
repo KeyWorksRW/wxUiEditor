@@ -129,12 +129,13 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
 
 void CodePreferenceDlg::OnInit(wxInitDialogEvent& event)
 {
-    if (!wxGetApp().isTestingSwitch())
+#if !defined(INTERNAL_TESTING)
     {
         m_radioBtn_XRC->Hide();
 
         Layout();
     }
+#endif  // !defined(INTERNAL_TESTING)
 
     event.Skip();
 }

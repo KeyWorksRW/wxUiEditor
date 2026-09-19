@@ -191,10 +191,9 @@ bool GenResults::Generate()
 
     const bool comparison_only = (m_mode == Mode::compare_only);
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        StartClock();
-    }
+#if defined(INTERNAL_TESTING)
+    StartClock();
+#endif
 
     const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.ChangeDir();
@@ -250,11 +249,13 @@ bool GenResults::Generate()
     {
         WaitForPendingDiffs();
     }
-    else if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    else
     {
         WaitForPendingDiffs();  // Wait for all async diffs to complete
         EndClock();
     }
+#endif
 
     return generate_result;
 }
@@ -439,11 +440,13 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
     const GenLang saved_lang = m_languages;
     m_languages = language;
 
-    const bool started_clock = (wxGetApp().isTestingMenuEnabled() && !m_clock_started);
+#if defined(INTERNAL_TESTING)
+    const bool started_clock = !m_clock_started;
     if (started_clock)
     {
         StartClock();
     }
+#endif
 
     const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.ChangeDir();
@@ -554,13 +557,12 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
         }
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    if (started_clock)
     {
-        if (started_clock)
-        {
-            EndClock();
-        }
+        EndClock();
     }
+#endif
 
     // Restore original m_languages value
     m_languages = saved_lang;
@@ -1044,20 +1046,18 @@ bool GenResults::GenerateCombinedFile(GenLang language)
 
     const bool comparison_only = (m_mode == Mode::compare_only);
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        StartClock();
-    }
+#if defined(INTERNAL_TESTING)
+    StartClock();
+#endif
 
     const wxue::SaveCwd save_cwd(wxue::restore_cwd);
     Project.ChangeDir();
 
     const bool generate_result = GenerateCombinedXrcFile(comparison_only);
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        EndClock();
-    }
+#if defined(INTERNAL_TESTING)
+    EndClock();
+#endif
 
     return generate_result;
 }

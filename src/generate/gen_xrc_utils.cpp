@@ -15,8 +15,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
 
-#include "../internal/msg_logging.h"  // MsgLogging
-
 #include "wxue_namespace/wxue_string.h"         // wxue::string
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
@@ -56,13 +54,10 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     if (node->HasValue(prop_conditional) && !node->as_string(prop_conditional).empty())
     {
         // XRC supports platforms but not conditional code.
-        if (g_pMsgLogging)
-        {
-            g_pMsgLogging->AddWarningMsg(
-                std::format("XRC does not support conditional code. The conditional property on {} "
-                            "will be ignored.",
-                            node->get_DeclName()));
-        }
+        MSG_WARNING(
+            std::format("XRC does not support conditional code. The conditional property on {} "
+                        "will be ignored.",
+                        node->get_DeclName()));
     }
 
     if (node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")

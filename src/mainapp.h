@@ -56,7 +56,9 @@ public:
     // type).
     bool isCoverageTesting() const noexcept { return m_is_coverage_testing; }
 
+#if defined(INTERNAL_TESTING)
     static void ShowMsgWindow();
+#endif
     [[nodiscard]] static bool AutoMsgWindow();
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)

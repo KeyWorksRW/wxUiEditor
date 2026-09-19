@@ -477,10 +477,12 @@ void MainFrame::OnImportProject([[maybe_unused]] wxCommandEvent& event)
         return;
     }
 
+#if defined(INTERNAL_TESTING)
     if (g_pMsgLogging)
     {
         g_pMsgLogging->Clear();
     }
+#endif
 
     Project.NewProject();
 }
@@ -497,10 +499,12 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
 
     if (file.file_exists())
     {
+#if defined(INTERNAL_TESTING)
         if (g_pMsgLogging)
         {
             g_pMsgLogging->Clear();
         }
+#endif
         Project.ImportProject(file);
     }
     else if (wxMessageBox(wxString::Format("The project file '%s' doesn't exist.\n\nWould you "

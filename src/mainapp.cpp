@@ -533,12 +533,14 @@ int App::OnRun()
 
 int App::OnExit()
 {
+#if defined(INTERNAL_TESTING)
     if (g_pMsgLogging)
     {
         wxLog::SetActiveTarget(nullptr);
         delete g_pMsgLogging;
         g_pMsgLogging = nullptr;
     }
+#endif
     return wxApp::OnExit();
 }
 
@@ -657,10 +659,12 @@ void App::OnFatalException()
 
 #endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
+#if defined(INTERNAL_TESTING)
 void App::ShowMsgWindow()
 {
     g_pMsgLogging->ShowLogger();
 }
+#endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 

@@ -45,6 +45,3 @@ private:
 
     std::map<std::string, std::set<Node*>> m_map_found;
 };
-
-// Find a form by its class_name property, searching recursively through folders
-[[nodiscard]] Node* FindNodeByClassName(Node* node_start, const std::string& classname);

@@ -29,6 +29,7 @@ if(INTERNAL_BLD_TESTING)
         src/internal/undo_info.cpp
         src/internal/viewdetails_dlg.cpp
         src/internal/xrc_list_dlg.cpp
+        src/tests/test_xrc_import.cpp          # XRC Import tests
 
         ${wxue_internal_generated_code}
         ${verify_files}

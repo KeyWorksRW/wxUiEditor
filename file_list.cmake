@@ -353,11 +353,6 @@ set( file_list
     src/utils/set_stc_colors.cpp           # Contains function for initializing wxStyledTextCtrl colors
     src/utils/utils.cpp                    # Utility functions that work with properties
 
-    # Testing
-    src/internal/msg_logging.cpp           # Message logging class
-    src/internal/import_panel.cpp          # Panel to display original imported file
-    src/tests/test_xrc_import.cpp          # XRC Import tests
-
     # Tools
 
     src/tools/compare/code_compare.cpp  # Code Generation Comparison
@@ -405,20 +400,9 @@ set( file_list
     $<$<CONFIG:Debug>:src/internal/convert_img.cpp>  # Convert image
     $<$<CONFIG:Debug>:src/tests/test_xrc_import.cpp> # XRC Import tests
 )
+
 set(parser_sources
     src/doc_viweer/zip_reader.cpp
-)
-
-set( debug_files
-
-    # These are just here to make it easier to open with a VSCode extension
-
-    src/tools/generate_dlg.cpp
-    src/tools/preview_settings.cpp
-
-    src/wxui/optionsdlg.cpp
-    src/wxui/code_preference_dlg.cpp
-    src/wxui/dlg_gen_results.cpp
 )
 
 # ============================================================================

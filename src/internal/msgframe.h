@@ -11,12 +11,15 @@
 
 #include <wx/log.h>
 
-#include "msgframe_base.h"
+#include "generated/msgframe_base.h"
 
 class MsgFrame : public MsgFrameBase
 {
 public:
+    /// The host owns pMsgs and pDestroyed and must keep both alive for this frame's lifetime;
+    /// neither may be null. This frame sets *pDestroyed when it is destroyed.
     MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
+    ~MsgFrame();
 
     void OnNodeSelected();
 
@@ -24,6 +27,7 @@ public:
     void Add_wxErrorMsg(std::string_view msg);
 
     void AddWarningMsg(std::string_view msg);
+    void AddAssertionMsg(std::string_view msg);
     void Add_wxWarningMsg(std::string_view msg);
 
     void AddInfoMsg(std::string_view msg)

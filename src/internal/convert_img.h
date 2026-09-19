@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "internal/convert_img_base.h"  // ConvertImageBase
+#include "internal/generated/convert_img_base.h"  // ConvertImageBase
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 

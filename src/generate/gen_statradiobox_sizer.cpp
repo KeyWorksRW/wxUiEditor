@@ -29,8 +29,12 @@ wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     // display the checkbox since Python doesn't support it.
     // Note: macOS doesn't support using a control as a wxStaticBox label
 #if !defined(__WXOSX__)
+    #if defined(INTERNAL_TESTING)
     if (Project.as_string(prop_code_preference) != "Python" ||
-        (Project.HasValue(prop_code_preference) && wxGetApp().isTestingMenuEnabled()))
+        Project.HasValue(prop_code_preference))
+    #else
+    if (Project.as_string(prop_code_preference) != "Python")
+    #endif
     {
         m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY,
                                        node->as_wxString(prop_label));

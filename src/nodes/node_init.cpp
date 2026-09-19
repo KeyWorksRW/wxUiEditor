@@ -622,25 +622,23 @@ NodeDeclaration* NodeCreator::ParseGenerator(pugi::xml_node& generator, bool is_
         class_name.erase(0, sizeof("gen_") - 1);
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    if (!rmap_GenNames.contains(class_name))
     {
-        if (!rmap_GenNames.contains(class_name))
-        {
-            MSG_WARNING(std::format("{}{}",
-                                    is_interface ? "Unrecognized interface name -- " :
-                                                   "Unrecognized class name -- ",
-                                    class_name.c_str()));
-        }
+        MSG_WARNING(std::format("{}{}",
+                                is_interface ? "Unrecognized interface name -- " :
+                                               "Unrecognized class name -- ",
+                                class_name.c_str()));
     }
+#endif
 
     // This code makes it possible to add `enable="internal"` to an XML class/interface to
     // prevent it from being used when not testing.
     if (auto enable = generator.attribute("enable"); enable.as_view() == "internal")
     {
-        if (!wxGetApp().isTestingMenuEnabled())
-        {
-            return nullptr;  // Skip this class if we're not testing
-        }
+#if !defined(INTERNAL_TESTING)
+        return nullptr;  // Skip this class if we're not testing
+#endif
     }
 
     GenType const type = DetermineGenType(generator, is_interface);

@@ -351,14 +351,13 @@ protected:
     void OnFindWidget(wxCommandEvent& event);
 
     void OnXrcPreview(wxCommandEvent& event);
+
+#if defined(INTERNAL_TESTING)  // Starts internal testing section.
     void OnTestXrcImport(wxCommandEvent& event);
     void OnTestXrcDuplicate(wxCommandEvent& event);
 
-#if defined(_DEBUG)  // Starts debug section.
-
     void OnVerifyTTWX(wxCommandEvent& event);
     void OnConvertImageDlg(wxCommandEvent& event);
-
 #endif
 
     wxWindow* CreateNoteBook(wxWindow* parent);

@@ -562,66 +562,64 @@ void NavPopupMenu::MenuAddCommands()
     wxMenuItem* menu_item = nullptr;
     const wxSize& dpi_size = wxGetFrame().GetMenuDpiSize();
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    if (m_node->is_Form())
     {
-        if (m_node->is_Form())
+        int count = 0;
+        if (m_node->HasValue(prop_base_file))
         {
-            int count = 0;
-            if (m_node->HasValue(prop_base_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenCpp), "Generate C++ for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_python_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenPython), "Generate Python for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_ruby_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenRuby), "Generate Ruby for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_xrc_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenXRC), "Generate XRC for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_typescript_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenTypeScript),
-                       "Generate TypeScript for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_fortran_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenFortran),
-                       "Generate Fortran for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_go_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenGO), "Generate GO for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_lua_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenLuaJIT), "Generate LuaJIT for this form");
-                ++count;
-            }
-            if (m_node->HasValue(prop_julia_file))
-            {
-                Append(std::to_underlying(Menu::SingleGenJulia), "Generate Julia for this form");
-                ++count;
-            }
+            Append(std::to_underlying(Menu::SingleGenCpp), "Generate C++ for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_python_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenPython), "Generate Python for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_ruby_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenRuby), "Generate Ruby for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_xrc_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenXRC), "Generate XRC for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_typescript_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenTypeScript),
+                   "Generate TypeScript for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_fortran_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenFortran), "Generate Fortran for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_go_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenGO), "Generate GO for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_lua_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenLuaJIT), "Generate LuaJIT for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_julia_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenJulia), "Generate Julia for this form");
+            ++count;
+        }
 
-            if (count)
-            {
-                Append(std::to_underlying(Menu::CompareCode), "Compare Code for this form");
-                AppendSeparator();
-            }
+        if (count)
+        {
+            Append(std::to_underlying(Menu::CompareCode), "Compare Code for this form");
+            AppendSeparator();
         }
     }
+#endif
 
     if (m_node->is_Form() || m_node->is_Gen(gen_Images) || m_node->is_Gen(gen_embedded_image))
     {

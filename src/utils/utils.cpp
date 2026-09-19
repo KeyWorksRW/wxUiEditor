@@ -824,3 +824,33 @@ wxString ShowOpenProjectDialog(wxWindow* parent)
     }
     return wxEmptyString;
 }
+
+Node* FindNodeByClassName(Node* node_start, const std::string& classname)
+{
+    for (const auto& child_form: node_start->get_ChildNodePtrs())
+    {
+        if (child_form->is_Gen(gen_Images) || child_form->is_Gen(gen_Data))
+        {
+            continue;
+        }
+
+        if (child_form->HasValue(prop_class_name) &&
+            child_form->as_string(prop_class_name) == classname)
+        {
+            return child_form.get();
+        }
+
+        if (child_form->is_Gen(gen_folder) || child_form->is_Gen(gen_sub_folder) ||
+            child_form->is_Type(type_DocViewApp) || child_form->is_Type(GenEnum::type_wx_document))
+        {
+            // Doc/View applications and Documents have additional child forms that need to
+            // be included in addition to folders and sub-folders
+            if (auto* result = FindNodeByClassName(child_form.get(), classname); result)
+            {
+                return result;
+            }
+        }
+    }
+
+    return nullptr;
+}

@@ -353,17 +353,6 @@ set( file_list
     src/utils/set_stc_colors.cpp           # Contains function for initializing wxStyledTextCtrl colors
     src/utils/utils.cpp                    # Utility functions that work with properties
 
-    # Testing
-    src/internal/node_info.cpp             # Node memory usage dialog
-    src/internal/msgframe.cpp              # Stores messages
-    src/internal/msg_logging.cpp           # Message logging class
-    src/internal/import_panel.cpp          # Panel to display original imported file
-    src/tests/test_xrc_import.cpp          # XRC Import tests
-
-    src/internal/xrcpreview.cpp            # Generated XrcPreview Dialog code
-    src/internal/xrcpreview_handlers.cpp   # Handlers for XrcPreview Dialog class
-    src/internal/xrc_list_dlg.cpp
-
     # Tools
 
     src/tools/compare/code_compare.cpp  # Code Generation Comparison
@@ -400,7 +389,6 @@ set( file_list
     src/ui/import_dlg.cpp               # Dialog to import one or more projects
     src/ui/insert_widget.cpp            # Dialog to insert a new widget
     src/ui/xrccompare.cpp               # C++/XRC UI Comparison dialog
-    src/ui/viewdetails_dlg.cpp          # Dialog to display details about a node in the Mockup
 
     src/helptext/archive_handler.cpp    # Handles doc archive: open, search, display
     src/helptext/find_in_page.cpp       # Find-in-page utilities for DocViewPane
@@ -412,28 +400,9 @@ set( file_list
     $<$<CONFIG:Debug>:src/internal/convert_img.cpp>  # Convert image
     $<$<CONFIG:Debug>:src/tests/test_xrc_import.cpp> # XRC Import tests
 )
+
 set(parser_sources
     src/doc_viweer/zip_reader.cpp
-)
-
-set( debug_files
-
-    # These are just here to make it easier to open with a VSCode extension
-    src/internal/convert_img.cpp
-
-    src/internal/convert_img_base.cpp
-    src/internal/debugsettings.cpp
-    src/internal/msgframe_base.cpp
-    src/internal/node_search_dlg.cpp
-    src/internal/undo_info.cpp
-    src/internal/unused_gen_dlg.cpp
-
-    src/tools/generate_dlg.cpp
-    src/tools/preview_settings.cpp
-
-    src/wxui/optionsdlg.cpp
-    src/wxui/code_preference_dlg.cpp
-    src/wxui/dlg_gen_results.cpp
 )
 
 # ============================================================================

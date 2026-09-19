@@ -199,27 +199,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(INTERNAL_BLD_TESTING)
-    message(NOTICE "Building internal testing version")
-
-    # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
-    # and FAIL_MSG() in a Release build.
-    add_compile_definitions(INTERNAL_TESTING)
-    # include( src/verify/verify.cmake ) # This will set ${verify_files} with a list of source files
-
-    set(wxui_internal_files
-        src/internal/msg_logging.cpp
-        src/internal/msgframe.cpp
-        src/internal/import_panel.cpp
-        src/internal/convert_img.cpp
-        ${verify_files}
-    )
-else()
-    set(wxui_internal_files
-        $<$<CONFIG:Debug>:src/internal/msg_logging.cpp>
-        $<$<CONFIG:Debug>:src/internal/msgframe.cpp>
-        $<$<CONFIG:Debug>:src/internal/import_panel.cpp>
-        $<$<CONFIG:Debug>:src/internal/convert_img.cpp>
-    )
+    include(cmake/internal.cmake)
 endif()
 
 if(INTERNAL_FEATURE1)

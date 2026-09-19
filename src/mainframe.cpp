@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main window frame
 // Author:    Ralph Walden
@@ -188,9 +189,9 @@ MainFrame::MainFrame() :
     m_FileHistory.UseMenu(m_submenu_recent);
     m_FileHistory.AddFilesToMenu();
 
+#if defined(INTERNAL_TESTING)
     CreateTestingMenuItems(this);
 
-#if defined(_DEBUG)
     auto* menuInternal = new wxMenu;
 
     menuInternal->AppendSeparator();
@@ -209,14 +210,13 @@ MainFrame::MainFrame() :
 
     m_menubar->Append(menuInternal, "&Internal");
 
-#endif  // defined(_DEBUG)
+#else
+    // Preview isn't reliable enough to be included in the release version
+    m_menuTools->Delete(m_mi_preview);
+    m_toolbar->DeleteTool(id_PreviewForm);
 
-    if (!wxGetApp().isTestingMenuEnabled())
-    {
-        // For version 1.1.0.0, preview isn't reliable enough to be included in the release version
-        m_menuTools->Delete(m_mi_preview);
-        m_toolbar->DeleteTool(id_PreviewForm);
-    }
+#endif  // defined(INTERNAL_TESTING)
+
     m_toolbar->Realize();
 
     CreateStatusBar(StatusPanels);
@@ -387,13 +387,10 @@ MainFrame::~MainFrame()
     delete m_findDialog;
 }
 
+#if defined(INTERNAL_TESTING)
+
 void MainFrame::CreateTestingMenuItems(MainFrame* frame)
 {
-    if (!wxGetApp().isTestingMenuEnabled())
-    {
-        return;
-    }
-
     wxMenuItem* item = nullptr;
 
     auto* menuExperimental = new wxMenu;
@@ -428,36 +425,6 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
     menuTesting->AppendSeparator();
     menuTesting->Append(std::to_underlying(MenuIDs::id_ShowLogger), "Show &Log Window",
                         "Show window containing debug messages");
-    wxMenuItem* menuItem =
-        menuTesting->Append(std::to_underlying(MenuIDs::id_TestSwitch), "Testing Switch",
-                            "Toggle test switch", wxITEM_CHECK);
-    menuItem->Check(wxGetApp().isTestingSwitch());
-    frame->Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent& event)
-        {
-            if (wxGetApp().isTestingSwitch())
-            {
-                wxGetApp().setTestingSwitch(false);
-                if (wxMenuItem* menuItemTestSwitch =
-                        wxStaticCast(event.GetEventObject(), wxMenu)
-                            ->FindItem(std::to_underlying(MenuIDs::id_TestSwitch)))
-                {
-                    menuItemTestSwitch->Check(false);
-                }
-            }
-            else
-            {
-                wxGetApp().setTestingSwitch(true);
-                if (wxMenuItem* menuItemTestSwitch =
-                        wxStaticCast(event.GetEventObject(), wxMenu)
-                            ->FindItem(std::to_underlying(MenuIDs::id_TestSwitch)))
-                {
-                    menuItemTestSwitch->Check(true);
-                }
-            }
-        },
-        std::to_underlying(MenuIDs::id_TestSwitch));
 
     frame->m_menubar->Append(menuExperimental, "Experimental");
     frame->m_menubar->Append(menuTesting, "Testing");
@@ -511,12 +478,10 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
                 std::to_underlying(MenuIDs::id_FindWidget));
 }
 
+#endif  // defined(INTERNAL_TESTING)
+
 wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg,
                              wxSize def_size);
-
-#if defined(_DEBUG)
-    #include "internal/debugsettings.h"
-#endif
 
 void MainFrame::ProjectLoaded()
 {
@@ -576,11 +541,13 @@ bool MainFrame::SaveWarning()
     {
         // Testing often requires importing multiple projects to verify they work, so there is
         // no reason to save them.
-        if (wxGetApp().isTestingMenuEnabled() && m_isImported)
+#if defined(INTERNAL_TESTING)
+        if (m_isImported)
         {
             result = wxNO;
         }
         else
+#endif
         {
             result = ::wxMessageBox("Current project file has been modified...\n"
                                     "Do you want to save the changes?",
@@ -610,14 +577,12 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_notebook->AddPage(m_languageDocsPanel, "Docs", false, wxWithImages::NO_IMAGE);
 #endif
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        // Shows original import file if project is imported, otherwise it shows the project
-        // file
-        m_importPanel = new ImportPanel(m_notebook);
-        m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
-    }
-
+#if defined(INTERNAL_TESTING)
+    // Shows original import file if project is imported, otherwise it shows the project
+    // file
+    m_importPanel = new ImportPanel(m_notebook);
+    m_notebook->AddPage(m_importPanel, "Import", false, wxWithImages::NO_IMAGE);
+#endif
     return m_notebook;
 }
 

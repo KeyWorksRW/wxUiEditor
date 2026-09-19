@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Panel to display original imported file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2022-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-19-2026]
 
 #include <wx/fdrepdlg.h>  // wxFindReplaceDialog class
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
@@ -38,7 +39,7 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
 
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
     // which is not cross-platform. See issue #597.
-    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    const wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     // These are settings used in codedisplay_base
@@ -77,7 +78,12 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
     if (!m_view.ReadFile(std::string_view(file)) &&
         !m_view.ReadFile(std::string_view(file.filename())))
     {
-        FAIL_MSG(wxue::string("Can't read ") << file);
+        MSG_ERROR(wxue::string("Can't read ") << file);
+        m_lexer = -1;
+        m_import_file.clear();
+        m_scintilla->SetReadOnly(false);
+        m_scintilla->ClearAll();
+        m_scintilla->SetReadOnly(true);
         return;
     }
 
@@ -93,11 +99,13 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
             // wxGlade. wxFormBuilder could probably use some extra keywords...
 
             {
-                pugi::xml_document doc;
-                if (auto result = doc.load_file_string(file); result)
+                pugi::xml_document xml_doc;
+                const pugi::xml_parse_result parse_result =
+                    xml_doc.load_buffer(m_view.GetBuffer().data(), m_view.GetBuffer().size());
+                if (parse_result)
                 {
                     std::set<wxue::string> keywords;
-                    auto root = doc.first_child();
+                    const pugi::xml_node root = xml_doc.first_child();
                     keywords.insert(root.name());
                     for (auto& iter: root.attributes())
                     {
@@ -178,7 +186,7 @@ void ImportPanel::SetImportFile(const wxue::string& file, int lexer)
 
 void ImportPanel::OnFind(wxFindDialogEvent& event)
 {
-    auto wxflags = event.GetFlags();
+    const int wxflags = event.GetFlags();
     int sciflags = 0;
 
     if (wxflags & wxFR_WHOLEWORD)
@@ -190,7 +198,7 @@ void ImportPanel::OnFind(wxFindDialogEvent& event)
         sciflags |= wxSTC_FIND_MATCHCASE;
     }
 
-    int result;
+    int result = 0;
     if (wxflags & wxFR_DOWN)
     {
         m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
@@ -218,16 +226,17 @@ void ImportPanel::OnFind(wxFindDialogEvent& event)
 void ImportPanel::Clear()
 {
     m_view.clear();
+    m_lexer = -1;
+    m_import_file.clear();
 
     m_scintilla->SetReadOnly(false);
     m_scintilla->ClearAll();
+    m_scintilla->SetReadOnly(true);
 }
 
 void ImportPanel::OnNodeSelected(Node* node)
 {
     // Find where the node is created.
-    wxue::string name(" ");
-    name << node->as_string(prop_var_name);
     int line = 0;
 
     wxue::string search;
@@ -242,10 +251,6 @@ void ImportPanel::OnNodeSelected(Node* node)
     if (node->HasProp(prop_id) && node->as_string(prop_id) != "wxID_ANY")
     {
         search << node->as_string(prop_id);
-        if (auto pos = search.find('='); wxue::is_found(pos))
-        {
-            search.erase(pos - 1, search.size() - pos + 1);
-        }
     }
     else if (node->HasValue(prop_var_name))
     {
@@ -259,11 +264,12 @@ void ImportPanel::OnNodeSelected(Node* node)
     // Helper lambda to find line containing a string
     auto find_line_containing = [this](const wxue::string& str) -> int
     {
-        auto iter = std::ranges::find_if(m_view,
-                                         [&str](const wxue::string_view& line)
-                                         {
-                                             return line.contains(str);
-                                         });
+        const wxue::ViewVector::iterator iter =
+            std::ranges::find_if(m_view,
+                                 [&str](const wxue::string_view& line)
+                                 {
+                                     return line.contains(str);
+                                 });
         return (iter != m_view.end()) ? static_cast<int>(std::distance(m_view.begin(), iter)) : -1;
     };
 

@@ -1483,7 +1483,8 @@ void WxCrafter::KnownProperty(Node* node, const glz::generic& value, GenEnum::Pr
                 {
                     prop_name = prop_help;
                 }
-                else if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+                else
                 {
                     if ((prop_value.is_string() && !prop_value.get<std::string>().empty()) ||
                         (prop_value.is_number() && prop_value.as<int>()))
@@ -1493,6 +1494,7 @@ void WxCrafter::KnownProperty(Node* node, const glz::generic& value, GenEnum::Pr
                                              GenEnum::map_PropNames.at(prop_name)));
                     }
                 }
+#endif
             }
             if (prop_value.is_boolean())
             {

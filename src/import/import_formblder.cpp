@@ -732,22 +732,21 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, std::string_view pr
                 return;
             }
 
-            if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+            if (parent && parent->get_Form())
             {
-                if (parent && parent->get_Form())
-                {
-                    MSG_INFO(std::string("Unsupported ") + std::string(prop_name) + "(" +
-                             std::string(xml_prop.text().as_view()) + ") property in " +
-                             std::string(class_name) +
-                             ". Form: " + parent->get_Form()->as_string(prop_class_name));
-                }
-                else
-                {
-                    MSG_INFO(std::string("Unsupported ") + std::string(prop_name) + "(" +
-                             std::string(xml_prop.text().as_view()) + ") property in " +
-                             std::string(class_name));
-                }
+                MSG_INFO(std::string("Unsupported ") + std::string(prop_name) + "(" +
+                         std::string(xml_prop.text().as_view()) + ") property in " +
+                         std::string(class_name) +
+                         ". Form: " + parent->get_Form()->as_string(prop_class_name));
             }
+            else
+            {
+                MSG_INFO(std::string("Unsupported ") + std::string(prop_name) + "(" +
+                         std::string(xml_prop.text().as_view()) + ") property in " +
+                         std::string(class_name));
+            }
+#endif
         }
     }
 }
@@ -1184,20 +1183,18 @@ void FormBuilder::ProcessXmlEvents(pugi::xml_node& xml_obj, Node* newobject, Nod
                     continue;
                 }
 
-                if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+                if (parent && parent->get_Form())
                 {
-                    if (parent && parent->get_Form())
-                    {
-                        MSG_INFO(std::string("Event ") + std::string(event_name) +
-                                 " not supported. Form: " +
-                                 parent->get_Form()->as_string(prop_class_name));
-                    }
-                    else
-                    {
-                        MSG_INFO(std::string("Event ") + std::string(event_name) +
-                                 " not supported");
-                    }
+                    MSG_INFO(
+                        std::string("Event ") + std::string(event_name) +
+                        " not supported. Form: " + parent->get_Form()->as_string(prop_class_name));
                 }
+                else
+                {
+                    MSG_INFO(std::string("Event ") + std::string(event_name) + " not supported");
+                }
+#endif
 
                 xml_event = xml_event.next_sibling("event");
                 continue;

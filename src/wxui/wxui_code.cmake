@@ -6,13 +6,6 @@ set (wxue_generated_code
 
     # Non-base classes
     ${CMAKE_CURRENT_LIST_DIR}/../import/import_winres_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/debugsettings.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/node_info.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/node_search_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/undo_info.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/unused_gen_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/xrc_list_dlg.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/xrcpreview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_dialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_frame.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../newdialogs/new_panel.cpp
@@ -39,8 +32,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/wxue_data.cpp
 
     # Base classes
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/convert_img_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../internal/msgframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/art_prop_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
@@ -65,7 +56,6 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/sys_header_dlg_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/viewdetails_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/xrccompare_base.cpp
 
 )

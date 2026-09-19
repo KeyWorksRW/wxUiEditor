@@ -57,12 +57,11 @@ void MainFrame::OnAbout([[maybe_unused]] wxCommandEvent& event)
     description
         << "wxUiEditor is a designer for wxWidgets\ngenerating C++, Python, Ruby and XRC code.\n";
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        description << "\n" << Project.get_ProjectFile() << "  \n";
-        description << "Original Project version: " << Project.get_OriginalProjectVersion() << "\n";
-        description << "wxUiEditor Project version: " << curSupportedVer << "\n";
-    }
+#if defined(INTERNAL_TESTING)
+    description << "\n" << Project.get_ProjectFile() << "  \n";
+    description << "Original Project version: " << Project.get_OriginalProjectVersion() << "\n";
+    description << "wxUiEditor Project version: " << curSupportedVer << "\n";
+#endif
 
     aboutInfo.SetDescription(description);
     aboutInfo.SetWebSite("https://github.com/KeyWorksRW/wxUiEditor");
@@ -365,17 +364,16 @@ void MainFrame::OnClose(wxCloseEvent& event)
     m_FileHistory.Save(*config);
     m_property_panel->SaveDescBoxHeight();
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        config->SetPath("/debug_history");
-        m_ImportHistory.Save(*config);
-        config->SetPath("/");
+#if defined(INTERNAL_TESTING)
+    config->SetPath("/debug_history");
+    m_ImportHistory.Save(*config);
+    config->SetPath("/");
 
-        if (g_pMsgLogging)
-        {
-            g_pMsgLogging->CloseLogger();
-        }
+    if (g_pMsgLogging)
+    {
+        g_pMsgLogging->CloseLogger();
     }
+#endif
     event.Skip();
 }
 
@@ -454,11 +452,14 @@ void MainFrame::OnFindDialog([[maybe_unused]] wxCommandEvent& event)
     {
         if (auto* page = m_notebook->GetCurrentPage(); page)
         {
-            if (wxGetApp().isTestingMenuEnabled() && page == m_importPanel)
+#if defined(INTERNAL_TESTING)
+            if (page == m_importPanel)
             {
                 m_findData.SetFindString(m_importPanel->GetTextCtrl()->GetSelectedText());
             }
-            else if (page != m_mockupPanel && page != m_languageDocsPanel)
+            else
+#endif
+                if (page != m_mockupPanel && page != m_languageDocsPanel)
             {
                 m_findData.SetFindString(dynamic_cast<BasePanel*>(page)->GetSelectedText());
             }
@@ -476,10 +477,12 @@ void MainFrame::OnImportProject([[maybe_unused]] wxCommandEvent& event)
         return;
     }
 
+#if defined(INTERNAL_TESTING)
     if (g_pMsgLogging)
     {
         g_pMsgLogging->Clear();
     }
+#endif
 
     Project.NewProject();
 }
@@ -496,10 +499,12 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
 
     if (file.file_exists())
     {
+#if defined(INTERNAL_TESTING)
         if (g_pMsgLogging)
         {
             g_pMsgLogging->Clear();
         }
+#endif
         Project.ImportProject(file);
     }
     else if (wxMessageBox(wxString::Format("The project file '%s' doesn't exist.\n\nWould you "
@@ -547,14 +552,13 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
         }
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    if (g_pMsgLogging)
     {
-        if (g_pMsgLogging)
-        {
-            g_pMsgLogging->OnNodeSelected();
-        }
-        m_importPanel->OnNodeSelected(evt_flags);
+        g_pMsgLogging->OnNodeSelected();
     }
+    m_importPanel->OnNodeSelected(evt_flags);
+#endif
 
     UpdateFrame();
 }

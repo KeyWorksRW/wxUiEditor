@@ -139,22 +139,21 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
 
     Bind(wxEVT_MENU, &StartupDlg::RemoveProjectFilename, this, wxID_REMOVE);
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    wxFileHistory const* append_history_ptr = wxGetFrame().GetAppendImportHistory();
+    for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
     {
-        wxFileHistory const* append_history_ptr = wxGetFrame().GetAppendImportHistory();
-        for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
+        wxString const history_file = append_history_ptr->GetHistoryFile(idx);
+        wxFileName const project_file(history_file);
+        if (project_file.FileExists())
         {
-            wxString const history_file = append_history_ptr->GetHistoryFile(idx);
-            wxFileName const project_file(history_file);
-            if (project_file.FileExists())
-            {
-                // We do *not* use RemovableProjectHyperlinkCtrl here since that will remove the
-                // file from the getFileHistory() list instead of GetAppendImportHistory().
-                AddProjectToGrid(project_file.GetName(), history_file, project_file, false);
-                file_added = true;
-            }
+            // We do *not* use RemovableProjectHyperlinkCtrl here since that will remove the
+            // file from the getFileHistory() list instead of GetAppendImportHistory().
+            AddProjectToGrid(project_file.GetName(), history_file, project_file, false);
+            file_added = true;
         }
     }
+#endif
 
     if (file_added)
     {
@@ -222,21 +221,20 @@ void StartupDlg::RemoveProjectFilename(wxCommandEvent& event)
         }
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    wxFileHistory const* append_history_ptr = wxGetFrame().GetAppendImportHistory();
+    for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
     {
-        wxFileHistory const* append_history_ptr = wxGetFrame().GetAppendImportHistory();
-        for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
+        wxString const history_file = append_history_ptr->GetHistoryFile(idx);
+        wxFileName const project_file(history_file);
+        if (project_file.FileExists())
         {
-            wxString const history_file = append_history_ptr->GetHistoryFile(idx);
-            wxFileName const project_file(history_file);
-            if (project_file.FileExists())
-            {
-                // We do *not* use RemovableProjectHyperlinkCtrl here since that will remove the
-                // file from the getFileHistory() list instead of GetAppendImportHistory().
-                AddProjectToGrid(project_file.GetName(), history_file, project_file, false);
-            }
+            // We do *not* use RemovableProjectHyperlinkCtrl here since that will remove the
+            // file from the getFileHistory() list instead of GetAppendImportHistory().
+            AddProjectToGrid(project_file.GetName(), history_file, project_file, false);
         }
     }
+#endif
 
     Fit();
     Refresh();

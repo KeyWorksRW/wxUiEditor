@@ -790,15 +790,14 @@ void resForm::AdoptChild(Node* node, resCtrl* child)
 
 void resForm::AdoptChild(const NodeSharedPtr& node, resCtrl& child)
 {
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
+    if (child.isAdded())
     {
-        ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
-        if (child.isAdded())
-        {
-            MSG_ERROR(wxue::string() << "Control already added: " << m_form_id
-                                     << ":: " << child.GetOriginalLine());
-        }
+        MSG_ERROR(wxue::string() << "Control already added: " << m_form_id
+                                 << ":: " << child.GetOriginalLine());
     }
+#endif
     node->AdoptChild(child.GetNodePtr());
     child.setAdded();
 }

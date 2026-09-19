@@ -978,7 +978,8 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                             CreateXrcNode(menu_item, node);
                         }
                     }
-                    else if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+                    else
                     {
                         if (parent && parent->get_Form())
                         {
@@ -1003,6 +1004,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                             MSG_INFO(msg);
                         }
                     }
+#endif
                     return;
                 }
                 break;
@@ -1027,7 +1029,8 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 {
                     HandleSizerItemProperty(xml_obj, node, parent);
                 }
-                else if (!node->is_Gen(gen_spacer) && wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+                else if (!node->is_Gen(gen_spacer))
                 {
                     // spacer's don't use alignment or border styles
                     if (parent && parent->get_Form())
@@ -1053,6 +1056,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         MSG_INFO(msg);
                     }
                 }
+#endif
                 return;
 
             case xrc_focused:
@@ -1071,7 +1075,8 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 {
                     std::ignore = node->set_value(prop_proportion, xml_obj.text().as_view());
                 }
-                else if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+                else
                 {
                     if (parent && parent->get_Form())
                     {
@@ -1098,6 +1103,7 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                         MSG_INFO(msg);
                     }
                 }
+#endif
                 return;
 
             case xrc_orient:
@@ -1199,29 +1205,28 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
         }
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    if (parent && parent->get_Form())
     {
-        if (parent && parent->get_Form())
-        {
-            std::string msg = m_importProjectFile;
-            msg += ": Unrecognized property: ";
-            msg += xml_obj.name();
-            msg += " for ";
-            msg += node->get_DeclName();
-            msg += " in ";
-            msg += parent->get_Form()->as_string(prop_class_name);
-            MSG_INFO(msg);
-        }
-        else
-        {
-            std::string msg = m_importProjectFile;
-            msg += ": Unrecognized property: ";
-            msg += xml_obj.name();
-            msg += " for ";
-            msg += node->get_DeclName();
-            MSG_INFO(msg);
-        }
+        std::string msg = m_importProjectFile;
+        msg += ": Unrecognized property: ";
+        msg += xml_obj.name();
+        msg += " for ";
+        msg += node->get_DeclName();
+        msg += " in ";
+        msg += parent->get_Form()->as_string(prop_class_name);
+        MSG_INFO(msg);
     }
+    else
+    {
+        std::string msg = m_importProjectFile;
+        msg += ": Unrecognized property: ";
+        msg += xml_obj.name();
+        msg += " for ";
+        msg += node->get_DeclName();
+        MSG_INFO(msg);
+    }
+#endif
 }
 
 void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
@@ -1453,13 +1458,10 @@ void ImportXML::ProcessStdDialogButtonSizer(const pugi::xml_node& xml_obj, Node*
 
 // Helper for logging an unrecognized XRC object with contextual info
 // Called by: CreateXrcNode
-void ImportXML::LogUnrecognizedObject(const wxue::string& object_name, Node* parent)
+void ImportXML::LogUnrecognizedObject([[maybe_unused]] const wxue::string& object_name,
+                                      [[maybe_unused]] Node* parent)
 {
-    if (!wxGetApp().isTestingMenuEnabled())
-    {
-        return;
-    }
-
+#if defined(INTERNAL_TESTING)
     std::string msg = std::filesystem::path(m_importProjectFile).filename().string();
     msg += ": Unrecognized object: ";
     msg += object_name;
@@ -1479,6 +1481,7 @@ void ImportXML::LogUnrecognizedObject(const wxue::string& object_name, Node* par
     }
 
     MSG_INFO(msg);
+#endif
 }
 
 NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)

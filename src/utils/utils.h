@@ -145,3 +145,6 @@ void SetUniqueRibbonToolID(Node* node);
 // Show the Open/Import Project file dialog and return the selected filename.
 // Returns an empty string if the user cancels.
 wxString ShowOpenProjectDialog(wxWindow* parent);
+
+// Find a form by its class_name property, searching recursively through folders
+[[nodiscard]] Node* FindNodeByClassName(Node* node_start, const std::string& classname);

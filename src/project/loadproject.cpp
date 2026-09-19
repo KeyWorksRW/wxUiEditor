@@ -170,13 +170,12 @@ bool ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui)
         return false;
     }
 
-    if (wxGetApp().isTestingMenuEnabled())
-    {
-        // This should NOT be necessary if all alignment in the project file has been set correctly.
-        // However, it it has not been set correctly, this will correct it and issue a MSG_WARNING
-        // about what got fixed.
-        RecursiveNodeCheck(project.get());
-    }
+#if defined(INTERNAL_TESTING)
+    // This should NOT be necessary if all alignment in the project file has been set correctly.
+    // However, it it has not been set correctly, this will correct it and issue a MSG_WARNING
+    // about what got fixed.
+    RecursiveNodeCheck(project.get());
+#endif
 
     // Calling this will also initialize the ImageHandler class
     Project.Initialize(project);
@@ -199,10 +198,9 @@ bool ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui)
     {
         wxGetFrame().setImportedFlag(false);
         wxGetFrame().FireProjectLoadedEvent();
-        if (wxGetApp().isTestingMenuEnabled())
-        {
-            wxGetFrame().getImportPanel()->SetImportFile(file);
-        }
+#if defined(INTERNAL_TESTING)
+        wxGetFrame().getImportPanel()->SetImportFile(file);
+#endif
 
         if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
         {
@@ -914,10 +912,12 @@ static constexpr frozen::map<std::string_view, ImportFileType, 8> import_file_ty
             return false;
     }
 
-    if (result && allow_ui && wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+    if (result && allow_ui)
     {
         wxGetFrame().getImportPanel()->SetImportFile(file, GetLexerType(file_type));
     }
+#endif
 
     return result;
 }
@@ -928,12 +928,14 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
     {
-        if (allow_ui && wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+        if (allow_ui)
         {
             wxue::string full_path(file);
             full_path.make_absolute();
             wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path.wx());
         }
+#endif
 
         // By having the importer create an XML document, we can pass it through
         // NodeCreation.CreateNodeFromXml() which will fix bitflag conflicts, convert wxWidgets
@@ -1236,55 +1238,49 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
                 {
                     WxCrafter crafter;
                     std::ignore = Import(crafter, iter, true);
-                    if (wxGetApp().isTestingMenuEnabled())
-                    {
-                        wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
-                    }
+#if defined(INTERNAL_TESTING)
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+#endif
                 }
                 else if (iter.has_extension(".fbp"))
                 {
                     FormBuilder form_builder;
                     std::ignore = Import(form_builder, iter, true);
-                    if (wxGetApp().isTestingMenuEnabled())
-                    {
-                        wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
-                    }
+#if defined(INTERNAL_TESTING)
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
                 else if (iter.has_extension(".wxs") || iter.has_extension(".xrc"))
                 {
                     WxSmith smith;
                     std::ignore = Import(smith, iter, true);
-                    if (wxGetApp().isTestingMenuEnabled())
-                    {
-                        wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
-                    }
+#if defined(INTERNAL_TESTING)
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
                 else if (iter.has_extension(".wxg"))
                 {
                     WxGlade glade;
                     std::ignore = Import(glade, iter, true);
-                    if (wxGetApp().isTestingMenuEnabled())
-                    {
-                        wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
-                    }
+#if defined(INTERNAL_TESTING)
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
                 else if (iter.has_extension(".rc") || iter.has_extension(".dlg"))
                 {
                     WinResource winres;
                     std::ignore = Import(winres, iter, true);
-                    if (wxGetApp().isTestingMenuEnabled())
-                    {
-                        wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
-                    }
+#if defined(INTERNAL_TESTING)
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+#endif
                 }
                 else if (iter.has_extension(".pjd"))
                 {
                     DialogBlocks db;
                     std::ignore = Import(db, iter, true);
-                    if (wxGetApp().isTestingMenuEnabled())
-                    {
-                        wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
-                    }
+#if defined(INTERNAL_TESTING)
+                    wxGetFrame().getImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
 
                 if (!imported_from.empty())
@@ -1738,28 +1734,27 @@ void ProjectHandler::RecursiveNodeCheck(Node* node)
                 prop_ptr->get_value().Replace("wxALIGN_CENTER_HORIZONTAL", "");
                 prop_ptr->get_value().Replace("wxALIGN_CENTER", "");
             }
-            if (wxGetApp().isTestingMenuEnabled())
+#if defined(INTERNAL_TESTING)
+            if (old_value != prop_ptr->as_string())
             {
-                if (old_value != prop_ptr->as_string())
+                std::string msg;
+                if (prop_ptr->as_string().empty())
                 {
-                    std::string msg;
-                    if (prop_ptr->as_string().empty())
-                    {
-                        msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
-                              parent->as_string(prop_var_name) + " changed from " + old_value +
-                              " to no flags";
-                    }
-                    else
-                    {
-                        msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
-                              parent->as_string(prop_var_name) + " changed from " + old_value +
-                              " to " + prop_ptr->as_string();
-                    }
-                    MSG_INFO(msg);
-
-                    m_isProject_updated = true;
+                    msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
+                          parent->as_string(prop_var_name) + " changed from " + old_value +
+                          " to no flags";
                 }
+                else
+                {
+                    msg = "Alignment flags for " + node->as_string(prop_var_name) + " in " +
+                          parent->as_string(prop_var_name) + " changed from " + old_value + " to " +
+                          prop_ptr->as_string();
+                }
+                MSG_INFO(msg);
+
+                m_isProject_updated = true;
             }
+#endif
         }
     }
 

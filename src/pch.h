@@ -71,12 +71,14 @@
     #error "wxUSE_UNICODE_UTF8 and wxUSE_UTF8_LOCALE_ONLY must be enabled for this project."
 #endif
 
-// Without this, a huge number of #included wxWidgets header files will generate the warning
-#pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
+#ifdef _MSC_VER
+    // Without this, a huge number of #included wxWidgets header files will generate the warning
+    #pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
 
-// REVIEW: [Randalphwa - 08-11-2023] See gen_infobar.cpp for an example. This may be fixed
-// in later versions of wxWidgets, but for now, we need to disable this warning.
-#pragma warning(disable : 5054)  // deprecated between enumerations of different types
+    // REVIEW: [Randalphwa - 08-11-2023] See gen_infobar.cpp for an example. This may be fixed
+    // in later versions of wxWidgets, but for now, we need to disable this warning.
+    #pragma warning(disable : 5054)  // deprecated between enumerations of different types
+#endif
 
 #if defined(__clang__)
     // Same as #pragma warning(disable : 5054)
@@ -249,9 +251,24 @@ extern wxue::string wxue::wxue_empty_string;
 // Character used to separate the fields in a bitmap property
 constexpr const char BMP_PROP_SEPARATOR = ';';
 
+#if defined(INTERNAL_TESTING)
 void MSG_INFO(const std::string& msg);
 void MSG_WARNING(const std::string& msg);
 void MSG_ERROR(const std::string& msg);
+void MSG_ASSERTION(const std::string& msg);
+#else
+// The real implementations live in src/internal/msg_logging.cpp, which CMake compiles only when
+// the INTERNAL_BLD_TESTING option is set (see cmake/internal.cmake). These functions are called
+// from code that is built in every configuration, so outside of internal testing they are
+// defined here as no-ops -- leaving them undefined breaks the link in a standard Release build.
+//
+// They must stay functions rather than become macros: call sites pass expressions that can have
+// side effects, and a macro would silently drop their evaluation.
+inline void MSG_INFO([[maybe_unused]] const std::string& msg) {}
+inline void MSG_WARNING([[maybe_unused]] const std::string& msg) {}
+inline void MSG_ERROR([[maybe_unused]] const std::string& msg) {}
+inline void MSG_ASSERTION([[maybe_unused]] const std::string& msg) {}
+#endif
 
 //////////////////////////////////////// macros ////////////////////////////////////////
 

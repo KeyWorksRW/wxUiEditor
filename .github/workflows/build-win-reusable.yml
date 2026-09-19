@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       create-setup:
-        description: 'Whether to create NSIS setup installer'
+        description: 'Whether to create NSIS setup installer (built from the Clang PGO binary)'
         required: false
         type: boolean
         default: false
@@ -14,7 +14,7 @@ on:
         type: string
         default: 'Release'
       enable-pgo:
-        description: 'Enable Profile-Guided Optimization (Clang-only, Release-only)'
+        description: 'Enable Profile-Guided Optimization (Clang-only, Release-only; implied when create-setup is true)'
         required: false
         type: boolean
         default: false
@@ -30,6 +30,15 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v7
+
+    # The PGO path is Release-only (the configure steps below hardcode
+    # -DCMAKE_BUILD_TYPE=Release), and create-setup implies PGO, so a non-Release
+    # setup cannot be honored. Fail fast instead of letting cpack search for a
+    # configuration that will never be installed.
+    - name: Validate build inputs (PGO/Setup is Release-only)
+      if: ${{ (inputs.enable-pgo || inputs.create-setup) && inputs.build-type != 'Release' }}
+      run: |
+        throw "PGO and setup builds require build-type 'Release', but got '${{ inputs.build-type }}'."
 
     - name: Setup CMake 4.2+
       uses: lukka/get-cmake@latest
@@ -49,26 +58,30 @@ jobs:
         # Non-empty file: build_docs.cmake only checks existence, and CMakeRC
         # embeds the bytes without parsing them, so any content is fine for linking.
         echo "Dummy wxWidgets docs archive for link-time verification" > ${{github.workspace}}/build/archive/wxWidgetsDocs.zip
-    # ── Non-PGO path: MSVC build ──────────────────────────────────────────
+    # ── Non-PGO path: MSVC build (never instrumented) ─────────────────────
+    # Only taken when neither PGO nor a setup is requested. create-setup implies
+    # PGO, so an installer is never packaged from an MSVC build.
 
     - name: Configure CMake (MSVC)
-      if: ${{ !inputs.enable-pgo }}
+      if: ${{ !inputs.enable-pgo && !inputs.create-setup }}
       run: cmake -G "Visual Studio 18 2026" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{inputs.build-type}}
 
     - name: Build wxUiEditor (MSVC)
-      if: ${{ !inputs.enable-pgo }}
+      if: ${{ !inputs.enable-pgo && !inputs.create-setup }}
       run: cmake --build ${{github.workspace}}/build --config ${{inputs.build-type}} --target wxUiEditor
 
     # ── PGO path: Clang + Ninja, instrument → profile → optimize ──────────
+    # Taken when enable-pgo is set, or whenever create-setup requests an
+    # installer, so the setup always ships the Clang PGO-optimized binary.
 
     - name: Install LLVM/Clang and Ninja (PGO)
-      if: ${{ inputs.enable-pgo }}
+      if: ${{ inputs.enable-pgo || inputs.create-setup }}
       run: |
         choco install llvm ninja --no-progress
         echo "C:\Program Files\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Configure CMake — Instrumented (PGO)
-      if: ${{ inputs.enable-pgo }}
+      if: ${{ inputs.enable-pgo || inputs.create-setup }}
       run: >-
         cmake -G Ninja
         -DCMAKE_C_COMPILER=clang
@@ -80,24 +93,54 @@ jobs:
         -B ${{github.workspace}}/build
 
     - name: Build — Instrumented (PGO)
-      if: ${{ inputs.enable-pgo }}
+      if: ${{ inputs.enable-pgo || inputs.create-setup }}
       run: cmake --build ${{github.workspace}}/build --config Release
 
     - name: Collect PGO Profiles
-      if: ${{ inputs.enable-pgo }}
-      run: ${{github.workspace}}/bin/Release/wxUiEditor.exe --verify_all ${{github.workspace}}/src/wxui/wxUiEditor.wxui
+      if: ${{ inputs.enable-pgo || inputs.create-setup }}
+      shell: pwsh
+      run: |
+        # The PGO path is always Clang + Ninja (single-config), so
+        # CMAKE_RUNTIME_OUTPUT_DIRECTORY (<repo>/bin) is used verbatim -- no
+        # per-config subdirectory is appended the way MSVC generators do.
+        $exe = Join-Path '${{github.workspace}}' 'bin\wxUiEditor.exe'
+        if (-not (Test-Path $exe)) {
+            throw "Instrumented wxUiEditor.exe not found at '$exe'"
+        }
+
+        # Start-Process is used because wxUiEditor is a GUI-subsystem app: this
+        # guarantees we wait for exit and can read the exit code reliably, so the
+        # .profraw files are fully flushed before the merge step runs.
+        $project = Join-Path '${{github.workspace}}' 'src\wxui\wxUiEditor.wxui'
+        $proc = Start-Process -FilePath $exe -ArgumentList '--verify_all', $project `
+            -Wait -NoNewWindow -PassThru
+        if ($proc.ExitCode -ne 0) {
+            throw "Profile collection run failed with exit code $($proc.ExitCode)"
+        }
+
+        $profiles = @(Get-ChildItem -Path '${{github.workspace}}\build\pgo_profiles' -Filter *.profraw -ErrorAction SilentlyContinue)
+        if ($profiles.Count -eq 0) {
+            throw "No .profraw files were written to '${{github.workspace}}\build\pgo_profiles'"
+        }
+        Write-Host "Collected $($profiles.Count) PGO profile file(s)."
       env:
         LLVM_PROFILE_FILE: ${{github.workspace}}/build/pgo_profiles/%p_%m.profraw
 
     - name: Merge PGO Profiles
-      if: ${{ inputs.enable-pgo }}
-      run: >-
-        llvm-profdata merge
-        -output=${{github.workspace}}/build/pgo_profiles/merged.profdata
-        ${{github.workspace}}/build/pgo_profiles/*.profraw
+      if: ${{ inputs.enable-pgo || inputs.create-setup }}
+      shell: pwsh
+      run: |
+        # PowerShell does not glob-expand arguments for native commands, so the
+        # profile list is expanded explicitly here.
+        $profiles = (Get-ChildItem -Path '${{github.workspace}}\build\pgo_profiles' -Filter *.profraw).FullName
+        $merged = Join-Path '${{github.workspace}}' 'build\pgo_profiles\merged.profdata'
+        llvm-profdata merge "-output=$merged" $profiles
+        if ($LASTEXITCODE -ne 0) {
+            throw "llvm-profdata merge failed with exit code $LASTEXITCODE"
+        }
 
     - name: Configure CMake — Optimized (PGO)
-      if: ${{ inputs.enable-pgo }}
+      if: ${{ inputs.enable-pgo || inputs.create-setup }}
       run: >-
         cmake -G Ninja
         -DCMAKE_C_COMPILER=clang
@@ -109,22 +152,28 @@ jobs:
         -B ${{github.workspace}}/build
 
     - name: Build — PGO Optimized
-      if: ${{ inputs.enable-pgo }}
+      if: ${{ inputs.enable-pgo || inputs.create-setup }}
       run: cmake --build ${{github.workspace}}/build --config Release
 
     - name: Install NSIS
       if: ${{ inputs.create-setup }}
       run: choco install nsis
 
+    # create-setup implies the PGO path, so this packages the Clang
+    # PGO-optimized build (install(TARGETS wxUiEditor CONFIGURATIONS Release)
+    # only installs Release, which is the config PGO builds).
     - name: Build Setup
       if: ${{ inputs.create-setup }}
       run: |
         cd build
         cpack -G NSIS -C ${{inputs.build-type}}
 
+    # Setup installers always come from the Clang PGO build. Otherwise the
+    # standalone exe is uploaded: Ninja (single-config) writes bin/wxUiEditor.exe,
+    # while the MSVC multi-config generator writes bin/<config>/wxUiEditor.exe.
     - name: Create Artifact
       uses: actions/upload-artifact@v7.0.1
       with:
         name: ${{ inputs.create-setup && 'WindowsSetup' || 'WindowsExecutable' }}
         path: |
-          ${{ inputs.create-setup && 'build/wxUiEditor-*-win64.exe' || format('build/bin/{0}/wxUiEditor.exe', inputs.build-type) }}
+          ${{ inputs.create-setup && 'build/wxUiEditor-*-win64.exe' || inputs.enable-pgo && 'bin/wxUiEditor.exe' || format('bin/{0}/wxUiEditor.exe', inputs.build-type) }}

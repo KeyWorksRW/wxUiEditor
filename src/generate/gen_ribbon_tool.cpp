@@ -130,7 +130,6 @@ bool RibbonToolGenerator::ConstructionCode(Code& code)
     const wxue::StringVector parts(code.node()->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
                                    wxue::TRIM::both);
     if (code.is_cpp() && Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
-
     {
         code.GenerateBundleParameter(parts, false);
     }

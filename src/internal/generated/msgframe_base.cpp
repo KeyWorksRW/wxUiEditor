@@ -15,29 +15,9 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
+#include "../../wxui/ui_images.h"
+
 #include "msgframe_base.h"
-
-#include <wx/bmpbndl.h>  // wxBitmapBundle class
-#include <wx/mstream.h>  // memory stream classes
-#include <wx/zstream.h>  // zlib stream classes
-
-#include <memory>  // for std::make_unique
-
-// Convert compressed SVG string into a wxBitmapBundle
-#ifdef __cpp_inline_variables
-inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size)
-#else
-static wxBitmapBundle wxueBundleSVG(const unsigned char* data,
-    size_t size_data, size_t size_svg, wxSize def_size)
-#endif
-{
-    auto str = std::make_unique<char[]>(size_svg);
-    wxMemoryInputStream stream_in(data, size_data);
-    wxZlibInputStream zlib_strm(stream_in);
-    zlib_strm.Read(str.get(), size_svg);
-    return wxBitmapBundle::FromSVG(str.get(), def_size);
-};
 
 bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -66,8 +46,7 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     menu_file->Append(menu_item_clear);
     auto* menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
-    menu_item_hide->SetBitmap(wxNullBitmap);
-
+    menu_item_hide->SetBitmap(wxue_img::bundle_hide_svg(24, 24));
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, "&File");
 
@@ -89,12 +68,15 @@ bool MsgFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& title
     SetMenuBar(menubar);
 
     m_tool_bar = CreateToolBar();
-    m_tool_bar->AddTool(wxID_SAVEAS, wxEmptyString, wxNullBitmap);
+    m_tool_bar->AddTool(wxID_SAVEAS, wxEmptyString,
+        wxue_img::bundle_saveas_svg(24, 24));
 
     m_tool_bar->AddSeparator();
-    auto* tool_item_clear = m_tool_bar->AddTool(wxID_ANY, wxEmptyString, wxNullBitmap);
+    auto* tool_item_clear = m_tool_bar->AddTool(wxID_ANY, wxEmptyString,
+        wxue_img::bundle_clear_svg(24, 24));
 
-    m_tool_bar->AddTool(id_hide, wxEmptyString, wxNullBitmap);
+    m_tool_bar->AddTool(id_hide, wxEmptyString,
+        wxue_img::bundle_hide_svg(24, 24));
 
     m_tool_bar->Realize();
 

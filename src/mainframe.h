@@ -282,8 +282,6 @@ public:
     void OnCodeCompare(wxCommandEvent& event) override;
     void OnGenSingleCpp(wxCommandEvent& event);
 
-    void OnGenSinglePython(wxCommandEvent& event);
-    void OnGenSingleRuby(wxCommandEvent& event);
     void OnGenSingleXRC(wxCommandEvent& event);
 
     void OnInsertWidget(wxCommandEvent& /*event*/) override;

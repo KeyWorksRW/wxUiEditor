@@ -159,9 +159,8 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
     // to *m_pMsgs. That vector is never shrunk, only appended to, so indices stay valid while a
     // reallocation invalidates the cached end() of a range-for and any reference into the vector.
     // Indexing also means the newly appended entries get rendered here instead of being missed.
-    for (size_t index = 0; index < m_pMsgs->size(); ++index)
+    for (const wxString& msg_text: *m_pMsgs)
     {
-        const wxString msg_text = (*m_pMsgs)[index];
         bool handled = false;
         for (const auto& [prefix, color]: prefix_colors)
         {
@@ -407,8 +406,7 @@ void MsgFrame::UpdateNodeInfo()
         label.clear();
         // find() rather than at(): the selected node's gen type is not guaranteed to be a key of
         // map_GenTypes, and the std::out_of_range from at() would escape this wx event handler.
-        decltype(GenEnum::map_GenTypes.find(cur_sel->get_GenType())) gen_type_iter =
-            GenEnum::map_GenTypes.find(cur_sel->get_GenType());
+        const auto gen_type_iter = GenEnum::map_GenTypes.find(cur_sel->get_GenType());
         const std::string_view gen_type = (gen_type_iter != GenEnum::map_GenTypes.end()) ?
                                               gen_type_iter->second :
                                               std::string_view("unknown");

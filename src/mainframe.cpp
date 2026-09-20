@@ -80,30 +80,16 @@ enum class MenuIDs : int
 
     ID_EXPERIMENTAL_MDI_APP,
 
-    id_TestSwitch,
-    id_CodeDiffDlg,
     id_DebugCurrentTest,
     id_DebugPreferences,
     id_DebugXrcDuplicate,
     id_DebugXrcImport,
     id_FindWidget,
-    id_GenerateCpp,
-    id_GeneratePerl,
-    id_GeneratePython,
-    id_GenerateRuby,
-    id_GenerateXrc,
-    id_GenSingleCpp,
-    id_GenSinglePython,
-    id_GenSingleRuby,
-    id_GenSingleXrc,
     id_OpenDocViewer,
     id_NodeMemory,
     id_ShowLogger,
     id_XrcPreviewDlg,
     id_UndoInfo,
-    id_DocViewDlg,
-    id_DebugPythonTest,
-    id_DebugRubyTest,
     id_AssertionTest,
 };
 
@@ -405,11 +391,6 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
                         "Show node memory usage");
     menuTesting->Append(std::to_underlying(MenuIDs::id_UndoInfo), "Undo &Stack Information...",
                         "Show undo/redo stack memory usage");
-    menuTesting->AppendSeparator();
-    menuTesting->Append(std::to_underlying(MenuIDs::id_GeneratePython), "&Generate Python",
-                        "Generate all python files from current project.");
-    menuTesting->Append(std::to_underlying(MenuIDs::id_GenerateRuby), "&Generate Ruby",
-                        "Generate all ruby files from current project.");
 
     auto* submenu_xrc = new wxMenu();
     item = submenu_xrc->Append(std::to_underlying(MenuIDs::id_XrcPreviewDlg), "&XRC Tests...",
@@ -476,6 +457,21 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
         std::to_underlying(MenuIDs::id_UndoInfo));
     frame->Bind(wxEVT_MENU, &MainFrame::OnFindWidget, frame,
                 std::to_underlying(MenuIDs::id_FindWidget));
+
+    frame->Bind(wxEVT_MENU, &MainFrame::OnXrcPreview, frame,
+                std::to_underlying(MenuIDs::id_XrcPreviewDlg));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, frame,
+                std::to_underlying(MenuIDs::id_DebugXrcImport));
+    frame->Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, frame,
+                std::to_underlying(MenuIDs::id_DebugXrcDuplicate));
+
+    frame->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            App::ShowMsgWindow();
+        },
+        std::to_underlying(MenuIDs::id_ShowLogger));
 }
 
 #endif  // defined(INTERNAL_TESTING)

@@ -313,7 +313,10 @@
 		<property name="minimum_compiler" type="option"
 			help="The minimum compiler standard required for the generated code. This will affect some of the code that is generated.">
 			<option name="11"/>
-			<option name="17"/>11</property>
+			<option name="17"/>
+			<option name="23"/>
+			<option name="26"/>
+			11</property>
 		<property name="base_directory" type="path"
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file."/>
 		<property name="derived_directory" type="path"

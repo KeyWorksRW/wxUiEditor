@@ -1082,6 +1082,15 @@ int ProjectHandler::get_LangVersion(GenLang language) const
     return (major * VERSION_MAJOR_MULTIPLIER) + (minor * VERSION_MINOR_MULTIPLIER) + patch;
 }
 
+static constexpr int DEFAULT_COMPILER_VERSION = 11;
+
+int ProjectHandler::get_CompilerVersion() const
+{
+    const std::string_view version = m_project_node->as_string(prop_minimum_compiler);
+
+    return version.empty() ? DEFAULT_COMPILER_VERSION : wxue::atoi(version);
+}
+
 static constexpr std::array<PropName, 3> LOCAL_VAR_PROPS = std::to_array<PropName>({
     prop_var_name,
     prop_checkbox_var_name,

@@ -210,6 +210,11 @@ public:
     // Returns major * 10000 + minor * 100 + patch
     [[nodiscard]] int get_LangVersion(GenLang language) const;
 
+    // Returns the minimum C++ standard required by the generated code: 11, 17, 23, or 26.
+    // Returns 11 if the project does not specify a value (e.g. a project file created before
+    // the minimum_compiler property was added).
+    [[nodiscard]] int get_CompilerVersion() const;
+
     // const wxue::string& value(GenEnum::PropName name) const { return
     // m_project_node->as_string(name); }
     [[nodiscard]] wxue::string_view view(PropName name) const

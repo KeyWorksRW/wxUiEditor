@@ -965,10 +965,6 @@ bool GenResults::GenerateCppFiles(bool comparison_only)
                 if (result == result::created || result == result::needs_writing)
                 {
                     IncrementFileCount();
-                    if (is_testing)
-                    {
-                        m_updated_files.emplace_back(iter.get()->as_view(prop_cmake_file));
-                    }
                 }
             }
         }
@@ -978,11 +974,6 @@ bool GenResults::GenerateCppFiles(bool comparison_only)
             if (result == result::created || result == result::needs_writing)
             {
                 IncrementFileCount();
-                if (is_testing)
-                {
-                    m_updated_files.emplace_back(
-                        Project.get_ProjectNode()->as_view(prop_cmake_file));
-                }
             }
         }
     }

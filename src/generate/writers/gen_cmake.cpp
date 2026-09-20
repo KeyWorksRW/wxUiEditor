@@ -258,6 +258,9 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         return out.WriteFile(cmake_file) ? result::created : result::fail;
     }
 
+    // Determine whether the file already exists so it can be reported as created vs updated.
+    const bool file_existed = cmake_file.file_exists();
+
     wxue::StringVector current;
 
     // The return value is ignored because if the file doesn't exist then it will be created,
@@ -271,7 +274,14 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
     if (flag == CMAKE_WRITE_CHECK_ONLY)
     {
-        results.GetUpdatedFiles().emplace_back(cmake_file);
+        if (file_existed)
+        {
+            results.GetUpdatedFiles().emplace_back(cmake_file);
+        }
+        else
+        {
+            results.GetCreatedFiles().emplace_back(cmake_file);
+        }
         return result::needs_writing;
     }
 
@@ -282,6 +292,13 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
         return result::fail;
     }
 
-    results.GetUpdatedFiles().emplace_back(cmake_file);
+    if (file_existed)
+    {
+        results.GetUpdatedFiles().emplace_back(cmake_file);
+    }
+    else
+    {
+        results.GetCreatedFiles().emplace_back(cmake_file);
+    }
     return result::created;
 }

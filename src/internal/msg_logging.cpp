@@ -108,11 +108,25 @@ void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
     // Everything added while this event was queued is already in g_log_msgs, and MsgFrame
     // displays the entire vector, so no message added before now is lost.
     //
+    // The frame *must* be parented to the main frame. MsgFrame is a top-level window, and
+    // wxWidgets deletes a top-level window only as part of its parent's destruction (see
+    // wxWindowMSW::~wxWindowMSW, which calls DestroyChildren()). An unparented frame outlives the
+    // main frame, and because it is a top-level window it also keeps the app's main loop alive
+    // (wxTopLevelWindowBase::IsLastBeforeExit()), leaving a stray message window on screen with no
+    // main window behind it. CloseLogger() alone cannot cover this: it is called from
+    // MainFrame::OnClose() only, so it is skipped on any shutdown path that does not deliver a
+    // close event to the main frame.
+    MainFrame* const main_frame = wxGetMainFrame();
+    if (!main_frame)
+    {
+        return;  // no window to own the frame, and an unparented one could never be cleaned up
+    }
+
     // Lifetime contract: MsgFrame stores the pointers passed here -- g_log_msgs and m_bDestroyed
     // (a MsgLogging member). Both must outlive the frame, so CloseLogger() must close the frame
     // before this MsgLogging object and before g_log_msgs are destroyed. See MsgFrame's
     // constructor for its side of the contract.
-    m_msgFrame = new MsgFrame(&g_log_msgs, &m_bDestroyed);
+    m_msgFrame = new MsgFrame(&g_log_msgs, &m_bDestroyed, main_frame);
     m_bDestroyed = false;
     m_msgFrame->Show();
 }

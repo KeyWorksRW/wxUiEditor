@@ -211,8 +211,11 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
     if (!results.GetUpdatedFiles().empty() || !results.GetCreatedFiles().empty() ||
         !results.GetMsgs().empty())
     {
+        // The mainframe must be the parent so that the dialog is centered over the mainframe's
+        // display -- without a parent it would be centered on the primary display, even when the
+        // mainframe is on a secondary monitor.
         GeneratedResultsDlg results_dlg;
-        if (!results_dlg.Create(this))
+        if (!results_dlg.Create(wxGetMainFrame()))
         {
             return;
         }
@@ -264,6 +267,9 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
             results_dlg.m_lb_info->Append(iter);
         }
 
+        // Create() restores the dialog's persisted geometry, which can leave it on the display it
+        // was last shown on. Re-center it over the mainframe now that all items have been added.
+        results_dlg.Centre(wxBOTH);
         results_dlg.ShowModal();
     }
     else if (results.GetFileCount())

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   wxStatusBar generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,23 +22,23 @@
 
 wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto org_style = GetStyleInt(node);
+    int org_style = GetStyleInt(node);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
     auto* widget =
         new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, (org_style &= ~wxSTB_SIZEGRIP));
 
-    auto fields = node->as_statusbar_fields(prop_fields);
-    if (fields.size())
+    const std::vector<NODEPROP_STATUSBAR_FIELD> fields = node->as_statusbar_fields(prop_fields);
+    if (!fields.empty())
     {
         bool set_width = false;
         bool set_style = false;
         for (auto& iter: fields)
         {
-            if (iter.width.size() && iter.width.atoi() != -1)
+            if (!iter.width.empty() && iter.width.atoi() != -1)
             {
                 set_width = true;
             }
-            if (iter.style.size() && iter.style != "wxSB_NORMAL")
+            if (!iter.style.empty() && iter.style != "wxSB_NORMAL")
             {
                 set_style = true;
             }
@@ -86,8 +86,8 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 bool StatusBarGenerator::ConstructionCode(Code& code)
 {
     Node* node = code.node();  // This is just for convenience
-    int num_fields;
-    auto fields = node->as_statusbar_fields(prop_fields);
+    int num_fields = 0;
+    const std::vector<NODEPROP_STATUSBAR_FIELD> fields = node->as_statusbar_fields(prop_fields);
 
     // GetRequiredVersion() checks see if the value starts with a digit -- if so, it's the
     // old style. If it isn't a digit, then it's a style which returns minRequiredVer+1.
@@ -157,16 +157,17 @@ bool StatusBarGenerator::SettingsCode(Code& code)
         return true;
     }
 
-    auto fields = code.node()->as_statusbar_fields(prop_fields);
+    const std::vector<NODEPROP_STATUSBAR_FIELD> fields =
+        code.node()->as_statusbar_fields(prop_fields);
     wxue::string widths, styles;
     for (auto& iter: fields)
     {
-        if (widths.size())
+        if (!widths.empty())
         {
             widths += ", ";
         }
         widths += iter.width;
-        if (styles.size())
+        if (!styles.empty())
         {
             styles += ", ";
         }
@@ -247,26 +248,26 @@ bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStatusBar");
 
     if (GetRequiredVersion(node) > minRequiredVer)
     {
-        auto fields = node->as_statusbar_fields(prop_fields);
-        if (fields.size())
+        const std::vector<NODEPROP_STATUSBAR_FIELD> fields = node->as_statusbar_fields(prop_fields);
+        if (!fields.empty())
         {
             wxue::string widths, styles;
             for (auto& iter: fields)
             {
-                if (widths.size())
+                if (!widths.empty())
                 {
                     widths += ",";
                 }
                 widths += iter.width;
-                if (styles.size())
+                if (!styles.empty())
                 {
                     styles += ",";
                 }

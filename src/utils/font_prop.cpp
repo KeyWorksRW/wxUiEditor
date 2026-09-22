@@ -126,6 +126,23 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
 
     wxue::ViewVector mstr(font, ',');
 
+    // Apple's libc++ did not implement the floating-point overload of std::from_chars until
+    // libc++ 20 (Xcode 26), so fall back to wxString::ToCDouble() there. Unlike std::from_chars,
+    // ToCDouble() requires the entire string to be a valid number -- for malformed values it
+    // returns false where std::from_chars would have accepted the leading digits.
+    auto parse_double = [](wxue::string_view text, double& value) -> std::errc
+    {
+#if defined(__APPLE__)
+        if (!text.wx().ToCDouble(&value))
+        {
+            return std::errc::invalid_argument;
+        }
+        return std::errc {};
+#else
+        return std::from_chars(text.data(), text.data() + text.size(), value).ec;
+#endif
+    };
+
     // If font was empty, then we would have already returned, so we know that mstr[0] is valid.
 
     if (font_symbol_pairs.HasName(mstr[0]))
@@ -163,11 +180,7 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
         Family(font_family_pairs.GetValue(mstr[0]));
         if (mstr.size() > font::idx_family_point)
         {
-            auto [ptr, err_code] = std::from_chars(mstr[font::idx_family_point].data(),
-                                                   mstr[font::idx_family_point].data() +
-                                                       mstr[font::idx_family_point].size(),
-                                                   m_pointSize);
-            if (err_code != std::errc {})
+            if (parse_double(mstr[font::idx_family_point], m_pointSize) != std::errc {})
             {
                 m_pointSize = 0.0;
             }
@@ -208,9 +221,7 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
     if (mstr.size() > font::idx_facename_style)
     {
         double value {};
-        std::from_chars(
-            mstr[font::idx_facename_style].data(),
-            mstr[font::idx_facename_style].data() + mstr[font::idx_facename_style].size(), value);
+        std::ignore = parse_double(mstr[font::idx_facename_style], value);
         if (!old_style &&
             value < static_cast<double>(wxFONTSTYLE_NORMAL))  // wxFONTSTYLE_NORMAL == 90, so too
                                                               // large to be a point size
@@ -241,11 +252,7 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
 
             return;
         }
-        auto [ptr, err_code] = std::from_chars(mstr[font::idx_facename_point].data(),
-                                               mstr[font::idx_facename_point].data() +
-                                                   mstr[font::idx_facename_point].size(),
-                                               m_pointSize);
-        if (err_code != std::errc {})
+        if (parse_double(mstr[font::idx_facename_point], m_pointSize) != std::errc {})
         {
             m_pointSize = 0.0;
         }
@@ -300,9 +307,13 @@ wxString FontProperty::as_wxString() const
 
         wxue::string prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
         if (GetStyle() != wxFONTSTYLE_NORMAL)
+        {
             prop_str << "," << font_style_pairs.GetName(GetStyle());
+        }
         if (GetWeight() != wxFONTWEIGHT_NORMAL)
+        {
             prop_str << "," << font_weight_pairs.GetName(GetWeight());
+        }
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')

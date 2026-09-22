@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-22-2026]
 
 #include <wx/statusbr.h>  // wxStatusBar class interface
 
@@ -25,7 +26,7 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
     int org_style = GetStyleInt(node);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
     auto* widget =
-        new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, (org_style &= ~wxSTB_SIZEGRIP));
+        new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, org_style & ~wxSTB_SIZEGRIP);
 
     const std::vector<NODEPROP_STATUSBAR_FIELD> fields = node->as_statusbar_fields(prop_fields);
     if (!fields.empty())
@@ -159,6 +160,14 @@ bool StatusBarGenerator::SettingsCode(Code& code)
 
     const std::vector<NODEPROP_STATUSBAR_FIELD> fields =
         code.node()->as_statusbar_fields(prop_fields);
+    if (fields.empty())
+    {
+        // A zero-length field list would generate an invalid zero-size array (sb_field_widths[0]).
+        // The GetRequiredVersion() gate above means this cannot normally happen -- this is
+        // defensive only.
+        return true;
+    }
+
     wxue::string widths, styles;
     for (auto& iter: fields)
     {
@@ -166,12 +175,29 @@ bool StatusBarGenerator::SettingsCode(Code& code)
         {
             widths += ", ";
         }
-        widths += iter.width;
+        // Substitute a default for an empty entry so the emitted list is never malformed
+        // (e.g. `{100, , 50}` or `[100, , 50]`).
+        if (iter.width.empty())
+        {
+            widths += "-1";
+        }
+        else
+        {
+            widths += iter.width;
+        }
+
         if (!styles.empty())
         {
             styles += ", ";
         }
-        styles += iter.style;
+        if (iter.style.empty())
+        {
+            styles += "wxSB_NORMAL";
+        }
+        else
+        {
+            styles += iter.style;
+        }
     }
 
     if (code.is_cpp())
@@ -219,7 +245,16 @@ bool StatusBarGenerator::SettingsCode(Code& code)
             {
                 is_first_style_set = true;
             }
-            code.Str(iter.style);
+            // Add() translates the wx identifier for Python (wx.SB_NORMAL) and Ruby
+            // (Wx::SB_NORMAL); Str() would emit the raw C++ constant.
+            if (iter.style.empty())
+            {
+                code.Add("wxSB_NORMAL");
+            }
+            else
+            {
+                code.Add(iter.style);
+            }
         }
         code.Str("]").EndFunction();
     }
@@ -232,7 +267,10 @@ int StatusBarGenerator::GetRequiredVersion(Node* node)
     {
         return BaseGenerator::GetRequiredVersion(node);
     }
-    if (wxue::is_digit(node->as_string(prop_fields)[0]))
+    // HasValue() doesn't guarantee a non-empty string, and indexing an empty string would be
+    // out of bounds.
+    const auto value = node->as_string(prop_fields);
+    if (value.empty() || wxue::is_digit(value[0]))
     {
         return BaseGenerator::GetRequiredVersion(node);
     }

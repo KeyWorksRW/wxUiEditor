@@ -119,18 +119,25 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     }
     code.Eol(eol_if_needed).AddAuto().NodeName().Str(" = ").FormFunction("CreateStatusBar(");
 
+    // Note that CreateStatusBar() takes the style before the id -- the opposite order from the
+    // wxStatusBar constructor used by the prop_subclass branch above. Because the arguments are
+    // positional, the style must be emitted to reach a non-default id.
     if (node->HasValue(prop_window_name))
     {
-        code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
+        code.itoa(num_fields).Comma().Style().Comma().as_string(prop_id);
         code.Comma().QuotedString(prop_window_name);
     }
     else if (node->as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->as_int(prop_window_style) > 0)
     {
-        code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
+        code.itoa(num_fields).Comma().Style();
+        if (node->as_string(prop_id) != "wxID_ANY")
+        {
+            code.Comma().as_string(prop_id);
+        }
     }
     else if (node->as_string(prop_id) != "wxID_ANY")
     {
-        code.itoa(num_fields).Comma().as_string(prop_id);
+        code.itoa(num_fields).Comma().Style().Comma().as_string(prop_id);
     }
     else if (num_fields > 1)
     {

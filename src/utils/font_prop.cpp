@@ -252,7 +252,10 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
 
             return;
         }
-        if (parse_double(mstr[font::idx_facename_point], m_pointSize) != std::errc {})
+        // The outer condition only guarantees that index 1 exists, but the point size for an
+        // old-style value is at index 3, so guard that read independently.
+        if (mstr.size() > font::idx_facename_point &&
+            parse_double(mstr[font::idx_facename_point], m_pointSize) != std::errc {})
         {
             m_pointSize = 0.0;
         }

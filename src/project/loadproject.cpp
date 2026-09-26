@@ -926,7 +926,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
 {
     m_isNewProject = false;
     m_ProjectVersion = ImportProjectVersion;
-    if (import.Import(file))
+    if (import.Import(file, true, allow_ui))
     {
 #if defined(INTERNAL_TESTING)
         if (allow_ui)
@@ -1331,7 +1331,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 void ProjectHandler::AppendWinRes(const wxue::string& rc_file, std::vector<wxue::string>& dialogs)
 {
     WinResource winres;
-    if (winres.ImportRc(rc_file, dialogs))
+    if (winres.ImportRc(rc_file, dialogs, false, m_allow_ui))
     {
         const NodeSharedPtr project = winres.GetProjectPtr();
         for (const auto& child: project->get_ChildNodePtrs())
@@ -1354,7 +1354,7 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
     {
         WxCrafter crafter;
 
-        if (crafter.Import(file.ToStdString()))
+        if (crafter.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = crafter.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1412,7 +1412,7 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
     {
         FormBuilder form_builder;
 
-        if (form_builder.Import(file.ToStdString()))
+        if (form_builder.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = form_builder.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1470,7 +1470,7 @@ void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
     {
         DialogBlocks db;
 
-        if (db.Import(file.ToStdString()))
+        if (db.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = db.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1528,7 +1528,7 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
     {
         WxGlade glade;
 
-        if (glade.Import(file.ToStdString()))
+        if (glade.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = glade.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1586,7 +1586,7 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
     {
         WxSmith smith;
 
-        if (smith.Import(file.ToStdString()))
+        if (smith.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = smith.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1645,7 +1645,7 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
         // wxSmith files are a superset of XRC files, so we use the wxSmith class to process both
         WxSmith smith;
 
-        if (smith.Import(file.ToStdString()))
+        if (smith.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = smith.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();

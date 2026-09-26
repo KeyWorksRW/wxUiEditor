@@ -23,7 +23,7 @@ public:
     WxCrafter();
     ~WxCrafter() {};
 
-    bool Import(const std::string& filename, bool write_doc = true) override;
+    bool Import(const std::string& filename, bool write_doc = true, bool allow_ui = true) override;
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
     // wxCrafter only supports C++ code generation

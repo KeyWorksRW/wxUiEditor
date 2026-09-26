@@ -17,9 +17,9 @@
 
 WxGlade::WxGlade() {}
 
-bool WxGlade::Import(const std::string& filename, bool write_doc)
+bool WxGlade::Import(const std::string& filename, bool write_doc, bool allow_ui)
 {
-    std::optional<pugi::xml_document> result = LoadDocFile(filename);
+    std::optional<pugi::xml_document> result = LoadDocFile(filename, allow_ui);
     if (!result)
     {
         return false;
@@ -28,7 +28,10 @@ bool WxGlade::Import(const std::string& filename, bool write_doc)
 
     if (!wxue::is_sameas(root.name(), "application", wxue::CASE::either))
     {
-        dlgInvalidProject(filename, "wxGlade", "Import wxGlade project");
+        if (allow_ui)
+        {
+            dlgInvalidProject(filename, "wxGlade", "Import wxGlade project");
+        }
         return false;
     }
 
@@ -119,8 +122,12 @@ bool WxGlade::Import(const std::string& filename, bool write_doc)
 
         if (!m_project->get_ChildCount())
         {
-            wxMessageBox(wxString::FromUTF8(filename) << " does not contain any top level forms.",
-                         "Import");
+            if (allow_ui)
+            {
+                wxMessageBox(wxString::FromUTF8(filename)
+                                 << " does not contain any top level forms.",
+                             "Import");
+            }
             return false;
         }
 
@@ -166,7 +173,10 @@ bool WxGlade::Import(const std::string& filename, bool write_doc)
     catch (const std::exception& err)
     {
         MSG_ERROR(err.what());
-        dlgImportError(err, filename, "Import wxGlade project");
+        if (allow_ui)
+        {
+            dlgImportError(err, filename, "Import wxGlade project");
+        }
         return false;
     }
 

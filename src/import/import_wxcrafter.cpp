@@ -160,14 +160,19 @@ static std::vector<std::string> GetStringVector(const glz::generic& array)
 
 WxCrafter::WxCrafter() {}
 
-bool WxCrafter::Import(const std::string& filename, bool write_doc)
+bool WxCrafter::Import(const std::string& filename, bool write_doc, bool allow_ui)
 {
     std::ifstream input(filename, std::ifstream::binary);
     if (!input.is_open())
     {
         const std::string msg("Unable to open\n    \"" + filename + "\"");
-        wxMessageDialog dlg_message(nullptr, msg, "Import wxCrafter project", wxICON_ERROR | wxOK);
-        dlg_message.ShowModal();
+        MSG_ERROR(msg);
+        if (allow_ui)
+        {
+            wxMessageDialog dlg_message(nullptr, msg, "Import wxCrafter project",
+                                        wxICON_ERROR | wxOK);
+            dlg_message.ShowModal();
+        }
         return false;
     }
     std::string buffer(std::istreambuf_iterator<char>(input), {});
@@ -176,12 +181,18 @@ bool WxCrafter::Import(const std::string& filename, bool write_doc)
     glz::generic document;
     if (glz::read_json(document, buffer))
     {
-        dlgInvalidProject(filename, "wxCrafter", "Import wxCrafter project");
+        if (allow_ui)
+        {
+            dlgInvalidProject(filename, "wxCrafter", "Import wxCrafter project");
+        }
         return false;
     }
     if (!document.is_object())
     {
-        dlgInvalidProject(filename, "wxCrafter", "Import wxCrafter project");
+        if (allow_ui)
+        {
+            dlgInvalidProject(filename, "wxCrafter", "Import wxCrafter project");
+        }
         return false;
     }
 
@@ -248,7 +259,10 @@ bool WxCrafter::Import(const std::string& filename, bool write_doc)
     {
         FAIL_MSG(e.what())
         MSG_ERROR(e.what());
-        dlgImportError(e, filename, "Import wxCrafter Project");
+        if (allow_ui)
+        {
+            dlgImportError(e, filename, "Import wxCrafter Project");
+        }
         return false;
     }
 
@@ -262,9 +276,12 @@ bool WxCrafter::Import(const std::string& filename, bool write_doc)
             MSG_ERROR(iter);
             errMsg += iter + '\n';
         }
-        wxMessageDialog dlg_message(nullptr, errMsg, "Import wxCrafter project",
-                                    wxICON_WARNING | wxOK);
-        dlg_message.ShowModal();
+        if (allow_ui)
+        {
+            wxMessageDialog dlg_message(nullptr, errMsg, "Import wxCrafter project",
+                                        wxICON_WARNING | wxOK);
+            dlg_message.ShowModal();
+        }
     }
 
     return true;

@@ -20,11 +20,11 @@ class WinResource : public ImportXML
 public:
     WinResource();
 
-    bool Import(const std::string& filename, bool write_doc) override;
+    bool Import(const std::string& filename, bool write_doc, bool allow_ui = true) override;
 
     // If forms is empty, then all forms will be parsed
     bool ImportRc(const wxue::string& rc_file, std::vector<wxue::string>& forms,
-                  bool isNested = false);
+                  bool isNested = false, bool allow_ui = true);
     void InsertDialogs(std::vector<wxue::string>& dialogs);
 
     std::optional<wxue::string> FindBitmap(const std::string& res_id);
@@ -65,4 +65,7 @@ private:
     size_t m_curline;
 
     int m_codepage;
+
+    // Set by ImportRc(); suppresses modal dialogs and the busy cursor in headless imports.
+    bool m_allow_ui { true };
 };

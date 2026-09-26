@@ -147,7 +147,7 @@ namespace xrc_import
 
 using namespace xrc_import;
 
-std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file)
+std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file, bool allow_ui)
 {
     pugi::xml_document document;
 
@@ -156,8 +156,12 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const std::string& file
         const std::string msg =
             std::format(std::locale(""), "Parsing error: {}\n Line: {}, Column: {}, Offset: {:L}\n",
                         result.description(), result.line, result.column, result.offset);
-        wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error", wxOK | wxICON_ERROR)
-            .ShowModal();
+        if (allow_ui)
+        {
+            wxMessageDialog(wxGetMainFrame()->getWindow(), msg, "Parsing Error",
+                            wxOK | wxICON_ERROR)
+                .ShowModal();
+        }
         return {};
     }
 

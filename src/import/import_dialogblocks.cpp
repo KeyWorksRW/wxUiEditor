@@ -618,6 +618,33 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
         }
     }
 
+    // A wxSplitterWindow has no prop_orientation. DialogBlocks stores its split direction in the
+    // same "proxy-Orientation" element, but the node property is prop_splitmode with the
+    // wxSPLIT_* values, so the splitter needs a mapping of its own.
+    if (auto* prop = node->get_PropPtr(prop_splitmode); prop)
+    {
+        if (auto value = child_xml.find_child_by_attribute("string", "name", "proxy-Orientation");
+            value)
+        {
+            const wxString direction = ExtractQuotedString(value);
+            if (direction.CmpNoCase("Vertical") == 0)
+            {
+                prop->set_value("wxSPLIT_VERTICAL");
+            }
+            else if (direction.CmpNoCase("Horizontal") == 0)
+            {
+                prop->set_value("wxSPLIT_HORIZONTAL");
+            }
+            else
+            {
+                FAIL_MSG(wxString() << "Unrecognized splitter orientation: " << direction << "\n"
+                                    << GatherErrorDetails(child_xml, get_GenName));
+                m_errors.emplace(std::string("Unrecognized splitter orientation: ") +
+                                 direction.ToStdString());
+            }
+        }
+    }
+
     // These Set...() functions can be called whether or not the property exists, so no need to
     // check for it first.
 
@@ -1864,6 +1891,7 @@ void DialogBlocks::ProcessMisc(pugi::xml_node& node_xml, const NodeSharedPtr& no
 {
     ProcessMiscStringChildren(node_xml, node);
     ProcessMiscLongChildren(node_xml, node);
+    ProcessMiscDoubleChildren(node_xml, node);
     ProcessMiscBoolChildren(node_xml, node);
 }
 
@@ -2105,6 +2133,27 @@ void DialogBlocks::ProcessMiscLongChildren(pugi::xml_node& node_xml, const NodeS
                         }
                         break;
                 }
+            }
+        }
+    }
+}
+
+// Helper for processing <double> child elements in ProcessMisc
+// Called by: ProcessMisc
+void DialogBlocks::ProcessMiscDoubleChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node)
+{
+    for (auto& double_xml: node_xml.children("double"))
+    {
+        std::string_view name = double_xml.attribute("name").as_sview();
+        if (name.starts_with("proxy-"))
+        {
+            name.remove_prefix(sizeof("proxy-") - 1);
+        }
+        if (const auto* result = map_proxy_names.find(name); result != map_proxy_names.end())
+        {
+            if (auto* prop = node->get_PropPtr(result->second); prop)
+            {
+                prop->set_value(double_xml.text().as_view());
             }
         }
     }

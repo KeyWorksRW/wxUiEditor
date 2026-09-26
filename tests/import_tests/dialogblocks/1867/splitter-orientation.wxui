@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="wxDialog"
+      class_name="CDlgWithSplitter"
+      style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+      title="CDlgWithSplitter"
+      id="ID_CDLGWITHSPLITTER"
+      pos="-1,-1"
+      size="400,300"
+      base_file="CDlgWithSplitter">
+      <node
+        class="wxBoxSizer"
+        class_access="protected:"
+        orientation="wxVERTICAL"
+        var_name="m_pSizer">
+        <node
+          class="wxSplitterWindow"
+          sashgravity="0.5"
+          sashpos="120"
+          splitmode="wxSPLIT_HORIZONTAL"
+          style="wxSP_3DBORDER|wxSP_3DSASH"
+          var_name="m_pSplitter"
+          id="ID_SPLITTER"
+          pos="-1,-1"
+          size="100,100"
+          window_style="wxBORDER_NONE"
+          alignment="wxALIGN_CENTER_HORIZONTAL"
+          proportion="1">
+          <node
+            class="wxPanel"
+            class_access="protected:"
+            var_name="m_pPane1"
+            id="ID_PANE1"
+            pos="-1,-1"
+            size="-1,-1"
+            window_extra_style="wxWS_EX_VALIDATE_RECURSIVELY"
+            window_style="wxBORDER_SUNKEN|wxTAB_TRAVERSAL"
+            alignment="wxALIGN_CENTER_HORIZONTAL" />
+          <node
+            class="wxPanel"
+            class_access="protected:"
+            var_name="m_pPane2"
+            id="ID_PANE2"
+            pos="-1,-1"
+            size="-1,-1"
+            window_extra_style="wxWS_EX_VALIDATE_RECURSIVELY"
+            window_style="wxBORDER_SUNKEN|wxTAB_TRAVERSAL"
+            alignment="wxALIGN_CENTER_HORIZONTAL" />
+        </node>
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

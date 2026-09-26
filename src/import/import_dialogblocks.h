@@ -99,6 +99,7 @@ private:
     // Helper methods for ProcessMisc
     static void ProcessMiscStringChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
     static void ProcessMiscLongChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
+    static void ProcessMiscDoubleChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
     static void ProcessMiscBoolChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
 
     bool m_use_enums { true };

@@ -50,7 +50,7 @@ protected:
     void CreateCustomNode(pugi::xml_node& child_xml, Node* parent);
 
     // Process all the style-like attributes for the current node
-    static void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // Add all events for the current node
     static void ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
@@ -62,6 +62,10 @@ protected:
     // This will try to determine the generator to use based on either "proxy-Base class" or
     // "proxy-type" attributes.
     GenEnum::GenName FindGenerator(pugi::xml_node& node, Node* parent);
+
+    // Returns true if the node's proxy class is wxBitmapButton, which maps onto gen_wxButton but
+    // has no label of its own.
+    bool IsBitmapButton(pugi::xml_node& node_xml) const;
 
     // Most strings in a DialogBlocks project are quoted, but some are not. This will return
     // the string without quotes.

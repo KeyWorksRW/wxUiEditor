@@ -647,6 +647,15 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
     ProcessEvents(child_xml, node);  // Add all events for the current node
     ProcessMisc(child_xml, node);    // Set all other properties for the current node
 
+    // A wxBitmapButton has no label, but it maps onto gen_wxButton which does -- and prop_label
+    // defaults to "MyButton". DialogBlocks stores a placeholder for the bitmap button's label
+    // that its own generated code never uses, so clear it here. This must come after
+    // ProcessMisc(), which is the last place prop_label can be set.
+    if (IsBitmapButton(child_xml))
+    {
+        node->set_value(prop_label, "");
+    }
+
     // Now add all the children of this child node
     for (auto& grand_child_xml: child_xml.children("document"))
     {
@@ -701,6 +710,38 @@ void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
         result << ")";
         node->set_value(prop_parameters, result);
     }
+}
+
+// DialogBlocks identifies a bitmap button through "proxy-type" (wbBitmapButtonProxy) or, when
+// the project uses a derived class, through "proxy-Class". Either way MapClassName() turns it
+// into gen_wxButton, which has a label that the original wxBitmapButton did not have.
+// The resolution order mirrors FindGenerator() so that this only matches a node that
+// FindGenerator() itself resolved from wxBitmapButton.
+bool DialogBlocks::IsBitmapButton(pugi::xml_node& node_xml) const
+{
+    if (auto type = node_xml.find_child_by_attribute("string", "name", "proxy-type"); type)
+    {
+        wxString type_name = ExtractQuotedString(type);
+        if (type_name.starts_with("wb"))
+        {
+            type_name[1] = 'x';
+        }
+        type_name.Replace("Proxy", "", true);
+
+        // A recognized proxy-type wins -- proxy-Class is only a fallback. Note that
+        // MapClassName("wxBitmapButton") resolves to gen_wxButton, so it is never unknown.
+        if (MapClassName(type_name.ToStdString()) != gen_unknown)
+        {
+            return (type_name == "wxBitmapButton");
+        }
+
+        if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Class"); value)
+        {
+            return (ExtractQuotedString(value) == "wxBitmapButton");
+        }
+    }
+
+    return false;
 }
 
 GenEnum::GenName DialogBlocks::FindGenerator(pugi::xml_node& node_xml, Node* parent)
@@ -1390,6 +1431,15 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
         if (const auto* result = map_old_borders.find(name); result != map_old_borders.end())
         {
             name = result->second;
+        }
+
+        // DialogBlocks sets wxBU_EXACTFIT on bitmap buttons. wxUE imports a wxBitmapButton as
+        // gen_wxButton, where the flag would shrink the button to fit the bitmap -- diverging
+        // from DialogBlocks' own generated code, which omits it. Drop it for bitmap buttons
+        // only; a regular wxButton with a bitmap keeps it.
+        if (name == "wxBU_EXACTFIT" && IsBitmapButton(node_xml))
+        {
+            continue;
         }
 
         if (set_window_styles.contains(name))

@@ -191,8 +191,13 @@ bool DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPt
         if (auto folder_name = form_xml.find_child_by_attribute("string", "name", "title");
             folder_name)
         {
+            // The node type is determined by the parent, not the nesting depth: only a folder
+            // directly under the project is gen_folder, everything below it -- including another
+            // sub-folder -- is a gen_sub_folder. Checking the parent for gen_folder meant a folder
+            // at the third level asked for a gen_folder inside a gen_sub_folder, which the
+            // parent/child table refuses, silently dropping the folder and every form in it.
             const GenEnum::GenName gen_folder_type =
-                parent->is_Gen(gen_folder) ? gen_sub_folder : gen_folder;
+                parent->is_Gen(gen_Project) ? gen_folder : gen_sub_folder;
             if (auto new_parent = NodeCreation.CreateNode(gen_folder_type, parent.get()).first;
                 new_parent)
             {
@@ -211,6 +216,9 @@ bool DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPt
                 }
                 return true;
             }
+
+            m_errors.emplace(std::string("Unable to create folder: ") +
+                             ExtractQuotedString(folder_name).ToStdString());
         }
     }
     return false;

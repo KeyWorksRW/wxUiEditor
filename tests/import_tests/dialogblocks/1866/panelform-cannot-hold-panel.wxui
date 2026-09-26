@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="PanelForm"
+      class_name="CPanelWithPanel"
+      id="ID_CPANELWITHPANEL"
+      pos="-1,-1"
+      size="400,300"
+      subclass="wxPanel"
+      window_extra_style="wxWS_EX_BLOCK_EVENTS|wxWS_EX_VALIDATE_RECURSIVELY"
+      base_file="CPanelWithPanel">
+      <node
+        class="wxPanel"
+        class_access="protected:"
+        var_name="m_pInnerPanel"
+        id="ID_INNERPANEL"
+        pos="-1,-1"
+        size="-1,-1"
+        window_extra_style="wxWS_EX_VALIDATE_RECURSIVELY"
+        window_style="wxBORDER_SUNKEN|wxTAB_TRAVERSAL"
+        alignment="wxALIGN_CENTER_HORIZONTAL"
+        proportion="1">
+        <node
+          class="wxBoxSizer"
+          class_access="protected:"
+          orientation="wxVERTICAL"
+          var_name="m_pSizer"
+          alignment="wxALIGN_CENTER_HORIZONTAL"
+          proportion="1">
+          <node
+            class="wxStaticText"
+            label="I disappear with my panel"
+            var_name="m_pLabel"
+            id="wxID_STATIC"
+            pos="-1,-1"
+            size="-1,-1"
+            alignment="wxALIGN_CENTER_HORIZONTAL" />
+        </node>
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

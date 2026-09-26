@@ -25,6 +25,7 @@
  */
 
 #include <filesystem>
+#include <format>
 #include <set>
 
 #include <frozen/map.h>
@@ -576,8 +577,7 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
                              << wxString(map_GenNames.at(parent->get_GenName())) << "\n"
                              << msg);
 #endif  // _DEBUG
-        m_errors.emplace(std::string("Unable to create ") +
-                         std::string(map_GenNames.at(get_GenName)));
+        m_errors.emplace(DescribeLostNode(child_xml, parent, map_GenNames.at(get_GenName)));
         return;
     }
 
@@ -705,6 +705,60 @@ NodeSharedPtr DialogBlocks::CreateFallbackNode(GenEnum::GenName get_GenName, Nod
     return nullptr;
 }
 
+// Counts the <document> elements below node_xml. DialogBlocks nests every control as a <document>,
+// so this is how many nodes would be dropped along with node_xml if it cannot be created.
+static size_t CountXmlDescendants(const pugi::xml_node& node_xml)
+{
+    size_t count = 0;
+    for (const auto& child: node_xml.children("document"))
+    {
+        ++count;
+        count += CountXmlDescendants(child);
+    }
+    return count;
+}
+
+std::string DialogBlocks::DescribeLostNode(pugi::xml_node& node_xml, Node* parent,
+                                           std::string_view class_name)
+{
+    std::string error_msg = "Unable to create ";
+    error_msg += class_name;
+
+    if (auto value =
+            node_xml.find_child_by_attribute("string", "name", "proxy-Member variable name");
+        value)
+    {
+        const wxString var_name = ExtractQuotedString(value);
+        if (!var_name.empty())
+        {
+            error_msg += std::format(" \"{}\"", var_name.ToStdString());
+        }
+    }
+
+    if (parent)
+    {
+        // GetHelpText() gives the user-facing name rather than the (possibly derived) class name.
+        // E.g., the parent might be a CDlgWithNotebook, but the user needs to see wxNotebook.
+        wxue::string parent_name = parent->get_Generator()->GetHelpText(parent);
+        if (!parent_name.empty() && parent_name != "wxWidgets")
+        {
+#if defined(_DEBUG)
+            // Debug builds also include the filename passed to the browser if Help is requested,
+            // which is not useful in a message box.
+            parent_name.erase_from('(');
+#endif  // _DEBUG
+            error_msg += std::format(" as a child of {}", parent_name.ToStdString());
+        }
+    }
+
+    if (const size_t lost = CountXmlDescendants(node_xml); lost > 0)
+    {
+        error_msg += std::format(" - {} descendants lost", lost);
+    }
+
+    return error_msg;
+}
+
 void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
 {
     bool adopt_node = true;
@@ -727,36 +781,19 @@ void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
                              << msg);
 #endif  // _DEBUG
 
-        // Include the class name and the parent -- m_errors is a std::set, so without them every
-        // lost custom control collapses into a single message that doesn't say which one failed.
-        std::string error_msg = "Unable to create ";
+        // A custom control is identified by "proxy-Class", falling back to the generic class name
+        // when it is missing. The variable name and parent are included so that m_errors -- a
+        // std::set -- does not collapse every lost custom control into a single, unhelpful line.
+        std::string class_name(map_GenNames.at(gen_CustomControl));
         if (auto class_node = child_xml.find_child_by_attribute("string", "name", "proxy-Class");
             class_node)
         {
-            error_msg += ExtractQuotedString(class_node).ToStdString();
-        }
-        else
-        {
-            error_msg += std::string(map_GenNames.at(gen_CustomControl));
-        }
-        if (parent)
-        {
-            // GetHelpText() gives the user-facing name rather than the (possibly derived) class
-            // name. E.g., the parent might be a CDlgWithNotebook, but the user needs to see
-            // wxNotebook.
-            wxue::string parent_name = parent->get_Generator()->GetHelpText(parent);
-            if (!parent_name.empty() && parent_name != "wxWidgets")
+            if (const wxString value = ExtractQuotedString(class_node); !value.empty())
             {
-#if defined(_DEBUG)
-                // Debug builds also include the filename passed to the browser if Help is
-                // requested, which is not useful in a message box.
-                parent_name.erase_from('(');
-#endif  // _DEBUG
-                error_msg += " as a child of ";
-                error_msg += parent_name;
+                class_name = value.ToStdString();
             }
         }
-        m_errors.emplace(error_msg);
+        m_errors.emplace(DescribeLostNode(child_xml, parent, class_name));
         return;
     }
 

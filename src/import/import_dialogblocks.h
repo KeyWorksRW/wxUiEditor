@@ -80,6 +80,13 @@ protected:
 
     static wxString GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName);
 
+    // Builds the m_errors entry for a node that could not be created, and therefore takes its whole
+    // subtree with it. m_errors is a std::set, so the class name alone collapses every lost node of
+    // that class into one line -- the variable name and parent distinguish them, and the descendant
+    // count tells the user how much was lost.
+    std::string DescribeLostNode(pugi::xml_node& node_xml, Node* parent,
+                                 std::string_view class_name);
+
 private:
     // Helper methods for CreateFormNode
     GenEnum::GenName DetermineFormGenName(pugi::xml_node& form_xml);

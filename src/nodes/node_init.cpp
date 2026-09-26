@@ -199,6 +199,7 @@ constexpr auto lstParentChild = std::to_array<ParentChild>({
         .parent = type_panel_form, .child = type_dataviewtreectrl, .max_children = infinite },
     ParentChild { .parent = type_panel_form, .child = type_listbook, .max_children = infinite },
     ParentChild { .parent = type_panel_form, .child = type_notebook, .max_children = infinite },
+    ParentChild { .parent = type_panel_form, .child = type_panel, .max_children = infinite },
     ParentChild { .parent = type_panel_form, .child = type_propgrid, .max_children = infinite },
     ParentChild { .parent = type_panel_form, .child = type_propgridman, .max_children = infinite },
     ParentChild { .parent = type_panel_form, .child = type_ribbonbar, .max_children = infinite },

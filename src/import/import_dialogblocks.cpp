@@ -1752,7 +1752,7 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
     // wxLEFT, wxRIGHT etc.
 }
 
-constexpr frozen::map<std::string_view, GenEnum::PropName, 52> map_proxy_names =
+constexpr frozen::map<std::string_view, GenEnum::PropName, 53> map_proxy_names =
     frozen::make_map<std::string_view, GenEnum::PropName>({
         { "Background colour", prop_background_colour },
         { "Foreground colour", prop_foreground_colour },
@@ -1771,6 +1771,7 @@ constexpr frozen::map<std::string_view, GenEnum::PropName, 52> map_proxy_names =
         { "Animation", prop_animation },
         { "Bitmap", prop_bitmap },
         { "Border", prop_border_size },
+        { "Checked", prop_checked },
         { "Column width", prop_default_col_size },
         { "ColumnSpacing", prop_hgap },
         { "Columns", prop_cols },
@@ -1894,19 +1895,19 @@ void DialogBlocks::ProcessMiscStringChildren(pugi::xml_node& node_xml, const Nod
                 case prop_kind:
                     if (str == "Normal")
                     {
-                        node->set_value(prop_selection_mode, "wxITEM_NORMAL");
+                        node->set_value(prop_kind, "wxITEM_NORMAL");
                     }
                     else if (str == "Check")
                     {
-                        node->set_value(prop_selection_mode, "wxITEM_CHECK");
+                        node->set_value(prop_kind, "wxITEM_CHECK");
                     }
                     else if (str == "Radio")
                     {
-                        node->set_value(prop_selection_mode, "wxITEM_RADIO");
+                        node->set_value(prop_kind, "wxITEM_RADIO");
                     }
                     else if (str == "Dropdown")
                     {
-                        node->set_value(prop_selection_mode, "wxITEM_DROPDOWN");
+                        node->set_value(prop_kind, "wxITEM_DROPDOWN");
                     }
                     break;
 

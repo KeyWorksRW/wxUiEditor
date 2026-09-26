@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="wxDialog"
+      class_name="CDlgWithNotebook"
+      style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+      title="CDlgWithNotebook"
+      id="ID_CDLGWITHNOTEBOOK"
+      pos="-1,-1"
+      size="400,300"
+      base_file="CDlgWithNotebook">
+      <node
+        class="wxBoxSizer"
+        class_access="protected:"
+        orientation="wxVERTICAL"
+        var_name="m_pSizer"
+        alignment="wxALIGN_CENTER_HORIZONTAL"
+        proportion="1">
+        <node
+          class="wxNotebook"
+          var_name="m_pNotebook"
+          id="ID_NOTEBOOK"
+          pos="-1,-1"
+          size="-1,-1"
+          alignment="wxALIGN_CENTER_HORIZONTAL"
+          proportion="1">
+          <node
+            class="PageCtrl"
+            label="Custom page">
+            <node
+              class="CustomControl"
+              class_name="CMyCustomPage"
+              parameters="()"
+              var_name="m_pCustomPage"
+              id="ID_CUSTOMPAGE"
+              pos="-1,-1"
+              size="100,100"
+              window_style="wxBORDER_SIMPLE"
+              alignment="wxALIGN_CENTER_HORIZONTAL" />
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

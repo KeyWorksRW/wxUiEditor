@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="16">
+  <node
+    class="Project">
+    <node
+      class="wxDialog"
+      class_name="CDlgWithBitmapButton"
+      style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+      title="CDlgWithBitmapButton"
+      id="ID_CDLGWITHBITMAPBUTTON"
+      pos="-1,-1"
+      size="400,300"
+      base_file="CDlgWithBitmapButton">
+      <node
+        class="wxBoxSizer"
+        class_access="protected:"
+        orientation="wxVERTICAL"
+        var_name="m_pSizer"
+        alignment="wxALIGN_CENTER_HORIZONTAL"
+        proportion="1">
+        <node
+          class="wxButton"
+          label=""
+          var_name="m_pCmdGo"
+          bitmap="Embed;go.png"
+          id="ID_CMD_GO"
+          pos="-1,-1"
+          size="-1,-1"
+          alignment="wxALIGN_CENTER_HORIZONTAL" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

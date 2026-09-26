@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="wxDialog"
+      class_name="CDlgWithColours"
+      style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+      title="CDlgWithColours"
+      background_colour="wxSYS_COLOUR_MENU"
+      foreground_colour="#FF0000"
+      id="ID_CDLGWITHCOLOURS"
+      pos="-1,-1"
+      size="400,300"
+      base_file="CDlgWithColours">
+      <node
+        class="wxBoxSizer"
+        class_access="protected:"
+        orientation="wxVERTICAL"
+        var_name="m_pSizer"
+        alignment="wxALIGN_CENTER_HORIZONTAL"
+        proportion="1" />
+    </node>
+  </node>
+</wxUiEditorData>

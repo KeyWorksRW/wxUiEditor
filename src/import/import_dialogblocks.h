@@ -17,7 +17,7 @@ class DialogBlocks : public ImportXML
 {
 public:
     DialogBlocks();
-    virtual ~DialogBlocks() = default;
+    ~DialogBlocks() = default;
 
     DialogBlocks(const DialogBlocks&) = delete;
     DialogBlocks& operator=(const DialogBlocks&) = delete;
@@ -49,11 +49,18 @@ protected:
     void CreateChildNode(pugi::xml_node& child_xml, Node* parent);
     void CreateCustomNode(pugi::xml_node& child_xml, Node* parent);
 
-    // Process all the style-like attributes for the current node
-    static void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    // Fallbacks for a node that cannot be created as a direct child of the parent it was declared
+    // under. If the node's actual parent differs from `parent`, then `parent` is updated. When the
+    // node has already been adopted by this function (a gen_PageCtrl was inserted), `adopt_node` is
+    // set to false so the caller does not adopt it a second time.
+    NodeSharedPtr CreateFallbackNode(GenEnum::GenName get_GenName, Node*& parent, bool& adopt_node);
 
-    // Add all events for the current node
-    static void ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    // Process all the style-like attributes for the current node
+    void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+
+    // Add all events for the current node. Not static -- a handler that has to be discarded is
+    // recorded in m_errors so the user is told rather than the handler vanishing silently.
+    void ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // This will walk through all the immediate children of the current node, and process any
     // known proxy settings.
@@ -63,11 +70,22 @@ protected:
     // "proxy-type" attributes.
     GenEnum::GenName FindGenerator(pugi::xml_node& node, Node* parent);
 
+    // Returns true if the node's proxy class is wxBitmapButton, which maps onto gen_wxButton but
+    // has no label of its own.
+    bool IsBitmapButton(pugi::xml_node& node_xml) const;
+
     // Most strings in a DialogBlocks project are quoted, but some are not. This will return
     // the string without quotes.
     static wxString ExtractQuotedString(pugi::xml_node& str_xml);
 
     static wxString GatherErrorDetails(pugi::xml_node& xml_node, GenEnum::GenName get_GenName);
+
+    // Builds the m_errors entry for a node that could not be created, and therefore takes its whole
+    // subtree with it. m_errors is a std::set, so the class name alone collapses every lost node of
+    // that class into one line -- the variable name and parent distinguish them, and the descendant
+    // count tells the user how much was lost.
+    static std::string DescribeLostNode(pugi::xml_node& node_xml, Node* parent,
+                                        std::string_view class_name);
 
 private:
     // Helper methods for CreateFormNode
@@ -81,6 +99,7 @@ private:
     // Helper methods for ProcessMisc
     static void ProcessMiscStringChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
     static void ProcessMiscLongChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
+    static void ProcessMiscDoubleChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
     static void ProcessMiscBoolChildren(pugi::xml_node& node_xml, const NodeSharedPtr& node);
 
     bool m_use_enums { true };

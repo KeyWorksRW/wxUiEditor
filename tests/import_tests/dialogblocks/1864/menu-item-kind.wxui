@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="wxFrame"
+      class_name="CMainFrame"
+      title="Menu item kind"
+      base_file="MainFrame"
+      id="ID_CMAINFRAME"
+      pos="-1,-1"
+      size="400,300">
+      <node
+        class="wxMenuBar"
+        class_access="none"
+        var_name="itemMenuBar1"
+        id="ID_MENUBAR"
+        pos="-1,-1"
+        size="-1,-1">
+        <node
+          class="wxMenu"
+          label="&amp;Options"
+          var_name="m_pMnuOptions">
+          <node
+            class="wxMenuItem"
+            checked="1"
+            id="ID_MNU_CHECK"
+            kind="wxITEM_CHECK"
+            label="&amp;Check me" />
+          <node
+            class="wxMenuItem"
+            id="ID_MNU_9600"
+            kind="wxITEM_RADIO"
+            label="&amp;9600" />
+          <node
+            class="wxMenuItem"
+            id="ID_MNU_115200"
+            kind="wxITEM_RADIO"
+            label="1&amp;15200" />
+        </node>
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

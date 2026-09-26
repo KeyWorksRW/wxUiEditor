@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="wxDialog"
+      class_name="CDlgLegacyEvent"
+      style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+      title="CDlgLegacyEvent"
+      id="ID_CDLGLEGACYEVENT"
+      pos="-1,-1"
+      size="400,300"
+      base_file="CDlgLegacyEvent">
+      <node
+        class="wxBoxSizer"
+        class_access="protected:"
+        orientation="wxVERTICAL"
+        var_name="m_pSizer"
+        alignment="wxALIGN_CENTER_HORIZONTAL"
+        proportion="1">
+        <node
+          class="wxAuiNotebook"
+          style="wxAUI_NB_TOP"
+          var_name="m_pNotebook"
+          id="ID_AUINOTEBOOK"
+          pos="-1,-1"
+          size="-1,-1"
+          alignment="wxALIGN_CENTER_HORIZONTAL"
+          proportion="1"
+          wxEVT_AUINOTEBOOK_PAGE_CHANGED="OnPageChanged" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

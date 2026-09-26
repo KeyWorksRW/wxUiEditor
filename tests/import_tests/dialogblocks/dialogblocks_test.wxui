@@ -11,10 +11,11 @@
       style="wxCAPTION|wxSYSTEM_MENU|wxRESIZE_BORDER"
       title="Import Test Dialog"
       pos="-1,-1d"
-      size="-1,-1d">
+      size="300,200d">
       <node
         class="wxBoxSizer"
-        orientation="wxVERTICAL">
+        orientation="wxVERTICAL"
+        var_name="itemBoxSizer2">
         <node
           class="wxStaticText"
           label="Hello World!"

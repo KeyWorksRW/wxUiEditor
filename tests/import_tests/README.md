@@ -8,19 +8,19 @@ of projects. Each sample project file has a matching `.wxui` golden beside it, p
 Never hand-edit a `.wxui` golden — regenerate it with the Python script (works unchanged on Windows and Unix):
 
 ```
-python tests/import_tests/regenerate.py debug
+python tests/import_tests/regenerate.py
 ```
 
-Omit the argument (or pass `release`) to use the Release build.
-The script runs `--save_import` for every sample, reports failures, prints `git diff --stat -- tests/import_tests`, and
-exits non-zero if any import failed.
-Importers are deliberately lossy, so a changed golden means importer output changed — review the diff.
+This defaults to the Debug build; pass `release` to use the Release build instead.
+The script runs `--save_import` for every sample, reports import failures, then lists the changed `.wxui` goldens with
+`git diff --stat`. It exits non-zero if any import failed or if any `.wxui` golden changed.
+Importers are deliberately lossy, so a changed golden means importer output changed — review the diff before committing.
 
 Add `--verify` to re-import each sample with `--verify_import` after regenerating, proving the goldens are reproducible
 (idempotent):
 
 ```
-python tests/import_tests/regenerate.py debug --verify
+python tests/import_tests/regenerate.py --verify
 ```
 
 ## Windows Resource files

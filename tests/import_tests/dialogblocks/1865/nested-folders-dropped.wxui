@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="folder"
+      label="Level 1">
+      <node
+        class="wxDialog"
+        class_name="CDialogInLevel1"
+        style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+        title="CDialogInLevel1"
+        id="ID_CDIALOGINLEVEL1"
+        pos="-1,-1"
+        size="400,300"
+        base_file="CDialogInLevel1" />
+      <node
+        class="sub_folder"
+        label="Level 2">
+        <node
+          class="wxDialog"
+          class_name="CDialogInLevel2"
+          style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+          title="CDialogInLevel2"
+          id="ID_CDIALOGINLEVEL2"
+          pos="-1,-1"
+          size="400,300"
+          base_file="CDialogInLevel2" />
+        <node
+          class="sub_folder"
+          label="Level 3">
+          <node
+            class="wxDialog"
+            class_name="CDialogInLevel3"
+            style="wxCAPTION|wxCLOSE_BOX|wxRESIZE_BORDER|wxSYSTEM_MENU"
+            title="CDialogInLevel3"
+            id="ID_CDIALOGINLEVEL3"
+            pos="-1,-1"
+            size="400,300"
+            base_file="CDialogInLevel3" />
+        </node>
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

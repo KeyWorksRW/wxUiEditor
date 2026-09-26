@@ -885,6 +885,18 @@ void WxCrafter::ProcessEvents(Node* node, const glz::generic& array)
                         node_event->set_value(function);
                     }
                 }
+                else
+                {
+                    // Report the dropped handler -- wxCrafter stores the untranslated name, so
+                    // without this the event would just never arrive in the imported project.
+                    std::string function_name;
+                    if (const auto& handler = FindValue(event, "m_functionNameAndSignature");
+                        handler.is_string())
+                    {
+                        function_name = handler.get<std::string>();
+                    }
+                    LogUnassignedEvent(node, name.get<std::string>(), function_name);
+                }
             }
         }
     }

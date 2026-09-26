@@ -9,9 +9,12 @@ build-fork/
 build-fedora/
 build-ubuntu/
 
+# All test assets live under tests/. Individual subdirectories are re-included below;
+# everything else in tests/ is scratch space and is not tracked.
 tests/*
-deno.jsonc
+!tests/import_tests/
 !tests/scripts/
+deno.jsonc
 
 # Ignore clangd cache
 .cache/

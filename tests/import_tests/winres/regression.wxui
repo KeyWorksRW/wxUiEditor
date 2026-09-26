@@ -1,0 +1,428 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="wxDialog"
+      class_name="Addcolumn"
+      title="Test two aligned columns">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxFlexGridSizer">
+          <node
+            class="wxStaticText"
+            label="TableID:"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_STATIC"
+            var_name="m_staticText2"
+            window_style="wxBORDER_SUNKEN"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxTextCtrl"
+            style="wxTE_MULTILINE"
+            var_comment="IDE_TABLEID"
+            var_name="m_textCtrl2"
+            minimum_size="130,-1d"
+            window_style="wxVSCROLL" />
+          <node
+            class="wxStaticText"
+            label="ColumnID:"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_STATIC2"
+            var_name="m_staticText3"
+            window_style="wxBORDER_SUNKEN"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxTextCtrl"
+            var_comment="IDE_COLUMNID"
+            var_name="m_textCtrl3"
+            minimum_size="130,-1d" />
+        </node>
+        <node
+          class="wxFlexGridSizer">
+          <node
+            class="wxStaticText"
+            label="pwszTypeName:"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_STATIC3"
+            var_name="m_staticText4"
+            window_style="wxBORDER_SUNKEN"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxComboBox"
+            style="wxCB_DROPDOWN"
+            var_comment="IDC_TYPENAME"
+            var_name="m_comboBox2"
+            minimum_size="130,-1d"
+            window_style="wxVSCROLL" />
+          <node
+            class="wxStaticText"
+            label="wType:"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_STATIC4"
+            var_name="m_staticText5"
+            window_style="wxBORDER_SUNKEN"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxComboBox"
+            style="wxCB_DROPDOWN"
+            var_comment="IDC_TYPE"
+            minimum_size="130,-1d"
+            window_style="wxVSCROLL" />
+        </node>
+        <node
+          class="wxFlexGridSizer">
+          <node
+            class="wxStaticText"
+            label="ColumnSize:"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_STATIC6"
+            var_name="m_staticText6"
+            window_style="wxBORDER_SUNKEN"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxTextCtrl"
+            var_comment="IDE_SIZE"
+            var_name="m_textCtrl4"
+            minimum_size="130,-1d" />
+          <node
+            class="wxStaticText"
+            label="Precision:"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_STATIC7"
+            var_name="m_staticText7"
+            window_style="wxBORDER_SUNKEN"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxTextCtrl"
+            var_comment="IDE_PRECISION"
+            var_name="m_textCtrl5"
+            minimum_size="130,-1d" />
+          <node
+            class="wxStaticText"
+            label="Scale:"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_STATIC8"
+            window_style="wxBORDER_SUNKEN"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxTextCtrl"
+            var_comment="IDE_SCALE"
+            minimum_size="130,-1d" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL">
+          <node
+            class="wxCheckBox"
+            label="Use Properties"
+            var_comment="IDB_USEPROPERTIES" />
+          <node
+            class="wxButton"
+            label="&amp;Properties..."
+            var_comment="IDB_SETPROPERTIES" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="Confirmdelete"
+      title="Test standard icon conversion">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer2">
+          <node
+            class="wxStaticBitmap"
+            bitmap="Art;wxART_INFORMATION|wxART_TOOLBAR" />
+          <node
+            class="wxStaticText"
+            label=""
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDC_MESSAGE"
+            wrap="337" />
+        </node>
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxButton"
+            default="1"
+            label="Don't Delete"
+            var_comment="IDCANCEL"
+            var_name="m_btn2"
+            id="wxID_CANCEL" />
+          <node
+            class="wxButton"
+            label="Delete!"
+            var_comment="IDC_DELETE" />
+        </node>
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="Dialog"
+      title="Installed Eap Methods">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer2">
+          <node
+            class="wxListBox"
+            var_comment="IDC_METHODLIST"
+            minimum_size="191,79d"
+            window_style="wxVSCROLL" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer3">
+          <node
+            class="wxButton"
+            label="Properties"
+            var_comment="IDC_PROPERTIES"
+            var_name="m_btn2" />
+          <node
+            class="wxButton"
+            label="Configure"
+            var_comment="IDC_CONFIGURE"
+            var_name="m_btn3" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer4">
+          <node
+            class="wxStaticText"
+            label=""
+            var_comment="IDC_PROPERTYTEXT"
+            wrap="175" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          flags="wxEXPAND">
+          <node
+            class="wxButton"
+            label="Exit"
+            var_comment="IDC_EXITDIALOG"
+            alignment="wxALIGN_RIGHT" />
+        </node>
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="EditReplace"
+      title="Test: Convert multiple rows to flex grid">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxFlexGridSizer"
+          cols="3">
+          <node
+            class="wxStaticText"
+            label="Fi&amp;nd what:"
+            var_name="m_staticText2"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxComboBox"
+            style="wxCB_DROPDOWN|wxCB_SORT"
+            var_comment="IDC_EDIT_FINDTEXT"
+            var_name="m_comboBox2"
+            minimum_size="165,-1d"
+            window_style="wxVSCROLL" />
+          <node
+            class="wxButton"
+            default="1"
+            label="&amp;Find Next"
+            var_comment="IDC_EDIT_SKIP"
+            var_name="m_btn2" />
+          <node
+            class="wxStaticText"
+            label="Re&amp;place with:"
+            alignment="wxALIGN_RIGHT" />
+          <node
+            class="wxComboBox"
+            style="wxCB_DROPDOWN|wxCB_SORT"
+            var_comment="IDC_EDIT_REPLACE_WITH"
+            minimum_size="165,-1d"
+            window_style="wxVSCROLL" />
+          <node
+            class="wxButton"
+            label="&amp;Replace"
+            var_comment="IDC_EDIT_REPLACE"
+            var_name="m_btn3" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer4"
+          alignment="wxALIGN_RIGHT">
+          <node
+            class="wxStaticBoxSizer"
+            label="Replace in">
+            <node
+              class="wxRadioButton"
+              label="&amp;Selection"
+              var_comment="IDC_EDIT_SCOPE_SELECTION"
+              var_name="m_radioBtn2" />
+            <node
+              class="wxRadioButton"
+              label="Wh&amp;ole file"
+              var_comment="IDC_EDIT_SCOPE_WHOLE_FILE" />
+          </node>
+          <node
+            class="wxButton"
+            label="Replace &amp;All"
+            var_comment="IDC_EDIT_REPLACE_ALL" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL">
+          <node
+            class="wxCheckBox"
+            label="Match &amp;whole word only"
+            var_comment="IDC_EDIT_WHOLE_WORD"
+            var_name="m_checkBox2" />
+          <node
+            class="wxCheckBox"
+            label="Match &amp;case"
+            var_comment="IDC_EDIT_MATCH_CASE"
+            var_name="m_checkBox3" />
+          <node
+            class="wxCheckBox"
+            label="Regular &amp;expression"
+            var_comment="IDC_EDIT_REGEXP"
+            var_name="m_checkBox4" />
+          <node
+            class="wxCheckBox"
+            label="&amp;Don't wrap end of file"
+            var_comment="IDC_EDIT_SCOPE_DONT_WRAP" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          OK="0"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="Getlistview"
+      title="Centered text: parent sizer needs wxExpand">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer2">
+          <node
+            class="wxListView"
+            var_comment="IDL_NAMES"
+            var_name="m_listview2" />
+          <node
+            class="wxListView"
+            var_comment="IDL_VALUES" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            label="Displays the rgBindings from the Accessor"
+            style="wxALIGN_CENTER_HORIZONTAL"
+            var_comment="IDT_HELPMSG"
+            window_style="wxBORDER_SUNKEN"
+            proportion="1" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="0"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="Settings"
+      style="wxDEFAULT_DIALOG_STYLE|wxCAPTION|wxSYSTEM_MENU|wxMAXIMIZE_BOX|wxMINIMIZE_BOX"
+      title="Test: SysLink controls">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer2"
+          alignment="wxALIGN_RIGHT">
+          <node
+            class="wxTextCtrl"
+            var_comment="IDC_EDITSEARCH"
+            minimum_size="120,-1d" />
+          <node
+            class="wxCheckBox"
+            label="Show all settings"
+            var_comment="IDC_CHECKALL" />
+          <node
+            class="wxStaticBitmap"
+            var_comment="IDC_ICONSEARCH" />
+          <node
+            class="wxHyperlinkCtrl"
+            label="&lt;a>Help...&lt;/a>"
+            url="Help..."
+            var_comment="IDC_LINKHELP"
+            var_name="m_hyperlink2" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer3">
+          <node
+            class="wxNotebook"
+            style="wxNB_MULTILINE"
+            var_comment="IDC_TABSETTINGS" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer4">
+          <node
+            class="wxButton"
+            label="&amp;Backup"
+            var_comment="IDC_BUTTONBACKUP" />
+        </node>
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxHyperlinkCtrl"
+            label="&lt;a>www.classicshell.net&lt;/a>"
+            url="www.classicshell.net"
+            var_comment="IDC_LINKWEB"
+            var_name="m_hyperlink3" />
+          <node
+            class="wxHyperlinkCtrl"
+            label="Name of translator goes &lt;a ref=&quot;http://www.yoursite.com&quot;>here&lt;/a>"
+            url="http://www.yoursite.com"
+            var_comment="IDC_SYSLINKLOC"
+            hidden="1" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

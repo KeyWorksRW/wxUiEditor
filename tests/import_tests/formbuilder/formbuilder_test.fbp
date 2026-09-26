@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wxFormBuilder_Project>
+  <FileVersion major="1" minor="18"/>
+  <object class="Project" expanded="true">
+    <property name="code_generation">C++</property>
+    <object class="Dialog" expanded="true">
+      <property name="name">ImportTestDialog</property>
+      <property name="title">Import Test Dialog</property>
+      <property name="size">300,200</property>
+      <object class="wxBoxSizer" expanded="true">
+        <property name="name">bSizer1</property>
+        <property name="orient">wxVERTICAL</property>
+        <object class="sizeritem" expanded="true">
+          <property name="border">5</property>
+          <property name="flag">wxALL</property>
+          <property name="proportion">0</property>
+          <object class="wxStaticText" expanded="true">
+            <property name="name">m_staticText1</property>
+            <property name="label">Hello World!</property>
+          </object>
+        </object>
+        <object class="sizeritem" expanded="true">
+          <property name="border">5</property>
+          <property name="flag">wxALL</property>
+          <property name="proportion">0</property>
+          <object class="wxTextCtrl" expanded="true">
+            <property name="name">m_textCtrl1</property>
+          </object>
+        </object>
+        <object class="sizeritem" expanded="true">
+          <property name="border">5</property>
+          <property name="flag">wxALL</property>
+          <property name="proportion">0</property>
+          <object class="wxButton" expanded="true">
+            <property name="name">m_button1</property>
+            <property name="label">OK</property>
+          </object>
+        </object>
+      </object>
+    </object>
+  </object>
+</wxFormBuilder_Project>

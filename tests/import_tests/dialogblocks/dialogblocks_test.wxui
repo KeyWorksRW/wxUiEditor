@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project"
+    internationalize="1">
+    <node
+      class="wxDialog"
+      center="no"
+      class_name="ImportTestDialog"
+      style="wxCAPTION|wxSYSTEM_MENU|wxRESIZE_BORDER"
+      title="Import Test Dialog"
+      pos="-1,-1d"
+      size="-1,-1d">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL">
+        <node
+          class="wxStaticText"
+          label="Hello World!"
+          var_name="m_staticText1"
+          id="ID_STATICTEXT1 = 10001"
+          pos="-1,-1d"
+          size="-1,-1d" />
+        <node
+          class="wxTextCtrl"
+          var_name="m_textCtrl1"
+          id="ID_TEXTCTRL1 = 10002"
+          pos="-1,-1d"
+          size="-1,-1d" />
+        <node
+          class="wxButton"
+          label="OK"
+          var_name="m_button1"
+          id="ID_BUTTON1 = 10003"
+          pos="-1,-1d"
+          size="-1,-1d" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

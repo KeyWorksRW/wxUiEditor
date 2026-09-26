@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="15">
+  <node
+    class="Project">
+    <node
+      class="wxDialog"
+      class_name="ImportTestDialog"
+      title="Import Test Dialog"
+      size="300,200">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="bSizer1">
+        <node
+          class="wxStaticText"
+          label="Hello World!"
+          var_name="m_staticText1" />
+        <node
+          class="wxTextCtrl"
+          var_name="m_textCtrl1" />
+        <node
+          class="wxButton"
+          label="OK"
+          var_name="m_button1" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

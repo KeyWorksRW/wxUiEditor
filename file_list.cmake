@@ -128,6 +128,7 @@ set( file_list
     src/generate/writers/gen_script_common.cpp # Common functions for generating Script Languages
     src/generate/writers/gen_xrc.cpp           # Generate XRC
     src/generate/writers/verify_codegen.cpp    # Verify that code generation did not change
+    src/generate/writers/verify_import.cpp     # Verify that importing a project file did not change
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python, Ruby and XRC code. If the generated object

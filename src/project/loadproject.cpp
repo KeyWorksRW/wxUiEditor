@@ -875,37 +875,37 @@ static constexpr frozen::map<std::string_view, ImportFileType, 8> import_file_ty
         case ImportFileType::wxcp:
             {
                 WxCrafter crafter;
-                result = Import(crafter, import_path);
+                result = Import(crafter, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::fbp:
             {
                 FormBuilder formbuilder;
-                result = Import(formbuilder, import_path);
+                result = Import(formbuilder, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::rc_dlg:
             {
                 WinResource winres;
-                result = Import(winres, import_path);
+                result = Import(winres, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::wxs_xrc:
             {
                 WxSmith smith;
-                result = Import(smith, import_path);
+                result = Import(smith, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::wxg:
             {
                 WxGlade glade;
-                result = Import(glade, import_path);
+                result = Import(glade, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::pjd:
             {
                 DialogBlocks dialogblocks;
-                result = Import(dialogblocks, import_path);
+                result = Import(dialogblocks, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::unknown:
@@ -966,7 +966,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
             return true;
         }
 
-        NodeSharedPtr project_node = NodeCreation.CreateProjectNode(&project);
+        NodeSharedPtr project_node = NodeCreation.CreateProjectNode(&project, allow_ui);
 
         auto SetLangFilenames = [&]()
         {
@@ -1072,7 +1072,9 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
         // If the file has been created once before, then for the first form, copy the old classname
         // and base filename to the re-converted first form.
 
-        if (m_project_node->get_ChildCount() && wxFileName::FileExists(file))
+        // Interactive-only: this shows a modal dialog on a parse error and reads the mainframe,
+        // so it must not run during a headless import (allow_ui == false).
+        if (allow_ui && m_project_node->get_ChildCount() && wxFileName::FileExists(file))
         {
             xml_doc.reset();
             const pugi::xml_parse_result result = xml_doc.load_file_string(file);

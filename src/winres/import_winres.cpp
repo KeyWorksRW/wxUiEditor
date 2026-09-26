@@ -13,10 +13,10 @@
 
 WinResource::WinResource() : m_curline(0), m_codepage(1252) {}
 
-bool WinResource::Import(const std::string& filename, bool write_doc)
+bool WinResource::Import(const std::string& filename, bool write_doc, bool allow_ui)
 {
     std::vector<wxue::string> forms;
-    if (ImportRc(filename, forms))
+    if (ImportRc(filename, forms, false, allow_ui))
     {
         if (write_doc)
         {
@@ -39,9 +39,19 @@ static const std::set<std::string_view> lst_ignored_includes = {
 // clang-format on
 
 bool WinResource::ImportRc(const wxue::string& rc_file, std::vector<wxue::string>& forms,
-                           bool isNested)
+                           bool isNested, bool allow_ui)
 {
-    wxBusyCursor busy;
+    // Recursive calls pass isNested == true and inherit the flag set by the outermost call.
+    if (!isNested)
+    {
+        m_allow_ui = allow_ui;
+    }
+
+    std::optional<wxBusyCursor> busy;
+    if (m_allow_ui)
+    {
+        busy.emplace();
+    }
 
     if (!isNested)
     {
@@ -98,7 +108,7 @@ bool WinResource::ImportRc(const wxue::string& rc_file, std::vector<wxue::string
                         path.make_relative(rc_file);
                     }
 
-                    ImportRc(path, forms, true);
+                    ImportRc(path, forms, true, m_allow_ui);
                 }
             }
         }
@@ -336,11 +346,14 @@ bool WinResource::ImportRc(const wxue::string& rc_file, std::vector<wxue::string
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((wxue::string() << "Problem parsing " << m_RcFilename << " at around line "
-                                     << wxue::itoa(m_curline << 1) << "\n\n"
-                                     << e.what())
-                         .wx(),
-                     "RC Parser");
+        if (m_allow_ui)
+        {
+            wxMessageBox((wxue::string() << "Problem parsing " << m_RcFilename << " at around line "
+                                         << wxue::itoa(m_curline << 1) << "\n\n"
+                                         << e.what())
+                             .wx(),
+                         "RC Parser");
+        }
         return false;
     }
 
@@ -387,11 +400,14 @@ void WinResource::ParseDialog(wxue::StringVector& file)
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((wxue::string() << "Problem parsing " << m_RcFilename << " at around line "
-                                     << m_curline + 1 << "\n\n"
-                                     << e.what())
-                         .wx(),
-                     "RC Parser");
+        if (m_allow_ui)
+        {
+            wxMessageBox((wxue::string() << "Problem parsing " << m_RcFilename << " at around line "
+                                         << m_curline + 1 << "\n\n"
+                                         << e.what())
+                             .wx(),
+                         "RC Parser");
+        }
     }
 }
 
@@ -419,11 +435,14 @@ void WinResource::ParseMenu(wxue::StringVector& file)
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        wxMessageBox((wxue::string() << "Problem parsing " << m_RcFilename << " at around line "
-                                     << m_curline + 1 << "\n\n"
-                                     << e.what())
-                         .wx(),
-                     "RC Parser");
+        if (m_allow_ui)
+        {
+            wxMessageBox((wxue::string() << "Problem parsing " << m_RcFilename << " at around line "
+                                         << m_curline + 1 << "\n\n"
+                                         << e.what())
+                             .wx(),
+                         "RC Parser");
+        }
     }
 }
 

@@ -42,9 +42,9 @@
 
 DialogBlocks::DialogBlocks() = default;
 
-bool DialogBlocks::Import(const std::string& filename, bool write_doc)
+bool DialogBlocks::Import(const std::string& filename, bool write_doc, bool allow_ui)
 {
-    std::optional<pugi::xml_document> result = LoadDocFile(filename);
+    std::optional<pugi::xml_document> result = LoadDocFile(filename, allow_ui);
     if (!result)
     {
         return false;
@@ -54,7 +54,10 @@ bool DialogBlocks::Import(const std::string& filename, bool write_doc)
 
     if (wxString(root.name()).CmpNoCase("anthemion-project") != 0)
     {
-        dlgInvalidProject(filename, "DialogBlocks", "Import DialogBlocks project");
+        if (allow_ui)
+        {
+            dlgInvalidProject(filename, "DialogBlocks", "Import DialogBlocks project");
+        }
         return false;
     }
 
@@ -151,7 +154,10 @@ bool DialogBlocks::Import(const std::string& filename, bool write_doc)
     catch (const std::exception& err)
     {
         MSG_ERROR(err.what());
-        dlgImportError(err, filename, "Import DialogBlocks project");
+        if (allow_ui)
+        {
+            dlgImportError(err, filename, "Import DialogBlocks project");
+        }
         return false;
     }
 
@@ -165,9 +171,12 @@ bool DialogBlocks::Import(const std::string& filename, bool write_doc)
             MSG_ERROR(iter);
             errMsg += iter + '\n';
         }
-        wxMessageDialog dlg_message(nullptr, errMsg, "Import DialogBlocks Project",
-                                    wxICON_WARNING | wxOK);
-        dlg_message.ShowModal();
+        if (allow_ui)
+        {
+            wxMessageDialog dlg_message(nullptr, errMsg, "Import DialogBlocks Project",
+                                        wxICON_WARNING | wxOK);
+            dlg_message.ShowModal();
+        }
     }
 
     return true;

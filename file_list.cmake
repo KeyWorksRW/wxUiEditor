@@ -24,11 +24,7 @@ set( file_list
 
     src/ui/startup_dlg.cpp      # Dialog to display if wxUiEditor is launched with no arguments
 
-    src/wxue_namespace/wxue.cpp
-    src/wxue_namespace/wxue_string.cpp          # wxue::wxue::string class
-    src/wxue_namespace/wxue_string_view.cpp     # wxue::string_view class
-    src/wxue_namespace/wxue_string_vector.cpp   # wxue::string_vector class
-    src/wxue_namespace/wxue_view_vector.cpp     # wxue::view_vector class
+    # The wxue_namespace sources live in wxui_core_files (below) so the unit tests can link them.
 
     # Custom property handling for Property Grid panel
     src/customprops/code_single_prop.cpp      # EditCodeSingleProperty -- Derived wxStringProperty class for single line code
@@ -128,6 +124,7 @@ set( file_list
     src/generate/writers/gen_script_common.cpp # Common functions for generating Script Languages
     src/generate/writers/gen_xrc.cpp           # Generate XRC
     src/generate/writers/verify_codegen.cpp    # Verify that code generation did not change
+    src/generate/writers/verify_import.cpp     # Verify that importing a project file did not change
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++, Python, Ruby and XRC code. If the generated object
@@ -356,7 +353,7 @@ set( file_list
     # Tools
 
     src/tools/compare/code_compare.cpp  # Code Generation Comparison
-    src/tools/compare/diff.cpp          # Simple diff algorithm for comparing text files
+    # diff.cpp lives in wxui_core_files (below) so the unit tests can link it.
     src/tools/compare/diff_viewer.cpp   # Dialog for displaying file differences
     src/tools/generate_dlg.cpp          # Dialog for choosing and generating specific language file(s)
     src/tools/global_ids_dlg.cpp        # Dialog to Globally edit Custom IDs
@@ -399,6 +396,25 @@ set( file_list
     # (generated) ui/preferences_dlg.cpp  # Preferences dialog
     $<$<CONFIG:Debug>:src/internal/convert_img.cpp>  # Convert image
     $<$<CONFIG:Debug>:src/tests/test_xrc_import.cpp> # XRC Import tests
+)
+
+# ============================================================================
+# wxui_core_files -- display-free, GUI-independent translation units
+# ============================================================================
+# Built as the `wxui_core` static library and linked by both wxUiEditor and the Catch2 unit
+# tests. Keep this list to code that needs no display, no wxApp and no main frame: the test
+# binary links it without initializing wxWidgets, so anything reaching for the GUI would fail
+# on a headless CI runner.
+
+set(wxui_core_files
+
+    src/wxue_namespace/wxue.cpp
+    src/wxue_namespace/wxue_string.cpp          # wxue::string class
+    src/wxue_namespace/wxue_string_view.cpp     # wxue::string_view class
+    src/wxue_namespace/wxue_string_vector.cpp   # wxue::string_vector class
+    src/wxue_namespace/wxue_view_vector.cpp     # wxue::view_vector class
+
+    src/tools/compare/diff.cpp          # Simple diff algorithm for comparing text files
 )
 
 set(parser_sources

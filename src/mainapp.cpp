@@ -32,6 +32,7 @@
 #include "project_handler.h"           // ProjectHandler class
 #include "utils.h"                     // Utility functions that work with properties
 #include "verify_codegen.h"  // VerifyCodeGen -- Verify that code generation did not change
+#include "verify_import.h"   // VerifyImport -- Verify that importing a project file did not change
 #include "version.h"         // Version numbers and other constants
 
 #include "frozen/map.h"  // frozen::map
@@ -298,6 +299,14 @@ int App::OnRun()
     parser.AddLongSwitch("verify_all", "verify generating all language files did not change",
                          wxCMD_LINE_HIDDEN);
 
+    // Import/project-file verification (no code generation).
+    parser.AddLongSwitch("verify_import", "verify importing a project file did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("save_import", "import a project file and save it as a .wxui file",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("golden", "path to the golden .wxui file", wxCMD_LINE_VAL_STRING,
+                         wxCMD_LINE_HIDDEN);
+
     // Just a quick way to python, and ruby
     parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING,
                          wxCMD_LINE_HIDDEN);
@@ -420,6 +429,14 @@ int App::OnRun()
     }
 
     bool is_project_loaded = false;
+
+    // Import/project-file verification is handled separately from the verify_* code-generation
+    // switches above because it does not require a language switch.
+    if (parser.FoundSwitch("verify_import") == wxCMD_SWITCH_ON ||
+        parser.FoundSwitch("save_import") == wxCMD_SWITCH_ON)
+    {
+        return VerifyImport(parser, is_project_loaded);
+    }
 
     if (is_verify_mode)
     {

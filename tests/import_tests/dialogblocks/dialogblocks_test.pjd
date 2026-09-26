@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<anthemion-project version="1.0.0.0" xmlns="http://www.anthemion.co.uk">
+  <header>
+    <string name="project_encoding">"utf-8"</string>
+    <string name="source_encoding">"utf-8"</string>
+    <string name="target_wx_version">"3.2.0"</string>
+    <bool name="translate_strings">1</bool>
+    <bool name="use_enums">1</bool>
+    <string name="xrc_filename">""</string>
+  </header>
+  <data>
+    <document>
+      <string name="title">""</string>
+      <string name="type">"data-document"</string>
+    </document>
+  </data>
+  <documents>
+    <document>
+      <string name="title">"Projects"</string>
+      <string name="type">"root-document"</string>
+      <document>
+        <string name="title">"Windows"</string>
+        <string name="type">"html-document"</string>
+        <document>
+          <string name="proxy-type">"wbDialogProxy"</string>
+          <string name="identifier">"itemDialog1"</string>
+          <string name="type">"dialog-document"</string>
+          <string name="proxy-Base class">"wxDialog"</string>
+          <string name="proxy-Class">"ImportTestDialog"</string>
+          <string name="proxy-Title">"Import Test Dialog"</string>
+          <string name="proxy-Width">300</string>
+          <string name="proxy-Height">200</string>
+          <long name="proxy-X">-1</long>
+          <long name="proxy-Y">-1</long>
+          <bool name="proxy-Dialog units">1</bool>
+          <bool name="proxy-wxCAPTION">1</bool>
+          <bool name="proxy-wxSYSTEM_MENU">1</bool>
+          <bool name="proxy-wxRESIZE_BORDER">1</bool>
+          <document>
+            <string name="proxy-type">"wbBoxSizerProxy"</string>
+            <string name="identifier">"itemBoxSizer2"</string>
+            <string name="type">"dialog-control-document"</string>
+            <string name="proxy-Orientation">"Vertical"</string>
+            <document>
+              <string name="proxy-type">"wbStaticTextProxy"</string>
+              <string name="identifier">"itemStaticText3"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="proxy-Base class">"wxStaticText"</string>
+              <string name="proxy-Class">"wxStaticText"</string>
+              <string name="proxy-Id name">"ID_STATICTEXT1"</string>
+              <long name="proxy-Id value">10001</long>
+              <string name="proxy-Label">"Hello World!"</string>
+              <string name="proxy-Member variable name">"m_staticText1"</string>
+              <bool name="proxy-wxLEFT">1</bool>
+              <bool name="proxy-wxRIGHT">1</bool>
+              <bool name="proxy-wxTOP">1</bool>
+              <bool name="proxy-wxBOTTOM">1</bool>
+              <long name="proxy-Border">5</long>
+            </document>
+            <document>
+              <string name="proxy-type">"wbTextCtrlProxy"</string>
+              <string name="identifier">"itemTextCtrl4"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="proxy-Base class">"wxTextCtrl"</string>
+              <string name="proxy-Class">"wxTextCtrl"</string>
+              <string name="proxy-Id name">"ID_TEXTCTRL1"</string>
+              <long name="proxy-Id value">10002</long>
+              <string name="proxy-Member variable name">"m_textCtrl1"</string>
+              <bool name="proxy-wxLEFT">1</bool>
+              <bool name="proxy-wxRIGHT">1</bool>
+              <bool name="proxy-wxTOP">1</bool>
+              <bool name="proxy-wxBOTTOM">1</bool>
+              <long name="proxy-Border">5</long>
+            </document>
+            <document>
+              <string name="proxy-type">"wbButtonProxy"</string>
+              <string name="identifier">"itemButton5"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="proxy-Base class">"wxButton"</string>
+              <string name="proxy-Class">"wxButton"</string>
+              <string name="proxy-Id name">"ID_BUTTON1"</string>
+              <long name="proxy-Id value">10003</long>
+              <string name="proxy-Label">"OK"</string>
+              <string name="proxy-Member variable name">"m_button1"</string>
+              <bool name="proxy-wxLEFT">1</bool>
+              <bool name="proxy-wxRIGHT">1</bool>
+              <bool name="proxy-wxTOP">1</bool>
+              <bool name="proxy-wxBOTTOM">1</bool>
+              <long name="proxy-Border">5</long>
+            </document>
+          </document>
+        </document>
+      </document>
+    </document>
+  </documents>
+</anthemion-project>

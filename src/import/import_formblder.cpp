@@ -30,9 +30,9 @@
 
 #include "import_frmbldr_maps.cpp"  // set_ignore_flags and map_evt_pair
 
-bool FormBuilder::Import(const std::string& filename, bool write_doc)
+bool FormBuilder::Import(const std::string& filename, bool write_doc, bool allow_ui)
 {
-    std::optional<pugi::xml_document> result = LoadDocFile(filename);
+    std::optional<pugi::xml_document> result = LoadDocFile(filename, allow_ui);
     if (!result)
     {
         return false;
@@ -41,7 +41,10 @@ bool FormBuilder::Import(const std::string& filename, bool write_doc)
 
     if (!wxue::is_sameas(root.name(), "wxFormBuilder_Project", wxue::CASE::either))
     {
-        dlgInvalidProject(filename, "wxFormBuilder", "Import wxFormBuilder project");
+        if (allow_ui)
+        {
+            dlgInvalidProject(filename, "wxFormBuilder", "Import wxFormBuilder project");
+        }
         return false;
     }
 
@@ -83,7 +86,10 @@ bool FormBuilder::Import(const std::string& filename, bool write_doc)
     catch (const std::exception& err)
     {
         MSG_ERROR(err.what());
-        dlgImportError(err, filename, "Import wxFormBuilder Project");
+        if (allow_ui)
+        {
+            dlgImportError(err, filename, "Import wxFormBuilder Project");
+        }
         return false;
     }
 
@@ -97,9 +103,12 @@ bool FormBuilder::Import(const std::string& filename, bool write_doc)
             MSG_ERROR(iter);
             errMsg += iter + '\n';
         }
-        wxMessageDialog dlg_msg(nullptr, errMsg, "Import wxFormBuilder project",
-                                wxICON_WARNING | wxOK);
-        dlg_msg.ShowModal();
+        if (allow_ui)
+        {
+            wxMessageDialog dlg_msg(nullptr, errMsg, "Import wxFormBuilder project",
+                                    wxICON_WARNING | wxOK);
+            dlg_msg.ShowModal();
+        }
     }
 
     return true;
@@ -357,14 +366,21 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     ProcessXmlEvents(xml_obj, newobject.get(), parent);
 
-    pugi::xml_node child = xml_obj.child("object");
+    // ProcessChildNodes() replaces newobject with the first child for a FormBuilder sizeritem
+    // (or gbsizeritem/splitteritem) and for an old-style book page. Because the replacement node
+    // is not itself a host type, testing is_OldHostType() after the call would fail to skip that
+    // already-consumed child -- which then gets imported a second time with the replacement node
+    // as its parent. Capture the answer before newobject is reassigned.
+    const bool is_old_host_type = NodeCreation.is_OldHostType(newobject->get_DeclName());
+
     newobject = ProcessChildNodes(xml_obj, newobject, parent, sizeritem);
     if (!newobject)
     {
         return newobject;
     }
-    child = xml_obj.child("object");
-    if (NodeCreation.is_OldHostType(newobject->get_DeclName()))
+
+    pugi::xml_node child = xml_obj.child("object");
+    if (is_old_host_type)
     {
         child = child.next_sibling("object");
     }

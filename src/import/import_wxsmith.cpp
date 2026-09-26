@@ -19,9 +19,9 @@
 
 WxSmith::WxSmith() = default;
 
-bool WxSmith::Import(const std::string& filename, bool write_doc)
+bool WxSmith::Import(const std::string& filename, bool write_doc, bool allow_ui)
 {
-    std::optional<pugi::xml_document> result = LoadDocFile(filename);
+    std::optional<pugi::xml_document> result = LoadDocFile(filename, allow_ui);
     if (!result)
     {
         return false;
@@ -31,7 +31,10 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
     if (!wxue::is_sameas(root.name(), "wxsmith", wxue::CASE::either) &&
         !wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
     {
-        dlgInvalidProject(filename, "wxSmith or XRC", "Import project");
+        if (allow_ui)
+        {
+            dlgInvalidProject(filename, "wxSmith or XRC", "Import project");
+        }
         return false;
     }
 
@@ -49,9 +52,12 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
 
         if (!m_project->get_ChildCount())
         {
-            wxMessageBox(wxString() << wxString::FromUTF8(filename)
-                                    << " does not contain any top level forms.",
-                         "Import");
+            if (allow_ui)
+            {
+                wxMessageBox(wxString() << wxString::FromUTF8(filename)
+                                        << " does not contain any top level forms.",
+                             "Import");
+            }
             return false;
         }
 
@@ -64,7 +70,10 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
     catch (const std::exception& err)
     {
         MSG_ERROR(err.what());
-        dlgImportError(err, filename, "Import Project");
+        if (allow_ui)
+        {
+            dlgImportError(err, filename, "Import Project");
+        }
         return false;
     }
 
@@ -80,9 +89,12 @@ bool WxSmith::Import(const std::string& filename, bool write_doc)
             errMsg += '\n';
         }
 
-        wxMessageDialog dlg_msg(nullptr, wxString::FromUTF8(errMsg), "Import Project",
-                                wxICON_WARNING | wxOK);
-        dlg_msg.ShowModal();
+        if (allow_ui)
+        {
+            wxMessageDialog dlg_msg(nullptr, wxString::FromUTF8(errMsg), "Import Project",
+                                    wxICON_WARNING | wxOK);
+            dlg_msg.ShowModal();
+        }
     }
 
     return true;

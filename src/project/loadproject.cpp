@@ -875,37 +875,37 @@ static constexpr frozen::map<std::string_view, ImportFileType, 8> import_file_ty
         case ImportFileType::wxcp:
             {
                 WxCrafter crafter;
-                result = Import(crafter, import_path);
+                result = Import(crafter, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::fbp:
             {
                 FormBuilder formbuilder;
-                result = Import(formbuilder, import_path);
+                result = Import(formbuilder, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::rc_dlg:
             {
                 WinResource winres;
-                result = Import(winres, import_path);
+                result = Import(winres, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::wxs_xrc:
             {
                 WxSmith smith;
-                result = Import(smith, import_path);
+                result = Import(smith, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::wxg:
             {
                 WxGlade glade;
-                result = Import(glade, import_path);
+                result = Import(glade, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::pjd:
             {
                 DialogBlocks dialogblocks;
-                result = Import(dialogblocks, import_path);
+                result = Import(dialogblocks, import_path, false, allow_ui);
                 break;
             }
         case ImportFileType::unknown:
@@ -926,7 +926,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
 {
     m_isNewProject = false;
     m_ProjectVersion = ImportProjectVersion;
-    if (import.Import(file))
+    if (import.Import(file, true, allow_ui))
     {
 #if defined(INTERNAL_TESTING)
         if (allow_ui)
@@ -966,7 +966,7 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
             return true;
         }
 
-        NodeSharedPtr project_node = NodeCreation.CreateProjectNode(&project);
+        NodeSharedPtr project_node = NodeCreation.CreateProjectNode(&project, allow_ui);
 
         auto SetLangFilenames = [&]()
         {
@@ -1072,7 +1072,9 @@ bool ProjectHandler::Import(ImportXML& import, std::string& file, bool append, b
         // If the file has been created once before, then for the first form, copy the old classname
         // and base filename to the re-converted first form.
 
-        if (m_project_node->get_ChildCount() && wxFileName::FileExists(file))
+        // Interactive-only: this shows a modal dialog on a parse error and reads the mainframe,
+        // so it must not run during a headless import (allow_ui == false).
+        if (allow_ui && m_project_node->get_ChildCount() && wxFileName::FileExists(file))
         {
             xml_doc.reset();
             const pugi::xml_parse_result result = xml_doc.load_file_string(file);
@@ -1329,7 +1331,7 @@ bool ProjectHandler::NewProject(bool create_empty, bool allow_ui)
 void ProjectHandler::AppendWinRes(const wxue::string& rc_file, std::vector<wxue::string>& dialogs)
 {
     WinResource winres;
-    if (winres.ImportRc(rc_file, dialogs))
+    if (winres.ImportRc(rc_file, dialogs, false, m_allow_ui))
     {
         const NodeSharedPtr project = winres.GetProjectPtr();
         for (const auto& child: project->get_ChildNodePtrs())
@@ -1352,7 +1354,7 @@ void ProjectHandler::AppendCrafter(wxArrayString& files)
     {
         WxCrafter crafter;
 
-        if (crafter.Import(file.ToStdString()))
+        if (crafter.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = crafter.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1410,7 +1412,7 @@ void ProjectHandler::AppendFormBuilder(wxArrayString& files)
     {
         FormBuilder form_builder;
 
-        if (form_builder.Import(file.ToStdString()))
+        if (form_builder.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = form_builder.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1468,7 +1470,7 @@ void ProjectHandler::AppendDialogBlocks(wxArrayString& files)
     {
         DialogBlocks db;
 
-        if (db.Import(file.ToStdString()))
+        if (db.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = db.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1526,7 +1528,7 @@ void ProjectHandler::AppendGlade(wxArrayString& files)
     {
         WxGlade glade;
 
-        if (glade.Import(file.ToStdString()))
+        if (glade.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = glade.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1584,7 +1586,7 @@ void ProjectHandler::AppendSmith(wxArrayString& files)
     {
         WxSmith smith;
 
-        if (smith.Import(file.ToStdString()))
+        if (smith.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = smith.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();
@@ -1643,7 +1645,7 @@ void ProjectHandler::AppendXRC(wxArrayString& files)
         // wxSmith files are a superset of XRC files, so we use the wxSmith class to process both
         WxSmith smith;
 
-        if (smith.Import(file.ToStdString()))
+        if (smith.Import(file.ToStdString(), true, m_allow_ui))
         {
             const pugi::xml_document& xml_doc = smith.GetDocument();
             const pugi::xml_node root = xml_doc.first_child();

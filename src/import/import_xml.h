@@ -21,7 +21,8 @@ class ImportXML
 public:
     virtual ~ImportXML() = default;
 
-    virtual bool Import(const std::string& filename, bool write_doc = true) = 0;
+    virtual bool Import(const std::string& filename, bool write_doc = true,
+                        bool allow_ui = true) = 0;
 
     // Valid return ONLY if Import specified with write_doc == true, and parsing worked.
     pugi::xml_document& GetDocument() { return m_docOut; }
@@ -65,7 +66,8 @@ protected:
     void LogUnrecognizedObject(const wxue::string& object_name, Node* parent);
     void ProcessStdDialogButtonSizer(const pugi::xml_node& xml_obj, Node* new_node, Node* parent);
     static void FixupSizerAlignment(Node* new_node, Node* parent);
-    [[nodiscard]] std::optional<pugi::xml_document> LoadDocFile(const std::string& file);
+    [[nodiscard]] std::optional<pugi::xml_document> LoadDocFile(const std::string& file,
+                                                                bool allow_ui = true);
     GenEnum::GenName ConvertToGenName(const std::string& object_name, Node* parent);
 
     void ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop);

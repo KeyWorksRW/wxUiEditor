@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="ImportTestDialog">
+		<title>Import Test Dialog</title>
+		<object class="wxBoxSizer" variable="BoxSizer1" member="yes">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<object class="wxStaticText" name="ID_STATICTEXT1" variable="StaticText1" member="yes">
+					<label>Hello World!</label>
+				</object>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<option>0</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxTextCtrl" name="ID_TEXTCTRL1" variable="TextCtrl1" member="yes">
+					<value></value>
+				</object>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<option>0</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxButton" name="ID_BUTTON1" variable="Button1" member="yes">
+					<label>OK</label>
+				</object>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<option>0</option>
+			</object>
+		</object>
+	</object>
+</wxsmith>

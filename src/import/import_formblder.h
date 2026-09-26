@@ -22,7 +22,7 @@ public:
     FormBuilder() = default;
     ~FormBuilder() = default;
 
-    bool Import(const std::string& filename, bool write_doc = true) override;
+    bool Import(const std::string& filename, bool write_doc = true, bool allow_ui = true) override;
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 
 protected:

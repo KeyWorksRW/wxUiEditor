@@ -18,7 +18,8 @@ locale = "en-us"
 
 # Ignore any word containing an ampersand (UI accelerators like "Styl&e" or "Striket&hrough")
 extend-ignore-re = [
-    "\\b\\w*&\\w*\\b",
+    "\\b\\w*&\\w*\\b",                                # UI accelerators like "Styl&e"
+    "(?Rm)^.*(#|//)\\s*spellchecker:disable-line$",    # per-line opt-out marker
 ]
 
 # Custom dictionary additions

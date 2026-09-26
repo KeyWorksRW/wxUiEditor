@@ -14,6 +14,7 @@ build-ubuntu/
 tests/*
 !tests/import_tests/
 !tests/scripts/
+!tests/unit/
 deno.jsonc
 
 # Ignore clangd cache

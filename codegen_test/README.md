@@ -1,15 +1,19 @@
 # DEPRECATED
 
-With the change to using CMake's FetchContent instead of maintaining our own copy of the wxWidgets source code, this sub-directory can no longer be built. The only reason it is still here is because if we ever change to using wxFetch as a sub-module, then this could be enabled again.
+With the change to using CMake’s FetchContent instead of maintaining our own copy of the wxWidgets source code, this
+sub-directory can no longer be built.
 
-In the meantime, the best coverage is the wxUiTesting project where both wxWidgets 3.2 and 3.3 C++ code can be tested, along with Perl, Python, and Ruby code.
+A different method of testing is in progress -- see the tests/ directory.
 
-## Old Notes
+## Automated validation (CI)
 
-This directory is used to verify that wxUiEditor generates C++ code that compiles correctly. The steps to check from this directory are:
+The wxPython output of this project is checked on Linux by `.github/workflows/unit_tests.yml`:
 
-1) cd ..
-2) cmake --build build --config Release --target wxUiEditor
-3) cd codegen_test
-4) ..\build\bin\Release\wxUiEditor.exe --gen_cpp codegen_test.wxui
-5) cmake --build build --config Release --target check_build
+1. `wxUiEditor --gen_python codegen_test.wxui` regenerates `python/`.
+2. `tests/scripts/run_wxpython.py python/` imports every generated module and constructs every top-level window it
+   defines, under `xvfb-run`. This is Tier 2 -- `py_compile` alone would only prove the modules parse.
+3. Python and wxPython are both pinned, wxPython is installed from a binary wheel only, and the block is
+   `continue-on-error`: a missing wheel must never red-line the pipeline.
+
+Locally: generate the code, then run `python tests/scripts/run_wxpython.py codegen_test/python` (needs a display and
+wxPython).

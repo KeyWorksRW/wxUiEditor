@@ -65,6 +65,11 @@ endif()
 
 option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 
+# Registers the CLI tests (tests/CMakeLists.txt) with CTest. Off by default: a normal
+# build must not depend on CTest, and CI turns this on explicitly. Not include(CTest) --
+# that defaults BUILD_TESTING to ON and would register tests in every developer build.
+option(WXUI_BUILD_TESTS "Register wxUiEditor tests with CTest" OFF)
+
 # Setting these will add a matching compiler definition. What that will enable in the code is
 # not set -- it's used for a long-running feature that will only be enabled in regular builds
 # when the feature is ready for release or testing.
@@ -451,21 +456,24 @@ endif()
 
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 
-target_include_directories(wxUiEditor PRIVATE
+# Include directories shared by wxUiEditor and wxui_core (the static library the unit tests
+# link). Declared once so the library's view of the codebase cannot silently drift from the
+# application's.
+set(WXUI_INCLUDE_DIRS
     ${wxWidgets_SOURCE_DIR}/include
 )
 
 if(WIN32)
-    target_include_directories(wxUiEditor PRIVATE
+    list(APPEND WXUI_INCLUDE_DIRS
         ${wxWidgets_BUILD_DIR}/lib/vc_x64_lib/mswu
     )
 elseif(APPLE)
-    target_include_directories(wxUiEditor PRIVATE
+    list(APPEND WXUI_INCLUDE_DIRS
         ${wxWidgets_SOURCE_DIR}/include
         ${wxWidgets_BUILD_DIR}/lib/osx_cocoa-unicode-static
     )
 elseif(UNIX)
-    target_include_directories(wxUiEditor PRIVATE
+    list(APPEND WXUI_INCLUDE_DIRS
         ${wxWidgets_SOURCE_DIR}/include
         ${wxWidgets_BUILD_DIR}/lib/gtk3_unixu-3.3/include
     )
@@ -473,7 +481,7 @@ else()
     message(FATAL_ERROR "Unsupported platform: Only WIN32, APPLE, or UNIX are supported.")
 endif()
 
-target_include_directories(wxUiEditor PRIVATE
+list(APPEND WXUI_INCLUDE_DIRS
 
     ${CMAKE_CURRENT_LIST_DIR}/src/wxue_namespace
     ${CMAKE_CURRENT_LIST_DIR}/src/
@@ -494,6 +502,7 @@ target_include_directories(wxUiEditor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/pugixml
 )
 
+target_include_directories(wxUiEditor PRIVATE ${WXUI_INCLUDE_DIRS})
 
 foreach(component ${wxWidgets_REQUIRED_COMPONENTS})
     list(APPEND wxWidgets_LIBRARIES wx${component})
@@ -503,8 +512,31 @@ endforeach()
 # wx/setup.h) transitively -- wxWidgets_BUILD_DIR is not set by FetchContent.
 target_link_libraries(art_files PRIVATE ${wxWidgets_LIBRARIES})
 
+# Static library of the display-free, GUI-independent translation units (the wxue:: string helpers
+# and the text-diff engine). wxUiEditor links it so those files are compiled exactly once, and the
+# Catch2 unit tests link the same object files -- there is no second copy of the code to drift.
+# It uses the same precompiled header as wxUiEditor because the wxue_namespace sources rely on the
+# ASSERT_MSG/FAIL_MSG macros that src/pch.h pulls in.
+add_library(wxui_core STATIC ${wxui_core_files})
+target_include_directories(wxui_core PUBLIC ${WXUI_INCLUDE_DIRS})
+target_precompile_headers(wxui_core PRIVATE "src/pch.h")
+target_compile_definitions(wxui_core PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
+target_link_libraries(wxui_core PUBLIC ${wxWidgets_LIBRARIES})
+
+if(MSVC)
+    target_compile_options(wxui_core PRIVATE "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
+else()
+    target_compile_options(wxui_core PRIVATE
+        -finput-charset=UTF-8 -fexec-charset=UTF-8
+        -Wall
+        -Wextra
+        -Wshadow
+    )
+endif()
+
 target_link_libraries(wxUiEditor PRIVATE
     art_files
+    wxui_core
     ${wxWidgets_LIBRARIES}
     ${SYSTEM_LIBS}
     glaze::glaze
@@ -513,6 +545,19 @@ target_link_libraries(wxUiEditor PRIVATE
     ftsrch
     docparser
 )
+
+# ###################### Tests (CTest) #######################
+# enable_testing() must be top-level and before add_subdirectory(tests) or ctest will not find
+# the tests. Placed after the wxWidgets components are resolved so tests/CMakeLists.txt can link
+# the same libraries as the editor. The tests need no display and no language compiler; that is
+# why they can run headless in CI.
+if(WXUI_BUILD_TESTS)
+    if(NOT INTERNAL_BLD_TESTING)
+        message(NOTICE "WXUI_BUILD_TESTS: internal-only tests will be skipped")
+    endif()
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 # ###################### Embedded wxWidgetsDocs.zip (CMakeRC) #######################
 # build_docs.cmake guarantees the zip exists before we embed it.

@@ -33,6 +33,7 @@
 
 #include "import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
 
+#include "base_generator.h"    // BaseGenerator -- Base widget generator class
 #include "dlg_msgs.h"          // wxMessageDialog dialogs
 #include "mainapp.h"           // App -- Main application class
 #include "node.h"              // Node class
@@ -547,39 +548,9 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
             return;
         }
 
-        if (parent->is_Sizer() && parent->get_Parent()->is_Form())
-        {
-            node = NodeCreation.CreateNode(get_GenName, parent->get_Parent()).first;
-            if (node)
-            {
-                parent = parent->get_Parent();
-            }
-        }
-
-        // DialogBlocks will sometimes put the statusbar nested under two sizers.
-        else if (get_GenName == gen_wxStatusBar)
-        {
-            if (auto* form = parent->get_Form(); form)
-            {
-                node = NodeCreation.CreateNode(get_GenName, form).first;
-                if (node)
-                {
-                    parent = form;
-                }
-            }
-        }
-        else if (map_GenTypes.at(parent->get_GenType()).find("book") != std::string_view::npos)
-        {
-            if (auto page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first; page_ctrl)
-            {
-                if (node = NodeCreation.CreateNode(get_GenName, page_ctrl.get()).first; node)
-                {
-                    page_ctrl->AdoptChild(node);
-                    parent->AdoptChild(page_ctrl);
-                    allow_adoption = false;
-                }
-            }
-        }
+        // DialogBlocks permits constructs that wxUiEditor does not, so the node may have to be
+        // moved to a different parent, or wrapped in a gen_PageCtrl.
+        node = CreateFallbackNode(get_GenName, parent, allow_adoption);
     }
 
     if (!node)
@@ -663,9 +634,75 @@ void DialogBlocks::CreateChildNode(pugi::xml_node& child_xml, Node* parent)
     }
 }
 
+// Called when a node could not be created as a direct child of the parent it was declared under.
+// DialogBlocks allows constructs that wxUiEditor does not, so this either creates the node under a
+// different parent, or inserts a gen_PageCtrl between a book control and the page it contains.
+//
+// Returns the created node, or nullptr if none of the fallbacks apply. If the node's actual parent
+// differs from the one passed in, `parent` is updated. When this function has already adopted the
+// node (the book-control case adopts both the PageCtrl and the node), `adopt_node` is set to false.
+NodeSharedPtr DialogBlocks::CreateFallbackNode(GenEnum::GenName get_GenName, Node*& parent,
+                                               bool& adopt_node)
+{
+    // A control can be declared under a sizer even though it belongs to the form itself.
+    if (parent->is_Sizer() && parent->get_Parent()->is_Form())
+    {
+        const NodeSharedPtr node = NodeCreation.CreateNode(get_GenName, parent->get_Parent()).first;
+        if (node)
+        {
+            parent = parent->get_Parent();
+        }
+        return node;
+    }
+
+    // DialogBlocks will sometimes put the statusbar nested under two sizers.
+    if (get_GenName == gen_wxStatusBar)
+    {
+        if (Node* form = parent->get_Form(); form)
+        {
+            const NodeSharedPtr node = NodeCreation.CreateNode(get_GenName, form).first;
+            if (node)
+            {
+                parent = form;
+            }
+            return node;
+        }
+        return nullptr;
+    }
+
+    // A book control only accepts gen_BookPage or gen_PageCtrl children, but DialogBlocks lets any
+    // window be a page, so insert a gen_PageCtrl to hold the control.
+    if (map_GenTypes.at(parent->get_GenType()).find("book") != std::string_view::npos)
+    {
+        if (const NodeSharedPtr page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first;
+            page_ctrl)
+        {
+            if (const NodeSharedPtr node =
+                    NodeCreation.CreateNode(get_GenName, page_ctrl.get()).first;
+                node)
+            {
+                page_ctrl->AdoptChild(node);
+                parent->AdoptChild(page_ctrl);
+                adopt_node = false;
+                return node;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
 void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
 {
-    const NodeSharedPtr node = NodeCreation.CreateNode(gen_CustomControl, parent).first;
+    bool adopt_node = true;
+    NodeSharedPtr node = NodeCreation.CreateNode(gen_CustomControl, parent).first;
+    if (!node)
+    {
+        // A custom control can be a page of a book control, or a child of a sizer whose parent is
+        // the form -- the same fallbacks that CreateChildNode() uses.
+        node = CreateFallbackNode(gen_CustomControl, parent, adopt_node);
+    }
+
     if (!node)
     {
 #if defined(_DEBUG)
@@ -676,12 +713,44 @@ void DialogBlocks::CreateCustomNode(pugi::xml_node& child_xml, Node* parent)
                              << wxString(map_GenNames.at(parent->get_GenName())) << "\n"
                              << msg);
 #endif  // _DEBUG
-        m_errors.emplace(std::string("Unable to create ") +
-                         std::string(map_GenNames.at(gen_CustomControl)));
+
+        // Include the class name and the parent -- m_errors is a std::set, so without them every
+        // lost custom control collapses into a single message that doesn't say which one failed.
+        std::string error_msg = "Unable to create ";
+        if (auto class_node = child_xml.find_child_by_attribute("string", "name", "proxy-Class");
+            class_node)
+        {
+            error_msg += ExtractQuotedString(class_node).ToStdString();
+        }
+        else
+        {
+            error_msg += std::string(map_GenNames.at(gen_CustomControl));
+        }
+        if (parent)
+        {
+            // GetHelpText() gives the user-facing name rather than the (possibly derived) class
+            // name. E.g., the parent might be a CDlgWithNotebook, but the user needs to see
+            // wxNotebook.
+            wxue::string parent_name = parent->get_Generator()->GetHelpText(parent);
+            if (!parent_name.empty() && parent_name != "wxWidgets")
+            {
+#if defined(_DEBUG)
+                // Debug builds also include the filename passed to the browser if Help is
+                // requested, which is not useful in a message box.
+                parent_name.erase_from('(');
+#endif  // _DEBUG
+                error_msg += " as a child of ";
+                error_msg += parent_name;
+            }
+        }
+        m_errors.emplace(error_msg);
         return;
     }
 
-    parent->AdoptChild(node);
+    if (adopt_node)
+    {
+        parent->AdoptChild(node);
+    }
 
     SetNodeState(child_xml, node);       // Set disabled and hidden states
     SetNodeDimensions(child_xml, node);  // Set pos and size

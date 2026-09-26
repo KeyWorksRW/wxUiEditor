@@ -49,6 +49,12 @@ protected:
     void CreateChildNode(pugi::xml_node& child_xml, Node* parent);
     void CreateCustomNode(pugi::xml_node& child_xml, Node* parent);
 
+    // Fallbacks for a node that cannot be created as a direct child of the parent it was declared
+    // under. If the node's actual parent differs from `parent`, then `parent` is updated. When the
+    // node has already been adopted by this function (a gen_PageCtrl was inserted), `adopt_node` is
+    // set to false so the caller does not adopt it a second time.
+    NodeSharedPtr CreateFallbackNode(GenEnum::GenName get_GenName, Node*& parent, bool& adopt_node);
+
     // Process all the style-like attributes for the current node
     void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 

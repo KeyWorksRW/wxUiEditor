@@ -19,6 +19,7 @@
         var_name="m_pSizer">
         <node
           class="wxSplitterWindow"
+          min_pane_size="0"
           sashgravity="0.5"
           sashpos="120"
           splitmode="wxSPLIT_HORIZONTAL"

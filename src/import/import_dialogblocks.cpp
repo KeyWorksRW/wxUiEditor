@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2023-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-15-2026]
+// CR: [09-26-2026]
 
 /*
  * DialogBlocks uses <document> for objects, and all properties are stored as <string>, <long>
@@ -34,13 +34,13 @@
 
 #include "import_dialogblocks.h"  // DialogBlocks -- Import a DialogBlocks project
 
-#include "base_generator.h"    // BaseGenerator -- Base widget generator class
-#include "dlg_msgs.h"          // wxMessageDialog dialogs
-#include "mainapp.h"           // App -- Main application class
-#include "node.h"              // Node class
-#include "node_creator.h"      // NodeCreator class
-#include "version.h"           // Version information for wxUiEditor and wxWidgets
-#include "wxue_view_vector.h"  // ViewVector -- wxue::ViewVector class
+#include "base_generator.h"      // BaseGenerator -- Base widget generator class
+#include "dlg_msgs.h"            // wxMessageDialog dialogs
+#include "mainapp.h"             // App -- Main application class
+#include "node.h"                // Node class
+#include "node_creator.h"        // NodeCreator class
+#include "version.h"             // Version information for wxUiEditor and wxWidgets
+#include "wxue_string_vector.h"  // wxue::StringVector -- wxue::atoi
 
 DialogBlocks::DialogBlocks() = default;
 
@@ -77,6 +77,10 @@ bool DialogBlocks::Import(const std::string& filename, bool write_doc, bool allo
         }
 
         m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
+        if (!m_project)
+        {
+            throw std::runtime_error("Unable to create project node");
+        }
         m_project->set_value(prop_code_preference, "C++");
 
         pugi::xml_node option =
@@ -187,7 +191,7 @@ bool DialogBlocks::Import(const std::string& filename, bool write_doc, bool allo
 bool DialogBlocks::CreateFolderNode(pugi::xml_node& form_xml, const NodeSharedPtr& parent)
 {
     if (auto folder = form_xml.find_child_by_attribute("string", "name", "type");
-        folder && folder.text().as_sview() == "\"html-folder-document\"")
+        folder && ExtractQuotedString(folder) == "html-folder-document")
     {
         if (auto folder_name = form_xml.find_child_by_attribute("string", "name", "title");
             folder_name)
@@ -402,9 +406,20 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
     {
         pugi::xml_node widgets_class =
             form_xml.find_child_by_attribute("string", "name", "proxy-type");
-        if (widgets_class && ExtractQuotedString(widgets_class) == "wxApp")
+        if (widgets_class)
         {
-            return true;  // Don't support app class, but it's not a folder
+            // Apply the same proxy-type conversion DetermineFormGenName() uses, otherwise the
+            // normal DialogBlocks encoding ("wbAppProxy") never matches "wxApp".
+            wxString type_name = ExtractQuotedString(widgets_class);
+            if (type_name.starts_with("wb"))
+            {
+                type_name[1] = 'x';
+            }
+            type_name.Replace("Proxy", "");
+            if (type_name == "wxApp")
+            {
+                return true;  // Don't support app class, but it's not a folder
+            }
         }
         return false;
     }
@@ -712,7 +727,8 @@ NodeSharedPtr DialogBlocks::CreateFallbackNode(GenEnum::GenName get_GenName, Nod
 
     // A book control only accepts gen_BookPage or gen_PageCtrl children, but DialogBlocks lets any
     // window be a page, so insert a gen_PageCtrl to hold the control.
-    if (map_GenTypes.at(parent->get_GenType()).find("book") != std::string_view::npos)
+    if (auto it = map_GenTypes.find(parent->get_GenType());
+        it != map_GenTypes.end() && it->second.find("book") != std::string_view::npos)
     {
         if (const NodeSharedPtr page_ctrl = NodeCreation.CreateNode(gen_PageCtrl, parent).first;
             page_ctrl)
@@ -970,6 +986,16 @@ void DialogBlocks::SetNodeVarname(pugi::xml_node& node_xml, const NodeSharedPtr&
                 }
             }
         }
+        else if (auto value = node_xml.find_child_by_attribute("string", "name", "identifier");
+                 value)
+        {
+            const wxString name = ExtractQuotedString(value);
+            if (!name.empty())
+            {
+                prop->set_value(name);
+                new_node->set_value(prop_class_access, "none");
+            }
+        }
     }
 }
 
@@ -1031,9 +1057,19 @@ void DialogBlocks::SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedP
         {
             size.SetWidth(value.text().as_int());
         }
+        else if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Width");
+                 value)
+        {
+            size.SetWidth(wxue::atoi(ExtractQuotedString(value).ToStdString()));
+        }
         if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Height"); value)
         {
             size.SetHeight(value.text().as_int());
+        }
+        else if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Height");
+                 value)
+        {
+            size.SetHeight(wxue::atoi(ExtractQuotedString(value).ToStdString()));
         }
         prop->set_value(size);
         if (m_class_uses_dlg_units)
@@ -1102,7 +1138,7 @@ void DialogBlocks::ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& 
             value)
         {
             const wxString event_text = ExtractQuotedString(value);
-            wxue::ViewVector event_parts(event_text.ToStdString(), '|');
+            wxue::StringVector event_parts(event_text.ToStdString(), '|');
             ASSERT(event_parts.size() > 1);
             if (event_parts.size() > 1)
             {
@@ -1688,7 +1724,14 @@ void DialogBlocks::ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& 
     {
         if (!dialog_styles.empty())
         {
-            new_node->set_value(prop_style, dialog_styles);
+            if (prop_styles.empty())
+            {
+                new_node->set_value(prop_style, dialog_styles);
+            }
+            else
+            {
+                new_node->set_value(prop_style, prop_styles + '|' + dialog_styles);
+            }
         }
         if (!dialog_exstyles.empty())
         {
@@ -1917,7 +1960,7 @@ void DialogBlocks::ProcessMiscStringChildren(pugi::xml_node& node_xml, const Nod
             {
                 case prop_contents:
                     {
-                        const wxue::ViewVector multi(str.ToStdString(), '|');
+                        const wxue::StringVector multi(str.ToStdString(), '|');
                         str.clear();
                         for (auto& iter: multi)
                         {
@@ -1957,7 +2000,7 @@ void DialogBlocks::ProcessMiscStringChildren(pugi::xml_node& node_xml, const Nod
                     }
                     else if (str == "Rows")
                     {
-                        node->set_value(prop_selection_mode, "wxGridSelectRowss");
+                        node->set_value(prop_selection_mode, "wxGridSelectRows");
                     }
                     else if (str == "Columns")
                     {
@@ -1999,7 +2042,7 @@ void DialogBlocks::ProcessMiscStringChildren(pugi::xml_node& node_xml, const Nod
                         str.erase(0, 3);
                         str.insert(0, "wxSYS_COLOUR_");
                     }
-                    else if (!str.starts_with('#'))
+                    else if (!str.starts_with('#') && !str.starts_with("wx"))
                     {
                         str.insert(0, "#");
                     }
@@ -2082,7 +2125,7 @@ void DialogBlocks::ProcessMiscLongChildren(pugi::xml_node& node_xml, const NodeS
         }
         if (const auto* result = map_proxy_names.find(name); result != map_proxy_names.end())
         {
-            if (string_xml.text().as_int() > 0)
+            if (!string_xml.text().empty())
             {
                 switch (result->second)
                 {
@@ -2203,6 +2246,7 @@ void DialogBlocks::ProcessMiscBoolChildren(pugi::xml_node& node_xml, const NodeS
                             node->set_value(prop_style, "rows");
                         }
                     }
+                    break;
 
                 default:
                     if (auto* prop = node->get_PropPtr(result->second); prop)

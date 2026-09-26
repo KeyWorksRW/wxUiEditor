@@ -17,7 +17,7 @@ class DialogBlocks : public ImportXML
 {
 public:
     DialogBlocks();
-    virtual ~DialogBlocks() = default;
+    ~DialogBlocks() = default;
 
     DialogBlocks(const DialogBlocks&) = delete;
     DialogBlocks& operator=(const DialogBlocks&) = delete;
@@ -84,8 +84,8 @@ protected:
     // subtree with it. m_errors is a std::set, so the class name alone collapses every lost node of
     // that class into one line -- the variable name and parent distinguish them, and the descendant
     // count tells the user how much was lost.
-    std::string DescribeLostNode(pugi::xml_node& node_xml, Node* parent,
-                                 std::string_view class_name);
+    static std::string DescribeLostNode(pugi::xml_node& node_xml, Node* parent,
+                                        std::string_view class_name);
 
 private:
     // Helper methods for CreateFormNode

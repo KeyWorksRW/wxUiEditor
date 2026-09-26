@@ -463,6 +463,11 @@ bool DialogBlocks::CreateFormNode(pugi::xml_node& form_xml, const NodeSharedPtr&
     ProcessStyles(form_xml, form);
     ProcessEvents(form_xml, form);
 
+    // ProcessMisc() is what copies a form's colour, tooltip, help-text and bitmap properties, but
+    // only the child-node path used to call it, so those properties were dropped for the form
+    // itself. The get_PropPtr() checks inside skip anything a generator does not declare.
+    ProcessMisc(form_xml, form);
+
     for (auto& child_xml: form_xml.children("document"))
     {
         CreateChildNode(child_xml, form.get());
@@ -1906,7 +1911,20 @@ void DialogBlocks::ProcessMiscStringChildren(pugi::xml_node& node_xml, const Nod
                 case prop_hover_color:
                 case prop_normal_color:
                 case prop_visited_color:
-                    str.insert(0, "#");
+                    // DialogBlocks stores a colour as bare hex ("FFFFFF"), as #-prefixed hex
+                    // ("#FF0000"), or as a "$WX<NAME>" system-colour token ("$WXMENU").
+                    // wxUiEditor wants either "#RRGGBB" or a "wxSYS_COLOUR_<NAME>" name, so the
+                    // bare hex needs a '#', the #-prefixed value must not gain a second one, and
+                    // the token maps onto the system-colour name.
+                    if (str.starts_with("$WX"))
+                    {
+                        str.erase(0, 3);
+                        str.insert(0, "wxSYS_COLOUR_");
+                    }
+                    else if (!str.starts_with('#'))
+                    {
+                        str.insert(0, "#");
+                    }
                     node->set_value(result->second, str);
                     break;
 

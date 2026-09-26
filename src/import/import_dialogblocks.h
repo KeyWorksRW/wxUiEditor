@@ -58,8 +58,9 @@ protected:
     // Process all the style-like attributes for the current node
     void ProcessStyles(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
-    // Add all events for the current node
-    static void ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
+    // Add all events for the current node. Not static -- a handler that has to be discarded is
+    // recorded in m_errors so the user is told rather than the handler vanishing silently.
+    void ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& new_node);
 
     // This will walk through all the immediate children of the current node, and process any
     // known proxy settings.

@@ -1039,6 +1039,10 @@ void DialogBlocks::ProcessEvents(pugi::xml_node& node_xml, const NodeSharedPtr& 
                 {
                     node_event->set_value(event_parts[1]);
                 }
+                else
+                {
+                    LogUnassignedEvent(new_node.get(), event_parts[0], event_parts[1]);
+                }
             }
         }
         else

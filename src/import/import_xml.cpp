@@ -118,6 +118,7 @@ namespace xrc_import
         { "wxEVT_COMMAND_CHECKBOX_CLICKED", "wxEVT_CHECKBOX" },
         { "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED", "wxEVT_CHECKLISTBOX" },
         { "wxEVT_COMMAND_CHOICE_SELECTED", "wxEVT_CHOICE" },
+        { "wxEVT_COMMAND_COLLPANE_CHANGED", "wxEVT_COLLAPSIBLEPANE_CHANGED" },
         { "wxEVT_COMMAND_COMBOBOX_CLOSEUP", "wxEVT_COMBOBOX_CLOSEUP" },
         { "wxEVT_COMMAND_COMBOBOX_DROPDOWN", "wxEVT_COMBOBOX_DROPDOWN" },
         { "wxEVT_COMMAND_COMBOBOX_SELECTED", "wxEVT_COMBOBOX" },
@@ -126,8 +127,12 @@ namespace xrc_import
         { "wxEVT_COMMAND_MENU_SELECTED", "wxEVT_MENU" },
         { "wxEVT_COMMAND_RADIOBOX_SELECTED", "wxEVT_RADIOBOX" },
         { "wxEVT_COMMAND_RADIOBUTTON_SELECTED", "wxEVT_RADIOBUTTON" },
+        { "wxEVT_COMMAND_RIBBONTOOL_CLICKED", "wxEVT_RIBBONTOOLBAR_CLICKED" },
+        { "wxEVT_COMMAND_RIBBONTOOL_DROPDOWN_CLICKED", "wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED" },
         { "wxEVT_COMMAND_SCROLLBAR_UPDATED", "wxEVT_SCROLLBAR" },
         { "wxEVT_COMMAND_SLIDER_UPDATED", "wxEVT_SLIDER" },
+        { "wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED", "wxEVT_SPINCTRLDOUBLE" },
+        { "wxEVT_COMMAND_SPINCTRL_UPDATED", "wxEVT_SPINCTRL" },
         { "wxEVT_COMMAND_TEXT_COPY", "wxEVT_TEXT_COPY" },
         { "wxEVT_COMMAND_TEXT_CUT", "wxEVT_TEXT_CUT" },
         { "wxEVT_COMMAND_TEXT_ENTER", "wxEVT_TEXT_ENTER" },
@@ -136,6 +141,7 @@ namespace xrc_import
         { "wxEVT_COMMAND_TEXT_UPDATED", "wxEVT_TEXT" },
         { "wxEVT_COMMAND_TEXT_URL", "wxEVT_TEXT_URL" },
         { "wxEVT_COMMAND_THREAD", "wxEVT_THREAD" },
+        { "wxEVT_COMMAND_TOGGLEBUTTON_CLICKED", "wxEVT_TOGGLEBUTTON" },
         { "wxEVT_COMMAND_TOOL_CLICKED", "wxEVT_TOOL" },
         { "wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED", "wxEVT_TOOL_DROPDOWN" },
         { "wxEVT_COMMAND_TOOL_ENTER", "wxEVT_TOOL_ENTER" },
@@ -1356,12 +1362,14 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
 
     std::string event_name("wx");
     event_name += xml_obj.attribute("entry").value();
-    NodeEvent* event = node->get_Event(event_name);
-    if (event)
+    const std::string_view handler = xml_obj.attribute("function").value();
+    if (NodeEvent* node_event = node->get_Event(GetCorrectEventName(event_name)); node_event)
     {
-        event->set_value(xml_obj.attribute("function").value());
+        node_event->set_value(handler);
         return;
     }
+
+    LogUnassignedEvent(node, event_name, handler);
 }
 
 // Helper for removing alignment flags that conflict with the parent sizer's orientation
@@ -1787,13 +1795,50 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
     return gen_unknown;
 }
 
-std::string_view ImportXML::GetCorrectEventName(std::string_view name)
+std::string ImportXML::GetCorrectEventName(std::string_view name)
 {
     if (const auto* result = map_old_events.find(name); result != map_old_events.end())
     {
-        return result->second;
+        return std::string(result->second);
     }
-    return name;
+
+    // wxWidgets 2.x prefixed almost every event name with wxEVT_COMMAND_. For the regular names
+    // the modern spelling is the old name with COMMAND_ removed, so only the irregular
+    // translations need an entry in map_old_events above. A name the rule builds that no
+    // generator declares behaves exactly as an untranslated name did -- get_Event() fails.
+    constexpr std::string_view old_prefix = "wxEVT_COMMAND_";
+    if (name.starts_with(old_prefix))
+    {
+        // Drop "COMMAND_", keeping the wxEVT_ prefix. The result is not a substring of the
+        // input, so it has to be assembled rather than returned as a view.
+        std::string modern("wxEVT_");
+        modern += name.substr(old_prefix.size());
+        return modern;
+    }
+
+    return std::string(name);
+}
+
+// Records an event handler that had to be discarded because the node does not declare the
+// event. Adding it to m_errors tells the user -- otherwise the handler silently disappears and
+// the event simply never arrives in the imported project.
+void ImportXML::LogUnassignedEvent(Node* node, std::string_view event_name,
+                                   std::string_view handler)
+{
+    std::string msg("Unable to assign handler for ");
+    msg += event_name;
+    if (node)
+    {
+        msg += " to ";
+        msg += node->get_DeclName();
+    }
+    if (!handler.empty())
+    {
+        msg += " (";
+        msg += handler;
+        msg += ')';
+    }
+    m_errors.emplace(std::move(msg));
 }
 
 void ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node)

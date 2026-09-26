@@ -36,7 +36,7 @@ public:
 
     // This will check for an obsolete event name, and if found, it will return the 3.x
     // version of the name. Otherwise, it returns name unmodified.
-    static std::string_view GetCorrectEventName(std::string_view name);
+    static std::string GetCorrectEventName(std::string_view name);
 
     // Only call this from an XRC importer (e.g., wxSMITH)
     NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
@@ -64,6 +64,7 @@ protected:
     void ProcessFont(const pugi::xml_node& xml_obj, Node* node);
     void ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent);
     void LogUnrecognizedObject(const wxue::string& object_name, Node* parent);
+    void LogUnassignedEvent(Node* node, std::string_view event_name, std::string_view handler);
     void ProcessStdDialogButtonSizer(const pugi::xml_node& xml_obj, Node* new_node, Node* parent);
     static void FixupSizerAlignment(Node* new_node, Node* parent);
     [[nodiscard]] std::optional<pugi::xml_document> LoadDocFile(const std::string& file,

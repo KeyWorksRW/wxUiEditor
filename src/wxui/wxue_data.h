@@ -37,7 +37,7 @@ namespace wxue_data
     std::string get_widgets();     // ../xml/widgets.xml
 
     // ../xml/bars.xml
-    extern const unsigned char bars[6328]; // Original size: 39,541 bytes
+    extern const unsigned char bars[6414]; // Original size: 39,836 bytes
     // ../xml/boxes.xml
     extern const unsigned char boxes[2429]; // Original size: 14,336 bytes
     // ../xml/buttons.xml
@@ -59,7 +59,7 @@ namespace wxue_data
     // ../xml/sizers.xml
     extern const unsigned char sizers[2268]; // Original size: 12,871 bytes
     // ../xml/text_ctrls.xml
-    extern const unsigned char text_ctrls[7105]; // Original size: 30,396 bytes
+    extern const unsigned char text_ctrls[7104]; // Original size: 30,395 bytes
     // ../xml/widgets.xml
     extern const unsigned char widgets[6714]; // Original size: 28,672 bytes
 }

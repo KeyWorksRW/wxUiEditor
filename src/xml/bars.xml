@@ -28,7 +28,7 @@
 			<option name="wxTB_DOCKABLE"
                 help="Makes the toolbar floatable and dockable (GTK only)."/>
 			<option name="wxTB_HORIZONTAL"
-                help="Specifies horizontal layout."/>
+                help="Specifies horizontal layout (default)."/>
 			<option name="wxTB_VERTICAL"
                 help="Specifies vertical layout."/>
 			<option name="wxTB_TEXT"
@@ -132,7 +132,7 @@
         <event name="wxEVT_TOOL_RCLICKED" class="wxCommandEvent"
             help=""/>
         <event name="wxEVT_TOOL_ENTER" class="wxCommandEvent"
-            help="This uses the tools parent ID, the ToolBar, so be sure you set it to something that is not the default. The value of wxCommandEvent::GetSelection is the tool id, or -1 if the mouse cursor has moved off a tool."/>
+            help="This uses the tool's parent ID, the ToolBar, so be sure you set it to something that is not the default. The value of wxCommandEvent::GetSelection is the tool id, or -1 if the mouse cursor has moved off a tool."/>
         <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
             help=""/>
     </gen>
@@ -180,7 +180,7 @@
             help="The default separator size. This is the size between each toolbar tool set.">5</property>
         <property name="style" type="bitlist">
             <option name="wxAUI_TB_TEXT"
-                help="Shows the text in the toolbar buttons; by default only icons are shown. "/>
+                help="Shows the text in the toolbar buttons; by default only icons are shown."/>
 			<option
                 name="wxAUI_TB_NO_TOOLTIPS"
                 help="Don't show tooltips on wxAuiToolBar items."/>
@@ -194,7 +194,7 @@
                 help="Using this style forces the toolbar to be vertical and be only dockable to the left or right sides of the window whereas by default it can be horizontal or vertical and be docked anywhere."/>
 			<option
                 name="wxAUI_TB_HORZ_LAYOUT"
-                help="Shows the text and the icons alongside, not vertically stacked. This style must be used with wxAUI_TB_TEXT"/>
+                help="For horizontal toolbars, shows the text and the icons alongside, not vertically stacked. This style must be used with wxAUI_TB_TEXT, and cannot be used with wxAUI_TB_VERTICAL."/>
 			<option
                 name="wxAUI_TB_HORIZONTAL"
                 help="Analogous to wxAUI_TB_VERTICAL, but forces the toolbar to be horizontal, docking to the top or bottom of the window."/>
@@ -203,13 +203,13 @@
                 help="Draw a plain background (based on parent) instead of the default gradient background."/>
 			<option
                 name="wxAUI_TB_HORZ_TEXT"
-                help="Shows the text alongside the icons, not vertically stacked."/>
+                help="Combination of wxAUI_TB_HORZ_LAYOUT and wxAUI_TB_TEXT."/>
 			<option
-                name="wxAUI_ORIENTATION_MASK "
-                help="Shows the text in the toolbar buttons. By default only icons are shown."/>
+                name="wxAUI_ORIENTATION_MASK"
+                help="A mask combining the wxAUI_TB_VERTICAL and wxAUI_TB_HORIZONTAL styles. This is not a style on its own; use one of those two styles to force the toolbar orientation."/>
 			<option
                 name="wxAUI_TB_DEFAULT_STYLE"
-                help="By default only icons are shown."/> wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_PLAIN_BACKGROUND </property>
+                help="Defined as 0 (no styles are set)."/> wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_PLAIN_BACKGROUND </property>
     </gen>
 
     <gen class="wxAuiToolBar" image="auitoolbar" type="aui_toolbar">
@@ -231,7 +231,7 @@
             help="The default separator size. This is the size between each toolbar tool set.">5</property>
         <property name="style" type="bitlist">
             <option name="wxAUI_TB_TEXT"
-                help="Shows the text in the toolbar buttons; by default only icons are shown. "/>
+                help="Shows the text in the toolbar buttons; by default only icons are shown."/>
 			<option
                 name="wxAUI_TB_NO_TOOLTIPS"
                 help="Don't show tooltips on wxAuiToolBar items."/>
@@ -245,7 +245,7 @@
                 help="Using this style forces the toolbar to be vertical and be only dockable to the left or right sides of the window whereas by default it can be horizontal or vertical and be docked anywhere."/>
 			<option
                 name="wxAUI_TB_HORZ_LAYOUT"
-                help="Shows the text and the icons alongside, not vertically stacked. This style must be used with wxAUI_TB_TEXT"/>
+                help="For horizontal toolbars, shows the text and the icons alongside, not vertically stacked. This style must be used with wxAUI_TB_TEXT, and cannot be used with wxAUI_TB_VERTICAL."/>
 			<option
                 name="wxAUI_TB_HORIZONTAL"
                 help="Analogous to wxAUI_TB_VERTICAL, but forces the toolbar to be horizontal, docking to the top or bottom of the window."/>
@@ -254,13 +254,13 @@
                 help="Draw a plain background (based on parent) instead of the default gradient background."/>
 			<option
                 name="wxAUI_TB_HORZ_TEXT"
-                help="Shows the text alongside the icons, not vertically stacked."/>
+                help="Combination of wxAUI_TB_HORZ_LAYOUT and wxAUI_TB_TEXT."/>
 			<option
-                name="wxAUI_ORIENTATION_MASK "
-                help="Shows the text in the toolbar buttons. By default only icons are shown."/>
+                name="wxAUI_ORIENTATION_MASK"
+                help="A mask combining the wxAUI_TB_VERTICAL and wxAUI_TB_HORIZONTAL styles. This is not a style on its own; use one of those two styles to force the toolbar orientation."/>
 			<option
                 name="wxAUI_TB_DEFAULT_STYLE"
-                help="By default only icons are shown."/> wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_PLAIN_BACKGROUND </property>
+                help="Defined as 0 (no styles are set)."/> wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_PLAIN_BACKGROUND </property>
     </gen>
 
     <gen class="auitool" image="tool" type="aui_tool">
@@ -401,7 +401,7 @@
 			<option name="expand"
                 help="Expanding or collapsing effect."/> no effects </property>
         <property name="hide_effect" type="option"
-            help="Set the effects to use when hiding the bar. ">
+            help="Set the effects to use when hiding the bar.">
             <option name="no effects"
                 help="No effect, equivalent to normal wxWindow::Show() or Hide() call."/>
 			<option name="roll to left"
@@ -532,8 +532,6 @@
 			<option name="wxID_INFO"
                 help="Sets the label and help text, and changes the id to the stock id."/>
 			<option name="wxID_LAST"
-                help="Sets the label and help text, and changes the id to the stock id."/>
-			<option name="wxID_NEW"
                 help="Sets the label and help text, and changes the id to the stock id."/>
 			<option name="wxID_NEW"
                 help="Sets the label and help text, and changes the id to the stock id."/>
@@ -734,7 +732,7 @@
         <property name="bitmap" type="image"
             help="ribbonButton bitmap."/>
         <property name="help" type="string_escapes"
-            help="ribbonButton"/>
+            help="The UI help string to associate with the button."/>
         <property name="kind" type="option">
             <option name="wxRIBBON_BUTTON_NORMAL"
                 help="Normal button or tool with a clickable area which causes some generic action."/>
@@ -774,7 +772,7 @@
         <property name="bitmap" type="image"
             help="ribbonTool bitmap."/>
         <property name="help" type="string_escapes"
-            help="ribbonTool"/>
+            help="The UI help string to associate with the tool."/>
         <property name="kind" type="option">
             <option name="wxRIBBON_BUTTON_NORMAL"
                 help="Normal button or tool with a clickable area which causes some generic action."/>
@@ -814,7 +812,7 @@
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <property name="bitmap" type="image"
-            help="The bitmap to display for the item. Note that all items must have equally sized bitmaps. "/>
+            help="The bitmap to display for the item. Note that all items must have equally sized bitmaps."/>
     </gen>
 
     <gen class="ribbonSeparator" image="ribbon_separator" type="ribbontool"/>

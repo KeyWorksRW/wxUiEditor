@@ -165,7 +165,7 @@
             help="Generated when content has been inserted into the control. Valid event functions: GetPosition, GetRange."/>
         <event name="wxEVT_RICHTEXT_CONTENT_DELETED" class="wxRichTextEvent"
             help="Generated when content has been deleted from the control. Valid event functions: GetPosition, GetRange."/>
-        <event name="wxEVT_RICHTEXT_BUFFER_RESET " class="wxRichTextEvent"
+        <event name="wxEVT_RICHTEXT_BUFFER_RESET" class="wxRichTextEvent"
             help="Generated when the buffer has been reset by deleting all content. You can use this to set a default style for the first new paragraph."/>
         <event name="wxEVT_RICHTEXT_SELECTION_CHANGED" class="wxRichTextEvent"
             help="Generated when the selection range has changed."/>

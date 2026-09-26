@@ -6,13 +6,14 @@ Regenerate the import goldens under tests/import_tests/.
 
 Every importer is deliberately lossy, so this script does NOT compare against the
 original project file -- it re-serializes each sample and overwrites the golden
-.wxui file beside it. A changed golden therefore means importer output changed;
-review the git diff this script prints at the end before committing.
+.wxui file beside it. Only the .wxui goldens are reported; a changed golden means
+importer output no longer matches the committed file, so it counts as a failed
+test -- review the diff this script prints at the end, then commit the new goldens.
 
 Usage:
     python tests/import_tests/regenerate.py [debug|release] [--verify]
 
-    debug|release  Which build to run (default: release).
+    debug|release  Which build to run (default: debug).
     --verify       After regenerating, re-import every sample with --verify_import
                    to prove the goldens are byte-stable (the idempotency check).
 
@@ -33,12 +34,28 @@ IMPORTER_DIRS = ("winres", "wxcrafter", "formbuilder", "wxsmith", "wxglade", "di
 SAMPLE_EXTENSIONS = ("rc", "wxcp", "fbp", "wxs", "wxg", "pjd")
 
 
+def sample_directories() -> List[Path]:
+    """Each importer directory plus its numerically-named issue subdirectories."""
+    directories: List[Path] = []
+    for name in IMPORTER_DIRS:
+        root = TESTS_DIR / name
+        directories.append(root)
+        directories.extend(
+            sorted(
+                subdirectory
+                for subdirectory in root.iterdir()
+                if subdirectory.is_dir() and subdirectory.name.isascii() and subdirectory.name.isdigit()
+            )
+        )
+    return directories
+
+
 def find_samples() -> List[Path]:
     """Every importer sample, ordered by importer directory then extension."""
     samples: List[Path] = []
-    for directory in IMPORTER_DIRS:
+    for directory in sample_directories():
         for extension in SAMPLE_EXTENSIONS:
-            samples.extend(sorted((TESTS_DIR / directory).glob(f"*.{extension}")))
+            samples.extend(sorted(directory.glob(f"*.{extension}")))
     return samples
 
 
@@ -55,9 +72,21 @@ def run_editor(editor: Path, switch: str, sample: Path) -> bool:
     return result.returncode == 0
 
 
+def changed_goldens() -> List[str]:
+    """Repo-relative paths of committed *.wxui goldens whose content is no longer current."""
+    tests_pathspec = TESTS_DIR.relative_to(REPO_ROOT).as_posix()
+    result = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "--no-pager", "diff", "--name-only", "--", tests_pathspec],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return [line for line in result.stdout.splitlines() if line.endswith(".wxui")]
+
+
 def main() -> int:
     arguments = [argument.lower() for argument in sys.argv[1:]]
-    build_type = "debug" if "debug" in arguments else "release"
+    build_type = "release" if "release" in arguments else "debug"
     verify = "--verify" in arguments
 
     editor = locate_editor(build_type)
@@ -96,13 +125,18 @@ def main() -> int:
             return 1
         print(f"\nVerified all {regenerated} golden(s) are reproducible.")
 
-    # Show what actually changed -- this is the diff summary to review in the PR.
+    # Only the committed .wxui goldens matter: if regenerating changed one, the importer
+    # output no longer matches what is checked in -- that is a failed test.
     if (REPO_ROOT / ".git").is_dir():
-        print("\n-------------- golden diffs --------------")
-        subprocess.run(
-            ["git", "-C", str(REPO_ROOT), "--no-pager", "diff", "--stat", "--", "tests/import_tests"],
-            check=False,
-        )
+        changed = changed_goldens()
+        if changed:
+            print("\n-------------- changed goldens --------------")
+            subprocess.run(
+                ["git", "-C", str(REPO_ROOT), "--no-pager", "diff", "--stat", "--", *changed],
+                check=False,
+            )
+            print(f"\n{len(changed)} golden(s) changed -- importer output does not match the committed .wxui files.")
+            return 1
 
     return 0
 

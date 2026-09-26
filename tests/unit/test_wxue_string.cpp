@@ -80,11 +80,11 @@ TEST_CASE("wxue::string_view compares case-insensitively on request")
     CHECK(view.comparei("help") < 0);
     CHECK(view.is_sameas("hello", wxue::CASE::either));
     CHECK_FALSE(view.is_sameas("hello"));
-    CHECK(view.is_sameprefix("Hel"));
+    CHECK(view.is_sameprefix("Hel"));  // spellchecker:disable-line
     CHECK_FALSE(view.is_sameprefix("Hello there"));
 }
 
-TEST_CASE("wxue::string_view::locate honours the requested case handling")
+TEST_CASE("wxue::string_view::locate honors the requested case handling")
 {
     const wxue::string_view haystack("alpha bravo charlie");
 

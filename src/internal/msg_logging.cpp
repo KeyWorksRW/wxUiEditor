@@ -110,7 +110,7 @@ void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
     //
     // The frame *must* be parented to the main frame. MsgFrame is a top-level window, and
     // wxWidgets deletes a top-level window only as part of its parent's destruction (see
-    // wxWindowMSW::~wxWindowMSW, which calls DestroyChildren()). An unparented frame outlives the
+    // wxWindowMSW::~wxWindowMSW, which calls DestroyChildren()). An parentless frame outlives the
     // main frame, and because it is a top-level window it also keeps the app's main loop alive
     // (wxTopLevelWindowBase::IsLastBeforeExit()), leaving a stray message window on screen with no
     // main window behind it. CloseLogger() alone cannot cover this: it is called from
@@ -119,7 +119,7 @@ void MsgLogging::OnShowLoggerEvent([[maybe_unused]] wxThreadEvent& event)
     MainFrame* const main_frame = wxGetMainFrame();
     if (!main_frame)
     {
-        return;  // no window to own the frame, and an unparented one could never be cleaned up
+        return;  // no window to own the frame, and an parentless one could never be cleaned up
     }
 
     // Lifetime contract: MsgFrame stores the pointers passed here -- g_log_msgs and m_bDestroyed

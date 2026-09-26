@@ -21,7 +21,7 @@ public:
     ///
     /// parent is deliberately not defaulted and must not be null: this is a top-level window, and
     /// wxWidgets deletes a top-level window only as part of its parent's destruction (see
-    /// wxWindowMSW::~wxWindowMSW). An unparented frame outlives whatever window created it and,
+    /// wxWindowMSW::~wxWindowMSW). An parentless frame outlives whatever window created it and,
     /// being a top-level window, keeps the app's main loop alive after that window is gone.
     MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* parent);
     ~MsgFrame();

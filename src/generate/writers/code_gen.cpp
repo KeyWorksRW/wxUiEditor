@@ -155,10 +155,17 @@ void Code::ProcessAlignmentFlags(const wxue::string& prop)
 {
     const size_t size_before = size();
 
-    if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
-        (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
-         m_node->get_Parent()->is_Gen(gen_wxFlexGridSizer) ||
-         m_node->get_Parent()->is_Gen(gen_wxGridBagSizer)))
+    if (prop.contains("wxALIGN_CENTER_HORIZONTAL") && prop.contains("wxALIGN_CENTER_VERTICAL"))
+    {
+        // Both centering bits are wxALIGN_CENTER, so Center() is the right call. This case must be
+        // tested before the single-bit branches below, otherwise the horizontal bit wins and the
+        // vertical centering is silently dropped for grid sizer parents.
+        SizerFlagsFunction("Center") += ')';
+    }
+    else if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
+             (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
+              m_node->get_Parent()->is_Gen(gen_wxFlexGridSizer) ||
+              m_node->get_Parent()->is_Gen(gen_wxGridBagSizer)))
     {
         SizerFlagsFunction("CenterHorizontal") += ')';
     }

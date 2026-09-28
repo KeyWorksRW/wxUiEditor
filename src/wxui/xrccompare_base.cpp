@@ -31,7 +31,7 @@ bool XrcCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_staticTextLeft = new wxStaticText(this, wxID_ANY, "C++ Generated");
     {
         wxFontInfo font_info(9);
-        font_info.Underlined();
+        font_info.Underlined();;
         m_staticTextLeft->SetFont(wxFont(font_info));
     }
     m_staticTextLeft->SetForegroundColour(wxColour("#FF0000"));
@@ -47,7 +47,7 @@ bool XrcCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_staticTextRight = new wxStaticText(this, wxID_ANY, "XRC Generated");
     {
         wxFontInfo font_info(9);
-        font_info.Underlined();
+        font_info.Underlined();;
         m_staticTextRight->SetFont(wxFont(font_info));
     }
     m_staticTextRight->SetForegroundColour(wxColour("#008000"));

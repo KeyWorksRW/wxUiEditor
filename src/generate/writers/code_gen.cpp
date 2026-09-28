@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-29-2026]
+// CR: [09-28-2026]
 
 #include <array>
 #include <charconv>  // for std::to_chars()
@@ -31,7 +31,7 @@ Code& Code::GenFont(GenEnum::PropName prop_name, wxue::string_view font_function
 
 void Code::GenColourValue(wxue::string_view colour_str, GenEnum::PropName prop_name)
 {
-    if (colour_str.contains("wx"))
+    if (colour_str.starts_with("wx"))
     {
         Class("wxSystemSettings").ClassMethod("GetColour(").Add(colour_str) += ")";
     }
@@ -153,7 +153,9 @@ Code& Code::GenSizerFlags()
 
 void Code::ProcessAlignmentFlags(const wxue::string& prop)
 {
-    const size_t size_before = size();
+    // Invariant: GenSizerFlags() is only invoked for nodes that have a parent, but guard against
+    // a null parent anyway to avoid dereferencing it.
+    const Node* parent = m_node->get_Parent();
 
     if (prop.contains("wxALIGN_CENTER_HORIZONTAL") && prop.contains("wxALIGN_CENTER_VERTICAL"))
     {
@@ -161,20 +163,36 @@ void Code::ProcessAlignmentFlags(const wxue::string& prop)
         // tested before the single-bit branches below, otherwise the horizontal bit wins and the
         // vertical centering is silently dropped for grid sizer parents.
         SizerFlagsFunction("Center") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     else if (prop.contains("wxALIGN_CENTER_HORIZONTAL") &&
-             (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
-              m_node->get_Parent()->is_Gen(gen_wxFlexGridSizer) ||
-              m_node->get_Parent()->is_Gen(gen_wxGridBagSizer)))
+             (parent && (parent->is_Gen(gen_wxGridSizer) || parent->is_Gen(gen_wxFlexGridSizer) ||
+                         parent->is_Gen(gen_wxGridBagSizer))))
     {
         SizerFlagsFunction("CenterHorizontal") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     else if (prop.contains("wxALIGN_CENTER_VERTICAL") &&
-             (m_node->get_Parent()->is_Gen(gen_wxGridSizer) ||
-              m_node->get_Parent()->is_Gen(gen_wxFlexGridSizer) ||
-              m_node->get_Parent()->is_Gen(gen_wxGridBagSizer)))
+             (parent && (parent->is_Gen(gen_wxGridSizer) || parent->is_Gen(gen_wxFlexGridSizer) ||
+                         parent->is_Gen(gen_wxGridBagSizer))))
     {
         SizerFlagsFunction("CenterVertical") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     else if (prop.contains("wxALIGN_CENTER"))
     {
@@ -182,60 +200,98 @@ void Code::ProcessAlignmentFlags(const wxue::string& prop)
         // use one that is invalid if the sizer parent's orientation doesn't support it.
         // Center() just works without the assertion check.
         SizerFlagsFunction("Center") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
 
     if (prop.contains("wxALIGN_LEFT"))
     {
         SizerFlagsFunction("Left") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     else if (prop.contains("wxALIGN_RIGHT"))
     {
         SizerFlagsFunction("Right") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
 
     if (prop.contains("wxALIGN_TOP"))
     {
         SizerFlagsFunction("Top") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     else if (prop.contains("wxALIGN_BOTTOM"))
     {
         SizerFlagsFunction("Bottom") += ')';
-    }
-
-    if (m_traits && m_traits->removes_empty_parens && size() > size_before)
-    {
-        // Language style guidelines are to eliminate empty parenthesis
-        pop_back();
-        pop_back();
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
 }
 
 void Code::ProcessSizerFlags(const wxue::string& prop)
 {
-    const size_t size_before = size();
-
     if (prop.contains("wxEXPAND"))
     {
         SizerFlagsFunction("Expand") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     if (prop.contains("wxSHAPED"))
     {
         SizerFlagsFunction("Shaped") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     if (prop.contains("wxFIXED_MINSIZE"))
     {
         SizerFlagsFunction("FixedMinSize") += ')';
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
     if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
     {
         SizerFlagsFunction("ReserveSpaceEvenIfHidden") += ')';
-    }
-
-    if (m_traits && m_traits->removes_empty_parens && size() > size_before)
-    {
-        // Language style guidelines are to eliminate empty parenthesis
-        pop_back();
-        pop_back();
+        if (m_traits && m_traits->removes_empty_parens)
+        {
+            // Language style guidelines are to eliminate empty parenthesis
+            pop_back();
+            pop_back();
+        }
     }
 }
 
@@ -316,7 +372,9 @@ void Code::ProcessBorderFlags(const wxue::string& prop, int border_size)
             }
             else if (is_ruby())
             {
-                *this += "Wx::SizerFlags.get_default_border)";
+                // Derive the wx prefix and snake_case method name from language traits rather
+                // than hardcoding them, so the branch stays in sync with m_language_wxPrefix.
+                *this << m_language_wxPrefix << "SizerFlags.get_default_border)";
             }
             else
             {
@@ -367,12 +425,6 @@ void Code::GenHiddenState()
         Eol(eol_if_empty);
         CallNodeOrFormFunction("Hide(");
         EndFunction();
-        if (m_traits && m_traits->removes_empty_parens)
-        {
-            // Language style guidelines are to eliminate empty parenthesis
-            pop_back();
-            pop_back();
-        }
     }
 }
 
@@ -400,28 +452,38 @@ void Code::GenWindowVariant()
 {
     if (!m_node->is_Form() && !m_node->is_PropValue(prop_variant, "normal"))
     {
-        Eol(eol_if_empty).NodeName().Function("SetWindowVariant(");
         if (m_node->is_PropValue(prop_variant, "small"))
         {
+            Eol(eol_if_empty).NodeName().Function("SetWindowVariant(");
             Add("wxWINDOW_VARIANT_SMALL");
+            EndFunction();
         }
         else if (m_node->is_PropValue(prop_variant, "mini"))
         {
+            Eol(eol_if_empty).NodeName().Function("SetWindowVariant(");
             Add("wxWINDOW_VARIANT_MINI");
+            EndFunction();
+        }
+        else if (m_node->is_PropValue(prop_variant, "large"))
+        {
+            Eol(eol_if_empty).NodeName().Function("SetWindowVariant(");
+            Add("wxWINDOW_VARIANT_LARGE");
+            EndFunction();
         }
         else
         {
-            Add("wxWINDOW_VARIANT_LARGE");
+            // Unrecognized variant — do not guess; skip emitting the call entirely.
+            ASSERT_MSG(false, "unexpected prop_variant value");
         }
-        EndFunction();
     }
 }
 
 void Code::GenTooltipAndHelp()
 {
+    const Node* parent = m_node->get_Parent();
     // wxAuiNotebook uses page tooltips for the tabs, so it should be ignored when generating
     // the page code.
-    if (HasValue(prop_tooltip) && !m_node->get_Parent()->is_Gen(gen_wxAuiNotebook))
+    if (HasValue(prop_tooltip) && (!parent || !parent->is_Gen(gen_wxAuiNotebook)))
     {
         Eol(eol_if_empty);
         CallNodeOrFormFunction("SetToolTip(");
@@ -521,6 +583,9 @@ void Code::SetFontOnControl(const wxue::string& font_var_name, wxue::string_view
     {
         NodeName().Function(font_function).Str(font_var_name).EndFunction();
     }
+    // Contract: this helper closes the font brace.
+    // (ApplyFontToControl() deliberately does NOT close the brace; GenFont() closes it after the
+    // ApplyFontToControl() call. Keep these in sync if either helper is reused.)
     CloseFontBrace();
 }
 
@@ -538,17 +603,17 @@ void Code::GenFontInfoCode(const FontProperty& fontprop)
     GenFontInfoProperties(fontprop);
 
     // Clean up trailing characters
-    if (back() == '.')
+    if (!empty() && back() == '.')
     {
         pop_back();
     }
     if (is_cpp())
     {
-        while (back() == '\t')
+        while (!empty() && back() == '\t')
         {
             pop_back();
         }
-        if (back() != '\n')
+        if (!empty() && back() != '\n')
         {
             *this += ';';
         }
@@ -571,7 +636,7 @@ void Code::GenFontInfoInit(const FontProperty& fontprop, double point_size,
 
     if (point_size != static_cast<int>(point_size))  // is there a fractional value?
     {
-        std::array<char, 10> float_str {};
+        std::array<char, 32> float_str {};
         if (auto [ptr, ec] =
                 std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
             ec == std::errc())
@@ -580,7 +645,9 @@ void Code::GenFontInfoInit(const FontProperty& fontprop, double point_size,
         }
         else
         {
-            EndFunction();
+            // std::to_chars() failed (should not happen with a 32-byte buffer); fall back to the
+            // integer point size rather than emitting a size-less wxFontInfo constructor.
+            itoa(static_cast<int>(point_size)).EndFunction();
         }
     }
     else
@@ -635,16 +702,19 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
     }
     if (fontprop.IsUnderlined())
     {
-        VariableMethod("Underlined()");
+        VariableMethod("Underlined(").EndFunction();
     }
     if (fontprop.IsStrikethrough())
     {
-        VariableMethod("Strikethrough()");
+        VariableMethod("Strikethrough(").EndFunction();
     }
 }
 
 void Code::ApplyFontToControl(wxue::string_view font_function)
 {
+    // Contract: this helper does NOT close the font brace — the caller (GenFont()) closes it
+    // after this call. SetFontOnControl() closes its own brace. Keep these in sync if either
+    // helper is reused.
     const char* font_var = "font_info";
 
     if (m_node->is_Form())

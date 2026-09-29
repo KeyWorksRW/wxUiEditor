@@ -405,6 +405,10 @@
             help="Generated when the search button is clicked. Note that this does not initiate a search on its own, you need to perform the appropriate action in your event handler. You may use event.GetString() to retrieve the string to search for in the event handler code."/>
         <event name="wxEVT_SEARCHCTRL_CANCEL_BTN" class="wxCommandEvent"
             help="Generated when the cancel button is clicked."/>
+        <event name="wxEVT_SEARCH" class="wxCommandEvent"
+            help="Generated when the user initiates a search (presses Enter or clicks the search button)."/>
+        <event name="wxEVT_SEARCH_CANCEL" class="wxCommandEvent"
+            help="Generated when the user cancels the search by clicking the cancel button."/>
     </gen>
 
     <gen class="wxHtmlWindow" image="htmlwin" type="widget">
@@ -455,9 +459,18 @@
             help="Generated when a new window is created."/>
         <event name="wxEVT_WEBVIEW_TITLE_CHANGED" class="wxWebViewEvent"
             help="Generated when the page title changes."/>
-        <event name="wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" class="wxWebViewEvent"
+        <event name="wxEVT_WEBVIEW_FULLSCREEN_CHANGED" class="wxWebViewEvent"
             help="Generated when the page wants to enter or leave fullscreen."/>
-        <event name="wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED" class="wxWebViewEvent"/>
+        <event name="wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED" class="wxWebViewEvent"
+            help="Generated when the running JavaScript script sends a message to the application."/>
+        <event name="wxEVT_WEBVIEW_CREATED" class="wxWebViewEvent"
+            help="Generated when the web view object is created."/>
+        <event name="wxEVT_WEBVIEW_NEWWINDOW_FEATURES" class="wxWebViewEvent"
+            help="Generated when a new window request includes the window features to apply. Can be vetoed to prevent the window from being created."/>
+        <event name="wxEVT_WEBVIEW_SCRIPT_RESULT" class="wxWebViewEvent"
+            help="Generated when the result of an asynchronous script run is available."/>
+        <event name="wxEVT_WEBVIEW_WINDOW_CLOSE_REQUESTED" class="wxWebViewEvent"
+            help="Generated when a script in the web page requests that the window be closed."/>
     </gen>
 
     <gen class="wxCalendarCtrl" image="calendar" type="widget">
@@ -507,10 +520,10 @@
             help="The selected month changed."/>
         <event name="wxEVT_CALENDAR_YEAR_CHANGED" class="wxCalendarEvent"
             help="The selected year changed."/>
-        <event name="EVT_CALENDAR_WEEK_CLICKED" class="wxCalendarEvent"
-            help="User clicked on the week day header (only generic)."/>
         <event name="wxEVT_CALENDAR_WEEK_CLICKED" class="wxCalendarEvent"
             help="User clicked on the week of the year number (only generic)."/>
+        <event name="wxEVT_CALENDAR_WEEKDAY_CLICKED" class="wxCalendarEvent"
+            help="User clicked on the weekday header."/>
     </gen>
 
     <gen class="wxGenericDirCtrl" image="genericdir_ctrl" type="widget">

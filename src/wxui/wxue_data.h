@@ -37,31 +37,31 @@ namespace wxue_data
     std::string get_widgets();     // ../xml/widgets.xml
 
     // ../xml/bars.xml
-    extern const unsigned char bars[6414]; // Original size: 39,836 bytes
+    extern const unsigned char bars[6479]; // Original size: 40,507 bytes
     // ../xml/boxes.xml
-    extern const unsigned char boxes[2429]; // Original size: 14,336 bytes
+    extern const unsigned char boxes[2433]; // Original size: 14,342 bytes
     // ../xml/buttons.xml
     extern const unsigned char buttons[2721]; // Original size: 15,325 bytes
     // ../xml/containers.xml
-    extern const unsigned char containers[5004]; // Original size: 27,443 bytes
+    extern const unsigned char containers[5112]; // Original size: 27,996 bytes
     // ../xml/data_ctrls.xml
     extern const unsigned char data_ctrls[8341]; // Original size: 47,178 bytes
     // ../xml/forms.xml
-    extern const unsigned char forms[6635]; // Original size: 55,979 bytes
+    extern const unsigned char forms[6697]; // Original size: 56,224 bytes
     // ../xml/interfaces.xml
     extern const unsigned char interfaces[11484]; // Original size: 57,724 bytes
     // ../xml/mdi.xml
     extern const unsigned char mdi[1995]; // Original size: 17,170 bytes
     // ../xml/pickers.xml
-    extern const unsigned char pickers[2480]; // Original size: 10,219 bytes
+    extern const unsigned char pickers[2478]; // Original size: 10,221 bytes
     // ../xml/project.xml
     extern const unsigned char project[1659]; // Original size: 6,107 bytes
     // ../xml/sizers.xml
     extern const unsigned char sizers[2268]; // Original size: 12,871 bytes
     // ../xml/text_ctrls.xml
-    extern const unsigned char text_ctrls[7104]; // Original size: 30,395 bytes
+    extern const unsigned char text_ctrls[7104]; // Original size: 30,397 bytes
     // ../xml/widgets.xml
-    extern const unsigned char widgets[6714]; // Original size: 28,672 bytes
+    extern const unsigned char widgets[6934]; // Original size: 29,657 bytes
 }
 
 // ************* End of generated code ***********

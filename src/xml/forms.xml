@@ -67,6 +67,10 @@
             help="Specifies the image to display in the title bar of the frame."/>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
+        <event name="wxEVT_MENU_OPEN" class="wxMenuEvent"
+            help="Generated just before a menu is opened, allowing the application to update the menu items."/>
+        <event name="wxEVT_MENU_CLOSE" class="wxMenuEvent"
+            help="Generated just after a menu is closed."/>
         <event name="wxEVT_MENU_HIGHLIGHT" class="wxMenuEvent"/>
     </gen>
 
@@ -641,7 +645,7 @@
             help="Triggered when the left mouse button is double clicked on a tab."/>
         <event name="wxEVT_RIBBONBAR_TOGGLED" class="wxRibbonBarEvent"
             help="Triggered when the button triggering the ribbon bar is clicked."/>
-        <event name="wxEVT_RIBBONBAR_HELP_CLICKED" class="wxRibbonBarEvent"
+        <event name="wxEVT_RIBBONBAR_HELP_CLICK" class="wxRibbonBarEvent"
             help="Triggered when the help button is clicked."/>
     </gen>
 

@@ -297,7 +297,7 @@ constexpr auto map_evt_pair = frozen::make_map<std::string_view, std::string_vie
     { "OnPropertyGridChanging", "wxEVT_PG_CHANGING" },
     { "OnRadioBox", "wxEVT_RADIOBOX" },
     { "OnRadioButton", "wxEVT_RADIOBUTTON" },
-    { "OnRibbonBarHelpClick", "wxEVT_RIBBONBAR_HELP_CLICKED" },
+    { "OnRibbonBarHelpClick", "wxEVT_RIBBONBAR_HELP_CLICK" },
     { "OnRibbonBarPageChanged", "wxEVT_RIBBONBAR_PAGE_CHANGED" },
     { "OnRibbonBarPageChanging", "wxEVT_RIBBONBAR_PAGE_CHANGING" },
     { "OnRibbonBarTabLeftDClick", "wxEVT_RIBBONBAR_TAB_LEFT_DCLICK" },

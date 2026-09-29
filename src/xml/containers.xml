@@ -8,6 +8,8 @@
         </inherits>
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">panel</property>
+        <event name="wxEVT_NAVIGATION_KEY" class="wxNavigationKeyEvent"
+            help="Generated when a navigation key (such as TAB or an arrow key) is pressed while the panel has focus."/>
     </gen>
 
     <gen class="wxSplitterWindow" image="wxSplitterWindow" type="splitter">
@@ -62,6 +64,8 @@
             help="The splitter has been just unsplit."/>
         <event name="wxEVT_SPLITTER_DOUBLECLICKED" class="wxSplitterEvent"
             help="The sash was double clicked. The default behaviour is to unsplit the window when this happens (unless the minimum pane size has been set to a value greater than zero)."/>
+        <event name="wxEVT_SPLITTER_SASH_POS_RESIZE" class="wxSplitterEvent"
+            help="The sash position was changed after the user finished dragging it. This event can be vetoed to revert the sash position."/>
     </gen>
 
     <gen class="wxScrolledCanvas" image="wxScrolledWindow" type="container">
@@ -120,6 +124,8 @@
             wxCP_DEFAULT_STYLE </property>
         <event name="wxEVT_COLLAPSIBLEPANE_CHANGED" class="wxCollapsiblePaneEvent"
             help="The user expanded or collapsed the collapsible pane."/>
+        <event name="wxEVT_NAVIGATION_KEY" class="wxNavigationKeyEvent"
+            help="Generated when a navigation key (such as TAB or an arrow key) is pressed while the collapsible pane has focus."/>
     </gen>
 
     <gen class="wxChoicebook" image="notebook_choice" type="choicebook">

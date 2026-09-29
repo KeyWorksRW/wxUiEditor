@@ -112,7 +112,7 @@
             help="Generated when the user changes the colour selected in the control either using the button or the text control (see wxCLRP_USE_TEXTCTRL. Note that in this case the event is fired only if the user's input is valid)."/>
         <event name="wxEVT_COLOURPICKER_CURRENT_CHANGED" class="wxColourPickerEvent"
             help="Generated when the user changes the currently selected colour in the dialog associated with the control.Currently only works on Windows."/>
-        <event name="EVT_COLOURPICKER_DIALOG_CANCELLED" class="wxColourPickerEvent"
+        <event name="wxEVT_COLOURPICKER_DIALOG_CANCELLED" class="wxColourPickerEvent"
             help="Generated if the user cancels the dialog associated with the control. Currently only works on Windows."/>
     </gen>
 

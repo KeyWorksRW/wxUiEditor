@@ -261,6 +261,16 @@
 			<option
                 name="wxAUI_TB_DEFAULT_STYLE"
                 help="Defined as 0 (no styles are set)."/> wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_PLAIN_BACKGROUND </property>
+        <event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent"
+            help="Generated when the user begins to drag a tool."/>
+        <event name="wxEVT_AUITOOLBAR_MIDDLE_CLICK" class="wxAuiToolBarEvent"
+            help="Generated when the middle mouse button is clicked over a tool."/>
+        <event name="wxEVT_AUITOOLBAR_OVERFLOW_CLICK" class="wxAuiToolBarEvent"
+            help="Generated when the overflow button is clicked."/>
+        <event name="wxEVT_AUITOOLBAR_RIGHT_CLICK" class="wxAuiToolBarEvent"
+            help="Generated when the right mouse button is clicked over a tool."/>
+        <event name="wxEVT_AUITOOLBAR_TOOL_DROPDOWN" class="wxAuiToolBarEvent"
+            help="Generated when the dropdown arrow of a tool is clicked."/>
     </gen>
 
     <gen class="auitool" image="tool" type="aui_tool">
@@ -672,7 +682,7 @@
             help="Triggered when the left mouse button is double clicked on a tab."/>
         <event name="wxEVT_RIBBONBAR_TOGGLED" class="wxRibbonBarEvent"
             help="Triggered when the button triggering the ribbon bar is clicked."/>
-        <event name="wxEVT_RIBBONBAR_HELP_CLICKED" class="wxRibbonBarEvent"
+        <event name="wxEVT_RIBBONBAR_HELP_CLICK" class="wxRibbonBarEvent"
             help="Triggered when the help button is clicked."/>
     </gen>
 
@@ -719,9 +729,9 @@
         <inherits class="wxWindow"/>
         <inherits class="Window Events"/>
         <property name="var_name" type="string">rbnBtnBar</property>
-        <event name="EVT_RIBBONBUTTONBAR_CLICKED" class="wxRibbonToolBarEvent"
+        <event name="wxEVT_RIBBONBUTTONBAR_CLICKED" class="wxRibbonButtonBarEvent"
             help="Triggered when the normal (non-dropdown) region of a button on the button bar is clicked."/>
-        <event name="EVT_RIBBONBUTTONBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
+        <event name="wxEVT_RIBBONBUTTONBAR_DROPDOWN_CLICKED" class="wxRibbonButtonBarEvent"
             help="Triggered when the dropdown region of a button on the button bar is clicked. wxRibbonButtonBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown buttons should be doing)."/>
     </gen>
 

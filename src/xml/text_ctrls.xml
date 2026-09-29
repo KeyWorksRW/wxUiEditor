@@ -136,7 +136,7 @@
             help="Generated when the user releases the right mouse button over an object."/>
         <event name="wxEVT_RICHTEXT_MIDDLE_CLICK" class="wxRichTextEvent"
             help="Generated when the user releases the middle mouse button over an object."/>
-        <event name="EVT_RICHTEXT_LEFT_DCLICK" class="wxRichTextEvent"
+        <event name="wxEVT_RICHTEXT_LEFT_DCLICK" class="wxRichTextEvent"
             help="Generated when the user double-clicks an object."/>
 
         <event name="wxEVT_RICHTEXT_CHARACTER" class="wxRichTextEvent"

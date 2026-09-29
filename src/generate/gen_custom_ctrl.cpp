@@ -109,8 +109,13 @@ bool CustomControl::ConstructionCode(Code& code)
     {
         parameters.erase(0, 1);
     }
-    parameters.Replace("${parent}", code.node()->get_ParentName(code.get_language(), true),
-                       wxue::REPLACE::all);
+    // Use Code::ValidParentName() rather than Node::get_ParentName() -- the latter returns the
+
+    // form's class name when the parent is the form, instead of the language's self-reference
+    // ("this"/"self"). See issue #1869.
+    Code parent_code(code.node(), code.get_language());
+    parent_code.ValidParentName();
+    parameters.Replace("${parent}", parent_code, wxue::REPLACE::all);
     if (code.is_cpp())
     {
         parameters.Replace("self", "this", wxue::REPLACE::all);

@@ -37,7 +37,7 @@
 #include "gen_combobox.h"        // ComboBoxGenerator -- wxComboBox generator
 #include "gen_ctx_help_btn.h"    // CtxHelpButtonGenerator -- wxContextHelpButton generator
 #include "gen_ctx_menu.h"        // CtxMenuGenerator -- generates function and includes
-#include "gen_custom_ctrl.h"     // CustomControl -- Custom Control generator
+#include "gen_custom_ctrl.h"     // CustomControlGenerator -- Custom Control generator
 #include "gen_date_picker.h"     // DatePickerCtrlGenerator -- wxDatePickerCtrl generator
 #include "gen_dialog.h"          // DialogFormGenerator -- wxDialog generator
 #include "gen_dir_ctrl.h"        // GenericDirCtrlGenerator -- wxGenericDirCtrl generator
@@ -298,7 +298,7 @@ void NodeCreator::InitGenerators()
     SetGenerator<WrapSizerGenerator>(gen_wxWrapSizer);
     SetGenerator<TextSizerGenerator>(gen_TextSizer);
 
-    SetGenerator<CustomControl>(gen_CustomControl);
+    SetGenerator<CustomControlGenerator>(gen_CustomControl);
 
     SetGenerator<DocParentFrameGenerator>(gen_wxDocParentFrame);
     SetGenerator<DocMdiParentFrameGenerator>(gen_wxDocMDIParentFrame);

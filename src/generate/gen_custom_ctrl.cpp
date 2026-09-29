@@ -1,9 +1,12 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Custom Control generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-29-2026]
+
+#include <tuple>
 
 #include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
 #include <wx/stattext.h>          // wxStaticText base header
@@ -20,35 +23,70 @@
 
 #include "gen_custom_ctrl.h"
 
-wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
+// Returns true if character can be part of an identifier (letter, digit, or underscore).
+static bool IsIdentifierChar(char character)
+{
+    return wxue::is_alnum(character) || character == '_';
+}
+
+// Replaces whole-token occurrences of old_token in text -- a match is only replaced when it is
+// not adjacent to an identifier character. This avoids corrupting identifiers such as "myself"
+// when replacing "self".
+static void ReplaceWholeToken(wxue::string& text, std::string_view old_token,
+                              std::string_view new_token)
+{
+    size_t position = 0;
+    while ((position = text.find(old_token, position)) != wxue::npos)
+    {
+        const size_t match_end = position + old_token.size();
+        const bool left_boundary = (position == 0) || !IsIdentifierChar(text[position - 1]);
+        const bool right_boundary =
+            (match_end >= text.size()) || !IsIdentifierChar(text[match_end]);
+        if (left_boundary && right_boundary)
+        {
+            text.replace(position, old_token.size(), new_token);
+            position += new_token.size();
+        }
+        else
+        {
+            position = match_end;
+        }
+    }
+}
+
+wxObject* CustomControlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     const wxue::StringVector parts(node->as_string(prop_custom_mockup), ";");
     wxWindow* widget = nullptr;
 
-    if (parts.size() && parts[0].starts_with("wxStaticText"))
+    if (!parts.empty() && parts[0].starts_with("wxStaticText"))
     {
         if (auto pos = parts[0].find('('); pos != wxue::npos)
         {
             wxue::StringVector options(parts[0].subview(pos + 1), ",");
-            widget =
-                new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, options[0],
-                                 wxDefaultPosition, wxDefaultSize,
-                                 wxBORDER_SIMPLE | (options.size() > 1 && options[1].contains("1") ?
-                                                        wxALIGN_CENTER_HORIZONTAL :
-                                                        0));
+            // An empty subview yields no elements -- guard the access so we never index an empty
+            // vector.
+            const wxString label = options.empty() ? wxString() : options[0].wx();
+            widget = new wxStaticText(
+                wxStaticCast(parent, wxWindow), wxID_ANY, label, wxDefaultPosition, wxDefaultSize,
+                wxBORDER_SIMPLE |
+                    (options.size() > 1 && options[1].contains("1") ? wxALIGN_CENTER_HORIZONTAL :
+                                                                      0));
         }
         else
         {
             widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
                                       wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE);
         }
+        // NOTE: Keep this sizing logic in sync with the identical block in the bitmap branch
+        // below.
         if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
         {
             widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
         }
         else
         {
-            auto size = node->as_wxSize(prop_size);
+            const wxSize size = node->as_wxSize(prop_size);
             if (size.x != -1 && size.y != -1)
             {
                 widget->SetMinSize(size);
@@ -61,6 +99,8 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
     {
         widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY,
                                            GetInternalImage("CustomControl"));
+        // NOTE: Keep this sizing logic in sync with the identical block in the wxStaticText
+        // branch above.
         if (parts.size() > 2 && parts[1] != "-1" && parts[2] != "-1")
         {
             widget->SetMinSize(wxSize(parts[1].atoi(), parts[2].atoi()));
@@ -68,7 +108,7 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
         }
         else
         {
-            auto size = node->as_wxSize(prop_size);
+            const wxSize size = node->as_wxSize(prop_size);
             if (size.x != -1 && size.y != -1)
             {
                 widget->SetMinSize(size);
@@ -86,15 +126,22 @@ wxObject* CustomControl::CreateMockup(Node* node, wxObject* parent)
 // map_MacroProps is in gen_enums.cpp and provides conversion for ${id}, ${pos}, ${size},
 // ${window_extra_style}, ${window_name}, ${window_style}
 
-bool CustomControl::ConstructionCode(Code& code)
+bool CustomControlGenerator::ConstructionCode(Code& code)
 {
     if (code.HasValue(prop_construction))
     {
         wxue::string construction = code.view(prop_construction);
         construction.BothTrim();
-        construction.Replace("@@", "\n", wxue::REPLACE::all);
+        std::ignore = construction.Replace("@@", "\n", wxue::REPLACE::all);
         code += construction;
         return true;
+    }
+
+    // A class name is required to construct the control -- without it we would generate an
+    // invalid statement such as `auto* m_custom = new (;`, so skip construction entirely.
+    if (!code.HasValue(prop_class_name))
+    {
+        return false;
     }
 
     code.AddAuto().NodeName();
@@ -109,17 +156,23 @@ bool CustomControl::ConstructionCode(Code& code)
     {
         parameters.erase(0, 1);
     }
-    parameters.Replace("${parent}", code.node()->get_ParentName(code.get_language(), true),
-                       wxue::REPLACE::all);
+    // Use Code::ValidParentName() rather than Node::get_ParentName() -- the latter returns the
+    // form's class name when the parent is the form, instead of the language's self-reference
+    // ("this"/"self"). See issue #1869.
+    Code parent_code(code.node(), code.get_language());
+    parent_code.ValidParentName();
+    std::ignore = parameters.Replace("${parent}", parent_code, wxue::REPLACE::all);
     if (code.is_cpp())
     {
-        parameters.Replace("self", "this", wxue::REPLACE::all);
-        parameters.Replace("wx.ID_ANY", "wxID_ANY", wxue::REPLACE::all);
+        // Replace whole tokens only -- a blanket substring replace would turn "myself" into
+        // "mythis".
+        ReplaceWholeToken(parameters, "self", "this");
+        std::ignore = parameters.Replace("wx.ID_ANY", "wxID_ANY", wxue::REPLACE::all);
     }
     else
     {
-        parameters.Replace("this", "self", wxue::REPLACE::all);
-        parameters.Replace("wxID_ANY", "wx.ID_ANY", wxue::REPLACE::all);
+        ReplaceWholeToken(parameters, "this", "self");
+        std::ignore = parameters.Replace("wxID_ANY", "wx.ID_ANY", wxue::REPLACE::all);
     }
 
     for (auto& iter: map_MacroProps)
@@ -129,23 +182,35 @@ bool CustomControl::ConstructionCode(Code& code)
             Code code_temp(code.node(), code.get_language());
             if (iter.second == prop_window_style && code.node()->as_string(iter.second).empty())
             {
-                parameters.Replace(iter.first, "0");
+                // An empty style would leave a dangling '|' in the argument list.
+                std::ignore = parameters.Replace(iter.first, "0", wxue::REPLACE::all);
+            }
+            else if (iter.second == prop_window_extra_style &&
+                     code.node()->as_string(iter.second).empty())
+            {
+                // Same as prop_window_style above -- an empty extra style would leave a
+                // dangling '|' in the argument list.
+                std::ignore = parameters.Replace(iter.first, "0", wxue::REPLACE::all);
             }
             else if (iter.second == prop_id)
             {
-                parameters.Replace(iter.first, code.node()->get_PropId());
+                // Use a language-aware Code object so non-C++ output gets that language's id
+                // form (e.g. wx.ID_ANY for Python) instead of the raw C++ identifier.
+                Code id_code(code.node(), code.get_language());
+                id_code.as_string(prop_id);
+                std::ignore = parameters.Replace(iter.first, id_code, wxue::REPLACE::all);
             }
             else if (iter.second == prop_pos)
             {
-                auto pos = code.node()->as_wxPoint(prop_pos);
+                const wxPoint pos = code.node()->as_wxPoint(prop_pos);
                 code_temp.WxPoint(pos);
-                parameters.Replace(iter.first, code_temp);
+                std::ignore = parameters.Replace(iter.first, code_temp, wxue::REPLACE::all);
             }
             else if (iter.second == prop_size)
             {
-                auto size = code.node()->as_wxSize(prop_size);
+                const wxSize size = code.node()->as_wxSize(prop_size);
                 code_temp.WxSize(size);
-                parameters.Replace(iter.first, code_temp);
+                std::ignore = parameters.Replace(iter.first, code_temp, wxue::REPLACE::all);
             }
             else
             {
@@ -153,20 +218,23 @@ bool CustomControl::ConstructionCode(Code& code)
                 // Python we need to do additional processing on most strings.
                 if (code.is_cpp())
                 {
-                    parameters.Replace(iter.first, code.view(iter.second));
+                    std::ignore =
+                        parameters.Replace(iter.first, code.view(iter.second), wxue::REPLACE::all);
                 }
                 else
                 {
                     Code macro(code.node(), code.get_language());
                     macro.Add(code.view(iter.second));
-                    parameters.Replace(iter.first, macro);
+                    std::ignore = parameters.Replace(iter.first, macro, wxue::REPLACE::all);
                 }
             }
         }
     }
 
-    if (parameters.size() && parameters.back() != ')')
+    if (parameters.empty() || parameters.back() != ')')
     {
+        // Always emit a closing parenthesis -- otherwise an empty parameter list would generate
+        // an unbalanced "ClassName(".
         parameters += ")";
     }
 
@@ -179,7 +247,7 @@ bool CustomControl::ConstructionCode(Code& code)
     return true;
 }
 
-bool CustomControl::SettingsCode(Code& code)
+bool CustomControlGenerator::SettingsCode(Code& code)
 {
     if (code.HasValue(prop_settings_code))
     {
@@ -188,16 +256,19 @@ bool CustomControl::SettingsCode(Code& code)
         // conversions.
 
         wxue::string settings = code.view(prop_settings_code);
-        settings.Replace("@@", "\n", wxue::REPLACE::all);
+        std::ignore = settings.Replace("@@", "\n", wxue::REPLACE::all);
+        // NOTE: These are whole-block substring replacements, so the settings block must not
+        // contain these tokens inside string literals or comments.
         if (code.is_python())
         {
-            settings.Replace("->", ".", wxue::REPLACE::all);
-            settings.Replace("wxID_ANY", "wx.ID_ANY", wxue::REPLACE::all);
+            std::ignore = settings.Replace("->", ".", wxue::REPLACE::all);
+            std::ignore = settings.Replace("wxID_ANY", "wx.ID_ANY", wxue::REPLACE::all);
         }
-        else
+        else if (code.is_cpp())
         {
-            settings.Replace("wx.", "wx", wxue::REPLACE::all);
+            std::ignore = settings.Replace("wx.", "wx", wxue::REPLACE::all);
         }
+        // Ruby and the FFI languages receive the settings block unchanged.
 
         code.Str(settings);
     }
@@ -205,12 +276,15 @@ bool CustomControl::SettingsCode(Code& code)
     return true;
 }
 
-int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int CustomControlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
+    // NOTE: XRC output is not supported for CustomControl (SUPPORTED.md lists XRC as "---").
+    // "unknown" is an intentional placeholder class name -- it is emitted only so the XRC
+    // document stays well-formed, and it is not a valid wxWidgets class name.
     GenXrcObjectAttributes(node, item, "unknown");
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
@@ -218,35 +292,27 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xr
     return result;
 }
 
-bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
-                                std::set<std::string>& set_hdr, GenLang language)
+bool CustomControlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
+                                         std::set<std::string>& set_hdr, GenLang language)
 {
     if (node->HasValue(prop_header) && language == GenLang::cplusplus)
     {
-        wxue::string_view cur_value = node->as_string(prop_header);
+        // A '#' prefixed value is emitted verbatim -- it may be an #include directive or
+        // something else such as #pragma once. Wrapping a non-include directive in
+        // #include "..." would generate invalid code.
+        const wxue::string_view cur_value = node->as_string(prop_header);
         if (cur_value.starts_with("#"))
         {
-            cur_value.remove_prefix(1);
-            cur_value = cur_value.view_nonspace();
-            if (cur_value.starts_with("include"))
-            {
-                wxue::string convert(node->as_string(prop_header));
-                convert.Replace("@@", "\n", wxue::REPLACE::all);
-                set_src.insert(convert);
-            }
-            else
-            {
-                wxString include_str;
-                include_str << "#include \"" << node->as_string(prop_header) << '"';
-                set_src.insert(include_str.ToStdString());
-            }
+            wxue::string convert(node->as_string(prop_header));
+            std::ignore = convert.Replace("@@", "\n", wxue::REPLACE::all);
+            set_src.insert(convert);
         }
         else
         {
             // Because the header is now a multi-line editor, it's easy for it to have a
             // trailing @@ -- we remove that here.
             wxue::string convert(node->as_string(prop_header));
-            convert.Replace("@@", "", wxue::REPLACE::all);
+            std::ignore = convert.Replace("@@", "", wxue::REPLACE::all);
 
             wxString include_str;
             include_str << "#include \"" << convert << '"';
@@ -254,7 +320,10 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src,
         }
     }
 
-    if (node->as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
+    // The forward-declaration/namespace block below is C++-only syntax -- no other language
+    // should receive it.
+    if (language == GenLang::cplusplus && node->as_string(prop_class_access) != "none" &&
+        node->HasValue(prop_class_name))
     {
         if (node->HasValue(prop_namespace))
         {

@@ -115,6 +115,15 @@ jobs:
         $proc = Start-Process -FilePath $exe -ArgumentList '--verify_all', $project `
             -Wait -NoNewWindow -PassThru
         if ($proc.ExitCode -ne 0) {
+            # Surface the verifier's own evidence: --verify_all writes code generation
+            # differences to <project>.log, which would otherwise be lost on the runner
+            # and make the failure an opaque non-zero exit code.
+            $log = Join-Path '${{github.workspace}}' 'src\wxui\wxUiEditor.log'
+            if (Test-Path $log) {
+                Write-Host '--- wxUiEditor.log ---'
+                Get-Content $log
+                Write-Host '--- end wxUiEditor.log ---'
+            }
             throw "Profile collection run failed with exit code $($proc.ExitCode)"
         }
 

@@ -700,13 +700,17 @@ void Code::GenFontInfoProperties(const FontProperty& fontprop)
     {
         VariableMethod("Weight(").Add(FontWeightPairs::GetValue(fontprop.GetWeight())) += ")";
     }
+    // These take no argument, but they must use += ")" rather than EndFunction() like their
+    // sibling properties above. EndFunction() also appends the statement terminator, and
+    // GenFontInfoCode() appends another when the last char is not a newline -- yielding ";;"
+    // and leaving a stray '.' before the next call when both properties are set.
     if (fontprop.IsUnderlined())
     {
-        VariableMethod("Underlined(").EndFunction();
+        VariableMethod("Underlined(") += ")";
     }
     if (fontprop.IsStrikethrough())
     {
-        VariableMethod("Strikethrough(").EndFunction();
+        VariableMethod("Strikethrough(") += ")";
     }
 }
 

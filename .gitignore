@@ -12,6 +12,7 @@ build-ubuntu/
 # All test assets live under tests/. Individual subdirectories are re-included below;
 # everything else in tests/ is scratch space and is not tracked.
 tests/*
+!tests/codegen/
 !tests/import_tests/
 !tests/scripts/
 !tests/unit/

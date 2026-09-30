@@ -150,24 +150,30 @@ void FontProperty::Convert(wxue::string_view font, bool old_style)
         m_isDefGuiFont = true;
         SymbolicSize(font_symbol_pairs.GetValue(mstr[0]));
 
-        if (mstr.size() > font::idx_gui_style)
+        // The fields that follow the symbolic size are the style, weight, underlined,
+        // strikethrough tokens. Older versions omitted any field that held its default value,
+        // which shifted every following field away from the fixed index it would otherwise be
+        // read from -- so match each token by name instead of by position. The four token sets
+        // are disjoint, and an empty token (a kept placeholder) matches nothing.
+        for (size_t idx = static_cast<size_t>(font::idx_gui_style); idx < mstr.size(); ++idx)
         {
-            Style(font_style_pairs.GetValue(mstr[font::idx_gui_style]));
-        }
-
-        if (mstr.size() > font::idx_gui_weight)
-        {
-            Weight(font_weight_pairs.GetValue(mstr[font::idx_gui_weight]));
-        }
-
-        if (mstr.size() > font::idx_gui_underlined)
-        {
-            Underlined(mstr[font::idx_gui_underlined].is_sameas("underlined"));
-        }
-
-        if (mstr.size() > font::idx_gui_strikethrough)
-        {
-            Strikethrough(mstr[font::idx_gui_strikethrough].is_sameas("strikethrough"));
+            const wxue::string_view token = mstr[idx];
+            if (token.is_sameas("underlined"))
+            {
+                Underlined(true);
+            }
+            else if (token.is_sameas("strikethrough"))
+            {
+                Strikethrough(true);
+            }
+            else if (font_style_pairs.HasName(token))
+            {
+                Style(font_style_pairs.GetValue(token));
+            }
+            else if (font_weight_pairs.HasName(token))
+            {
+                Weight(font_weight_pairs.GetValue(token));
+            }
         }
 
         return;
@@ -307,16 +313,17 @@ wxString FontProperty::as_wxString() const
     if (m_isDefGuiFont)
     {
         // symbol size, style, weight, underlined, strikethrough
-
+        //
+        // Style and weight are written even when they hold their default value, so that
+        // underlined and strikethrough always land at the fixed indexes Convert() reads them
+        // from. Omitting a default field shifted the ones after it, which is why a system font
+        // with only underlined and/or strikethrough set used to lose those flags on reload.
         wxue::string prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
-        if (GetStyle() != wxFONTSTYLE_NORMAL)
-        {
-            prop_str << "," << font_style_pairs.GetName(GetStyle());
-        }
-        if (GetWeight() != wxFONTWEIGHT_NORMAL)
-        {
-            prop_str << "," << font_weight_pairs.GetName(GetWeight());
-        }
+        prop_str << ","
+                 << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
+        prop_str << ","
+                 << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" :
+                                                          font_weight_pairs.GetName(GetWeight()));
         if (!IsUnderlined() && !IsStrikethrough())
         {
             while (prop_str.back() == ',')
@@ -336,7 +343,6 @@ wxString FontProperty::as_wxString() const
             str = prop_str;
             return str;
         }
-        std::ignore = prop_str.Replace(",normal", ",", true);
         prop_str << ",strikethrough";
         str = prop_str;
     }

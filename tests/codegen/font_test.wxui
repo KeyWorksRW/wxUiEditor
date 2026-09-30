@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="16">
+  <node
+    class="Project"
+    generate_languages="C++">
+    <node
+      class="wxDialog"
+      class_name="FontTestBase"
+      title="Font Code Generation Test"
+      size="500,600"
+      base_file="font_test_base"
+      derived_class_name="FontTest"
+      derived_file="font_test">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="font_test_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxTextCtrl"
+          var_name="text_system_default"
+          value="1: system font, defaults (no font property)"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_system_size"
+          value="2: system font, large"
+          font="large"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_system_underline"
+          value="3: system font, underlined"
+          font="normal size,,,underlined"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_system_strike"
+          value="4: system font, strikethrough"
+          font="normal size,,,,strikethrough"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_system_both"
+          value="5: system font, underlined + strikethrough"
+          font="normal size,,,underlined,strikethrough"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_system_italic_underline"
+          value="6: system font, italic + underlined"
+          font="normal size,italic,,underlined"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_legacy_underline"
+          value="7: system font, underlined (legacy compact string)"
+          font="normal size,underlined"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_legacy_strike"
+          value="8: system font, strikethrough (legacy compact string)"
+          font="normal size,,strikethrough"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_legacy_weight"
+          value="9: system font, bold (legacy compact string)"
+          font="normal size,bold"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_custom_underline"
+          value="10: Arial, underlined"
+          font="Arial,12,,,,underlined"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_custom_strike"
+          value="11: Arial, strikethrough"
+          font="Arial,12,,,,,strikethrough"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_custom_underline_style_weight"
+          value="12: Arial, italic + bold + underlined"
+          font="Arial,12,italic,bold,,underlined"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_family_italic"
+          value="13: roman family, italic"
+          font="roman,12,italic"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_foreground"
+          value="14: foreground colour"
+          foreground_colour="#FF0000"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_background"
+          value="15: background colour"
+          background_colour="#0000FF"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_style_weight_system"
+          value="16: system font, italic + semi-bold"
+          font="normal size,italic,semi-bold"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          var_name="text_style_weight_custom"
+          value="17: Arial, italic + semi-bold"
+          font="Arial,12,italic,semi-bold"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

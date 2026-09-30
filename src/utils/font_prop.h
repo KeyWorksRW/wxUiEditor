@@ -412,6 +412,20 @@ struct FontWeightPairs
         return wxFONTWEIGHT_NORMAL;
     }
 
+    [[nodiscard]] bool HasName(wxue::string_view name) const
+    {
+        if (name.empty())
+        {
+            return false;
+        }
+
+        return std::ranges::any_of(pairs,
+                                   [name](const auto& pair)
+                                   {
+                                       return name.is_sameas(pair.first);
+                                   });
+    }
+
     [[nodiscard]] static std::string GetValue(wxFontWeight weight)
     {
         switch (weight)
@@ -483,6 +497,20 @@ struct FontStylePairs
             }
         }
         return wxFONTSTYLE_NORMAL;
+    }
+
+    [[nodiscard]] bool HasName(wxue::string_view name) const
+    {
+        if (name.empty())
+        {
+            return false;
+        }
+
+        return std::ranges::any_of(pairs,
+                                   [name](const auto& pair)
+                                   {
+                                       return name.is_sameas(pair.first);
+                                   });
     }
 
     [[nodiscard]] static std::string GetValue(wxFontStyle style)

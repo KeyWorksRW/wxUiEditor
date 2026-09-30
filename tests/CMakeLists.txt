@@ -35,6 +35,28 @@ foreach(importer_dir IN LISTS WXUI_IMPORT_DIRS)
 endforeach()
 
 
+# ###################### Code generation tests (--verify_cpp) #######################
+# Each project is regenerated in memory and diffed against the committed golden .h/.cpp files
+# beside it. Any difference -- intended or not -- fails the test, so the golden files have to be
+# updated (by running `wxUiEditor --gen_cpp <project>.wxui`) whenever code generation changes.
+# Adding a project needs no CMake edit -- drop the .wxui and its goldens in tests/codegen/ and
+# reconfigure.
+set(WXUI_CODEGEN_TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/codegen)
+
+file(GLOB codegen_projects CONFIGURE_DEPENDS "${WXUI_CODEGEN_TESTS_DIR}/*.wxui")
+foreach(codegen_project IN LISTS codegen_projects)
+    get_filename_component(codegen_name ${codegen_project} NAME_WE)
+    set(test_name "verify_codegen_${codegen_name}")
+    add_test(NAME ${test_name}
+        COMMAND ${WXUI_EXE} --verify_cpp ${codegen_project})
+    set_tests_properties(${test_name} PROPERTIES
+        # The .log written on a mismatch lands beside the project, so run from the project dir
+        # rather than the build tree.
+        WORKING_DIRECTORY "${WXUI_CODEGEN_TESTS_DIR}"
+        LABELS cli
+        TIMEOUT 120)
+endforeach()
+
 # ###################### Unit tests (Catch2 v3) #######################
 # The display-free logic (the wxue:: string helpers and the text-diff engine) is compiled into
 # the wxui_core static library, which both wxUiEditor and wxui_tests link -- the tests therefore

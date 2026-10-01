@@ -113,7 +113,10 @@ auto PythonCodeGenerator::WriteImportList() -> void
     if (m_form_node->HasValue(prop_python_import_list))
     {
         wxue::StringVector list;
-        list.SetString(std::string_view(m_form_node->as_string(prop_python_import_list)), '\n');
+        // The include dialog stores this list with ';' separators. A newline is also accepted so
+        // that project files written when a newline was used still generate one import per entry.
+        list.SetString(m_form_node->as_view(prop_python_import_list),
+                       std::vector<std::string_view> { ";", "\n" }, wxue::TRIM::both);
         for (auto& iter: list)
         {
             if (!iter.starts_with("import "))

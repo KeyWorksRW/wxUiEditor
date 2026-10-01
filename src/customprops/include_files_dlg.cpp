@@ -82,7 +82,10 @@ void IncludeFilesDialog::OnInit([[maybe_unused]] wxInitDialogEvent& event)
     if (m_prop->HasValue())
     {
         wxue::ViewVector list;
-        list.SetString(std::string_view { m_prop->value() }, ';');
+        // The list is normally ';'-separated, but older project files may have stored it
+        // newline-separated, so accept either when populating the listbox.
+        list.SetString(std::string_view { m_prop->value() },
+                       std::vector<std::string_view> { ";", "\n" });
         for (auto& iter: list)
         {
             if (!iter.empty())

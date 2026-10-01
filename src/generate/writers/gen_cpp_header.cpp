@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ code header content
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-30-2026]
 
 #include "gen_cpp.h"
 
@@ -38,7 +39,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
         return;
     }
 
-    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
+    BaseGenerator* generator = m_form_node->get_NodeDeclaration()->get_Generator();
     Code code(m_form_node, GenLang::cplusplus);
 
     // This may result in two blank lines, but without it there may be a case where there is no
@@ -52,7 +53,7 @@ void CppCodeGenerator::GenerateCppClassHeader(bool class_namespace)
     }
 
     // If the class has a namespace, then this was already written
-    if (!class_namespace && m_embedded_images.size())
+    if (!class_namespace && !m_embedded_images.empty())
     {
         WriteImagePostHeader();
         m_header->writeLine();
@@ -82,7 +83,9 @@ void CppCodeGenerator::GenHdrEvents()
 {
     ASSERT(m_language == GenLang::cplusplus);
 
-    if (m_events.size() || m_ctx_menu_events.size())
+    bool wrote_event_handler_header = false;
+
+    if (!m_events.empty() || !m_ctx_menu_events.empty())
     {
         std::set<wxue::string> code_lines;
 
@@ -99,9 +102,10 @@ void CppCodeGenerator::GenHdrEvents()
             ProcessSingleEvent(event, code_lines);
         }
 
-        if (code_lines.size())
+        if (!code_lines.empty())
         {
             WriteEventHandlerHeader();
+            wrote_event_handler_header = true;
             for (const auto& iter: code_lines)
             {
                 m_header->writeLine(iter.subview());
@@ -109,9 +113,12 @@ void CppCodeGenerator::GenHdrEvents()
         }
     }
 
-    if (m_map_conditional_events.size())
+    if (!m_map_conditional_events.empty())
     {
-        if (m_events.empty() && m_ctx_menu_events.empty())
+        // Only emit the banner if the first block above didn't already write one. Checking the
+        // event vectors is not sufficient: every entry may have been skipped by
+        // ShouldSkipEvent(), in which case no banner was written even though they are non-empty.
+        if (!wrote_event_handler_header)
         {
             WriteEventHandlerHeader();
         }
@@ -121,13 +128,13 @@ void CppCodeGenerator::GenHdrEvents()
     }
 }
 
-auto CppCodeGenerator::ShouldSkipEvent(const wxue::string& event_code) -> bool
+bool CppCodeGenerator::ShouldSkipEvent(const wxue::string& event_code)
 {
     // Ignore lambda's and functions in another class
     return event_code.find('[') != std::string::npos || event_code.find("::") != std::string::npos;
 }
 
-auto CppCodeGenerator::HasContextMenuHandler(NodeEvent* event) -> bool
+bool CppCodeGenerator::HasContextMenuHandler(NodeEvent* event)
 {
     if (!event->getNode()->is_Form() || event->get_name() != "wxEVT_CONTEXT_MENU")
     {
@@ -143,7 +150,7 @@ auto CppCodeGenerator::HasContextMenuHandler(NodeEvent* event) -> bool
 
 void CppCodeGenerator::ProcessSingleEvent(NodeEvent* event, std::set<wxue::string>& code_lines)
 {
-    auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
+    const std::string event_code = EventHandlerDlg::GetCppValue(event->get_value());
     if (ShouldSkipEvent(event_code))
     {
         return;
@@ -212,9 +219,12 @@ void CppCodeGenerator::ProcessConditionalEvents(Code& code)
 
     for (auto& iter: m_map_conditional_events)
     {
-        auto& events = iter.second;
+        std::vector<NodeEvent*>& events = iter.second;
         std::sort(events.begin(), events.end(), sort_events_by_handler);
         code.clear();
+        // BeginPlatformCode() only emits an opening #if when a language strategy is available,
+        // so the matching #endif must be conditional too.
+        const bool has_platform_block = (m_strategy != nullptr);
         {
             wxue::string cond_platforms;
             wxue::string cond_conditional;
@@ -225,7 +235,7 @@ void CppCodeGenerator::ProcessConditionalEvents(Code& code)
 
         for (auto& event: events)
         {
-            auto event_code = EventHandlerDlg::GetCppValue(event->get_value());
+            const std::string event_code = EventHandlerDlg::GetCppValue(event->get_value());
             if (ShouldSkipEvent(event_code))
             {
                 continue;
@@ -238,8 +248,11 @@ void CppCodeGenerator::ProcessConditionalEvents(Code& code)
             code.Eol();
         }
 
-        code << "#endif  // limited to specific platforms";
-        code.Eol();
+        if (has_platform_block)
+        {
+            code << "#endif  // limited to specific platforms";
+            code.Eol();
+        }
         m_header->writeLine(code);
     }
 }
@@ -249,8 +262,8 @@ void CppCodeGenerator::GenHdrNameSpace(wxue::string& namespace_prop, wxue::Strin
 {
     // namespace_prop can be a single or multiple namespaces separated by either :: or ;.
     // Replace both separator types with a single ':' character.
-    namespace_prop.Replace("::", ":");
-    namespace_prop.Replace(";", ":");
+    std::ignore = namespace_prop.Replace("::", ":", wxue::REPLACE::all);
+    std::ignore = namespace_prop.Replace(";", ":", wxue::REPLACE::all);
     names.SetString(std::string_view(namespace_prop), ':');
 
     wxue::string using_name;
@@ -275,7 +288,7 @@ void CppCodeGenerator::GenHdrNameSpace(wxue::string& namespace_prop, wxue::Strin
     }
     m_header->SetLastLineBlank();
 
-    if (using_name.size())
+    if (!using_name.empty())
     {
         using_name << ';';
         m_source->writeLine(using_name);
@@ -287,7 +300,7 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
     std::vector<std::string> ordered_includes;
     ProcessOrderDependentHeaderIncludes(hdr_includes, ordered_includes);
 
-    if (ordered_includes.size())
+    if (!ordered_includes.empty())
     {
         for (auto& iter: ordered_includes)
         {
@@ -299,7 +312,7 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
     WriteWxWidgetsHeaders(hdr_includes);
     m_header->writeLine();
 
-    auto namespaces = ExtractNamespaces(hdr_includes);
+    const std::vector<std::string> namespaces = ExtractNamespaces(hdr_includes);
     WriteNonWxHeaders(hdr_includes);
     m_header->writeLine();
 
@@ -357,11 +370,10 @@ void CppCodeGenerator::WriteWxWidgetsHeaders(const std::set<std::string>& hdr_in
     }
 }
 
-auto CppCodeGenerator::ExtractNamespaces(std::set<std::string>& hdr_includes)
-    -> std::vector<std::string>
+std::vector<std::string> CppCodeGenerator::ExtractNamespaces(std::set<std::string>& hdr_includes)
 {
     std::vector<std::string> namespaces;
-    for (auto iter = hdr_includes.begin(); iter != hdr_includes.end();)
+    for (std::set<std::string>::iterator iter = hdr_includes.begin(); iter != hdr_includes.end();)
     {
         if (iter->starts_with("namespace "))
         {
@@ -398,7 +410,7 @@ void CppCodeGenerator::WritePreambleAndCustomIncludes()
     {
         m_header->writeLine();
         wxue::ViewVector list;
-        list.SetString(m_form_node->as_view(prop_system_hdr_includes), ';');
+        list.SetString(m_form_node->as_view(prop_system_hdr_includes), ';', wxue::TRIM::both);
         for (auto& iter: list)
         {
             m_header->writeLine(wxue::string("#include <") << iter << '>');
@@ -409,7 +421,11 @@ void CppCodeGenerator::WritePreambleAndCustomIncludes()
     {
         m_header->writeLine();
         wxue::ViewVector list;
-        list.SetString(m_form_node->as_view(prop_local_hdr_includes), '\n');
+        // The include dialog stores this list with ';' separators. A newline is also accepted so
+        // that project files written when a newline was used still generate one #include per
+        // entry instead of a single unterminated one.
+        list.SetString(m_form_node->as_view(prop_local_hdr_includes),
+                       std::vector<std::string_view> { ";", "\n" }, wxue::TRIM::both);
         for (auto& iter: list)
         {
             m_header->writeLine(wxue::string("#include \"") << iter << '"');
@@ -419,7 +435,7 @@ void CppCodeGenerator::WritePreambleAndCustomIncludes()
 
 void CppCodeGenerator::WriteNamespaceDeclarations(const std::vector<std::string>& namespaces)
 {
-    if (namespaces.size())
+    if (!namespaces.empty())
     {
         m_header->writeLine();
         for (const auto& iter: namespaces)
@@ -428,6 +444,15 @@ void CppCodeGenerator::WriteNamespaceDeclarations(const std::vector<std::string>
 
             // See gen_custom_ctrl.cpp -- GetIncludes(). Format is namespace name\n{\nclass
             // name;\n}
+            //
+            // ExtractNamespaces() accepts any entry beginning with "namespace ", not only that
+            // 3-line form, so a single-line entry such as "namespace foo;" would make list[1]
+            // an out-of-bounds read.
+            if (list.size() < 2)
+            {
+                m_header->writeLine(wxue::string_view(iter));
+                continue;
+            }
             m_header->writeLine(list[0]);
             m_header->writeLine(list[1]);
             m_header->Indent();
@@ -449,7 +474,7 @@ void CppCodeGenerator::WriteNamespaceDeclarations(const std::vector<std::string>
 void CppCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
 {
     wxue::string convert(node->as_view(prop));
-    convert.Replace("@@", "\n", wxue::REPLACE::all);
+    std::ignore = convert.Replace("@@", "\n", wxue::REPLACE::all);
     wxue::StringVector lines(convert, '\n', wxue::TRIM::right);
     bool initial_bracket = false;
 
@@ -499,8 +524,8 @@ void CppCodeGenerator::WriteClassDeclaration(Code& code, BaseGenerator* generato
     {
         if (m_form_node->HasValue(prop_additional_inheritance))
         {
-            wxue::StringVector class_list(m_form_node->as_view(prop_additional_inheritance), '"',
-                                          wxue::TRIM::both);
+            const wxue::StringVector class_list(m_form_node->as_view(prop_additional_inheritance),
+                                                '"', wxue::TRIM::both);
             for (auto& iter: class_list)
             {
                 code.Str(", public ").Str(iter);
@@ -514,6 +539,12 @@ void CppCodeGenerator::WriteClassDeclaration(Code& code, BaseGenerator* generato
         {
             FAIL_MSG("All form generators need to support BaseClassNameCode() to provide the class "
                      "name to derive from.");
+
+            // FAIL_MSG is diagnostic only -- it does not abort, and the caller unconditionally
+            // emits the class body. Write a fallback declaration so the generated header does not
+            // end up with a body and no declaration line.
+            m_header->writeLine(wxue::string()
+                                << "class " << m_form_node->as_view(prop_class_name));
         }
         else
         {
@@ -587,7 +618,7 @@ void CppCodeGenerator::WritePublicMemberVariables(Code& code)
     // to write the lines and clear the set.
     std::set<std::string> code_lines;
     CollectMemberVariables(m_form_node, Permission::Public, code_lines);
-    if (code_lines.size())
+    if (!code_lines.empty())
     {
         WriteSetLines(m_header, code_lines);
         m_header->writeLine();
@@ -596,6 +627,9 @@ void CppCodeGenerator::WritePublicMemberVariables(Code& code)
     for (auto& member: m_map_public_members)
     {
         code.clear();
+        // BeginPlatformCode() only emits an opening #if when a language strategy is available,
+        // so the matching #endif must be conditional too.
+        const bool has_platform_block = (m_strategy != nullptr);
         {
             wxue::string cond_platforms;
             wxue::string cond_conditional;
@@ -607,8 +641,15 @@ void CppCodeGenerator::WritePublicMemberVariables(Code& code)
         {
             m_header->writeLine(member_code);
         }
-        m_header->writeLine("#endif  // limited to specific platforms");
+        if (has_platform_block)
+        {
+            m_header->writeLine("#endif  // limited to specific platforms");
+        }
     }
+
+    // Correctness currently relies on a fresh generator per form; clear the map so reusing this
+    // instance cannot emit stale platform-specific members a second time.
+    m_map_public_members.clear();
 }
 
 void CppCodeGenerator::WriteConstValues(Code& code)
@@ -625,7 +666,7 @@ void CppCodeGenerator::WriteConstValues(Code& code)
     WriteFormSizeConst(code, m_form_node);
     WriteFormTitleConst(code, m_form_node);
 
-    if (code.size())
+    if (!code.empty())
     {
         m_header->writeLine(code);
         m_header->writeLine();
@@ -650,6 +691,11 @@ void CppCodeGenerator::WriteGeneratorHeaderCode(Code& code, BaseGenerator* gener
             }
             else
             {
+                // Nothing has been written yet, so the pending header code still needs to be
+                // emitted -- otherwise the MDI view code would be silently dropped. Write it at
+                // the current indentation, then indent so the following members line up with the
+                // branch above.
+                m_header->writeLine(code);
                 m_header->Indent();
             }
         }
@@ -670,7 +716,7 @@ void CppCodeGenerator::WritePublicClassMethods()
     {
         wxue::StringVector class_list(m_form_node->as_view(prop_class_methods), '"',
                                       wxue::TRIM::both);
-        if (class_list.size())
+        if (!class_list.empty())
         {
             m_header->writeLine();
             for (auto& iter: class_list)
@@ -688,7 +734,7 @@ void CppCodeGenerator::WriteProtectedClassMethods()
     {
         wxue::StringVector class_list(m_form_node->as_view(prop_protected_class_methods), '"',
                                       wxue::TRIM::both);
-        if (class_list.size())
+        if (!class_list.empty())
         {
             m_header->writeLine();
             for (auto& iter: class_list)
@@ -703,22 +749,25 @@ void CppCodeGenerator::WriteProtectedClassMethods()
 void CppCodeGenerator::WriteValidatorVariables(Code& code, std::set<std::string>& code_lines)
 {
     CollectValidatorVariables(m_form_node, code_lines);
-    if (code_lines.size() || m_map_protected.size())
+    if (!code_lines.empty() || !m_map_protected.empty())
     {
         m_header->writeLine();
         m_header->writeLine("// Validator variables");
-        if (code_lines.size())
+        if (!code_lines.empty())
         {
             m_header->writeLine();
             WriteSetLines(m_header, code_lines);
         }
     }
 
-    if (m_map_protected.size())
+    if (!m_map_protected.empty())
     {
         for (auto& member: m_map_protected)
         {
             code.clear();
+            // BeginPlatformCode() only emits an opening #if when a language strategy is
+            // available, so the matching #endif must be conditional too.
+            const bool has_platform_block = (m_strategy != nullptr);
             {
                 wxue::string cond_platforms;
                 wxue::string cond_conditional;
@@ -730,7 +779,10 @@ void CppCodeGenerator::WriteValidatorVariables(Code& code, std::set<std::string>
             {
                 m_header->writeLine(code_line);
             }
-            m_header->writeLine("#endif  // limited to specific platforms");
+            if (has_platform_block)
+            {
+                m_header->writeLine("#endif  // limited to specific platforms");
+            }
         }
         m_map_protected.clear();
     }
@@ -742,11 +794,11 @@ void CppCodeGenerator::WriteProtectedMemberVariables(Code& code, BaseGenerator* 
     CollectMemberVariables(m_form_node, Permission::Protected, code_lines);
     generator->AddProtectedHdrMembers(code_lines);
 
-    if (code_lines.size() || m_map_protected.size())
+    if (!code_lines.empty() || !m_map_protected.empty())
     {
         m_header->writeLine();
         m_header->writeLine("// Class member variables");
-        if (code_lines.size())
+        if (!code_lines.empty())
         {
             m_header->writeLine();
             WriteSetLines(m_header, code_lines);
@@ -756,6 +808,9 @@ void CppCodeGenerator::WriteProtectedMemberVariables(Code& code, BaseGenerator* 
     for (auto& member: m_map_protected)
     {
         code.clear();
+        // BeginPlatformCode() only emits an opening #if when a language strategy is available,
+        // so the matching #endif must be conditional too.
+        const bool has_platform_block = (m_strategy != nullptr);
         {
             wxue::string cond_platforms;
             wxue::string cond_conditional;
@@ -767,8 +822,15 @@ void CppCodeGenerator::WriteProtectedMemberVariables(Code& code, BaseGenerator* 
         {
             m_header->writeLine(code_line);
         }
-        m_header->writeLine("#endif  // limited to specific platforms");
+        if (has_platform_block)
+        {
+            m_header->writeLine("#endif  // limited to specific platforms");
+        }
     }
+
+    // Correctness currently relies on a fresh generator per form; clear the map so reusing this
+    // instance cannot emit stale platform-specific members a second time.
+    m_map_protected.clear();
 }
 
 void CppCodeGenerator::WriteFormIdConst(Code& code, Node* node)
@@ -776,7 +838,7 @@ void CppCodeGenerator::WriteFormIdConst(Code& code, Node* node)
     if (node->HasProp(prop_id))
     {
         code.Eol(eol_if_needed).Str("static const int form_id = ");
-        if (node->as_view(prop_id).size())
+        if (!node->as_view(prop_id).empty())
         {
             code.as_string(prop_id) += ";";
         }
@@ -787,12 +849,12 @@ void CppCodeGenerator::WriteFormIdConst(Code& code, Node* node)
     }
 }
 
-auto CppCodeGenerator::WriteFormStyleConst(Code& code, Node* node) -> void
+void CppCodeGenerator::WriteFormStyleConst(Code& code, Node* node)
 {
     if (node->HasProp(prop_style))
     {
         code.Eol(eol_if_needed).Str("static const int form_style = ");
-        if (node->as_view(prop_style).size())
+        if (!node->as_view(prop_style).empty())
         {
             code.as_string(prop_style) += ";";
         }
@@ -804,7 +866,7 @@ auto CppCodeGenerator::WriteFormStyleConst(Code& code, Node* node) -> void
     else if (node->HasProp(prop_window_style))
     {
         code.Eol(eol_if_needed).Str("static const int form_style = ");
-        if (node->as_view(prop_window_style).size())
+        if (!node->as_view(prop_window_style).empty())
         {
             code.as_string(prop_window_style) += ";";
         }
@@ -815,7 +877,7 @@ auto CppCodeGenerator::WriteFormStyleConst(Code& code, Node* node) -> void
     }
 }
 
-auto CppCodeGenerator::WriteFormPosConst(Code& code, Node* node) -> void
+void CppCodeGenerator::WriteFormPosConst(Code& code, Node* node)
 {
     if (node->HasProp(prop_pos))
     {
@@ -825,24 +887,27 @@ auto CppCodeGenerator::WriteFormPosConst(Code& code, Node* node) -> void
     }
 }
 
-auto CppCodeGenerator::WriteFormSizeConst(Code& code, Node* node) -> void
+void CppCodeGenerator::WriteFormSizeConst(Code& code, Node* node)
 {
     if (node->HasProp(prop_size))
     {
         code.Eol(eol_if_needed)
-            .Str("static const wxSize form_size() { return  ")
+            .Str("static const wxSize form_size() { return ")
             .WxSize(prop_size, no_dpi_scaling) += "; }";
     }
 }
 
-auto CppCodeGenerator::WriteFormTitleConst(Code& code, Node* node) -> void
+void CppCodeGenerator::WriteFormTitleConst(Code& code, Node* node)
 {
     if (node->HasProp(prop_title))
     {
         code.Eol(eol_if_needed).Str("static const wxString form_title() { return ");
         if (node->HasValue(prop_title))
         {
-            code.Str("wxString::FromUTF8(\"").as_string(prop_title) += "\"); }";
+            // Emit the title through the quoting helper so that ", \ and control characters are
+            // escaped instead of producing an invalid string literal.
+            code.Str("wxString::FromUTF8(")
+                .Str(GenerateQuotedString(node->as_string(prop_title)).ToStdView()) += "); }";
         }
         else
         {
@@ -851,12 +916,12 @@ auto CppCodeGenerator::WriteFormTitleConst(Code& code, Node* node) -> void
     }
 }
 
-auto CppCodeGenerator::IsAccessSpecifier(const wxue::string& code) -> bool
+bool CppCodeGenerator::IsAccessSpecifier(const wxue::string& code)
 {
     return code.is_sameas("public:") || code.is_sameas("protected:") || code.is_sameas("private:");
 }
 
-auto CppCodeGenerator::ShouldIndentAfter(const wxue::string& code) -> bool
+bool CppCodeGenerator::ShouldIndentAfter(const wxue::string& code)
 {
     return code.contains("{") && !code.contains("}");
 }

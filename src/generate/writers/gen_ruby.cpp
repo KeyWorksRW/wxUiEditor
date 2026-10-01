@@ -168,7 +168,10 @@ auto RubyCodeGenerator::WriteRelativeRequires(const std::vector<Node*>& forms) -
     if (m_form_node->HasValue(prop_relative_require_list))
     {
         wxue::StringVector list;
-        list.SetString(std::string_view(m_form_node->as_string(prop_relative_require_list)), '\n');
+        // The include dialog stores this list with ';' separators. A newline is also accepted so
+        // that project files written when a newline was used still generate one require per entry.
+        list.SetString(m_form_node->as_view(prop_relative_require_list),
+                       std::vector<std::string_view> { ";", "\n" }, wxue::TRIM::both);
         for (auto& iter: list)
         {
             iter.remove_extension();

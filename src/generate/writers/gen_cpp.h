@@ -1,13 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate C++ code
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [09-30-2026]
 
+#pragma once
+
+#include <string>
 #include <thread>
+#include <unordered_set>
+#include <vector>
 
 #include "gen_base.h"  // BaseCodeGenerator
+
+#include "gen_common.h"  // GenerateQuotedString()
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
@@ -16,12 +24,32 @@ class CppCodeGenerator : public BaseCodeGenerator
 public:
     CppCodeGenerator(Node* form_node);
 
+    // The three std::thread members can still be joinable if GenerateClass() exits early (an
+    // exception, or an early return). Without this, destroying the generator would call
+    // std::terminate on a joinable thread.
+    ~CppCodeGenerator() override
+    {
+        if (m_thrd_get_events.joinable())
+        {
+            m_thrd_get_events.join();
+        }
+        if (m_thrd_collect_img_headers.joinable())
+        {
+            m_thrd_collect_img_headers.join();
+        }
+        if (m_thrd_need_img_func.joinable())
+        {
+            m_thrd_need_img_func.join();
+        }
+    }
+
     // All language generators must implement this method.
     void GenerateClass(GenLang language = GenLang::cplusplus,
                        PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL,
                        wxProgressDialog* progress = nullptr) override;
 
     // Returns result::fail, result::exists, result::created, or result::ignored
+    [[nodiscard]]
     int GenerateDerivedClass(Node* form_node,
                              PANEL_PAGE panel_type = PANEL_PAGE::NOT_PANEL) override;
 
@@ -48,7 +76,7 @@ protected:
     // Writes the #include files to m_header
     void GenInitHeaderFile(std::set<std::string>& hdr_includes);
 
-    // Generates an enum of all use-defined ids
+    // Generates an enum of all user-defined ids
     void GenCppEnumIds(Node* class_node);
 
     // Called from GenerateCppClassConstructor if node is a gen_Data
@@ -79,13 +107,13 @@ protected:
 
     // Generate extern statements after the header definition for embedded images not defined
     // in the gen_Images node.
-    void WriteImagePostHeader();  // declared in image_gen.cpp
+    void WriteImagePostHeader();  // defined in gen_cpp.cpp
 
     // Generate extern references to images used in the current form that are defined in the
     // gen_Images node.
     //
     // This will call code.clear() before writing any code.
-    void WriteImagePreConstruction(Code& code);  // declared in image_gen.cpp
+    void WriteImagePreConstruction(Code& code);  // defined in gen_cpp.cpp
 
     void WritePropHdrCode(Node* node, GenEnum::PropName prop);
 
@@ -268,10 +296,14 @@ public:
         }
     };
 
-    std::string_view get_source_ext() const { return m_source_ext; }
+    // The returned reference is only valid while this GenData instance is alive and until the
+    // matching set_*() is called; do not store it.
+    const std::string& get_source_ext() const { return m_source_ext; }
     void set_source_ext(std::string_view extension) { m_source_ext = extension; }
 
-    std::string_view get_header_ext() const { return m_header_ext; }
+    // The returned reference is only valid while this GenData instance is alive and until the
+    // matching set_*() is called; do not store it.
+    const std::string& get_header_ext() const { return m_header_ext; }
     void set_header_ext(std::string_view extension) { m_header_ext = extension; }
 
     std::vector<std::string>* get_pClassList() const { return m_pClassList; }

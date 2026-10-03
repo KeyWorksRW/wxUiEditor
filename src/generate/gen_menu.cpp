@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu Generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [10-03-2026]
 
 #include <wx/menu.h>               // wxMenu and wxMenuBar classes
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
@@ -27,15 +28,25 @@ bool MenuGenerator::ConstructionCode(Code& code)
 
 bool MenuGenerator::AfterChildrenCode(Code& code)
 {
-    auto* node =
+    Node* node =
         code.node();  // This is just for code readability -- could just use code.node() everywhere
-    auto parent_type = node->get_Parent()->get_GenType();
+
+    // A Menu node is never nested inside another Menu: nested menus are type_submenu nodes
+    // handled by SubMenuGenerator, which emits AppendSubMenu(). Cache the parent once and
+    // guard against a null parent before dereferencing it.
+    Node* parent = node->get_Parent();
+    if (!parent)
+    {
+        return true;
+    }
+    const GenType parent_type = parent->get_GenType();
     if (parent_type == type_menubar)
     {
         code.ParentName().Function("Append(").NodeName().Comma();
         if (node->as_string(prop_stock_id) != "none")
         {
-            // Call Function(..., false) so that Ruby will convert the function to snake-case
+            // Pass add_operator=false so no receiver is emitted: C++ gets the bare
+            // wxGetStockLabel() call while Ruby converts it to Wx::get_stock_label().
             code.Function("wxGetStockLabel(", false).Add(prop_stock_id).Str(")");
         }
         else
@@ -46,21 +57,27 @@ bool MenuGenerator::AfterChildrenCode(Code& code)
     }
     else if (parent_type == type_menubar_form)
     {
+        // This branch is only valid for targets that supply the receiver implicitly: Python
+        // via AddIfPython("self."), and C++ where the menu is appended from inside the
+        // wxMenuBar-derived constructor so a bare Append() call resolves to this->Append().
         code.AddIfPython("self.");
         code.Add("Append(").NodeName().Comma().QuotedString(prop_label).EndFunction();
     }
     else if (code.is_cpp())
     {
         // The parent can disable generation of Bind by shutting off the context menu
-        if (!node->get_Parent()->as_bool(prop_context_menu))
+        if (!parent->as_bool(prop_context_menu))
         {
             return true;
         }
 
+        // The wxEVT_RIGHT_DOWN handler name is the parent node's name with an "OnContextMenu"
+        // suffix, matching the wxEVT_CONTEXT_MENU handler name emitted by GenEvent() in
+        // CtxMenuGenerator. The class qualifier is always the enclosing form's name.
         if (parent_type == type_form || parent_type == type_frame_form ||
             parent_type == type_panel_form || parent_type == type_wizard)
         {
-            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->get_ParentName(code.get_language())
+            code << "Bind(wxEVT_RIGHT_DOWN, &" << node->get_FormName()
                  << "::" << node->get_ParentName(code.get_language()) << "OnContextMenu, this);";
         }
         else
@@ -88,7 +105,7 @@ bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenu");
 
@@ -107,8 +124,14 @@ void MenuGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
 {
     if (changed_prop->isProp(prop_stock_id))
     {
-        if (auto* pg_setting = prop_grid->GetProperty(wxString(map_PropNames.at(prop_label)));
-            pg_setting)
+        const std::map<GenEnum::PropName, std::string_view>::const_iterator label_iter =
+            map_PropNames.find(prop_label);
+        if (label_iter == map_PropNames.end())
+        {
+            return;
+        }
+
+        if (auto* pg_setting = prop_grid->GetProperty(wxString(label_iter->second)); pg_setting)
         {
             pg_setting->Enable(changed_prop->as_string() == "none");
         }
@@ -123,9 +146,13 @@ bool MenuGenerator::ModifyProperty(NodeProperty* prop, wxue::string_view value)
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
             undo_stock_id->addProperty(prop, value);
-            undo_stock_id->addProperty(
-                prop->getNode()->get_PropPtr(prop_label),
-                wxGetStockLabel(NodeCreation.get_ConstantAsInt(value.as_str())).utf8_string());
+            // Only update the label when value names a known stock id; otherwise
+            // wxGetStockLabel() would be called with a bogus id.
+            if (const int stock_id = NodeCreation.get_ConstantAsInt(value.as_str()); stock_id > 0)
+            {
+                undo_stock_id->addProperty(prop->getNode()->get_PropPtr(prop_label),
+                                           wxGetStockLabel(stock_id).utf8_string());
+            }
             wxGetFrame().PushUndoAction(undo_stock_id);
             return true;
         }

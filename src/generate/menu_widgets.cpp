@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [10-03-2026]
 
 #include <wx/menu.h>      // wxMenu and wxMenuBar classes
 #include <wx/sizer.h>     // provide wxSizer class for layout
@@ -70,8 +71,8 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     // To simulate what a real wxMenuBar would do, we get the label from the static text
     // control, find the matching child, and create a popup menu based on that child.
 
-    auto* menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
-    wxue::string text = menu_label->GetLabel().utf8_string();
+    const wxStaticText* menu_label = wxStaticCast(event.GetEventObject(), wxStaticText);
+    const wxue::string text = menu_label->GetLabel().utf8_string();
 
     Node* menu_node = nullptr;
 
@@ -93,7 +94,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
             {
                 label = child->as_wxString(prop_label);
             }
-            if (label == text)
+            if (label.utf8_string() == text)
             {
                 menu_node = child.get();
                 break;
@@ -107,7 +108,9 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
         return;
     }
 
-    auto* popup_menu = MakeSubMenu(menu_node);
+    wxMenu* popup_menu = MakeSubMenu(menu_node);
+    // wxWindow::PopupMenu runs a modal loop and does not return until the menu has been
+    // dismissed, so it is safe to delete popup_menu immediately after the call returns.
     getMockup()->PopupMenu(popup_menu);
     delete popup_menu;
 }
@@ -120,8 +123,12 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
     {
         if (menu_item->is_Type(type_submenu))
         {
-            auto* result = MakeSubMenu(menu_item.get());
-            auto* item = sub_menu->AppendSubMenu(result, menu_item->as_wxString(prop_label));
+            wxMenu* result = MakeSubMenu(menu_item.get());
+            wxMenuItem* item = sub_menu->AppendSubMenu(result, menu_item->as_wxString(prop_label));
+            if (menu_item->as_bool(prop_disabled))
+            {
+                item->Enable(false);
+            }
             if (menu_item->HasValue(prop_bitmap))
             {
                 item->SetBitmap(menu_item->as_wxBitmapBundle(prop_bitmap));
@@ -133,9 +140,9 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         }
         else
         {
-            auto menu_label = menu_item->as_string(prop_label);
-            auto shortcut = menu_item->as_string(prop_shortcut);
-            if (shortcut.size())
+            wxue::string menu_label = menu_item->as_string(prop_label);
+            const wxue::string shortcut = menu_item->as_string(prop_shortcut);
+            if (!shortcut.empty())
             {
                 menu_label << "\t" << shortcut;
             }
@@ -150,6 +157,9 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
                 menu_id = NodeCreation.get_ConstantAsInt(menu_item->as_string(prop_id), wxID_ANY);
             }
 
+            // node->as_int() resolves option-typed properties via
+            // NodeCreation.get_ConstantAsInt(), and prop_kind is type_option, so
+            // wxITEM_CHECK/wxITEM_RADIO map to their integer values here.
             auto* item =
                 new wxMenuItem(sub_menu, menu_id, menu_label, menu_item->as_wxString(prop_help),
                                (wxItemKind) menu_item->as_int(prop_kind));
@@ -163,7 +173,8 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             {
                 if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
-                    auto unchecked = menu_item->as_wxBitmapBundle(prop_unchecked_bitmap);
+                    const wxBitmapBundle unchecked =
+                        menu_item->as_wxBitmapBundle(prop_unchecked_bitmap);
                     item->SetBitmaps(menu_item->as_wxBitmapBundle(prop_bitmap), unchecked);
                 }
                 else
@@ -231,9 +242,10 @@ bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int MenuBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = (node->get_Parent() && node->get_Parent()->is_Sizer()) ?
+                           BaseGenerator::xrc_sizer_item_created :
+                           BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuBar");
 
@@ -261,7 +273,16 @@ bool MenuBarFormGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
-        code.Str("(long style) : wxMenuBar(style)\n{");
+        code.Str("(long style) : ");
+        if (code.HasValue(prop_subclass))
+        {
+            code.as_string(prop_subclass);
+        }
+        else
+        {
+            code.Str("wxMenuBar");
+        }
+        code.Str("(style)\n{");
     }
     else
     {
@@ -310,9 +331,10 @@ bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 int MenuBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    const int result = (node->get_Parent() && node->get_Parent()->is_Sizer()) ?
+                           BaseGenerator::xrc_sizer_item_created :
+                           BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuBar");
 
@@ -340,15 +362,24 @@ bool PopupMenuGenerator::ConstructionCode(Code& code)
     if (code.is_cpp())
     {
         code.as_string(prop_class_name).Str("::").as_string(prop_class_name);
-        code.Str("() : wxMenu()\n{");
+        code.Str("() : ");
+        if (code.HasValue(prop_subclass))
+        {
+            code.as_string(prop_subclass);
+        }
+        else
+        {
+            code.Str("wxMenu");
+        }
+        code.Str("()\n{");
     }
     else
     {
-        code.Add("class ").NodeName().Add("(wx.wxMenu):\n");
+        code.Add("class ").NodeName().Add("(wx.Menu):\n");
         code.Eol().Tab().Add("def __init__(self");
         code.Str("):");
         code.Indent(3);
-        code.Eol() += "wx.wxMenu.__init__(self)";
+        code.Eol() += "wx.Menu.__init__(self)";
         code.ResetIndent();
     }
 
@@ -357,7 +388,7 @@ bool PopupMenuGenerator::ConstructionCode(Code& code)
 
 bool PopupMenuGenerator::HeaderCode(Code& code)
 {
-    code.NodeName().Str("();");
+    code.NodeName().Str("()").EndFunction();
 
     return true;
 }
@@ -411,7 +442,7 @@ bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int SeparatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "separator");
     return BaseGenerator::xrc_updated;
 }

@@ -96,7 +96,9 @@ wxue::string GenerateQuotedString(const wxue::string& str)
             // compiles on all platforms.
             if (Project.as_bool(prop_internationalize) && wxue::has_alpha(str))
             {
-                code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
+                // wxWidgets 3.3's _() only accepts a string literal, so a string that also
+                // needs wxString::FromUTF8() must be translated with wxGetTranslation().
+                code << "wxGetTranslation(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
             }
             else
             {

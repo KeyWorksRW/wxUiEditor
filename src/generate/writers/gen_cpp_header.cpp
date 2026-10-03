@@ -905,9 +905,11 @@ void CppCodeGenerator::WriteFormTitleConst(Code& code, Node* node)
         if (node->HasValue(prop_title))
         {
             // Emit the title through the quoting helper so that ", \ and control characters are
-            // escaped instead of producing an invalid string literal.
-            code.Str("wxString::FromUTF8(")
-                .Str(GenerateQuotedString(node->as_string(prop_title)).ToStdView()) += "); }";
+            // escaped instead of producing an invalid string literal. The helper already wraps the
+            // result in wxString::FromUTF8() (and a translation call) when needed, so it must not
+            // be wrapped again here -- a second wxString::FromUTF8() would round-trip the string
+            // through the locale charset, mangling any non-ASCII characters.
+            code.Str(GenerateQuotedString(node->as_string(prop_title)).ToStdView()) += "; }";
         }
         else
         {

@@ -23,9 +23,11 @@ class FontProperty;
 // Common component functions
 
 // Places the string in wxString::FromUTF8(), adds C++ escapes around any characters the
-// compiler wouldn't accept as a normal part of a string, and wraps it all in _() if
-// prop_internationalize is set. The _() wrapper is omitted if the string contains no alphabetic
-// characters (e.g. "123", "%%", "1,000").
+// compiler wouldn't accept as a normal part of a string, and wraps it in a translation call if
+// prop_internationalize is set. wxGetTranslation() is used when the string also needs
+// wxString::FromUTF8(), because wxWidgets 3.3's _() only accepts a string literal; otherwise _() is
+// used. The translation wrapper is omitted if the string contains no alphabetic characters (e.g.
+// "123", "%%", "1,000").
 //
 // Will return "wxEmptyString" if prop_name is empty.
 wxue::string GenerateQuotedString(const wxue::string& str);

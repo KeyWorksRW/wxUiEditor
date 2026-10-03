@@ -137,11 +137,21 @@ Code& Code::QuotedString(wxue::string_view text)
     const size_t cur_pos = this->size();
 
     const bool internationalize = Project.as_bool(prop_internationalize) && wxue::has_alpha(text);
+    const bool has_utf_char = is_cpp() && HasUtf8Char(text);
     if (internationalize)
     {
         if (is_cpp())
         {
-            *this += "_(";
+            // wxWidgets 3.3's _() only accepts a string literal, so a string that also needs
+            // wxString::FromUTF8() must be translated with wxGetTranslation() instead.
+            if (has_utf_char)
+            {
+                *this += "wxGetTranslation(";
+            }
+            else
+            {
+                *this += "_(";
+            }
         }
         else
         {
@@ -149,7 +159,6 @@ Code& Code::QuotedString(wxue::string_view text)
         }
     }
 
-    const bool has_utf_char = is_cpp() && HasUtf8Char(text);
     if (has_utf_char)
     {
         *this += "wxString::FromUTF8(";

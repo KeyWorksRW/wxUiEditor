@@ -500,6 +500,9 @@
     <gen class="submenu" image="submenu" type="submenu">
         <property name="var_name" type="string">submenu</property>
         <property name="label" type="string_escapes">MySubMenu</property>
+        <property name="id" type="id"
+            help="Optional identifier for the submenu. When set, the generated code calls the id-taking wxMenu::Append() overload instead of AppendSubMenu(), so the submenu can be enabled, disabled, or updated by id.">
+            wxID_ANY</property>
         <property name="bitmap" type="image"
             help="Bitmap for the submenu item."/>
     </gen>

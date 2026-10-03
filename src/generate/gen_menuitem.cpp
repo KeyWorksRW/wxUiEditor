@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu Item Generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [10-03-2026]
 
 #include <unordered_map>
 
@@ -26,7 +27,7 @@
 
 // clang-format off
 
-std::unordered_map<std::string, std::string> map_id_artid = {
+static const std::unordered_map<std::string, std::string> map_id_artid = {
 
     { "wxID_OPEN", "wxART_FILE_OPEN" },
     { "wxID_SAVE", "wxART_FILE_SAVE" },
@@ -55,15 +56,18 @@ std::unordered_map<std::string, std::string> map_id_artid = {
 
 bool MenuItemGenerator::ConstructionCode(Code& code)
 {
-    Node* node =
+    const Node* node =
         code.node();  // This is just for code readability -- could just use code.node() everywhere
     code.AddAuto();
 
+    // MenuItem nodes always have a parent (menu, menu bar, or popup menu).
     if (node->get_Parent()->is_Gen(gen_PopupMenu))
     {
         code.NodeName();
         code.AddIfCpp(" = Append(");
         code.AddIfPython(" = self.Append(");
+        // wxRuby has no Append(); the equivalent is the snake_case append().
+        code.AddIfRuby(" = append(");
         code.as_string(prop_id).Comma();
     }
     else
@@ -71,14 +75,15 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
         code.NodeName().CreateClass().ParentName().Comma();
         if (node->as_string(prop_stock_id) != "none")
         {
+            // Code::Add(prop_stock_id) translates the wxID_* constant to each target language.
             code.Add(prop_stock_id).EndFunction();
             return true;
         }
         code.as_string(prop_id).Comma();
     }
 
-    const auto& label = node->as_string(prop_label);
-    if (label.size())
+    const wxue::string& label = node->as_string(prop_label);
+    if (!label.empty())
     {
         if (node->HasValue(prop_shortcut))
         {
@@ -91,11 +96,15 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
     }
     else
     {
+        // Code::Add() translates "wxEmptyString" per target language ("''" for Ruby,
+        // "wx.EmptyString" for Python), so this literal is valid for every language.
         code.Add("wxEmptyString");
     }
 
     if (code.HasValue(prop_help) || node->as_string(prop_kind) != "wxITEM_NORMAL")
     {
+        // Code::Add(prop_kind) routes through Code::as_string() -> Code::Add(), which converts
+        // the wx-prefixed constant (e.g. wxITEM_CHECK) to each target language's prefix.
         code.Comma().CheckLineLength().QuotedString(prop_help).Comma().Add(prop_kind);
     }
     code.EndFunction();
@@ -105,7 +114,7 @@ bool MenuItemGenerator::ConstructionCode(Code& code)
 
 bool MenuItemGenerator::SettingsCode(Code& code)
 {
-    Node* node = code.node();
+    const Node* node = code.node();
     if (code.HasValue(prop_extra_accels))
     {
         wxue::StringVector accel_list;
@@ -119,7 +128,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
 
             for (auto& accel: accel_list)
             {
-                if (accel.size())
+                if (!accel.empty())
                 {
                     code.Eol(eol_if_needed)
                         << "if (entry.FromString(" << GenerateQuotedString(accel) << "))";
@@ -134,14 +143,18 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             code.Str("entry = ").Add("wxAcceleratorEntry()").Eol();
             for (auto& accel: accel_list)
             {
-                code.Str("if entry.FromString(").QuotedString(accel).Str(") :").Eol();
-                code.Tab().Str("menuQuit.AddExtraAccel(entry)").Eol();
+                if (!accel.empty())
+                {
+                    code.Str("if entry.FromString(").QuotedString(accel).Str(") :").Eol();
+                    code.Tab().NodeName().Str(".AddExtraAccel(entry)").Eol();
+                }
             }
         }
         else if (code.is_ruby())
         {
             // TODO: [Randalphwa - 08-02-2023] Fill in once we have figured out how to handle
             // wxAcceleratorEntry in Ruby
+            code.AddComment("Extra accelerators are not supported in wxRuby", true);
         }
         else
         {
@@ -154,7 +167,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
-            const auto& description = node->as_string(prop_bitmap);
+            const wxue::string& description = node->as_string(prop_bitmap);
             const wxue::StringVector description_parts(description, BMP_PROP_SEPARATOR,
                                                        wxue::TRIM::both);
             wxue::string function_name = ProjectImages.GetBundleFuncName(description);
@@ -174,7 +187,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 wxue::string bundle_code;
-                bool is_vector_code = GenerateBundleCode(description, bundle_code);
+                const bool is_vector_code = GenerateBundleCode(description, bundle_code);
 
                 if (!is_vector_code)
                 {
@@ -186,15 +199,15 @@ bool MenuItemGenerator::SettingsCode(Code& code)
                 else  // bundle_code contains a vector
                 {
                     code += bundle_code;
-                    code.Tab().NodeName().Function(
-                        "SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));");
-                    code.CloseBrace();
+                    code.Tab().NodeName().Function("SetBitmap(");
+                    code += "wxBitmapBundle::FromBitmaps(bitmaps)";
+                    code.EndFunction().CloseBrace();
                 }
             }
         }
         else if (code.is_python())
         {
-            bool is_list_created = PythonBitmapList(code, prop_bitmap);
+            const bool is_list_created = PythonBitmapList(code, prop_bitmap);
             code.NodeName().Function("SetBitmap(");
             if (is_list_created)
             {
@@ -222,7 +235,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         code.AddComment("Set the unchecked bitmap");
         if (code.is_cpp())
         {
-            const auto& description = node->as_string(prop_unchecked_bitmap);
+            const wxue::string& description = node->as_string(prop_unchecked_bitmap);
             const wxue::StringVector description_parts(description, BMP_PROP_SEPARATOR,
                                                        wxue::TRIM::both);
             wxue::string function_name = ProjectImages.GetBundleFuncName(description);
@@ -241,7 +254,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             else
             {
                 wxue::string bundle_code;
-                bool is_vector_code = GenerateBundleCode(description, bundle_code);
+                const bool is_vector_code = GenerateBundleCode(description, bundle_code);
                 code.UpdateBreakAt();
 
                 if (!is_vector_code)
@@ -268,7 +281,7 @@ bool MenuItemGenerator::SettingsCode(Code& code)
         else if (code.is_python())
         {
             code.Eol(eol_if_needed);
-            bool is_list_created = PythonBitmapList(code, prop_unchecked_bitmap);
+            const bool is_list_created = PythonBitmapList(code, prop_unchecked_bitmap);
             code.NodeName().Function("SetBitmap(");
             if (is_list_created)
             {
@@ -276,17 +289,18 @@ bool MenuItemGenerator::SettingsCode(Code& code)
             }
             else
             {
-                code.Bundle(prop_bitmap);
+                code.Bundle(prop_unchecked_bitmap);
             }
             code.Comma().False().EndFunction();
         }
         else if (code.is_ruby())
         {
             code.Eol(eol_if_needed).NodeName().Function("SetBitmap(");
-            code.Bundle(prop_bitmap).Comma().False().EndFunction();
+            code.Bundle(prop_unchecked_bitmap).Comma().False().EndFunction();
         }
     }
 
+    // MenuItem nodes always have a parent (menu, menu bar, or popup menu).
     if (!node->get_Parent()->is_Gen(gen_PopupMenu))
     {
         code.Eol(eol_if_empty).ParentName().Function("Append(").NodeName().EndFunction();
@@ -316,9 +330,11 @@ bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
-                                                   BaseGenerator::xrc_updated;
-    auto item = InitializeXrcObject(node, object);
+    // MenuItem nodes always have a parent; a MenuItem whose parent is a sizer is a menu item
+    // inside a popup menu.
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenuItem");
 
@@ -338,13 +354,13 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     ADD_ITEM_PROP(prop_shortcut, "accel")
     if (node->HasValue(prop_extra_accels))
     {
-        auto child = item.append_child("extra-accels");
+        pugi::xml_node child = item.append_child("extra-accels");
         wxue::StringVector accel_list;
         accel_list.SetString(std::string_view(node->as_string(prop_extra_accels)), '"',
                              wxue::TRIM::both);
         for (auto& accel: accel_list)
         {
-            if (accel.size())
+            if (!accel.empty())
             {
                 child.append_child("accel").text().set(accel);
             }
@@ -379,6 +395,8 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 void MenuItemGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
                                           NodeProperty* changed_prop)
 {
+    // map_PropNames is a compile-time table containing every PropName, so the .at() lookups
+    // below (prop_label, prop_help, prop_id) cannot throw.
     if (changed_prop->isProp(prop_stock_id))
     {
         if (auto* pg_setting = prop_grid->GetProperty(wxString(map_PropNames.at(prop_label)));
@@ -407,6 +425,8 @@ bool MenuItemGenerator::ModifyProperty(NodeProperty* prop, wxue::string_view val
         {
             auto undo_stock_id = std::make_shared<ModifyProperties>("Stock ID");
             undo_stock_id->addProperty(prop, value);
+            // A MenuItem node always has prop_label, prop_help, prop_id, and prop_bitmap, so
+            // get_PropPtr() here is guaranteed to be non-null.
             undo_stock_id->addProperty(
                 prop->getNode()->get_PropPtr(prop_label),
                 wxGetStockLabel(NodeCreation.get_ConstantAsInt(value.as_str())).utf8_string());

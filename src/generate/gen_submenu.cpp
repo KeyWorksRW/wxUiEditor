@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   SubMenu Generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [10-03-2026]
 
 #include <wx/menu.h>  // wxMenu and wxMenuBar classes
 
@@ -25,7 +26,7 @@ bool SubMenuGenerator::ConstructionCode(Code& code)
 
 bool SubMenuGenerator::AfterChildrenCode(Code& code)
 {
-    auto* node =
+    const Node* node =
         code.node();  // This is just for code readability -- could just use code.node() everywhere
     wxue::string submenu_item_name;
 
@@ -35,35 +36,49 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
         {
             code += "auto* ";
         }
-        code.NodeName().Str("_item = ");
-        submenu_item_name = node->get_NodeName();
+        const size_t name_offset = code.size();
+        code.NodeName();
+        submenu_item_name.assign(code.data() + name_offset, code.size() - name_offset);
+        code.Str("_item = ");
         submenu_item_name << "_item";
     }
 
-    if (node->get_Parent()->is_Gen(gen_PopupMenu))
+    // When an id is set, use the id-taking wxMenu::Append() overload so the submenu item can be
+    // enabled, disabled, or updated by id. Leaving it at the wxID_ANY default keeps
+    // AppendSubMenu(), whose item is created with wxID_ANY -- the same output as before this
+    // property existed. HasValue() is not usable here: it only reports whether the value is
+    // non-empty, and the property's default is the non-empty string "wxID_ANY".
+    const wxue::string id_value = node->as_string(prop_id);
+    const bool has_id = !id_value.empty() && !id_value.is_sameas("wxID_ANY", wxue::CASE::either);
+
+    if (node->get_Parent() != nullptr && node->get_Parent()->is_Gen(gen_PopupMenu))
     {
-        code.FormFunction("AppendSubMenu(")
-            .NodeName()
-            .Comma()
-            .QuotedString(prop_label)
-            .EndFunction();
+        code.FormFunction(has_id ? "Append(" : "AppendSubMenu(");
     }
     else
     {
-        code.ParentName()
-            .Function("AppendSubMenu(")
-            .NodeName()
-            .Comma()
-            .QuotedString(prop_label)
-            .EndFunction();
+        code.ParentName().Function(has_id ? "Append(" : "AppendSubMenu(");
     }
+
+    // Every supported target exposes the id-taking submenu overload in the same
+    // (id, label, submenu) argument order as wxMenu::Append(int, const wxString&, wxMenu*),
+    // so a single argument sequence is emitted for all languages.
+    if (has_id)
+    {
+        code.as_string(prop_id).Comma().QuotedString(prop_label).Comma().NodeName();
+    }
+    else
+    {
+        code.NodeName().Comma().QuotedString(prop_label);
+    }
+    code.EndFunction();
 
     if (node->HasValue(prop_bitmap))
     {
         code.Eol(eol_if_empty);
         if (code.is_cpp())
         {
-            const auto& description = node->as_string(prop_bitmap);
+            const wxue::string& description = node->as_string(prop_bitmap);
             const wxue::StringVector description_parts(description, BMP_PROP_SEPARATOR,
                                                        wxue::TRIM::both);
             wxue::string function_name = ProjectImages.GetBundleFuncName(description);
@@ -83,7 +98,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
             else
             {
                 wxue::string bundle_code;
-                bool is_vector_code = GenerateBundleCode(description, bundle_code);
+                const bool is_vector_code = GenerateBundleCode(description, bundle_code);
                 code.UpdateBreakAt();
 
                 if (!is_vector_code)
@@ -91,7 +106,8 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
                     code.Str(submenu_item_name).Function("SetBitmap(");
                     code += bundle_code;
                     code.EndFunction();
-                    code.Eol();
+                    // No Eol() here: EndFunction() plus the code writer handle statement
+                    // termination, matching the function_name/vector/Python/Ruby branches below.
                 }
                 else  // bundle_code contains a vector
                 {
@@ -104,7 +120,7 @@ bool SubMenuGenerator::AfterChildrenCode(Code& code)
 
         else if (code.is_python())
         {
-            bool is_list_created = PythonBitmapList(code, prop_bitmap);
+            const bool is_list_created = PythonBitmapList(code, prop_bitmap);
             code.Str(submenu_item_name).Function("SetBitmap(");
             if (is_list_created)
             {
@@ -135,10 +151,13 @@ bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 int SubMenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto item = InitializeXrcObject(node, object);
+    pugi::xml_node item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenu");
 
+    // A non-default prop_id is emitted as this object's name attribute by
+    // GenXrcObjectAttributes(), so the XRC preview keeps the same id as the generated
+    // Append(id, label, submenu) call; no separate id handling is needed here.
     ADD_ITEM_PROP(prop_label, "label")
     GenXrcBitmap(node, item, xrc_flags);
 

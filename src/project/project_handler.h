@@ -193,6 +193,12 @@ public:
 
     [[nodiscard]] bool is_UiAllowed() const { return m_allow_ui; }
 
+    // Command-line operations (--gen_*, --verify_*, --test_*, import verification) mark the run
+    // as headless before any dialog can be shown. A dialog displayed while is_UiAllowed() is
+    // false is suppressed by the modal guard installed in App::OnRun instead of blocking an
+    // unattended process. Interactive builds never call this, so m_allow_ui stays true.
+    void set_UiAllowed(bool value) { m_allow_ui = value; }
+
     [[nodiscard]] bool is_NewProject() const { return m_isNewProject; }
     void clear_NewProject() { m_isNewProject = false; }
 

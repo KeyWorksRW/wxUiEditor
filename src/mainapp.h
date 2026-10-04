@@ -121,6 +121,7 @@ private:
         cmd_project_file_only = 0,
         cmd_gen_project_not_loaded = 1,
         cmd_gen_success = 2,
+        cmd_gen_write_error = 3,
 
     };
 
@@ -138,8 +139,10 @@ private:
     static void LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
                                      bool test_only, std::string_view language_type);
 
-    static void GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                                     std::vector<std::string>& class_list);
+    // Returns the total number of files that could not be written across all generated
+    // languages. Zero means every requested language was generated successfully.
+    static size_t GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                                       std::vector<std::string>& class_list);
     // Every time we try to write to a directory that doesn't exist, we ask the user if they
     // want to create it. If they choose No then we store the path here and never ask again
     // for the current session.

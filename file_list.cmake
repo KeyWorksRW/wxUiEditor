@@ -345,6 +345,7 @@ set( file_list
     src/project/project_handler.cpp        # ProjectHandler class
     src/project/saveproject.cpp            # Save a wxUiEditor project file
 
+    src/utils/cli_ui_guard.cpp             # Suppress modal dialogs during command-line runs
     src/utils/dlg_msgs.cpp                 # wxMessageDialog dialogs
     src/utils/font_prop.cpp                # FontProperty class
     src/utils/set_stc_colors.cpp           # Contains function for initializing wxStyledTextCtrl colors

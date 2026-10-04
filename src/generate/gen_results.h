@@ -92,6 +92,11 @@ public:
     void SetFileCount(size_t count) { m_file_count = count; }
     void IncrementFileCount() { ++m_file_count; }
 
+    // Number of files that could not be written (missing directory, permissions, etc.).
+    // Callers use this to return a failure exit code for non-interactive generation.
+    [[nodiscard]] auto GetErrorCount() const { return m_error_count; }
+    void IncrementErrorCount() { ++m_error_count; }
+
     [[nodiscard]] auto GetElapsed() const { return m_elapsed; }
 
     [[nodiscard]] auto GetMsgs() -> auto& { return m_msgs; }
@@ -176,6 +181,7 @@ private:
     std::string m_combined_output_path;  // Override for combined output path
 
     size_t m_file_count { 0 };
+    size_t m_error_count { 0 };  // Files that could not be written
     size_t m_elapsed { 0 };
 
     std::vector<std::string> m_msgs;

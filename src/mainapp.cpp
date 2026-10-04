@@ -22,6 +22,7 @@
 
 #include "mainapp.h"
 
+#include "cli_ui_guard.h"              // cli_ui::InstallModalGuard
 #include "gen_common.h"                // Common component functions
 #include "gen_results.h"               // Code generation file writing functions
 #include "internal/msg_logging.h"      // MsgLogging -- Message logging class
@@ -206,6 +207,11 @@ bool App::OnInit()
 
 int App::OnRun()
 {
+    // Intercept modal dialogs whenever Project.is_UiAllowed() is false so an unattended
+    // command-line run can never block on a dialog no one can dismiss. In GUI mode
+    // is_UiAllowed() is true and the hook passes every dialog through unchanged.
+    cli_ui::InstallModalGuard();
+
 #if defined(_DEBUG)
     #if defined(_WIN32)
     // Attach to parent console for command-line output
@@ -435,17 +441,22 @@ int App::OnRun()
     if (parser.FoundSwitch("verify_import") == wxCMD_SWITCH_ON ||
         parser.FoundSwitch("save_import") == wxCMD_SWITCH_ON)
     {
+        // Headless: the modal guard suppresses any dialog these paths would otherwise show.
+        Project.set_UiAllowed(false);
         return VerifyImport(parser, is_project_loaded);
     }
 
     if (is_verify_mode)
     {
+        // Headless: a missing project file, an unknown language, or a bad project would
+        // otherwise pop a dialog before the project is ever loaded.
+        Project.set_UiAllowed(false);
         return VerifyCodeGen(parser, is_project_loaded);
     }
 
     // A positive return value means code generation was for command-line only
     const int result = Generate(parser, is_project_loaded);
-    if (result == cmd_gen_project_not_loaded)
+    if (result == cmd_gen_project_not_loaded || result == cmd_gen_write_error)
     {
         return 1;
     }
@@ -857,8 +868,8 @@ void App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
 }
 
 // Helper: Generate code for all requested languages
-void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
-                               std::vector<std::string>& class_list)
+size_t App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults& results,
+                                 std::vector<std::string>& class_list)
 {
     // If a form filter is specified, find that form
     Node* form_node = nullptr;
@@ -870,9 +881,11 @@ void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
         {
             wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
             log_msg << "Error: Form '" << form_filter << "' not found in project";
-            return;
+            return 0;
         }
     }
+
+    size_t total_errors = 0;
 
     auto GenCode = [&](GenLang language)
     {
@@ -911,6 +924,7 @@ void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
             }
 
             LogGenerationResults(results, class_list, test_only, GenLangToString(language));
+            total_errors += results.GetErrorCount();
         }
     };
 
@@ -925,6 +939,8 @@ void App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResults&
     GenCode(GenLang::ruby);
 
     GenCode(GenLang::xrc);
+
+    return total_errors;
 }
 
 int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
@@ -976,6 +992,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
     }
 
     m_is_generating = true;
+    // Command-line generation is unattended -- suppress any dialog via the modal guard.
+    Project.set_UiAllowed(false);
     GenResults results;
 #if defined(INTERNAL_TESTING)
     results.StartClock();
@@ -994,7 +1012,8 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
     std::vector<std::string> class_list;
     const std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
-    GenerateAllLanguages(generate_type, test_only, results, class_list);
+    const size_t generate_errors =
+        GenerateAllLanguages(generate_type, test_only, results, class_list);
 
     wxue::string& log_msg = m_cmdline_log.emplace_back();
     const std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
@@ -1004,5 +1023,7 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
     log_msg << "Total elapsed time: " << total_elapsed_time << " milliseconds";
     std::ignore = m_cmdline_log.WriteFile(log_file);
 
-    return cmd_gen_success;
+    // A file that could not be written is a failure for non-interactive generation, so the
+    // caller/CI script can detect it from the exit code.
+    return generate_errors > 0 ? cmd_gen_write_error : cmd_gen_success;
 }

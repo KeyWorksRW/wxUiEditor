@@ -401,6 +401,7 @@ void GenResults::Clear()
 
     m_elapsed = 0;
     m_file_count = 0;
+    m_error_count = 0;
     m_clock_started = false;
     m_msgs.clear();
     m_updated_files.clear();
@@ -746,6 +747,7 @@ bool GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     }
     if (result < 0)
     {
+        IncrementErrorCount();
         m_msgs.emplace_back(
             std::format("Error writing file: {}", static_cast<std::string>(src_path)));
     }
@@ -855,6 +857,7 @@ bool GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
         }
         else if (hdr_result < 0)
         {
+            IncrementErrorCount();
             m_msgs.emplace_back(
                 std::format("Error writing file: {}", static_cast<std::string>(hdr_path)));
         }
@@ -909,6 +912,7 @@ bool GenResults::GenerateCppForm(Node* form, bool comparison_only, wxProgressDia
         }
         else if (src_result < 0)
         {
+            IncrementErrorCount();
             m_msgs.emplace_back(
                 std::format("Error writing file: {}", static_cast<std::string>(src_path)));
         }

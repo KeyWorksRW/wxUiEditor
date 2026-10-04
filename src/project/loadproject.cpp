@@ -177,8 +177,10 @@ bool ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui)
     RecursiveNodeCheck(project.get());
 #endif
 
-    // Calling this will also initialize the ImageHandler class
-    Project.Initialize(project);
+    // Calling this will also initialize the ImageHandler class. Pass allow_ui through: the
+    // default is true, which would silently re-enable UI for a headless command-line load and
+    // let Project.is_UiAllowed() report the wrong value for the rest of the run.
+    Project.Initialize(project, allow_ui);
     Project.set_ProjectFile(file);
     ProjectImages.CollectBundles();
 

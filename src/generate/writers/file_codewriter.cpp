@@ -593,29 +593,40 @@ bool FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content)
         return 0;
     }
 
-    wxFileName dir(m_filename);
-    dir.ClearExt();
-    dir.RemoveLastDir();
+    // m_filename is the output file. Its containing directory is GetPath(). Do NOT derive it
+    // with RemoveLastDir(): m_filename still has a name component, so GetPath() already strips
+    // the file, and RemoveLastDir() would remove the output directory itself -- making
+    // DirExists() test the *parent* directory and wrongly report that the output directory
+    // exists. That mistake let the write proceed, wxWidgets logged a "can't create file"
+    // error, and the wxLogGui dialog that flushes at shutdown hung unattended generation.
+    const wxString out_dir = m_filename.GetPath();
 
-    if ((!dir.GetFullPath().empty() && dir.DirExists()) ||
-        wxGetApp().AskedAboutMissingDir(dir.GetFullPath().ToStdString()))
+    if ((!out_dir.empty() && wxFileName::DirExists(out_dir)) ||
+        wxGetApp().AskedAboutMissingDir(out_dir))
     {
         return 0;
     }
 
     if (wxGetApp().is_Generating() || (flags & code::flag_no_ui))
     {
+        // Command-line generation has no UI to prompt for folder creation. Record the cause so
+        // the log file names the missing directory instead of only the file that was skipped.
+        if (wxGetApp().is_Generating())
+        {
+            wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+            log_msg << "Error: the output directory does not exist: " << out_dir.utf8_string();
+        }
         return write_no_folder;
     }
 
-    wxString msg("The directory:\n    \"" + dir.GetFullPath() +
+    wxString msg("The directory:\n    \"" + out_dir +
                  "\"\ndoesn't exist. Would you like it to be created?");
     wxMessageDialog dialog(nullptr, msg, "Generate Files", wxICON_WARNING | wxYES_NO);
     if (dialog.ShowModal() == wxID_YES)
     {
-        if (!wxFileName::Mkdir(dir.GetFullPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
+        if (!wxFileName::Mkdir(out_dir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
         {
-            msg = "The directory:\n    \"" + dir.GetFullPath() + "\"\ncould not be created.";
+            msg = "The directory:\n    \"" + out_dir + "\"\ncould not be created.";
             wxMessageDialog dlg_error(nullptr, msg, "Generate Files", wxICON_ERROR | wxOK);
             dlg_error.ShowModal();
             return write_cant_create;
@@ -623,7 +634,7 @@ bool FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content)
     }
     else
     {
-        wxGetApp().AddMissingDir(dir.GetFullPath().ToStdString());
+        wxGetApp().AddMissingDir(out_dir);
     }
     return 0;
 }

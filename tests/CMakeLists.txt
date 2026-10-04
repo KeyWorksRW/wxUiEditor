@@ -57,6 +57,12 @@ foreach(codegen_project IN LISTS codegen_projects)
         TIMEOUT 120)
 endforeach()
 
+# ###################### CLI behaviour tests (tests/cli/) #######################
+# Guards against regressions in unattended runs (for example a modal dialog blocking a
+# command-line generation). Kept in its own directory so the import and codegen fixtures
+# above stay focused on their own comparisons.
+add_subdirectory(cli)
+
 # ###################### Unit tests (Catch2 v3) #######################
 # The display-free logic (the wxue:: string helpers and the text-diff engine) is compiled into
 # the wxui_core static library, which both wxUiEditor and wxui_tests link -- the tests therefore

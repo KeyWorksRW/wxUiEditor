@@ -56,6 +56,14 @@ Code& Code::QuotedString(GenEnum::PropName prop_name)
         return *this;
     }
 
+    // A window name is an internal identifier, not user-visible text, so it must never be wrapped
+    // in a translation function. Translating it would make GetName() and FindWindowByName()
+    // locale-dependent. See issue #1876.
+    if (prop_name == prop_window_name)
+    {
+        return AddQuotedText(m_node->as_string(prop_name), false);
+    }
+
     return QuotedString(m_node->as_string(prop_name));
 }
 
@@ -134,9 +142,15 @@ void Code::AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_cha
 
 Code& Code::QuotedString(wxue::string_view text)
 {
+    return AddQuotedText(text, true);
+}
+
+Code& Code::AddQuotedText(wxue::string_view text, bool translate)
+{
     const size_t cur_pos = this->size();
 
-    const bool internationalize = Project.as_bool(prop_internationalize) && wxue::has_alpha(text);
+    const bool internationalize =
+        translate && Project.as_bool(prop_internationalize) && wxue::has_alpha(text);
     const bool has_utf_char = is_cpp() && HasUtf8Char(text);
     if (internationalize)
     {

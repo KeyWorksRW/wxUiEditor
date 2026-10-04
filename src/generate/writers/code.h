@@ -514,6 +514,9 @@ public:
     // wxGetTranslation().
     //
     // Empty strings generate wxEmptyString for C++, '' for Ruby and "" for other languages.
+    //
+    // prop_window_name is an identifier rather than user-visible text, so it is always quoted
+    // without a translation function even when prop_internationalize is set (see issue #1876).
     Code& QuotedString(GenEnum::PropName prop_name);
 
     // Calls color.GetAsString(wxC2S_HTML_SYNTAX).ToStdString() and places the result in
@@ -747,6 +750,7 @@ private:
     void ProcessEscapedChar(char char_val, bool& has_escape);
     [[nodiscard]] static bool HasUtf8Char(wxue::string_view text);
     void AddQuoteClosing(bool has_escape, size_t begin_quote, bool has_utf_char);
+    Code& AddQuotedText(wxue::string_view text, bool translate);
 
     // Helper methods for WxSize()
     void AddScaledSizeRuby(wxSize size);

@@ -285,7 +285,19 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
         {
             if (get_ParentName(code.node(), code.get_language()) != "this")
             {
-                code.ValidParentName().Function("SetSizerAndFit(");
+                if (parent->is_Gen(gen_wxScrolledWindow) || parent->is_Gen(gen_wxScrolledCanvas))
+                {
+                    // A wxScrolled window must keep the size the layout gives it. The sizer
+                    // sets the virtual size and FitInside() updates the scrollbars.
+                    code.ValidParentName().Function("SetSizer(");
+                    code.NodeName().EndFunction();
+                    code.Eol().ValidParentName().Function("FitInside(").EndFunction();
+                }
+                else
+                {
+                    code.ValidParentName().Function("SetSizerAndFit(");
+                    code.NodeName().EndFunction();
+                }
             }
             else
             {
@@ -297,8 +309,8 @@ bool GridBagSizerGenerator::AfterChildrenCode(Code& code)
                 {
                     code.FormFunction("SetSizer(");
                 }
+                code.NodeName().EndFunction();
             }
-            code.NodeName().EndFunction();
         }
     }
 

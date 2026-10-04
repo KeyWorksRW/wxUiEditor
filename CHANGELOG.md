@@ -86,6 +86,9 @@ All notable changes to this project will be documented in this file.
 - The `submenu` generator now has an `id` property.
   When set, the generated code uses the id-taking `wxMenu::Append()` overload so the submenu can be enabled, disabled,
   or updated by id (issue #1874).
+- A wxScrolledWindow (or wxScrolledCanvas) is no longer sized to its content.
+  The top-level sizer under a scrolled window now emits `SetSizer()` followed by `FitInside()` instead of
+  `SetSizerAndFit()`, so the window keeps the size the layout gives it and the scrollbars cover the rest (issue #1873).
 
 [Released (1.2.1)]
 

@@ -388,7 +388,7 @@ bool PopupMenuGenerator::ConstructionCode(Code& code)
 
 bool PopupMenuGenerator::HeaderCode(Code& code)
 {
-    code.NodeName().Str("()").EndFunction();
+    code.NodeName().Str("(").EndFunction();
 
     return true;
 }

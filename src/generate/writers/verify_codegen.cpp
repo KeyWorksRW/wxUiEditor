@@ -45,9 +45,11 @@ namespace
             { "verify_julia", GenLang::julia },
             { "verify_luajit", GenLang::luajit },
             { "verify_typescript", GenLang::typescript },
-            { "verify_all", GenLang::cplusplus | GenLang::python | GenLang::ruby |
-                                GenLang::fortran | GenLang::go | GenLang::julia | GenLang::luajit |
-                                GenLang::typescript },
+            // Matches --gen_all (App::ParseGenerationType), which deliberately excludes the KWX
+            // languages (fortran/go/julia/luajit/typescript): those are not per-form and have no
+            // base-file/output-path properties, so the per-form compare path cannot verify them
+            // (GetBaseFilename() has no entry for them and asserts when called).
+            { "verify_all", GenLang::cplusplus | GenLang::python | GenLang::ruby },
         });
 
         for (const auto& [switch_name, lang]: switches)

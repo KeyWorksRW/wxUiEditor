@@ -28,9 +28,9 @@ namespace cli_ui
     // life of the process.
     void InstallModalGuard();
 
-    // Writes a message to the command-line log when code is being generated, otherwise to
-    // stderr. Used by the modal guard and available to any command-line path that needs to
-    // report a problem without a dialog.
+    // Always writes the message to stderr, and also records it in the command-line log when
+    // code is being generated. Used by the modal guard and available to any command-line path
+    // that needs to report a problem without a dialog.
     void ReportMessage(const wxString& msg);
 
 }  // namespace cli_ui

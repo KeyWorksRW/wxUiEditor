@@ -63,6 +63,8 @@
 			<option name="wxHORIZONTAL"/>
 			<option name="wxVERTICAL"/>
 			<option name="wxBOTH"/> wxBOTH </property>
+        <property name="set_sizer_and_fit" type="bool"
+            help="If true, sets the sizer for the window and fits the window to the sizer's minimum size. If false, only the window's sizer is set.">1</property>
         <property name="icon" type="image"
             help="Specifies the image to display in the title bar of the frame."/>
         <property name="cpp_conditional" type="string_code_single"
@@ -137,6 +139,8 @@
 			<option name="wxBOTH"/> wxBOTH </property>
         <property name="icon" type="image"
             help="Specifies the image to display in the title bar of the frame."/>
+        <property name="set_sizer_and_fit" type="bool"
+            help="If true, sets the sizer for the window and fits the window to the sizer's minimum size. If false, only the window's sizer is set.">1</property>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
@@ -204,6 +208,8 @@
 			<option name="wxBOTH"/> wxBOTH </property>
         <property name="icon" type="image"
             help="Specifies the image to display in the title bar of the frame."/>
+        <property name="set_sizer_and_fit" type="bool"
+            help="If true, sets the sizer for the window and fits the window to the sizer's minimum size. If false, only the window's sizer is set.">1</property>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
@@ -271,6 +277,8 @@
 			<option name="wxBOTH"/> wxBOTH </property>
         <property name="icon" type="image"
             help="Specifies the image to display in the title bar of the frame."/>
+        <property name="set_sizer_and_fit" type="bool"
+            help="If true, sets the sizer for the window and fits the window to the sizer's minimum size. If false, only the window's sizer is set.">1</property>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
@@ -338,6 +346,8 @@
 			<option name="wxBOTH"/> wxBOTH </property>
         <property name="icon" type="image"
             help="Specifies the image to display in the title bar of the frame."/>
+        <property name="set_sizer_and_fit" type="bool"
+            help="If true, sets the sizer for the window and fits the window to the sizer's minimum size. If false, only the window's sizer is set.">1</property>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
@@ -405,6 +415,8 @@
 			<option name="wxBOTH"/> wxBOTH </property>
         <property name="icon" type="image"
             help="Specifies the image to display in the title bar of the frame."/>
+        <property name="set_sizer_and_fit" type="bool"
+            help="If true, sets the sizer for the window and fits the window to the sizer's minimum size. If false, only the window's sizer is set.">1</property>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>
@@ -472,6 +484,8 @@
 			<option name="wxBOTH"/> wxBOTH </property>
         <property name="icon" type="image"
             help="Specifies the image to display in the title bar of the frame."/>
+        <property name="set_sizer_and_fit" type="bool"
+            help="If true, sets the sizer for the window and fits the window to the sizer's minimum size. If false, only the window's sizer is set.">1</property>
         <property name="cpp_conditional" type="string_code_single"
             help="In C++ code, any value in this property will be used to place a conditional (#if/#endif) block around the Frame's generated code."/>
     </gen>

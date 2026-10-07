@@ -267,7 +267,16 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 {
                     gen_code.Str("self");
                 }
-                gen_code.Function("SetSizerAndFit(").NodeName().EndFunction();
+                if (parent->is_Type(type_frame_form) && parent->HasProp(prop_set_sizer_and_fit) &&
+                    !parent->as_bool(prop_set_sizer_and_fit))
+                {
+                    gen_code.Function("SetSizer(");
+                }
+                else
+                {
+                    gen_code.Function("SetSizerAndFit(");
+                }
+                gen_code.NodeName().EndFunction();
             }
 
             m_source->writeLine();

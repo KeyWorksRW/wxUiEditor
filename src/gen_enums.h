@@ -414,6 +414,7 @@ namespace GenEnum
         prop_separator_margin,
         prop_separator_width,
         prop_set_function,
+        prop_set_sizer_and_fit,
         prop_settings_code,
         prop_shortcut,
         prop_show,

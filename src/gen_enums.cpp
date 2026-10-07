@@ -396,6 +396,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_separator_margin, "separator_margin" },
     { prop_separator_width, "separator_width" },
     { prop_set_function, "set_function" },
+    { prop_set_sizer_and_fit, "set_sizer_and_fit" },
     { prop_settings_code, "settings_code" },
     { prop_shortcut, "shortcut" },
     { prop_show, "show" },

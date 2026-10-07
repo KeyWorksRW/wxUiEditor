@@ -226,11 +226,14 @@ bool FlexGridSizerGenerator::AfterChildrenCode(Code& code)
             }
             else
             {
-                if (parent->as_wxSize(prop_size) == wxDefaultSize)
+                if (parent->as_wxSize(prop_size) == wxDefaultSize &&
+                    (!parent->is_Type(type_frame_form) ||
+                     !parent->HasProp(prop_set_sizer_and_fit) ||
+                     parent->as_bool(prop_set_sizer_and_fit)))
                 {
                     code.FormFunction("SetSizerAndFit(");
                 }
-                else  // Don't call Fit() if size has been specified
+                else  // Size specified, or set_sizer_and_fit is false
                 {
                     code.FormFunction("SetSizer(");
                 }

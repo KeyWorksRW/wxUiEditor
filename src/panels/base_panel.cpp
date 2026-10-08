@@ -6,6 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-01-2026]
 
+#include <tuple>  // std::ignore
+
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/stc/stc.h>      // A wxWidgets implementation of Scintilla.  This class is the
@@ -365,7 +367,7 @@ void BasePanel::GenerateBaseClass()
     CppCodeGenerator code_generator(m_cur_form);
     code_generator.SetSrcWriteCode(m_derived_src_panel);
     code_generator.SetHdrWriteCode(m_derived_hdr_panel);
-    code_generator.GenerateDerivedClass(m_cur_form, panel_page);
+    std::ignore = code_generator.GenerateDerivedClass(m_cur_form, panel_page);
 
     if (panel_page == PANEL_PAGE::DERIVED_SRC_PANEL)
     {

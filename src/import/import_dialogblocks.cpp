@@ -305,7 +305,7 @@ GenEnum::GenName DialogBlocks::HandleDialogToPanelConversion(pugi::xml_node& for
 
 NodeSharedPtr DialogBlocks::TryRecreateFormNode(GenEnum::GenName& gen_name,
                                                 const NodeSharedPtr& parent,
-                                                pugi::xml_node& form_xml)
+                                                [[maybe_unused]] pugi::xml_node& form_xml)
 {
     switch (gen_name)
     {

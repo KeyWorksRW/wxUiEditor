@@ -45,7 +45,7 @@ private:
 
     NodeProperty* m_prop { nullptr };
 
-    GenLang m_language = GenLang::cplusplus;
+    // GenLang m_language = GenLang::cplusplus;
 
     wxFileHistory m_FileHistory;
 };

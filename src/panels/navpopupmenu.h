@@ -28,6 +28,10 @@ public:
     // The child parameter is the node that child sizers should be added to.
     void MenuAddChildSizerCommands(Node* child);
 
+    // Runs the command with this id exactly as if the user had chosen it from the menu.
+    // Returns false if no such item exists or it is currently disabled.
+    bool InvokeCommand(int id);
+
     enum class Menu : std::int32_t
     {
         Duplicate = START_NAV_CTX_MENU_IDS,

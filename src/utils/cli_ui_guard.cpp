@@ -7,6 +7,12 @@
 
 #include "cli_ui_guard.h"
 
+#if defined(INTERNAL_TESTING)
+    #include <functional>
+    #include <utility>  // std::move
+#endif
+
+#include <wx/dialog.h>
 #include <wx/log.h>     // wxLogStderr
 #include <wx/msgdlg.h>  // wxMessageDialogBase -- GetMessage()
 #include <wx/string.h>
@@ -18,6 +24,16 @@
 // Reporting a message runs code that can itself raise an assert or show a dialog; that nested
 // dialog must not be reported again, or the reporting would recurse.
 static thread_local bool is_reporting = false;
+
+#if defined(INTERNAL_TESTING)
+// Debug-only scripted dialog answer. Set by the UI harness so an automated run can answer a
+// modal dialog without a human. wxID_NONE means "no scripted answer" -- the guard behaves as it
+// always has.
+static int g_scripted_answer { wxID_NONE };
+
+// Debug-only observer notified with each intercepted dialog's message and the answer returned.
+static std::function<void(const wxString& message, int answer)> g_dialog_observer;
+#endif
 
 // RAII scope for reporting an intercepted dialog's message. The destructor always clears
 // is_reporting, so a message raised while reporting cannot leave the flag set and suppress
@@ -47,6 +63,30 @@ class CliUiGuard : public wxModalDialogHook
 protected:
     int Enter(wxDialog* dialog) override
     {
+#if defined(INTERNAL_TESTING)
+        if (g_scripted_answer != wxID_NONE)
+        {
+            // Report the dialog through the observer before returning the scripted answer, so
+            // the harness log records what the dialog would have shown.
+            wxString msg;
+            if (auto* message_dialog = dynamic_cast<wxMessageDialogBase*>(dialog))
+            {
+                msg = message_dialog->GetMessage();
+            }
+
+            if (msg.empty())
+            {
+                msg = dialog->GetTitle();
+            }
+
+            if (g_dialog_observer)
+            {
+                g_dialog_observer(msg, g_scripted_answer);
+            }
+            return g_scripted_answer;
+        }
+#endif
+
         if (Project.is_UiAllowed())
         {
             // Interactive build: no interception, the dialog is shown normally.
@@ -124,4 +164,17 @@ namespace cli_ui
             log_msg << "Error: " << msg.utf8_string();
         }
     }
+
+#if defined(INTERNAL_TESTING)
+    void SetScriptedDialogAnswer(int answer)
+    {
+        g_scripted_answer = answer;
+    }
+
+    void SetDialogObserver(std::function<void(const wxString& message, int answer)> observer)
+    {
+        g_dialog_observer = std::move(observer);
+    }
+#endif
+
 }  // namespace cli_ui

@@ -241,6 +241,49 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
     }
 }
 
+// wxMenu::FindItem() does not reliably descend into submenus, so walk the item list explicitly.
+static wxMenuItem* FindItemRecursive(wxMenu* menu, int id)
+{
+    const wxMenuItemList& items = menu->GetMenuItems();
+    for (wxMenuItemList::compatibility_iterator iter = items.GetFirst(); iter;
+         iter = iter->GetNext())
+    {
+        wxMenuItem* item = static_cast<wxMenuItem*>(iter->GetData());
+        if (item == nullptr)
+        {
+            continue;
+        }
+        if (item->GetId() == id)
+        {
+            return item;
+        }
+        if (item->IsSubMenu())
+        {
+            if (wxMenuItem* found = FindItemRecursive(item->GetSubMenu(), id); found != nullptr)
+            {
+                return found;
+            }
+        }
+    }
+    return nullptr;
+}
+
+bool NavPopupMenu::InvokeCommand(int id)
+{
+    wxMenuItem* item = FindItemRecursive(this, id);
+    if (item == nullptr || item->IsSeparator() || !item->IsEnabled())
+    {
+        return false;
+    }
+
+    wxCommandEvent event(wxEVT_MENU, id);
+    event.SetEventObject(this);
+    // ProcessEvent (not wxPostEvent) so the effect is observable immediately while the agent is
+    // stopped in the debugger.
+    ProcessEvent(event);  // synchronous on the GUI thread; OnMenuEvent is bound to wxEVT_MENU
+    return true;
+}
+
 void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 {
     switch (event.GetId())

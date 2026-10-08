@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include <cstdint>  // std::int32_t
+#include <cstdint>      // std::int32_t
+#include <string_view>  // std::string_view
 
 #include <wx/event.h>  // Event classes
 #include <wx/menu.h>   // wxMenu and wxMenuBar classes
@@ -20,7 +21,7 @@ class Node;
 class NavPopupMenu : public wxMenu
 {
 public:
-    NavPopupMenu(Node* node);
+    explicit NavPopupMenu(Node* node);
 
     // Call this from a generator if adding commands via PopupMenuAddCommands().
     //
@@ -71,8 +72,7 @@ public:
         ChangeToStaticSizer,
         ChangeToWrapSizer,
 
-        // This can only be used if there is just one possibility
-        ChangeToNewNode,
+        ChangeToStdDialogButtonSizer,
 
         // 2-state wxCheckBox, 3-state wxCheckBox, wxRadioBox
 
@@ -207,18 +207,16 @@ protected:
     void MenuAddMoveCommands();
 
     void ChangeNode(GenEnum::GenName new_node_gen);
+    void ChangeToStdDialogButtonSizer();
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
     void CreateSizerParent(std::string_view widget);
 
     void AddSeparatorIfNeeded();
 
 private:
-    Node* m_parent { nullptr };  // parent of the node passed to ctor
-    Node* m_node { nullptr };    // node passed to ctor
-    Node* m_child { nullptr };
+    Node* m_parent { nullptr };      // parent of the node passed to ctor
+    Node* m_node { nullptr };        // node passed to ctor
     Node* m_sizer_node { nullptr };  // node to add child sizers to
-    GenEnum::GenName m_tool_name { GenEnum::GenName::gen_name_array_size };
 
-    bool m_isPasteAllowed { true };
     bool m_is_parent_toolbar { false };  // true if parent is wxToolBar or wxAuiToolBar
 };

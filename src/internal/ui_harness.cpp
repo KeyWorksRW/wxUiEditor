@@ -173,7 +173,7 @@ static Node* ResolveNode(const wxString& path)
     return node;
 }
 
-// Splits on spaces/tabs, honouring double-quoted arguments (a '"' toggles quoting; quotes are
+// Splits on spaces/tabs, honoring double-quoted arguments (a '"' toggles quoting; quotes are
 // stripped; no escape handling). Keeps argument values with spaces intact.
 static std::vector<wxString> Tokenize(const wxString& line)
 {

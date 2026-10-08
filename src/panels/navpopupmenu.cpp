@@ -4,9 +4,14 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-01-2026]
+// CR: [10-07-2026]
 
-#include <utility>  // std::ignore. std::to_underlying
+#include <array>
+#include <bit>  // std::to_underlying
+#include <optional>
+#include <string_view>
+#include <tuple>  // std::ignore
+#include <vector>
 
 #include <wx/artprov.h>   // wxArtProvider class
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
@@ -24,6 +29,187 @@
 #include "node_creator.h"  // NodeCreator class
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"         // Utility functions that work with properties
+
+struct StdButtonInfo
+{
+    std::string_view id;
+    GenEnum::PropName flag;
+    std::string_view clicked_event;
+    std::string_view default_name;  // empty if not a valid default_button choice
+};
+
+static constexpr std::array<StdButtonInfo, 9> STD_BUTTONS = { {
+    { "wxID_OK", prop_OK, "OKButtonClicked", "OK" },
+    { "wxID_YES", prop_Yes, "YesButtonClicked", "Yes" },
+    { "wxID_SAVE", prop_Save, "SaveButtonClicked", "Save" },
+    { "wxID_APPLY", prop_Apply, "ApplyButtonClicked", "" },
+    { "wxID_NO", prop_No, "NoButtonClicked", "No" },
+    { "wxID_CANCEL", prop_Cancel, "CancelButtonClicked", "Cancel" },
+    { "wxID_CLOSE", prop_Close, "CloseButtonClicked", "Close" },
+    { "wxID_HELP", prop_Help, "HelpButtonClicked", "" },
+    { "wxID_CONTEXT_HELP", prop_ContextHelp, "ContextHelpButtonClicked", "" },
+} };
+
+static std::optional<StdButtonInfo> GetStdButtonInfo(std::string_view button_id)
+{
+    for (const StdButtonInfo& info: STD_BUTTONS)
+    {
+        if (button_id == info.id)
+        {
+            return info;
+        }
+    }
+    return std::nullopt;
+}
+
+// The sizers the conversion command needs to locate.
+struct StdSizerLocation
+{
+    Node* form_sizer { nullptr };
+    Node* existing_sizer { nullptr };
+};
+
+// Returns the form's top-level sizer plus any existing wxStdDialogButtonSizer. A
+// wxStdDialogButtonSizer belongs at the end of the form's sizer, so it is only ever a direct child
+// of that sizer.
+static StdSizerLocation LocateStdSizers(Node* form)
+{
+    StdSizerLocation location;
+    if (!form)
+    {
+        return location;
+    }
+
+    for (const NodeSharedPtr& child: form->get_ChildNodePtrs())
+    {
+        if (!child->is_Sizer())
+        {
+            continue;
+        }
+        location.form_sizer = child.get();
+        for (const NodeSharedPtr& sub_child: child->get_ChildNodePtrs())
+        {
+            if (sub_child->is_Gen(gen_wxStdDialogButtonSizer))
+            {
+                location.existing_sizer = sub_child.get();
+                return location;
+            }
+        }
+    }
+    return location;
+}
+
+// Counts the parent's children that are wxButtons using a standard dialog-button id.
+static size_t CountStandardSiblingButtons(Node* parent)
+{
+    size_t count = 0;
+    for (const NodeSharedPtr& child: parent->get_ChildNodePtrs())
+    {
+        if (child->is_Gen(gen_wxButton) && GetStdButtonInfo(child->as_string(prop_id)).has_value())
+        {
+            ++count;
+        }
+    }
+    return count;
+}
+
+// A wxStdDialogButtonSizer can hold only one button from each of these mutually-exclusive groups,
+// so a button whose group is already represented cannot be added.
+static bool IsStdButtonGroupSet(const Node* sizer, GenEnum::PropName flag)
+{
+    switch (flag)
+    {
+        case prop_OK:
+        case prop_Yes:
+        case prop_Save:
+            return sizer->as_bool(prop_OK) || sizer->as_bool(prop_Yes) || sizer->as_bool(prop_Save);
+
+        case prop_No:
+            return sizer->as_bool(prop_No);
+
+        case prop_Cancel:
+        case prop_Close:
+            return sizer->as_bool(prop_Cancel) || sizer->as_bool(prop_Close);
+
+        case prop_Apply:
+            return sizer->as_bool(prop_Apply);
+
+        case prop_Help:
+            return sizer->as_bool(prop_Help);
+
+        case prop_ContextHelp:
+            return sizer->as_bool(prop_ContextHelp);
+
+        default:
+            return true;
+    }
+}
+
+// Copies the button's wxEVT_BUTTON handler to the sizer's matching event. This modifies the sizer
+// directly, so it is only safe when the caller's undo action owns the sizer's state (new node).
+static void CopyButtonEventToSizer(Node* sizer, Node* button, const StdButtonInfo& info)
+{
+    const NodeEvent* button_event = button->get_Event("wxEVT_BUTTON");
+    if (button_event && !button_event->get_value().empty())
+    {
+        if (NodeEvent* sizer_event = sizer->get_Event(info.clicked_event); sizer_event)
+        {
+            sizer_event->set_value(button_event->get_value());
+        }
+    }
+}
+
+// Adds action to a group with select events suppressed. GroupUndoActions performs a single
+// selection change of its own, and a sub-action may have saved a selection that the command
+// removes -- selecting such a node again would crash the Navigation panel.
+static void AddSuppressingSelect(GroupUndoActions& group, const UndoActionPtr& action)
+{
+    action->AllowSelectEvent(false);
+    group.Add(action);
+}
+
+// Moves a button into an already-existing wxStdDialogButtonSizer as a single undoable action.
+static void AddButtonToExistingStdSizer(Node* sizer, Node* button, const StdButtonInfo& info)
+{
+    if (IsStdButtonGroupSet(sizer, info.flag))
+    {
+        return;
+    }
+
+    // The button is removed by this command, so it cannot be the node GroupUndoActions restores on
+    // undo. Select the sizer instead -- it exists both before and after the command.
+    wxGetFrame().SelectNode(sizer, evt_flags::no_event);
+
+    auto group = std::make_shared<GroupUndoActions>("Add to wxStdDialogButtonSizer", sizer);
+
+    if (sizer->HasProp(info.flag))
+    {
+        AddSuppressingSelect(
+            *group, std::make_shared<ModifyPropertyAction>(sizer->get_PropPtr(info.flag), "1"));
+    }
+
+    if (!info.default_name.empty() && button->as_bool(prop_default) &&
+        sizer->HasProp(prop_default_button))
+    {
+        AddSuppressingSelect(
+            *group, std::make_shared<ModifyPropertyAction>(sizer->get_PropPtr(prop_default_button),
+                                                           info.default_name));
+    }
+
+    // info.clicked_event is always declared on a wxStdDialogButtonSizer, so get_Event() is non-null
+    const NodeEvent* button_event = button->get_Event("wxEVT_BUTTON");
+    if (button_event && !button_event->get_value().empty())
+    {
+        AddSuppressingSelect(
+            *group, std::make_shared<ModifyEventAction>(sizer->get_Event(info.clicked_event),
+                                                        button_event->get_value()));
+    }
+
+    AddSuppressingSelect(
+        *group, std::make_shared<RemoveNodeAction>(button, "Add to wxStdDialogButtonSizer", false));
+
+    wxGetFrame().PushUndoAction(group);
+}
 
 NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
 {
@@ -59,42 +245,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 {
     switch (event.GetId())
     {
-        case std::to_underlying(Menu::NewItem):
-            if (m_tool_name < gen_name_array_size)
-            {
-                if (m_node->is_Type(type_bookpage) || m_node->is_Type(type_wizardpagesimple))
-                {
-                    if (m_child && m_child->is_Sizer())
-                    {
-                        m_child = m_child->get_Parent();
-                    }
-                }
-
-                if (m_child)
-                {
-                    std::ignore = m_child->CreateToolNode(m_tool_name);
-                }
-                else
-                {
-                    wxGetFrame().CreateToolNode(m_tool_name);
-                }
-            }
-            break;
-
-        case std::to_underlying(Menu::NewColumn):
-            if (m_tool_name == gen_wxTreeListCtrl)
-            {
-                if (m_child)
-                {
-                    std::ignore = m_child->CreateToolNode(gen_TreeListCtrlColumn);
-                }
-                else
-                {
-                    wxGetFrame().CreateToolNode(gen_TreeListCtrlColumn);
-                }
-            }
-            break;
-
         case std::to_underlying(Menu::NewSiblingBoxSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxBoxSizer);
             break;
@@ -117,10 +267,6 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 
         case std::to_underlying(Menu::NewSiblingGridbagSizer):
             std::ignore = m_parent->CreateToolNode(gen_wxGridBagSizer);
-            break;
-
-        case std::to_underlying(Menu::NewSiblingStdDialgBtns):
-            std::ignore = m_parent->CreateToolNode(gen_wxStdDialogButtonSizer);
             break;
 
         case std::to_underlying(Menu::NewSiblingSpacer):
@@ -152,11 +298,11 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case std::to_underlying(Menu::NewChildStdDialgBtns):
-            wxGetFrame().CreateToolNode(gen_wxStdDialogButtonSizer);
+            std::ignore = m_sizer_node->CreateToolNode(gen_wxStdDialogButtonSizer);
             break;
 
         case std::to_underlying(Menu::NewChildSpacer):
-            wxGetFrame().CreateToolNode(gen_spacer);
+            std::ignore = m_sizer_node->CreateToolNode(gen_spacer);
             break;
 
         case std::to_underlying(Menu::NewToolbar):
@@ -172,14 +318,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case std::to_underlying(Menu::AddToolSeparator):
-            if (m_child)
-            {
-                std::ignore = m_child->CreateToolNode(gen_toolSeparator);
-            }
-            else
-            {
-                wxGetFrame().CreateToolNode(gen_toolSeparator);
-            }
+            wxGetFrame().CreateToolNode(gen_toolSeparator);
             break;
 
         case std::to_underlying(Menu::ExpandAll):
@@ -301,6 +440,10 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 
         case std::to_underlying(Menu::ChangeToListBox):
             ChangeNode(gen_wxListBox);
+            break;
+
+        case std::to_underlying(Menu::ChangeToStdDialogButtonSizer):
+            ChangeToStdDialogButtonSizer();
             break;
 
         case std::to_underlying(Menu::ChangeToGridSizer):
@@ -669,13 +812,6 @@ void NavPopupMenu::MenuAddCommands()
                     wxGetFrame().CreateToolNode(gen_embedded_image);
                 },
                 std::to_underlying(Menu::AddImage));
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_data_xml);
-                },
-                std::to_underlying(Menu::AddDataXml));
             return;
         }
         if (!m_node->is_Gen(gen_wxWizard) && !m_node->is_ToolBar())
@@ -684,7 +820,7 @@ void NavPopupMenu::MenuAddCommands()
         }
     }
 
-    if (m_node->is_Gen(gen_wxStatusBar) || m_node->is_Gen(gen_embedded_image))
+    if (m_node->is_Gen(gen_wxStatusBar))
     {
         return;
     }
@@ -1229,6 +1365,36 @@ void NavPopupMenu::MenuAddMoveCommands()
         menu_item->SetBitmap(GetSvgImage("notebook", dpi_size));
         AppendSubMenu(sub_menu, "&Change widget to");
     }
+
+    if (m_node->is_Gen(gen_wxButton) && m_parent && !m_parent->is_Gen(gen_wxGridBagSizer))
+    {
+        const std::optional<StdButtonInfo> info = GetStdButtonInfo(m_node->as_string(prop_id));
+        if (info)
+        {
+            const StdSizerLocation location = LocateStdSizers(m_node->get_Form());
+            if (location.existing_sizer)
+            {
+                // Only offer this if the button's type isn't already in the sizer.
+                if (!IsStdButtonGroupSet(location.existing_sizer, info->flag))
+                {
+                    AddSeparatorIfNeeded();
+                    menu_item = Append(std::to_underlying(Menu::ChangeToStdDialogButtonSizer),
+                                       "Add to wxStdDialogButtonSizer");
+                    menu_item->SetBitmap(GetInternalImage("stddialogbuttonsizer"));
+                }
+            }
+            else if (location.form_sizer && !location.form_sizer->is_Gen(gen_wxGridBagSizer))
+            {
+                AddSeparatorIfNeeded();
+                const size_t std_count = CountStandardSiblingButtons(m_parent);
+                menu_item = Append(std::to_underlying(Menu::ChangeToStdDialogButtonSizer),
+                                   std_count > 1 ?
+                                       "Convert all standard buttons to wxStdDialogButtonSizer" :
+                                       "Convert to wxStdDialogButtonSizer");
+                menu_item->SetBitmap(GetInternalImage("stddialogbuttonsizer"));
+            }
+        }
+    }
     return;
 }
 
@@ -1237,7 +1403,6 @@ void NavPopupMenu::MenuAddStandardCommands()
     const wxSize& dpi_size = wxGetFrame().GetMenuDpiSize();
 
     AddSeparatorIfNeeded();
-    m_isPasteAllowed = false;
     if (m_node->is_Gen(gen_embedded_image))
     {
         wxMenuItem* menu_item = Append(wxID_DELETE);
@@ -1262,7 +1427,6 @@ void NavPopupMenu::MenuAddStandardCommands()
     {
         clip_node = wxGetFrame().getClipboardPtr();
     }
-    m_isPasteAllowed = (clip_node ? true : false);
 
     if (m_node->is_Gen(gen_Project))
     {
@@ -1271,7 +1435,6 @@ void NavPopupMenu::MenuAddStandardCommands()
         if (!clip_node || !clip_node->is_Form())
         {
             paste_menu_item->Enable(false);
-            m_isPasteAllowed = false;
         }
 
         // There are no other standard commands for a project
@@ -1321,11 +1484,9 @@ void NavPopupMenu::CreateSizerParent(std::string_view widget)
         return;
     }
 
-    const size_t childPos = m_parent->get_ChildPosition(m_node);
-
-    if (!m_parent->is_FormParent())
+    if (!m_parent->is_Form())
     {
-        while (m_parent && !m_parent->is_Sizer())
+        while (m_parent && !m_parent->is_Sizer() && !m_parent->is_Form())
         {
             m_parent = m_parent->get_Parent();
         }
@@ -1339,6 +1500,10 @@ void NavPopupMenu::CreateSizerParent(std::string_view widget)
                  "know why.")
         return;
     }
+
+    // The loop above can retarget m_parent to an ancestor, so the insertion index must be computed
+    // against the final parent -- not the parent captured before the walk.
+    const size_t childPos = m_parent->get_ChildPosition(m_node);
 
     if (m_parent->is_Gen(gen_folder) || m_parent->is_Gen(gen_sub_folder))
     {
@@ -1408,6 +1573,110 @@ void NavPopupMenu::ChangeNode(GenEnum::GenName new_node_gen)
 {
     const wxWindowUpdateLocker freeze(wxGetFrame().getWindow());
     wxGetFrame().PushUndoAction(std::make_shared<ChangeNodeType>(m_node, new_node_gen));
+}
+
+void NavPopupMenu::ChangeToStdDialogButtonSizer()
+{
+    const std::optional<StdButtonInfo> info = GetStdButtonInfo(m_node->as_string(prop_id));
+    if (!info)
+    {
+        return;
+    }
+
+    const StdSizerLocation location = LocateStdSizers(m_node->get_Form());
+    if (location.existing_sizer)
+    {
+        AddButtonToExistingStdSizer(location.existing_sizer, m_node, *info);
+        return;
+    }
+
+    if (!location.form_sizer || location.form_sizer->is_Gen(gen_wxGridBagSizer))
+    {
+        return;
+    }
+
+    Node* parent = m_node->get_Parent();
+    if (!parent)
+    {
+        return;
+    }
+
+    // Convert every sibling button that uses a standard dialog-button id.
+    std::vector<Node*> std_buttons;
+    for (const NodeSharedPtr& child: parent->get_ChildNodePtrs())
+    {
+        if (child->is_Gen(gen_wxButton) && GetStdButtonInfo(child->as_string(prop_id)).has_value())
+        {
+            std_buttons.emplace_back(child.get());
+        }
+    }
+    if (std_buttons.empty())
+    {
+        return;
+    }
+
+    const NodeSharedPtr new_sizer =
+        NodeCreation.CreateNode(gen_wxStdDialogButtonSizer, location.form_sizer).first;
+    if (!new_sizer)
+    {
+        return;
+    }
+
+    // A new wxStdDialogButtonSizer defaults to an OK and a Cancel button -- clear those so that
+    // only the flags for the buttons actually being converted get set.
+    new_sizer->set_value(prop_OK, "0");
+    new_sizer->set_value(prop_Yes, "0");
+    new_sizer->set_value(prop_Save, "0");
+    new_sizer->set_value(prop_Apply, "0");
+    new_sizer->set_value(prop_No, "0");
+    new_sizer->set_value(prop_Cancel, "0");
+    new_sizer->set_value(prop_Close, "0");
+    new_sizer->set_value(prop_Help, "0");
+    new_sizer->set_value(prop_ContextHelp, "0");
+    new_sizer->set_value(prop_flags, "wxEXPAND");
+
+    // The converted buttons are removed by this command, so the node selected before it cannot be
+    // the one GroupUndoActions restores on undo -- its Nav tree item does not exist again until the
+    // tree is rebuilt. Select the form's sizer, which survives the command.
+    wxGetFrame().SelectNode(location.form_sizer, evt_flags::no_event);
+
+    auto group =
+        std::make_shared<GroupUndoActions>("Convert to wxStdDialogButtonSizer", new_sizer.get());
+
+    // Append the sizer at the end of the form's sizer so it appears at the bottom of the form.
+    // With no position argument, InsertNodeAction appends.
+    auto insert_action = std::make_shared<InsertNodeAction>(new_sizer.get(), location.form_sizer,
+                                                            "Convert to wxStdDialogButtonSizer");
+    insert_action->SetFireCreatedEvent(true);
+    AddSuppressingSelect(*group, insert_action);
+
+    for (Node* button: std_buttons)
+    {
+        const std::optional<StdButtonInfo> button_info =
+            GetStdButtonInfo(button->as_string(prop_id));
+        if (!button_info)
+        {
+            continue;
+        }
+
+        // Only one button of a given type can exist in a wxStdDialogButtonSizer, so the first
+        // sibling in each group wins the flag, its handler, and the default-button setting.
+        if (!IsStdButtonGroupSet(new_sizer.get(), button_info->flag))
+        {
+            new_sizer->set_value(button_info->flag, "1");
+            if (!button_info->default_name.empty() && button->as_bool(prop_default))
+            {
+                new_sizer->set_value(prop_default_button, button_info->default_name);
+            }
+
+            CopyButtonEventToSizer(new_sizer.get(), button, *button_info);
+        }
+
+        AddSuppressingSelect(*group, std::make_shared<RemoveNodeAction>(
+                                         button, "Convert to wxStdDialogButtonSizer", false));
+    }
+
+    wxGetFrame().PushUndoAction(group);
 }
 
 void NavPopupMenu::AddToolbarCommands(Node* node)

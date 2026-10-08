@@ -40,6 +40,10 @@
 
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
+#if defined(INTERNAL_TESTING)
+    #include "internal/ui_harness.h"  // ui_harness::Start -- debug-only UI command harness
+#endif
+
 #include "helptext/doc_view_frame.h"
 
 #if defined(_WIN32) && defined(_MSC_VER)
@@ -373,6 +377,12 @@ int App::OnRun()
     parser.AddLongOption("docview", "Open documentation viewer", wxCMD_LINE_VAL_STRING,
                          wxCMD_LINE_HIDDEN);
 
+    // Debug-only: drive the editor UI from a script file (see src/internal/ui_harness.cpp).
+    parser.AddLongOption("dbg-ui-script", "run editor UI commands from a script file",
+                         wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongOption("dbg-ui-log", "write the UI harness log to this file",
+                         wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
     parser.Parse();
 
     // Return current data_version for AI tools and exit immediately
@@ -542,6 +552,19 @@ int App::OnRun()
     {
         m_frame->Show();
         SetTopWindow(m_frame);
+
+#if defined(INTERNAL_TESTING)
+        if (wxString dbg_script; parser.Found("dbg-ui-script", &dbg_script))
+        {
+            // Default the log next to the script so the agent always knows where to read it.
+            wxString dbg_log;
+            if (!parser.Found("dbg-ui-log", &dbg_log))
+            {
+                dbg_log = dbg_script + ".log";
+            }
+            ui_harness::Start(dbg_script, dbg_log);
+        }
+#endif
 
 #if defined(_DEBUG)
         // if (AutoMsgWindow())

@@ -9,6 +9,7 @@
 #include <wx/display.h>   // wxDisplay
 #include <wx/filedlg.h>   // wxFileDialog base header
 #include <wx/filename.h>  // wxFileName class
+#include <wx/statbmp.h>   // wxStaticBitmap
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "startup_dlg.h"  // #include "../wxui/startup_dlg_base.h"
@@ -20,6 +21,7 @@
 #include "utils.h"                       // Utility functions that work with properties
 #include "version.h"                     // Version numbers generated in ../CMakeLists.txt
 #include "wxue_namespace/wxue_string.h"  // wxue::string
+#include "wxui/ui_images.h"              // Generated image bundle declarations
 
 // wxGenericHyperlinkCtrl has a DoContextMenu() method that displays "Copy URL" which isn't useful
 // for StartDlg. What we need instead is an option to remove the project from the list.
@@ -98,6 +100,32 @@ void StartupDlg::AddProjectToGrid(const wxString& display_name, const wxString& 
 
 void StartupDlg::OnInit(wxInitDialogEvent& event)
 {
+#if defined(_DEBUG)
+    // The .wxui layout has no conditional-compilation support, so the generated base class
+    // always uses the release logo (bundle_wxUiEditor_svg). Swap in the debug logo here,
+    // where the change survives code regeneration.
+    SetIcon(wxue_img::bundle_debug_logo_svg(16, 16).GetIconFor(this));
+
+    // The logo is the largest static bitmap in this dialog; the remaining static bitmaps
+    // are small 16/24 px icons.
+    wxStaticBitmap* logo_bitmap = nullptr;
+    for (wxWindow* child: GetChildren())
+    {
+        if (auto* static_bmp = wxDynamicCast(child, wxStaticBitmap); static_bmp != nullptr)
+        {
+            if (logo_bitmap == nullptr ||
+                static_bmp->GetBitmap().GetWidth() > logo_bitmap->GetBitmap().GetWidth())
+            {
+                logo_bitmap = static_bmp;
+            }
+        }
+    }
+    if (logo_bitmap != nullptr)
+    {
+        logo_bitmap->SetBitmap(wxue_img::bundle_debug_logo_svg(64, 64));
+    }
+#endif  // _DEBUG
+
     if (!GetParent())
     {
         const wxDisplay desktop(this);

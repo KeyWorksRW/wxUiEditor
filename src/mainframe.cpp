@@ -123,6 +123,25 @@ MainFrame::MainFrame() :
 
     SetIcons(bundle);
 
+#if defined(_DEBUG)
+    // The .wxui layout files have no conditional-compilation support, so the generated base
+    // class always assigns the release logo (bundle_wxUiEditor_svg) to these toolbar and menu
+    // bitmaps. Override them here, where the change survives code regeneration.
+    m_toolbar->SetToolNormalBitmap(id_DifferentProject, bundle_debug_logo_svg(24, 24));
+    m_toolbar->Realize();
+
+    if (wxMenuItem* const item_different_project = m_menuFile->FindItem(id_DifferentProject);
+        item_different_project != nullptr)
+    {
+        item_different_project->SetBitmap(bundle_debug_logo_svg(16, 16));
+    }
+
+    if (wxMenuItem* const item_about = m_menuHelp->FindItem(wxID_ABOUT); item_about != nullptr)
+    {
+        item_about->SetBitmap(bundle_debug_logo_svg(20, 20));
+    }
+#endif  // _DEBUG
+
     SetTitle("wxUiEditor");
 
     if (WakaTime::IsWakaTimeAvailable())

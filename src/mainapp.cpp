@@ -193,7 +193,7 @@ bool App::OnInit()
     {
 #if defined(_WIN32)
         auto* DarkModeSettings = new DarkSettings;
-        MSWEnableDarkMode(0, DarkModeSettings);
+        MSWEnableDarkMode(wxApp::DarkMode_Auto, DarkModeSettings);
 #else
         // Unlike MSW, this can be set at any time and it will affect all future windows. Note,
         // however, that we have no control over the specific colors used, so we can't support our

@@ -986,10 +986,10 @@ void DialogBlocks::SetNodeVarname(pugi::xml_node& node_xml, const NodeSharedPtr&
                 }
             }
         }
-        else if (auto value = node_xml.find_child_by_attribute("string", "name", "identifier");
-                 value)
+        else if (auto identifier = node_xml.find_child_by_attribute("string", "name", "identifier");
+                 identifier)
         {
-            const wxString name = ExtractQuotedString(value);
+            const wxString name = ExtractQuotedString(identifier);
             if (!name.empty())
             {
                 prop->set_value(name);
@@ -1057,19 +1057,21 @@ void DialogBlocks::SetNodeDimensions(pugi::xml_node& node_xml, const NodeSharedP
         {
             size.SetWidth(value.text().as_int());
         }
-        else if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Width");
-                 value)
+        else if (auto width_string =
+                     node_xml.find_child_by_attribute("string", "name", "proxy-Width");
+                 width_string)
         {
-            size.SetWidth(wxue::atoi(ExtractQuotedString(value).ToStdString()));
+            size.SetWidth(wxue::atoi(ExtractQuotedString(width_string).ToStdString()));
         }
         if (auto value = node_xml.find_child_by_attribute("long", "name", "proxy-Height"); value)
         {
             size.SetHeight(value.text().as_int());
         }
-        else if (auto value = node_xml.find_child_by_attribute("string", "name", "proxy-Height");
-                 value)
+        else if (auto height_string =
+                     node_xml.find_child_by_attribute("string", "name", "proxy-Height");
+                 height_string)
         {
-            size.SetHeight(wxue::atoi(ExtractQuotedString(value).ToStdString()));
+            size.SetHeight(wxue::atoi(ExtractQuotedString(height_string).ToStdString()));
         }
         prop->set_value(size);
         if (m_class_uses_dlg_units)

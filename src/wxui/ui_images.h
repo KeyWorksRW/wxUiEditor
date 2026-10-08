@@ -240,7 +240,7 @@ namespace wxue_img
     extern const unsigned char dataviewlist_ctrl_svg[18308];  // ../art_src/dataviewlist_ctrl.svg
     extern const unsigned char dataviewtree_ctrl_svg[12886];  // ../art_src/dataviewtree_ctrl.svg
     extern const unsigned char datepicker_svg[3836];  // ../art_src/datepicker.svg
-    extern const unsigned char debug_logo_svg[11593];  // ../art_src/debug_logo.svg
+    extern const unsigned char debug_logo_svg[10046];  // ../art_src/debug_logo.svg
     extern const unsigned char default_png[518];  // ../art_src/default.png
     extern const unsigned char dirPicker_svg[2772];  // ../art_src/dirPicker.svg
     extern const unsigned char doc_mdi_parent_frame_svg[7676];  // ../art_src/doc_mdi_parent_frame.svg
@@ -377,7 +377,7 @@ namespace wxue_img
     extern const unsigned char wxToolBar_svg[1677];  // ../art_src/wxToolBar.svg
     extern const unsigned char wxToolbook_svg[7198];  // ../art_src/wxToolbook.svg
     extern const unsigned char wxTreebook_svg[2845];  // ../art_src/wxTreebook.svg
-    extern const unsigned char wxUiEditor_svg[4381];  // ../art_src/wxUiEditor.svg
+    extern const unsigned char wxUiEditor_svg[2757];  // ../art_src/wxUiEditor.svg
     extern const unsigned char wxWizardPageSimple_svg[1092];  // ../art_src/wxWizardPageSimple.svg
     extern const unsigned char wxWizard_svg[6433];  // ../art_src/wxWizard.svg
     extern const unsigned char wxactivityIndicator_svg[2129];  // ../art_src/wxactivityIndicator.svg

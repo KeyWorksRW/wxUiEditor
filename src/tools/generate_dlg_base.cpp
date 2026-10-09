@@ -12,9 +12,9 @@
 
 #include <wx/button.h>
 
-#include "generate_dlg_gen.h"
+#include "generate_dlg_base.h"
 
-bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool GenerateDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     // Scaling of pos and size are handled after the dialog
@@ -61,7 +61,7 @@ bool GenerateDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &GenerateDlg::OnInit, this);
+    Bind(wxEVT_INIT_DIALOG, &GenerateDlgBase::OnInit, this);
 
     return true;
 }

@@ -76,9 +76,91 @@ jobs:
 
     - name: Install LLVM/Clang and Ninja (PGO)
       if: ${{ inputs.enable-pgo || inputs.create-setup }}
+      shell: pwsh
       run: |
-        choco install llvm ninja --no-progress
-        echo "C:\Program Files\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        # winget is the primary source: its manifest feed is Microsoft-maintained.
+        # The Chocolatey community feed returned HTTP 503 while `choco install`
+        # still exited 0 after installing 0/0 packages, so that failure only
+        # surfaced later, as a missing clang during the CMake configure step.
+        # The runner image normally ships LLVM and Ninja already, so both are
+        # probed first and nothing is installed when they are usable.
+        function Resolve-Tool {
+            param([string]$Name, [string[]]$Candidates)
+            # Fixed install locations are preferred over PATH: a Chocolatey shim
+            # directory would otherwise win and hide the real LLVM layout.
+            foreach ($candidate in $Candidates) {
+                if (Test-Path $candidate) { return $candidate }
+            }
+            $cmd = Get-Command $Name -ErrorAction SilentlyContinue
+            if ($cmd) { return $cmd.Source }
+            return $null
+        }
+
+        $llvmBin = 'C:\Program Files\LLVM\bin'
+        $ninjaCandidates = @(
+            (Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Links\ninja.exe'),
+            'C:\ProgramData\chocolatey\bin\ninja.exe'
+        )
+
+        $clang = Resolve-Tool 'clang' @((Join-Path $llvmBin 'clang.exe'))
+        $ninja = Resolve-Tool 'ninja' $ninjaCandidates
+
+        if (-not $clang -or -not $ninja) {
+            if (Get-Command winget -ErrorAction SilentlyContinue) {
+                if (-not $clang) {
+                    winget install --id LLVM.LLVM --exact --source winget --silent `
+                        --accept-package-agreements --accept-source-agreements `
+                        --disable-interactivity
+                }
+                if (-not $ninja) {
+                    # Portable package: winget links ninja.exe into WinGet\Links,
+                    # which the current process does not see as PATH.
+                    winget install --id Ninja-build.Ninja --exact --source winget --silent `
+                        --accept-package-agreements --accept-source-agreements `
+                        --disable-interactivity
+                }
+            } else {
+                Write-Host 'winget is not available on this image.'
+            }
+        }
+
+        # Re-probe before falling back: installers update PATH in the registry,
+        # which this process never observes, but the fixed paths are checked.
+        $clang = Resolve-Tool 'clang' @((Join-Path $llvmBin 'clang.exe'))
+        $ninja = Resolve-Tool 'ninja' $ninjaCandidates
+
+        # Last resort for images without App Installer.
+        if ((-not $clang -or -not $ninja) -and (Get-Command choco -ErrorAction SilentlyContinue)) {
+            $packages = @()
+            if (-not $clang) { $packages += 'llvm' }
+            if (-not $ninja) { $packages += 'ninja' }
+            Write-Host "winget did not provide $($packages -join '/'); falling back to choco."
+            choco install @packages --no-progress -y
+            $clang = Resolve-Tool 'clang' @((Join-Path $llvmBin 'clang.exe'))
+            $ninja = Resolve-Tool 'ninja' $ninjaCandidates
+        }
+
+        if (-not $clang) {
+            throw "clang is not installed: neither '$llvmBin\clang.exe' nor PATH resolves it."
+        }
+        if (-not $ninja) {
+            throw "ninja is not installed: none of $($ninjaCandidates -join ', ') or PATH resolves it."
+        }
+
+        # The PGO configure step passes -DCMAKE_RC_COMPILER=llvm-rc, which CMake
+        # looks up on PATH alongside clang.
+        $llvmRc = Join-Path (Split-Path $clang) 'llvm-rc.exe'
+        if (-not (Test-Path $llvmRc)) {
+            throw "'$llvmRc' not found next to clang; the PGO configure step requires llvm-rc."
+        }
+
+        # GITHUB_PATH only affects subsequent steps, which is where CMake runs.
+        @( (Split-Path $clang), (Split-Path $ninja) ) |
+            Select-Object -Unique |
+            Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+        & $clang --version | Select-Object -First 1
+        & $ninja --version
 
     - name: Configure CMake — Instrumented (PGO)
       if: ${{ inputs.enable-pgo || inputs.create-setup }}
@@ -166,7 +248,46 @@ jobs:
 
     - name: Install NSIS
       if: ${{ inputs.create-setup }}
-      run: choco install nsis
+      shell: pwsh
+      run: |
+        # NSIS installs to a fixed location, and cpack's NSIS generator locates
+        # makensis through the PATH -- so both the install and the PATH export
+        # are required for the packaging step to work.
+        $nsisDir  = 'C:\Program Files (x86)\NSIS'
+        $makensis = Join-Path $nsisDir 'makensis.exe'
+
+        if (-not (Test-Path $makensis)) {
+            # winget's manifest feed is Microsoft-maintained. The Chocolatey
+            # community feed returned HTTP 503 while this step still exited 0,
+            # because choco reports success after installing 0/0 packages -- the
+            # failure then surfaced much later, inside cpack.
+            $wingetExit = -1
+            if (Get-Command winget -ErrorAction SilentlyContinue) {
+                winget install --id NSIS.NSIS --exact --source winget --silent `
+                    --accept-package-agreements --accept-source-agreements `
+                    --disable-interactivity
+                $wingetExit = $LASTEXITCODE
+            } else {
+                Write-Host 'winget is not available on this image.'
+            }
+
+            # Last resort for images without App Installer.
+            if (-not (Test-Path $makensis) -and (Get-Command choco -ErrorAction SilentlyContinue)) {
+                Write-Host "winget did not install NSIS (exit code $wingetExit); falling back to choco."
+                choco install nsis --no-progress -y
+            }
+        }
+
+        if (-not (Test-Path $makensis)) {
+            throw "NSIS is not installed: '$makensis' is missing after winget/choco."
+        }
+
+        # GITHUB_PATH only affects subsequent steps, which is where cpack runs.
+        $nsisDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        & $makensis /VERSION
+        if ($LASTEXITCODE -ne 0) {
+            throw "'$makensis /VERSION' failed; the NSIS installation looks broken."
+        }
 
     # create-setup implies the PGO path, so this packages the Clang
     # PGO-optimized build (install(TARGETS wxUiEditor CONFIGURATIONS Release)

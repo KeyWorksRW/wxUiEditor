@@ -110,7 +110,7 @@ bool MainFrame::GenerateFromOutputType(GenResults& results)
     if (language != GenLang::none)
     {
         results.SetNodes(Project.get_ProjectNode());
-        results.SetLanguages(static_cast<GenLang>(language));
+        results.SetLanguages(language);
         results.SetMode(GenResults::Mode::generate_and_write);
         std::ignore = results.Generate();
         return true;
@@ -192,7 +192,7 @@ bool MainFrame::GenerateFromDialog(GenResults& results)
     if (lang_flags != GenLang::none)
     {
         results.SetNodes(Project.get_ProjectNode());
-        results.SetLanguages(static_cast<GenLang>(lang_flags));
+        results.SetLanguages(lang_flags);
         results.SetMode(GenResults::Mode::generate_and_write);
         std::ignore = results.Generate();
         code_generated = true;

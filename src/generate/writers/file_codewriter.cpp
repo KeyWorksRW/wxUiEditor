@@ -74,6 +74,19 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
         return result;
     }
 
+    // TypeScript and the other kwx/FFI languages have no "End of generated code" marker, so the
+    // entire file belongs to the generator -- there is no user content to preserve. Compare the
+    // full buffers instead of running the preservation logic below.
+    if (m_comment_line_to_find.empty())
+    {
+        if (m_buffer.size() == m_org_buffer.size() &&
+            std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
+        {
+            return write_current;
+        }
+        return (m_flags & flag_test_only) ? write_needed : WriteToFile();
+    }
+
     // At this point, m_buffer contains newly generated code WITH fake user content already
     // appended (Ruby 'end', C++ '};', Perl '1;'). m_org_buffer contains the original file.
     // m_fake_content_pos marks where we can erase the fake content if we need to preserve

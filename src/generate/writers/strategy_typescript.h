@@ -20,6 +20,7 @@ public:
     void EmitImport(Code& code, std::string_view module) override;
     void EmitVarDecl(Code& code, std::string_view type, std::string_view name) override;
 
-    // wxButton → Button (TypeScript uses namespace-qualified: wx.Frame)
+    // The kwx TypeScript corpus keeps the "wx" prefix on wrapper class names (wxFrame,
+    // wxButton), so names are passed through unchanged.
     [[nodiscard]] std::string MapClassName(std::string_view wx_class_name) override;
 };

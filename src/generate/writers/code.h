@@ -767,8 +767,9 @@ private:
     GenLang m_language;
     const LanguageTraits* m_traits { nullptr };
 
-    // This is changed on a per-language basis in Code::Init()
+    // These are changed on a per-language basis in Code::Init()
     wxue::string m_language_wxPrefix { "wx" };
+    wxue::string m_language_classPrefix { "wx" };
 
     size_t m_break_length { DEFAULT_BREAK_LENGTH };
     size_t m_break_at { DEFAULT_BREAK_LENGTH };  // this should be the same as m_break_length

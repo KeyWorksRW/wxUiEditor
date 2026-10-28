@@ -175,12 +175,10 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event unused */)
         {
             m_mockupPanel->CreateContent();
         }
-#if wxUSE_WEBVIEW
         else if (page == m_languageDocsPanel)
         {
             m_languageDocsPanel->ActivatePage();
         }
-#endif
         else if (page != m_importPanel)
         {
             dynamic_cast<BasePanel*>(page)->GenerateBaseClass();

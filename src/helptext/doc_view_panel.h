@@ -53,6 +53,17 @@ public:
     // Navigate to the archive home page.
     void NavigateHome();
 
+    // Display an archived page by name (e.g. "wxTextCtrl.md").
+    // Returns false when no archive is open or the page does not exist; the
+    // currently displayed page and navigation history are left untouched.
+    [[nodiscard]] bool DisplayPage(const std::string& archive_name);
+
+    // Browser-style navigation over this panel's page history.
+    void NavigateBack();
+    void NavigateForward();
+    [[nodiscard]] bool CanNavigateBack() const noexcept;
+    [[nodiscard]] bool CanNavigateForward() const noexcept;
+
     // Run post-Create initialization: bind the Find toolbar button and Ctrl+F.
     // Called automatically by the constructors that invoke Create().
     void InitPanel();

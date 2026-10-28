@@ -103,7 +103,7 @@ jobs:
       runner-type: ${{ github.actor == 'Randalphwa' && 'self-hosted' || 'github-hosted' }}
 
   buildMacOS:
-    if: ${{ false }}  # temporarily disabled
+    if: ${{ true }}
     uses: ./.github/workflows/build-macos-reusable.yml
     with:
       create-setup: false

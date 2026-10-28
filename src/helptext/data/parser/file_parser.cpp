@@ -1256,7 +1256,7 @@ namespace docparser
                     ClassInfo nested = ParseClassDecl(header_text);
                     if (have_doc && !pending_doc.class_name.empty())
                     {
-                        // Honour an explicit qualified @class Outer::Inner.
+                        // Honor an explicit qualified @class Outer::Inner.
                         nested.name = pending_doc.class_name;
                     }
                     if (nested.name.empty())
@@ -1915,7 +1915,7 @@ namespace docparser
 
                     if (!found_brace)
                     {
-                        // Forward declaration or unparseable header — nothing to emit.
+                        // Forward declaration or unparsable header — nothing to emit.
                         have_doc = false;
                         i = probe > i ? probe : i + 1;
                         continue;

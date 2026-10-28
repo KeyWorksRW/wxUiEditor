@@ -7,17 +7,25 @@
 
 #include "doxy_commands.h"
 
+#include <cctype>
+#include <cstddef>
 #include <unordered_map>
+
+// CR: [10-27-2026]
 
 namespace docparser
 {
 
-    // Map command strings to DoxyCmd enum values
+    // Map command strings to DoxyCmd enum values.
+    // Synonym spellings each map to a distinct enumerator (e.g. return_/returns,
+    // see/sa, remark/remarks) -- all synonyms of a command must be handled together
+    // wherever these commands are consumed.
     static const std::unordered_map<std::string_view, DoxyCmd>& CommandMap()
     {
         static const std::unordered_map<std::string_view, DoxyCmd> cmdMap = {
             // Class/file-level metadata
             { "class", DoxyCmd::class_ },
+            { "page", DoxyCmd::page },
             { "brief", DoxyCmd::brief },
             { "param", DoxyCmd::param },
             { "return", DoxyCmd::return_ },
@@ -36,6 +44,16 @@ namespace docparser
             { "warning", DoxyCmd::warning },
             { "deprecated", DoxyCmd::deprecated },
             { "todo", DoxyCmd::todo },
+            { "tableofcontents", DoxyCmd::table_of_contents },
+
+            // Block content and cross references
+            { "verbatim", DoxyCmd::verbatim },
+            { "endverbatim", DoxyCmd::end_verbatim },
+            { "anchor", DoxyCmd::anchor },
+            { "image", DoxyCmd::image },
+            { "copydoc", DoxyCmd::copydoc },
+            { "ref_member_group", DoxyCmd::ref_member_group },
+            { "member_group_name", DoxyCmd::member_group_name },
 
             // Inline formatting
             { "a", DoxyCmd::a },
@@ -43,6 +61,7 @@ namespace docparser
             { "c", DoxyCmd::c },
             { "p", DoxyCmd::p },
             { "e", DoxyCmd::e },
+            { "em", DoxyCmd::em },
 
             // Lists
             { "li", DoxyCmd::li },
@@ -85,6 +104,7 @@ namespace docparser
             // Section headings
             { "section", DoxyCmd::section },
             { "subsection", DoxyCmd::subsection },
+            { "subsubsection", DoxyCmd::subsubsection },
 
             // Platform-specific
             { "onlyfor", DoxyCmd::only_for },
@@ -93,6 +113,9 @@ namespace docparser
             // Remarks
             { "remark", DoxyCmd::remark },
             { "remarks", DoxyCmd::remarks },
+
+            // Directives that never produce output
+            { "hideinitializer", DoxyCmd::hide_initializer },
         };
         return cmdMap;
     }
@@ -123,7 +146,7 @@ namespace docparser
         std::string_view rest = text.substr(endPos);
 
         // Strip leading whitespace from rest
-        while (!rest.empty() && rest[0] == ' ')
+        while (!rest.empty() && (rest[0] == ' ' || rest[0] == '\t'))
         {
             rest.remove_prefix(1);
         }
@@ -136,7 +159,7 @@ namespace docparser
             return { iter->second, rest };
         }
 
-        return { DoxyCmd::unknown, rest };
+        return { DoxyCmd::unknown, text };
     }
 
     std::string ExpandAlias(DoxyCmd command)

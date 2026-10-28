@@ -6,12 +6,15 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "decl_parser.h"
+#include "comment_parser.h"
 
+#include <algorithm>
 #include <array>
 #include <cctype>
-#include <sstream>
 #include <string>
 #include <vector>
+
+// CR: [10-27-2026]
 
 namespace docparser
 {
@@ -23,10 +26,17 @@ namespace docparser
         // Helpers
         // ---------------------------------------------------------------------------
 
+        // True for every character Trim treats as whitespace. CR and LF are included so
+        // CRLF text and wrapped declarations trim the same as single-line text.
+        [[nodiscard]] auto IsTrimSpace(char chr) -> bool
+        {
+            return chr == ' ' || chr == '\t' || chr == '\r' || chr == '\n';
+        }
+
         // Skip whitespace at position pos, return new position
         [[nodiscard]] auto SkipWS(std::string_view text, size_t pos) -> size_t
         {
-            while (pos < text.size() && (text[pos] == ' ' || text[pos] == '\t'))
+            while (pos < text.size() && IsTrimSpace(text[pos]))
             {
                 ++pos;
             }
@@ -37,7 +47,7 @@ namespace docparser
         {
             size_t start = SkipWS(text, 0);
             size_t endPos = text.size();
-            while (endPos > start && (text[endPos - 1] == ' ' || text[endPos - 1] == '\t'))
+            while (endPos > start && IsTrimSpace(text[endPos - 1]))
             {
                 --endPos;
             }
@@ -75,6 +85,139 @@ namespace docparser
             return text.starts_with(prefix) ? prefix.size() : 0;
         }
 
+        // Defined below; declared here so SkipBalanced can delegate to the single
+        // nesting-aware implementation.
+        auto FindMatchingClose(std::string_view text, size_t pos) -> size_t;
+
+        // Skip a balanced bracket/paren/angle group starting at 'pos', which must point at
+        // the opening character. Returns the position just past the closing character.
+        [[nodiscard]] auto SkipBalanced(std::string_view text, size_t pos) -> size_t
+        {
+            if (pos >= text.size())
+            {
+                return text.size();
+            }
+
+            const char open = text[pos];
+            if (open != '(' && open != '<' && open != '[' && open != '{')
+            {
+                return pos + 1;
+            }
+
+            const size_t close_pos = FindMatchingClose(text, pos);
+            if (close_pos == std::string_view::npos)
+            {
+                return text.size();
+            }
+            return close_pos + 1;
+        }
+
+        [[nodiscard]] auto IsExportMacroToken(std::string_view token) -> bool
+        {
+            return token.starts_with("WXDLLIMPEXP") || token.starts_with("WXLLIMPEXP") ||
+                   token.starts_with("WXDLLEXPORT") || token.starts_with("WXEXPORT");
+        }
+
+        // Remove declaration prefixes that may precede a type or a class keyword:
+        // template<...>, __declspec(...), wxDEPRECATED_MSG(...), and export macros.
+        [[nodiscard]] auto StripDeclPrefix(std::string_view text) -> std::string
+        {
+            std::string_view rest = text;
+            bool changed = true;
+            while (changed)
+            {
+                changed = false;
+                rest = rest.substr(SkipWS(rest, 0));
+                if (rest.empty())
+                {
+                    break;
+                }
+
+                if (rest.starts_with("template"))
+                {
+                    // "template <...>" (with whitespace before '<') is as valid as
+                    // "template<...>" -- skip the whitespace, then require '<'.
+                    size_t angle_pos = 8;
+                    while (angle_pos < rest.size() &&
+                           (rest[angle_pos] == ' ' || rest[angle_pos] == '\t'))
+                    {
+                        ++angle_pos;
+                    }
+                    if (angle_pos < rest.size() && rest[angle_pos] == '<')
+                    {
+                        rest = rest.substr(SkipBalanced(rest, angle_pos));
+                        changed = true;
+                        continue;
+                    }
+                }
+                if (rest.starts_with("__declspec("))
+                {
+                    rest = rest.substr(SkipBalanced(rest, 10));
+                    changed = true;
+                    continue;
+                }
+                if (rest.starts_with("wxDEPRECATED_MSG("))
+                {
+                    rest = rest.substr(SkipBalanced(rest, 16));
+                    changed = true;
+                    continue;
+                }
+                if (rest.starts_with("wxDEPRECATED"))
+                {
+                    rest = rest.substr(std::min<size_t>(12, rest.size()));
+                    changed = true;
+                    continue;
+                }
+
+                size_t token_end = 0;
+                while (token_end < rest.size() &&
+                       !std::isspace(static_cast<unsigned char>(rest[token_end])) &&
+                       rest[token_end] != '<' && rest[token_end] != '(')
+                {
+                    ++token_end;
+                }
+                if (token_end > 0 && token_end < rest.size() &&
+                    IsExportMacroToken(rest.substr(0, token_end)))
+                {
+                    rest = rest.substr(token_end);
+                    changed = true;
+                    continue;
+                }
+            }
+            return Trim(rest);
+        }
+
+        // Collapse "operator !=(...)" to "operator!=(...)" while keeping a single space
+        // before word-like operator names ("operator void *", "operator new").
+        [[nodiscard]] auto NormalizeOperatorName(std::string_view name) -> std::string
+        {
+            const size_t op_pos = name.find("operator");
+            if (op_pos == std::string_view::npos)
+            {
+                return std::string(name);
+            }
+
+            std::string result = Trim(name.substr(0, op_pos));
+            std::string_view rest = name.substr(op_pos + 8);
+            rest = rest.substr(SkipWS(rest, 0));
+
+            if (!result.empty())
+            {
+                result += ' ';
+            }
+            result += "operator";
+            if (rest.empty())
+            {
+                return result;
+            }
+            if (std::isalnum(static_cast<unsigned char>(rest[0])) || rest[0] == '_')
+            {
+                result += ' ';
+            }
+            result += rest;
+            return Trim(result);
+        }
+
         // Find matching closing bracket/paren/angle, handling nesting.
         // pos should point to the opening character.
         // Returns position of closing character, or npos.
@@ -108,6 +251,27 @@ namespace docparser
             int depth = 1;
             for (size_t i = pos + 1; i < text.size(); ++i)
             {
+                // A bracket inside a comment is text, not nesting.
+                if (text[i] == '/' && i + 1 < text.size() && text[i + 1] == '/')
+                {
+                    const size_t line_end = text.find('\n', i);
+                    if (line_end == std::string_view::npos)
+                    {
+                        break;
+                    }
+                    i = line_end;
+                    continue;
+                }
+                if (text[i] == '/' && i + 1 < text.size() && text[i + 1] == '*')
+                {
+                    const size_t block_end = text.find("*/", i + 2);
+                    if (block_end == std::string_view::npos)
+                    {
+                        break;
+                    }
+                    i = block_end + 1;
+                    continue;
+                }
                 if (text[i] == open)
                 {
                     ++depth;
@@ -122,28 +286,44 @@ namespace docparser
                 }
                 else if (text[i] == '"')
                 {
-                    // Skip string literals
-                    ++i;
-                    while (i < text.size() && text[i] != '"')
+                    // Skip a string literal, but only when it closes on the same line.
+                    // An apostrophe inside a prose comment (e.g. "wxImage's palette")
+                    // must not swallow the rest of the declaration.
+                    const size_t line_end = text.find('\n', i);
+                    const size_t limit =
+                        line_end == std::string_view::npos ? text.size() : line_end;
+                    size_t scan = i + 1;
+                    while (scan < limit && text[scan] != '"')
                     {
-                        if (text[i] == '\\')
+                        if (text[scan] == '\\')
                         {
-                            ++i;
+                            ++scan;
                         }
-                        ++i;
+                        ++scan;
+                    }
+                    if (scan < limit)
+                    {
+                        i = scan;
                     }
                 }
                 else if (text[i] == '\'')
                 {
-                    // Skip char literals
-                    ++i;
-                    while (i < text.size() && text[i] != '\'')
+                    // Skip a char literal only when it closes on the same line.
+                    const size_t line_end = text.find('\n', i);
+                    const size_t limit =
+                        line_end == std::string_view::npos ? text.size() : line_end;
+                    size_t scan = i + 1;
+                    while (scan < limit && text[scan] != '\'')
                     {
-                        if (text[i] == '\\')
+                        if (text[scan] == '\\')
                         {
-                            ++i;
+                            ++scan;
                         }
-                        ++i;
+                        ++scan;
+                    }
+                    if (scan < limit)
+                    {
+                        i = scan;
                     }
                 }
             }
@@ -151,7 +331,10 @@ namespace docparser
         }
 
         // Attempt to split a parameter string (between parentheses) into individual
-        // parameters, respecting nested angle brackets, parens, etc.
+        // parameters, respecting nested parens and angle brackets and skipping string
+        // literals, char literals, and comments.
+        // LIFETIME: the returned views point into `params_text` and do NOT own their text.
+        // Callers must keep the source string alive for as long as they use the views.
         [[nodiscard]] auto SplitParams(std::string_view params_text)
             -> std::vector<std::string_view>
         {
@@ -168,13 +351,61 @@ namespace docparser
             for (size_t i = 0; i < params_text.size(); ++i)
             {
                 const char chr = params_text[i];
+
+                // Comments and literals can hold commas and unmatched angle brackets.
+                if (chr == '/' && i + 1 < params_text.size() && params_text[i + 1] == '/')
+                {
+                    const size_t line_end = params_text.find('\n', i);
+                    if (line_end == std::string_view::npos)
+                    {
+                        break;
+                    }
+                    i = line_end;
+                    continue;
+                }
+                if (chr == '/' && i + 1 < params_text.size() && params_text[i + 1] == '*')
+                {
+                    const size_t end_pos = params_text.find("*/", i + 2);
+                    if (end_pos == std::string_view::npos)
+                    {
+                        break;
+                    }
+                    i = end_pos + 1;
+                    continue;
+                }
+                if (chr == '"' || chr == '\'')
+                {
+                    const size_t line_end = params_text.find('\n', i);
+                    const size_t limit =
+                        line_end == std::string_view::npos ? params_text.size() : line_end;
+                    size_t scan = i + 1;
+                    while (scan < limit && params_text[scan] != chr)
+                    {
+                        if (params_text[scan] == '\\')
+                        {
+                            ++scan;
+                        }
+                        ++scan;
+                    }
+                    if (scan < limit)
+                    {
+                        i = scan;
+                    }
+                    continue;
+                }
+
                 if (chr == '(')
                 {
                     ++paren_depth;
                 }
                 else if (chr == ')')
                 {
-                    --paren_depth;
+                    // A stray ')' must not make the depth negative, which would stop every
+                    // later comma from splitting.
+                    if (paren_depth > 0)
+                    {
+                        --paren_depth;
+                    }
                 }
                 else if (chr == '<')
                 {
@@ -182,11 +413,17 @@ namespace docparser
                 }
                 else if (chr == '>')
                 {
-                    --angle_depth;
+                    // Likewise a stray '>' (e.g. from "->").
+                    if (angle_depth > 0)
+                    {
+                        --angle_depth;
+                    }
                 }
                 else if (chr == ',' && paren_depth == 0 && angle_depth == 0)
                 {
                     result.push_back(params_text.substr(start, i - start));
+                    // A split only happens at depth zero, which resets the counters for the
+                    // next parameter.
                     start = i + 1;
                 }
             }
@@ -299,6 +536,24 @@ namespace docparser
                 return param;
             }
 
+            // A lone builtin keyword is a type, not a name: "SetValue(int)" and
+            // "unsigned long" have no parameter name. Only treat the last token as a name
+            // when a type prefix is left over and the token is not a builtin type keyword.
+            static constexpr std::array<std::string_view, 10> BUILTIN_TYPE_KEYWORDS = {
+                "int",      "long",   "short", "char",   "bool",
+                "unsigned", "signed", "float", "double", "void"
+            };
+            const std::string_view last_token =
+                std::string_view(type_and_name).substr(name_start, name_end - name_start);
+            const std::string_view type_prefix =
+                std::string_view(type_and_name).substr(0, name_start);
+            if (Trim(type_prefix).empty() ||
+                std::ranges::find(BUILTIN_TYPE_KEYWORDS, last_token) != BUILTIN_TYPE_KEYWORDS.end())
+            {
+                param.type = type_and_name;
+                return param;
+            }
+
             param.name = type_and_name.substr(name_start, name_end - name_start);
             param.type = Trim(std::string_view(type_and_name.data(), name_start));
 
@@ -306,6 +561,152 @@ namespace docparser
             // Actually they should already be part of the type portion
 
             return param;
+        }
+
+        // True when a (possibly multi-line) initializer ends with a binary operator,
+        // meaning the next source line continues the same value.
+        [[nodiscard]] auto EndsWithOperator(std::string_view text) -> bool
+        {
+            const std::string trimmed = Trim(text);
+            if (trimmed.empty())
+            {
+                return false;
+            }
+            switch (trimmed.back())
+            {
+                case '|':
+                case '&':
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%':
+                case '^':
+                case '~':
+                case '(':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Number of unclosed '(' / '[' / '{' in 'text', ignoring comments and string/char
+        // literals. Used to keep a multi-line enum initializer in one value.
+        [[nodiscard]] auto CountOpenNesting(std::string_view text) -> int
+        {
+            int nesting = 0;
+            for (size_t i = 0; i < text.size(); ++i)
+            {
+                const char chr = text[i];
+                if (chr == '/' && i + 1 < text.size() && text[i + 1] == '/')
+                {
+                    break;
+                }
+                if (chr == '/' && i + 1 < text.size() && text[i + 1] == '*')
+                {
+                    const size_t end_pos = text.find("*/", i + 2);
+                    if (end_pos == std::string_view::npos)
+                    {
+                        break;
+                    }
+                    i = end_pos + 1;
+                    continue;
+                }
+                if (chr == '"' || chr == '\'')
+                {
+                    size_t scan = i + 1;
+                    while (scan < text.size() && text[scan] != chr)
+                    {
+                        if (text[scan] == '\\')
+                        {
+                            ++scan;
+                        }
+                        ++scan;
+                    }
+                    i = scan;
+                    continue;
+                }
+                if (chr == '(' || chr == '[' || chr == '{')
+                {
+                    ++nesting;
+                }
+                else if ((chr == ')' || chr == ']' || chr == '}') && nesting > 0)
+                {
+                    --nesting;
+                }
+            }
+            return nesting;
+        }
+
+        // Split a comma-separated enum value list at top-level commas, ignoring commas
+        // inside parens/brackets/braces, comments, and string/char literals.
+        [[nodiscard]] auto SplitEnumValues(std::string_view text) -> std::vector<std::string>
+        {
+            std::vector<std::string> result;
+            size_t start = 0;
+            int nesting = 0;
+            for (size_t i = 0; i < text.size(); ++i)
+            {
+                const char chr = text[i];
+                if (chr == '/' && i + 1 < text.size() && text[i + 1] == '/')
+                {
+                    break;
+                }
+                if (chr == '/' && i + 1 < text.size() && text[i + 1] == '*')
+                {
+                    const size_t end_pos = text.find("*/", i + 2);
+                    if (end_pos == std::string_view::npos)
+                    {
+                        break;
+                    }
+                    i = end_pos + 1;
+                    continue;
+                }
+                if (chr == '"' || chr == '\'')
+                {
+                    size_t scan = i + 1;
+                    while (scan < text.size() && text[scan] != chr)
+                    {
+                        if (text[scan] == '\\')
+                        {
+                            ++scan;
+                        }
+                        ++scan;
+                    }
+                    i = scan;
+                    continue;
+                }
+                if (chr == '(' || chr == '[' || chr == '{')
+                {
+                    ++nesting;
+                }
+                else if (chr == ')' || chr == ']' || chr == '}')
+                {
+                    if (nesting > 0)
+                    {
+                        --nesting;
+                    }
+                }
+                else if (chr == ',' && nesting == 0)
+                {
+                    result.push_back(Trim(text.substr(start, i - start)));
+                    start = i + 1;
+                }
+            }
+            result.push_back(Trim(text.substr(start)));
+            return result;
+        }
+
+        // Doxygen trailing markers (/**<, /**!) are punctuation, not doc text.
+        [[nodiscard]] auto StripDocMarker(std::string text) -> std::string
+        {
+            std::string result = Trim(text);
+            while (!result.empty() && (result[0] == '<' || result[0] == '!'))
+            {
+                const std::string rest = Trim(std::string_view(result).substr(1));
+                result = rest;
+            }
+            return result;
         }
 
     }  // anonymous namespace
@@ -320,77 +721,70 @@ namespace docparser
         std::string trimmed = Trim(text);
 
         // Remove trailing '{', ';', etc.
-        while (!trimmed.empty() && (trimmed.back() == '{' || trimmed.back() == ';' ||
-                                    trimmed.back() == ' ' || trimmed.back() == '\t'))
+        while (!trimmed.empty() &&
+               (trimmed.back() == '{' || trimmed.back() == ';' || IsTrimSpace(trimmed.back())))
         {
             trimmed.pop_back();
         }
 
-        // Skip "class " prefix
-        if (size_t len = StartsWith(trimmed, "class "); len > 0)
+        // Strip a leading template<...>/export-macro prefix, then the
+        // class/struct/union keyword.
+        std::string rest_text = StripDeclPrefix(trimmed);
+        size_t keyword_len = StartsWith(rest_text, "class ");
+        if (keyword_len == 0)
         {
-            trimmed = trimmed.substr(len);
+            keyword_len = StartsWith(rest_text, "struct ");
         }
-        else
+        if (keyword_len == 0)
+        {
+            keyword_len = StartsWith(rest_text, "union ");
+        }
+        if (keyword_len == 0)
         {
             return info;
         }
+        rest_text = Trim(std::string_view(rest_text).substr(keyword_len));
 
-        trimmed = Trim(trimmed);
-
-        // Check for WXDLLIMPEXP_* macro between "class" and the name
-        // e.g., "class WXDLLIMPEXP_CORE wxButton : public wxAnyButton"
-        std::string name_part = trimmed;
-        if (!trimmed.empty() && std::isupper(static_cast<unsigned char>(trimmed[0])))
-        {
-            // Could be a macro like WXDLLIMPEXP_CORE
-            if (size_t space = trimmed.find(' '); space != std::string_view::npos)
-            {
-                std::string potential_macro = trimmed.substr(0, space);
-                // Check if it looks like WXDLLIMPEXP_XXX or similar all-caps macro
-                bool is_macro = true;
-                for (const char chr: potential_macro)
-                {
-                    if (chr != '_' && !std::isupper(static_cast<unsigned char>(chr)) &&
-                        !std::isdigit(static_cast<unsigned char>(chr)))
-                    {
-                        is_macro = false;
-                        break;
-                    }
-                }
-                if (is_macro && potential_macro.size() > 2)
-                {
-                    name_part = Trim(trimmed.substr(space + 1));
-                }
-            }
-        }
+        // Strip export macros that follow the keyword, e.g.
+        // "class WXDLLIMPEXP_CORE wxButton : public wxAnyButton".
+        const std::string name_part = StripDeclPrefix(rest_text);
 
         // Find ':' for inheritance
-        if (size_t colon = name_part.find(':'); colon != std::string_view::npos)
+        if (const size_t colon = name_part.find(':'); colon != std::string_view::npos)
         {
             info.name = Trim(name_part.substr(0, colon));
 
-            // Parse bases: "public Base1, public Base2"
-            std::string bases_str = Trim(name_part.substr(colon + 1));
-            std::istringstream stream { bases_str };
-            std::string token;
-            while (std::getline(stream, token, ','))
+            // Parse bases: "public Base1, virtual public Base2". SplitParams survives the
+            // commas inside template arguments; its views point into bases_str, which
+            // outlives this loop.
+            const std::string bases_str = Trim(name_part.substr(colon + 1));
+            for (const std::string_view base_part: SplitParams(bases_str))
             {
-                std::string base = Trim(token);
-                // Remove access specifier
-                if (size_t len = StartsWith(base, "public "); len > 0)
+                std::string base = Trim(base_part);
+                // Remove access specifiers and 'virtual' in any order.
+                bool stripped = true;
+                while (stripped)
                 {
-                    base = base.substr(len);
+                    stripped = false;
+                    size_t len = StartsWith(base, "public ");
+                    if (len == 0)
+                    {
+                        len = StartsWith(base, "protected ");
+                    }
+                    if (len == 0)
+                    {
+                        len = StartsWith(base, "private ");
+                    }
+                    if (len == 0)
+                    {
+                        len = StartsWith(base, "virtual ");
+                    }
+                    if (len > 0)
+                    {
+                        base = Trim(std::string_view(base).substr(len));
+                        stripped = true;
+                    }
                 }
-                else if (size_t len = StartsWith(base, "protected "); len > 0)
-                {
-                    base = base.substr(len);
-                }
-                else if (size_t len = StartsWith(base, "private "); len > 0)
-                {
-                    base = base.substr(len);
-                }
-                base = Trim(base);
                 if (!base.empty())
                 {
                     info.bases.push_back(base);
@@ -401,6 +795,18 @@ namespace docparser
         {
             info.name = Trim(name_part);
         }
+
+        // Keep only the first identifier of the name: drop template arguments
+        // ("wxList<T>" -> "wxList") and trailing specifiers such as "final".
+        if (const size_t angle = info.name.find('<'); angle != std::string::npos)
+        {
+            info.name.resize(angle);
+        }
+        if (const size_t space = info.name.find_first_of(" \t"); space != std::string::npos)
+        {
+            info.name.resize(space);
+        }
+        info.name = Trim(info.name);
 
         return info;
     }
@@ -415,14 +821,61 @@ namespace docparser
         std::string trimmed = Trim(text);
 
         // Remove trailing semicolon
-        while (!trimmed.empty() && (trimmed.back() == ';' || trimmed.back() == ' '))
+        while (!trimmed.empty() && (trimmed.back() == ';' || IsTrimSpace(trimmed.back())))
         {
             trimmed.pop_back();
         }
 
+        // Strip a leading template<...>/export-macro prefix: the parens of a macro such as
+        // "wxDEPRECATED_MSG(\"...\") void Foo();" would otherwise be taken as the
+        // parameter list.
+        trimmed = StripDeclPrefix(trimmed);
+
         // Check for trailing qualifiers after the closing paren
         // Find the parameter list first
         size_t open_paren = std::string_view::npos;
+        // An "operator" token moves where the parameter list starts: the operator's own
+        // '<'/'>' must not drive the angle tracking, and the empty "()" of "operator()" is
+        // part of the name rather than the parameter list.
+        const size_t op_pos = trimmed.find("operator");
+        const bool has_operator_keyword =
+            op_pos != std::string::npos &&
+            (op_pos + 8 == trimmed.size() ||
+             !(std::isalnum(static_cast<unsigned char>(trimmed[op_pos + 8])) ||
+               trimmed[op_pos + 8] == '_'));
+        if (has_operator_keyword)
+        {
+            static constexpr std::string_view OPERATOR_SYMBOLS = "=<>!+-*/%^&|~[],";
+            const size_t after_keyword = SkipWS(trimmed, op_pos + 8);
+            size_t scan = after_keyword;
+            // Consume the operator symbol run (e.g. "==", "<<=", "[]").
+            while (scan < trimmed.size() &&
+                   OPERATOR_SYMBOLS.find(trimmed[scan]) != std::string_view::npos)
+            {
+                ++scan;
+            }
+            // Word-like names: "operator new", "operator delete", "operator void *".
+            while (
+                scan < trimmed.size() &&
+                (std::isalnum(static_cast<unsigned char>(trimmed[scan])) || trimmed[scan] == '_'))
+            {
+                ++scan;
+            }
+            scan = SkipWS(trimmed, scan);
+            // "operator()": the empty paren pair belongs to the name, so the parameter list
+            // is the next paren group.
+            if (scan == after_keyword && scan + 1 < trimmed.size() && trimmed[scan] == '(' &&
+                trimmed[scan + 1] == ')')
+            {
+                scan = SkipWS(trimmed, scan + 2);
+            }
+            // Take the following '(' unconditionally.
+            if (const size_t paren = trimmed.find('(', scan); paren != std::string::npos)
+            {
+                open_paren = paren;
+            }
+        }
+        else
         {
             // Find the FIRST '(' that is at the right nesting level
             int angle_depth = 0;
@@ -446,8 +899,15 @@ namespace docparser
 
         if (open_paren == std::string_view::npos)
         {
-            // No parens — might be a variable or something odd; treat as name-only
-            info.name = std::string(trimmed);
+            // No parens — might be a variable or something odd. Only a bare identifier
+            // is a usable name; anything else is rejected so the caller discards it.
+            std::string name_only = std::string(trimmed);
+            if (name_only.contains(' ') || name_only.contains('.') || name_only.contains(';') ||
+                name_only.contains(':') || name_only.contains(',') || name_only.contains('#'))
+            {
+                return info;
+            }
+            info.name = std::move(name_only);
             return info;
         }
 
@@ -488,7 +948,7 @@ namespace docparser
         }
 
         // Parse the prefix (before open paren) for: [virtual] [static] ReturnType Name
-        std::string prefix = Trim(trimmed.substr(0, open_paren));
+        std::string prefix = Trim(StripDeclPrefix(Trim(trimmed.substr(0, open_paren))));
 
         // Strip leading specifiers from the prefix
         struct PrefixSpec
@@ -534,10 +994,11 @@ namespace docparser
         //   "operator==" -> name="operator=="
 
         // Handle operator overloads
-        if (size_t op_pos = prefix.find("operator"); op_pos != std::string::npos)
+        if (const size_t op_pos = prefix.find("operator"); op_pos != std::string::npos)
         {
-            // Everything from "operator" onwards is the name
-            info.name = Trim(std::string_view(prefix).substr(op_pos));
+            // Everything from "operator" onwards is the name; normalize the spacing
+            // so "operator !=" becomes "operator!=" and "operator []" becomes "operator[]".
+            info.name = NormalizeOperatorName(std::string_view(prefix).substr(op_pos));
             if (op_pos > 0)
             {
                 info.return_type = Trim(std::string_view(prefix).substr(0, op_pos));
@@ -574,6 +1035,25 @@ namespace docparser
             }
         }
 
+        // Reject bogus names: a name with an embedded space that is not an operator
+        // overload, or one containing punctuation that cannot belong to an identifier.
+        // This is what keeps "wxDouble m_11, m_12;" from becoming a method.
+        // Operator names are exempt: "operator()", "operator[]" and "operator<="
+        // legitimately contain punctuation that would fail these identifier tests.
+        if (info.name.starts_with("operator"))
+        {
+            // A valid operator overload name is kept as-is.
+        }
+        else if (info.name.contains(' '))
+        {
+            info.name.clear();
+        }
+        else if (info.name.contains('.') || info.name.contains(';') || info.name.contains(':') ||
+                 info.name.contains('(') || info.name.contains(')'))
+        {
+            info.name.clear();
+        }
+
         // Parse parameters
         std::string params_text = trimmed.substr(open_paren + 1, close_paren - open_paren - 1);
         std::vector<std::string_view> param_parts = SplitParams(params_text);
@@ -606,8 +1086,12 @@ namespace docparser
         // First line should be "enum [class] Name" or "enum [class] Name {"
         std::string first_line = Trim(lines[0]);
 
-        // Strip "enum " prefix
-        if (size_t len = StartsWith(first_line, "enum "); len > 0)
+        // Strip "enum " prefix. An anonymous enum (just "enum") has no name.
+        if (first_line == "enum")
+        {
+            first_line.clear();
+        }
+        else if (const size_t len = StartsWith(first_line, "enum "); len > 0)
         {
             first_line = first_line.substr(len);
         }
@@ -633,8 +1117,8 @@ namespace docparser
         // Extract name (stop at '{', ':', or whitespace)
         size_t name_end = 0;
         while (name_end < first_line.size() && first_line[name_end] != '{' &&
-               first_line[name_end] != ':' && first_line[name_end] != ' ' &&
-               first_line[name_end] != '\t')
+               first_line[name_end] != ';' && first_line[name_end] != ':' &&
+               first_line[name_end] != ' ' && first_line[name_end] != '\t')
         {
             ++name_end;
         }
@@ -674,7 +1158,9 @@ namespace docparser
         bool have_pending_block_doc = false;
         std::string pending_block_text;
         bool in_block_comment = false;
-        bool in_skip_block = false;  // for non-doxygen /* */ block comments
+        bool in_skip_block = false;    // for non-doxygen /* */ block comments
+        bool value_continues = false;  // previous initializer ends with an operator
+        int value_nesting = 0;         // unmatched '(' / '[' / '{' in the current value
 
         for (const auto& raw_line: body_lines)
         {
@@ -726,19 +1212,25 @@ namespace docparser
             // Start of block comment
             if (size_t len = StartsWith(line, "/**"); len > 0)
             {
-                std::string rest = line.substr(len);
-                if (auto end_pos = rest.find("*/"); end_pos != std::string::npos)
+                const std::string rest = line.substr(len);
+                const size_t end_pos = rest.find("*/");
+                if (end_pos == std::string::npos)
                 {
-                    // Single-line block comment: /** text */
-                    pending_block_text = Trim(rest.substr(0, end_pos));
-                    have_pending_block_doc = true;
-                }
-                else
-                {
-                    pending_block_text = Trim(rest);
+                    pending_block_text = StripDocMarker(rest);
                     in_block_comment = true;
+                    continue;
                 }
-                continue;
+
+                // Single-line block comment: /** text */. Whatever follows the closing
+                // "*/" is the value (or a further comment) on the same line, so keep
+                // processing that remainder instead of dropping it.
+                pending_block_text = StripDocMarker(rest.substr(0, end_pos));
+                have_pending_block_doc = true;
+                line = Trim(std::string_view(rest).substr(end_pos + 2));
+                if (line.empty())
+                {
+                    continue;
+                }
             }
 
             // Skip C-style comments that aren't doxygen: /* ... */
@@ -763,19 +1255,59 @@ namespace docparser
             // Could be: "wxFOO = 0x1234," or "wxFOO," or "wxFOO = wxBAR | wxBAZ,"
             // May have trailing /// comment
 
-            // Check for trailing /// comment
+            // Check for a trailing /// or //!< comment
             std::string trailing_comment;
             std::string value_part;
-            if (size_t triple_slash = line.find("///"); triple_slash != std::string::npos)
+            size_t marker_pos = line.find("///");
+            if (marker_pos == std::string::npos)
             {
-                value_part = Trim(std::string_view(line).substr(0, triple_slash));
-                trailing_comment = Trim(std::string_view(line).substr(triple_slash + 3));
+                marker_pos = line.find("//!");
+            }
+            if (marker_pos != std::string::npos)
+            {
+                value_part = Trim(std::string_view(line).substr(0, marker_pos));
+                trailing_comment = Trim(std::string_view(line).substr(marker_pos + 3));
 
-                // Handle "/// @c wxBOTH." or "/// A synonym for ..." forms by just using as-is
+                // Doxygen marks a trailing comment with '<' (///<, //!<); the marker is
+                // punctuation, not content. A leading '!' can also leak from //!<.
+                while (!trailing_comment.empty() &&
+                       (trailing_comment[0] == '<' || trailing_comment[0] == '!'))
+                {
+                    trailing_comment = Trim(std::string_view(trailing_comment).substr(1));
+                }
+
+                // A line holding nothing but the doc comment documents the next value.
+                if (marker_pos == 0)
+                {
+                    if (!trailing_comment.empty())
+                    {
+                        if (!pending_block_text.empty())
+                        {
+                            pending_block_text += ' ';
+                        }
+                        pending_block_text += trailing_comment;
+                        have_pending_block_doc = true;
+                    }
+                    continue;
+                }
             }
             else
             {
                 value_part = std::string(line);
+            }
+
+            // A plain // comment after a value is not part of the initializer.
+            if (const size_t plain_comment = value_part.find("//");
+                plain_comment != std::string::npos)
+            {
+                value_part = Trim(std::string_view(value_part).substr(0, plain_comment));
+            }
+
+            // Likewise a trailing block comment: "wxFOO, /* deprecated */".
+            if (const size_t block_comment = value_part.find("/*");
+                block_comment != std::string::npos)
+            {
+                value_part = Trim(std::string_view(value_part).substr(0, block_comment));
             }
 
             if (value_part.empty())
@@ -783,8 +1315,24 @@ namespace docparser
                 continue;
             }
 
+            // A continuation of a multi-line initializer (a flag combination or a call
+            // split over several lines) belongs to the previous value. Commas inside the
+            // continuation are part of the value, so it is not split here.
+            if ((value_continues || value_nesting > 0) && !info.values.empty())
+            {
+                std::string& initializer = info.values.back().initializer;
+                if (!initializer.empty())
+                {
+                    initializer += ' ';
+                }
+                initializer += value_part;
+                value_nesting = CountOpenNesting(initializer);
+                value_continues = (value_nesting == 0) && EndsWithOperator(initializer);
+                continue;
+            }
+
             // Remove trailing comma
-            if (!value_part.empty() && value_part.back() == ',')
+            if (value_part.back() == ',')
             {
                 value_part.pop_back();
                 value_part = Trim(value_part);
@@ -801,37 +1349,56 @@ namespace docparser
                 continue;
             }
 
-            EnumValue enum_val;
+            // A single line can hold several values: "enum Flags { A, B, C };"
+            const std::vector<std::string> value_pieces = SplitEnumValues(value_part);
+            for (size_t piece_index = 0; piece_index < value_pieces.size(); ++piece_index)
+            {
+                const std::string& piece = value_pieces[piece_index];
+                if (piece.empty())
+                {
+                    continue;
+                }
 
-            // Split on '='
-            if (size_t eq_pos = value_part.find('='); eq_pos != std::string::npos)
-            {
-                enum_val.name = Trim(std::string_view(value_part).substr(0, eq_pos));
-                enum_val.initializer = Trim(std::string_view(value_part).substr(eq_pos + 1));
-            }
-            else
-            {
-                enum_val.name = Trim(value_part);
-            }
+                EnumValue enum_val;
 
-            if (enum_val.name.empty())
-            {
-                continue;
-            }
+                // Split on '='
+                if (size_t eq_pos = piece.find('='); eq_pos != std::string::npos)
+                {
+                    enum_val.name = Trim(std::string_view(piece).substr(0, eq_pos));
+                    enum_val.initializer = Trim(std::string_view(piece).substr(eq_pos + 1));
+                }
+                else
+                {
+                    enum_val.name = Trim(piece);
+                }
 
-            // Apply doc comment
-            if (have_pending_block_doc)
-            {
-                enum_val.doc.brief = pending_block_text;
-                pending_block_text.clear();
-                have_pending_block_doc = false;
-            }
-            else if (!trailing_comment.empty())
-            {
-                enum_val.doc.brief = trailing_comment;
-            }
+                if (enum_val.name.empty())
+                {
+                    continue;
+                }
 
-            info.values.push_back(std::move(enum_val));
+                // Apply doc comment: a pending block comment belongs to the first value on
+                // the line, a trailing "///<" comment to the last one.
+                if (piece_index == 0 && have_pending_block_doc)
+                {
+                    // Parse rather than assign raw text so inline commands (@c, @e, ...)
+                    // are processed instead of leaking into the value table.
+                    enum_val.doc = ParseCommentBlock(pending_block_text);
+                    pending_block_text.clear();
+                    have_pending_block_doc = false;
+                }
+                else if (piece_index + 1 == value_pieces.size() && !trailing_comment.empty())
+                {
+                    // Route the trailing text through the comment parser so inline commands
+                    // such as @c and @e are processed instead of leaking raw into the table.
+                    enum_val.doc = ParseCommentBlock(trailing_comment);
+                }
+
+                info.values.push_back(std::move(enum_val));
+                value_nesting = CountOpenNesting(info.values.back().initializer);
+                value_continues =
+                    (value_nesting == 0) && EndsWithOperator(info.values.back().initializer);
+            }
         }
 
         return info;
@@ -847,7 +1414,7 @@ namespace docparser
         std::string trimmed = Trim(text);
 
         // Remove trailing semicolon
-        while (!trimmed.empty() && (trimmed.back() == ';' || trimmed.back() == ' '))
+        while (!trimmed.empty() && (trimmed.back() == ';' || IsTrimSpace(trimmed.back())))
         {
             trimmed.pop_back();
         }
@@ -855,9 +1422,50 @@ namespace docparser
         if (size_t len = StartsWith(trimmed, "typedef "); len > 0)
         {
             // "typedef OldType NewName"
-            std::string rest = Trim(std::string_view(trimmed).substr(len));
-            // Name is the last identifier
+            const std::string rest = Trim(std::string_view(trimmed).substr(len));
+            if (rest.empty())
+            {
+                return info;
+            }
+
+            // Function-pointer typedef: "int (*wxSortCompareFunction)(int, int)" — the name
+            // sits inside "(*...)"; the underlying type is the declaration with the name
+            // removed.
+            if (const size_t pointer_pos = rest.rfind("(*"); pointer_pos != std::string::npos)
+            {
+                size_t scan = SkipWS(rest, pointer_pos + 2);
+                const size_t name_begin = scan;
+                while (scan < rest.size() &&
+                       (std::isalnum(static_cast<unsigned char>(rest[scan])) || rest[scan] == '_'))
+                {
+                    ++scan;
+                }
+                if (scan > name_begin && scan < rest.size() && rest[scan] == ')')
+                {
+                    info.name = rest.substr(name_begin, scan - name_begin);
+                    info.underlying_type = Trim(rest.substr(0, name_begin)) + rest.substr(scan);
+                    return info;
+                }
+            }
+
+            // Array typedef: "wxChar wxCharBuffer[]" — the name precedes the brackets.
+            std::string suffix;
             size_t name_end = rest.size();
+            if (rest.back() == ']')
+            {
+                const size_t bracket_pos = rest.rfind('[');
+                if (bracket_pos != std::string::npos && bracket_pos > 0)
+                {
+                    suffix = rest.substr(bracket_pos);
+                    name_end = bracket_pos;
+                    while (name_end > 0 && IsTrimSpace(rest[name_end - 1]))
+                    {
+                        --name_end;
+                    }
+                }
+            }
+
+            // Name is the last identifier
             size_t name_start = name_end;
             while (name_start > 0 &&
                    (std::isalnum(static_cast<unsigned char>(rest[name_start - 1])) ||
@@ -867,8 +1475,8 @@ namespace docparser
             }
             if (name_start < name_end)
             {
-                info.name = std::string(rest.substr(name_start, name_end - name_start));
-                info.underlying_type = Trim(rest.substr(0, name_start));
+                info.name = rest.substr(name_start, name_end - name_start);
+                info.underlying_type = Trim(rest.substr(0, name_start)) + suffix;
             }
         }
         else if (size_t len = StartsWith(trimmed, "using "); len > 0)
@@ -926,6 +1534,16 @@ namespace docparser
             {
                 after_name = after_name.substr(close + 1);
             }
+        }
+
+        // A trailing comment is not part of the macro value.
+        if (const size_t line_comment = after_name.find("//"); line_comment != std::string::npos)
+        {
+            after_name = after_name.substr(0, line_comment);
+        }
+        if (const size_t block_comment = after_name.find("/*"); block_comment != std::string::npos)
+        {
+            after_name = after_name.substr(0, block_comment);
         }
 
         info.value = Trim(after_name);

@@ -12,6 +12,8 @@
 #include <fstream>
 #include <string>
 #include <thread>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "doc_types.h"
@@ -165,8 +167,10 @@ struct GeneratedFile
 
 struct PerFileResult
 {
-    fs::path rel_path;                        // source .h relative path
-    std::vector<GeneratedFile> output_files;  // one entry per generated .md
+    fs::path rel_path;                                       // source .h relative path
+    std::vector<GeneratedFile> output_files;                 // one entry per generated .md
+    std::vector<std::pair<std::string, std::string>> pages;  // (page id, title)
+    std::vector<std::string> alias_pages;                    // @class names with no class
     std::size_t class_count { 0 };
     std::size_t enum_count { 0 };
     std::size_t function_count { 0 };
@@ -202,7 +206,17 @@ static std::vector<fs::path> GenerateLists(const std::vector<PerFileResult>& res
         {
             const std::string stem = gen_file.out_rel.stem().string();
 
-            if (symbols.ClassToFile(stem).has_value())
+            if (symbols.IsPageName(stem))
+            {
+                // @page topic — always listed under overviews regardless of how
+                // many free functions its header happens to define.
+                fs::path entry_path = gen_file.out_rel;
+                entry_path.replace_extension();
+                overviews_list.push_back(entry_path.generic_string());
+                continue;
+            }
+
+            if (symbols.IsClassPageStem(stem))
             {
                 // Class output file — classify as event or regular class.
                 if (symbols.IsEventClass(stem))
@@ -328,16 +342,16 @@ static void GenerateWelcomePage(const docparser::SymbolTable& symbols,
         for (const GeneratedFile& gen_file: slot.output_files)
         {
             const std::string stem = gen_file.out_rel.stem().string();
-            if (!symbols.ClassToFile(stem).has_value())
+            if (!symbols.IsClassPageStem(stem))
             {
                 ++overview_count;
             }
         }
     }
 
-    // -- Collect overview paths for linking --------------------------------
+    // -- Collect overview paths and their display titles -------------------
 
-    std::vector<std::string> overview_paths;
+    std::vector<std::pair<std::string, std::string>> overview_entries;  // (path, title)
     for (const PerFileResult& slot: results)
     {
         if (!slot.parsed_ok)
@@ -347,16 +361,39 @@ static void GenerateWelcomePage(const docparser::SymbolTable& symbols,
         for (const GeneratedFile& gen_file: slot.output_files)
         {
             const std::string stem = gen_file.out_rel.stem().string();
-            if (!symbols.ClassToFile(stem).has_value())
+            if (symbols.IsClassPageStem(stem))
             {
-                fs::path overview_rel = gen_file.out_rel;
-                overview_rel.replace_extension();
-                overview_paths.push_back(overview_rel.generic_string());
+                continue;
             }
+
+            fs::path overview_rel = gen_file.out_rel;
+            overview_rel.replace_extension();
+
+            // Prefer the @page title; fall back to the readable file stem for
+            // non-class pages that are not topic pages.
+            std::string display_name = stem;
+            for (const auto& [page_id, page_title]: slot.pages)
+            {
+                if (page_id == stem && !page_title.empty())
+                {
+                    display_name = page_title;
+                    break;
+                }
+            }
+            if (display_name == stem)
+            {
+                std::ranges::replace(display_name, '/', ' ');
+                if (!display_name.empty())
+                {
+                    display_name[0] = static_cast<char>(
+                        std::toupper(static_cast<unsigned char>(display_name[0])));
+                }
+            }
+            overview_entries.emplace_back(overview_rel.generic_string(), display_name);
         }
     }
 
-    std::ranges::sort(overview_paths);
+    std::ranges::sort(overview_entries);
 
     // -- Write index.md ----------------------------------------------------
 
@@ -391,15 +428,8 @@ static void GenerateWelcomePage(const docparser::SymbolTable& symbols,
 
     index_file << "## Overviews\n\n";
     index_file << "Key topic-based documentation sections:\n\n";
-    for (const std::string& overview_path: overview_paths)
+    for (const auto& [overview_path, display_name]: overview_entries)
     {
-        std::string display_name = overview_path;
-        std::ranges::replace(display_name, '/', ' ');
-        if (!display_name.empty())
-        {
-            display_name[0] =
-                static_cast<char>(std::toupper(static_cast<unsigned char>(display_name[0])));
-        }
         index_file << "- [" << display_name << "](" << overview_path << ".md)\n";
     }
 
@@ -515,6 +545,60 @@ int RunParser(const ParseOptions& opts)
         files_to_process = files;
     }
 
+    // Non-class output files are named after the source basename. Two headers in
+    // different directories may share a basename, so every file after the
+    // top-level one gets a deterministic name that prefixes its source directory
+    // components joined with '_' (persist/toplevel.h -> persist_toplevel.md).
+    std::unordered_map<std::string, std::string> non_class_stems;
+    {
+        std::unordered_map<std::string, std::vector<fs::path>> files_by_name;
+        for (const fs::path& rel_path: files_to_process)
+        {
+            files_by_name[rel_path.filename().string()].push_back(rel_path);
+        }
+
+        for (const auto& file_group: files_by_name)
+        {
+            if (file_group.second.size() < 2)
+            {
+                continue;
+            }
+
+            std::vector<fs::path> sorted_group = file_group.second;
+            std::ranges::sort(sorted_group,
+                              [](const fs::path& lhs, const fs::path& rhs)
+                              {
+                                  const bool lhs_is_root = lhs.parent_path().empty();
+                                  const bool rhs_is_root = rhs.parent_path().empty();
+                                  if (lhs_is_root != rhs_is_root)
+                                  {
+                                      return lhs_is_root;
+                                  }
+                                  return lhs.generic_string() < rhs.generic_string();
+                              });
+
+            for (std::size_t index = 1; index < sorted_group.size(); ++index)
+            {
+                const fs::path& rel_path = sorted_group[index];
+                std::string stem;
+                for (const fs::path& component: rel_path.parent_path())
+                {
+                    if (!stem.empty())
+                    {
+                        stem += '_';
+                    }
+                    stem += component.string();
+                }
+                if (!stem.empty())
+                {
+                    stem += '_';
+                }
+                stem += rel_path.stem().string();
+                non_class_stems[rel_path.generic_string()] = stem;
+            }
+        }
+    }
+
     // FTS index setup
     ftsrch::IndexPtr fts_index;
     ftsrch::DocId next_doc_id = 0;
@@ -578,13 +662,40 @@ int RunParser(const ParseOptions& opts)
 
             try
             {
-                const docparser::FileContent content =
-                    docparser::ParseFile(abs_path, slot.rel_path);
+                docparser::FileContent content = docparser::ParseFile(abs_path, slot.rel_path);
 
-                // WriteFile creates per-class files plus a source-derived file for
-                // any non-class content; returns all generated relative paths.
-                const std::vector<fs::path> generated =
-                    docparser::WriteFile(content, symbols, output_dir, slot.rel_path, input_dir);
+                // An @class doc that no class in this header claims becomes a
+                // doc-only class page, unless pass 1 already knows the name as a
+                // class page from another header.
+                for (docparser::ClassInfo& alias_page: content.alias_pages)
+                {
+                    if (symbols.IsClassPageStem(alias_page.name))
+                    {
+                        continue;
+                    }
+                    slot.alias_pages.push_back(alias_page.name);
+                    content.classes.push_back(std::move(alias_page));
+                }
+
+                slot.pages.reserve(content.pages.size());
+                for (const docparser::PageInfo& page_info: content.pages)
+                {
+                    slot.pages.emplace_back(page_info.id, page_info.title);
+                }
+
+                std::string non_class_stem;
+                const std::unordered_map<std::string, std::string>::const_iterator stem_iter =
+                    non_class_stems.find(slot.rel_path.generic_string());
+                if (stem_iter != non_class_stems.end())
+                {
+                    non_class_stem = stem_iter->second;
+                }
+
+                // WriteFile creates per-class files, one file per @page, plus a
+                // source-derived file for any non-class content; returns all
+                // generated relative paths.
+                const std::vector<fs::path> generated = docparser::WriteFile(
+                    content, symbols, output_dir, slot.rel_path, input_dir, non_class_stem);
 
                 slot.class_count = content.classes.size();
                 slot.enum_count = content.enums.size();
@@ -595,7 +706,8 @@ int RunParser(const ParseOptions& opts)
                     GeneratedFile gen_file;
                     gen_file.out_rel = out_rel;
                     gen_file.out_path = output_dir / out_rel;
-                    // Use stem as title (class name for class files, source stem for others)
+                    // Use stem as title (class name for class files, page id for
+                    // topic pages, source stem for other non-class files)
                     gen_file.title = out_rel.stem().string();
 
                     if (want_fts)
@@ -657,6 +769,92 @@ int RunParser(const ParseOptions& opts)
             pool.emplace_back(worker);
         }
         // std::jthread joins on scope exit
+    }
+
+    // Register alias pages after the pool closes so every worker sees the same
+    // pass-1 symbol table and the registration order stays deterministic.
+    for (const PerFileResult& slot: results)
+    {
+        for (const std::string& alias_name: slot.alias_pages)
+        {
+            symbols.RegisterClassPageStem(alias_name);
+        }
+    }
+
+    // Output-name invariant: two source files must never share an output name.
+    // Non-class names were disambiguated before the worker pass; this verifies the
+    // result and resolves anything left (for example two headers declaring a class
+    // with the same name) deterministically.
+    {
+        struct OutputOwner
+        {
+            std::size_t slot_index = 0;
+            std::size_t file_index = 0;
+        };
+
+        std::unordered_map<std::string, OutputOwner> owners;
+        for (std::size_t slot_index = 0; slot_index < results.size(); ++slot_index)
+        {
+            PerFileResult& slot = results[slot_index];
+            for (std::size_t file_index = 0; file_index < slot.output_files.size(); ++file_index)
+            {
+                GeneratedFile& gen_file = slot.output_files[file_index];
+                const std::string output_name = gen_file.out_rel.generic_string();
+                const auto [owner_iter, inserted] =
+                    owners.try_emplace(output_name, OutputOwner { slot_index, file_index });
+                if (inserted)
+                {
+                    continue;
+                }
+
+                const OutputOwner existing = owner_iter->second;
+                const fs::path& existing_path = results[existing.slot_index].rel_path;
+                if (existing_path == slot.rel_path)
+                {
+                    // A single header may declare the same class twice (for example
+                    // the macro-based wxScopedPtr and its template counterpart). Both
+                    // declarations map to one page; the later write replaces the
+                    // earlier one in the same worker, which is deterministic.
+                    continue;
+                }
+
+                parser::AddErrorMessage("Error: output name collision: " + output_name + " from " +
+                                        existing_path.generic_string() + " and " +
+                                        slot.rel_path.generic_string());
+
+                // Keep class page names stable; rename the non-class output when
+                // the colliding entry is one.
+                const std::string stem = gen_file.out_rel.stem().string();
+                if (symbols.IsClassPageStem(stem))
+                {
+                    continue;
+                }
+
+                std::string new_stem;
+                for (const fs::path& component: slot.rel_path.parent_path())
+                {
+                    if (!new_stem.empty())
+                    {
+                        new_stem += '_';
+                    }
+                    new_stem += component.string();
+                }
+                if (!new_stem.empty())
+                {
+                    new_stem += '_';
+                }
+                new_stem += stem;
+
+                const fs::path new_rel = fs::path(new_stem + ".md");
+                std::error_code rename_error;
+                fs::rename(gen_file.out_path, output_dir / new_rel, rename_error);
+                if (!rename_error)
+                {
+                    gen_file.out_rel = new_rel;
+                    gen_file.out_path = output_dir / new_rel;
+                }
+            }
+        }
     }
 
     // Serial FTS pass: adds one document per generated .md file in deterministic

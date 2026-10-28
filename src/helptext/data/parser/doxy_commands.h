@@ -15,13 +15,16 @@
 namespace docparser
 {
 
-    // All recognized doxygen commands
+    // All recognized doxygen commands.
+    // Synonym spellings each get their own enumerator (e.g. return_/returns, see/sa,
+    // remark/remarks) -- consumers must handle all synonyms of a command together.
     enum class DoxyCmd : std::uint8_t
     {
         unknown,
 
         // Class/file-level metadata
         class_,
+        page,
         brief,
         param,
         return_,
@@ -40,6 +43,16 @@ namespace docparser
         warning,
         deprecated,
         todo,
+        table_of_contents,
+
+        // Block content and cross references
+        verbatim,
+        end_verbatim,
+        anchor,
+        image,
+        copydoc,
+        ref_member_group,
+        member_group_name,
 
         // Inline formatting
         a,
@@ -47,6 +60,7 @@ namespace docparser
         c,
         p,
         e,
+        em,
 
         // Lists
         li,
@@ -89,6 +103,7 @@ namespace docparser
         // Section headings
         section,
         subsection,
+        subsubsection,
 
         // Platform-specific
         only_for,
@@ -97,11 +112,15 @@ namespace docparser
         // Remarks
         remark,
         remarks,
+
+        // Directives that affect how a value is displayed and never produce output
+        hide_initializer,
     };
 
     // Parse a doxygen command from text starting at '@' or '\'.
     // Returns the command enum and the remaining text after the command word.
-    // If the command is not recognized, returns DoxyCmd::unknown.
+    // On an unknown command, returns { DoxyCmd::unknown, <the command text as passed in> }.
+    // The returned string_view refers to the caller's buffer -- `text` must outlive the result.
     [[nodiscard]] std::pair<DoxyCmd, std::string_view> ParseCommand(std::string_view text);
 
     // Expand simple alias commands to their markdown equivalents.

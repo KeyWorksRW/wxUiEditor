@@ -23,8 +23,10 @@
 #include <cctype>
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <set>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -37,57 +39,259 @@ namespace docparser
     // ---------------------------------------------------------------------------
 
     // Convert a class name to its output .md filename, preserving case.
-    // Example: "wxButton" -> "wxButton.md"
+    // A nested compound keeps its qualification as a dot:
+    // "wxButton" -> "wxButton.md", "wxImage::HSVValue" -> "wxImage.HSVValue.md".
     std::string ClassNameToFile(const std::string& name)
     {
-        return name + ".md";
+        std::string filename = name;
+        size_t separator = 0;
+        while ((separator = filename.find("::", separator)) != std::string::npos)
+        {
+            filename.replace(separator, 2, ".");
+            ++separator;
+        }
+        return filename + ".md";
     }
 
-    // Convert a method name to a lowercase anchor (e.g. "Create" -> "create")
-    static std::string NameToAnchor(const std::string& name)
+    // Generate a stable anchor id from heading text.
+    // Mirrors tests/scripts/audit_markdown.ps1 ConvertTo-Anchor and the viewer's
+    // HeadingTextToId: lowercase, markdown syntax stripped, runs outside [a-z0-9_-]
+    // collapsed to '-', leading/trailing hyphens trimmed.
+    static std::string AnchorForHeading(std::string_view heading_text)
+    {
+        std::string plain;
+        plain.reserve(heading_text.size());
+        for (size_t index = 0; index < heading_text.size(); ++index)
+        {
+            const char character = heading_text[index];
+            if (character == '[')
+            {
+                // Keep the link text but drop the (...) destination.
+                const size_t close_bracket = heading_text.find(']', index + 1);
+                if (close_bracket != std::string_view::npos)
+                {
+                    plain.append(heading_text.substr(index + 1, close_bracket - index - 1));
+                    index = close_bracket;
+                    if (index + 1 < heading_text.size() && heading_text[index + 1] == '(')
+                    {
+                        const size_t close_paren = heading_text.find(')', index + 2);
+                        if (close_paren != std::string_view::npos)
+                        {
+                            index = close_paren;
+                        }
+                    }
+                    continue;
+                }
+            }
+            if (character == '`' || character == '*' || character == '_')
+            {
+                continue;
+            }
+            plain += character;
+        }
+
+        std::string result;
+        result.reserve(plain.size());
+        for (const char character: plain)
+        {
+            const unsigned char value = static_cast<unsigned char>(character);
+            if ((value >= 'a' && value <= 'z') || (value >= '0' && value <= '9') ||
+                character == '-' || character == '_')
+            {
+                result += character;
+            }
+            else if (value >= 'A' && value <= 'Z')
+            {
+                result += static_cast<char>(value - 'A' + 'a');
+            }
+            else if (!result.empty() && result.back() != '-')
+            {
+                result += '-';
+            }
+        }
+        while (!result.empty() && result.front() == '-')
+        {
+            result.erase(0, 1);
+        }
+        while (!result.empty() && result.back() == '-')
+        {
+            result.pop_back();
+        }
+        if (result.empty())
+        {
+            result = "section";
+        }
+        return result;
+    }
+
+    // Remove a template argument list from a class name (wxList<T> -> wxList).
+    static std::string StripTemplateArgs(const std::string& name)
+    {
+        const size_t open = name.find('<');
+        if (open == std::string::npos)
+        {
+            return name;
+        }
+        const size_t close = name.find('>', open);
+        if (close == std::string::npos)
+        {
+            return name.substr(0, open);
+        }
+        return name.substr(0, open) + name.substr(close + 1);
+    }
+
+    static std::string EscapeProse(std::string_view text);
+
+    // Resolve a cross-reference target to a markdown link destination.
+    // Returns an empty string when the target is unknown. A Class::Member target only
+    // receives an anchor when the member is documented on the current page; otherwise
+    // it links to the class page so that no dead anchor is emitted.
+    static std::string ResolveDestination(const std::string& target, const SymbolTable& symbols,
+                                          const std::string& current_class,
+                                          const std::map<std::string, std::string>* method_anchors)
+    {
+        if (target.empty())
+        {
+            return {};
+        }
+        if (target[0] == '#')
+        {
+            return target;
+        }
+
+        // A nested compound is itself a page, so try the whole target before
+        // interpreting a '::' as a class/member separator.
+        const std::string whole_class = StripTemplateArgs(target);
+        if (symbols.ClassToFile(whole_class).has_value())
+        {
+            return ClassNameToFile(whole_class);
+        }
+
+        // For Class::Nested::Member, prefer the longest registered class prefix
+        // (nested member documentation lives on the nested page).
+        const size_t first_separator = target.find("::");
+        const size_t last_separator = target.rfind("::");
+        if (last_separator != std::string::npos && last_separator != first_separator)
+        {
+            size_t separator = last_separator;
+            while (separator != std::string::npos && separator > 0)
+            {
+                const std::string prefix = StripTemplateArgs(target.substr(0, separator));
+                if (symbols.ClassToFile(prefix).has_value())
+                {
+                    return ClassNameToFile(prefix);
+                }
+                separator = target.rfind("::", separator - 1);
+            }
+        }
+
+        const size_t double_colon = target.find("::");
+        if (double_colon != std::string::npos)
+        {
+            const std::string class_name = StripTemplateArgs(target.substr(0, double_colon));
+            std::string member_name = target.substr(double_colon + 2);
+            if (const size_t nested = member_name.rfind("::"); nested != std::string::npos)
+            {
+                member_name = member_name.substr(nested + 2);
+            }
+            if (const size_t paren = member_name.find('('); paren != std::string::npos)
+            {
+                member_name.resize(paren);
+            }
+            if (symbols.ClassToFile(class_name).has_value())
+            {
+                const bool same_page = class_name == current_class;
+                const bool known_member =
+                    method_anchors != nullptr && method_anchors->contains(member_name);
+                if (same_page && known_member)
+                {
+                    return ClassNameToFile(class_name) + "#" + method_anchors->at(member_name);
+                }
+                return ClassNameToFile(class_name);
+            }
+            return {};
+        }
+
+        std::string class_name = StripTemplateArgs(target);
+        if (class_name.ends_with("()"))
+        {
+            class_name.resize(class_name.size() - 2);
+        }
+        if (symbols.ClassToFile(class_name).has_value())
+        {
+            return ClassNameToFile(class_name);
+        }
+        if (symbols.IsPageName(target))
+        {
+            return target + ".md";
+        }
+        return {};
+    }
+
+    // Resolve a cross-reference target to a markdown link (or a code span).
+    static std::string ResolveTarget(const std::string& target, const SymbolTable& symbols,
+                                     const std::string& current_class,
+                                     const std::map<std::string, std::string>* method_anchors)
+    {
+        const std::string destination =
+            ResolveDestination(target, symbols, current_class, method_anchors);
+        if (destination.empty())
+        {
+            return "`" + target + "`";
+        }
+        return "[" + EscapeProse(target) + "](" + destination + ")";
+    }
+
+    // Allocates unique anchors in document order.
+    class AnchorAllocator
+    {
+    public:
+        std::string Allocate(const std::string& base)
+        {
+            const std::string stem = base.empty() ? std::string("section") : base;
+            std::string candidate = stem;
+            int suffix = 2;
+            while (!used_.insert(candidate).second)
+            {
+                candidate = stem + "-" + std::to_string(suffix);
+                ++suffix;
+            }
+            return candidate;
+        }
+
+    private:
+        std::set<std::string> used_;
+    };
+
+    // Escape prose characters that would otherwise be interpreted as HTML.
+    static std::string EscapeProse(std::string_view text)
     {
         std::string result;
-        for (const char character: name)
+        result.reserve(text.size());
+        for (const char character: text)
         {
-            if (std::isalnum(static_cast<unsigned char>(character)) || character == '_' ||
-                character == '-')
+            if (character == '&')
             {
-                result += static_cast<char>(std::tolower(static_cast<unsigned char>(character)));
+                result += "&amp;";
+            }
+            else if (character == '<')
+            {
+                result += "&lt;";
+            }
+            else if (character == '>')
+            {
+                result += "&gt;";
+            }
+            else
+            {
+                result += character;
             }
         }
         return result;
     }
 
-    // Resolve a cross-reference target to a markdown link.
-    // Handles "wxFoo", "wxFoo::Bar", and non-class refs (leaves as-is).
-    static std::string ResolveRef(const std::string& reference, const SymbolTable& symbols)
-    {
-        // Check for Class::Member pattern
-        const std::string::size_type double_colon = reference.find("::");
-        if (double_colon != std::string::npos)
-        {
-            const std::string class_name = reference.substr(0, double_colon);
-            const std::string member_name = reference.substr(double_colon + 2);
-
-            if (symbols.ClassToFile(class_name).has_value())
-            {
-                return "[" + reference + "](" + ClassNameToFile(class_name) + "#" +
-                       NameToAnchor(member_name) + ")";
-            }
-            return "`" + reference + "`";
-        }
-
-        // Check for plain class reference
-        if (symbols.ClassToFile(reference).has_value())
-        {
-            return "[" + reference + "](" + ClassNameToFile(reference) + ")";
-        }
-
-        // Not a known class — return as code
-        return "`" + reference + "`";
-    }
-
-    // Escape pipe characters in table cell text
+    // Escape pipe characters in table cell text. Use the HTML entity rather than a
+    // backslash escape: the markdown linter counts every '|' character, escaped or not.
     static std::string EscapePipe(const std::string& text)
     {
         std::string result;
@@ -96,7 +300,12 @@ namespace docparser
         {
             if (character == '|')
             {
-                result += "\\|";
+                result += "&#124;";
+            }
+            else if (character == '\n' || character == '\r')
+            {
+                // A newline inside a cell would split the table row.
+                result += ' ';
             }
             else
             {
@@ -106,367 +315,67 @@ namespace docparser
         return result;
     }
 
-    // Classify a method name for the summary table kind column.
-    [[nodiscard]] static std::string ClassifyMethodKind(const std::string& method_name,
-                                                        const std::string& class_name)
-    {
-        if (method_name == class_name)
-        {
-            return "🏗️";
-        }
-        if (method_name.starts_with('~'))
-        {
-            return "💣";
-        }
-        if (method_name.starts_with("operator"))
-        {
-            return "⚙️";
-        }
-        // Group getters by common prefixes
-        if (method_name.starts_with("Get") || method_name.starts_with("Is") ||
-            method_name.starts_with("Has") || method_name.starts_with("Can") ||
-            method_name.starts_with("Should"))
-        {
-            return "🔍";
-        }
-        if (method_name.starts_with("Set"))
-        {
-            return "✏️";
-        }
-        return "";
-    }
-
-    // Strip markdown formatting from text for use in the summary table.
-    // Removes **bold**, *italic*, `code`, [links](url), and collapses whitespace.
-    [[nodiscard]] static std::string StripInlineMarkdown(const std::string& text)
+    // Concatenate inline spans into plain text (no markdown markers).
+    static std::string SpansPlainText(const std::vector<InlineSpan>& spans)
     {
         std::string result;
-        result.reserve(text.size());
-        bool in_bold = false;
-        bool in_italic = false;
-        bool in_code = false;
-        bool in_link_text = false;
-
-        for (size_t idx = 0; idx < text.size(); ++idx)
+        for (const InlineSpan& span: spans)
         {
-            const char character = text[idx];
-
-            if (character == '`')
+            if (span.kind == InlineSpan::Kind::ref)
             {
-                in_code = !in_code;
-                continue;
-            }
-            if (in_code)
-            {
-                continue;
-            }
-            if (character == '*' && idx + 1 < text.size() && text[idx + 1] == '*')
-            {
-                in_bold = !in_bold;
-                ++idx;
-                continue;
-            }
-            if (character == '*' && !in_bold)
-            {
-                in_italic = !in_italic;
-                continue;
-            }
-            if (character == '[')
-            {
-                in_link_text = true;
-                continue;
-            }
-            if (in_link_text && character == ']')
-            {
-                in_link_text = false;
-                // Skip the URL portion: ](url)
-                if (idx + 1 < text.size() && text[idx + 1] == '(')
-                {
-                    const size_t close_paren = text.find(')', idx + 2);
-                    if (close_paren != std::string::npos)
-                    {
-                        idx = close_paren;
-                    }
-                }
-                continue;
-            }
-            if (in_link_text)
-            {
-                result += character;
-                continue;
-            }
-            result += character;
-        }
-
-        // Collapse multiple spaces and trim
-        std::string cleaned;
-        cleaned.reserve(result.size());
-        bool last_was_space = false;
-        for (const char character: result)
-        {
-            if (character == ' ' || character == '\n' || character == '\t')
-            {
-                if (!last_was_space)
-                {
-                    cleaned += ' ';
-                    last_was_space = true;
-                }
+                result += span.text.empty() ? span.target : span.text;
             }
             else
             {
-                cleaned += character;
-                last_was_space = false;
+                result += span.text;
             }
         }
-        while (!cleaned.empty() && cleaned.back() == ' ')
-        {
-            cleaned.pop_back();
-        }
-        while (!cleaned.empty() && cleaned.front() == ' ')
-        {
-            cleaned.erase(0, 1);
-        }
-        return cleaned;
-    }
-
-    // Fix indentation of code blocks based on brace nesting depth.
-    // Strips existing leading whitespace and re-indents with 4 spaces per brace level.
-    [[nodiscard]] static std::string FixBraceIndentation(const std::string& code)
-    {
-        static constexpr int INDENT_WIDTH = 4;
-        std::string result;
-        static constexpr size_t RESERVE_FACTOR = 4;
-        result.reserve(code.size() + (code.size() / RESERVE_FACTOR));
-
-        int depth = 0;
-        size_t line_start = 0;
-
-        while (line_start <= code.size())
-        {
-            // Find end of current line
-            const size_t newline_pos = code.find('\n', line_start);
-            const size_t line_end = (newline_pos == std::string::npos) ? code.size() : newline_pos;
-
-            // Extract line and strip leading whitespace
-            const std::string_view raw_line(code.data() + line_start, line_end - line_start);
-            size_t leading = 0;
-            while (leading < raw_line.size() &&
-                   (raw_line[leading] == ' ' || raw_line[leading] == '\t'))
-            {
-                ++leading;
-            }
-            const std::string_view stripped = raw_line.substr(leading);
-
-            // Count braces in the stripped line (simple count, ignores strings/comments)
-            const auto opens = static_cast<int>(std::ranges::count(stripped, '{'));
-            const auto closes = static_cast<int>(std::ranges::count(stripped, '}'));
-
-            // Closing braces reduce depth before this line is output
-            depth -= closes;
-            if (depth < 0)
-            {
-                depth = 0;
-            }
-
-            // Output indented line (blank lines stay blank)
-            if (!stripped.empty())
-            {
-                const int indent = depth * INDENT_WIDTH;
-                result.append(static_cast<size_t>(indent), ' ');
-                result.append(stripped);
-            }
-            result += '\n';
-
-            // Opening braces increase depth for subsequent lines
-            depth += opens;
-
-            if (newline_pos == std::string::npos)
-            {
-                break;
-            }
-            line_start = newline_pos + 1;
-        }
-
-        // Remove trailing newline if original didn't have one
-        if (!code.empty() && code.back() != '\n' && !result.empty() && result.back() == '\n')
-        {
-            result.pop_back();
-        }
-
         return result;
     }
 
-    // Format a code block using clang-format via stdin/stdout pipe.
-    // Falls back to FixBraceIndentation() if clang-format is unavailable or returns an error.
+    // One-line summary for the summary tables: the brief paragraph if marked,
+    // otherwise the first paragraph.
+    static std::string BriefText(const DocComment& doc_comment)
+    {
+        for (const DocBlock& block: doc_comment.blocks)
+        {
+            if (block.kind == BlockKind::paragraph && block.is_brief)
+            {
+                return SpansPlainText(block.spans);
+            }
+        }
+        for (const DocBlock& block: doc_comment.blocks)
+        {
+            if (block.kind == BlockKind::paragraph)
+            {
+                return SpansPlainText(block.spans);
+            }
+        }
+        return {};
+    }
+
     [[nodiscard]] static std::string FormatCodeBlock(const std::string& code)
     {
-        if (code.empty())
-        {
-            return code;
-        }
-
-        std::string result;
-        bool success = false;
-
-#if defined(_WIN32)
-        // --- Windows: CreateProcess with redirected stdin/stdout ---
-
-        SECURITY_ATTRIBUTES security_attr {};
-        security_attr.nLength = sizeof(security_attr);
-        security_attr.bInheritHandle = TRUE;
-
-        HANDLE child_stdin_read = nullptr;
-        HANDLE child_stdin_write = nullptr;
-        HANDLE child_stdout_read = nullptr;
-        HANDLE child_stdout_write = nullptr;
-
-        if (CreatePipe(&child_stdout_read, &child_stdout_write, &security_attr, 0) &&
-            CreatePipe(&child_stdin_read, &child_stdin_write, &security_attr, 0))
-        {
-            // Parent keeps the write-end of stdin and read-end of stdout
-            std::ignore = SetHandleInformation(child_stdin_write, HANDLE_FLAG_INHERIT, 0);
-            std::ignore = SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0);
-
-            STARTUPINFOA startup_info {};
-            startup_info.cb = sizeof(startup_info);
-            startup_info.dwFlags = STARTF_USESTDHANDLES;
-            startup_info.hStdInput = child_stdin_read;
-            startup_info.hStdOutput = child_stdout_write;
-            startup_info.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-
-            PROCESS_INFORMATION proc_info {};
-
-            // --assume-filename lets clang-format detect C++ language
-            // ColumnLimit: 0 avoids reflowing documentation snippet lines
-            std::string cmdline = R"(clang-format --assume-filename=snippet.cpp )" +
-                                  std::string(R"(--style="{IndentWidth: 4, ColumnLimit: 0}")");
-
-            if (CreateProcessA(nullptr, cmdline.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW,
-                               nullptr, nullptr, &startup_info, &proc_info))
-            {
-                std::ignore = CloseHandle(child_stdin_read);
-                std::ignore = CloseHandle(child_stdout_write);
-
-                // Write code to child's stdin, then close to signal EOF
-                DWORD bytes_written = 0;
-                std::ignore = ::WriteFile(child_stdin_write, code.c_str(),
-                                          static_cast<DWORD>(code.size()), &bytes_written, nullptr);
-                std::ignore = CloseHandle(child_stdin_write);
-
-                // Read formatted output from child's stdout
-                static constexpr DWORD BUF_SIZE = 4096;
-                std::array<char, BUF_SIZE> buffer {};
-                DWORD bytes_read = 0;
-                while (ReadFile(child_stdout_read, buffer.data(), BUF_SIZE, &bytes_read, nullptr) &&
-                       bytes_read > 0)
-                {
-                    result.append(buffer.data(), bytes_read);
-                }
-                std::ignore = CloseHandle(child_stdout_read);
-
-                std::ignore = WaitForSingleObject(proc_info.hProcess, INFINITE);
-                DWORD exit_code = 1;
-                std::ignore = GetExitCodeProcess(proc_info.hProcess, &exit_code);
-                std::ignore = CloseHandle(proc_info.hProcess);
-                std::ignore = CloseHandle(proc_info.hThread);
-
-                success = (exit_code == 0 && !result.empty());
-            }
-            else
-            {
-                std::ignore = CloseHandle(child_stdin_read);
-                std::ignore = CloseHandle(child_stdin_write);
-                std::ignore = CloseHandle(child_stdout_read);
-                std::ignore = CloseHandle(child_stdout_write);
-            }
-        }
-
-#else
-        // --- POSIX: fork/exec with pipe redirection ---
-
-        // pipe_in:  parent writes to [1], child reads from [0]
-        // pipe_out: child writes to [1], parent reads from [0]
-        std::array<int, 2> pipe_in { -1, -1 };
-        std::array<int, 2> pipe_out { -1, -1 };
-
-        if (pipe(pipe_in.data()) == 0 && pipe(pipe_out.data()) == 0)
-        {
-            const pid_t child_pid = fork();
-            if (child_pid == 0)
-            {
-                // Child process: redirect stdin/stdout and exec clang-format
-                close(pipe_in[1]);
-                close(pipe_out[0]);
-                dup2(pipe_in[0], STDIN_FILENO);
-                dup2(pipe_out[1], STDOUT_FILENO);
-                close(pipe_in[0]);
-                close(pipe_out[1]);
-
-                execlp("clang-format", "clang-format", "--assume-filename=snippet.cpp",
-                       "--style={IndentWidth: 4, ColumnLimit: 0}", nullptr);
-                _exit(127);  // exec failed
-            }
-
-            if (child_pid > 0)
-            {
-                // Parent process
-                close(pipe_in[0]);
-                close(pipe_out[1]);
-
-                // Write code to child's stdin, then close to signal EOF
-                std::ignore = write(pipe_in[1], code.c_str(), code.size());
-                close(pipe_in[1]);
-
-                // Read formatted output from child's stdout
-                static constexpr size_t BUF_SIZE = 4096;
-                std::array<char, BUF_SIZE> buffer {};
-                ssize_t bytes_read = 0;
-                while ((bytes_read = read(pipe_out[0], buffer.data(), buffer.size())) > 0)
-                {
-                    result.append(buffer.data(), static_cast<size_t>(bytes_read));
-                }
-                close(pipe_out[0]);
-
-                int status = 0;
-                waitpid(child_pid, &status, 0);
-                success = (WIFEXITED(status) && WEXITSTATUS(status) == 0 && !result.empty());
-            }
-            else
-            {
-                // fork() failed — close all pipe ends
-                close(pipe_in[0]);
-                close(pipe_in[1]);
-                close(pipe_out[0]);
-                close(pipe_out[1]);
-            }
-        }
-
-#endif
-
-        if (!success)
-        {
-            return FixBraceIndentation(code);
-        }
-
-        // Remove trailing newline if original didn't have one
-        if (!code.empty() && code.back() != '\n' && !result.empty() && result.back() == '\n')
-        {
-            result.pop_back();
-        }
-
-        return result;
+        return code;
     }
 
-    // Replace occurrences of known method names (e.g. "GetKeyCode()") in text
-    // with markdown links to their section anchors within the same file.
-    // Skips occurrences already inside markdown links or backtick code spans.
-    // When class_name is non-empty, bare constructor names (method == class)
-    // are rendered as bold text without () rather than linked as methods.
-    [[nodiscard]] static std::string LinkifyMethods(const std::string& text,
-                                                    const std::set<std::string>& method_names,
-                                                    const std::string& class_name = {})
+    // RenderContext carries what block rendering needs to resolve links.
+    struct RenderContext
     {
-        if (method_names.empty())
+        const SymbolTable& symbols;
+        std::string class_name;
+        const std::set<std::string>* method_names = nullptr;
+        const std::map<std::string, std::string>* method_anchors = nullptr;
+        AnchorAllocator* anchors = nullptr;
+    };
+
+    // Link only "Name()" at word boundaries. Backtick spans and existing markdown
+    // links are left untouched. Never called with heading text.
+    [[nodiscard]] static std::string LinkifyMethodCalls(const std::string& text,
+                                                        const RenderContext& context)
+    {
+        if (context.method_names == nullptr || context.method_names->empty() ||
+            context.method_anchors == nullptr)
         {
             return text;
         }
@@ -477,7 +386,6 @@ namespace docparser
         size_t offset = 0;
         while (offset < text.size())
         {
-            // Skip backtick code spans
             if (text[offset] == '`')
             {
                 const size_t close = text.find('`', offset + 1);
@@ -494,7 +402,6 @@ namespace docparser
                 continue;
             }
 
-            // Skip existing markdown links [text](url)
             if (text[offset] == '[')
             {
                 const size_t close_bracket = text.find(']', offset + 1);
@@ -514,104 +421,38 @@ namespace docparser
                 continue;
             }
 
-            // Try to match a method name at the current position.
-            // Handles: MethodName(), MethodName (without parens), and
-            // ClassName::MethodName / ClassName::MethodName() patterns.
             bool matched = false;
-            for (const std::string& method_name: method_names)
+            const bool at_boundary =
+                (offset == 0) ||
+                (!std::isalnum(static_cast<unsigned char>(text[offset - 1])) &&
+                 text[offset - 1] != '_' && text[offset - 1] != ':' && text[offset - 1] != '.');
+            if (at_boundary)
             {
-                const std::string with_parens = method_name + "()";
-                bool has_parens = false;
-                size_t match_len = 0;
-
-                if (text.compare(offset, with_parens.size(), with_parens) == 0)
+                for (const std::string& method_name: *context.method_names)
                 {
-                    match_len = with_parens.size();
-                    has_parens = true;
-                }
-                else if (text.compare(offset, method_name.size(), method_name) == 0)
-                {
-                    // Must be followed by a word boundary (not alphanumeric, '_', '(', or ':')
-                    const size_t after_pos = offset + method_name.size();
-                    if (after_pos < text.size() &&
-                        (std::isalnum(static_cast<unsigned char>(text[after_pos])) ||
-                         text[after_pos] == '_' || text[after_pos] == '(' ||
-                         text[after_pos] == ':'))
+                    const std::string call = method_name + "()";
+                    if (text.compare(offset, call.size(), call) != 0)
                     {
                         continue;
                     }
-                    match_len = method_name.size();
-                }
-
-                if (match_len == 0)
-                {
-                    continue;
-                }
-
-                // Check for optional ClassName:: prefix
-                size_t prefix_len = 0;
-                if (offset >= 2 && text[offset - 1] == ':' && text[offset - 2] == ':')
-                {
-                    // Scan backwards past the class name
-                    size_t class_start = offset - 2;
-                    while (class_start > 0 &&
-                           (std::isalnum(static_cast<unsigned char>(text[class_start - 1])) ||
-                            text[class_start - 1] == '_'))
+                    const size_t after_pos = offset + call.size();
+                    if (after_pos < text.size() &&
+                        (std::isalnum(static_cast<unsigned char>(text[after_pos])) ||
+                         text[after_pos] == '_'))
                     {
-                        --class_start;
+                        continue;
                     }
-                    // Verify word boundary before class name
-                    if (class_start < offset - 2 &&
-                        (class_start == 0 ||
-                         (!std::isalnum(static_cast<unsigned char>(text[class_start - 1])) &&
-                          text[class_start - 1] != '_' && text[class_start - 1] != '.')))
+                    const std::map<std::string, std::string>::const_iterator anchor_iter =
+                        context.method_anchors->find(method_name);
+                    if (anchor_iter == context.method_anchors->end())
                     {
-                        prefix_len = offset - class_start;
+                        continue;
                     }
-                    else
-                    {
-                        continue;  // Nested in a larger qualified name
-                    }
-                }
-                else if (offset > 0 &&
-                         (std::isalnum(static_cast<unsigned char>(text[offset - 1])) ||
-                          text[offset - 1] == ':' || text[offset - 1] == '_' ||
-                          text[offset - 1] == '.'))
-                {
-                    continue;  // Part of a larger identifier
-                }
-
-                // Build the display text, removing any already-appended prefix from result
-                std::string display;
-                if (prefix_len > 0)
-                {
-                    result.erase(result.size() - prefix_len);
-                    display = std::string(text, offset - prefix_len, prefix_len + match_len);
-                }
-                else
-                {
-                    display = std::string(text, offset, match_len);
-                }
-                // Constructor names (method == class) are rendered as bold
-                // rather than linked with () — they refer to the class, not the
-                // constructor call. Destructors (~Name) still link normally.
-                if (!has_parens && !class_name.empty() && method_name == class_name)
-                {
-                    result += "**" + display + "**";
-                    offset += match_len;
+                    result += "[" + call + "](#" + anchor_iter->second + ")";
+                    offset = after_pos;
                     matched = true;
                     break;
                 }
-
-                if (!has_parens)
-                {
-                    display += "()";
-                }
-
-                result += "[" + display + "](#" + NameToAnchor(method_name) + ")";
-                offset += match_len;
-                matched = true;
-                break;
             }
             if (!matched)
             {
@@ -619,59 +460,324 @@ namespace docparser
                 ++offset;
             }
         }
-
         return result;
     }
 
-    // Write a DocComment's brief and detailed text, optionally linkifying method names.
-    // class_name is used to detect constructors (method == class) and render them as
-    // bold rather than method links with ().
-    static void WriteDocText(std::ostream& output, const DocComment& doc_comment,
-                             const std::set<std::string>& method_names = {},
-                             const std::string& class_name = {})
+    // Render inline spans to a string (without a surrounding paragraph break).
+    static std::string RenderSpans(const std::vector<InlineSpan>& spans,
+                                   const RenderContext& context, bool linkify)
     {
-        if (!doc_comment.brief.empty())
+        std::string result;
+        for (const InlineSpan& span: spans)
         {
-            std::string text(doc_comment.brief);
-            while (text.ends_with('\n'))
+            if (span.kind == InlineSpan::Kind::text)
             {
-                text.pop_back();
+                std::string text = EscapeProse(span.text);
+                if (linkify)
+                {
+                    text = LinkifyMethodCalls(text, context);
+                }
+                result += text;
             }
-            output << LinkifyMethods(text, method_names, class_name) << "\n\n";
-        }
-        if (!doc_comment.detailed.empty() && doc_comment.detailed != doc_comment.brief)
-        {
-            std::string text(doc_comment.detailed);
-            while (text.ends_with('\n'))
+            else if (span.kind == InlineSpan::Kind::code)
             {
-                text.pop_back();
+                result += '`';
+                result += span.text;
+                result += '`';
             }
-            output << LinkifyMethods(text, method_names, class_name) << "\n\n";
+            else if (span.kind == InlineSpan::Kind::emphasis)
+            {
+                result += '*';
+                result += EscapeProse(span.text);
+                result += '*';
+            }
+            else if (span.kind == InlineSpan::Kind::strong)
+            {
+                result += "**";
+                result += EscapeProse(span.text);
+                result += "**";
+            }
+            else
+            {
+                const std::string display = span.text.empty() ? span.target : span.text;
+                const std::string destination = ResolveDestination(
+                    span.target, context.symbols, context.class_name, context.method_anchors);
+                if (destination.empty())
+                {
+                    result += EscapeProse(display);
+                }
+                else
+                {
+                    result += "[" + EscapeProse(display) + "](" + destination + ")";
+                }
+            }
         }
+        return result;
     }
 
-    // Write parameters section
-    static void WriteParams(std::ostream& output, const std::vector<ParamDoc>& params)
+    static void WriteSpans(std::ostream& output, const std::vector<InlineSpan>& spans,
+                           const RenderContext& context, bool linkify)
     {
-        if (params.empty())
+        output << RenderSpans(spans, context, linkify);
+    }
+
+    // Emit an explicit anchor followed by the blank line that precedes its heading.
+    static void WriteAnchor(std::ostream& output, const std::string& id)
+    {
+        if (id.empty())
         {
             return;
         }
-        output << "**Parameters:**\n";
-        for (const ParamDoc& param: params)
+        output << "<a name=\"" << id << "\"></a>\n\n";
+    }
+
+    // Render one blockquote value block, prefixing continuation lines with '>'.
+    static void WriteQuotedBlock(std::ostream& output, std::string_view label,
+                                 const std::vector<InlineSpan>& spans, const RenderContext& context)
+    {
+        const std::string rendered = RenderSpans(spans, context, true);
+        output << "> **" << label << ":** ";
+        for (size_t index = 0; index < rendered.size(); ++index)
         {
-            output << "- `" << param.name << "` — " << param.description << "\n";
+            if (rendered[index] == '\n')
+            {
+                output << "\n> ";
+            }
+            else
+            {
+                output << rendered[index];
+            }
         }
-        output << "\n";
+        output << "\n\n";
+    }
+
+    // Render the ordered documentation blocks.
+    static void WriteBlocks(std::ostream& output, const std::vector<DocBlock>& blocks,
+                            const RenderContext& context)
+    {
+        for (const DocBlock& block: blocks)
+        {
+            switch (block.kind)
+            {
+                case BlockKind::paragraph:
+                    {
+                        WriteSpans(output, block.spans, context, true);
+                        output << "\n\n";
+                        break;
+                    }
+                case BlockKind::bullet_list:
+                case BlockKind::ordered_list:
+                    {
+                        output << "\n";
+                        for (const std::vector<InlineSpan>& item: block.items)
+                        {
+                            if (block.kind == BlockKind::bullet_list)
+                            {
+                                output << "- ";
+                            }
+                            else
+                            {
+                                output << "1. ";
+                            }
+                            WriteSpans(output, item, context, true);
+                            output << "\n";
+                        }
+                        output << "\n";
+                        break;
+                    }
+                case BlockKind::code:
+                case BlockKind::verbatim:
+                    {
+                        output << "```";
+                        if (block.kind == BlockKind::verbatim)
+                        {
+                            output << "text";
+                        }
+                        else
+                        {
+                            output << block.language;
+                        }
+                        output << "\n";
+                        output << FormatCodeBlock(block.code);
+                        if (!block.code.empty() && !block.code.ends_with('\n'))
+                        {
+                            output << "\n";
+                        }
+                        output << "```\n\n";
+                        break;
+                    }
+                case BlockKind::table:
+                    {
+                        if (block.rows.empty())
+                        {
+                            break;
+                        }
+                        size_t column_count = 0;
+                        for (const std::vector<std::vector<InlineSpan>>& row: block.rows)
+                        {
+                            column_count = std::max(column_count, row.size());
+                        }
+                        if (column_count == 0)
+                        {
+                            break;
+                        }
+                        output << "\n";
+                        for (size_t row_index = 0; row_index < block.rows.size(); ++row_index)
+                        {
+                            const std::vector<std::vector<InlineSpan>>& row = block.rows[row_index];
+                            output << "|";
+                            for (size_t column_index = 0; column_index < column_count;
+                                 ++column_index)
+                            {
+                                std::string cell;
+                                if (column_index < row.size())
+                                {
+                                    cell = RenderSpans(row[column_index], context, false);
+                                }
+                                std::string single_line;
+                                for (const char character: cell)
+                                {
+                                    if (character == '\n')
+                                    {
+                                        single_line += ' ';
+                                    }
+                                    else
+                                    {
+                                        single_line += character;
+                                    }
+                                }
+                                output << " " << EscapePipe(single_line) << " |";
+                            }
+                            output << "\n";
+                            if (row_index == 0)
+                            {
+                                output << "|";
+                                for (size_t column_index = 0; column_index < column_count;
+                                     ++column_index)
+                                {
+                                    output << "---|";
+                                }
+                                output << "\n";
+                            }
+                        }
+                        output << "\n";
+                        break;
+                    }
+                case BlockKind::def_list:
+                case BlockKind::params:
+                    {
+                        for (const auto& item: block.def_items)
+                        {
+                            output << "**" << RenderSpans(item.first, context, false) << "**\n";
+                            output << RenderSpans(item.second, context, true) << "\n\n";
+                        }
+                        break;
+                    }
+                case BlockKind::returns:
+                    {
+                        output << "**Returns:** " << RenderSpans(block.spans, context, true)
+                               << "\n\n";
+                        break;
+                    }
+                case BlockKind::since:
+                    {
+                        output << "**Since:** " << RenderSpans(block.spans, context, true)
+                               << "\n\n";
+                        break;
+                    }
+                case BlockKind::deprecated:
+                    {
+                        output << "**Deprecated:** " << RenderSpans(block.spans, context, true)
+                               << "\n\n";
+                        break;
+                    }
+                case BlockKind::note:
+                    {
+                        WriteQuotedBlock(output, "Note", block.spans, context);
+                        break;
+                    }
+                case BlockKind::warning:
+                    {
+                        WriteQuotedBlock(output, "Warning", block.spans, context);
+                        break;
+                    }
+                case BlockKind::todo:
+                    {
+                        WriteQuotedBlock(output, "Todo", block.spans, context);
+                        break;
+                    }
+                case BlockKind::see_also:
+                    {
+                        output << "**See also:** ";
+                        bool first_item = true;
+                        for (const std::vector<InlineSpan>& item: block.items)
+                        {
+                            if (!first_item)
+                            {
+                                output << ", ";
+                            }
+                            first_item = false;
+                            output << RenderSpans(item, context, false);
+                        }
+                        output << "\n\n";
+                        break;
+                    }
+                case BlockKind::section:
+                    {
+                        std::string anchor = block.id;
+                        if (anchor.empty())
+                        {
+                            anchor = AnchorForHeading(RenderSpans(block.spans, context, false));
+                        }
+                        if (context.anchors != nullptr)
+                        {
+                            anchor = context.anchors->Allocate(anchor);
+                        }
+                        WriteAnchor(output, anchor);
+                        if (block.level <= 0)
+                        {
+                            output << "## ";
+                        }
+                        else if (block.level == 1)
+                        {
+                            output << "### ";
+                        }
+                        else
+                        {
+                            output << "#### ";
+                        }
+                        output << RenderSpans(block.spans, context, false) << "\n\n";
+                        break;
+                    }
+                case BlockKind::anchor:
+                    {
+                        WriteAnchor(output, block.id);
+                        break;
+                    }
+                case BlockKind::image:
+                    {
+                        output << "*[Image: " << block.id << "]*\n\n";
+                        break;
+                    }
+                case BlockKind::availability:
+                    {
+                        output << "**Availability:** " << RenderSpans(block.spans, context, true)
+                               << "\n\n";
+                        break;
+                    }
+            }
+        }
     }
 
     // Write style table
-    static void WriteStyleTable(std::ostream& output, const std::vector<StyleEntry>& styles)
+    static void WriteStyleTable(std::ostream& output, const std::vector<StyleEntry>& styles,
+                                const std::string& anchor)
     {
         if (styles.empty())
         {
             return;
         }
+        WriteAnchor(output, anchor);
         output << "## Styles\n\n";
         output << "| Style | Description |\n";
         output << "|-------|-------------|\n";
@@ -683,12 +789,14 @@ namespace docparser
     }
 
     // Write event table
-    static void WriteEventTable(std::ostream& output, const std::vector<EventEntry>& events)
+    static void WriteEventTable(std::ostream& output, const std::vector<EventEntry>& events,
+                                const std::string& anchor)
     {
         if (events.empty())
         {
             return;
         }
+        WriteAnchor(output, anchor);
         output << "## Events\n\n";
         output << "| Event | Description |\n";
         output << "|-------|-------------|\n";
@@ -817,99 +925,88 @@ namespace docparser
         return signature;
     }
 
-    // Write a single method section. When 'disambiguate' is true and the method has
-    // parameters, the heading lists the parameter names so overloads can be told apart
-    // (e.g. "### wxButton(parent, id, label, ...)" instead of a second "### wxButton()").
-    // class_name is the owning class, used to suppress () on constructor-name references.
+    struct MethodHeading
+    {
+        std::string heading;
+        std::string anchor;
+    };
+
+    // Compute heading text and a page-unique anchor for every method in source order.
+    // The first occurrence of a name keeps the plain "name()" heading; later overloads
+    // list parameter names so the table and the sections cannot disagree.
+    static std::vector<MethodHeading>
+        BuildMethodHeadings(const std::vector<MethodInfo>& methods, AnchorAllocator& anchors,
+                            std::map<std::string, std::string>& method_anchors)
+    {
+        std::vector<MethodHeading> result;
+        result.reserve(methods.size());
+        std::set<std::string> seen_names;
+        for (const MethodInfo& method: methods)
+        {
+            const bool is_overload = !seen_names.insert(method.name).second;
+            std::string heading = method.name + "()";
+            if (is_overload && !method.params.empty())
+            {
+                std::string args;
+                bool first_arg = true;
+                for (const ParamInfo& param: method.params)
+                {
+                    if (!first_arg)
+                    {
+                        args += ", ";
+                    }
+                    first_arg = false;
+                    args += param.name.empty() ? param.type : param.name;
+                }
+                // A trailing ']' (operator[]) would otherwise form "[](i)", which the
+                // markdown linter reads as a link with target 'i'.
+                heading = method.name.ends_with(']') ? method.name + " (" + args + ")" :
+                                                       method.name + "(" + args + ")";
+            }
+
+            MethodHeading heading_info;
+            heading_info.heading = heading;
+            heading_info.anchor = anchors.Allocate(AnchorForHeading(heading));
+            if (!method_anchors.contains(method.name))
+            {
+                method_anchors[method.name] = heading_info.anchor;
+            }
+            result.push_back(std::move(heading_info));
+        }
+        return result;
+    }
+
+    // Write a single method section using a heading and anchor computed by
+    // BuildMethodHeadings(). Documentation blocks render in source order.
     static void WriteMethod(std::ostream& output, const MethodInfo& method,
-                            const SymbolTable& symbols,
-                            const std::set<std::string>& method_names = {},
-                            bool disambiguate = false, const std::string& class_name = {})
+                            const std::string& heading, const std::string& anchor,
+                            const RenderContext& context)
     {
         output << "---\n\n";
-
-        std::string heading = method.name + "()";
-        if (disambiguate && !method.params.empty())
-        {
-            std::string args;
-            bool first_arg = true;
-            for (const ParamInfo& param: method.params)
-            {
-                if (!first_arg)
-                {
-                    args += ", ";
-                }
-                first_arg = false;
-                args += param.name.empty() ? param.type : param.name;
-            }
-            heading = method.name + "(" + args + ")";
-        }
+        WriteAnchor(output, anchor);
         output << "### " << heading << "\n\n";
         output << "```cpp\n";
         output << FormatMethodSignature(method) << "\n";
         output << "```\n\n";
 
-        WriteDocText(output, method.doc, method_names, class_name);
-
-        // Code blocks from method doc
-        for (const CodeBlock& code: method.doc.code_blocks)
-        {
-            output << "```";
-            if (!code.language.empty())
-            {
-                output << code.language;
-            }
-            output << "\n" << FormatCodeBlock(code.code) << "\n```\n\n";
-        }
-
-        WriteParams(output, method.doc.params);
-
-        if (!method.doc.returns.empty())
-        {
-            output << "**Returns:** " << method.doc.returns << "\n\n";
-        }
-        if (!method.doc.since.empty())
-        {
-            output << "**Since:** " << method.doc.since << "\n\n";
-        }
-        if (!method.doc.deprecated.empty())
-        {
-            output << "**Deprecated:** " << method.doc.deprecated << "\n\n";
-        }
-        for (const std::string& note: method.doc.notes)
-        {
-            output << "> **Note:** " << note << "\n\n";
-        }
-        for (const std::string& warn: method.doc.warnings)
-        {
-            output << "> **Warning:** " << warn << "\n\n";
-        }
-
-        if (!method.doc.see_also.empty())
-        {
-            output << "**See also:** ";
-            bool first_ref = true;
-            for (const std::string& see_ref: method.doc.see_also)
-            {
-                if (!first_ref)
-                {
-                    output << ", ";
-                }
-                first_ref = false;
-                output << ResolveRef(see_ref, symbols);
-            }
-            output << "\n\n";
-        }
+        WriteBlocks(output, method.doc.blocks, context);
     }
 
     // Write a single enum section
-    static void WriteEnum(std::ostream& output, const EnumInfo& enum_info)
+    static void WriteEnum(std::ostream& output, const EnumInfo& enum_info,
+                          const RenderContext& context)
     {
         const std::string heading =
             enum_info.name.empty() ? std::string("Anonymous Enum") : enum_info.name;
+        std::string anchor = AnchorForHeading(heading);
+        if (context.anchors != nullptr)
+        {
+            anchor = context.anchors->Allocate(anchor);
+        }
+        WriteAnchor(output, anchor);
         output << "### " << heading << "\n\n";
 
-        WriteDocText(output, enum_info.doc);
+        WriteBlocks(output, enum_info.doc.blocks, context);
 
         if (!enum_info.values.empty())
         {
@@ -917,12 +1014,12 @@ namespace docparser
             output << "|-------|-------------|\n";
             for (const EnumValue& value: enum_info.values)
             {
-                output << "| `" << value.name << "`";
-                if (!value.initializer.empty())
+                output << "| `" << EscapePipe(value.name) << "`";
+                if (!value.initializer.empty() && !value.doc.hide_initializer)
                 {
-                    output << " = `" << value.initializer << "`";
+                    output << " = `" << EscapePipe(value.initializer) << "`";
                 }
-                output << " | " << EscapePipe(value.doc.brief) << " |\n";
+                output << " | " << EscapePipe(EscapeProse(BriefText(value.doc))) << " |\n";
             }
             output << "\n";
         }
@@ -933,13 +1030,32 @@ namespace docparser
     static void WriteClass(std::ostream& output, const ClassInfo& class_info,
                            const SymbolTable& symbols, const std::string& include_hint)
     {
-        // Collect all method names for cross-reference linkification
         std::set<std::string> method_names;
         for (const MethodInfo& method: class_info.methods)
         {
             method_names.insert(method.name);
         }
 
+        AnchorAllocator anchors;
+        std::map<std::string, std::string> method_anchors;
+
+        // Reserve page-level headings first so method anchors never collide with them.
+        const std::string title_anchor = anchors.Allocate(AnchorForHeading(class_info.name));
+        const std::string methods_anchor = anchors.Allocate("methods");
+        const std::string enums_anchor = anchors.Allocate("enums");
+        const std::string aliases_anchor = anchors.Allocate("type-aliases");
+        const std::string attributes_anchor = anchors.Allocate("public-attributes");
+        const std::string styles_anchor = anchors.Allocate("styles");
+        const std::string events_anchor = anchors.Allocate("events");
+        const std::string nested_anchor = anchors.Allocate("nested-classes");
+
+        const std::vector<MethodHeading> headings =
+            BuildMethodHeadings(class_info.methods, anchors, method_anchors);
+
+        const RenderContext context { symbols, class_info.name, &method_names, &method_anchors,
+                                      &anchors };
+
+        WriteAnchor(output, title_anchor);
         output << "# " << class_info.name << "\n\n";
 
         // Include directive (Doxygen lists this prominently near the top). Prefer an
@@ -993,54 +1109,70 @@ namespace docparser
                     output << ", ";
                 }
                 first_base = false;
-                output << ResolveRef(base, symbols);
+                output << ResolveTarget(base, symbols, class_info.name, &method_anchors);
             }
 
             // Walk inheritance chain for the first base
             const std::vector<std::string> chain = symbols.InheritanceChain(class_info.bases[0]);
             for (const std::string& ancestor: chain)
             {
-                output << " → " << ResolveRef(ancestor, symbols);
+                output << " → "
+                       << ResolveTarget(ancestor, symbols, class_info.name, &method_anchors);
             }
             output << "\n\n";
         }
 
-        // Description
-        WriteDocText(output, class_info.doc, method_names, class_info.name);
-
-        // Code blocks from class doc
-        for (const CodeBlock& code: class_info.doc.code_blocks)
-        {
-            output << "```";
-            if (!code.language.empty())
-            {
-                output << code.language;
-            }
-            output << "\n" << FormatCodeBlock(code.code) << "\n```\n\n";
-        }
+        // Description — blocks render in source order, including sections and code.
+        WriteBlocks(output, class_info.doc.blocks, context);
 
         // Style table
-        WriteStyleTable(output, class_info.doc.styles);
+        WriteStyleTable(output, class_info.doc.styles, styles_anchor);
 
         // Event table
-        WriteEventTable(output, class_info.doc.events);
+        WriteEventTable(output, class_info.doc.events, events_anchor);
+
+        // Nested classes/structs have their own pages; link to them from here.
+        if (!class_info.nested.empty())
+        {
+            WriteAnchor(output, nested_anchor);
+            output << "## Nested Classes\n\n";
+            for (const ClassInfo& nested: class_info.nested)
+            {
+                if (nested.name.empty())
+                {
+                    continue;
+                }
+                output << "- [" << EscapeProse(nested.name) << "](" << ClassNameToFile(nested.name)
+                       << ")";
+                const std::string nested_brief = BriefText(nested.doc);
+                if (!nested_brief.empty())
+                {
+                    output << " — " << EscapeProse(nested_brief);
+                }
+                output << "\n";
+            }
+            output << "\n";
+        }
 
         // Enums inside class
         if (!class_info.enums.empty())
         {
+            WriteAnchor(output, enums_anchor);
             output << "## Enums\n\n";
             for (const EnumInfo& enum_entry: class_info.enums)
             {
-                WriteEnum(output, enum_entry);
+                WriteEnum(output, enum_entry, context);
             }
         }
 
         // Typedefs inside class
         if (!class_info.typedefs.empty())
         {
+            WriteAnchor(output, aliases_anchor);
             output << "## Type Aliases\n\n";
             for (const TypedefInfo& alias: class_info.typedefs)
             {
+                WriteAnchor(output, anchors.Allocate(AnchorForHeading(alias.name)));
                 output << "### " << alias.name << "\n\n";
                 if (!alias.underlying_type.empty())
                 {
@@ -1048,26 +1180,42 @@ namespace docparser
                     output << "using " << alias.name << " = " << alias.underlying_type << ";\n";
                     output << "```\n\n";
                 }
-                WriteDocText(output, alias.doc);
+                WriteBlocks(output, alias.doc.blocks, context);
             }
+        }
+
+        // Public data members
+        if (!class_info.fields.empty())
+        {
+            WriteAnchor(output, attributes_anchor);
+            output << "## Public Attributes\n\n";
+            output << "| Type | Name | Description |\n";
+            output << "|------|------|-------------|\n";
+            for (const FieldInfo& field: class_info.fields)
+            {
+                output << "| `" << field.type << "` | `" << field.name << "` | "
+                       << EscapePipe(EscapeProse(BriefText(field.doc))) << " |\n";
+            }
+            output << "\n";
         }
 
         // Methods
         if (!class_info.methods.empty())
         {
+            WriteAnchor(output, methods_anchor);
             output << "## Methods\n\n";
 
-            // Emit a compact summary table grouping methods by kind
+            // Emit a compact summary table of the methods with truncated briefs.
             static constexpr size_t BRIEF_MAX_LEN = 120;
-            output << "| | Method | Description |\n";
-            output << "|---|--------|-------------|\n";
-            for (const MethodInfo& method: class_info.methods)
+            output << "| Method | Description |\n";
+            output << "|--------|-------------|\n";
+            for (size_t method_index = 0; method_index < class_info.methods.size(); ++method_index)
             {
-                const std::string kind_icon = ClassifyMethodKind(method.name, class_info.name);
-                std::string brief = StripInlineMarkdown(method.doc.brief);
+                const MethodInfo& method = class_info.methods[method_index];
+                std::string brief = BriefText(method.doc);
                 if (brief.size() > BRIEF_MAX_LEN)
                 {
-                    // Truncate at last space before the limit
+                    // Truncate at the last space before the limit
                     size_t chop_pos = BRIEF_MAX_LEN;
                     while (chop_pos > 0 && brief[chop_pos] != ' ')
                     {
@@ -1080,20 +1228,15 @@ namespace docparser
                     brief.resize(chop_pos);
                     brief += "…";
                 }
-                const std::string anchor = NameToAnchor(method.name);
-                output << "| " << kind_icon << " | [" << method.name << "()"
-                       << "](#" << anchor << ") | " << EscapePipe(brief) << " |\n";
+                output << "| [" << method.name << "()"
+                       << "](#" << headings[method_index].anchor << ") | "
+                       << EscapePipe(EscapeProse(brief)) << " |\n";
             }
             output << "\n";
 
-            std::set<std::string> seen_names;
-            for (const MethodInfo& method: class_info.methods)
+            for (size_t method_index = 0; method_index < class_info.methods.size(); ++method_index)
             {
-                // First occurrence of a name keeps the plain "name()" heading (and its
-                // anchor); later overloads get parameter names for disambiguation.
-                const bool is_overload = !seen_names.insert(method.name).second;
-
-                MethodInfo effective = method;
+                MethodInfo effective = class_info.methods[method_index];
                 // wxWidgets interface headers omit 'virtual' on overrides; restore it
                 // when an ancestor declares the method virtual (matches Doxygen output).
                 if (!effective.is_virtual && !effective.is_static &&
@@ -1102,7 +1245,8 @@ namespace docparser
                     effective.is_virtual = true;
                 }
 
-                WriteMethod(output, effective, symbols, method_names, is_overload, class_info.name);
+                WriteMethod(output, effective, headings[method_index].heading,
+                            headings[method_index].anchor, context);
             }
         }
 
@@ -1119,23 +1263,6 @@ namespace docparser
                 }
             }
         }
-
-        // See also (class-level)
-        if (!class_info.doc.see_also.empty())
-        {
-            output << "**See also:** ";
-            bool first_ref = true;
-            for (const std::string& see_ref: class_info.doc.see_also)
-            {
-                if (!first_ref)
-                {
-                    output << ", ";
-                }
-                first_ref = false;
-                output << ResolveRef(see_ref, symbols);
-            }
-            output << "\n\n";
-        }
     }
 
     // ---------------------------------------------------------------------------
@@ -1145,22 +1272,48 @@ namespace docparser
     static void WriteNonClassContent(std::ostream& output, const FileContent& content,
                                      const SymbolTable& symbols)
     {
+        AnchorAllocator anchors;
+        std::map<std::string, std::string> method_anchors;
+
+        // The file title is written by WriteFile; reserve its computed anchor so no
+        // member heading can reuse it.
+        anchors.Allocate(AnchorForHeading(content.filename));
+        const std::string enumerations_anchor = anchors.Allocate("enumerations");
+        const std::string aliases_anchor = anchors.Allocate("type-aliases");
+        const std::string constants_anchor = anchors.Allocate("constants");
+        const std::string defines_anchor = anchors.Allocate("defines");
+        const std::string functions_anchor = anchors.Allocate("functions");
+
+        std::set<std::string> method_names;
+        for (const MethodInfo& function: content.free_functions)
+        {
+            method_names.insert(function.name);
+        }
+
+        const std::vector<MethodHeading> headings =
+            BuildMethodHeadings(content.free_functions, anchors, method_anchors);
+
+        const RenderContext context { symbols, {}, &method_names, &method_anchors, &anchors };
+
         // File-level enums
         if (!content.enums.empty())
         {
+            WriteAnchor(output, enumerations_anchor);
             output << "## Enumerations\n\n";
             for (const EnumInfo& enum_entry: content.enums)
             {
-                WriteEnum(output, enum_entry);
+                WriteEnum(output, enum_entry, context);
             }
         }
 
         // File-level typedefs
         if (!content.typedefs.empty())
         {
+            WriteAnchor(output, aliases_anchor);
             output << "## Type Aliases\n\n";
             for (const TypedefInfo& alias: content.typedefs)
             {
+                WriteAnchor(output, anchors.Allocate(AnchorForHeading(alias.name)));
                 output << "### " << alias.name << "\n\n";
                 if (!alias.underlying_type.empty())
                 {
@@ -1168,16 +1321,38 @@ namespace docparser
                     output << "typedef " << alias.underlying_type << " " << alias.name << ";\n";
                     output << "```\n\n";
                 }
-                WriteDocText(output, alias.doc);
+                WriteBlocks(output, alias.doc.blocks, context);
+            }
+        }
+
+        // Constants (file-scope const / constexpr declarations)
+        if (!content.constants.empty())
+        {
+            WriteAnchor(output, constants_anchor);
+            output << "## Constants\n\n";
+            for (const ConstantInfo& constant: content.constants)
+            {
+                WriteAnchor(output, anchors.Allocate(AnchorForHeading(constant.name)));
+                output << "### " << constant.name << "\n\n";
+                output << "```cpp\n";
+                output << constant.declaration;
+                if (!constant.value.empty())
+                {
+                    output << " = " << constant.value;
+                }
+                output << ";\n```\n\n";
+                WriteBlocks(output, constant.doc.blocks, context);
             }
         }
 
         // Defines
         if (!content.defines.empty())
         {
+            WriteAnchor(output, defines_anchor);
             output << "## Defines\n\n";
             for (const DefineInfo& define: content.defines)
             {
+                WriteAnchor(output, anchors.Allocate(AnchorForHeading(define.name)));
                 output << "### " << define.name << "\n\n";
                 output << "```cpp\n";
                 output << "#define " << define.name;
@@ -1186,7 +1361,7 @@ namespace docparser
                     output << " " << define.value;
                 }
                 output << "\n```\n\n";
-                WriteDocText(output, define.doc);
+                WriteBlocks(output, define.doc.blocks, context);
             }
         }
 
@@ -1194,42 +1369,70 @@ namespace docparser
         if (!content.free_functions.empty())
         {
             std::string current_group;
-            bool need_header = true;
-            std::set<std::string> seen_func_names;
+            bool functions_header_written = false;
 
-            for (const MethodInfo& func: content.free_functions)
+            for (size_t function_index = 0; function_index < content.free_functions.size();
+                 ++function_index)
             {
-                if (func.group_name != current_group)
+                const MethodInfo& function = content.free_functions[function_index];
+                if (function_index == 0 || function.group_name != current_group)
                 {
-                    current_group = func.group_name;
+                    current_group = function.group_name;
                     if (!current_group.empty())
                     {
+                        WriteAnchor(output, anchors.Allocate(AnchorForHeading(current_group)));
                         output << "## " << current_group << "\n\n";
                     }
-                    else if (need_header)
+                    else if (!functions_header_written)
                     {
+                        WriteAnchor(output, functions_anchor);
                         output << "## Functions\n\n";
+                        functions_header_written = true;
                     }
-                    need_header = false;
                 }
-                else if (need_header)
-                {
-                    output << "## Functions\n\n";
-                    need_header = false;
-                }
-                const bool is_overload = !seen_func_names.insert(func.name).second;
-                WriteMethod(output, func, symbols, {}, is_overload);
+
+                WriteMethod(output, function, headings[function_index].heading,
+                            headings[function_index].anchor, context);
             }
         }
+    }
+
+    // ---------------------------------------------------------------------------
+    // WritePage  (internal helper)
+    // ---------------------------------------------------------------------------
+
+    // Write one @page topic page: the title as the document heading, the page body,
+    // then the standard trailer (written by WriteFile).
+    static void WritePage(std::ostream& output, const PageInfo& page, const SymbolTable& symbols)
+    {
+        AnchorAllocator anchors;
+        const std::string title_anchor = anchors.Allocate(AnchorForHeading(page.title));
+        WriteAnchor(output, title_anchor);
+        output << "# " << page.title << "\n\n";
+
+        const RenderContext context { symbols, {}, nullptr, nullptr, &anchors };
+        WriteBlocks(output, page.doc.blocks, context);
     }
 
     // ---------------------------------------------------------------------------
     // WriteFile
     // ---------------------------------------------------------------------------
 
+    // Collect a class page followed by the pages of its nested compounds, in
+    // declaration order. Nested classes are written flat as '<Outer>.<Inner>.md'.
+    static void CollectClassPages(const ClassInfo& class_info,
+                                  std::vector<const ClassInfo*>& class_pages)
+    {
+        class_pages.push_back(&class_info);
+        for (const ClassInfo& nested: class_info.nested)
+        {
+            CollectClassPages(nested, class_pages);
+        }
+    }
+
     std::vector<fs::path> WriteFile(const FileContent& content, const SymbolTable& symbols,
                                     const fs::path& output_dir, const fs::path& source_rel_path,
-                                    const fs::path& input_dir)
+                                    const fs::path& input_dir, const std::string& non_class_stem)
     {
         // Guard: only header files should be written here. Assert to catch any
         // unexpected source or markdown file routed through this function.
@@ -1257,9 +1460,104 @@ namespace docparser
 
         std::vector<fs::path> generated_files;
 
-        // Write one .md file per class
+        // Write one .md file per class. A header can declare the same class name twice
+        // (e.g. scopedptr.h declares both the macro-based wxScopedPtr and the template
+        // specialization wxScopedPtr<T>). The first declaration owns the page and keeps
+        // its documentation; members that appear only in a later declaration are merged
+        // into it so no member heading is lost.
+        std::vector<ClassInfo> class_pages;
+        std::map<std::string, size_t> class_page_index;
         for (const ClassInfo& class_info: content.classes)
         {
+            const std::map<std::string, size_t>::iterator existing =
+                class_page_index.find(class_info.name);
+            if (existing == class_page_index.end())
+            {
+                class_page_index[class_info.name] = class_pages.size();
+                class_pages.push_back(class_info);
+                continue;
+            }
+
+            ClassInfo& target = class_pages[existing->second];
+            for (const MethodInfo& method: class_info.methods)
+            {
+                bool present = false;
+                for (const MethodInfo& known: target.methods)
+                {
+                    if (known.name == method.name)
+                    {
+                        present = true;
+                        break;
+                    }
+                }
+                if (!present)
+                {
+                    target.methods.push_back(method);
+                }
+            }
+            for (const FieldInfo& field: class_info.fields)
+            {
+                bool present = false;
+                for (const FieldInfo& known: target.fields)
+                {
+                    if (known.name == field.name)
+                    {
+                        present = true;
+                        break;
+                    }
+                }
+                if (!present)
+                {
+                    target.fields.push_back(field);
+                }
+            }
+            for (const EnumInfo& enum_info: class_info.enums)
+            {
+                bool present = false;
+                for (const EnumInfo& known: target.enums)
+                {
+                    if (known.name == enum_info.name)
+                    {
+                        present = true;
+                        break;
+                    }
+                }
+                if (!present)
+                {
+                    target.enums.push_back(enum_info);
+                }
+            }
+            for (const TypedefInfo& alias: class_info.typedefs)
+            {
+                bool present = false;
+                for (const TypedefInfo& known: target.typedefs)
+                {
+                    if (known.name == alias.name)
+                    {
+                        present = true;
+                        break;
+                    }
+                }
+                if (!present)
+                {
+                    target.typedefs.push_back(alias);
+                }
+            }
+            if (target.doc.blocks.empty())
+            {
+                target.doc = class_info.doc;
+            }
+        }
+
+        std::vector<const ClassInfo*> class_page_ptrs;
+        for (const ClassInfo& class_info: class_pages)
+        {
+            CollectClassPages(class_info, class_page_ptrs);
+        }
+
+        for (const ClassInfo* class_page: class_page_ptrs)
+        {
+            const ClassInfo& class_info = *class_page;
             const fs::path class_rel = fs::path(ClassNameToFile(class_info.name));
             const fs::path class_abs = output_dir / class_rel;
 
@@ -1276,10 +1574,35 @@ namespace docparser
             generated_files.emplace_back(class_rel);
         }
 
+        // Write one .md file per @page topic. Pages are independent documents; they
+        // are not routed through the non-class content branch below.
+        for (const PageInfo& page: content.pages)
+        {
+            if (page.id.empty())
+            {
+                continue;
+            }
+
+            const fs::path page_rel = fs::path(page.id + ".md");
+            const fs::path page_abs = output_dir / page_rel;
+
+            std::ofstream output_stream(page_abs);
+            if (!output_stream)
+            {
+                parser::AddErrorMessage("Error: could not write to " + page_abs.string());
+                continue;
+            }
+
+            WritePage(output_stream, page, symbols);
+            output_stream << "---\n*Generated from `" << content.filename << "`*\n";
+
+            generated_files.emplace_back(page_rel);
+        }
+
         // Write non-class content (enums, typedefs, defines, free functions) to a
         // file named after the source header, written flat in the output root.
         const bool has_non_class_content = !content.enums.empty() || !content.typedefs.empty() ||
-                                           !content.defines.empty() ||
+                                           !content.defines.empty() || !content.constants.empty() ||
                                            !content.free_functions.empty();
         if (has_non_class_content)
         {
@@ -1287,8 +1610,16 @@ namespace docparser
             // path — all converted markdown files are written flat in the output
             // root. Subdirectories (e.g. data/) are reserved for support files
             // such as the FTS index, not for header conversions.
-            fs::path non_class_rel = source_rel_path.filename();
-            non_class_rel.replace_extension(".md");
+            fs::path non_class_rel;
+            if (non_class_stem.empty())
+            {
+                non_class_rel = source_rel_path.filename();
+                non_class_rel.replace_extension(".md");
+            }
+            else
+            {
+                non_class_rel = fs::path(non_class_stem + ".md");
+            }
             const fs::path non_class_abs = output_dir / non_class_rel;
 
             std::ofstream output_stream(non_class_abs);

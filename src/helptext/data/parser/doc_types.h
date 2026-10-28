@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace docparser
@@ -58,25 +60,67 @@ namespace docparser
         std::string code;
     };
 
+    // Ordered documentation blocks. Rendering walks this list in source order so
+    // that prose, code, tables, lists, and sections never drift apart.
+    enum class BlockKind : std::uint8_t
+    {
+        paragraph,
+        bullet_list,
+        ordered_list,
+        code,
+        table,
+        def_list,
+        params,
+        returns,
+        since,
+        deprecated,
+        note,
+        warning,
+        todo,
+        see_also,
+        section,
+        verbatim,
+        image,
+        availability,
+        anchor
+    };
+
+    // One run of inline text. 'target' is only used by the ref kind.
+    struct InlineSpan
+    {
+        enum class Kind : std::uint8_t
+        {
+            text,
+            code,
+            emphasis,
+            strong,
+            ref
+        } kind = Kind::text;
+        std::string text;
+        std::string target;
+    };
+
+    struct DocBlock
+    {
+        BlockKind kind = BlockKind::paragraph;
+        std::vector<InlineSpan> spans;               // paragraph and single-value blocks
+        std::vector<std::vector<InlineSpan>> items;  // bullet_list / ordered_list / see_also
+        std::vector<std::vector<std::vector<InlineSpan>>> rows;  // table: rows -> cells -> spans
+        std::vector<std::pair<std::vector<InlineSpan>, std::vector<InlineSpan>>>
+            def_items;          // def_list / params
+        std::string language;   // code block language
+        std::string code;       // code block body, emitted verbatim
+        std::string id;         // section / anchor id
+        int level = 0;          // section level: 0 = ##, 1 = ###, 2 = ####
+        bool is_brief = false;  // paragraph promoted to the one-line summary
+    };
+
     struct DocComment
     {
-        std::string brief;
-        std::string detailed;
-
-        std::vector<ParamDoc> params;
-        std::string returns;
-        std::vector<std::string> see_also;
-        std::string since;
-        std::string deprecated;
-        std::vector<std::string> notes;
-        std::vector<std::string> warnings;
-        std::vector<std::string> todos;
-        std::vector<CodeBlock> code_blocks;
+        std::vector<DocBlock> blocks;
 
         std::vector<StyleEntry> styles;
         std::vector<EventEntry> events;
-        std::vector<TableRow> tables;
-        std::vector<DefListItem> def_list;
 
         // Metadata
         std::string library;     // @library{name}
@@ -87,8 +131,24 @@ namespace docparser
         std::string class_name;   // @class Name
         std::string header_file;  // @header{file}
 
+        // Page-level (@page id title)
+        std::string page_id;
+        std::string page_title;
+
         // Grouping
         std::string group_name;  // @addtogroup
+
+        // @hideinitializer was present: suppress the initializer when the
+        // declaration is rendered as a value row.
+        bool hide_initializer = false;
+    };
+
+    // A topic page declared with @page. The body lives in 'doc'.
+    struct PageInfo
+    {
+        std::string id;
+        std::string title;
+        DocComment doc;
     };
 
     // ---------------------------------------------------------------------------
@@ -100,6 +160,24 @@ namespace docparser
         std::string type;
         std::string name;
         std::string default_value;  // empty if none
+    };
+
+    // Accessibility of a class member as declared in the class body.
+    enum class Access : std::uint8_t
+    {
+        public_,
+        protected_,
+        private_
+    };
+
+    // Data member declared inside a class/struct body.
+    struct FieldInfo
+    {
+        std::string type;
+        std::string name;
+        bool is_static = false;
+        Access access = Access::public_;
+        DocComment doc;
     };
 
     // Method or free function
@@ -115,6 +193,7 @@ namespace docparser
         bool is_pure = false;
         bool is_deleted = false;
         bool is_default = false;
+        Access access = Access::public_;
         DocComment doc;
         std::string group_name;  // for free functions via @addtogroup
     };
@@ -150,6 +229,17 @@ namespace docparser
         DocComment doc;
     };
 
+    // File-scope constant: "const"/"constexpr" declaration with an optional
+    // initializer (e.g. "constexpr wxUint32 wxPG_COLOUR_WEB_BASE = 0x10000").
+    struct ConstantInfo
+    {
+        std::string name;  // declared identifier
+        std::string
+            declaration;    // everything before '=', e.g. "constexpr wxUint32 wxPG_COLOUR_WEB_BASE"
+        std::string value;  // initializer text; empty if none
+        DocComment doc;
+    };
+
     // A free function (same as MethodInfo but grouped by @addtogroup)
     using FreeFunction = MethodInfo;
 
@@ -158,8 +248,10 @@ namespace docparser
         std::string name;
         std::vector<std::string> bases;
         std::vector<MethodInfo> methods;
+        std::vector<FieldInfo> fields;
         std::vector<EnumInfo> enums;
         std::vector<TypedefInfo> typedefs;
+        std::vector<ClassInfo> nested;  // class/struct declared inside this body
         DocComment doc;
     };
 
@@ -170,7 +262,11 @@ namespace docparser
         std::vector<EnumInfo> enums;        // file-level enums
         std::vector<TypedefInfo> typedefs;  // file-level typedefs
         std::vector<DefineInfo> defines;
+        std::vector<ConstantInfo> constants;  // file-scope const/constexpr declarations
         std::vector<FreeFunction> free_functions;
+        std::vector<PageInfo> pages;  // topic pages declared with @page
+        // @class documentation whose name matches no class page in this header.
+        std::vector<ClassInfo> alias_pages;
     };
 
 }  // namespace docparser

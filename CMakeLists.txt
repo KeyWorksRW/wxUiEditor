@@ -588,7 +588,7 @@ FetchContent_MakeAvailable(cmrc)
 # guarantee cmrc_add_resource_library() is defined regardless of module-path resolution.
 include("${cmrc_SOURCE_DIR}/CMakeRC.cmake")
 
-message(STATUS "Embedding build/archive/wxWidgetsDocs.zip via CMakeRC")
+message(STATUS "Embedding build/archive/wxWidgetsDocs.zip via CMakeRC2")
 cmrc_add_resource_library(
     wxuedocs
     ALIAS wxuedocs::rc

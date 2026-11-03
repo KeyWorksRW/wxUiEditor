@@ -361,9 +361,10 @@ wxue::string ProjectHandler::GetBaseFilename(Node* form, GenLang language) const
     }
 
     static const std::map<GenLang, PropName> langbase_file_propertyMap = {
-        { GenLang::cplusplus, prop_base_file },
-        { GenLang::python, prop_python_file },
-        { GenLang::ruby, prop_ruby_file },
+        { GenLang::cplusplus, prop_base_file }, { GenLang::python, prop_python_file },
+        { GenLang::ruby, prop_ruby_file },      { GenLang::fortran, prop_fortran_file },
+        { GenLang::go, prop_go_file },          { GenLang::julia, prop_julia_file },
+        { GenLang::luajit, prop_lua_file },     { GenLang::typescript, prop_typescript_file },
         { GenLang::xrc, prop_xrc_file }
     };
 
@@ -980,6 +981,11 @@ static const std::map<GenLang, PropName> langPropMap = {
     { GenLang::cplusplus, prop_wxWidgets_version },
     { GenLang::python, prop_wxPython_version },
     { GenLang::ruby, prop_wxRuby_version },
+    { GenLang::fortran, prop_kwxFortran_version },
+    { GenLang::go, prop_kwxGO_version },
+    { GenLang::julia, prop_kwxJulia_version },
+    { GenLang::luajit, prop_kwxLuaJIT_version },
+    { GenLang::typescript, prop_kwxtypescript_version },
     { GenLang::xrc, prop_wxWidgets_version }
 };
 // clang-format on

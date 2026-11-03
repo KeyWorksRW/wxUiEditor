@@ -149,8 +149,11 @@ Code& Code::AddQuotedText(wxue::string_view text, bool translate)
 {
     const size_t cur_pos = this->size();
 
-    const bool internationalize =
-        translate && Project.as_bool(prop_internationalize) && wxue::has_alpha(text);
+    // Only C++, Python and Ruby have a runtime translation wrapper. FFI languages have no
+    // equivalent, so the raw quoted string is emitted instead.
+    const bool supports_translation = is_cpp() || is_python() || is_ruby();
+    const bool internationalize = translate && supports_translation &&
+                                  Project.as_bool(prop_internationalize) && wxue::has_alpha(text);
     const bool has_utf_char = is_cpp() && HasUtf8Char(text);
     if (internationalize)
     {

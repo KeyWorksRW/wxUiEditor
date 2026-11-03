@@ -293,6 +293,11 @@ void Code::Init(Node* node, GenLang language)
             m_indent_size = m_traits->indent_size;
         }
         m_language_wxPrefix = m_traits->wx_prefix;
+
+        // Class/type names may use a different prefix than constants -- TypeScript emits bare
+        // constants ("") but keeps the "wx" prefix on wrapper class names.
+        m_language_classPrefix =
+            m_traits->class_prefix.empty() ? m_traits->wx_prefix : m_traits->class_prefix;
     }
 
     m_break_length = GetLineBreakLength(language);
@@ -679,7 +684,7 @@ Code& Code::Class(wxue::string_view text)
     {
         if (text.is_sameprefix("wx"))
         {
-            *this << m_language_wxPrefix << text.substr(2);
+            *this << m_language_classPrefix << text.substr(2);
         }
         else
         {
@@ -723,7 +728,7 @@ Code& Code::Object(wxue::string_view class_name)
     {
         if (class_name.is_sameprefix("wx"))
         {
-            *this << m_language_wxPrefix << class_name.substr(2);
+            *this << m_language_classPrefix << class_name.substr(2);
         }
         else
         {
@@ -818,7 +823,7 @@ Code& Code::Assign(wxue::string_view class_name)
     }
     else
     {
-        *this << m_language_wxPrefix << class_name.substr(2);
+        *this << m_language_classPrefix << class_name.substr(2);
         if (!m_traits->construction_suffix.empty())
         {
             *this += m_traits->construction_suffix;

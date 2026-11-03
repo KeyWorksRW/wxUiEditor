@@ -8,9 +8,9 @@
 #include <wx/config.h>    // wxConfig base header
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "generate_dlg_gen.h"
-
 #include <format>
+
+#include "generate_dlg.h"
 
 #include "gen_common.h"       // Common component functions
 #include "gen_results.h"      // Code generation file writing functions
@@ -24,8 +24,13 @@
 
 static bool gen_base_code = false;
 static bool gen_derived_code = false;
+static bool gen_fortran_code = false;
+static bool gen_go_code = false;
+static bool gen_julia_code = false;
+static bool gen_luajit_code = false;
 static bool gen_python_code = false;
 static bool gen_ruby_code = false;
+static bool gen_typescript_code = false;
 static bool gen_xrc_code = false;
 
 constexpr int generation_timer_interval_ms = 250;
@@ -105,7 +110,7 @@ bool MainFrame::GenerateFromOutputType(GenResults& results)
     if (language != GenLang::none)
     {
         results.SetNodes(Project.get_ProjectNode());
-        results.SetLanguages(static_cast<GenLang>(language));
+        results.SetLanguages(language);
         results.SetMode(GenResults::Mode::generate_and_write);
         std::ignore = results.Generate();
         return true;
@@ -153,11 +158,41 @@ bool MainFrame::GenerateFromDialog(GenResults& results)
         lang_flags |= GenLang::ruby;
     }
 
+    gen_fortran_code = dialog.is_gen_fortran();
+    if (gen_fortran_code)
+    {
+        lang_flags |= GenLang::fortran;
+    }
+
+    gen_go_code = dialog.is_gen_go();
+    if (gen_go_code)
+    {
+        lang_flags |= GenLang::go;
+    }
+
+    gen_julia_code = dialog.is_gen_julia();
+    if (gen_julia_code)
+    {
+        lang_flags |= GenLang::julia;
+    }
+
+    gen_luajit_code = dialog.is_gen_luajit();
+    if (gen_luajit_code)
+    {
+        lang_flags |= GenLang::luajit;
+    }
+
+    gen_typescript_code = dialog.is_gen_typescript();
+    if (gen_typescript_code)
+    {
+        lang_flags |= GenLang::typescript;
+    }
+
     // Generate all selected languages in one call
     if (lang_flags != GenLang::none)
     {
         results.SetNodes(Project.get_ProjectNode());
-        results.SetLanguages(static_cast<GenLang>(lang_flags));
+        results.SetLanguages(lang_flags);
         results.SetMode(GenResults::Mode::generate_and_write);
         std::ignore = results.Generate();
         code_generated = true;
@@ -187,6 +222,11 @@ void MainFrame::SaveGenerationPreferences()
 
     config->Write("gen_python_code", gen_python_code);
     config->Write("gen_ruby_code", gen_ruby_code);
+    config->Write("gen_fortran_code", gen_fortran_code);
+    config->Write("gen_go_code", gen_go_code);
+    config->Write("gen_julia_code", gen_julia_code);
+    config->Write("gen_luajit_code", gen_luajit_code);
+    config->Write("gen_typescript_code", gen_typescript_code);
     config->SetPath("/");
 }
 
@@ -280,6 +320,11 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
     }
 }
 
+GenerateDlg::GenerateDlg(wxWindow* parent)
+{
+    std::ignore = Create(parent);
+}
+
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
     const GenLang languages = Project.get_GenerateLanguages();
@@ -295,6 +340,21 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
             break;
         case GenLang::ruby:
             gen_ruby_code = true;
+            break;
+        case GenLang::fortran:
+            gen_fortran_code = true;
+            break;
+        case GenLang::go:
+            gen_go_code = true;
+            break;
+        case GenLang::julia:
+            gen_julia_code = true;
+            break;
+        case GenLang::luajit:
+            gen_luajit_code = true;
+            break;
+        case GenLang::typescript:
+            gen_typescript_code = true;
             break;
         case GenLang::xrc:
             gen_xrc_code = true;
@@ -340,6 +400,41 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkRuby = new wxCheckBox(this, wxID_ANY, "Ruby");
         m_checkRuby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
         m_grid_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
+    }
+    if (languages & GenLang::fortran || gen_fortran_code)
+    {
+        m_gen_fortran_code = gen_fortran_code;
+        m_checkFortran = new wxCheckBox(this, wxID_ANY, "Fortran");
+        m_checkFortran->SetValidator(wxGenericValidator(&m_gen_fortran_code));
+        m_grid_sizer->Add(m_checkFortran, wxSizerFlags().Border(wxALL));
+    }
+    if (languages & GenLang::go || gen_go_code)
+    {
+        m_gen_go_code = gen_go_code;
+        m_checkGo = new wxCheckBox(this, wxID_ANY, "GO");
+        m_checkGo->SetValidator(wxGenericValidator(&m_gen_go_code));
+        m_grid_sizer->Add(m_checkGo, wxSizerFlags().Border(wxALL));
+    }
+    if (languages & GenLang::julia || gen_julia_code)
+    {
+        m_gen_julia_code = gen_julia_code;
+        m_checkJulia = new wxCheckBox(this, wxID_ANY, "Julia");
+        m_checkJulia->SetValidator(wxGenericValidator(&m_gen_julia_code));
+        m_grid_sizer->Add(m_checkJulia, wxSizerFlags().Border(wxALL));
+    }
+    if (languages & GenLang::luajit || gen_luajit_code)
+    {
+        m_gen_luajit_code = gen_luajit_code;
+        m_checkLuaJIT = new wxCheckBox(this, wxID_ANY, "LuaJIT");
+        m_checkLuaJIT->SetValidator(wxGenericValidator(&m_gen_luajit_code));
+        m_grid_sizer->Add(m_checkLuaJIT, wxSizerFlags().Border(wxALL));
+    }
+    if (languages & GenLang::typescript || gen_typescript_code)
+    {
+        m_gen_typescript_code = gen_typescript_code;
+        m_checkTypeScript = new wxCheckBox(this, wxID_ANY, "TypeScript");
+        m_checkTypeScript->SetValidator(wxGenericValidator(&m_gen_typescript_code));
+        m_grid_sizer->Add(m_checkTypeScript, wxSizerFlags().Border(wxALL));
     }
     if (languages & GenLang::xrc || gen_xrc_code)
     {

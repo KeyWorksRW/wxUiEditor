@@ -31,7 +31,7 @@ void Code::AddClassNameForLanguage(const std::string& class_name)
     // Handle non-C++ languages
     if (class_name.starts_with("wx"))
     {
-        *this << m_language_wxPrefix << class_name.substr(2);
+        *this << m_language_classPrefix << class_name.substr(2);
     }
     else
     {
@@ -74,9 +74,15 @@ void Code::AddFunctionNoOperatorWithWx(wxue::string_view text)
         // wxGetStockLabel( → wx_get_stock_label(
         *this << "wx_" << ConvertToSnakeCase(text.substr(sizeof("wx") - 1));
     }
+    else if (is_typescript())
+    {
+        // TypeScript imports the wrapper functions by name with the "wx" prefix removed:
+        // wxGetStockLabel -> GetStockLabel
+        *this << text.substr(sizeof("wx") - 1);
+    }
     else
     {
-        // Python, Go, TypeScript: wx.GetStockLabel(
+        // Python, Go: wx.GetStockLabel(
         *this << "wx." << text.substr(sizeof("wx") - 1);
     }
 }
@@ -376,8 +382,8 @@ Code& Code::AddType(wxue::string_view text)
     }
     else
     {
-        CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
-        *this << m_language_wxPrefix << text.substr(2);
+        CheckLineLength(m_language_classPrefix.size() + text.size() - 2);
+        *this << m_language_classPrefix << text.substr(2);
     }
 
     return *this;

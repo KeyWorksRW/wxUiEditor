@@ -15,39 +15,36 @@ TypeScriptStrategy::TypeScriptStrategy(const LanguageTraits& traits) : FFIStrate
 
 std::string TypeScriptStrategy::MapClassName(std::string_view wx_class_name)
 {
-    // wxButton → Button (TypeScript uses namespace-qualified: wx.Frame)
-    if (!wx_class_name.starts_with("wx"))
-    {
-        return std::string(wx_class_name);
-    }
-
-    return std::string(wx_class_name.substr(2));
+    // The kwx TypeScript corpus keeps the "wx" prefix on wrapper classes (wxFrame, wxButton),
+    // so the name is passed through unchanged.
+    return std::string(wx_class_name);
 }
 
 void TypeScriptStrategy::EmitPlatformBegin(Code& code, std::string_view platforms,
                                            std::string_view conditional)
 {
-    // TypeScript: process.platform checks
+    // TypeScript: compare against the runtime platform value imported from "kwx/platform".
     bool has_prior = false;
+    const LanguageTraits& traits = code.get_traits();
 
-    auto emit_condition = [&](std::string_view platform_name, std::string_view node_platform)
+    auto emit_condition = [&](std::string_view platform_name, std::string_view platform_value)
     {
         if (platforms.find(platform_name) != std::string_view::npos)
         {
             if (has_prior)
             {
-                code << " || ";
+                code << traits.logical_or;
             }
             else
             {
                 code.Eol() << "if (";
                 has_prior = true;
             }
-            code << "process.platform === \"" << node_platform << "\"";
+            code << "platform === \"" << platform_value << "\"";
         }
     };
 
-    emit_condition("Windows", "win32");
+    emit_condition("Windows", "windows");
     emit_condition("Unix", "linux");
     emit_condition("Mac", "darwin");
 
@@ -55,7 +52,7 @@ void TypeScriptStrategy::EmitPlatformBegin(Code& code, std::string_view platform
     {
         if (has_prior)
         {
-            code << " && ";
+            code << traits.logical_and;
         }
         else
         {

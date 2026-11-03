@@ -18,16 +18,12 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-#include <wx/checkbox.h>
-#include <wx/sizer.h>
-#include <wx/valgen.h>
-
-class GenerateDlg : public wxDialog
+class GenerateDlgBase : public wxDialog
 {
 public:
-    GenerateDlg() {}
-    GenerateDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code", const wxPoint& pos =
-        wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    GenerateDlgBase() {}
+    GenerateDlgBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Generate Code",
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
@@ -36,34 +32,11 @@ public:
         wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
-public:
-    bool is_gen_base() const { return m_gen_base_code; }
-    bool is_gen_inherited() const { return m_gen_inherited_code; }
-    bool is_gen_perl() const { return m_gen_perl_code; }
-    bool is_gen_python() const { return m_gen_python_code; }
-    bool is_gen_ruby() const { return m_gen_ruby_code; }
-    bool is_gen_xrc() const { return m_gen_xrc_code; }
-
-private:
-    wxCheckBox* m_checkBaseCode { nullptr };
-    wxCheckBox* m_checkDerived { nullptr };
-    wxCheckBox* m_checkPerl { nullptr };
-    wxCheckBox* m_checkPython { nullptr };
-    wxCheckBox* m_checkRuby { nullptr };
-    wxCheckBox* m_checkXRC { nullptr };
-
-    bool m_gen_base_code { false };
-    bool m_gen_inherited_code { false };
-    bool m_gen_perl_code { false };
-    bool m_gen_python_code { false };
-    bool m_gen_ruby_code { false };
-    bool m_gen_xrc_code { false };
-
 protected:
 
-    // Event handlers
+    // Virtual event handlers -- override them in your derived class
 
-    void OnInit(wxInitDialogEvent& event);
+    virtual void OnInit(wxInitDialogEvent& event) = 0;
 
     // Class member variables
 

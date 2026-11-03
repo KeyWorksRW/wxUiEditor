@@ -50,8 +50,11 @@ struct LanguageTraits
     // Construction suffix appended after class name in object creation
     std::string_view construction_suffix;  // ".new" (Ruby), "" (most languages)
 
-    // Language prefix for wxWidgets identifiers
+    // Language prefix for wxWidgets constants and free functions
     std::string_view wx_prefix;  // "wx", "Wx::", "wx.", "wx_"
+
+    // Language prefix for class/type names
+    std::string_view class_prefix;  // "wx", "Wx::", "wx.", "wx_" — used for class/type names
 
     // Logical operators (with surrounding spaces)
     std::string_view logical_and;  // " && ", " and "

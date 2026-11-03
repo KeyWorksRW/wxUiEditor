@@ -59,6 +59,108 @@ wxue::string ImageHandler::ConvertToLookup(const wxue::StringVector* parts)
     return lookup_str;
 }
 
+namespace
+{
+    // Walks the node tree looking for the first property that references filename as an
+    // embedded, SVG, or XPM image. Returns the form the image belongs to, or nullptr.
+    Node* FindFirstImageForm(Node* node, const wxue::string& filename)
+    {
+        const wxue::string_view image_filename(filename);
+
+        for (const auto& prop: node->get_PropsVector())
+        {
+            if (prop.type() != type_image && prop.type() != type_animation)
+            {
+                continue;
+            }
+            if (!prop.HasValue())
+            {
+                continue;
+            }
+
+            const wxue::ViewVector parts(prop.as_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
+            if (parts.size() <= IndexImage || parts[IndexImage].empty())
+            {
+                continue;
+            }
+
+            const wxue::string_view image_type(parts[IndexType]);
+            if (!image_type.starts_with("Embed") && !image_type.starts_with("SVG") &&
+                !image_type.starts_with("XPM"))
+            {
+                continue;
+            }
+
+            if (parts[IndexImage].filename() == image_filename)
+            {
+                return node->get_Form();
+            }
+        }
+
+        for (const auto& child: node->get_ChildNodePtrs())
+        {
+            if (Node* child_form = FindFirstImageForm(child.get(), filename); child_form)
+            {
+                return child_form;
+            }
+        }
+
+        return nullptr;
+    }
+}  // namespace
+
+void ImageHandler::UpdateImageForm(const wxue::string& description)
+{
+    if (!m_project_node)
+    {
+        return;
+    }
+
+    const wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+    if (parts.size() <= IndexImage || parts[IndexImage].empty())
+    {
+        return;
+    }
+
+    // The Images List node is always the first project child, so if the image is still in that
+    // list it is found before any form that references it.
+    Node* owning_form = nullptr;
+    for (const auto& form: m_project_node->get_ChildNodePtrs())
+    {
+        owning_form = FindFirstImageForm(form.get(), parts[IndexImage]);
+        if (owning_form)
+        {
+            break;
+        }
+    }
+
+    if (!owning_form)
+    {
+        return;
+    }
+
+    std::vector<wxue::string> filenames;
+    if (const auto* bundle = GetPropertyImageBundle(&parts);
+        bundle && !bundle->lst_filenames.empty())
+    {
+        // A multi-resolution bundle's secondary images are not individually referenced by any
+        // property, so they must be updated from the bundle's filename list.
+        filenames = bundle->lst_filenames;
+    }
+    else
+    {
+        filenames.emplace_back(parts[IndexImage]);
+    }
+
+    for (const auto& filename: filenames)
+    {
+        if (auto* embed = GetEmbeddedImage(filename); embed)
+        {
+            embed->set_Form(owning_form);
+        }
+    }
+}
+
 void ImageHandler::Initialize(NodeSharedPtr project, bool allow_ui)
 {
     m_project_node = std::move(project);

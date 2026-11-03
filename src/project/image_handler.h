@@ -129,6 +129,11 @@ public:
     bool AddEmbeddedImage(wxue::string path, Node* form, bool is_animation = false);
     EmbeddedImage* GetEmbeddedImage(wxue::string_view path);
 
+    // Recalculates which form the images described by description belong to. Call this after
+    // an embedded_image node has been added to or removed from an Images List node so that
+    // code generation no longer references the Images List for an image that is not in it.
+    void UpdateImageForm(const wxue::string& description);
+
     // This will collect bundles for the entire project -- it initializes m_bundles and
     // m_map_embedded for every image.
     void CollectBundles();

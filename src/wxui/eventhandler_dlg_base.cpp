@@ -599,6 +599,85 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     page_sizer7->Add(m_perl_function_box6, wxSizerFlags().Expand().Border(wxALL));
     m_typescript_bookpage->SetSizerAndFit(page_sizer7);
 
+    m_rust_bookpage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_rust_bookpage, "Rust");
+    m_rust_bookpage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer8 = new wxBoxSizer(wxVERTICAL);
+
+    m_perl_radio_use_function7 = new wxRadioButton(m_rust_bookpage, wxID_ANY, "Use function", wxDefaultPosition,
+        wxDefaultSize, wxRB_SINGLE);
+    m_perl_function_box7 = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+        wxVERTICAL, m_rust_bookpage, "Use function");
+#else
+        new wxStaticBox(m_rust_bookpage, wxID_ANY, m_perl_radio_use_function7), wxVERTICAL);
+#endif
+
+    auto* box_sizer17 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_rust_text_function = new wxTextCtrl(m_perl_function_box7->GetStaticBox(), wxID_ANY, wxEmptyString);
+    box_sizer17->Add(m_rust_text_function, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* btn19 = new wxButton(m_perl_function_box7->GetStaticBox(), wxID_ANY, "Default");
+    box_sizer17->Add(btn19, wxSizerFlags().Border(wxALL));
+
+    auto* btn20 = new wxButton(m_perl_function_box7->GetStaticBox(), wxID_ANY, "None");
+    box_sizer17->Add(btn20, wxSizerFlags().Border(wxALL));
+
+    m_perl_function_box7->Add(box_sizer17, wxSizerFlags().Expand().Border(wxALL));
+
+    m_perl_radio_use_anon_func6 = new wxRadioButton(m_perl_function_box7->GetStaticBox(), wxID_ANY, "Closure",
+        wxDefaultPosition, wxDefaultSize, wxRB_SINGLE);
+    m_perl_lambda_box6 = new wxStaticBoxSizer(
+#if defined(__WXOSX__)
+        wxVERTICAL, m_perl_function_box7->GetStaticBox(), "Closure");
+#else
+        new wxStaticBox(m_perl_function_box7->GetStaticBox(), wxID_ANY, m_perl_radio_use_anon_func6), wxVERTICAL);
+#endif
+
+    auto* box_sizer16 = new wxBoxSizer(wxHORIZONTAL);
+
+    m_perl_lambda_box6->Add(box_sizer16, wxSizerFlags().Border(wxALL));
+
+    auto* static_text_rust_lambda = new wxStaticText(m_perl_lambda_box6->GetStaticBox(), wxID_ANY, "Function:");
+    m_perl_lambda_box6->Add(static_text_rust_lambda, wxSizerFlags().Border(wxALL));
+
+    m_rust_stc_lambda = new wxStyledTextCtrl(m_perl_lambda_box6->GetStaticBox());
+    {
+        m_rust_stc_lambda->SetLexer(wxSTC_LEX_RUST);
+        m_rust_stc_lambda->SetEOLMode(wxSTC_EOL_LF);
+        m_rust_stc_lambda->SetWrapMode(wxSTC_WRAP_WORD);
+        m_rust_stc_lambda->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_rust_stc_lambda->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_rust_stc_lambda->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_rust_stc_lambda->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_rust_stc_lambda->SetAdditionalSelectionTyping(true);
+        m_rust_stc_lambda->SetAdditionalCaretsBlink(true);
+        // Sets text margin scaled appropriately for the current DPI on Windows,
+        // 5 on wxGTK or wxOSX
+
+        m_rust_stc_lambda->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_rust_stc_lambda->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_rust_stc_lambda->SetMarginWidth(1, 0);
+        // Remove default margin
+
+        m_rust_stc_lambda->SetMarginWidth(0, 16);
+        m_rust_stc_lambda->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_rust_stc_lambda->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_rust_stc_lambda->SetMarginSensitive(0, false);
+        m_rust_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
+        m_rust_stc_lambda->SetUseTabs(false);
+        m_rust_stc_lambda->SetBackSpaceUnIndents(true);
+    }
+    m_rust_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
+    m_perl_lambda_box6->Add(m_rust_stc_lambda, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
+
+    m_perl_function_box7->Add(m_perl_lambda_box6, wxSizerFlags(1).Expand().Border(wxALL));
+
+    page_sizer8->Add(m_perl_function_box7, wxSizerFlags().Expand().Border(wxALL));
+    m_rust_bookpage->SetSizerAndFit(page_sizer8);
+
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
@@ -639,6 +718,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     btn13->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn15->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn17->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
+    btn19->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn3->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn5->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
     btn7->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnDefault, this);
@@ -648,6 +728,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     btn16->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn18->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn2->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
+    btn20->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn4->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn6->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
     btn8->Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnNone, this);
@@ -661,6 +742,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_perl_radio_use_anon_func3->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_perl_radio_use_anon_func4->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_perl_radio_use_anon_func5->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
+    m_perl_radio_use_anon_func6->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePerlLambda, this);
     m_py_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonFunction, this);
     m_py_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUsePythonLambda, this);
     m_perl_radio_use_function2->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
@@ -668,6 +750,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_perl_radio_use_function4->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_perl_radio_use_function5->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_perl_radio_use_function6->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
+    m_perl_radio_use_function7->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyFunction, this);
     m_ruby_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseRubyLambda, this);
     m_cpp_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
@@ -678,6 +761,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_py_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_python_stc_lambda->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_ruby_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
+    m_rust_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
     m_typescript_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnChange, this);
 
     return true;

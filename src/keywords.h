@@ -63,3 +63,9 @@ inline constexpr const char* g_typescript_keywords =
     " implements import in instanceof interface let module new null number package private"
     " protected public readonly return static string super switch symbol this throw true"
     " try type typeof undefined var void while with yield";
+
+inline constexpr const char* g_rust_keywords =
+    "abstract as async await become box break const continue crate do dyn else enum extern"
+    " false final fn for if impl in let loop macro match mod move mut override priv pub ref"
+    " return self Self static struct super trait true try type typeof unsafe unsized use"
+    " virtual where while yield";

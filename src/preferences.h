@@ -78,6 +78,9 @@ public:
     int get_RubyLineLength() const { return m_ruby_line_length; }
     void set_RubyLineLength(int length) { m_ruby_line_length = length; }
 
+    int get_RustLineLength() const { return m_rust_line_length; }
+    void set_RustLineLength(int length) { m_rust_line_length = length; }
+
     int get_PerlLineLength() const { return m_perl_line_length; }
     void set_PerlLineLength(int length) { m_perl_line_length = length; }
 
@@ -96,6 +99,8 @@ public:
     void set_PythonVersion(const wxue::string& version) { m_python_version = version; }
     const wxue::string& get_RubyVersion() const { return m_ruby_version; }
     void set_RubyVersion(const wxue::string& version) { m_ruby_version = version; }
+    const wxue::string& get_RustVersion() const { return m_rust_version; }
+    void set_RustVersion(const wxue::string& version) { m_rust_version = version; }
 
     const wxColour& get_CppColour() const { return m_colour_cpp; }  // wxWidgets keywords
     void set_CppColour(const wxColour& colour) { m_colour_cpp = colour; }
@@ -127,6 +132,15 @@ public:
     void set_RubyNumberColour(const wxColour& colour) { m_colour_ruby_number = colour; }
     const wxColour& get_RubyStringColour() const { return m_colour_ruby_string; }
     void set_RubyStringColour(const wxColour& colour) { m_colour_ruby_string = colour; }
+
+    const wxColour& get_RustColour() const { return m_colour_rust; }
+    void set_RustColour(const wxColour& colour) { m_colour_rust = colour; }
+    const wxColour& get_RustCommentColour() const { return m_colour_rust_comment; }
+    void set_RustCommentColour(const wxColour& colour) { m_colour_rust_comment = colour; }
+    const wxColour& get_RustNumberColour() const { return m_colour_rust_number; }
+    void set_RustNumberColour(const wxColour& colour) { m_colour_rust_number = colour; }
+    const wxColour& get_RustStringColour() const { return m_colour_rust_string; }
+    void set_RustStringColour(const wxColour& colour) { m_colour_rust_string = colour; }
 
     const wxColour& get_PerlColour() const { return m_colour_perl; }
     void set_PerlColour(const wxColour& colour) { m_colour_perl = colour; }
@@ -207,6 +221,7 @@ private:
     wxue::string m_cpp_widgets_version { "3.2" };
     wxue::string m_python_version { "4.2" };
     wxue::string m_ruby_version { "1.2" };
+    wxue::string m_rust_version { "0.9.0" };
     wxue::string m_code_display_font;
 
     wxColour m_colour_cpp { wxColour("#FF00FF") };
@@ -226,6 +241,11 @@ private:
     wxColour m_colour_ruby_number { wxColour("#FF0000") };
     wxColour m_colour_ruby_string { wxColour("#008000") };
 
+    wxColour m_colour_rust { wxColour("#FF00FF") };
+    wxColour m_colour_rust_comment { wxColour("#008000") };
+    wxColour m_colour_rust_number { wxColour("#FF0000") };
+    wxColour m_colour_rust_string { wxColour("#008000") };
+
     wxColour m_colour_perl { wxColour("#FF00FF") };
     wxColour m_colour_perl_comment { wxColour("#008000") };
     wxColour m_colour_perl_keyword { wxColour("#0000FF") };
@@ -241,6 +261,7 @@ private:
     int m_cpp_line_length { 110 };
     int m_python_line_length { 90 };
     int m_ruby_line_length { 80 };
+    int m_rust_line_length { 100 };
     int m_perl_line_length { 80 };
 
     int m_icon_size { 20 };

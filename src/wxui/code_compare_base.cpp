@@ -58,6 +58,9 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_radio_luajit = new wxRadioButton(this, wxID_ANY, "&LuaJIT");
     grid_sizer->Add(m_radio_luajit, wxSizerFlags().Border(wxALL));
 
+    m_radio_rust = new wxRadioButton(this, wxID_ANY, "&Rust");
+    grid_sizer->Add(m_radio_rust, wxSizerFlags().Border(wxALL));
+
     m_radio_typescript = new wxRadioButton(this, wxID_ANY, "&TypeScript");
     grid_sizer->Add(m_radio_typescript, wxSizerFlags().Border(wxALL));
 
@@ -123,6 +126,7 @@ bool CodeCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_radio_luajit->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnLuaJIT, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnPython, this);
     m_radio_ruby->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnRuby, this);
+    m_radio_rust->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnRust, this);
     m_radio_typescript->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnTypeScript, this);
     m_radio_xrc->Bind(wxEVT_RADIOBUTTON, &CodeCompareBase::OnXRC, this);
 

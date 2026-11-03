@@ -539,6 +539,9 @@ bool PropSheetDlgGenerator::ConstructionCode(Code& code)
             case GenLang::typescript:
                 ConstructionCodeTypeScript(code);
                 break;
+            case GenLang::rust:
+                code.AddComment("Rust construction code is not yet implemented", true);
+                break;
             default:
                 code.AddComment("Unsupported FFI language", true);
                 break;

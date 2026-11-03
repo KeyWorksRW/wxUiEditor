@@ -74,6 +74,7 @@ protected:
     wxPanel* m_lua_bookpage;
     wxPanel* m_python_bookpage;
     wxPanel* m_ruby_bookpage;
+    wxPanel* m_rust_bookpage;
     wxPanel* m_typescript_bookpage;
     wxRadioButton* m_cpp_radio_use_function;
     wxStaticBoxSizer* m_cpp_function_box;
@@ -87,6 +88,8 @@ protected:
     wxStaticBoxSizer* m_perl_lambda_box4;
     wxRadioButton* m_perl_radio_use_anon_func5;
     wxStaticBoxSizer* m_perl_lambda_box5;
+    wxRadioButton* m_perl_radio_use_anon_func6;
+    wxStaticBoxSizer* m_perl_lambda_box6;
     wxRadioButton* m_perl_radio_use_function2;
     wxStaticBoxSizer* m_perl_function_box2;
     wxRadioButton* m_perl_radio_use_function3;
@@ -97,6 +100,8 @@ protected:
     wxStaticBoxSizer* m_perl_function_box5;
     wxRadioButton* m_perl_radio_use_function6;
     wxStaticBoxSizer* m_perl_function_box6;
+    wxRadioButton* m_perl_radio_use_function7;
+    wxStaticBoxSizer* m_perl_function_box7;
     wxRadioButton* m_py_radio_use_function;
     wxStaticBoxSizer* m_py_function_box;
     wxRadioButton* m_py_radio_use_lambda;
@@ -111,6 +116,7 @@ protected:
     wxStyledTextCtrl* m_julia_stc_lambda;
     wxStyledTextCtrl* m_luajit_stc_lambda;
     wxStyledTextCtrl* m_ruby_stc_lambda;
+    wxStyledTextCtrl* m_rust_stc_lambda;
     wxStyledTextCtrl* m_typescript_stc_lambda;
     wxTextCtrl* m_cpp_text_function;
     wxTextCtrl* m_fortran_text_function;
@@ -120,6 +126,7 @@ protected:
     wxTextCtrl* m_py_text_function;
     wxTextCtrl* m_python_stc_lambda;
     wxTextCtrl* m_ruby_text_function;
+    wxTextCtrl* m_rust_text_function;
     wxTextCtrl* m_typescript_text_function;
 };
 

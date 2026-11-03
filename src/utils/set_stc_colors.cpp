@@ -470,6 +470,37 @@ static void SetLuaJitColors(wxStyledTextCtrl* stc, bool set_lexer, bool add_keyw
     stc->StyleSetForeground(wxSTC_LUA_WORD2, theme.clr_functions);
 }
 
+static void SetRustColors(wxStyledTextCtrl* stc, bool set_lexer, bool add_keywords,
+                          const StcColorTheme& theme)
+{
+    if (set_lexer)
+    {
+        stc->SetLexer(wxSTC_LEX_RUST);
+    }
+    if (add_keywords)
+    {
+        stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_rust_keywords);
+    }
+    stc->StyleSetBold(wxSTC_R_KWORD, true);
+
+    if (UserPrefs.is_DarkMode())
+    {
+        SetDarkModeBase(stc, theme);
+    }
+    stc->StyleSetForeground(wxSTC_R_COMMENT, theme.clr_comments);
+    stc->StyleSetForeground(wxSTC_R_NUMBER, theme.clr_numbers);
+    stc->StyleSetForeground(wxSTC_R_STRING, theme.clr_strings);
+    stc->StyleSetForeground(wxSTC_R_STRING2, theme.clr_strings);
+    stc->StyleSetForeground(wxSTC_R_RAWSTRING, theme.clr_strings);
+    stc->StyleSetForeground(wxSTC_R_RAWSTRING2, theme.clr_strings);
+    stc->StyleSetForeground(wxSTC_R_KWORD, theme.clr_keywords);
+    stc->StyleSetForeground(wxSTC_R_BASEKWORD, theme.clr_keywords);
+    stc->StyleSetForeground(wxSTC_R_OTHERKWORD, theme.clr_functions);
+    stc->StyleSetForeground(wxSTC_R_IDENTIFIER, theme.clr_functions);
+    stc->StyleSetForeground(wxSTC_R_INFIX, theme.clr_types);
+    stc->StyleSetForeground(wxSTC_R_INFIXEOL, theme.clr_types);
+}
+
 static void SetTypeScriptColors(wxStyledTextCtrl* stc, bool set_lexer, bool add_keywords,
                                 const StcColorTheme& theme)
 {
@@ -636,6 +667,9 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             break;
         case GenLang::luajit:
             SetLuaJitColors(stc, set_lexer, add_keywords, theme);
+            break;
+        case GenLang::rust:
+            SetRustColors(stc, set_lexer, add_keywords, theme);
             break;
         case GenLang::typescript:
             SetTypeScriptColors(stc, set_lexer, add_keywords, theme);

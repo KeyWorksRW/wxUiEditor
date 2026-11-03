@@ -238,6 +238,9 @@ bool WizardFormGenerator::ConstructionCode(Code& code)
             case GenLang::typescript:
                 WizardFormFfiConstructionCodeTypeScript(code);
                 break;
+            case GenLang::rust:
+                code.AddComment("Rust construction code is not yet implemented", true);
+                break;
             default:
                 code.AddComment("Unsupported FFI language", true);
                 break;

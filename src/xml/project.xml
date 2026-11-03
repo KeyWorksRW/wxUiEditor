@@ -11,6 +11,7 @@
         <inherits class="kwxLuaJIT"/>
         <inherits class="kwxJulia"/>
         <inherits class="kwxTypeScript"/>
+        <inherits class="kwxRust"/>
         <inherits class="XRC"/>
 
         <property name="code_preference" type="option"
@@ -23,6 +24,7 @@
 			<option name="LuaJIT"/>
 			<option name="Julia"/>
 			<option name="TypeScript"/>
+			<option name="Rust"/>
 		<option name="XRC"/>
             C++</property>
         <property name="generate_languages" type="bitlist"
@@ -35,6 +37,7 @@
 			<option name="Julia"/>
 			<option name="LuaJIT"/>
 			<option name="TypeScript"/>
+			<option name="Rust"/>
 			<option name="XRC"/>
             C++
         </property>
@@ -79,6 +82,7 @@
 			<option name="Julia"/>
 			<option name="LuaJIT"/>
 			<option name="TypeScript"/>
+			<option name="Rust"/>
 			<option name="XRC"/>C++</property>
     </gen>
 

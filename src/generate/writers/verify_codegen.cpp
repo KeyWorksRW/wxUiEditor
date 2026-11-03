@@ -44,6 +44,7 @@ namespace
             { "verify_go", GenLang::go },
             { "verify_julia", GenLang::julia },
             { "verify_luajit", GenLang::luajit },
+            { "verify_rust", GenLang::rust },
             { "verify_typescript", GenLang::typescript },
             // Matches --gen_all (App::ParseGenerationType), which deliberately excludes the KWX
             // languages (fortran/go/julia/luajit/typescript): those are not per-form and have no

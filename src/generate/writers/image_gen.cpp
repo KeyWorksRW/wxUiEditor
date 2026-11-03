@@ -46,6 +46,7 @@ constexpr size_t GO_PREFIX_SIZE = 5;          // 1 for tab, 1 for quote, 3 for "
 constexpr size_t JULIA_PREFIX_SIZE = 8;       // 4 for spaces, 1 for quote, 3 for " * suffix
 constexpr size_t LUAJIT_PREFIX_SIZE = 7;      // 2 for spaces, 1 for quote, 4 for " .. suffix
 constexpr size_t TYPESCRIPT_PREFIX_SIZE = 5;  // 1 for tab, 1 for quote, 3 for " + suffix
+constexpr size_t RUST_PREFIX_SIZE = 5;        // 1 for tab, 1 for quote, 2 for "," suffix, 1 spare
 constexpr size_t RESERVE_PADDING = 4;
 
 // Base64 encoding: 3 input bytes produce 4 output characters
@@ -480,6 +481,12 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 code.Eol().Str("const ").Str(b64_name).Str(" = ");
                 suffix_to_strip = " +";
             }
+            else if (code.is_rust())
+            {
+                // Rust: adjacent literals do not concatenate; concat!() is required.
+                code.Eol().Str("const ").Str(b64_name).Str(": &str = concat!(");
+                suffix_to_strip = ",";
+            }
             else if (code.is_julia())
             {
                 code.Eol().Str("const ").Str(b64_name).Str(" = ");
@@ -499,6 +506,19 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 {
                     encoded.back().erase(encoded.back().size() - suffix_to_strip.size());
                 }
+
+                // Rust: close the concat!(...) invocation on the final literal line. The
+                // trailing comma was stripped above, so this yields `"...");`.
+                if (code.is_rust())
+                {
+                    encoded.back() += ");";
+                }
+            }
+            else if (code.is_rust())
+            {
+                // No base64 data was produced -- still close the concat!() invocation so the
+                // emitted constant remains valid Rust.
+                code.Str("\"\")");
             }
             m_source->writeLine(code);
             code.clear();
@@ -521,7 +541,7 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
 
 // clang-format off
 
-constexpr frozen::map<GenLang, GenEnum::PropName, 8> map_lang_to_prop = frozen::make_map<GenLang, GenEnum::PropName>({
+constexpr frozen::map<GenLang, GenEnum::PropName, 9> map_lang_to_prop = frozen::make_map<GenLang, GenEnum::PropName>({
     { GenLang::cplusplus,  prop_cpp_line_length        },
     { GenLang::python,     prop_python_line_length     },
     { GenLang::ruby,       prop_ruby_line_length       },
@@ -529,6 +549,7 @@ constexpr frozen::map<GenLang, GenEnum::PropName, 8> map_lang_to_prop = frozen::
     { GenLang::go,         prop_go_line_length         },
     { GenLang::julia,      prop_julia_line_length      },
     { GenLang::luajit,     prop_lua_line_length        },
+    { GenLang::rust,       prop_rust_line_length       },
     { GenLang::typescript, prop_typescript_line_length },
 });
 
@@ -562,6 +583,10 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 
         case GenLang::typescript:
             tab_quote_prefix = TYPESCRIPT_PREFIX_SIZE;
+            break;
+
+        case GenLang::rust:
+            tab_quote_prefix = RUST_PREFIX_SIZE;
             break;
 
         default:
@@ -643,6 +668,12 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
         case GenLang::luajit:
             line_begin = "  \"";
             line_end = "\" ..";
+            break;
+
+        case GenLang::rust:
+            // Rust: adjacent literals do not concatenate; concat!() is required.
+            line_begin = "\t\"";
+            line_end = "\",";
             break;
 
         default:

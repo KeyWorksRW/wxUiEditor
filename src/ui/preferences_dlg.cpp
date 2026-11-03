@@ -76,6 +76,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         bundle_list.push_back(wxueBundleSVG(wxue_img::julia_logo_svg, 167, 267, wxSize(24, 24)));
         bundle_list.push_back(wxue_img::bundle_lua_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_ts_logo_round_128_svg(24, 24));
+        bundle_list.push_back(wxue_img::bundle_rust_logo_svg(24, 24));
         bundle_list.push_back(wxue_img::bundle_wxlogo_svg(24, 24));
         notebook->SetImages(bundle_list);
     }
@@ -646,7 +647,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_choice_typescript_version = new wxChoice(page_typescript, wxID_ANY);
     m_choice_typescript_version->Append("0.9.0");
     m_choice_typescript_version->Append("1.0.0");
-    m_choice_typescript_version->SetStringSelection("0.0.0");
+    m_choice_typescript_version->SetStringSelection("0.9.0");
     m_choice_typescript_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
     box_sizer14_14->Add(m_choice_typescript_version, wxSizerFlags().Border(wxALL));
 
@@ -675,14 +676,76 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* staticText31_14 = new wxStaticText(page_typescript, wxID_ANY, "&String color:");
     grid_sizer7_14->Add(staticText31_14, wxSizerFlags().CenterVertical().Border(wxALL));
 
-    m_colour_perl_string_14 = new wxColourPickerCtrl(page_typescript, wxID_ANY, wxColour("#008000"));
-    grid_sizer7_14->Add(m_colour_perl_string_14, wxSizerFlags().Border(wxALL));
+    m_colour_typescript_string = new wxColourPickerCtrl(page_typescript, wxID_ANY, wxColour("#008000"));
+    grid_sizer7_14->Add(m_colour_typescript_string, wxSizerFlags().Border(wxALL));
 
     page_sizer5_14->Add(grid_sizer7_14, wxSizerFlags().Border(wxALL));
     page_typescript->SetSizerAndFit(page_sizer5_14);
 
+    auto* page_rust = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    notebook->AddPage(page_rust, "Rust", false, 8);
+
+    auto* page_sizer5_15 = new wxBoxSizer(wxVERTICAL);
+
+    auto* box_sizer13_15 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* staticText27_15 = new wxStaticText(page_rust, wxID_ANY, "&Line Length");
+    staticText27_15->Wrap(200);
+    box_sizer13_15->Add(staticText27_15, wxSizerFlags().Center().Border(wxALL));
+
+    auto* text_rust_line_length = new wxTextCtrl(page_rust, wxID_ANY, "100");
+    text_rust_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_rust_line_length));
+    text_rust_line_length->SetToolTip(
+    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+    box_sizer13_15->Add(text_rust_line_length, wxSizerFlags().Border(wxALL));
+
+    page_sizer5_15->Add(box_sizer13_15, wxSizerFlags().Border(wxALL));
+
+    auto* box_sizer14_15 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* static_text7_15 = new wxStaticText(page_rust, wxID_ANY, "kwxrust version");
+    box_sizer14_15->Add(static_text7_15, wxSizerFlags().Center().Border(wxALL));
+
+    m_choice_rust_version = new wxChoice(page_rust, wxID_ANY);
+    m_choice_rust_version->Append("0.9.0");
+    m_choice_rust_version->Append("1.0.0");
+    m_choice_rust_version->SetStringSelection("0.9.0");
+    m_choice_rust_version->SetToolTip("Code requiring a newer version then this will be placed in a conditional block.");
+    box_sizer14_15->Add(m_choice_rust_version, wxSizerFlags().Border(wxALL));
+
+    page_sizer5_15->Add(box_sizer14_15, wxSizerFlags().Border(wxALL));
+
+    auto* grid_sizer7_15 = new wxGridSizer(2, 0, 0);
+
+    auto* staticText28_15 = new wxStaticText(page_rust, wxID_ANY, "wxWidgets &keyword color:");
+    grid_sizer7_15->Add(staticText28_15, wxSizerFlags().CenterVertical().Border(wxALL));
+
+    m_colour_rust = new wxColourPickerCtrl(page_rust, wxID_ANY, wxColour("#FF00FF"));
+    grid_sizer7_15->Add(m_colour_rust, wxSizerFlags().Border(wxALL));
+
+    auto* staticText29_15 = new wxStaticText(page_rust, wxID_ANY, "&Comment color:");
+    grid_sizer7_15->Add(staticText29_15, wxSizerFlags().CenterVertical().Border(wxALL));
+
+    m_colour_rust_comment = new wxColourPickerCtrl(page_rust, wxID_ANY, wxColour("#008000"));
+    grid_sizer7_15->Add(m_colour_rust_comment, wxSizerFlags().Border(wxALL));
+
+    auto* staticText30_15 = new wxStaticText(page_rust, wxID_ANY, "&Number color:");
+    grid_sizer7_15->Add(staticText30_15, wxSizerFlags().CenterVertical().Border(wxALL));
+
+    m_colour_rust_number = new wxColourPickerCtrl(page_rust, wxID_ANY, wxColour("#FF0000"));
+    grid_sizer7_15->Add(m_colour_rust_number, wxSizerFlags().Border(wxALL));
+
+    auto* staticText31_15 = new wxStaticText(page_rust, wxID_ANY, "&String color:");
+    grid_sizer7_15->Add(staticText31_15, wxSizerFlags().CenterVertical().Border(wxALL));
+
+    m_colour_rust_string = new wxColourPickerCtrl(page_rust, wxID_ANY, wxColour("#008000"));
+    grid_sizer7_15->Add(m_colour_rust_string, wxSizerFlags().Border(wxALL));
+
+    page_sizer5_15->Add(grid_sizer7_15, wxSizerFlags().Border(wxALL));
+    page_rust->SetSizerAndFit(page_sizer5_15);
+
     auto* page_xrc = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    notebook->AddPage(page_xrc, "XRC", false, 8);
+    notebook->AddPage(page_xrc, "XRC", false, 9);
 
     auto* page_sizer2 = new wxBoxSizer(wxVERTICAL);
 
@@ -807,6 +870,7 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_choice_cpp_version->SetStringSelection(UserPrefs.get_CppWidgetsVersion().wx());
     m_choice_python_version->SetStringSelection(UserPrefs.get_PythonVersion().wx());
     m_choice_ruby_version->SetStringSelection(UserPrefs.get_RubyVersion().wx());
+    m_choice_rust_version->SetStringSelection(UserPrefs.get_RustVersion().wx());
 
     m_colour_cpp->SetColour(UserPrefs.get_CppColour());
     m_colour_cpp_comment->SetColour(UserPrefs.get_CppCommentColour());
@@ -825,6 +889,11 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_colour_ruby_number->SetColour(UserPrefs.get_RubyNumberColour());
     m_colour_ruby_string->SetColour(UserPrefs.get_RubyStringColour());
 
+    m_colour_rust->SetColour(UserPrefs.get_RustColour());
+    m_colour_rust_comment->SetColour(UserPrefs.get_RustCommentColour());
+    m_colour_rust_number->SetColour(UserPrefs.get_RustNumberColour());
+    m_colour_rust_string->SetColour(UserPrefs.get_RustStringColour());
+
     m_colour_xrc_attribute->SetColour(UserPrefs.get_XrcAttributeColour());
     m_colour_xrc_string->SetColour(UserPrefs.get_XrcDblStringColour());
     m_colour_xrc_tag->SetColour(UserPrefs.get_XrcTagColour());
@@ -832,6 +901,7 @@ void PreferencesDlg::OnInit(wxInitDialogEvent& event)
     m_cpp_line_length = std::to_string(UserPrefs.get_CppLineLength());
     m_python_line_length = std::to_string(UserPrefs.get_PythonLineLength());
     m_ruby_line_length = std::to_string(UserPrefs.get_RubyLineLength());
+    m_rust_line_length = std::to_string(UserPrefs.get_RustLineLength());
 
     m_choice_icon_size->SetStringSelection(std::to_string(UserPrefs.get_IconSize()));
 
@@ -901,6 +971,12 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
     {
         UserPrefs.set_RubyVersion(m_choice_ruby_version->GetStringSelection().ToStdString());
         Project.get_ProjectNode()->ModifyProperty(prop_wxRuby_version, UserPrefs.get_RubyVersion());
+    }
+
+    // No project-node property for kwx Rust; only the persisted Prefs value is updated here.
+    if (m_choice_rust_version->GetStringSelection().ToStdString() != UserPrefs.get_RustVersion())
+    {
+        UserPrefs.set_RustVersion(m_choice_rust_version->GetStringSelection().ToStdString());
     }
 
     UserPrefs.set_DarkModePending(Prefs::PENDING_DARK_MODE_ENABLE |
@@ -1015,6 +1091,28 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
         }
     }
 
+    // The Rust lexer has no dedicated Scintilla style constants, so the Rust colour
+    // preferences are persisted here without updating a live code panel.
+    if (UserPrefs.get_RustColour() != m_colour_rust->GetColour())
+    {
+        UserPrefs.set_RustColour(m_colour_rust->GetColour());
+    }
+
+    if (UserPrefs.get_RustCommentColour() != m_colour_rust_comment->GetColour())
+    {
+        UserPrefs.set_RustCommentColour(m_colour_rust_comment->GetColour());
+    }
+
+    if (UserPrefs.get_RustNumberColour() != m_colour_rust_number->GetColour())
+    {
+        UserPrefs.set_RustNumberColour(m_colour_rust_number->GetColour());
+    }
+
+    if (UserPrefs.get_RustStringColour() != m_colour_rust_string->GetColour())
+    {
+        UserPrefs.set_RustStringColour(m_colour_rust_string->GetColour());
+    }
+
     if (auto panel = wxGetFrame().GetXrcPanel(); panel)
     {
         if (UserPrefs.get_XrcAttributeColour() != m_colour_xrc_attribute->GetColour())
@@ -1079,6 +1177,10 @@ void PreferencesDlg::OnOK(wxCommandEvent& /* event unused */)
     line_length = wxue::atoi(m_ruby_line_length.ToStdString());
     fix_line_length();
     UserPrefs.set_RubyLineLength(line_length);
+
+    line_length = wxue::atoi(m_rust_line_length.ToStdString());
+    fix_line_length();
+    UserPrefs.set_RustLineLength(line_length);
 
     auto old_size = UserPrefs.get_IconSize();
     UserPrefs.set_IconSize(wxue::atoi(m_choice_icon_size->GetStringSelection().ToStdString()));

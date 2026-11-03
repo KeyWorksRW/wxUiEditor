@@ -75,6 +75,10 @@ void CodeCompare::OnInit([[maybe_unused]] wxInitDialogEvent& event)
             m_radio_luajit->SetValue(true);
             break;
 
+        case GenLang::rust:
+            m_radio_rust->SetValue(true);
+            break;
+
         case GenLang::typescript:
             m_radio_typescript->SetValue(true);
             break;
@@ -217,6 +221,11 @@ void CodeCompare::OnJulia([[maybe_unused]] wxCommandEvent& event)
 void CodeCompare::OnLuaJIT([[maybe_unused]] wxCommandEvent& event)
 {
     OnRadioButton(GenLang::luajit);
+}
+
+void CodeCompare::OnRust([[maybe_unused]] wxCommandEvent& event)
+{
+    OnRadioButton(GenLang::rust);
 }
 
 void CodeCompare::OnTypeScript([[maybe_unused]] wxCommandEvent& event)

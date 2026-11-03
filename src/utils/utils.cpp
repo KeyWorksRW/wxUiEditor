@@ -363,6 +363,7 @@ std::set<std::string> g_set_go_keywords;
 std::set<std::string> g_set_julia_keywords;
 std::set<std::string> g_set_luajit_keywords;
 std::set<std::string> g_set_typescript_keywords;
+std::set<std::string> g_set_rust_keywords;
 
 bool isValidVarName(const std::string& str, GenLang language)
 {
@@ -417,6 +418,26 @@ bool isValidVarName(const std::string& str, GenLang language)
     if (language == GenLang::ruby)
     {
         return lambda(g_set_ruby_keywords, g_ruby_keywords);
+    }
+    if (language == GenLang::fortran)
+    {
+        return lambda(g_set_fortran_keywords, g_fortran_keywords);
+    }
+    if (language == GenLang::go)
+    {
+        return lambda(g_set_go_keywords, g_go_keywords);
+    }
+    if (language == GenLang::julia)
+    {
+        return lambda(g_set_julia_keywords, g_julia_keywords);
+    }
+    if (language == GenLang::luajit)
+    {
+        return lambda(g_set_luajit_keywords, g_luajit_keywords);
+    }
+    if (language == GenLang::rust)
+    {
+        return lambda(g_set_rust_keywords, g_rust_keywords);
     }
     if (language == GenLang::typescript)
     {
@@ -610,6 +631,8 @@ std::string_view GenLangToString(GenLang language)
             return "Julia";
         case GenLang::luajit:
             return "LuaJIT";
+        case GenLang::rust:
+            return "Rust";
         case GenLang::typescript:
             return "TypeScript";
         case GenLang::xrc:
@@ -655,6 +678,11 @@ GenLang ConvertToGenLang(wxue::string_view language)
     {
         return GenLang::luajit;
     }
+    if (language == "Rust" || language.starts_with("kwxRust") ||
+        language.starts_with("Folder kwxRust"))
+    {
+        return GenLang::rust;
+    }
     if (language == "TypeScript" || language.starts_with("kwxTypeScript") ||
         language.starts_with("Folder kwxTypeScript"))
     {
@@ -688,6 +716,8 @@ std::string GetLanguageExtension(GenLang language)
             return ".jl";
         case GenLang::luajit:
             return ".lua";
+        case GenLang::rust:
+            return ".rs";
         case GenLang::typescript:
             return ".ts";
         case GenLang::xrc:

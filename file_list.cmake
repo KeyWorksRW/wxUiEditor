@@ -80,6 +80,7 @@ set( file_list
     src/generate/writers/strategy_go.cpp       # GoStrategy -- Go language strategy
     src/generate/writers/strategy_julia.cpp    # JuliaStrategy -- Julia language strategy
     src/generate/writers/strategy_luajit.cpp   # LuaJITStrategy -- LuaJIT language strategy
+    src/generate/writers/strategy_rust.cpp     # RustStrategy -- Rust language strategy
     src/generate/writers/strategy_python.cpp   # PythonStrategy -- Python language strategy
     src/generate/writers/strategy_ruby.cpp     # RubyStrategy -- Ruby language strategy
     src/generate/writers/strategy_typescript.cpp  # TypeScriptStrategy -- TypeScript language strategy
@@ -119,6 +120,7 @@ set( file_list
     src/generate/writers/gen_go.cpp            # Generate Go code via kwxFFI
     src/generate/writers/gen_julia.cpp         # Generate Julia code via kwxFFI
     src/generate/writers/gen_luajit.cpp        # Generate LuaJIT code via kwxFFI
+    src/generate/writers/gen_rust.cpp          # Generate Rust code via kwxFFI
     src/generate/writers/gen_typescript.cpp     # Generate TypeScript code via kwxFFI
 
     src/generate/writers/gen_script_common.cpp # Common functions for generating Script Languages

@@ -34,6 +34,7 @@ constexpr int EVENT_PAGE_LUA = 4;
 constexpr int EVENT_PAGE_PYTHON = 5;
 constexpr int EVENT_PAGE_RUBY = 6;
 constexpr int EVENT_PAGE_TYPESCRIPT = 7;
+constexpr int EVENT_PAGE_RUST = 8;
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     EventHandlerDlgBase(parent),
@@ -49,7 +50,8 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     m_is_go_enabled(m_gen_languages & GenLang::go),
     m_is_julia_enabled(m_gen_languages & GenLang::julia),
     m_is_luajit_enabled(m_gen_languages & GenLang::luajit),
-    m_is_typescript_enabled(m_gen_languages & GenLang::typescript)
+    m_is_typescript_enabled(m_gen_languages & GenLang::typescript),
+    m_is_rust_enabled(m_gen_languages & GenLang::rust)
 {
     m_value = event->get_value().wx();
     if (m_is_cpp_enabled)
@@ -157,6 +159,10 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     else if (m_code_preference == GenLang::typescript)
     {
         m_notebook->SetSelection(EVENT_PAGE_TYPESCRIPT);
+    }
+    else if (m_code_preference == GenLang::rust)
+    {
+        m_notebook->SetSelection(EVENT_PAGE_RUST);
     }
 }
 

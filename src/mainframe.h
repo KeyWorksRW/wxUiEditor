@@ -91,6 +91,7 @@ public:
     BasePanel* GetGoPanel() { return m_goPanel; }
     BasePanel* GetJuliaPanel() { return m_juliaPanel; }
     BasePanel* GetLuaJITPanel() { return m_luajitPanel; }
+    BasePanel* GetRustPanel() { return m_rustPanel; }
     BasePanel* GetPythonPanel() { return m_pythonPanel; }
     BasePanel* GetRubyPanel() { return m_rubyPanel; }
     BasePanel* GetTypeScriptPanel() { return m_typescriptPanel; }
@@ -397,6 +398,7 @@ private:
     BasePanel* m_goPanel { nullptr };
     BasePanel* m_juliaPanel { nullptr };
     BasePanel* m_luajitPanel { nullptr };
+    BasePanel* m_rustPanel { nullptr };
     BasePanel* m_typescriptPanel { nullptr };
 
     BasePanel* m_xrcPanel { nullptr };

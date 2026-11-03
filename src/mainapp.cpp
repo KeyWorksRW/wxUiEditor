@@ -260,6 +260,7 @@ int App::OnRun()
     parser.AddLongOption("gen_julia", "generate Julia files and exit");
     parser.AddLongOption("gen_luajit", "generate LuaJIT files and exit");
     parser.AddLongOption("gen_ruby", "generate ruby files and exit");
+    parser.AddLongOption("gen_rust", "generate Rust files and exit");
     parser.AddLongOption("gen_typescript", "generate TypeScript files and exit");
 
     parser.AddLongOption("gen_xrc", "generate XRC files and exit");
@@ -300,6 +301,8 @@ int App::OnRun()
     parser.AddLongSwitch("verify_julia", "verify generating Julia files did not change",
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_luajit", "verify generating LuaJIT files did not change",
+                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("verify_rust", "verify generating Rust files did not change",
                          wxCMD_LINE_HIDDEN);
     parser.AddLongSwitch("verify_ruby", "verify generating Ruby files did not change",
                          wxCMD_LINE_HIDDEN);
@@ -433,7 +436,7 @@ int App::OnRun()
     bool is_verify_mode = false;
     constexpr auto verify_options = std::to_array(
         { "verify_cpp", "verify_python", "verify_fortran", "verify_go", "verify_julia",
-          "verify_luajit", "verify_ruby", "verify_typescript", "verify_all" });
+          "verify_luajit", "verify_rust", "verify_ruby", "verify_typescript", "verify_all" });
 
     for (const auto& opt: verify_options)
     {
@@ -739,7 +742,7 @@ void App::DbgCurrentTest(wxCommandEvent& /* event unused */)  // NOLINT (cppchec
 std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
 {
     // Map option names to their corresponding generation type values
-    constexpr frozen::map<std::string_view, size_t, 12> gen_options = {
+    constexpr frozen::map<std::string_view, size_t, 13> gen_options = {
         { "gen_cpp", std::to_underlying(GenLang::cplusplus) },
         { "gen_python", std::to_underlying(GenLang::python) },
         { "gen_fortran", std::to_underlying(GenLang::fortran) },
@@ -747,6 +750,7 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
         { "gen_julia", std::to_underlying(GenLang::julia) },
         { "gen_luajit", std::to_underlying(GenLang::luajit) },
         { "gen_ruby", std::to_underlying(GenLang::ruby) },
+        { "gen_rust", std::to_underlying(GenLang::rust) },
         { "gen_typescript", std::to_underlying(GenLang::typescript) },
         { "gen_xrc", std::to_underlying(GenLang::xrc) },
         { "gen_all", std::to_underlying(GenLang::cplusplus | GenLang::python | GenLang::ruby) },
@@ -754,7 +758,7 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
         { "gen_coverage",
           std::to_underlying(GenLang::cplusplus | GenLang::python | GenLang::ruby |
                              GenLang::fortran | GenLang::go | GenLang::julia | GenLang::luajit |
-                             GenLang::typescript | GenLang::xrc) },
+                             GenLang::rust | GenLang::typescript | GenLang::xrc) },
     };
 
     size_t generate_type = std::to_underlying(GenLang::none);
@@ -958,6 +962,7 @@ size_t App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResult
     GenCode(GenLang::go);
     GenCode(GenLang::julia);
     GenCode(GenLang::luajit);
+    GenCode(GenLang::rust);
     GenCode(GenLang::typescript);
     GenCode(GenLang::ruby);
 

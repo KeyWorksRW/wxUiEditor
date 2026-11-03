@@ -145,6 +145,7 @@ struct LanguageTraits
 //           ├── GoStrategy
 //           ├── JuliaStrategy
 //           ├── LuaJITStrategy
+//           ├── RustStrategy
 //           └── TypeScriptStrategy
 //
 // The strategy pattern handles complex behavioral differences that can't be reduced to

@@ -325,6 +325,9 @@ bool FrameCommon::ConstructionCode(Code& code, FrameType frame_type)
             case GenLang::typescript:
                 ConstructionCodeTypeScript(code, frame_type);
                 break;
+            case GenLang::rust:
+                code.AddComment("Rust construction code is not yet implemented", true);
+                break;
             default:
                 code.AddComment("Unsupported FFI language", true);
                 break;

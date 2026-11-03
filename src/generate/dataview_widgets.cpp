@@ -207,7 +207,9 @@ void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& han
 
 std::pair<bool, wxue::string> DataViewCtrl::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
+    if (language == GenLang::none ||
+        (language & (GenLang::cplusplus | GenLang::python | GenLang::fortran | GenLang::go |
+                     GenLang::julia | GenLang::luajit | GenLang::rust | GenLang::typescript)))
     {
         return { true, {} };
     }
@@ -366,7 +368,9 @@ void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>&
 
 std::pair<bool, wxue::string> DataViewListCtrl::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
+    if (language == GenLang::none ||
+        (language & (GenLang::cplusplus | GenLang::python | GenLang::fortran | GenLang::go |
+                     GenLang::julia | GenLang::luajit | GenLang::rust | GenLang::typescript)))
     {
         return { true, {} };
     }
@@ -426,7 +430,9 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 std::pair<bool, wxue::string> DataViewTreeCtrl::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
+    if (language == GenLang::none ||
+        (language & (GenLang::cplusplus | GenLang::python | GenLang::fortran | GenLang::go |
+                     GenLang::julia | GenLang::luajit | GenLang::rust | GenLang::typescript)))
     {
         return { true, {} };
     }
@@ -525,7 +531,9 @@ bool DataViewColumn::ConstructionCode(Code& code)
 
 std::pair<bool, wxue::string> DataViewColumn::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
+    if (language == GenLang::none ||
+        (language & (GenLang::cplusplus | GenLang::python | GenLang::fortran | GenLang::go |
+                     GenLang::julia | GenLang::luajit | GenLang::rust | GenLang::typescript)))
     {
         return { true, {} };
     };
@@ -588,7 +596,9 @@ bool DataViewListColumn::ConstructionCode(Code& code)
 
 std::pair<bool, wxue::string> DataViewListColumn::isLanguageVersionSupported(GenLang language)
 {
-    if (language == GenLang::none || (language & (GenLang::cplusplus | GenLang::python)))
+    if (language == GenLang::none ||
+        (language & (GenLang::cplusplus | GenLang::python | GenLang::fortran | GenLang::go |
+                     GenLang::julia | GenLang::luajit | GenLang::rust | GenLang::typescript)))
     {
         return { true, {} };
     }

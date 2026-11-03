@@ -658,6 +658,30 @@ void PropGridPanel::CheckOutputFile(const wxue::string& newValue, Node* node)
             ChangeOutputFile(prop_ruby_file);
             break;
 
+        case GenLang::fortran:
+            ChangeOutputFile(prop_fortran_file);
+            break;
+
+        case GenLang::go:
+            ChangeOutputFile(prop_go_file);
+            break;
+
+        case GenLang::julia:
+            ChangeOutputFile(prop_julia_file);
+            break;
+
+        case GenLang::luajit:
+            ChangeOutputFile(prop_lua_file);
+            break;
+
+        case GenLang::rust:
+            ChangeOutputFile(prop_rust_file);
+            break;
+
+        case GenLang::typescript:
+            ChangeOutputFile(prop_typescript_file);
+            break;
+
         case GenLang::xrc:
             ChangeOutputFile(prop_xrc_file);
             break;

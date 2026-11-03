@@ -138,6 +138,7 @@ void MainFrame::UpdateLanguagePanels()
     manage_panel(GenLang::go, m_goPanel, "GO");
     manage_panel(GenLang::julia, m_juliaPanel, "Julia");
     manage_panel(GenLang::luajit, m_luajitPanel, "LuaJIT");
+    manage_panel(GenLang::rust, m_rustPanel, "Rust");
     manage_panel(GenLang::typescript, m_typescriptPanel, "TypeScript");
     manage_panel(GenLang::xrc, m_xrcPanel, "XRC");
 
@@ -157,6 +158,7 @@ void MainFrame::UpdateLanguagePanels()
         LangInfo { .flag = GenLang::go, .panel = m_goPanel, .label = "GO" },
         LangInfo { .flag = GenLang::julia, .panel = m_juliaPanel, .label = "Julia" },
         LangInfo { .flag = GenLang::luajit, .panel = m_luajitPanel, .label = "LuaJIT" },
+        LangInfo { .flag = GenLang::rust, .panel = m_rustPanel, .label = "Rust" },
         LangInfo { .flag = GenLang::typescript, .panel = m_typescriptPanel, .label = "TypeScript" },
         LangInfo { .flag = GenLang::xrc, .panel = m_xrcPanel, .label = "XRC" },
     };

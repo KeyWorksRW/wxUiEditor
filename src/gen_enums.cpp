@@ -564,6 +564,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
 
     { prop_folder_typescript_combined_file, "folder_typescript_combined_file" },
     { prop_folder_typescript_output_folder, "folder_typescript_output_folder" },
+    { prop_typescript_conditional, "typescript_conditional" },
     { prop_typescript_file, "typescript_file" },
     { prop_typescript_inherit_name, "typescript_inherit_name" },
     { prop_typescript_insert, "insert_typescript_code" },
@@ -571,6 +572,15 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_typescript_output_folder, "typescript_output_folder" },
     { prop_typescript_project_preamble, "typescript_project_preamble" },
     { prop_kwxtypescript_version, "kwxtypescript_version" },
+    { prop_folder_rust_output_folder, "folder_rust_output_folder" },
+    { prop_rust_conditional, "rust_conditional" },
+    { prop_rust_file, "rust_file" },
+    { prop_rust_inherit_name, "rust_inherit_name" },
+    { prop_rust_insert, "insert_rust_code" },
+    { prop_rust_line_length, "rust_line_length" },
+    { prop_rust_output_folder, "rust_output_folder" },
+    { prop_rust_project_preamble, "rust_project_preamble" },
+    { prop_kwxRust_version, "kwxRust_version" },
 
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames {};
@@ -689,6 +699,7 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_folder_Code, "Folder C++ Overrides" },
     { gen_folder_XRC, "Folder XRC Overrides" },
     { gen_folder_kwxTypeScript, "Folder kwxTypeScript Overrides" },
+    { gen_folder_kwxRust, "Folder kwxRust Overrides" },
     { gen_folder_wxPython, "Folder wxPython Overrides" },
     { gen_folder_wxRuby, "Folder wxRuby Overrides" },
     { gen_folder_wxFortran, "Folder wxFortran Overrides" },
@@ -712,6 +723,7 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_kwxJulia, "kwxJulia" },
     { gen_kwxLua, "kwxLuaJIT" },
     { gen_kwxTypeScript, "kwxTypeScript" },
+    { gen_kwxRust, "kwxRust" },
     { gen_XRC, "XRC" },
 
     { gen_LanguageSettings, "Language Settings" },
@@ -726,6 +738,7 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_JuliaSettings, "kwxJulia Settings" },
     { gen_LuaSettings, "kwxLuaJIT Settings" },
     { gen_TypeScriptSettings, "kwxTypeScript Settings" },
+    { gen_RustSettings, "kwxRust Settings" },
 
     // These are special purpose generators. gen_Images is used for code, but gen_folder is
     // just for organtizing forms in the Navigation panel.

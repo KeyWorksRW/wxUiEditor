@@ -49,13 +49,13 @@ namespace wxue_data
     // ../xml/forms.xml
     extern const unsigned char forms[6787]; // Original size: 57,596 bytes
     // ../xml/interfaces.xml
-    extern const unsigned char interfaces[11484]; // Original size: 57,724 bytes
+    extern const unsigned char interfaces[11579]; // Original size: 58,996 bytes
     // ../xml/mdi.xml
     extern const unsigned char mdi[1995]; // Original size: 17,170 bytes
     // ../xml/pickers.xml
     extern const unsigned char pickers[2478]; // Original size: 10,221 bytes
     // ../xml/project.xml
-    extern const unsigned char project[1659]; // Original size: 6,107 bytes
+    extern const unsigned char project[1670]; // Original size: 6,197 bytes
     // ../xml/sizers.xml
     extern const unsigned char sizers[2268]; // Original size: 12,871 bytes
     // ../xml/text_ctrls.xml

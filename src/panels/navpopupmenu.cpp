@@ -552,6 +552,12 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case std::to_underlying(Menu::SingleGenRust):
+            {
+                OnGenerateSingleLanguage(GenLang::rust);
+            }
+            break;
+
         case std::to_underlying(Menu::SingleGenTypeScript):
             {
                 OnGenerateSingleLanguage(GenLang::typescript);
@@ -796,6 +802,11 @@ void NavPopupMenu::MenuAddCommands()
         if (m_node->HasValue(prop_julia_file))
         {
             Append(std::to_underlying(Menu::SingleGenJulia), "Generate Julia for this form");
+            ++count;
+        }
+        if (m_node->HasValue(prop_rust_file))
+        {
+            Append(std::to_underlying(Menu::SingleGenRust), "Generate Rust for this form");
             ++count;
         }
 

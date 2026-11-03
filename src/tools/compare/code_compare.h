@@ -49,6 +49,7 @@ protected:
     void OnLuaJIT(wxCommandEvent& event) override;
     void OnPython(wxCommandEvent& event) override;
     void OnRuby(wxCommandEvent& event) override;
+    void OnRust(wxCommandEvent& event) override;
     void OnTypeScript(wxCommandEvent& event) override;
     void OnXRC(wxCommandEvent& event) override;
 

@@ -278,6 +278,9 @@
         bitmap="SVG;ruby_logo.svg;[24,24]" />
       <node
         class="embedded_image"
+        bitmap="SVG;rust_logo.svg;[24,24]" />
+      <node
+        class="embedded_image"
         bitmap="SVG;saveas.svg;[24,24]" />
       <node
         class="embedded_image"

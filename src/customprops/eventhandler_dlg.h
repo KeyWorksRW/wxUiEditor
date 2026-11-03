@@ -110,6 +110,7 @@ private:
     bool m_is_julia_enabled { false };
     bool m_is_luajit_enabled { false };
     bool m_is_typescript_enabled { false };
+    bool m_is_rust_enabled { false };
 
     bool m_is_cpp_lambda { false };
     bool m_is_python_lambda { false };

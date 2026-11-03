@@ -8,7 +8,7 @@ maps, forming the bridge between the XML definition files that describe wxWidget
 and the C++ code that creates, edits, and generates code for those controls.
 
 Every property shown in the Property Panel, every widget available in the Add menu, and every
-code generator that emits C++, Python, Ruby, Perl, Fortran, Go, Julia, LuaJIT, or Rust code
+code generator that emits C++, Python, Ruby, Fortran, Go, Julia, LuaJIT, Rust, or TypeScript code
 is identified by an enum value defined in this file.
 
 ## Relationship to XML Definition Files
@@ -142,8 +142,12 @@ prop_base_file             prop_python_base_file       prop_ruby_base_file
                            prop_python_inherit_name    prop_ruby_inherit_name
 ```
 
-The six kwxFFI languages (Fortran, Go, Julia, LuaJIT, Perl, Rust) each have similar sets:
-`prop_fortran_*`, `prop_go_*`, `prop_julia_*`, `prop_lua_*`, `prop_perl_*`, `prop_rust_*`.
+The six kwxFFI languages (Fortran, Go, Julia, LuaJIT, Rust, TypeScript) each have similar sets:
+`prop_fortran_*`, `prop_go_*`, `prop_julia_*`, `prop_lua_*`, `prop_rust_*`, `prop_typescript_*`.
+
+LuaJIT uses the `lua_` prefix rather than `luajit_`, and the version property names are not
+uniform: `prop_kwxFortran_version`, `prop_kwxGO_version`, `prop_kwxJulia_version`,
+`prop_kwxLuaJIT_version`, `prop_kwxRust_version`, `prop_kwxtypescript_version`.
 
 **Special sentinel values:**
 - `prop_name_array_size` — Always the last real value; used to size static arrays
@@ -262,20 +266,25 @@ Identify which code languages are available for generation:
 | `gen_wxPython` | Python (wxPython) |
 | `gen_wxRuby` | Ruby (wxRuby3) |
 | `gen_XRC` | XRC (XML resource format) |
-| `gen_kwxPerl` | Perl (kwxFFI) |
 | `gen_kwxFortran` | Fortran (kwxFFI) |
 | `gen_kwxGo` | Go (kwxFFI) |
 | `gen_kwxJulia` | Julia (kwxFFI) |
 | `gen_kwxLua` | LuaJIT (kwxFFI) |
 | `gen_kwxRust` | Rust (kwxFFI) |
+| `gen_kwxTypeScript` | TypeScript (kwxFFI) |
+
+Each kwxFFI language also has a folder-override generator used for per-folder settings:
+`gen_folder_wxFortran`, `gen_folder_wxGo`, `gen_folder_wxJulia`, `gen_folder_wxLua`,
+`gen_folder_kwxRust`, `gen_folder_kwxTypeScript`.
 
 #### 3. Language Settings
 
 Per-language configuration sections shown in the Property Panel:
 
-`gen_LanguageSettings` (umbrella), `gen_CPlusSettings`, `gen_PythonSettings`,
-`gen_RubySettings`, `gen_PerlSettings`, `gen_FortranSettings`, `gen_GoSettings`,
-`gen_JuliaSettings`, `gen_LuaSettings`, `gen_RustSettings`
+`gen_LanguageSettings` (umbrella), `gen_CPlusSettings`, `gen_DerivedCPlusSettings`,
+`gen_CPlusHeaderSettings`, `gen_PythonSettings`, `gen_RubySettings`,
+`gen_FortranSettings`, `gen_GoSettings`, `gen_JuliaSettings`, `gen_LuaSettings`,
+`gen_RustSettings`, `gen_TypeScriptSettings`
 
 #### 4. Special-Purpose Generators
 
@@ -348,25 +357,34 @@ macro equivalents (e.g., style flag names used in wxWidgets headers).
 ## GenLang — Language Identifier Flags
 
 While not defined in `gen_enums.h` (it lives in `src/pch.h`), `GenLang` is closely related
-and frequently used alongside these enums:
+and frequently used alongside these enums. It is a scoped `enum class`, so its values are
+referenced as `GenLang::python`, `GenLang::rust`, and so on:
 
 ```cpp
-enum GenLang : std::uint16_t
+enum class GenLang : unsigned int
 {
-    GEN_LANG_NONE      = 0,
-    GEN_LANG_CPLUSPLUS = 1,
-    GEN_LANG_PYTHON    = 1 << 2,
-    GEN_LANG_RUBY      = 1 << 3,
-    GEN_LANG_FORTRAN   = 1 << 4,
-    GEN_LANG_GO        = 1 << 5,
-    GEN_LANG_JULIA     = 1 << 6,
-    GEN_LANG_LUAJIT    = 1 << 7,
-    GEN_LANG_PERL      = 1 << 8,
-    GEN_LANG_RUST      = 1 << 9,
-    GEN_LANG_XRC       = 1 << 10,
-    GEN_LANG_XML       = 1 << 11,
+    none = 0,
+    cplusplus = 1 << 0,
+    python = 1 << 1,
+    ruby = 1 << 2,
+
+    // These 6 are the kwx languages (kwxFortran, kwxGO, etc.)
+    fortran = 1 << 3,
+    go = 1 << 4,
+    julia = 1 << 5,
+    luajit = 1 << 6,
+    rust = 1 << 7,
+    typescript = 1 << 8,
+
+    // These should always be the last languages in the list.
+    xrc = 1 << 9,
+    xml = 1 << 10,
+    reserved1 = 1 << 11,  // Reserved for future use
 };
 ```
 
 Values are bit flags, allowing a bitmask to represent multiple languages simultaneously
-(e.g., for specifying which languages a form should generate code for).
+(e.g., for specifying which languages a form should generate code for). Bits are OR-ed via the
+`operator|` overload — for example `GenLang::cplusplus | GenLang::python`. The frozen set
+`gen_lang_set` in `src/pch.h` enumerates all code-generation languages and is used when
+iterating over languages rather than over individual flags.

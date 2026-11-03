@@ -469,6 +469,15 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
                     UpdateRubyMemberPrefix(access, name, node, is_name_changed);
                     break;
 
+                case GenLang::fortran:
+                case GenLang::go:
+                case GenLang::julia:
+                case GenLang::luajit:
+                case GenLang::rust:
+                case GenLang::typescript:
+                    // No member-prefix convention is applied for these languages.
+                    break;
+
                 default:
                     {
                         auto lang_str = GenLangToString(Project.get_CodePreference(selected_node));

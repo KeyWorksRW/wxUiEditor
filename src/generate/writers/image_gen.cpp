@@ -742,12 +742,19 @@ std::vector<std::string> base64_encode(unsigned char const* data, size_t data_si
 //
 // **************************************************************************************
 
-void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap)
+void Code::GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap,
+                             const wxSize& svg_size_def)
 {
     wxSize svg_size { -1, -1 };
     if (!parts[IndexSize].empty())
     {
         svg_size = GetSizeInfo(parts[IndexSize]);
+    }
+    // wxBitmapBundle rasterizes an SVG at the bundle's default size, so a control that
+    // stretches the image (Scale_Fill) needs the control's size here to stay sharp.
+    if (svg_size_def.x > 0 && svg_size_def.y > 0)
+    {
+        svg_size = svg_size_def;
     }
 
     if (is_cpp())
@@ -1424,7 +1431,8 @@ void Code::GenerateXpmBitmap(const wxue::StringVector& parts, bool /* get_bitmap
     }
 }
 
-void Code::GenerateBundleParameter(const wxue::StringVector& parts, bool get_bitmap)
+void Code::GenerateBundleParameter(const wxue::StringVector& parts, bool get_bitmap,
+                                   const wxSize& svg_size_def)
 {
     if (parts.size() <= 1 || parts[IndexImage].empty())
     {
@@ -1434,7 +1442,7 @@ void Code::GenerateBundleParameter(const wxue::StringVector& parts, bool get_bit
 
     if (parts[IndexType].starts_with("SVG"))
     {
-        GenerateSVGBundle(parts, get_bitmap);
+        GenerateSVGBundle(parts, get_bitmap, svg_size_def);
     }
     else if (parts[IndexType].contains("Art"))
     {

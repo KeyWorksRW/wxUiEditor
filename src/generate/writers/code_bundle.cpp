@@ -16,12 +16,12 @@
 #include "utils.h"                              // Miscellaneous utilities
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
-Code& Code::Bundle(GenEnum::PropName prop_name)
+Code& Code::Bundle(GenEnum::PropName prop_name, const wxSize& svg_size_def)
 {
     wxue::StringVector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, wxue::TRIM::both);
     if (parts[IndexType].contains("SVG"))
     {
-        GenerateBundleParameter(parts);
+        GenerateBundleParameter(parts, false, svg_size_def);
     }
 
     else

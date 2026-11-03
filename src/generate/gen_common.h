@@ -54,8 +54,13 @@ wxue::string GenerateBitmapCode(const wxue::string& description);
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
+// If svg_size_def has both components greater than zero, it replaces the recorded size of an
+// SVG bitmap -- only wxStaticBitmap::Scale_Fill passes this so that the SVG is rasterized at
+// the size it will be drawn at.
+//
 // Returns true if the returned string contains a wxVector.
-bool GenerateBundleCode(const wxue::string& description, wxue::string& code);
+bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
+                        const wxSize& svg_size_def = wxDefaultSize);
 
 // Returns the integer value of all style properties for the node. Includes style,
 // window_style, tab_position etc.

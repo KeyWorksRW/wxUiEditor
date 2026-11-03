@@ -598,8 +598,11 @@ public:
     void GenFontColourSettings();
 
     // Calls the language-specific function to generate code for the specified bitmap
-    // property
-    Code& Bundle(GenEnum::PropName prop);
+    // property.
+    //
+    // For SVG bitmaps, svg_size_def overrides the recorded default size when both components
+    // are greater than zero.
+    Code& Bundle(GenEnum::PropName prop, const wxSize& svg_size_def = wxDefaultSize);
 
     void BundlePerl(const wxue::StringVector& parts);
     void BundlePython(const wxue::StringVector& parts);
@@ -679,10 +682,12 @@ public:
     // Generates the code to load a wxBitmapBundle.
     // If get_bitmap is true, a bitmap will be returned. The bitmap will be scaled to the current
     // DPI using Rescale for a single bitmap, and wxBitmapBundle::GetBitmap() otherwise.
-    void GenerateBundleParameter(const wxue::StringVector& parts, bool get_bitmap = false);
+    void GenerateBundleParameter(const wxue::StringVector& parts, bool get_bitmap = false,
+                                 const wxSize& svg_size_def = wxDefaultSize);
 
     // Generate specific bundle types
-    void GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap);
+    void GenerateSVGBundle(const wxue::StringVector& parts, bool get_bitmap,
+                           const wxSize& svg_size_def = wxDefaultSize);
     void GenerateARTBundle(const wxue::StringVector& parts, bool get_bitmap);
     void GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap);
     void GenerateXpmBitmap(const wxue::StringVector& parts, bool get_bitmap);

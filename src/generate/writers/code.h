@@ -113,7 +113,7 @@ public:
     [[nodiscard]] bool is_python() const { return m_language == GenLang::python; }
     [[nodiscard]] bool is_ruby() const { return m_language == GenLang::ruby; }
 
-    // Returns true if the language is an FFI-based language (Fortran, Go, Julia, LuaJIT,
+    // Returns true if the language is an FFI-based language (Fortran, Go, Julia, LuaJIT, Rust,
     // TypeScript)
     [[nodiscard]] bool is_ffi() const
     {
@@ -124,6 +124,7 @@ public:
     [[nodiscard]] bool is_go() const { return m_language == GenLang::go; }
     [[nodiscard]] bool is_julia() const { return m_language == GenLang::julia; }
     [[nodiscard]] bool is_luajit() const { return m_language == GenLang::luajit; }
+    [[nodiscard]] bool is_rust() const { return m_language == GenLang::rust; }
     [[nodiscard]] bool is_typescript() const { return m_language == GenLang::typescript; }
 
     [[nodiscard]] bool is_local_var() const;
@@ -363,6 +364,15 @@ public:
     Code& AddIfTypeScript(wxue::string_view text)
     {
         if (is_typescript())
+        {
+            Add(text);
+        }
+        return *this;
+    }
+
+    Code& AddIfRust(wxue::string_view text)
+    {
+        if (is_rust())
         {
             Add(text);
         }

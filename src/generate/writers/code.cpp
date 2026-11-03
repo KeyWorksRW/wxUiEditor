@@ -265,6 +265,8 @@ constexpr size_t DEFAULT_LINE_LENGTH = 90;         // NOLINT (magic number)
             return Project.as_size_t(prop_julia_line_length);
         case GenLang::luajit:
             return Project.as_size_t(prop_lua_line_length);
+        case GenLang::rust:
+            return Project.as_size_t(prop_rust_line_length);
         case GenLang::typescript:
             return Project.as_size_t(prop_typescript_line_length);
         case GenLang::xrc:

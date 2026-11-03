@@ -50,7 +50,8 @@ void InfoBarBtnGenerator::GenEvent(Code& code, NodeEvent* event, const std::stri
     }
     else
     {
-        FAIL_MSG("Unknown language");
+        // kwx FFI languages have no event-handler value mapping yet -- emit nothing rather than
+        // asserting (the empty check below returns early).
         event_code.clear();
     }
 

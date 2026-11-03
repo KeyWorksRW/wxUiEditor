@@ -15,6 +15,7 @@
 #include "strategy_luajit.h"
 #include "strategy_python.h"
 #include "strategy_ruby.h"
+#include "strategy_rust.h"
 #include "strategy_typescript.h"
 
 // clang-format off
@@ -287,6 +288,43 @@ static constexpr LanguageTraits luajit_traits
     .supports_classes = true,
 };
 
+static constexpr LanguageTraits rust_traits
+{
+    .language = GenLang::rust,
+    .true_literal = "true",
+    .false_literal = "false",
+    .null_literal = "None",
+    .empty_string = "\"\"",
+    .self_reference = "self",
+    .member_operator = ".",
+    .scope_operator = "::",
+    .local_var_keyword = "let ",
+    .line_comment = "// ",
+    .indent_size = 4,
+    .line_offset = 1,
+    .stmt_end = ";",
+    .construction_suffix = "",
+    .wx_prefix = "wx",
+    .class_prefix = "wx",
+    .logical_and = " && ",
+    .logical_or = " || ",
+    .block_begin = "{",
+    .block_end = "}",
+    .conditional_begin = "if ",
+    .conditional_end = "",
+    .family = LanguageTraits::Family::ffi,
+    .feature_parity = LanguageTraits::FeatureParity::full,
+    .construction_style = LanguageTraits::ConstructionStyle::ffi_function,
+    .supports_markup = true,
+    .supports_lambda_events = false,
+    .needs_explicit_types = false,
+    .has_header_files = false,
+    .method_case = LanguageTraits::MethodCase::snake_case,
+    .removes_empty_parens = false,
+    .supports_namespaces = true,
+    .supports_classes = true,
+};
+
 static constexpr LanguageTraits typescript_traits
 {
     .language = GenLang::typescript,
@@ -346,6 +384,8 @@ const LanguageTraits* GetLanguageTraits(GenLang language)
             return &julia_traits;
         case GenLang::luajit:
             return &luajit_traits;
+        case GenLang::rust:
+            return &rust_traits;
         case GenLang::typescript:
             return &typescript_traits;
 
@@ -378,6 +418,9 @@ std::unique_ptr<LanguageStrategy> CreateLanguageStrategy(GenLang language)
 
         case GenLang::luajit:
             return std::make_unique<LuaJITStrategy>(luajit_traits);
+
+        case GenLang::rust:
+            return std::make_unique<RustStrategy>(rust_traits);
 
         case GenLang::typescript:
             return std::make_unique<TypeScriptStrategy>(typescript_traits);

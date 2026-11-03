@@ -151,17 +151,18 @@ enum class GenLang : unsigned int
     python = 1 << 1,
     ruby = 1 << 2,
 
-    // These 5 are the kwx languages (kwxFortran, kwxGO, etc.)
+    // These 6 are the kwx languages (kwxFortran, kwxGO, etc.)
     fortran = 1 << 3,
     go = 1 << 4,
     julia = 1 << 5,
     luajit = 1 << 6,
-    typescript = 1 << 7,
+    rust = 1 << 7,
+    typescript = 1 << 8,
 
     // These should always be the last languages in the list.
-    xrc = 1 << 8,
-    xml = 1 << 9,
-    reserved1 = 1 << 10,  // Reserved for future use
+    xrc = 1 << 9,
+    xml = 1 << 10,
+    reserved1 = 1 << 11,  // Reserved for future use
 };
 
 constexpr GenLang operator|(GenLang lang_a, GenLang lang_b)
@@ -189,7 +190,7 @@ constexpr GenLang& operator&=(GenLang& lang_a, GenLang lang_b)
 // Frozen set containing all supported code generation languages
 constexpr auto gen_lang_set = frozen::make_set<GenLang>(
     { GenLang::cplusplus, GenLang::fortran, GenLang::go, GenLang::julia, GenLang::luajit,
-      GenLang::python, GenLang::ruby, GenLang::typescript, GenLang::xrc });
+      GenLang::python, GenLang::ruby, GenLang::rust, GenLang::typescript, GenLang::xrc });
 
 // Used to index fields in a bitmap property
 enum PropIndex : std::uint8_t

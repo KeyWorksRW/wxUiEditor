@@ -55,6 +55,7 @@ protected:
     wxString m_luajit_line_length { "80" };
     wxString m_python_line_length { "90" };
     wxString m_ruby_line_length { "80" };
+    wxString m_rust_line_length { "100" };
     wxString m_typescript_line_length { "80" };
 
     // Class member variables
@@ -76,6 +77,7 @@ protected:
     wxChoice* m_choice_luajit_version;
     wxChoice* m_choice_python_version;
     wxChoice* m_choice_ruby_version;
+    wxChoice* m_choice_rust_version;
     wxChoice* m_choice_typescript_version;
     wxColourPickerCtrl* m_colour_cpp;
     wxColourPickerCtrl* m_colour_cpp_comment;
@@ -98,7 +100,6 @@ protected:
     wxColourPickerCtrl* m_colour_perl_string_11;
     wxColourPickerCtrl* m_colour_perl_string_12;
     wxColourPickerCtrl* m_colour_perl_string_13;
-    wxColourPickerCtrl* m_colour_perl_string_14;
     wxColourPickerCtrl* m_colour_python;
     wxColourPickerCtrl* m_colour_python_comment;
     wxColourPickerCtrl* m_colour_python_keyword;
@@ -108,9 +109,14 @@ protected:
     wxColourPickerCtrl* m_colour_ruby_comment;
     wxColourPickerCtrl* m_colour_ruby_number;
     wxColourPickerCtrl* m_colour_ruby_string;
+    wxColourPickerCtrl* m_colour_rust;
+    wxColourPickerCtrl* m_colour_rust_comment;
+    wxColourPickerCtrl* m_colour_rust_number;
+    wxColourPickerCtrl* m_colour_rust_string;
     wxColourPickerCtrl* m_colour_typescript;
     wxColourPickerCtrl* m_colour_typescript_comment;
     wxColourPickerCtrl* m_colour_typescript_number;
+    wxColourPickerCtrl* m_colour_typescript_string;
     wxColourPickerCtrl* m_colour_xrc_attribute;
     wxColourPickerCtrl* m_colour_xrc_string;
     wxColourPickerCtrl* m_colour_xrc_tag;

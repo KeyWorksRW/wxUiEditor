@@ -27,6 +27,7 @@ public:
     bool is_gen_luajit() const { return m_gen_luajit_code; }
     bool is_gen_python() const { return m_gen_python_code; }
     bool is_gen_ruby() const { return m_gen_ruby_code; }
+    bool is_gen_rust() const { return m_gen_rust_code; }
     bool is_gen_typescript() const { return m_gen_typescript_code; }
     bool is_gen_xrc() const { return m_gen_xrc_code; }
 
@@ -44,6 +45,7 @@ private:
     wxCheckBox* m_checkLuaJIT { nullptr };
     wxCheckBox* m_checkPython { nullptr };
     wxCheckBox* m_checkRuby { nullptr };
+    wxCheckBox* m_checkRust { nullptr };
     wxCheckBox* m_checkTypeScript { nullptr };
     wxCheckBox* m_checkXRC { nullptr };
 
@@ -55,6 +57,7 @@ private:
     bool m_gen_luajit_code { false };
     bool m_gen_python_code { false };
     bool m_gen_ruby_code { false };
+    bool m_gen_rust_code { false };
     bool m_gen_typescript_code { false };
     bool m_gen_xrc_code { false };
 };

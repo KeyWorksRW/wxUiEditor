@@ -489,10 +489,9 @@ namespace
                 return EventHandlerDlg::GetRubyValue(value);
 
             default:
-                FAIL_MSG(wxue::string()
-                         << "No event handlers for " << GenLangToString(language) << " ("
-                         << static_cast<int>(std::to_underlying(language)) << ")");
-                return EventHandlerDlg::GetCppValue(value);
+                // kwx FFI languages have no event-handler value mapping -- generate no
+                // handler code for them.
+                return std::string {};
         }
     }
 

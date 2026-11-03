@@ -296,6 +296,13 @@
 			help="Specify the code to insert into the typescript file after the generated import statements. This can be any valid typescript code for use before the class definition."/>
 	</gen>
 
+	<gen class="kwxRust Settings" type="interface">
+		<property name="rust_file" type="file"
+			help="The filename to use if generating code for kwxRust."/>
+		<property name="insert_rust_code" type="code_edit"
+			help="Specify the code to insert into the rust file after the generated statements. This can be any valid rust code for use before the class definition."/>
+	</gen>
+
 	<gen class="XRC Settings" type="interface">
 		<property name="xrc_file" type="file"
 			help="The filename to use if generating XRC. This will be ignored if the project specifies combined XRC files."/>
@@ -446,6 +453,19 @@
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
 
+	<gen class="kwxRust" type="interface">
+		<property name="kwxRust_version" type="option"
+			help="Specifies the minimum version of kwxRust needed to run the generated code.">
+			<option name="0.9.0"/> 0.9.0 </property>
+		<property name="rust_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all rust code."/>
+		<property name="rust_line_length" type="uint"
+			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
+			100</property>
+		<property name="rust_project_preamble" type="code_edit"
+			help="Code to generate at the top of every source file after the comment block."/>
+	</gen>
+
 	<gen class="wxPython" type="interface">
 		<property name="wxPython_version" type="option"
 			help="Specifies the minimum version of wxPython needed to run the generated code.">
@@ -536,6 +556,11 @@
 	<gen class="Folder kwxTypeScript Overrides" type="interface">
 		<property name="folder_typescript_output_folder" type="path"
 			help="Overrides any project setting of the output folder used for all generated wxTypeScript code. Only affects the forms within this folder."/>
+	</gen>
+
+	<gen class="Folder kwxRust Overrides" type="interface">
+		<property name="folder_rust_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated kwxRust code. Only affects the forms within this folder."/>
 	</gen>
 
 	<gen class="Folder XRC Overrides" type="interface">

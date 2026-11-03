@@ -179,6 +179,7 @@ public:
         SingleGenGO,
         SingleGenLuaJIT,
         SingleGenJulia,
+        SingleGenRust,
         SingleGenTypeScript,
         SingleGenXRC,
         SingleGenPerl,

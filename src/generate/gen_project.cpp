@@ -103,7 +103,8 @@ bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePrope
     if (prop->isProp(prop_cpp_line_length) || prop->isProp(prop_python_line_length) ||
         prop->isProp(prop_ruby_line_length) || prop->isProp(prop_fortran_line_length) ||
         prop->isProp(prop_go_line_length) || prop->isProp(prop_julia_line_length) ||
-        prop->isProp(prop_lua_line_length) || prop->isProp(prop_typescript_line_length))
+        prop->isProp(prop_lua_line_length) || prop->isProp(prop_typescript_line_length) ||
+        prop->isProp(prop_rust_line_length))
     {
         wxVariant const variant = event->GetPropertyValue();
         long const num = variant.GetInteger();

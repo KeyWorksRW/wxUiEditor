@@ -30,6 +30,7 @@ static bool gen_julia_code = false;
 static bool gen_luajit_code = false;
 static bool gen_python_code = false;
 static bool gen_ruby_code = false;
+static bool gen_rust_code = false;
 static bool gen_typescript_code = false;
 static bool gen_xrc_code = false;
 
@@ -182,6 +183,12 @@ bool MainFrame::GenerateFromDialog(GenResults& results)
         lang_flags |= GenLang::luajit;
     }
 
+    gen_rust_code = dialog.is_gen_rust();
+    if (gen_rust_code)
+    {
+        lang_flags |= GenLang::rust;
+    }
+
     gen_typescript_code = dialog.is_gen_typescript();
     if (gen_typescript_code)
     {
@@ -226,6 +233,7 @@ void MainFrame::SaveGenerationPreferences()
     config->Write("gen_go_code", gen_go_code);
     config->Write("gen_julia_code", gen_julia_code);
     config->Write("gen_luajit_code", gen_luajit_code);
+    config->Write("gen_rust_code", gen_rust_code);
     config->Write("gen_typescript_code", gen_typescript_code);
     config->SetPath("/");
 }
@@ -353,6 +361,9 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         case GenLang::luajit:
             gen_luajit_code = true;
             break;
+        case GenLang::rust:
+            gen_rust_code = true;
+            break;
         case GenLang::typescript:
             gen_typescript_code = true;
             break;
@@ -428,6 +439,13 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_checkLuaJIT = new wxCheckBox(this, wxID_ANY, "LuaJIT");
         m_checkLuaJIT->SetValidator(wxGenericValidator(&m_gen_luajit_code));
         m_grid_sizer->Add(m_checkLuaJIT, wxSizerFlags().Border(wxALL));
+    }
+    if (languages & GenLang::rust || gen_rust_code)
+    {
+        m_gen_rust_code = gen_rust_code;
+        m_checkRust = new wxCheckBox(this, wxID_ANY, "Rust");
+        m_checkRust->SetValidator(wxGenericValidator(&m_gen_rust_code));
+        m_grid_sizer->Add(m_checkRust, wxSizerFlags().Border(wxALL));
     }
     if (languages & GenLang::typescript || gen_typescript_code)
     {

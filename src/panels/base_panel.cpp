@@ -98,6 +98,13 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
     }
+    else if (m_panel_type == GenLang::rust)
+    {
+        m_source_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
+        m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
+        m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+    }
     else if (m_panel_type == GenLang::typescript)
     {
         m_source_panel = new CodeDisplay(m_notebook, panel_type);

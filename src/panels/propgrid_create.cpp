@@ -947,6 +947,22 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
             m_prop_grid->Collapse(category_id);
         }
     }
+    else if (name.contains("kwxRust"))
+    {
+        if (UserPrefs.is_DarkMode())
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id, wxColour("#8c2b16"));
+        }
+        else
+        {
+            m_prop_grid->SetPropertyBackgroundColour(category_id,
+                                                     wxColour("#ffccbc"));  // Rust orange
+        }
+        if (Project.get_CodePreference(node) != GenLang::rust)
+        {
+            m_prop_grid->Collapse(category_id);
+        }
+    }
     else if (name.contains("XRC"))
     {
         if (UserPrefs.is_DarkMode())

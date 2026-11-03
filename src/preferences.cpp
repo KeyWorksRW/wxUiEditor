@@ -46,6 +46,7 @@ void Prefs::ReadConfig()
     {
         m_ruby_version = "1.2";
     }
+    m_rust_version = config->Read("rust_version", "0.9.0");
 
     m_colour_cpp = config->Read("cpp_colour", "#FF00FF");
     m_colour_cpp_comment = config->Read("cpp_comment_colour", "#008000");
@@ -64,6 +65,11 @@ void Prefs::ReadConfig()
     m_colour_ruby_number = config->Read("ruby_number_colour", "#FF0000");
     m_colour_ruby_string = config->Read("ruby_string_colour", "#008000");
 
+    m_colour_rust = config->Read("rust_colour", "#FF00FF");
+    m_colour_rust_comment = config->Read("rust_comment_colour", "#008000");
+    m_colour_rust_number = config->Read("rust_number_colour", "#FF0000");
+    m_colour_rust_string = config->Read("rust_string_colour", "#008000");
+
     m_colour_perl = config->Read("perl_colour", "#FF00FF");
     m_colour_perl_comment = config->Read("perl_comment_colour", "#008000");
     m_colour_perl_keyword = config->Read("perl_keyword_colour", "#0000FF");
@@ -77,6 +83,7 @@ void Prefs::ReadConfig()
     m_cpp_line_length = config->Read("cpp_line_length", 110);
     m_python_line_length = config->Read("python_line_length", 90);
     m_ruby_line_length = config->Read("ruby_line_length", 80);
+    m_rust_line_length = config->Read("rust_line_length", 100);
     m_perl_line_length = config->Read("perl_line_length", 80);
 
     m_icon_size = config->Read("icon_size", 20);
@@ -108,6 +115,7 @@ void Prefs::WriteConfig()
     config->Write("cpp_widgets_version", m_cpp_widgets_version.wx());
     config->Write("python_version", m_python_version.wx());
     config->Write("ruby_version", m_ruby_version.wx());
+    config->Write("rust_version", m_rust_version.wx());
     config->Write("preview_type", std::to_underlying(m_preview_type));
 
     config->Write("cpp_colour", m_colour_cpp.GetAsString(wxC2S_HTML_SYNTAX));
@@ -127,6 +135,11 @@ void Prefs::WriteConfig()
     config->Write("ruby_number_colour", m_colour_ruby_number.GetAsString(wxC2S_HTML_SYNTAX));
     config->Write("ruby_string_colour", m_colour_ruby_string.GetAsString(wxC2S_HTML_SYNTAX));
 
+    config->Write("rust_colour", m_colour_rust.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("rust_comment_colour", m_colour_rust_comment.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("rust_number_colour", m_colour_rust_number.GetAsString(wxC2S_HTML_SYNTAX));
+    config->Write("rust_string_colour", m_colour_rust_string.GetAsString(wxC2S_HTML_SYNTAX));
+
     config->Write("xrc_colour", m_colour_xrc_attribute.GetAsString(wxC2S_HTML_SYNTAX));
     config->Write("xrc_dblstring_colour", m_colour_xrc_dblstring.GetAsString(wxC2S_HTML_SYNTAX));
     config->Write("xrc_tag_colour", m_colour_xrc_tag.GetAsString(wxC2S_HTML_SYNTAX));
@@ -134,6 +147,7 @@ void Prefs::WriteConfig()
     config->Write("cpp_line_length", m_cpp_line_length);
     config->Write("python_line_length", m_python_line_length);
     config->Write("ruby_line_length", m_ruby_line_length);
+    config->Write("rust_line_length", m_rust_line_length);
 
     config->Write("icon_size", m_icon_size);
 

@@ -38,6 +38,7 @@
 #include "gen_luajit.h"      // LuaJITCodeGenerator -- Generate LuaJIT code
 #include "gen_python.h"      // PythonCodeGenerator -- Generate wxPython code
 #include "gen_ruby.h"        // RubyCodeGenerator -- Generate wxRuby code
+#include "gen_rust.h"        // RustCodeGenerator -- Generate Rust code
 #include "gen_typescript.h"  // TypeScriptCodeGenerator -- Generate TypeScript code
 #include "gen_xrc.h"         // XrcCodeGenerator -- Generate XRC code
 #include "write_code.h"      // WriteCode -- Write code to a string
@@ -343,6 +344,10 @@ bool GenResults::GenerateForDisplay()
             code_generator = std::make_unique<LuaJITCodeGenerator>(form);
             break;
 
+        case GenLang::rust:
+            code_generator = std::make_unique<RustCodeGenerator>(form);
+            break;
+
         case GenLang::typescript:
             code_generator = std::make_unique<TypeScriptCodeGenerator>(form);
             break;
@@ -632,6 +637,10 @@ bool GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             code_generator = std::make_unique<LuaJITCodeGenerator>(form);
             break;
 
+        case GenLang::rust:
+            code_generator = std::make_unique<RustCodeGenerator>(form);
+            break;
+
         case GenLang::typescript:
             code_generator = std::make_unique<TypeScriptCodeGenerator>(form);
             break;
@@ -667,6 +676,9 @@ bool GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
             break;
         case GenLang::luajit:
             file_ext = ".lua";
+            break;
+        case GenLang::rust:
+            file_ext = ".rs";
             break;
         case GenLang::typescript:
             file_ext = ".ts";

@@ -567,6 +567,16 @@ namespace GenEnum
         prop_typescript_project_preamble,
         prop_kwxtypescript_version,
 
+        prop_folder_rust_output_folder,
+        prop_rust_conditional,
+        prop_rust_file,
+        prop_rust_inherit_name,
+        prop_rust_insert,
+        prop_rust_line_length,
+        prop_rust_output_folder,
+        prop_rust_project_preamble,
+        prop_kwxRust_version,
+
         prop_folder_python_combined_file,
         prop_folder_python_output_folder,
         prop_python_combine_forms,
@@ -751,6 +761,7 @@ namespace GenEnum
         gen_folder_wxJulia,
         gen_folder_wxLua,
         gen_folder_kwxTypeScript,
+        gen_folder_kwxRust,
         gen_sizer_child,
         gen_sizeritem_settings,
         gen_wxTopLevelWindow,
@@ -768,6 +779,7 @@ namespace GenEnum
         gen_kwxJulia,
         gen_kwxLua,
         gen_kwxTypeScript,
+        gen_kwxRust,
 
         gen_LanguageSettings,  // Using this will pull in all the language settings
 
@@ -781,6 +793,7 @@ namespace GenEnum
         gen_JuliaSettings,
         gen_LuaSettings,
         gen_TypeScriptSettings,
+        gen_RustSettings,
 
         // These are special purpose generators. gen_Images is used for code, but gen_folder is
         // just for organtizing forms in the Navigation panel.

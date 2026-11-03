@@ -65,9 +65,13 @@ bool CodePreferenceDlg::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBtn_Ruby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
     grid_sizer->Add(m_radioBtn_Ruby, wxSizerFlags().Border(wxALL));
 
-    auto* m_radioBtn_TypeScript = new wxRadioButton(this, wxID_ANY, "&Rust");
+    auto* m_radioBtn_TypeScript = new wxRadioButton(this, wxID_ANY, "&TypeScript");
     m_radioBtn_TypeScript->SetValidator(wxGenericValidator(&m_gen_typescript_code));
     grid_sizer->Add(m_radioBtn_TypeScript, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_Rust = new wxRadioButton(this, wxID_ANY, "&Rust");
+    m_radioBtn_Rust->SetValidator(wxGenericValidator(&m_gen_rust_code));
+    grid_sizer->Add(m_radioBtn_Rust, wxSizerFlags().Border(wxALL));
 
     m_radioBtn_XRC = new wxRadioButton(this, wxID_ANY, "&XRC");
     m_radioBtn_XRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));

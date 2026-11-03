@@ -4075,6 +4075,90 @@
                   </node>
                 </node>
               </node>
+              <node
+                class="BookPage"
+                bitmap="SVG;rust_logo.svg;[24,24]"
+                class_access="protected:"
+                label="Rust"
+                var_name="m_rust_bookpage"
+                background_colour="wxSYS_COLOUR_BTNFACE"
+                window_style="wxTAB_TRAVERSAL">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="page_sizer8">
+                  <node
+                    class="StaticRadioBtnBoxSizer"
+                    checked="0"
+                    class_access="protected:"
+                    label="Use function"
+                    radiobtn_var_name="m_perl_radio_use_function7"
+                    var_name="m_perl_function_box7"
+                    flags="wxEXPAND"
+                    wxEVT_RADIOBUTTON="OnUseRubyFunction">
+                    <node
+                      class="wxBoxSizer"
+                      var_name="box_sizer17"
+                      flags="wxEXPAND">
+                      <node
+                        class="wxTextCtrl"
+                        var_name="m_rust_text_function"
+                        flags="wxEXPAND"
+                        proportion="1"
+                        wxEVT_TEXT="OnChange" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="Default"
+                        var_name="btn19"
+                        wxEVT_BUTTON="OnDefault" />
+                      <node
+                        class="wxButton"
+                        class_access="none"
+                        label="None"
+                        var_name="btn20"
+                        wxEVT_BUTTON="OnNone" />
+                    </node>
+                    <node
+                      class="StaticRadioBtnBoxSizer"
+                      checked="0"
+                      class_access="protected:"
+                      label="Closure"
+                      radiobtn_var_name="m_perl_radio_use_anon_func6"
+                      var_name="m_perl_lambda_box6"
+                      flags="wxEXPAND"
+                      proportion="1"
+                      wxEVT_RADIOBUTTON="OnUsePerlLambda">
+                      <node
+                        class="wxBoxSizer"
+                        var_name="box_sizer16" />
+                      <node
+                        class="wxStaticText"
+                        class_access="none"
+                        label="Function:"
+                        var_name="static_text_rust_lambda" />
+                      <node
+                        class="wxStyledTextCtrl"
+                        additional_carets_blink="1"
+                        indentation_guides="forward"
+                        lexer="RUST"
+                        multiple_selection_typing="1"
+                        multiple_selections="1"
+                        paste_multiple="1"
+                        symbol_margin="0"
+                        use_tabs="0"
+                        var_name="m_rust_stc_lambda"
+                        wrap_indent_mode="indent"
+                        wrap_mode="word"
+                        wrap_visual_flag="end"
+                        minimum_size="400,-1"
+                        border_size="10"
+                        flags="wxEXPAND"
+                        proportion="1" />
+                    </node>
+                  </node>
+                </node>
+              </node>
             </node>
           </node>
           <node
@@ -6189,6 +6273,11 @@
               wxEVT_RADIOBUTTON="OnLuaJIT" />
             <node
               class="wxRadioButton"
+              label="&amp;Rust"
+              var_name="m_radio_rust"
+              wxEVT_RADIOBUTTON="OnRust" />
+            <node
+              class="wxRadioButton"
               label="&amp;TypeScript"
               var_name="m_radio_typescript"
               wxEVT_RADIOBUTTON="OnTypeScript" />
@@ -6322,10 +6411,16 @@
           <node
             class="wxRadioButton"
             class_access="none"
-            label="&amp;Rust"
+            label="&amp;TypeScript"
             var_name="m_radioBtn_TypeScript"
             get_function="is_gen_typescript"
             validator_variable="m_gen_typescript_code" />
+          <node
+            class="wxRadioButton"
+            label="&amp;Rust"
+            var_name="m_radioBtn_Rust"
+            get_function="is_gen_rust"
+            validator_variable="m_gen_rust_code" />
           <node
             class="wxRadioButton"
             label="&amp;XRC"
@@ -7910,7 +8005,7 @@
                 <node
                   class="wxChoice"
                   contents="&quot;0.9.0&quot; &quot;1.0.0&quot;"
-                  selection_string="0.0.0"
+                  selection_string="0.9.0"
                   var_name="m_choice_typescript_version"
                   tooltip="Code requiring a newer version then this will be placed in a conditional block." />
               </node>
@@ -7956,7 +8051,98 @@
                 <node
                   class="wxColourPickerCtrl"
                   colour="#008000"
-                  var_name="m_colour_perl_string_14" />
+                  var_name="m_colour_typescript_string" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            bitmap="SVG;rust_logo.svg;[24,24]"
+            label="Rust"
+            var_name="page_rust"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer5_15">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer13_15">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Line Length"
+                  var_name="staticText27_15"
+                  wrap="200"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxTextCtrl"
+                  class_access="none"
+                  value="100"
+                  var_name="text_rust_line_length"
+                  validator_style="wxFILTER_DIGITS"
+                  validator_variable="m_rust_line_length"
+                  tooltip="Most generated code will not exceed this length. This will be the initial value when a new project is created." />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer14_15">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="kwxrust version"
+                  var_name="static_text7_15"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxChoice"
+                  contents="&quot;0.9.0&quot; &quot;1.0.0&quot;"
+                  selection_string="0.9.0"
+                  var_name="m_choice_rust_version"
+                  tooltip="Code requiring a newer version then this will be placed in a conditional block." />
+              </node>
+              <node
+                class="wxGridSizer"
+                var_name="grid_sizer7_15">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxWidgets &amp;keyword color:"
+                  var_name="staticText28_15"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF00FF"
+                  var_name="m_colour_rust" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Comment color:"
+                  var_name="staticText29_15"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_rust_comment" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;Number color:"
+                  var_name="staticText30_15"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#FF0000"
+                  var_name="m_colour_rust_number" />
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="&amp;String color:"
+                  var_name="staticText31_15"
+                  alignment="wxALIGN_CENTER_VERTICAL" />
+                <node
+                  class="wxColourPickerCtrl"
+                  colour="#008000"
+                  var_name="m_colour_rust_string" />
               </node>
             </node>
           </node>

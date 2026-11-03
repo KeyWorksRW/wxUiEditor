@@ -50,6 +50,7 @@ protected:
     virtual void OnLuaJIT(wxCommandEvent& event) = 0;
     virtual void OnPython(wxCommandEvent& event) = 0;
     virtual void OnRuby(wxCommandEvent& event) = 0;
+    virtual void OnRust(wxCommandEvent& event) = 0;
     virtual void OnTypeScript(wxCommandEvent& event) = 0;
     virtual void OnXRC(wxCommandEvent& event) = 0;
 
@@ -64,6 +65,7 @@ protected:
     wxRadioButton* m_radio_luajit;
     wxRadioButton* m_radio_python;
     wxRadioButton* m_radio_ruby;
+    wxRadioButton* m_radio_rust;
     wxRadioButton* m_radio_typescript;
     wxRadioButton* m_radio_xrc;
     wxStaticText* m_changed_classes_text;

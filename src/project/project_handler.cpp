@@ -320,6 +320,7 @@ wxue::string ProjectHandler::GetFolderOutputPath(Node* folder, GenLang language,
             { GenLang::julia, prop_folder_julia_output_folder },
             { GenLang::luajit, prop_folder_lua_output_folder },
             { GenLang::typescript, prop_folder_typescript_output_folder },
+            { GenLang::rust, prop_folder_rust_output_folder },
             { GenLang::ruby, prop_folder_ruby_output_folder },
             { GenLang::xrc, prop_folder_xrc_directory }
         };
@@ -340,6 +341,12 @@ wxue::string ProjectHandler::GetProjectOutputPath(GenLang language) const
         { GenLang::cplusplus, prop_base_directory },
         { GenLang::python, prop_python_output_folder },
         { GenLang::ruby, prop_ruby_output_folder },
+        { GenLang::fortran, prop_fortran_output_folder },
+        { GenLang::go, prop_go_output_folder },
+        { GenLang::julia, prop_julia_output_folder },
+        { GenLang::luajit, prop_lua_output_folder },
+        { GenLang::rust, prop_rust_output_folder },
+        { GenLang::typescript, prop_typescript_output_folder },
         { GenLang::xrc, prop_xrc_directory }
     };
 
@@ -365,7 +372,7 @@ wxue::string ProjectHandler::GetBaseFilename(Node* form, GenLang language) const
         { GenLang::ruby, prop_ruby_file },      { GenLang::fortran, prop_fortran_file },
         { GenLang::go, prop_go_file },          { GenLang::julia, prop_julia_file },
         { GenLang::luajit, prop_lua_file },     { GenLang::typescript, prop_typescript_file },
-        { GenLang::xrc, prop_xrc_file }
+        { GenLang::rust, prop_rust_file },      { GenLang::xrc, prop_xrc_file }
     };
 
     const std::map<GenLang, PropName>::const_iterator iter =
@@ -453,6 +460,7 @@ std::string ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) c
             { GenLang::cplusplus, prop_folder_derived_directory },
             { GenLang::python, prop_folder_python_output_folder },
             { GenLang::ruby, prop_folder_ruby_output_folder },
+            { GenLang::rust, prop_folder_rust_output_folder },
             { GenLang::xrc, prop_folder_xrc_directory }
         };
         if (auto iter = folderLangPropMap.find(language); iter != folderLangPropMap.end())
@@ -480,6 +488,12 @@ std::string ProjectHandler::get_DerivedDirectory(Node* node, GenLang language) c
             { GenLang::cplusplus, prop_derived_directory },
             { GenLang::python, prop_python_output_folder },
             { GenLang::ruby, prop_ruby_output_folder },
+            { GenLang::fortran, prop_fortran_output_folder },
+            { GenLang::go, prop_go_output_folder },
+            { GenLang::julia, prop_julia_output_folder },
+            { GenLang::luajit, prop_lua_output_folder },
+            { GenLang::rust, prop_rust_output_folder },
+            { GenLang::typescript, prop_typescript_output_folder },
             { GenLang::xrc, prop_xrc_directory }
         };
 
@@ -565,6 +579,7 @@ GenLang ProjectHandler::get_CodePreference(Node* node) const
         { "Julia", GenLang::julia },
         { "LuaJIT", GenLang::luajit },
         { "TypeScript", GenLang::typescript },
+        { "Rust", GenLang::rust },
         { "XRC", GenLang::xrc }
     };
     // clang-format on
@@ -594,6 +609,7 @@ GenLang ProjectHandler::get_GenerateLanguages() const
         { "Python", std::to_underlying(GenLang::python) },
         { "Ruby", std::to_underlying(GenLang::ruby) },
         { "TypeScript", std::to_underlying(GenLang::typescript) },
+        { "Rust", std::to_underlying(GenLang::rust) },
         { "XRC", std::to_underlying(GenLang::xrc) }
     };
     // clang-format on
@@ -986,6 +1002,7 @@ static const std::map<GenLang, PropName> langPropMap = {
     { GenLang::julia, prop_kwxJulia_version },
     { GenLang::luajit, prop_kwxLuaJIT_version },
     { GenLang::typescript, prop_kwxtypescript_version },
+    { GenLang::rust, prop_kwxRust_version },
     { GenLang::xrc, prop_wxWidgets_version }
 };
 // clang-format on

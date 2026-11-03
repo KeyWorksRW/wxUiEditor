@@ -699,6 +699,7 @@ void NodeCreator::ProcessGeneratorInheritance(pugi::xml_node& elem_obj)
             class_info->AddBaseClass(get_NodeDeclaration("kwxJulia Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("kwxLuaJIT Settings"));
             class_info->AddBaseClass(get_NodeDeclaration("kwxTypeScript Settings"));
+            class_info->AddBaseClass(get_NodeDeclaration("kwxRust Settings"));
             // NOLINTEND(bugprone-unchecked-error-return)
 
             elem_base = elem_base.next_sibling("inherits");

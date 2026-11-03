@@ -52,21 +52,21 @@ static TypeScriptFormField GetFormField(Node* form_node)
 {
     if (form_node->is_Gen(gen_wxWizard))
     {
-        return TypeScriptFormField{ "wizard", "wxWizard" };
+        return TypeScriptFormField { "wizard", "wxWizard" };
     }
     if (form_node->is_Gen(gen_wxDialog) || form_node->is_Gen(gen_wxPropertySheetDialog))
     {
-        return TypeScriptFormField{ "dialog", "wxDialog" };
+        return TypeScriptFormField { "dialog", "wxDialog" };
     }
     if (form_node->is_Gen(gen_wxPopupWindow))
     {
-        return TypeScriptFormField{ "frame", "wxPopupWindow" };
+        return TypeScriptFormField { "frame", "wxPopupWindow" };
     }
     if (form_node->is_Gen(gen_wxPopupTransientWindow))
     {
-        return TypeScriptFormField{ "frame", "wxPopupTransientWindow" };
+        return TypeScriptFormField { "frame", "wxPopupTransientWindow" };
     }
-    return TypeScriptFormField{ "frame", "wxFrame" };
+    return TypeScriptFormField { "frame", "wxFrame" };
 }
 
 // Converts "kwxMainFrame" to "KwxMainFrame".

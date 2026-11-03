@@ -27,6 +27,11 @@ bool IDEditorDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
+    m_infoBar = new wxInfoBar(this);
+    m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    m_infoBar->SetEffectDuration(500);
+    dlg_sizer->Add(m_infoBar, wxSizerFlags(1).Expand().Border(wxALL));
+
     m_radioBtn_Standard = new wxRadioButton(this, wxID_ANY, "&wxWidgets Standard ID", wxDefaultPosition, wxDefaultSize,
         wxRB_SINGLE);
     m_std_id_box = new wxStaticBoxSizer(

@@ -4610,6 +4610,11 @@
           var_name="dlg_sizer"
           flags="wxEXPAND">
           <node
+            class="wxInfoBar"
+            var_name="m_infoBar"
+            flags="wxEXPAND"
+            proportion="1" />
+          <node
             class="StaticRadioBtnBoxSizer"
             class_access="protected:"
             label="&amp;wxWidgets Standard ID"

@@ -21,6 +21,19 @@
 #include "project_handler.h"      // ProjectHandler class
 #include "utils.h"                // Utility functions that work with properties
 
+namespace
+{
+    // When an image node is added to or removed from an Images List, the form used by code
+    // generation for that image must be recalculated. See issue #1534.
+    void UpdateImageFormForNode(Node* node)
+    {
+        if (node->is_Gen(gen_embedded_image))
+        {
+            ProjectImages.UpdateImageForm(node->as_string(prop_bitmap));
+        }
+    }
+}  // namespace
+
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
 InsertNodeAction::InsertNodeAction(Node* node, Node* parent, std::string_view undo_str, int pos) :
@@ -60,6 +73,8 @@ void InsertNodeAction::Change()
         }
     }
 
+    UpdateImageFormForNode(m_node.get());
+
     if (m_fix_duplicate_names)
     {
         // This needs to be done only once, even if the insertion is reverted and then changed
@@ -86,6 +101,9 @@ void InsertNodeAction::Revert()
 {
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());  // Remove the parent pointer
+
+    UpdateImageFormForNode(m_node.get());
+
     if (m_fire_created_event)
     {
         wxGetFrame().FireDeletedEvent(m_node.get());
@@ -122,6 +140,8 @@ void RemoveNodeAction::Change()
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());
 
+    UpdateImageFormForNode(m_node.get());
+
     wxGetFrame().FireDeletedEvent(m_node.get());
 
     if (m_parent->get_ChildCount())
@@ -147,6 +167,8 @@ void RemoveNodeAction::Revert()
     m_parent->AddChild(m_node);
     m_node->set_Parent(m_parent);
     m_parent->ChangeChildPosition(m_node, m_old_pos);
+
+    UpdateImageFormForNode(m_node.get());
 
     if (isAllowedSelectEvent())
     {

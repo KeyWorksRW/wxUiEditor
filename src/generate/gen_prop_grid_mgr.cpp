@@ -9,8 +9,10 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
+#include "pugixml.hpp"        // xml read/write/create/process
 #include "utils.h"            // Utility functions that work with properties
 #include "utils_prop_grid.h"  // PropertyGrid utilities
 
@@ -135,6 +137,45 @@ bool PropertyGridManagerGenerator::GetImports([[maybe_unused]] Node* node,
         return true;
     }
     return false;
+}
+
+int PropertyGridManagerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+{
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxPropertyGridManager");
+    GenXrcPreStylePosSize(node, item, GetXrcPropertyGridStyle(node, "wxPGMAN_DEFAULT_STYLE"));
+    GenXrcWindowSettings(node, item);
+
+    if (xrc_flags & xrc::add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    for (const auto& child: node->get_ChildNodePtrs())
+    {
+        if (!child->is_Gen(gen_propGridPage))
+        {
+            continue;
+        }
+
+        pugi::xml_node page = item.append_child("page");
+        if (child->HasValue(prop_label))
+        {
+            page.append_child("label").text().set(child->as_string(prop_label));
+        }
+        GenXrcPropertyGridChildren(child.get(), page);
+    }
+
+    return result;
+}
+
+void PropertyGridManagerGenerator::RequiredHandlers([[maybe_unused]] Node* node,
+                                                    std::set<std::string>& handlers)
+{
+    handlers.emplace("wxPropertyGridXmlHandler");
 }
 
 /////////////////////////////////  PropertyGridPageGenerator ////////////////////////////////////

@@ -18,6 +18,7 @@
 
 #include <wx/xrc/xh_aui.h>             // XRC resource handler for wxAUI
 #include <wx/xrc/xh_auitoolb.h>        // XML resource handler for wxAuiToolBar
+#include <wx/xrc/xh_propgrid.h>        // XML resource handler for wxPropertyGrid
 #include <wx/xrc/xh_ribbon.h>          // XML resource handler for wxRibbon related classes
 #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
@@ -92,6 +93,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node, bool compare_import
         xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
         xrc_resource->AddHandler(new wxRibbonXmlHandler);
         xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
+        xrc_resource->AddHandler(new wxPropertyGridXmlHandler);
     }
 
     // Distinct names for the generated and import documents -- wxXmlResource::Unload() only

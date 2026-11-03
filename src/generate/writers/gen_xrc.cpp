@@ -43,6 +43,14 @@ const char* txt_dlg_name = "_wxue_temp_dlg";
 
 int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
+    // These generators write their own children (<property>/<page>), so the generic <object>
+    // child loop below must not run for them.
+    auto writes_own_children = [](Node* candidate)
+    {
+        return candidate->is_Gen(gen_tool_dropdown) || candidate->is_Gen(gen_wxPropertyGrid) ||
+               candidate->is_Gen(gen_wxPropertyGridManager);
+    };
+
     auto* generator = node->get_NodeDeclaration()->get_Generator();
     auto result = generator->GenXrcObject(node, object, xrc_flags);
     if (result == BaseGenerator::xrc_not_supported)
@@ -69,6 +77,11 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 
     if (result == BaseGenerator::xrc_sizer_item_created)
     {
+        if (writes_own_children(node))
+        {
+            return result;
+        }
+
         auto actual_object = object.child("object");
         if (node->is_Gen(gen_wxCollapsiblePane))
         {
@@ -125,9 +138,9 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
     }
     if (result == BaseGenerator::xrc_updated)
     {
-        if (node->is_Gen(gen_tool_dropdown))
+        if (writes_own_children(node))
         {
-            return result;  // The dropdown tool will already have handled it's children.
+            return result;  // The node will already have handled it's children.
         }
 
         for (const auto& child: node->get_ChildNodePtrs())

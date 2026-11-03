@@ -10,6 +10,7 @@
 
 #include "gen_enums.h"  // Enumerations for generators
 #include "node.h"       // Node class
+#include "pugixml.hpp"  // xml read/write/create/process
 
 #include "utils_prop_grid.h"
 
@@ -49,6 +50,83 @@ void AfterCreationAddItems(wxPropertyGridInterface* grid_iface, Node* node)
             AfterCreationAddItems(grid_iface, child.get());
         }
     }
+}
+
+std::string GetXrcPropertyClass(Node* node)
+{
+    if (node->is_Gen(gen_propGridCategory))
+    {
+        return "wxPropertyCategory";
+    }
+
+    if (node->is_Gen(gen_propGridItem) && node->as_string(prop_type) == "Category")
+    {
+        return "wxPropertyCategory";
+    }
+
+    std::string class_name = "wx";
+    class_name += node->as_string(prop_type);
+    class_name += "Property";
+    return class_name;
+}
+
+void GenXrcPropertyGridItem(Node* node, pugi::xml_node& parent)
+{
+    pugi::xml_node item = parent.append_child("property");
+
+    const std::string class_name = GetXrcPropertyClass(node);
+    item.append_attribute("class").set_value(class_name.c_str());
+
+    item.append_child("label").text().set(node->as_string(prop_label));
+    item.append_child("name").text().set(node->as_string(prop_var_name));
+
+    if (node->HasProp(prop_help) && node->HasValue(prop_help))
+    {
+        item.append_child("tip").text().set(node->as_string(prop_help));
+    }
+
+    GenXrcPropertyGridChildren(node, item);
+}
+
+void GenXrcPropertyGridChildren(Node* node, pugi::xml_node& parent)
+{
+    for (const auto& child: node->get_ChildNodePtrs())
+    {
+        if (child->is_Gen(gen_propGridItem) || child->is_Gen(gen_propGridCategory))
+        {
+            GenXrcPropertyGridItem(child.get(), parent);
+        }
+    }
+}
+
+std::string GetXrcPropertyGridStyle(Node* node, std::string_view default_style)
+{
+    const wxue::string& style = node->as_string(prop_style);
+
+    std::string result;
+    size_t start = 0;
+    while (start < style.size())
+    {
+        size_t end = style.find('|', start);
+        if (end == wxue::string::npos)
+        {
+            end = style.size();
+        }
+
+        const std::string_view token = std::string_view(style).substr(start, end - start);
+        if (!token.empty() && token != default_style)
+        {
+            if (!result.empty())
+            {
+                result += '|';
+            }
+            result += token;
+        }
+
+        start = end + 1;
+    }
+
+    return result;
 }
 
 // clang-format off

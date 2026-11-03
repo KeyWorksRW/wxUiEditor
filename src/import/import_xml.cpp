@@ -6,7 +6,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-15-2026]
 
+#include <algorithm>
+#include <array>
 #include <filesystem>
+#include <string_view>
 
 #include <frozen/map.h>
 
@@ -1496,6 +1499,230 @@ void ImportXML::LogUnrecognizedObject([[maybe_unused]] const wxue::string& objec
 #endif
 }
 
+// XRC property class names are the wxWidgets class name, e.g. "wxStringProperty".
+static constexpr std::string_view XRC_WX_PREFIX = "wx";
+static constexpr std::string_view XRC_PROPERTY_SUFFIX = "Property";
+
+// Legal values for the propGridItem type property. XRC uses the wxWidgets class name
+// (e.g., "wxStringProperty"), which is converted to one of these names.
+// clang-format off
+static constexpr std::array<std::string_view, 19> PROP_GRID_ITEM_TYPES = {
+    "ArrayString",
+    "Bool",
+    "Colour",
+    "Cursor",
+    "Date",
+    "Dir",
+    "EditEnum",
+    "Enum",
+    "File",
+    "Flags",
+    "Float",
+    "Font",
+    "ImageFile",
+    "Int",
+    "LongString",
+    "MultiChoice",
+    "String",
+    "SystemColour",
+    "UInt",
+};
+// clang-format on
+
+// wxPropertyGrid/wxPropertyGridManager store their hierarchy in <property> and <page> child
+// elements rather than <object> children.
+void ImportXML::ProcessPropertyGridChildren(const pugi::xml_node& xml_obj, Node* parent)
+{
+    for (const auto& iter: xml_obj.children())
+    {
+        const std::string_view child_name = iter.name();
+        if (child_name == "property")
+        {
+            ProcessPropertyGridItem(iter, parent);
+        }
+        else if (child_name == "page" && parent->is_Gen(gen_wxPropertyGridManager))
+        {
+            const NodeSharedPtr page_node = NodeCreation.CreateNode(gen_propGridPage, parent).first;
+            if (!page_node)
+            {
+                LogUnrecognizedObject("page", parent);
+                continue;
+            }
+
+            const std::string label = iter.child_as_cstr("label");
+            if (!label.empty())
+            {
+                page_node->set_value(prop_label, label);
+            }
+
+            parent->AdoptChild(page_node);
+
+            // A page is a container -- its properties are child <property> elements.
+            ProcessPropertyGridChildren(iter, page_node.get());
+        }
+
+        // Anything else ("style", "pos", "size", "columns", "virtualwidth", "choices",
+        // "attribute", "splitterpos") has no wxUiEditor equivalent.
+    }
+}
+
+void ImportXML::ProcessPropertyGridItem(const pugi::xml_node& xml_obj, Node* parent)
+{
+    const std::string class_name = xml_obj.attribute("class").as_str();
+    if (class_name.empty())
+    {
+        LogUnrecognizedObject("property", parent);
+        return;
+    }
+
+    GenEnum::GenName gen_name = gen_unknown;
+    std::string item_type;
+
+    if (class_name == "wxPropertyCategory")
+    {
+        gen_name = gen_propGridCategory;
+    }
+    else if (class_name.starts_with(XRC_WX_PREFIX) && class_name.ends_with(XRC_PROPERTY_SUFFIX) &&
+             class_name.size() > (XRC_WX_PREFIX.size() + XRC_PROPERTY_SUFFIX.size()))
+    {
+        // Strip "wx" and "Property" to get the name used by the propGridItem type property,
+        // e.g. wxStringProperty becomes String.
+        const std::string_view class_view = class_name;
+        const std::string_view type_name =
+            class_view.substr(XRC_WX_PREFIX.size(), class_view.size() - XRC_WX_PREFIX.size() -
+                                                        XRC_PROPERTY_SUFFIX.size());
+        if (std::ranges::find(PROP_GRID_ITEM_TYPES, type_name) == PROP_GRID_ITEM_TYPES.end())
+        {
+            LogUnrecognizedObject(class_name, parent);
+            return;
+        }
+        gen_name = gen_propGridItem;
+        item_type = type_name;
+    }
+    else
+    {
+        LogUnrecognizedObject(class_name, parent);
+        return;
+    }
+
+    const NodeSharedPtr new_node = NodeCreation.CreateNode(gen_name, parent).first;
+    if (!new_node)
+    {
+        LogUnrecognizedObject(class_name, parent);
+        return;
+    }
+
+    if (gen_name == gen_propGridItem)
+    {
+        new_node->set_value(prop_type, item_type);
+    }
+
+    const std::string name = xml_obj.child_as_cstr("name");
+    std::string label = xml_obj.child_as_cstr("label");
+    if (label.empty())
+    {
+        if (!name.empty())
+        {
+            label = name;
+        }
+        else if (gen_name == gen_propGridCategory)
+        {
+            label = "Category";
+        }
+        else
+        {
+            label = item_type;
+        }
+    }
+
+    // Set the label directly -- ProcessProperties() converts '_' to '&', which would corrupt
+    // property names such as "my_property".
+    new_node->set_value(prop_label, label);
+
+    if (!name.empty())
+    {
+        const std::string unique_name = parent->get_UniqueName(name);
+        if (!unique_name.empty())
+        {
+            new_node->set_value(prop_var_name, unique_name);
+        }
+    }
+
+    if (const pugi::xml_node tip_node = xml_obj.child("tip"); tip_node)
+    {
+        const std::string_view tip_text = tip_node.text().as_view();
+        if (!tip_text.empty() && new_node->HasProp(prop_help))
+        {
+            new_node->set_value(prop_help, tip_text);
+        }
+    }
+
+    parent->AdoptChild(new_node);
+
+    // Only a category can contain other properties -- the node model cannot represent
+    // sub-properties of a regular property, so those are ignored.
+    if (gen_name == gen_propGridCategory)
+    {
+        ProcessPropertyGridChildren(xml_obj, new_node.get());
+    }
+}
+
+void ImportXML::ProcessPropertyGridStyle(const pugi::xml_node& xml_obj, Node* node)
+{
+    if (!node->HasProp(prop_extra_style))
+    {
+        return;
+    }
+
+    // XRC puts the extended wxPG_EX_* styles in the same <style> element as the normal
+    // styles, but wxUiEditor stores them in prop_extra_style.
+    const pugi::xml_node style_node = xml_obj.child("style");
+    if (style_node)
+    {
+        const std::string_view style_text = style_node.text().as_view();
+        if (style_text.contains("wxPG_EX_"))
+        {
+            std::string normal_style;
+            std::string extra_style;
+            for (const auto& token: wxue::ViewVector(style_text, '|', wxue::TRIM::both))
+            {
+                if (token.starts_with("wxPG_EX_"))
+                {
+                    if (!extra_style.empty())
+                    {
+                        extra_style += '|';
+                    }
+                    extra_style += token;
+                }
+                else
+                {
+                    if (!normal_style.empty())
+                    {
+                        normal_style += '|';
+                    }
+                    normal_style += token;
+                }
+            }
+
+            node->set_value(prop_style, normal_style);
+            node->set_value(prop_extra_style, extra_style);
+        }
+    }
+
+    // XRC can also write the extended style to a dedicated <exstyle> element (this is what
+    // GenXrcWindowSettings() does for wxPropertyGrid/wxPropertyGridManager). An explicit
+    // <exstyle> is authoritative, so it overrides any wxPG_EX_* tokens found in <style>.
+    const pugi::xml_node exstyle_node = xml_obj.child("exstyle");
+    if (exstyle_node)
+    {
+        const std::string_view exstyle_text = exstyle_node.text().as_view();
+        if (!exstyle_text.empty())
+        {
+            node->set_value(prop_extra_style, exstyle_text);
+        }
+    }
+}
+
 NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem)
 {
     const wxue::string object_name = xml_obj.attribute("class").as_cstr();
@@ -1741,6 +1968,16 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     FixupSizerAlignment(new_node.get(), parent);
+
+    // wxPropertyGrid and wxPropertyGridManager store their hierarchy in <property> and <page>
+    // child elements, so the <object> loop below would silently drop them.
+
+    if (new_node->is_Gen(gen_wxPropertyGrid) || new_node->is_Gen(gen_wxPropertyGridManager))
+    {
+        ProcessPropertyGridChildren(xml_obj, new_node.get());
+        ProcessPropertyGridStyle(xml_obj, new_node.get());
+        return new_node;
+    }
 
     // XRC creates a bookpage with a few properties (label, style, etc.) and then it creates
     // a wxPanel object. We need to ignore the panel, and just process it's children. When we

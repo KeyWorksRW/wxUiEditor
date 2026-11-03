@@ -22,6 +22,9 @@ public:
 
     bool GetImports(Node*, std::set<std::string>& /* set_imports */, GenLang language) override;
 
+    int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags) override;
+    void RequiredHandlers(Node* node, std::set<std::string>& handlers) override;
+
 protected:
     void OnPageChanged(wxPropertyGridEvent& event);
 };

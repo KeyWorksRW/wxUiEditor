@@ -10,6 +10,7 @@
 #include "gen_common.h"       // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"    // Common XRC generating functions
 #include "node.h"             // Node class
+#include "pugixml.hpp"        // xml read/write/create/process
 #include "utils.h"            // Utility functions that work with general properties
 #include "utils_prop_grid.h"  // PropertyGrid utilities
 
@@ -72,4 +73,30 @@ bool PropertyGridGenerator::GetImports([[maybe_unused]] Node* node,
         return true;
     }
     return false;
+}
+
+int PropertyGridGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+{
+    const int result = node->get_Parent()->is_Sizer() ? BaseGenerator::xrc_sizer_item_created :
+                                                        BaseGenerator::xrc_updated;
+    pugi::xml_node item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxPropertyGrid");
+    GenXrcPreStylePosSize(node, item, GetXrcPropertyGridStyle(node, "wxPG_DEFAULT_STYLE"));
+    GenXrcWindowSettings(node, item);
+
+    if (xrc_flags & xrc::add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    GenXrcPropertyGridChildren(node, item);
+
+    return result;
+}
+
+void PropertyGridGenerator::RequiredHandlers([[maybe_unused]] Node* node,
+                                             std::set<std::string>& handlers)
+{
+    handlers.emplace("wxPropertyGridXmlHandler");
 }

@@ -25,6 +25,8 @@ All notable changes to this project will be documented in this file.
   versus what is currently on disk.
   Select the project, a folder, or a form and then choose this command to see the differences.
 - Ribbon gallery has a new `gallery_size` property
+- The ID Editor now warns when a custom ID is already used elsewhere in the form, and offers a Make
+  Unique button that generates a unique ID.
 
 ### Changed
 

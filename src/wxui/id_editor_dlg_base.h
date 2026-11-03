@@ -18,6 +18,7 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/infobar.h>
 #include <wx/radiobut.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
@@ -65,6 +66,7 @@ protected:
     wxComboBox* m_comboPrefixes;
     wxComboBox* m_comboSuffix;
     wxFlexGridSizer* m_flex_grid_sizer;
+    wxInfoBar* m_infoBar;
     wxRadioButton* m_radioBtn_Custom;
     wxStaticBoxSizer* m_cstm_id_box;
     wxRadioButton* m_radioBtn_Standard;

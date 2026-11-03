@@ -58,9 +58,9 @@ bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 void TreeListCtrlGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& class_name)
 {
     if (code.get_language() == GenLang::none ||
-        (code.get_language() & (GenLang::cplusplus | GenLang::python | GenLang::fortran |
-                                GenLang::go | GenLang::julia | GenLang::luajit | GenLang::rust |
-                                GenLang::typescript)))
+        (code.get_language() &
+         (GenLang::cplusplus | GenLang::python | GenLang::fortran | GenLang::go | GenLang::julia |
+          GenLang::luajit | GenLang::rust | GenLang::typescript)))
     {
         BaseGenerator::GenEvent(code, event, class_name);
     }

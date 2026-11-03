@@ -110,7 +110,8 @@ void LanguageDocs::EnsureDocViewPanel()
         return;
     }
 
-    m_doc_view_panel = new DocViewPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_doc_view_panel =
+        new DocViewPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     std::ignore = m_doc_view_panel->OpenArchive(ResolveDocsZipPath());
     m_parent_sizer->Add(m_doc_view_panel, wxSizerFlags(1).Expand().Border(wxALL));
 }

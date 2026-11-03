@@ -460,7 +460,8 @@ wxue::string GenerateBitmapCode(const wxue::string& description)
     return code;
 }
 
-bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
+bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
+                        const wxSize& svg_size_def)
 {
     if (description.empty())
     {
@@ -595,6 +596,12 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code)
         if (!parts[IndexSize].empty())
         {
             svg_size = GetSizeInfo(parts[IndexSize]);
+        }
+        // wxBitmapBundle rasterizes an SVG at the bundle's default size, so a control that
+        // stretches the image (Scale_Fill) needs the control's size here to stay sharp.
+        if (svg_size_def.x > 0 && svg_size_def.y > 0)
+        {
+            svg_size = svg_size_def;
         }
 
         const wxue::string name = "wxue_img::" + embed->base_image().array_name;

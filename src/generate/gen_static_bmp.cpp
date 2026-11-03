@@ -47,6 +47,29 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
+// wxBitmapBundle rasterizes an SVG at the bundle's default size and wxGenericStaticBitmap then
+// stretches that raster to the control's size. With Scale_Fill, rasterizing at the control's size
+// keeps the image sharp instead of upscaling a small bitmap.
+//
+// AspectFit/AspectFill must not be included here: they use the bundle's default size as the base
+// for their aspect-ratio math, so overriding it would change their layout.
+static wxSize get_SvgBundleSize(Node* node)
+{
+    if (node->as_string(prop_scale_mode) != "Fill" || !node->HasValue(prop_bitmap) ||
+        !node->as_string(prop_bitmap).starts_with("SVG"))
+    {
+        return wxDefaultSize;
+    }
+
+    const wxSize size = node->as_wxSize(prop_size);
+    if (size.x > 0 && size.y > 0)
+    {
+        return size;
+    }
+
+    return wxDefaultSize;
+}
+
 bool StaticBitmapGenerator::ConstructionCode(Code& code)
 {
     if (code.is_cpp())
@@ -58,6 +81,7 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
         if (code.HasValue(prop_bitmap))
         {
             const bool use_generic_version = (code.node()->as_string(prop_scale_mode) != "None");
+            const wxSize svg_size_def = get_SvgBundleSize(code.node());
 
             if (code.is_python())
             {
@@ -87,7 +111,7 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
                 }
                 else
                 {
-                    code.Bundle(prop_bitmap);
+                    code.Bundle(prop_bitmap, svg_size_def);
                 }
             }
             else if (code.is_ruby())
@@ -111,12 +135,12 @@ bool StaticBitmapGenerator::ConstructionCode(Code& code)
                         .Comma();
                 }
 
-                code.Bundle(prop_bitmap);
+                code.Bundle(prop_bitmap, svg_size_def);
             }
             else if (code.is_ffi())
             {
                 code.NodeName().CreateClass().ValidParentName().Comma().as_string(prop_id).Comma();
-                code.Bundle(prop_bitmap);
+                code.Bundle(prop_bitmap, svg_size_def);
             }
             code.PosSizeFlags();
         }
@@ -146,7 +170,8 @@ void StaticBitmapGenerator::GenCppConstruction(Code& code)
     {
         const wxue::string& description = node->as_string(prop_bitmap);
         wxue::string bundle_code;
-        const bool is_vector_code = GenerateBundleCode(description, bundle_code);
+        const bool is_vector_code =
+            GenerateBundleCode(description, bundle_code, get_SvgBundleSize(node));
         code.UpdateBreakAt();
 
         if (is_vector_code)

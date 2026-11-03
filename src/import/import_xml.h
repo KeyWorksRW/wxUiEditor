@@ -66,6 +66,9 @@ protected:
     void LogUnrecognizedObject(const wxue::string& object_name, Node* parent);
     void LogUnassignedEvent(Node* node, std::string_view event_name, std::string_view handler);
     void ProcessStdDialogButtonSizer(const pugi::xml_node& xml_obj, Node* new_node, Node* parent);
+    void ProcessPropertyGridItem(const pugi::xml_node& xml_obj, Node* parent);
+    void ProcessPropertyGridChildren(const pugi::xml_node& xml_obj, Node* parent);
+    void ProcessPropertyGridStyle(const pugi::xml_node& xml_obj, Node* node);
     static void FixupSizerAlignment(Node* new_node, Node* parent);
     [[nodiscard]] std::optional<pugi::xml_document> LoadDocFile(const std::string& file,
                                                                 bool allow_ui = true);

@@ -556,8 +556,8 @@ namespace
                 return;
             }
             handler << event->get_name() << ',' << event->get_value();
-            handler.GetCode().Replace("[", "\n\t[");
-            comma = ",\n\t";
+            handler.GetCode().Replace("[", "\n[");
+            comma = ",\n";
             ExpandLambda(handler.GetCode());
         }
         else if (event_code.find("::") != std::string::npos)

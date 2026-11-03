@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="16">
+  <node
+    class="Project"
+    generate_languages="C++">
+    <node
+      class="wxFrame"
+      class_name="LambdaIndentTestBase"
+      base_file="lambda_indent_test_base"
+      derived_class_name="LambdaIndentTest"
+      derived_file="lambda_indent_test"
+      title="Lambda Indent Test">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="frame_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxButton"
+          var_name="m_button"
+          label="Click me"
+          wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@    auto name = m_button-&gt;GetLabel();@@    if (name.size())@@        name += &quot;, &quot;;@@    m_button-&gt;SetLabel(name);@@}" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

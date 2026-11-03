@@ -65,6 +65,8 @@ All notable changes to this project will be documented in this file.
   and not a bot.
 - wxHtmlWindow will set a temporary minimum size of 160x60 pixels if neither size nor minimum_size properties are set.
   This prevents the control from collapsing to zero size in sizers.
+- C++ lambda event handlers now preserve relative indentation in generated code.
+  Only the indentation common to every line of the lambda body is removed (issue #1005).
 
 ### Fixed
 - Fixed generation of event handlers in C++ derived classes.

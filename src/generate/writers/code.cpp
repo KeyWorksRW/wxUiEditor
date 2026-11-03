@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-29-2026]
+// CR: [11-03-2026]
 
 /*
 
@@ -1208,6 +1208,91 @@ Code& Code::False()
     return *this;
 }
 
+// Returns the number of leading space or tab characters in the line.
+static size_t GetLeadingWhitespace(const wxue::string& line)
+{
+    size_t count = 0;
+    while (count < line.size() && (line[count] == ' ' || line[count] == '\t'))
+    {
+        ++count;
+    }
+    return count;
+}
+
+// Removes the indentation that is common to every non-blank line of a lambda function's body. Any
+// additional indentation is preserved so that nested code stays readable.
+static void RemoveCommonIndentation(wxue::string& lambda)
+{
+    wxue::StringVector lines(lambda, '\n');
+
+    size_t open_brace = lines.size();
+    size_t close_brace = 0;
+    for (size_t pos = 0; pos < lines.size(); ++pos)
+    {
+        if (lines[pos].contains("{"))
+        {
+            // The first line containing an opening brace starts the lambda body
+            open_brace = pos;
+            break;
+        }
+    }
+    for (size_t pos = 0; pos < lines.size(); ++pos)
+    {
+        if (lines[pos].contains("}"))
+        {
+            // The last line containing a closing brace ends the lambda body
+            close_brace = pos;
+        }
+    }
+
+    if (open_brace == lines.size() || open_brace + 1 >= close_brace)
+    {
+        // Single-line lambda, or a body with no lines to de-indent
+        return;
+    }
+
+    size_t common = 0;
+    bool first_line = true;
+    for (size_t pos = open_brace + 1; pos < close_brace; ++pos)
+    {
+        const size_t leading = GetLeadingWhitespace(lines[pos]);
+        if (leading == lines[pos].size())
+        {
+            // Blank line -- ignore it when calculating the common indentation
+            continue;
+        }
+        if (first_line)
+        {
+            common = leading;
+            first_line = false;
+        }
+        else if (leading < common)
+        {
+            common = leading;
+        }
+    }
+
+    if (first_line || common == 0)
+    {
+        return;
+    }
+
+    for (size_t pos = open_brace + 1; pos < close_brace; ++pos)
+    {
+        lines[pos].erase(0, common);
+    }
+
+    lambda.clear();
+    for (size_t pos = 0; pos < lines.size(); ++pos)
+    {
+        if (pos > 0)
+        {
+            lambda += '\n';
+        }
+        lambda += lines[pos];
+    }
+}
+
 Code& Code::ExpandEventLambda(wxue::string lambda)
 {
     lambda.LeftTrim();
@@ -1216,37 +1301,22 @@ Code& Code::ExpandEventLambda(wxue::string lambda)
 
     if (is_cpp())
     {
-        Indent(1);
+        RemoveCommonIndentation(lambda);
+
+        // WriteLambdaEventLines() now preserves the leading whitespace of every line, so no tabs
+        // may be added here. The string handed to it must contain only the user's own
+        // (de-indented) whitespace.
+        const int saved_indent = get_Indentation();
+        ResetIndent();
         Eol();
         const wxue::StringVector lines(lambda, '\n');
 
         for (auto& line: lines)
         {
-            if (line.contains("}"))
-            {
-                Unindent(1);
-                if (back() == '\t')
-                {
-                    pop_back();
-                }
-                Str(line);
-                if (line.contains("{"))
-                {
-                    Indent();
-                }
-            }
-            else if (line.contains("{"))
-            {
-                Str(line);
-                Indent();
-            }
-            else
-            {
-                Str(line);
-            }
+            Str(line);
             Eol();
         }
-        Unindent(1);
+        Indent(saved_indent);
 
         // The caller will be adding a comma, which should appear after the closing brace
         while (back() == '\t')

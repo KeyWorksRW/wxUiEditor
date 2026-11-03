@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 ///////////////////////////////////////////////////////////////////////////////
+// CR: [11-03-2026]
 
 #include <wx/infobar.h>  // declaration of wxInfoBarBase defining common API of wxInfoBar
 
@@ -69,7 +70,7 @@ void InfoBarBtnGenerator::GenEvent(Code& code, NodeEvent* event, const std::stri
         {
             handler << event->get_name() << ',';
             handler.ExpandEventLambda(event_code);
-            comma = ",\n\t";
+            comma = ",\n";
         }
         else if (code.is_python())
         {

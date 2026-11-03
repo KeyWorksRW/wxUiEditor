@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-30-2026]
+// CR: [11-03-2026]
 
 #include <algorithm>
 
@@ -88,7 +88,7 @@ void BaseGenerator::GenEvent(Code& code, NodeEvent* event, const std::string& cl
             handler << event->get_name() << ',';
             handler.ExpandEventLambda(event_code);
             is_lambda = true;
-            comma = ",\n\t";
+            comma = ",\n";
         }
         else if (code.is_python())
         {
@@ -359,7 +359,7 @@ void BaseCodeGenerator::WriteLambdaEventLines(Code& code)
             m_source->Indent();
         }
 
-        constexpr size_t indentation = indent::auto_no_whitespace;
+        constexpr size_t indentation = indent::auto_keep_whitespace;
         m_source->writeLine(line, indentation);
 
         if (line.contains("{"))

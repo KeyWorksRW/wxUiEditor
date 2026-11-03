@@ -87,6 +87,12 @@ extern std::map<std::string, const char*> g_stc_wrap_mode;  // NOLINT () // cppc
 // Checks whether a string is a valid C++ variable name.
 [[nodiscard]] bool isValidVarName(const std::string& str, GenLang language = GenLang::cplusplus);
 
+// Removes a trailing "Base" suffix from the class name. If the resulting name ends with an
+// underscore, that underscore is also removed.
+//
+// MyDialogBase -> MyDialog; MyDialog_Base -> MyDialog; MyBase_Base -> MyBase
+wxue::string StripBaseSuffix(const wxue::string& class_name);
+
 // This takes the class_name of the form, converts it to lowercase, and if the class name
 // ends with Base, the a "_base" suffix is added.
 //

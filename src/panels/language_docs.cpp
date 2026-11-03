@@ -1,10 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Purpose:   Panel for displaying docs in wxWebView
+// Purpose:   Panel for displaying wxWidgets documentation for the current language
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2023-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-06-2026]
+
+#include <string>
+#include <string_view>
 
 #if wxUSE_WEBVIEW
     #include <wx/webview.h>
@@ -12,12 +15,13 @@
 
 #include "language_docs.h"
 
-#include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "cstm_event.h"       // CustomEvent -- Custom Event class
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler -- Project file handler
-#include "version.h"
+#include "base_generator.h"           // BaseGenerator -- Base widget generator class
+#include "cstm_event.h"               // CustomEvent -- Custom Event class
+#include "helptext/doc_view_frame.h"  // ResolveDocsZipPath
+#include "helptext/doc_view_panel.h"  // DocViewPanel -- embedded wxWidgets docs viewer
+#include "mainframe.h"                // MainFrame -- Main window frame
+#include "node.h"                     // Node class
+#include "project_handler.h"          // ProjectHandler -- Project file handler
 
 LanguageDocs::LanguageDocs(wxWindow* parent, MainFrame* frame) : m_mainframe(frame)
 {
@@ -40,16 +44,6 @@ void LanguageDocs::ActivatePage()
 {
     // Language can change if there is a folder override
     m_language = Project.get_CodePreference(m_mainframe->getSelectedNode());
-    if (!m_webview)
-    {
-        const wxBusyCursor wait;
-
-#if wxUSE_WEBVIEW
-        m_webview = wxWebView::New(this, wxID_ANY, "about:blank");
-        m_parent_sizer->Add(m_webview, wxSizerFlags(1).Expand().Border(wxALL));
-#endif
-        m_parent_sizer->Layout();
-    }
 
     m_toolBar->ToggleTool(ID_CPLUS, m_language == GenLang::cplusplus);
     m_toolBar->ToggleTool(ID_PYTHON, m_language == GenLang::python);
@@ -85,68 +79,116 @@ void LanguageDocs::OnNodeSelected([[maybe_unused]] CustomEvent& event)
 
 void LanguageDocs::OnCPlus(wxCommandEvent& /* event */)
 {
-#if wxUSE_WEBVIEW
-    if (!m_webview)
-        return;
     m_toolBar->ToggleTool(ID_CPLUS, true);
     m_toolBar->ToggleTool(ID_PYTHON, false);
     m_toolBar->ToggleTool(ID_RUBY, false);
+
     const wxBusyCursor wait;
     m_language = GenLang::cplusplus;
-    if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
+
+    ShowDocViewChild();
+    DisplaySelectedNodeDocs();
+}
+
+void LanguageDocs::EnsureWebView()
+{
+#if wxUSE_WEBVIEW
+    if (m_webview != nullptr)
     {
-        if (auto* generator = cur_sel->get_Generator(); generator)
-        {
-            if (auto file = generator->GetHelpURL(cur_sel); !file.empty())
-            {
-                wxString url;
-                url = (Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0) ?
-                          "https://docs.wxwidgets.org/3.2.8" :
-                          "https://docs.wxwidgets.org/latest";
-
-                if (!file.starts_with("group"))
-                {
-                    url += "/class";
-                }
-                url << file.wx();
-
-                // Unfortunately, the wxWidgets documentation site now requires a captcha to verify
-                // that the user is not a bot before allowing access to the documentation.
-                // The website does not display at all in the IE embedded view that we use.
-
-                // m_webview->LoadURL(url);
-
-                m_webview->SetPage(
-                    "<html><title>Displaying Documentation in Browser</title>"
-                    "<body>"
-                    "The C++ documentation is not accessible in the embedded browser because"
-                    " the wxWidgets documentation site now requires a captcha to verify"
-                    " that the user is not a bot before allowing access to the documentation."
-                    " Instead, the documentation will be opened in the default web browser."
-                    "</body></html>",
-                    wxEmptyString);
-                wxLaunchDefaultBrowser(url);
-                return;
-            }
-        }
+        return;
     }
-    m_webview->SetPage("<html><title>Select Node</title>"
-                       "<body>The selected node does not have any specific documentation for C++."
-                       "</body></html>",
-                       wxEmptyString);
+
+    m_webview = wxWebView::New(this, wxID_ANY, "about:blank");
+    m_parent_sizer->Add(m_webview, wxSizerFlags(1).Expand().Border(wxALL));
 #endif
+}
+
+void LanguageDocs::EnsureDocViewPanel()
+{
+    if (m_doc_view_panel != nullptr)
+    {
+        return;
+    }
+
+    m_doc_view_panel =
+        new DocViewPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    std::ignore = m_doc_view_panel->OpenArchive(ResolveDocsZipPath());
+    m_parent_sizer->Add(m_doc_view_panel, wxSizerFlags(1).Expand().Border(wxALL));
+}
+
+void LanguageDocs::ShowWebViewChild()
+{
+    EnsureWebView();
+
+    if (m_doc_view_panel != nullptr)
+    {
+        m_doc_view_panel->Hide();
+    }
+#if wxUSE_WEBVIEW
+    if (m_webview != nullptr)
+    {
+        m_webview->Show();
+    }
+#endif
+    m_parent_sizer->Layout();
+}
+
+void LanguageDocs::ShowDocViewChild()
+{
+    EnsureDocViewPanel();
+
+#if wxUSE_WEBVIEW
+    if (m_webview != nullptr)
+    {
+        m_webview->Hide();
+    }
+#endif
+    m_doc_view_panel->Show();
+    m_parent_sizer->Layout();
+}
+
+void LanguageDocs::DisplaySelectedNodeDocs()
+{
+    if (m_doc_view_panel == nullptr || !m_doc_view_panel->IsArchiveOpen())
+    {
+        return;
+    }
+
+    const Node* cur_sel = m_mainframe->getSelectedNode();
+    if (cur_sel == nullptr)
+    {
+        return;
+    }
+
+    // Archived documentation pages are named after the wxWidgets class, e.g.
+    // "wxTextCtrl.md". Nodes that are not wxWidgets classes keep the page that
+    // is currently displayed.
+    const std::string_view decl_name = cur_sel->get_DeclName();
+    if (!decl_name.starts_with("wx"))
+    {
+        return;
+    }
+
+    std::string page_name(decl_name);
+    page_name += ".md";
+    std::ignore = m_doc_view_panel->DisplayPage(page_name);
 }
 
 void LanguageDocs::OnPython(wxCommandEvent& /* event */)
 {
-#if wxUSE_WEBVIEW
-    if (!m_webview)
-        return;
     m_toolBar->ToggleTool(ID_CPLUS, false);
     m_toolBar->ToggleTool(ID_PYTHON, true);
     m_toolBar->ToggleTool(ID_RUBY, false);
     const wxBusyCursor wait;
     m_language = GenLang::python;
+
+    ShowWebViewChild();
+
+#if wxUSE_WEBVIEW
+    if (m_webview == nullptr)
+    {
+        return;
+    }
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* generator = cur_sel->get_Generator(); generator)
@@ -170,14 +212,19 @@ void LanguageDocs::OnPython(wxCommandEvent& /* event */)
 
 void LanguageDocs::OnRuby(wxCommandEvent& /* event */)
 {
-#if wxUSE_WEBVIEW
-    if (!m_webview)
-        return;
     m_toolBar->ToggleTool(ID_CPLUS, false);
     m_toolBar->ToggleTool(ID_PYTHON, false);
     m_toolBar->ToggleTool(ID_RUBY, true);
     const wxBusyCursor wait;
     m_language = GenLang::ruby;
+
+    ShowWebViewChild();
+
+#if wxUSE_WEBVIEW
+    if (m_webview == nullptr)
+    {
+        return;
+    }
     if (auto* cur_sel = m_mainframe->getSelectedNode(); cur_sel)
     {
         if (auto* generator = cur_sel->get_Generator(); generator)
@@ -201,14 +248,28 @@ void LanguageDocs::OnRuby(wxCommandEvent& /* event */)
 
 void LanguageDocs::OnHome([[maybe_unused]] wxCommandEvent& event)
 {
+    if (m_language == GenLang::cplusplus && m_doc_view_panel != nullptr)
+    {
+        m_doc_view_panel->NavigateHome();
+        return;
+    }
+
     ActivatePage();
 }
 
 void LanguageDocs::OnBack([[maybe_unused]] wxCommandEvent& event)
 {
-#if wxUSE_WEBVIEW
-    if (!m_webview)
+    if (m_language == GenLang::cplusplus && m_doc_view_panel != nullptr)
+    {
+        m_doc_view_panel->NavigateBack();
         return;
+    }
+
+#if wxUSE_WEBVIEW
+    if (m_webview == nullptr)
+    {
+        return;
+    }
     const wxBusyCursor wait;
 
     m_webview->GoBack();
@@ -217,9 +278,17 @@ void LanguageDocs::OnBack([[maybe_unused]] wxCommandEvent& event)
 
 void LanguageDocs::OnForward([[maybe_unused]] wxCommandEvent& event)
 {
-#if wxUSE_WEBVIEW
-    if (!m_webview)
+    if (m_language == GenLang::cplusplus && m_doc_view_panel != nullptr)
+    {
+        m_doc_view_panel->NavigateForward();
         return;
+    }
+
+#if wxUSE_WEBVIEW
+    if (m_webview == nullptr)
+    {
+        return;
+    }
     const wxBusyCursor wait;
     m_webview->GoForward();
 #endif
@@ -227,8 +296,14 @@ void LanguageDocs::OnForward([[maybe_unused]] wxCommandEvent& event)
 
 void LanguageDocs::OnUpdateBack([[maybe_unused]] wxUpdateUIEvent& event)
 {
+    if (m_language == GenLang::cplusplus && m_doc_view_panel != nullptr)
+    {
+        event.Enable(m_doc_view_panel->CanNavigateBack());
+        return;
+    }
+
 #if wxUSE_WEBVIEW
-    if (!m_webview)
+    if (m_webview == nullptr)
     {
         event.Enable(false);
         return;
@@ -253,8 +328,14 @@ void LanguageDocs::OnUpdateBack([[maybe_unused]] wxUpdateUIEvent& event)
 
 void LanguageDocs::OnUpdateForward([[maybe_unused]] wxUpdateUIEvent& event)
 {
+    if (m_language == GenLang::cplusplus && m_doc_view_panel != nullptr)
+    {
+        event.Enable(m_doc_view_panel->CanNavigateForward());
+        return;
+    }
+
 #if wxUSE_WEBVIEW
-    if (!m_webview)
+    if (m_webview == nullptr)
     {
         event.Enable(false);
 

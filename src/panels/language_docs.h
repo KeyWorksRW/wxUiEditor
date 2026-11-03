@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Panel for displaying docs in wxWebView
+// Purpose:   Panel for displaying wxWidgets documentation for the current language
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2023-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -11,6 +11,7 @@
 #include "language_docs_base.h"
 
 class CustomEvent;
+class DocViewPanel;
 class MainFrame;
 class wxWebView;
 
@@ -37,8 +38,24 @@ protected:
     void OnUpdateForward(wxUpdateUIEvent& event) override;
 
 private:
+    // Create the child used to display documentation for the current language.
+    void EnsureWebView();
+    void EnsureDocViewPanel();
+
+    // Show the child that belongs to m_language and hide the other one.
+    void ShowWebViewChild();
+    void ShowDocViewChild();
+
+    // Navigate the doc panel to the page for the currently selected node.
+    void DisplaySelectedNodeDocs();
+
     MainFrame* m_mainframe { nullptr };
     wxWebView* m_webview { nullptr };
+
+    // Embedded wxWidgets documentation viewer, used for the C++ tab. The
+    // wxWidgets documentation site blocks the embedded browser, so the C++
+    // documentation is served from the archive embedded in the executable.
+    DocViewPanel* m_doc_view_panel { nullptr };
 
     GenLang m_language { GenLang::cplusplus };
 };

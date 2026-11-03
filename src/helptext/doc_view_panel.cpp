@@ -177,6 +177,24 @@ void DocViewPanel::NavigateHome()
     }
 }
 
+bool DocViewPanel::DisplayPage(const std::string& archive_name)
+{
+    if (!wxueArchive.is_open())
+    {
+        return false;
+    }
+
+    // Verify the page exists before it is recorded in the navigation history --
+    // DisplayArchivePage would otherwise leave a dead entry behind.
+    if (!wxueArchive.ReadFile(archive_name))
+    {
+        return false;
+    }
+
+    DisplayArchivePage(archive_name);
+    return true;
+}
+
 // ---------------------------------------------------------------------------
 //  DisplayArchivePage
 // ---------------------------------------------------------------------------
@@ -731,7 +749,17 @@ void DocViewPanel::RecordNavigation(const std::string& destination)
     m_current_history_page = destination;
 }
 
-void DocViewPanel::OnNavBack([[maybe_unused]] wxCommandEvent& event)
+bool DocViewPanel::CanNavigateBack() const noexcept
+{
+    return !m_back_history.empty();
+}
+
+bool DocViewPanel::CanNavigateForward() const noexcept
+{
+    return !m_forward_history.empty();
+}
+
+void DocViewPanel::NavigateBack()
 {
     if (m_back_history.empty())
     {
@@ -750,7 +778,7 @@ void DocViewPanel::OnNavBack([[maybe_unused]] wxCommandEvent& event)
     m_is_history_nav = false;
 }
 
-void DocViewPanel::OnNavForward([[maybe_unused]] wxCommandEvent& event)
+void DocViewPanel::NavigateForward()
 {
     if (m_forward_history.empty())
     {
@@ -769,8 +797,18 @@ void DocViewPanel::OnNavForward([[maybe_unused]] wxCommandEvent& event)
     m_is_history_nav = false;
 }
 
+void DocViewPanel::OnNavBack([[maybe_unused]] wxCommandEvent& event)
+{
+    NavigateBack();
+}
+
+void DocViewPanel::OnNavForward([[maybe_unused]] wxCommandEvent& event)
+{
+    NavigateForward();
+}
+
 void DocViewPanel::OnUpdateUI([[maybe_unused]] wxUpdateUIEvent& event)
 {
-    m_aui_tool_bar->EnableTool(m_back->GetId(), !m_back_history.empty());
-    m_aui_tool_bar->EnableTool(m_forward->GetId(), !m_forward_history.empty());
+    m_aui_tool_bar->EnableTool(m_back->GetId(), CanNavigateBack());
+    m_aui_tool_bar->EnableTool(m_forward->GetId(), CanNavigateForward());
 }

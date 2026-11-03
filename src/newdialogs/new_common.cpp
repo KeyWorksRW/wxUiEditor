@@ -32,15 +32,7 @@ void UpdateFormClass(Node* form_node)
 
     if (is_base_class)
     {
-        auto class_name = form_node->as_string(prop_class_name);
-        if (class_name.ends_with("Base"))
-        {
-            class_name.erase(class_name.size() - (sizeof("Base") - 1));
-        }
-        else
-        {
-            class_name += "Derived";
-        }
+        const wxue::string class_name = StripBaseSuffix(form_node->as_string(prop_class_name));
         form_node->set_value(prop_derived_class_name, class_name);
 
         filename = CreateDerivedFilename(form_node, class_name);

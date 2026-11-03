@@ -447,6 +447,23 @@ bool isValidVarName(const std::string& str, GenLang language)
     return true;
 }
 
+wxue::string StripBaseSuffix(const wxue::string& class_name)
+{
+    constexpr size_t BASE_SUFFIX_LEN = sizeof("Base") - 1;
+
+    wxue::string name = class_name;
+    if (name.ends_with("Base"))
+    {
+        name.erase(name.size() - BASE_SUFFIX_LEN);
+        if (name.ends_with("_"))
+        {
+            name.pop_back();
+        }
+    }
+
+    return name;
+}
+
 wxue::string CreateBaseFilename(Node* form_node, const wxue::string& class_name)
 {
     wxue::string filename;
@@ -461,7 +478,7 @@ wxue::string CreateBaseFilename(Node* form_node, const wxue::string& class_name)
 
     if (filename.ends_with("Base"))
     {
-        filename.erase(filename.size() - (sizeof("Base") - 1));
+        filename = StripBaseSuffix(filename);
         filename += "_base";
     }
 

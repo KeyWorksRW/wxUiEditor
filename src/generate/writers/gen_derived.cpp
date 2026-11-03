@@ -32,6 +32,7 @@
 #include "node.h"              // Node class
 #include "node_creator.h"      // NodeCreator class
 #include "project_handler.h"   // ProjectHandler class
+#include "utils.h"             // StripBaseSuffix()
 #include "write_code.h"        // Write code to Scintilla or file
 
 #include "wxue_namespace/wxue_string.h"         // wxue::string
@@ -227,9 +228,12 @@ void CppCodeGenerator::GenerateDerivedClassName(wxue::string& derived_name)
     }
     else if (derived_name.empty())
     {
-        wxue::string base_name(m_form_node->as_string(prop_class_name));
-        (void) base_name.Replace("My", "");
-        (void) base_name.Replace("Base", "");
+        // No derived class name was specified, so build one from the base class name.
+        wxue::string base_name(StripBaseSuffix(m_form_node->as_string(prop_class_name)));
+        if (base_name.starts_with("My"))
+        {
+            base_name.erase(0, sizeof("My") - 1);
+        }
         derived_name << "MyDerived" << base_name;
     }
 }

@@ -603,7 +603,7 @@ void PropGridPanel::ReplaceDerivedName(const wxue::string& newValue, NodePropert
     wxue::string drvName = newValue;
     if (drvName.ends_with("Base"))
     {
-        drvName.erase(drvName.size() - (sizeof("Base") - 1));
+        drvName = StripBaseSuffix(drvName);
     }
     else
     {

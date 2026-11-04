@@ -6,6 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [09-30-2026]
 
+#include <algorithm>
+
 #include "gen_cpp.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
@@ -309,11 +311,56 @@ void CppCodeGenerator::GenInitHeaderFile(std::set<std::string>& hdr_includes)
         m_header->writeLine();
     }
 
-    WriteWxWidgetsHeaders(hdr_includes);
+    // Namespace declarations are not #include lines, so they must be removed before the
+    // remaining entries are classified into include groups.
+    const std::vector<std::string> namespaces = ExtractNamespaces(hdr_includes);
+
+    std::set<std::string> all_includes = hdr_includes;
+    if (m_form_node->HasValue(prop_system_hdr_includes))
+    {
+        wxue::ViewVector list;
+        list.SetString(m_form_node->as_view(prop_system_hdr_includes), ';', wxue::TRIM::both);
+        for (const auto& iter: list)
+        {
+            if (iter.empty())
+            {
+                continue;
+            }
+            wxue::string include_line("#include <");
+            include_line << iter << '>';
+            all_includes.insert(include_line);
+        }
+    }
+
+    const bool has_std_lib =
+        std::ranges::any_of(all_includes,
+                            [](const std::string& include)
+                            {
+                                return GetIncludeGroup(include) == IncludeGroup::std_lib;
+                            });
+    const bool has_other_system =
+        std::ranges::any_of(all_includes,
+                            [](const std::string& include)
+                            {
+                                return GetIncludeGroup(include) == IncludeGroup::other_system;
+                            });
+
+    WriteIncludeGroup(m_header, all_includes, IncludeGroup::wx);
     m_header->writeLine();
 
-    const std::vector<std::string> namespaces = ExtractNamespaces(hdr_includes);
-    WriteNonWxHeaders(hdr_includes);
+    WriteIncludeGroup(m_header, all_includes, IncludeGroup::std_lib);
+    if (has_std_lib)
+    {
+        m_header->writeLine();
+    }
+
+    WriteIncludeGroup(m_header, all_includes, IncludeGroup::other_system);
+    if (has_other_system)
+    {
+        m_header->writeLine();
+    }
+
+    WriteIncludeGroup(m_header, all_includes, IncludeGroup::local);
     m_header->writeLine();
 
     WritePreambleAndCustomIncludes();
@@ -359,17 +406,6 @@ void CppCodeGenerator::ProcessOrderDependentHeaderIncludes(
     }
 }
 
-void CppCodeGenerator::WriteWxWidgetsHeaders(const std::set<std::string>& hdr_includes)
-{
-    for (const auto& iter: hdr_includes)
-    {
-        if (iter.contains("<wx"))
-        {
-            m_header->writeLine(iter);
-        }
-    }
-}
-
 std::vector<std::string> CppCodeGenerator::ExtractNamespaces(std::set<std::string>& hdr_includes)
 {
     std::vector<std::string> namespaces;
@@ -388,33 +424,11 @@ std::vector<std::string> CppCodeGenerator::ExtractNamespaces(std::set<std::strin
     return namespaces;
 }
 
-void CppCodeGenerator::WriteNonWxHeaders(const std::set<std::string>& hdr_includes)
-{
-    for (const auto& iter: hdr_includes)
-    {
-        if (!iter.contains("<wx"))
-        {
-            m_header->writeLine(iter);
-        }
-    }
-}
-
 void CppCodeGenerator::WritePreambleAndCustomIncludes()
 {
     if (m_form_node->HasValue(prop_header_preamble))
     {
         WritePropHdrCode(m_form_node, prop_header_preamble);
-    }
-
-    if (m_form_node->HasValue(prop_system_hdr_includes))
-    {
-        m_header->writeLine();
-        wxue::ViewVector list;
-        list.SetString(m_form_node->as_view(prop_system_hdr_includes), ';', wxue::TRIM::both);
-        for (auto& iter: list)
-        {
-            m_header->writeLine(wxue::string("#include <") << iter << '>');
-        }
     }
 
     if (m_form_node->HasValue(prop_local_hdr_includes))

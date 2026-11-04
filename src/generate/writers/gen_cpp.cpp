@@ -784,6 +784,48 @@ void CppCodeGenerator::ProcessOrderDependentIncludes(std::set<std::string>& src_
     }
 }
 
+CppCodeGenerator::IncludeGroup CppCodeGenerator::GetIncludeGroup(std::string_view include)
+{
+    if (!include.starts_with("#include <"))
+    {
+        // Covers quoted includes as well as forward declarations such as "class wxButton;"
+        return IncludeGroup::local;
+    }
+
+    const size_t path_start = include.find('<') + 1;
+    size_t path_end = include.find('>', path_start);
+    if (path_end == std::string_view::npos)
+    {
+        // One generator writes "#include <iostream" without a closing bracket
+        path_end = include.size();
+    }
+
+    const std::string_view path = include.substr(path_start, path_end - path_start);
+    if (path.starts_with("wx"))
+    {
+        return IncludeGroup::wx;
+    }
+
+    if (!path.contains('/') && !path.contains('\\'))
+    {
+        return IncludeGroup::std_lib;
+    }
+
+    return IncludeGroup::other_system;
+}
+
+void CppCodeGenerator::WriteIncludeGroup(WriteCode* code, const std::set<std::string>& includes,
+                                         IncludeGroup group)
+{
+    for (const auto& include: includes)
+    {
+        if (GetIncludeGroup(include) == group)
+        {
+            code->writeLine(include);
+        }
+    }
+}
+
 void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_includes,
                                            const std::vector<std::string>& ordered_includes,
                                            const std::string& file)
@@ -797,13 +839,37 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
         m_source->writeLine();
     }
 
-    for (const auto& iter: src_includes)
+    std::set<std::string> all_includes = src_includes;
+    if (m_form_node->HasValue(prop_system_src_includes))
     {
-        if (iter.contains("<wx"))
+        wxue::ViewVector list;
+        list.SetString(m_form_node->as_view(prop_system_src_includes), ';', wxue::TRIM::both);
+        for (const auto& iter: list)
         {
-            m_source->writeLine(iter);
+            if (iter.empty())
+            {
+                continue;
+            }
+            wxue::string include_line("#include <");
+            include_line << iter << '>';
+            all_includes.insert(include_line);
         }
     }
+
+    const bool has_std_lib =
+        std::ranges::any_of(all_includes,
+                            [](const std::string& include)
+                            {
+                                return GetIncludeGroup(include) == IncludeGroup::std_lib;
+                            });
+    const bool has_other_system =
+        std::ranges::any_of(all_includes,
+                            [](const std::string& include)
+                            {
+                                return GetIncludeGroup(include) == IncludeGroup::other_system;
+                            });
+
+    WriteIncludeGroup(m_source, all_includes, IncludeGroup::wx);
 
     m_source->writeLine();
 
@@ -826,31 +892,27 @@ void CppCodeGenerator::WriteSourceIncludes(const std::set<std::string>& src_incl
         m_source->writeLine();
     }
 
-    // Now output all the other header files (this will include derived_class header files)
-    for (const auto& iter: src_includes)
+    // Standard library headers, then all other system headers, then local includes and forward
+    // declarations (this includes derived_class header files).
+    WriteIncludeGroup(m_source, all_includes, IncludeGroup::std_lib);
+    if (has_std_lib)
     {
-        if (!iter.contains("<wx"))
-        {
-            m_source->writeLine(iter);
-        }
+        m_source->writeLine();
     }
+
+    WriteIncludeGroup(m_source, all_includes, IncludeGroup::other_system);
+    if (has_other_system)
+    {
+        m_source->writeLine();
+    }
+
+    WriteIncludeGroup(m_source, all_includes, IncludeGroup::local);
 
     m_source->writeLine();
 
     if (m_form_node->HasValue(prop_source_preamble))
     {
         WritePropSourceCode(m_form_node, prop_source_preamble);
-    }
-
-    if (m_form_node->HasValue(prop_system_src_includes))
-    {
-        m_source->writeLine();
-        wxue::ViewVector list;
-        list.SetString(m_form_node->as_view(prop_system_src_includes), ';', wxue::TRIM::both);
-        for (auto& iter: list)
-        {
-            m_source->writeLine(wxue::string("#include <") << iter << '>');
-        }
     }
 
     if (file.empty())

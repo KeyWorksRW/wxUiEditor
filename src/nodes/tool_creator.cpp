@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-16-2026]
+// CR: [11-04-2026]
 
 #include <algorithm>
 #include <format>
@@ -588,6 +588,15 @@ void MainFrame::CreateToolNode(GenName name)
         (m_selected_node->is_Type(type_aui_toolbar) || m_selected_node->is_Type(type_aui_tool)))
     {
         name = gen_auitool;
+    }
+
+    if (name == gen_dataViewColumn &&
+        (m_selected_node->is_Gen(gen_wxDataViewListCtrl) ||
+         (m_selected_node->get_Parent() &&
+          m_selected_node->get_Parent()->is_Gen(gen_wxDataViewListCtrl))))
+    {
+        // wxDataViewListCtrl only accepts dataViewListColumn children.
+        name = gen_dataViewListColumn;
     }
 
     std::expected<bool, std::string> result = m_selected_node->CreateToolNode(name);

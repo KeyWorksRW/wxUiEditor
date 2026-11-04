@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [10-07-2026]
+// CR: [11-04-2026]
 
 #include <array>
 #include <bit>  // std::to_underlying
@@ -1146,6 +1146,19 @@ void NavPopupMenu::MenuAddCommands()
                     wxGetFrame().CreateToolNode(gen_data_xml);
                 },
                 std::to_underlying(Menu::AddDataXml));
+            break;
+
+        case gen_wxDataViewListCtrl:
+            add_sizer = false;
+            menu_item = Append(std::to_underlying(Menu::AddDataViewListColumn), "Add Column");
+            menu_item->SetBitmap(GetSvgImage("dataviewlist_column", dpi_size));
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_dataViewListColumn);
+                },
+                std::to_underlying(Menu::AddDataViewListColumn));
             break;
 
         default:

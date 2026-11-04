@@ -17,14 +17,13 @@
 #include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
+#include <wx/filehistory.h>
 #include <wx/gdicmn.h>
 #include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 
 class NodeProperty;
-
-#include <wx/filehistory.h>
 
 class SysHeaderDlgBase : public wxDialog
 {

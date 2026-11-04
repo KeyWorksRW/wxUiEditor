@@ -12,12 +12,11 @@
 
 #include <wx/button.h>
 #include <wx/collpane.h>
+#include <wx/filedlg.h>
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
 #include <wx/sizer.h>
 #include <wx/valgen.h>
-
-#include <wx/filedlg.h>
 
 #include "sys_header_dlg_base.h"
 

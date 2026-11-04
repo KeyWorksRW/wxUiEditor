@@ -11,9 +11,8 @@
 // cppcheck-suppress-begin *
 
 #include <wx/artprov.h>
-#include <wx/sizer.h>
-
 #include <wx/filedlg.h>
+#include <wx/sizer.h>
 #include <wx/tokenzr.h>
 
 #include "include_files_dlg_base.h"

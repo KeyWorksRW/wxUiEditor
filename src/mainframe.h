@@ -255,6 +255,10 @@ public:
     void ShowInfoBarMsg(std::string_view msg, int icon = wxICON_WARNING);
     void DismissInfoBar();
 
+    // Shows an info bar warning if the node is a wxITEM_CHECK or wxITEM_RADIO menu item that has a
+    // bitmap -- on MSW, the bitmap replaces the check mark.
+    void ShowCheckableMenuItemWarning(Node* node);
+
     wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
 
     void ProjectLoaded();

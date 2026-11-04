@@ -238,6 +238,13 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
             }
         }
     }
+    else if (event.getNode()->is_Gen(gen_wxMenuItem) &&
+             (event.GetNodeProperty()->isProp(prop_kind) ||
+              event.GetNodeProperty()->isProp(prop_bitmap)))
+    {
+        wxGetFrame().GetPropInfoBar()->Dismiss();
+        wxGetFrame().ShowCheckableMenuItemWarning(event.getNode());
+    }
 }
 
 void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)

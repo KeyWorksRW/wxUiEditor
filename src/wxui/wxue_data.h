@@ -39,7 +39,7 @@ namespace wxue_data
     // ../xml/bars.xml
     extern const unsigned char bars[6562]; // Original size: 40,762 bytes
     // ../xml/boxes.xml
-    extern const unsigned char boxes[2433]; // Original size: 14,342 bytes
+    extern const unsigned char boxes[2466]; // Original size: 14,399 bytes
     // ../xml/buttons.xml
     extern const unsigned char buttons[2721]; // Original size: 15,325 bytes
     // ../xml/containers.xml

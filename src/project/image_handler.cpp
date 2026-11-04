@@ -668,6 +668,29 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
                 }
             }
         }
+        else if (iter.type() == type_bmp_combo_item)
+        {
+            for (const auto& item: iter.as_bmp_combo_items())
+            {
+                if (item.bitmap.empty())
+                {
+                    continue;
+                }
+                wxue::string description;
+                if (item.bitmap.extension().is_sameas(".svg", wxue::CASE::either))
+                {
+                    description << "SVG;" << item.bitmap << ";[16,16]";
+                }
+                else
+                {
+                    description << "Embed;" << item.bitmap;
+                }
+                if (!m_bundles.contains(ConvertToLookup(description)))
+                {
+                    ProcessBundleProperty(description, form);
+                }
+            }
+        }
     }
 
     for (const auto& child: node->get_ChildNodePtrs())

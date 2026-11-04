@@ -19,6 +19,7 @@
 
 // Various customized wxPGProperty classes
 
+#include "../customprops/bmp_combo_prop.h"      // BmpComboProperty -- wxBitmapComboBox contents editor
 #include "../customprops/code_single_prop.h"    // Derived wxStringProperty class for code
 #include "../customprops/code_string_prop.h"    // Derived wxStringProperty class for code
 #include "../customprops/custom_colour_prop.h"  // Property editor for colour
@@ -314,6 +315,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_statbar_fields:
             // This includes a button that triggers a dialog to edit the fields.
             return new SBarFieldsProperty(wxString(prop->get_DeclName()), prop);
+
+        case type_bmp_combo_item:
+            // This includes a button that triggers a dialog to edit text + bitmap entries.
+            return new BmpComboProperty(wxString(prop->get_DeclName()), prop);
 
         case type_checklist_item:
             // This includes a button that triggers a dialog to edit the fields.

@@ -680,6 +680,20 @@ std::vector<NODEPROP_BMP_COMBO_ITEM> NodeProperty::as_bmp_combo_items() const
 {
     std::vector<NODEPROP_BMP_COMBO_ITEM> result;
 
+    // Legacy form (projects saved before bitmaps were supported): a quoted text list, e.g.
+    // "one" "two" -- no bitmap for any entry.
+    if (!m_value.empty() && m_value[0] == '"')
+    {
+        const std::vector<wxue::string> array = as_ArrayString();
+        for (const auto& iter: array)
+        {
+            NODEPROP_BMP_COMBO_ITEM item;
+            item.label = iter;
+            result.emplace_back(item);
+        }
+        return result;
+    }
+
     const wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {

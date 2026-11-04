@@ -16,9 +16,15 @@
 #include "utils.h"                              // Miscellaneous utilities
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
-Code& Code::Bundle(GenEnum::PropName prop_name, const wxSize& svg_size_def)
+Code& Code::Bundle(const wxue::string& description, const wxSize& svg_size_def)
 {
-    wxue::StringVector parts(m_node->as_string(prop_name), BMP_PROP_SEPARATOR, wxue::TRIM::both);
+    if (description.empty())
+    {
+        Add("wxNullBitmap");
+        return *this;
+    }
+
+    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
     if (parts[IndexType].contains("SVG"))
     {
         GenerateBundleParameter(parts, false, svg_size_def);
@@ -46,6 +52,11 @@ Code& Code::Bundle(GenEnum::PropName prop_name, const wxSize& svg_size_def)
     }
 
     return *this;
+}
+
+Code& Code::Bundle(GenEnum::PropName prop, const wxSize& svg_size_def)
+{
+    return Bundle(m_node->as_string(prop), svg_size_def);
 }
 
 void Code::BundlePython(const wxue::StringVector& parts)

@@ -1040,6 +1040,24 @@ void MainFrame::DismissInfoBar()
     }
 }
 
+void MainFrame::ShowCheckableMenuItemWarning(Node* node)
+{
+    if (!node || !node->is_Gen(gen_wxMenuItem))
+    {
+        return;
+    }
+
+    const wxue::string kind = node->as_string(prop_kind);
+    if ((kind == "wxITEM_CHECK" || kind == "wxITEM_RADIO") && node->HasValue(prop_bitmap))
+    {
+        m_info_bar->ShowMessage(
+            "On Windows, a bitmap on a wxITEM_CHECK or wxITEM_RADIO menu item replaces the check "
+            "mark. The bitmap is shown when the item is checked; when unchecked, nothing is shown "
+            "unless an unchecked bitmap is also set.",
+            wxICON_INFORMATION);
+    }
+}
+
 BasePanel* MainFrame::GetFirstCodePanel()
 {
     auto* panel = dynamic_cast<BasePanel*>(m_notebook->GetPage(1));

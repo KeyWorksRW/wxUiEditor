@@ -550,6 +550,8 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
         }
     }
 
+    ShowCheckableMenuItemWarning(evt_flags);
+
 #if defined(INTERNAL_TESTING)
     if (g_pMsgLogging)
     {

@@ -591,9 +591,9 @@
             help="Specifies the menu item identifier. When generating Python code, a non wx.Widgets id will be global unless prefixed with self.">
             wxID_ANY</property>
         <property name="bitmap" type="image"
-            help="Bitmap for the menu item. This doubles as the checked bitmap if the menu item is wxITEM_CHECK."/>
+            help="Bitmap for the menu item. If the kind is wxITEM_CHECK or wxITEM_RADIO, this is used as the checked bitmap, replacing the check mark (Windows only)."/>
         <property name="unchecked_bitmap" type="image"
-            help="Unchecked bitmap for the menu item. This will be shown if the menu item is wxITEM_CHECK and it is currently unchecked. (Windows only)"/>
+            help="Unchecked bitmap for the menu item. This will be shown if the kind is wxITEM_CHECK or wxITEM_RADIO and the item is currently unchecked (Windows only)."/>
         <property name="checked" type="bool">0</property>
         <property name="disabled" type="bool">0</property>
         <property name="kind" type="option">

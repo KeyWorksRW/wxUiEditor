@@ -32,6 +32,38 @@ namespace
             ProjectImages.UpdateImageForm(node->as_string(prop_bitmap));
         }
     }
+
+    bool ContainsImagesForm(Node* node)
+    {
+        if (node->is_Gen(gen_Images))
+        {
+            return true;
+        }
+
+        // The Images form can live inside a project-level folder.
+        if (node->is_Gen(gen_folder) || node->is_Gen(gen_sub_folder))
+        {
+            for (const auto& child: node->get_ChildNodePtrs())
+            {
+                if (ContainsImagesForm(child.get()))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // Removing or restoring an Images form invalidates ImageHandler's cached bundles and
+    // embedded images, so it has to be rebuilt from the current node tree. See issue #1291.
+    void ReinitializeImagesForNode(Node* node)
+    {
+        if (ContainsImagesForm(node))
+        {
+            Project.ReinitializeImageHandler();
+        }
+    }
 }  // namespace
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
@@ -74,6 +106,7 @@ void InsertNodeAction::Change()
     }
 
     UpdateImageFormForNode(m_node.get());
+    ReinitializeImagesForNode(m_node.get());
 
     if (m_fix_duplicate_names)
     {
@@ -103,6 +136,7 @@ void InsertNodeAction::Revert()
     m_node->set_Parent(NodeSharedPtr());  // Remove the parent pointer
 
     UpdateImageFormForNode(m_node.get());
+    ReinitializeImagesForNode(m_node.get());
 
     if (m_fire_created_event)
     {
@@ -141,6 +175,7 @@ void RemoveNodeAction::Change()
     m_node->set_Parent(NodeSharedPtr());
 
     UpdateImageFormForNode(m_node.get());
+    ReinitializeImagesForNode(m_node.get());
 
     wxGetFrame().FireDeletedEvent(m_node.get());
 
@@ -169,6 +204,7 @@ void RemoveNodeAction::Revert()
     m_parent->ChangeChildPosition(m_node, m_old_pos);
 
     UpdateImageFormForNode(m_node.get());
+    ReinitializeImagesForNode(m_node.get());
 
     if (isAllowedSelectEvent())
     {

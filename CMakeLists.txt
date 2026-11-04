@@ -77,15 +77,6 @@ option(INTERNAL_FEATURE1 "Build with Feature #1 enabled") # Currently tied to In
 option(INTERNAL_FEATURE2 "Build with Feature #2 enabled") # Currently tied to Data List
 option(INTERNAL_FEATURE3 "Build with Feature #3 enabled") # unused
 
-# ###################### PGO (Profile-Guided Optimization) #######################
-# Clang-only, two-phase workflow:
-#   Phase 1: cmake -DUSE_PGO_INSTRUMENT=ON → build profile-collecting binary
-#   Phase 2: run workload, llvm-profdata merge, cmake -DUSE_PGO_OPTIMIZE=ON
-option(USE_PGO_INSTRUMENT "Build instrumented binary for PGO training (Clang)" OFF)
-option(USE_PGO_OPTIMIZE "Build optimized binary using PGO profile data (Clang)" OFF)
-set(PGO_PROFILE_DIR "${CMAKE_BINARY_DIR}/pgo_profiles"
-    CACHE PATH "Directory for PGO .profraw output (instrument) or .profdata input (optimize)")
-
 # ###################### Version #######################
 # Generate C++ header file with version constants for use in source code
 configure_file(
@@ -144,47 +135,6 @@ else()
         # add_compile_options(-fdebug-types-section)
         add_compile_options($<$<CONFIG:Debug>:-fno-standalone-debug>)
         add_compile_options($<$<CONFIG:Debug>:-gz=zlib>)
-
-        if(USE_PGO_INSTRUMENT AND USE_PGO_OPTIMIZE)
-            message(FATAL_ERROR "USE_PGO_INSTRUMENT and USE_PGO_OPTIMIZE are mutually exclusive")
-        endif()
-
-        # Auto-detect PGO profile: if neither option was explicitly set,
-        # check for merged.profdata and enable optimize automatically.
-        # Most users cloning the repo won't have a profile; this silently
-        # skips PGO for them while CI can drop in a profile for free perf.
-        # Debug builds never auto-apply PGO -- a stale merged.profdata must
-        # not slow down or complicate local debugging.
-        # PGO flags below are additionally gated by $<CONFIG:Debug>, so a Debug
-        # config never receives PGO flags even on multi-config generators where
-        # CMAKE_BUILD_TYPE is empty at configure time.
-        if(NOT USE_PGO_INSTRUMENT AND NOT USE_PGO_OPTIMIZE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-            if(EXISTS "${PGO_PROFILE_DIR}/merged.profdata")
-                message(STATUS "PGO: auto-detected profile at ${PGO_PROFILE_DIR}/merged.profdata")
-                set(USE_PGO_OPTIMIZE ON CACHE BOOL "Build optimized binary using PGO profile data (Clang)" FORCE)
-            endif()
-        endif()
-
-        if(USE_PGO_INSTRUMENT)
-            message(STATUS "PGO: instrumenting → profiles written to ${PGO_PROFILE_DIR}")
-            add_compile_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-generate=${PGO_PROFILE_DIR}>)
-            add_compile_options($<$<NOT:$<CONFIG:Debug>>:-fno-omit-frame-pointer>)
-            add_link_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-generate=${PGO_PROFILE_DIR}>)
-        elseif(USE_PGO_OPTIMIZE)
-            set(PGO_PROFDATA "${PGO_PROFILE_DIR}/merged.profdata")
-            if(NOT EXISTS "${PGO_PROFDATA}")
-                message(FATAL_ERROR
-                    "PGO profile not found: ${PGO_PROFDATA}\n"
-                    "  Run the instrumented build, collect profiles, then run:\n"
-                    "  llvm-profdata merge -output=${PGO_PROFDATA} ${PGO_PROFILE_DIR}/*.profraw")
-            endif()
-            message(STATUS "PGO: optimizing with profile ${PGO_PROFDATA}")
-            add_compile_options(
-                $<$<NOT:$<CONFIG:Debug>>:-fprofile-use=${PGO_PROFDATA}>
-                $<$<NOT:$<CONFIG:Debug>>:-Wno-backend-plugin>
-            )
-            add_link_options($<$<NOT:$<CONFIG:Debug>>:-fprofile-use=${PGO_PROFDATA}>)
-        endif()
     endif()
 endif()
 
@@ -429,7 +379,7 @@ else()
         -Wshadow  # Warn when a local variable shadows a parameter or member
     )
     # The manifest is embedded by src/wxUiEditor.rc (RT_MANIFEST). Clang's GNU driver
-    # targeting the MSVC ABI (the LLVM-build compiler used by the PGO job) gets a CMake
+    # targeting the MSVC ABI (the LLVM-build compiler) gets a CMake
     # link rule that unconditionally passes `-Xlinker /MANIFEST:EMBED`, which adds a
     # second manifest and makes lld-link abort with "duplicate resource: type MANIFEST".
     # Linker options are last-wins, so appending /MANIFEST:NO *after* CMake's flag stops

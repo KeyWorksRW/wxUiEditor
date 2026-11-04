@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [09-01-2026]
+// CR: [11-04-2026]
 
 #include <wx/datetime.h>  // wxDateTime
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
@@ -31,6 +31,21 @@
 #include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 using namespace GenEnum;
+
+// Converts a bmp-combo item bitmap into the description format expected by
+// ProjectImages::GetPropertyImageBundle(). Returns an empty string when the item has no bitmap.
+static wxue::string get_BmpComboItemDescription(const wxue::string& bitmap)
+{
+    if (bitmap.empty())
+    {
+        return {};
+    }
+    if (bitmap.extension().is_sameas(".svg", wxue::CASE::either))
+    {
+        return wxue::string() << "SVG;" << bitmap << ";[16,16]";
+    }
+    return wxue::string() << "Embed;" << bitmap;
+}
 
 BaseCodeGenerator::BaseCodeGenerator(GenLang language, Node* form_node) :
     m_header(nullptr),
@@ -517,6 +532,21 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 ProcessAnimationHeaders(value, node, embedset);
             }
         }
+        else if (iter.type() == type_bmp_combo_item)
+        {
+            for (const auto& item: iter.as_bmp_combo_items())
+            {
+                const wxue::string description = get_BmpComboItemDescription(item.bitmap);
+                if (description.empty())
+                {
+                    continue;
+                }
+                if (const auto* bundle = ProjectImages.GetPropertyImageBundle(description); bundle)
+                {
+                    ProcessEmbeddedImages(bundle->lst_filenames);
+                }
+            }
+        }
     }
 
     for (const auto& child: node->get_ChildNodePtrs())
@@ -708,6 +738,30 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 if (parts[IndexType] == "Header")
                 {
                     ProcessChildHeaderType(parts, iter.type() == type_animation);
+                }
+            }
+            else if (iter.type() == type_bmp_combo_item)
+            {
+                for (const auto& item: iter.as_bmp_combo_items())
+                {
+                    const wxue::string description = get_BmpComboItemDescription(item.bitmap);
+                    if (description.empty())
+                    {
+                        continue;
+                    }
+                    wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+                    if (parts.size() < IndexImage + 1)
+                    {
+                        continue;
+                    }
+                    if (parts[IndexType] == "Embed")
+                    {
+                        ProcessChildEmbedType(parts, false);
+                    }
+                    else if (parts[IndexType] == "SVG")
+                    {
+                        ProcessChildSVGType(parts, false);
+                    }
                 }
             }
         }

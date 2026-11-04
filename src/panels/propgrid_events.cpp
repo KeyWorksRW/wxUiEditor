@@ -361,6 +361,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_include_files:
         case type_uint:
         case type_statbar_fields:
+        case type_bmp_combo_item:
         case type_checklist_item:
             {
                 ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));

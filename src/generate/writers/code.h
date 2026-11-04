@@ -604,6 +604,11 @@ public:
     // are greater than zero.
     Code& Bundle(GenEnum::PropName prop, const wxSize& svg_size_def = wxDefaultSize);
 
+    // Same as above, but takes the bundle description string (e.g. "Embed;image.png" or
+    // "SVG;image.svg;[16,16]") instead of a property name. Generates wxNullBitmap if description
+    // is empty.
+    Code& Bundle(const wxue::string& description, const wxSize& svg_size_def = wxDefaultSize);
+
     void BundlePerl(const wxue::StringVector& parts);
     void BundlePython(const wxue::StringVector& parts);
     void BundleRuby(const wxue::StringVector& parts);

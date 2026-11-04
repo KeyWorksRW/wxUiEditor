@@ -27,6 +27,7 @@ set( file_list
     # The wxue_namespace sources live in wxui_core_files (below) so the unit tests can link them.
 
     # Custom property handling for Property Grid panel
+    src/customprops/bmp_combo_prop.cpp         # BmpComboProperty -- Property editor for wxBitmapComboBox contents
     src/customprops/code_single_prop.cpp      # EditCodeSingleProperty -- Derived wxStringProperty class for single line code
     src/customprops/code_string_prop.cpp      # EditCodeProperty --Derived wxStringProperty class for code
     src/customprops/custom_colour_prop.cpp    # EditColourProperty -- Property editor for colour

@@ -51,8 +51,8 @@
         <property name="var_name" type="string">m_bmpComboBox</property>
         <property name="hint" type="string_escapes"
             help="Sets a hint to be shown when the text field is empty and does not have the focus."/>
-        <property name="contents" type="stringlist"
-            help="Contents of the Combo Box"/>
+        <property name="contents" type="bmp_combo_item"
+            help="Contents of the Combo Box. Each entry can specify text and an optional bitmap."/>
         <property name="selection_string" type="string_escapes"
             help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards."/>
         <property name="selection_int" type="int"

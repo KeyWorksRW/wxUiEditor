@@ -17,6 +17,10 @@ public:
 
     bool ConstructionCode(Code& code) override;
     bool SettingsCode(Code& code) override;
+    bool AfterChildrenCode(Code& code) override;
+
+    void AfterCreation(wxObject* wxobject, wxWindow* wxparent, Node* node,
+                       bool is_preview) override;
 
     int GetRequiredVersion(Node* node) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,

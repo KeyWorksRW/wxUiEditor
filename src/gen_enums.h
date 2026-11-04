@@ -231,6 +231,7 @@ namespace GenEnum
         prop_extra_accels,
         prop_extra_style,
         prop_factor,
+        prop_field_index,
         prop_fields,
         prop_filter,
         prop_filter_index,

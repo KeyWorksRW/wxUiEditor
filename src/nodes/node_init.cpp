@@ -161,6 +161,7 @@ constexpr auto lstParentChild = std::to_array<ParentChild>({
     ParentChild { .parent = type_frame_form, .child = type_splitter, .max_children = infinite },
 
     ParentChild { .parent = type_frame_form, .child = type_statusbar, .max_children = one },
+    ParentChild { .parent = type_statusbar, .child = type_widget, .max_children = infinite },
     ParentChild { .parent = type_frame_form, .child = type_toolbar, .max_children = one },
     ParentChild { .parent = type_frame_form, .child = type_aui_toolbar, .max_children = one },
     ParentChild { .parent = type_frame_form, .child = type_menubar, .max_children = one },

@@ -8,14 +8,17 @@
 
 #include <wx/statusbr.h>  // wxStatusBar class interface
 
-#include "code.h"           // Code -- Helper class for generating code
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "node_creator.h"   // Class used to create nodes
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_common.h"       // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "mockup_parent.h"    // Top-level MockUp Parent window
+#include "node.h"             // Node class
+#include "node_creator.h"     // Class used to create nodes
+#include "project_handler.h"  // ProjectHandler class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
+#include "version.h"          // Version numbers and other constants
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 #include "wxue_namespace/wxue_string.h"  // wxue:: helpers
 
@@ -146,6 +149,118 @@ bool StatusBarGenerator::ConstructionCode(Code& code)
     }
 
     code.EndFunction();
+
+    return true;
+}
+
+void StatusBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
+                                       bool is_preview)
+{
+    wxStatusBar* status_bar = wxDynamicCast(wxobject, wxStatusBar);
+    if (!status_bar)
+    {
+        return;
+    }
+
+    const int num_fields = status_bar->GetFieldsCount();
+    std::set<int> used_fields;
+
+    for (size_t i = 0; i < node->get_ChildCount(); ++i)
+    {
+        Node* child = node->get_Child(i);
+        const int field_index = child->as_int(prop_field_index);
+        // AddFieldControl() uses wxCHECK_MSG, so an out-of-range or duplicate field index would
+        // display an assert dialog in the Mockup.
+        if (field_index < 0 || field_index >= num_fields || used_fields.contains(field_index))
+        {
+            continue;
+        }
+
+        const wxObject* child_object =
+            is_preview ? child->get_MockupObject() : getMockup()->get_Child(wxobject, i);
+        wxWindow* window = wxDynamicCast(child_object, wxWindow);
+        if (window)
+        {
+            status_bar->AddFieldControl(field_index, window);
+            used_fields.insert(field_index);
+        }
+    }
+}
+
+bool StatusBarGenerator::AfterChildrenCode(Code& code)
+{
+    Node* node = code.node();
+    if (node->get_ChildCount() == 0 || !code.is_cpp())
+    {
+        // AddFieldControl() is C++ only, so no other language generates anything here.
+        return false;
+    }
+
+    int num_fields = 0;
+    if (GetRequiredVersion(node) > minRequiredVer)
+    {
+        num_fields = to_int(node->as_statusbar_fields(prop_fields).size());
+    }
+    else
+    {
+        num_fields = node->as_int(prop_fields);
+    }
+
+    std::vector<Node*> field_children;
+    std::vector<int> field_indices;
+    std::vector<Node*> skipped_children;
+    std::set<int> used_fields;
+
+    for (size_t i = 0; i < node->get_ChildCount(); ++i)
+    {
+        Node* child = node->get_Child(i);
+        const int field_index = child->as_int(prop_field_index);
+        if (field_index < 0 || field_index >= num_fields || used_fields.contains(field_index))
+        {
+            skipped_children.push_back(child);
+            continue;
+        }
+        field_children.push_back(child);
+        field_indices.push_back(field_index);
+        used_fields.insert(field_index);
+    }
+
+    if (field_children.empty())
+    {
+        return false;
+    }
+
+    const bool use_conditional =
+        Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0;
+    if (use_conditional)
+    {
+        code.Str("#if wxCHECK_VERSION(3, 3, 0)");
+    }
+
+    for (size_t child_index = 0; child_index < field_children.size(); ++child_index)
+    {
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("AddFieldControl(")
+            .itoa(field_indices[child_index])
+            .Comma()
+            .NodeName(field_children[child_index])
+            .EndFunction();
+    }
+
+    if (use_conditional)
+    {
+        code.Eol().Str("#endif");
+    }
+
+    // Emitted after the conditional block so the comment is never guarded out.
+    for (Node* child: skipped_children)
+    {
+        code.Eol(eol_if_needed)
+            .Str("// ")
+            .NodeName(child)
+            .Str(" was not added: field_index is out of range or already used.");
+    }
 
     return true;
 }

@@ -929,6 +929,13 @@ bool BaseGenerator::CanChangeParent(Node* node)
 
 int BaseGenerator::GetRequiredVersion(Node* node)
 {
+    // A child of a wxStatusBar is placed in a specific field using the field_index property,
+    // which requires project file version 21.
+    if (Node* parent = node->get_Parent(); parent && parent->is_Gen(gen_wxStatusBar))
+    {
+        return minRequiredVer + 6;  // 1.2.9 release (project version 21)
+    }
+
     if (node->HasValue(prop_platforms) && node->as_string(prop_platforms) != "Windows|Unix|Mac")
     {
         return minRequiredVer + 1;

@@ -27,6 +27,8 @@ All notable changes to this project will be documented in this file.
 - Ribbon gallery has a new `gallery_size` property
 - The ID Editor now warns when a custom ID is already used elsewhere in the form, and offers a Make
   Unique button that generates a unique ID.
+- Any widget added as a direct child of a status bar can be placed in a specific field with the new `field_index`
+  property. This generates `wxStatusBar::AddFieldControl()` and requires wxWidgets 3.3 or later (C++ only).
 
 ### Changed
 

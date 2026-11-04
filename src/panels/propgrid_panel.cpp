@@ -706,10 +706,19 @@ void PropGridPanel::ReplaceDerivedFile(const wxue::string& newValue, NodePropert
     Project.InvalidateDerivedFileCache();
 }
 
-bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)
+bool PropGridPanel::IsPropAllowed(Node* node, NodeProperty* prop)
 {
     // If this function returns false, the property will not be created in the property grid. Note
     // that properties marked as hidden in the XML interface will not be passed to this function.
+
+    if (prop->isProp(prop_field_index))
+    {
+        // field_index only applies to a control that is a direct child of a wxStatusBar, and the
+        // generated code (wxStatusBar::AddFieldControl()) is only emitted for C++.
+        const Node* parent = node->get_Parent();
+        return parent && parent->is_Gen(gen_wxStatusBar) &&
+               Project.get_CodePreference(node) == GenLang::cplusplus;
+    }
 
     return true;
 }

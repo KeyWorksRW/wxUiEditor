@@ -910,6 +910,9 @@
 				help="About 33% smaller than normal."/>
 			<option name="large"
 				help="About 35% larger than normal."/> normal </property>
+		<property name="field_index" type="uint"
+			help="0-based index of the status bar field this control is placed in. Only applies when the parent is a wxStatusBar; the value must be less than the number of fields. Generated code uses wxStatusBar::AddFieldControl(), which requires wxWidgets 3.3 or later and is C++ only.">
+			0</property>
 		<property name="minimum_size" type="wxSize"
 			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done."/>
 		<property name="maximum_size" type="wxSize"

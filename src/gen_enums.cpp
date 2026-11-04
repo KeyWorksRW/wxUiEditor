@@ -212,6 +212,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_extra_accels, "extra_accels" },
     { prop_extra_style, "extra_style" },
     { prop_factor, "factor" },
+    { prop_field_index, "field_index" },
     { prop_fields, "fields" },
     { prop_filter, "filter" },
     { prop_filter_index, "filter_index" },

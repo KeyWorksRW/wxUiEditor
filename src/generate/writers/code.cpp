@@ -954,8 +954,8 @@ Code& Code::ParentName()
 constexpr auto s_GenParentTypes = std::to_array<GenType>(
     { type_aui_toolbar, type_auinotebook, type_bookpage, type_choicebook, type_container,
       type_listbook, type_notebook, type_panel, type_propgridpage, type_ribbonbar,
-      type_ribbonbar_form, type_ribbonpanel, type_simplebook, type_splitter, type_toolbar,
-      type_wizardpagesimple });
+      type_ribbonbar_form, type_ribbonpanel, type_simplebook, type_splitter, type_statusbar,
+      type_toolbar, type_wizardpagesimple });
 
 void Code::AddFormParentName()
 {

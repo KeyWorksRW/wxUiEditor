@@ -975,6 +975,18 @@ Node* ProjectHandler::get_ImagesForm()
     return m_ImagesForm;
 }
 
+void ProjectHandler::ReinitializeImageHandler()
+{
+    m_form_BundleSVG = nullptr;
+    m_form_BundleBitmaps = nullptr;
+    m_form_Image = nullptr;
+    m_form_Animation = nullptr;
+    m_ImagesForm = nullptr;
+
+    ProjectImages.Initialize(m_project_node, m_allow_ui);
+    ProjectImages.CollectBundles();
+}
+
 Node* ProjectHandler::get_DataForm()
 {
     if (!m_DataForm)

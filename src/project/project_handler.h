@@ -294,6 +294,10 @@ public:
     // either return that Node* or nullptr if no ImagesList class is found.
     [[nodiscard]] Node* get_ImagesForm();
 
+    // Call this after an Images form has been added to or removed from the project. It clears
+    // the cached image-form pointers and rebuilds ImageHandler from the current node tree.
+    void ReinitializeImageHandler();
+
     // This will assume any Data class will be the first or second child of the project, and
     // will either return that Node* or nullptr if no Data class is found.
     [[nodiscard]] Node* get_DataForm();

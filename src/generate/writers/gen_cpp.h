@@ -8,7 +8,9 @@
 
 #pragma once
 
+#include <set>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <unordered_set>
 #include <vector>
@@ -160,6 +162,22 @@ private:
                              const std::vector<std::string>& ordered_includes,
                              const std::string& file);
 
+    // System #include classification. Includes are written in this order, with one blank line
+    // between each non-empty group.
+    enum class IncludeGroup
+    {
+        wx,
+        std_lib,
+        other_system,
+        local
+    };
+    [[nodiscard]] static IncludeGroup GetIncludeGroup(std::string_view include);
+
+    // Writes every entry of includes belonging to group, one per line, in the set's sorted
+    // order. No blank lines are written.
+    static void WriteIncludeGroup(WriteCode* code, const std::set<std::string>& includes,
+                                  IncludeGroup group);
+
     // Helper methods for GenerateClass - reduce function complexity
     void InitializeGenerationState();
     void StartThreadedCollections(std::set<std::string>& img_include_set);
@@ -179,9 +197,8 @@ private:
     // Helper methods for GenInitHeaderFile
     static void ProcessOrderDependentHeaderIncludes(std::set<std::string>& hdr_includes,
                                                     std::vector<std::string>& ordered_includes);
-    void WriteWxWidgetsHeaders(const std::set<std::string>& hdr_includes);
+    // Removes namespace declarations from hdr_includes so they are not treated as includes
     static std::vector<std::string> ExtractNamespaces(std::set<std::string>& hdr_includes);
-    void WriteNonWxHeaders(const std::set<std::string>& hdr_includes);
     void WritePreambleAndCustomIncludes();
     void WriteNamespaceDeclarations(const std::vector<std::string>& namespaces);
 

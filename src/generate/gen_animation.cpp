@@ -18,6 +18,7 @@
 #include "project_handler.h"                    // ProjectHandler class
 #include "pugixml.hpp"                          // xml read/write/create/process
 #include "utils.h"                              // Utility functions that work with properties
+#include "version.h"                            // Version numbers and other constants
 #include "wxue_namespace/wxue_string.h"         // wxue::string, wxue::string_view
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 #include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
@@ -162,7 +163,20 @@ bool AnimationGenerator::ConstructionCode(Code& code)
 
             code.Eol() << "wxueAnimation(" << name << ", sizeof(" << name << ")";
             code.Comma().Str("animate").EndFunction();
-            code.Eol().NodeName().Function("SetAnimation(animate").EndFunction().CloseBrace();
+
+            if (Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
+            {
+                code.Eol()
+                    .NodeName()
+                    .Function("SetAnimation(")
+                    .Str("wxAnimationBundle(animate)")
+                    .EndFunction();
+            }
+            else
+            {
+                code.Eol().NodeName().Function("SetAnimation(animate").EndFunction();
+            }
+            code.CloseBrace();
         }
         else if (code.is_python())
         {

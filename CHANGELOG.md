@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
   Unique button that generates a unique ID.
 - Any widget added as a direct child of a status bar can be placed in a specific field with the new `field_index`
   property. This generates `wxStatusBar::AddFieldControl()` and requires wxWidgets 3.3 or later (C++ only).
+- C++ code generation for wxAnimationCtrl now uses `wxAnimationBundle` when the project targets wxWidgets 3.3.0 or later.
 
 ### Changed
 

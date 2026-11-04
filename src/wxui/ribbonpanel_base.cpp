@@ -325,8 +325,6 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
             wxue_img::bundle_dataview_ctrl_svg(24, 24), "Data Control", wxRIBBON_BUTTON_DROPDOWN);
         data_bar_dataview->AddTool(gen_dataViewColumn,
             wxue_img::bundle_dataview_column_svg(24, 24), "DataView Column", wxRIBBON_BUTTON_NORMAL);
-        data_bar_dataview->AddTool(gen_dataViewListColumn,
-            wxue_img::bundle_dataviewlist_column_svg(24, 24), "DataViewList Column", wxRIBBON_BUTTON_NORMAL);
     }
     data_bar_dataview->Realize();
 

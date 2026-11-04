@@ -2573,11 +2573,6 @@
                     bitmap="SVG;dataview_column.svg;[24,24]"
                     help="DataView Column"
                     id="gen_dataViewColumn" />
-                  <node
-                    class="ribbonTool"
-                    bitmap="SVG;dataviewlist_column.svg;[24,24]"
-                    help="DataViewList Column"
-                    id="gen_dataViewListColumn" />
                 </node>
               </node>
             </node>

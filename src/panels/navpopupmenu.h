@@ -170,6 +170,7 @@ public:
         // Data List commands
         AddDataString,
         AddDataXml,
+        AddDataViewListColumn,
 
         // These are for Internal builds only
         SingleGenCpp,

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class Creation functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-01-2026]
@@ -30,7 +30,7 @@
 #include "../customprops/html_string_prop.h"    // EditHtmlProperty
 #include "../customprops/id_prop.h"             // ID_Property
 #include "../customprops/include_files_prop.h"  // IncludeFilesProperty
-#include "../customprops/markup_string_prop.h"    // MarkupStringProperty -- property editor for markup labels
+#include "../customprops/markup_string_prop.h"  // MarkupStringProperty -- property editor for markup labels
 #include "../customprops/pg_animation.h"        // Custom property grid class for animations
 #include "../customprops/pg_image.h"            // Custom property grid class for images
 #include "../customprops/pg_point.h"            // custom wxPGProperty for handling wxPoint

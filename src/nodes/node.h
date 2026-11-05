@@ -550,8 +550,7 @@ public:
     // Duplicate-name fixing sets this, because an absent attribute is loaded as the default value
     // and must not be treated as a user-assigned name.
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
-                            PropName prop_name = prop_var_name,
-                            bool include_cur_node_names = false,
+                            PropName prop_name = prop_var_name, bool include_cur_node_names = false,
                             bool exclude_default_names = false);
 
     // --- Insertion & Position ---

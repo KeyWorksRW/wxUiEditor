@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   ProjectHandler class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-03-2026]
@@ -1143,7 +1143,9 @@ static int CountLocalDuplicatesInForm(Node* form)
         {
             for (const PropName prop: LOCAL_VAR_PROPS)
             {
-                if (node_ptr->HasValue(prop))
+                // A value still equal to the property default is treated as unset -- an
+                // attribute absent from the .wxui file loads as the default value.
+                if (node_ptr->HasValue(prop) && !node_ptr->is_PropDefault(prop))
                 {
                     ++name_count[std::string(node_ptr->as_string(prop))];
                 }

@@ -231,8 +231,8 @@
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_radioBox</property>
         <property name="label" type="string_escapes">My Radio Box</property>
-        <property name="contents" type="stringlist"
-            help="Contents of the Radio Box. On Windows, the last character may be clipped unless you include a trailing space.">
+        <property name="contents" type="radiobox_item"
+            help="Contents of the Radio Box. Each entry specifies the text plus whether the item is enabled and shown, and an optional per-item tooltip and help text. On Windows, the last character may be clipped unless you include a trailing space.">
             "Radio Button "
         </property>
         <property name="selection" type="uint"

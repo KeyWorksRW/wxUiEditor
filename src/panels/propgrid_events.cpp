@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class event handlers
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-01-2026]
@@ -372,6 +372,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_statbar_fields:
         case type_bmp_combo_item:
         case type_checklist_item:
+        case type_radiobox_item:
             {
                 ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
                 break;
@@ -392,51 +393,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             break;
 
         case type_stringlist:
-#if defined(_WIN32)
-            if (prop->isProp(prop_contents))
-            {
-                // REVIEW: [Randalphwa - 06-26-2023] This will only work if we use quotes to
-                // separate items.
-                wxue::string newValue = property->GetValueAsString().utf8_string();
-                // REVIEW: [Randalphwa - 04-04-2026] Is this still true in wxWidgets 3.2.9
-                // and/or 3.3.x?
-
-                // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is
-                // partially clipped. Adding a trailing space prevents this clipping.
-
-                if (m_currentSel->is_Gen(gen_wxRadioBox) && !newValue.empty())
-                {
-                    size_t result = 0;
-                    for (size_t pos = 0; pos < newValue.size();)
-                    {
-                        result = newValue.find("\" \"", pos);
-                        if (wxue::is_found(result))
-                        {
-                            if (newValue.at(result - 1) != ' ')
-                            {
-                                newValue.insert(result, 1, ' ');
-                            }
-                            pos = result + 3;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    result = newValue.find_last_of('"');
-                    if (wxue::is_found(result))
-                    {
-                        if (newValue.at(result - 1) != ' ')
-                        {
-                            newValue.insert(result, 1, ' ');
-                        }
-                    }
-                    ModifyProperty(prop, newValue);
-                    break;
-                }
-            }
-#endif  // _WIN32
             ModifyProperty(prop, property->GetValueAsString().utf8_string());
             break;
 

@@ -3289,6 +3289,194 @@
       </node>
       <node
         class="wxDialog"
+        class_name="MarkStringDlgBase"
+        title="Markup Property"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        size="820,640"
+        minimum_size="600,480"
+        base_file="markstring_dlg_base"
+        derived_class_name="MarkStringDlg"
+        pure_virtual_functions="1">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxSplitterWindow"
+            sashgravity="0.5"
+            persist_name="MarkStringDlgSash"
+            min_pane_size="150"
+            style="wxSP_LIVE_UPDATE|wxSP_3DSASH"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxPanel"
+              window_style="wxTAB_TRAVERSAL"
+              flags="wxEXPAND">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="left_sizer"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Markup source"
+                  var_name="m_source_heading"
+                  border_size="8"
+                  borders="wxLEFT|wxTOP" />
+                <node
+                  class="wxTextCtrl"
+                  style="wxTE_MULTILINE"
+                  var_name="m_text"
+                  border_size="8"
+                  borders="wxALL"
+                  flags="wxEXPAND"
+                  proportion="1"
+                  wxEVT_TEXT="OnMarkupChanged" />
+              </node>
+            </node>
+            <node
+              class="wxPanel"
+              window_style="wxTAB_TRAVERSAL"
+              flags="wxEXPAND">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="right_sizer"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Preview"
+                  var_name="m_preview_heading"
+                  border_size="8"
+                  borders="wxLEFT|wxTOP" />
+                <node
+                  class="wxPanel"
+                  window_style="wxBORDER_SIMPLE"
+                  minimum_size="-1,60"
+                  border_size="8"
+                  borders="wxALL"
+                  flags="wxEXPAND"
+                  proportion="1">
+                  <node
+                    class="wxBoxSizer"
+                    orientation="wxVERTICAL"
+                    var_name="preview_sizer"
+                    flags="wxEXPAND">
+                    <node
+                      class="wxStaticText"
+                      label=""
+                      var_name="m_preview"
+                      border_size="8"
+                      borders="wxALL"
+                      flags="wxEXPAND"
+                      proportion="1" />
+                    <node
+                      class="wxStaticText"
+                      label=""
+                      var_name="m_status"
+                      border_size="8"
+                      borders="wxLEFT|wxRIGHT|wxBOTTOM"
+                      flags="wxEXPAND" />
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node
+            class="wxWrapSizer"
+            var_name="button_sizer"
+            border_size="8"
+            borders="wxLEFT|wxRIGHT"
+            flags="wxEXPAND">
+            <node
+              class="wxButton"
+              label="Bold"
+              var_name="m_btn_bold"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertTag" />
+            <node
+              class="wxButton"
+              label="Italic"
+              var_name="m_btn_italic"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertTag" />
+            <node
+              class="wxButton"
+              label="Underline"
+              var_name="m_btn_underline"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertTag" />
+            <node
+              class="wxButton"
+              label="Strike"
+              var_name="m_btn_strike"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertTag" />
+            <node
+              class="wxButton"
+              label="Monospace"
+              var_name="m_btn_monospace"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertTag" />
+            <node
+              class="wxButton"
+              label="Bigger"
+              var_name="m_btn_bigger"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertTag" />
+            <node
+              class="wxButton"
+              label="Smaller"
+              var_name="m_btn_smaller"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertTag" />
+            <node
+              class="wxButton"
+              label="Foreground colour..."
+              var_name="m_btn_foreground"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertColour" />
+            <node
+              class="wxButton"
+              label="Background colour..."
+              var_name="m_btn_background"
+              border_size="4"
+              borders="wxRIGHT|wxBOTTOM"
+              wxEVT_BUTTON="OnInsertColour" />
+          </node>
+          <node
+            class="wxStaticText"
+            label="Supported markup:"
+            var_name="m_reference_heading"
+            border_size="8"
+            borders="wxLEFT" />
+          <node
+            class="wxTextCtrl"
+            style="wxTE_MULTILINE|wxTE_READONLY|wxTE_DONTWRAP"
+            var_name="m_reference"
+            size="-1,90"
+            border_size="8"
+            borders="wxLEFT|wxRIGHT|wxBOTTOM"
+            flags="wxEXPAND" />
+          <node
+            class="wxStdDialogButtonSizer"
+            var_name="stdBtn"
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
         class_name="ColourPropBase"
         title="Colour Property"
         base_file="colourprop_base"

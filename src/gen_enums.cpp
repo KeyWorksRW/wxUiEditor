@@ -43,6 +43,7 @@ const std::map<std::string_view, PropType, std::less<>> GenEnum::umap_PropTypes 
     { "string_code_single", type_string_code_single },
     { "string_edit", type_string_edit },
     { "string_edit_escapes", type_string_edit_escapes },
+    { "string_edit_markup", type_string_edit_markup },
     { "string_edit_single", type_string_edit_single },
     { "string_escapes", type_string_escapes },
     { "stringlist", type_stringlist },

@@ -30,6 +30,7 @@
 #include "../customprops/html_string_prop.h"    // EditHtmlProperty
 #include "../customprops/id_prop.h"             // ID_Property
 #include "../customprops/include_files_prop.h"  // IncludeFilesProperty
+#include "../customprops/markup_string_prop.h"    // MarkupStringProperty -- property editor for markup labels
 #include "../customprops/pg_animation.h"        // Custom property grid class for animations
 #include "../customprops/pg_image.h"            // Custom property grid class for images
 #include "../customprops/pg_point.h"            // custom wxPGProperty for handling wxPoint
@@ -361,6 +362,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_string_edit_single:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditStringProperty(wxString(prop->get_DeclName()), prop);
+
+        case type_string_edit_markup:
+            // This includes a button that triggers a dialog to edit the label and preview markup
+            return new MarkupStringProperty(wxString(prop->get_DeclName()), prop);
 
         case type_code_edit:
             // This includes a button that triggers a small single-line custom text editor dialog

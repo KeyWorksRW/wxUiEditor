@@ -42,6 +42,7 @@ set( file_list
     src/customprops/img_string_prop.cpp       # ImageDialogAdapter -- used by ImageStringProperty (img_string_prop.h)
     src/customprops/include_files_dlg.cpp     # Dialog for editing a list of include files
     src/customprops/include_files_prop.cpp    # IncludeFilesProperty -- Derived wxStringProperty class for Include Files
+    src/customprops/markup_string_prop.cpp    # MarkupStringProperty -- Property editor for labels that support markup
     src/customprops/rearrange_prop.cpp        # RearrangeProperty -- wxRearangeList contents editor
     src/customprops/sb_fields_prop.cpp        # SBarFieldsProperty -- Property editor for status bar fields
     src/customprops/sizer_grow_columns.cpp    # GrowColumnsProperty -- Property editor for Growable Sizer Columns

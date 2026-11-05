@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   NodeProperty class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-16-2026]
@@ -717,6 +717,22 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
 {
     std::vector<NODEPROP_RADIOBOX_ITEM> result;
 
+    // Legacy form (projects saved before per-item settings were supported): a quoted text list,
+    // e.g. "one" "two" -- every entry is enabled and shown with no tooltip or help text.
+    if (!m_value.empty() && m_value[0] == '"')
+    {
+        const std::vector<wxue::string> array = as_ArrayString();
+        for (const auto& iter: array)
+        {
+            NODEPROP_RADIOBOX_ITEM item;
+            item.label = iter;
+            item.enabled = "1";
+            item.show = "1";
+            result.emplace_back(item);
+        }
+        return result;
+    }
+
     const wxue::StringVector fields(m_value, ';');
     for (auto& field: fields)
     {
@@ -726,14 +742,8 @@ std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
         {
             item.label = parts[0];
         }
-        if (parts.size() > 1)
-        {
-            item.enabled = parts[1];
-        }
-        if (parts.size() > 2)
-        {
-            item.show = parts[2];
-        }
+        item.enabled = parts.size() > 1 && !parts[1].empty() ? parts[1] : wxue::string("1");
+        item.show = parts.size() > 2 && !parts[2].empty() ? parts[2] : wxue::string("1");
         if (parts.size() > 3)
         {
             item.tooltip = parts[3];

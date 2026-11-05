@@ -31,9 +31,10 @@
 #include "../customprops/id_prop.h"             // ID_Property
 #include "../customprops/include_files_prop.h"  // IncludeFilesProperty
 #include "../customprops/markup_string_prop.h"  // MarkupStringProperty -- property editor for markup labels
-#include "../customprops/pg_animation.h"        // Custom property grid class for animations
-#include "../customprops/pg_image.h"            // Custom property grid class for images
-#include "../customprops/pg_point.h"            // custom wxPGProperty for handling wxPoint
+#include "../customprops/pg_animation.h"  // Custom property grid class for animations
+#include "../customprops/pg_image.h"      // Custom property grid class for images
+#include "../customprops/pg_point.h"      // custom wxPGProperty for handling wxPoint
+#include "../customprops/radiobox_prop.h"  // RadioBoxProperty -- Property editor for wxRadioBox items
 #include "../customprops/rearrange_prop.h"      // Property editor for rearranging items
 #include "../customprops/sb_fields_prop.h"      // Property editor for status bar fields
 #include "../customprops/sizer_grow_columns.h"  // Property editor for Growable Sizer Columns
@@ -324,6 +325,11 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_checklist_item:
             // This includes a button that triggers a dialog to edit the fields.
             return new RearrangeProperty(wxString(prop->get_DeclName()), prop);
+
+        case type_radiobox_item:
+            // This includes a button that triggers a dialog to edit text, enabled, show,
+            // tooltip and help text for each item.
+            return new RadioBoxProperty(wxString(prop->get_DeclName()), prop);
 
         case type_string_code_grow_columns:
             return new GrowColumnsProperty(wxString(prop->get_DeclName()), prop);

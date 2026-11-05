@@ -54,6 +54,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/markstring_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/new_mdi_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/radiobox_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/sys_header_dlg_base.cpp

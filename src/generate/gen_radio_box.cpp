@@ -1,10 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxRadioBox generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/arrstr.h>    // wxArrayString
 #include <wx/radiobox.h>  // wxRadioBox declaration
 
 #include "gen_common.h"                  // GeneratorLibrary -- Generator classes
@@ -17,9 +18,16 @@
 
 #include "gen_radio_box.h"
 
+using namespace code;
+
 wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto choices = node->as_wxArrayString(prop_contents);
+    const std::vector<NODEPROP_RADIOBOX_ITEM> items = node->as_radiobox_items(prop_contents);
+    wxArrayString choices;
+    for (const NODEPROP_RADIOBOX_ITEM& item: items)
+    {
+        choices.Add(item.label.wx());
+    }
     if (!choices.Count())
     {
         choices.Add("at least one choice required");
@@ -33,6 +41,30 @@ wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     if (int selection = node->as_int(prop_selection); (to_size_t) selection < choices.Count())
     {
         widget->SetSelection(selection);
+    }
+
+    // The wxRadioBox constructor has no per-item state parameter, so each item's state has to be
+    // applied after the widget is created.
+    unsigned int item_index = 0U;
+    for (const NODEPROP_RADIOBOX_ITEM& item: items)
+    {
+        if (item.enabled != "1")
+        {
+            widget->Enable(item_index, false);
+        }
+        if (item.show != "1")
+        {
+            widget->Show(item_index, false);
+        }
+        if (!item.tooltip.empty())
+        {
+            widget->SetItemToolTip(item_index, item.tooltip.wx());
+        }
+        if (!item.helptext.empty())
+        {
+            widget->SetItemHelpText(item_index, item.helptext.wx());
+        }
+        ++item_index;
     }
 
     // This is the only event generated when a button within the box is clicked
@@ -68,9 +100,9 @@ void RadioBoxGenerator::OnRadioBox(wxCommandEvent& event)
 
 bool RadioBoxGenerator::ConstructionCode(Code& code)
 {
-    auto array = code.node()->as_ArrayString(prop_contents);
+    const std::vector<NODEPROP_RADIOBOX_ITEM> items = code.node()->as_radiobox_items(prop_contents);
     wxue::string choice_name;
-    if (code.is_cpp() && array.size())
+    if (code.is_cpp() && items.size())
     {
         choice_name = (code.node()->get_NodeName());
         if (choice_name.starts_with("m_"))
@@ -79,9 +111,9 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
         }
         choice_name << "_choices";
         code.Str("wxString ") << choice_name << "[] = {";
-        for (auto& iter: array)
+        for (const NODEPROP_RADIOBOX_ITEM& item: items)
         {
-            code.Eol().Tab().QuotedString((iter)) += ",";
+            code.Eol().Tab().QuotedString(item.label) += ",";
         }
         code.GetCode().pop_back();  // remove the last comma
         code.Eol().Str("};").Eol();
@@ -93,8 +125,8 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     code.Comma().Pos().Comma().WxSize().Comma();
     if (code.is_cpp())
     {
-        code.itoa(array.size()).Comma();
-        if (array.size())
+        code.itoa(items.size()).Comma();
+        if (items.size())
         {
             code.Str(choice_name);
         }
@@ -106,9 +138,9 @@ bool RadioBoxGenerator::ConstructionCode(Code& code)
     else
     {
         code.Str("[");
-        for (auto& iter: array)
+        for (const NODEPROP_RADIOBOX_ITEM& item: items)
         {
-            code.QuotedString((iter)) += ",";
+            code.QuotedString(item.label) += ",";
         }
         code.GetCode().pop_back();  // remove the last comma
         code << "]";
@@ -129,6 +161,58 @@ bool RadioBoxGenerator::SettingsCode(Code& code)
     if (auto sel = code.IntValue(prop_selection); sel > 0)
     {
         code.NodeName().Function("SetSelection(").as_string(prop_selection).EndFunction();
+    }
+
+    if (!code.is_cpp())
+    {
+        return true;
+    }
+
+    const std::vector<NODEPROP_RADIOBOX_ITEM> items = code.node()->as_radiobox_items(prop_contents);
+    size_t item_index = 0U;
+    for (const NODEPROP_RADIOBOX_ITEM& item: items)
+    {
+        if (item.enabled != "1")
+        {
+            code.Eol(eol_if_empty)
+                .NodeName()
+                .Function("Enable(")
+                .itoa(item_index)
+                .Comma()
+                .Str("false")
+                .EndFunction();
+        }
+        if (item.show != "1")
+        {
+            code.Eol(eol_if_empty)
+                .NodeName()
+                .Function("Show(")
+                .itoa(item_index)
+                .Comma()
+                .Str("false")
+                .EndFunction();
+        }
+        if (!item.tooltip.empty())
+        {
+            code.Eol(eol_if_empty)
+                .NodeName()
+                .Function("SetItemToolTip(")
+                .itoa(item_index)
+                .Comma()
+                .QuotedString(item.tooltip)
+                .EndFunction();
+        }
+        if (!item.helptext.empty())
+        {
+            code.Eol(eol_if_empty)
+                .NodeName()
+                .Function("SetItemHelpText(")
+                .itoa(item_index)
+                .Comma()
+                .QuotedString(item.helptext)
+                .EndFunction();
+        }
+        ++item_index;
     }
 
     return true;
@@ -164,10 +248,11 @@ int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     if (node->HasValue(prop_contents))
     {
         auto content = item.append_child("content");
-        auto array = node->as_ArrayString(prop_contents);
-        for (auto& iter: array)
+        // XRC has no support for per-item state, so only the label is written.
+        const std::vector<NODEPROP_RADIOBOX_ITEM> items = node->as_radiobox_items(prop_contents);
+        for (const NODEPROP_RADIOBOX_ITEM& entry: items)
         {
-            content.append_child("item").text().set(iter);
+            content.append_child("item").text().set(entry.label);
         }
     }
 

@@ -254,6 +254,11 @@ public:
     // wxDefaultPosition, or non-specified bitmap)
     bool HasValue(PropName name) const;
 
+    // Returns true only if the property exists and its current value is still identical to the
+    // property's default value. Such a value is treated as "not set" -- an attribute absent
+    // from a saved .wxui file is loaded with the default value.
+    [[nodiscard]] bool is_PropDefault(PropName name) const;
+
     // Returns true if the property exists
     bool HasProp(PropName name) const { return (m_prop_indices.contains(name)); }
 
@@ -534,8 +539,20 @@ public:
     // validator_variable properties in the current form
     //
     // If prop_name is != prop_var_name, only that property is collected.
+    //
+    // include_cur_node_names controls whether cur_node's own var_name,
+    // checkbox_var_name, radiobtn_var_name and validator_variable values are added to the set.
+    // This is needed only for an explicit var_name uniqueness check (get_UniqueName()), where a
+    // proposed var_name must not collide with the same node's other variable names. Duplicate
+    // name fixing must leave it false, otherwise a node's own names look like duplicates.
+    //
+    // exclude_default_names skips names whose value still equals the property's default value.
+    // Duplicate-name fixing sets this, because an absent attribute is loaded as the default value
+    // and must not be treated as a user-assigned name.
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node,
-                            PropName prop_name = prop_var_name);
+                            PropName prop_name = prop_var_name,
+                            bool include_cur_node_names = false,
+                            bool exclude_default_names = false);
 
     // --- Insertion & Position ---
 

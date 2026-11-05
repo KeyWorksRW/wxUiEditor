@@ -63,7 +63,6 @@ jobs:
     # due to partial/mismatched source files.
 
     # ── Standard build ─────────────────────────────────────────────────────
-    # PGO is not used here (see build-win-reusable.yml for the PGO path).
 
     - name: Configure CMake (GitHub runner - universal binary)
       if: ${{ !startsWith(inputs.runner-type, 'self-hosted') }}

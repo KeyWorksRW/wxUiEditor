@@ -7,7 +7,7 @@
         <inherits class="String Validator"/>
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_staticText</property>
-        <property name="label" type="string_edit_escapes">MyLabel</property>
+        <property name="label" type="string_edit_markup">MyLabel</property>
         <property name="markup" type="bool"
             help="Simple markup can be used to apply different fonts or colours to different parts of the control label when supported. If markup is not supported by the control or platform, it is simply stripped and SetLabel() is used with the resulting string.\n\nSample: This is <i>italic</i> and this is <span fgcolor='red'>red</span>">
             0</property>

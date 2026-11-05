@@ -69,7 +69,7 @@
         <inherits class="String Validator"/>
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_btn</property>
-        <property name="label" type="string_escapes"
+        <property name="label" type="string_edit_markup"
             help="Leave this property blank if you are using a stock id. A stock id will automatically display a label matching the id.">
             MyButton</property>
         <property name="markup" type="bool"
@@ -253,7 +253,7 @@
         <inherits class="Boolean Validator"/>
         <inherits class="sizer_child"/>
         <property name="var_name" type="string">m_toggleBtn</property>
-        <property name="label" type="string_escapes">MyToggleButton</property>
+        <property name="label" type="string_edit_markup">MyToggleButton</property>
         <property name="markup" type="bool"
             help="This can be used to apply fonts or colours to different parts of the label.">0</property>
         <property name="pressed" type="bool">0</property>

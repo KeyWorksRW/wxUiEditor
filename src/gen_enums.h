@@ -71,6 +71,8 @@ namespace GenEnum
         type_wxPoint,
         type_wxSize,
 
+        type_string_edit_markup,  // includes button that triggers a markup editor dialog
+
         type_unknown,
 
     };

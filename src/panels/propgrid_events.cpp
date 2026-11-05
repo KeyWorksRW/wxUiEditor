@@ -78,6 +78,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 
         case type_string:
         case type_string_edit:
+        case type_string_edit_markup:
             grid_property->SetValueFromString(prop->as_string());
             break;
 
@@ -363,6 +364,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_html_edit:
         case type_wxFont:
         case type_string_edit:
+        case type_string_edit_markup:
         case type_id:
         case type_int:
         case type_include_files:

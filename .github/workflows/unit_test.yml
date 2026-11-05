@@ -69,8 +69,6 @@ jobs:
     # due to partial/mismatched source files.
 
     # ── Build with tests enabled ───────────────────────────────────────────
-    # PGO is not used here: profile collection has to run the GUI (GTK), which
-    # cannot start on a headless runner.
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -G "Ninja Multi-Config" -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20 -DINTERNAL_BLD_TESTING=ON -DWXUI_BUILD_TESTS=ON
@@ -83,8 +81,7 @@ jobs:
 
     - name: Run tests
       # A wxWidgets GUI application needs a display connection to initialize even when
-      # it only generates code, so the CLI tests have to run under a virtual display --
-      # the same reason this workflow cannot collect PGO profiles (see the note above).
+      # it only generates code, so the CLI tests have to run under a virtual display.
       run: xvfb-run -a ctest --test-dir ${{github.workspace}}/build -C ${{env.BUILD_TYPE}} --output-on-failure -L "cli|unit"
 
     # ── Generated wxPython validation (Tier 2, non-blocking) ────────────────

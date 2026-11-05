@@ -16,7 +16,6 @@ jobs:
     with:
       create-setup: true
       build-type: Release
-      enable-pgo: true
 
   buildUnix:
     uses: ./.github/workflows/build-unix-reusable.yml

@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-27-2026]
+// CR: [11-06-2026]
 
 #include <format>
 #include <wx/aboutdlg.h>     // declaration of wxAboutDialog class
@@ -721,6 +721,10 @@ void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
             return;
         }
 
+        // Rewrite every project-relative path before the document is written so the saved file
+        // already contains values that resolve after the move.
+        std::ignore = Project.UpdatePathsAfterSaveAs(filename);
+
         pugi::xml_document document;
         Project.get_ProjectNode()->CreateDoc(document);
         if (document.save_file(filename.GetFullPath().utf8_string(), "  ",
@@ -731,6 +735,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)
             Project.clear_NewProject();
             m_FileHistory.AddFileToHistory(filename.GetFullPath());
             Project.set_ProjectPath(filename);
+            Project.ReinitializeImageHandler();
             ProjectSaved();
             FireProjectLoadedEvent();
         }

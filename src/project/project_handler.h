@@ -136,6 +136,12 @@ public:
     wxue::string ArtDirectory();
     const wxFileName* get_ArtPath();
 
+    // Call this before writing the project file when the project is being saved to a different
+    // directory (Save As). Rebases art_directory, xrc_art_directory, and every image property
+    // path so they still resolve to the same files after the move. Returns true if anything
+    // changed.
+    bool UpdatePathsAfterSaveAs(const wxFileName& new_project_file);
+
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.
     wxue::string get_BaseDirectory(Node* node, GenLang language = GenLang::cplusplus) const;

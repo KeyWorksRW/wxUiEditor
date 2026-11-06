@@ -4,11 +4,12 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-03-2026]
+// CR: [11-06-2026]
 
 #include <array>
 #include <format>
 #include <memory>
+#include <tuple>
 #include <unordered_map>
 #include <utility>
 
@@ -264,6 +265,208 @@ const wxFileName* ProjectHandler::get_ArtPath()
 wxue::string ProjectHandler::ArtDirectory()
 {
     return get_ArtPath()->GetFullPath();
+}
+
+// Returns the value unchanged if it is empty or absolute, otherwise returns a path that is
+// relative to new_dir but resolves to the same absolute file as it did relative to old_dir.
+static wxue::string RebaseProjectPath(const wxue::string& value, const wxString& old_dir,
+                                      const wxString& new_dir)
+{
+    if (value.empty())
+    {
+        return value;
+    }
+
+    wxFileName file(value.wx());
+    if (file.IsAbsolute())
+    {
+        return value;
+    }
+
+    file.MakeAbsolute(old_dir);
+    file.MakeRelativeTo(new_dir);
+
+    wxue::string result = file.GetFullPath().ToStdString();
+    result.backslashestoforward();
+    return result;
+}
+
+// Rebases an image path that may be stored relative to the project directory (what the image
+// property dialogs write) or relative to the art directory (legacy/hand-written projects such as
+// bitmap="Embed;english.xpm" with art_directory="art"). Resolution order matches ImageHandler:
+// try the path under the old project directory, then under the art directory.
+static wxue::string RebaseImagePath(const wxue::string& value, const wxString& old_dir,
+                                    const wxString& new_dir, const wxString& art_dir_abs)
+{
+    if (value.empty())
+    {
+        return value;
+    }
+
+    wxFileName file(value.wx());
+    if (file.IsAbsolute())
+    {
+        return value;
+    }
+
+    file.MakeAbsolute(old_dir);
+
+    // The art directory itself is not moving, so a value that only resolves through it must come
+    // back unchanged.
+    wxString target_dir = new_dir;
+    if (!file.FileExists() && !art_dir_abs.empty())
+    {
+        wxFileName art_file(value.wx());
+        art_file.MakeAbsolute(art_dir_abs);
+        if (art_file.FileExists())
+        {
+            file = art_file;
+            target_dir = art_dir_abs;
+        }
+    }
+
+    file.MakeRelativeTo(target_dir);
+
+    wxue::string result = file.GetFullPath().ToStdString();
+    result.backslashestoforward();
+    return result;
+}
+
+// Rebases every image path (bitmap, icon, animation, bmp_combo_item bitmap) below node.
+static bool RebaseNodePaths(Node* node, const wxString& old_dir, const wxString& new_dir,
+                            const wxString& art_dir_abs)
+{
+    bool changed = false;
+
+    for (auto& child_ptr: node->get_ChildNodePtrs())
+    {
+        Node* child = child_ptr.get();
+
+        for (auto& prop: child->get_PropsVector())
+        {
+            if ((prop.type() == type_image || prop.type() == type_animation) && prop.HasValue())
+            {
+                const wxue::string original = prop.as_string();
+                wxue::StringVector parts(original, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+                if (parts.size() <= IndexImage)
+                {
+                    continue;
+                }
+
+                // Art-provider ids are wxART_ constants, not file paths
+                if (parts[IndexType] == "Art")
+                {
+                    continue;
+                }
+
+                const wxue::string rebased =
+                    RebaseImagePath(parts[IndexImage], old_dir, new_dir, art_dir_abs);
+                if (rebased == parts[IndexImage])
+                {
+                    continue;
+                }
+
+                // Rebuild using the original part text so size info such as "[16,16]" is kept
+                wxue::string new_value = parts[IndexType];
+                new_value << BMP_PROP_SEPARATOR << rebased;
+                for (size_t index = IndexSize; index < parts.size(); ++index)
+                {
+                    new_value << BMP_PROP_SEPARATOR << parts[index];
+                }
+
+                if (new_value != original)
+                {
+                    prop.set_value(new_value);
+                    changed = true;
+                }
+            }
+            else if (prop.type() == type_bmp_combo_item)
+            {
+                std::vector<NODEPROP_BMP_COMBO_ITEM> items = prop.as_bmp_combo_items();
+                bool items_changed = false;
+
+                for (auto& item: items)
+                {
+                    if (item.bitmap.empty())
+                    {
+                        continue;
+                    }
+
+                    const wxue::string rebased =
+                        RebaseImagePath(item.bitmap, old_dir, new_dir, art_dir_abs);
+                    if (rebased != item.bitmap)
+                    {
+                        item.bitmap = rebased;
+                        items_changed = true;
+                    }
+                }
+
+                if (items_changed)
+                {
+                    prop.set_value(items);
+                    changed = true;
+                }
+            }
+        }
+
+        if (child->get_ChildCount() && RebaseNodePaths(child, old_dir, new_dir, art_dir_abs))
+        {
+            changed = true;
+        }
+    }
+
+    return changed;
+}
+
+bool ProjectHandler::UpdatePathsAfterSaveAs(const wxFileName& new_project_file)
+{
+    if (!m_project_path || !m_project_path->IsOk() || !m_project_node)
+    {
+        return false;
+    }
+
+    const wxString old_dir = m_project_path->GetPath();
+    const wxString new_dir = new_project_file.GetPath();
+    if (old_dir.IsSameAs(new_dir, false))
+    {
+        return false;
+    }
+
+    // Capture the original art directory before anything is rebased. Image paths may have been
+    // stored relative to it, and it is not moving, so those values must be left alone.
+    wxString art_dir_abs;
+    if (NodeProperty* art_prop = m_project_node->get_PropPtr(prop_art_directory);
+        art_prop && art_prop->HasValue())
+    {
+        wxFileName art(art_prop->as_string().wx());
+        art.MakeAbsolute(old_dir);
+        art_dir_abs = art.GetFullPath();
+    }
+
+    bool changed = false;
+
+    for (const PropName name: { prop_art_directory, prop_xrc_art_directory })
+    {
+        NodeProperty* prop = m_project_node->get_PropPtr(name);
+        if (!prop || !prop->HasValue())
+        {
+            continue;
+        }
+
+        const wxue::string rebased = RebaseProjectPath(prop->as_string(), old_dir, new_dir);
+        if (rebased != prop->as_string())
+        {
+            prop->set_value(rebased);
+            changed = true;
+        }
+    }
+
+    if (RebaseNodePaths(m_project_node.get(), old_dir, new_dir, art_dir_abs))
+    {
+        changed = true;
+    }
+
+    return changed;
 }
 
 wxue::string ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const

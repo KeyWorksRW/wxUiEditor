@@ -82,6 +82,29 @@ static wxImage wxueImage(const unsigned char* data, size_t size_data)
 };
 )===";
 
+inline constexpr const auto txt_wxueIconBundleFunctions = R"===(
+// Convert an embedded icon file into a wxIconBundle containing every icon size in the file
+#ifdef __cpp_inline_variables
+inline wxIconBundle wxueIcons(const unsigned char* data, size_t size_data)
+#else
+static wxIconBundle wxueIcons(const unsigned char* data, size_t size_data)
+#endif
+{
+    wxMemoryInputStream stream(data, size_data);
+    return wxIconBundle(stream);
+};
+
+// Convert an embedded icon file into a wxBitmapBundle containing every icon size in the file
+#ifdef __cpp_inline_variables
+inline wxBitmapBundle wxueIconBundle(const unsigned char* data, size_t size_data)
+#else
+static wxBitmapBundle wxueIconBundle(const unsigned char* data, size_t size_data)
+#endif
+{
+    return wxBitmapBundle::FromIconBundle(wxueIcons(data, size_data));
+};
+)===";
+
 inline constexpr const auto txt_GetBundleFromSVG = R"===(
 // Convert compressed SVG string into a wxBitmapBundle
 #ifdef __cpp_inline_variables
@@ -390,13 +413,23 @@ void CppCodeGenerator::GenCppImageFunctions()
             m_source->writeLine();
             m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
         }
-    }
-    else if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction)
-    {
-        m_source->writeLine();
-        if (m_NeedSVGFunction)
+        if (m_NeedIconBundleFunction)
         {
             m_source->writeLine("#include <wx/bmpbndl.h>  // wxBitmapBundle class", indent::none);
+            m_source->writeLine("#include <wx/iconbndl.h>  // wxIconBundle class", indent::none);
+        }
+    }
+    else if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction ||
+             m_NeedIconBundleFunction)
+    {
+        m_source->writeLine();
+        if (m_NeedSVGFunction || m_NeedIconBundleFunction)
+        {
+            m_source->writeLine("#include <wx/bmpbndl.h>  // wxBitmapBundle class", indent::none);
+        }
+        if (m_NeedIconBundleFunction)
+        {
+            m_source->writeLine("#include <wx/iconbndl.h>  // wxIconBundle class", indent::none);
         }
         m_source->writeLine("#include <wx/mstream.h>  // memory stream classes", indent::none);
     }
@@ -412,11 +445,24 @@ void CppCodeGenerator::GenCppImageFunctions()
 
     // m_NeedImageFunction and m_NeedSVGFunction will be set to true if there is an image
     // that is not added to an Image List where it can be loaded via a wxue_img:: function.
+    // The icon bundle helpers do not replace every wxueImage() call site (single-image and
+    // list/bundle branches still call it), so wxueImage() must be emitted for icons as well.
 
-    if (m_NeedImageFunction || m_NeedHeaderFunction)
+    if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedIconBundleFunction)
     {
         wxue::StringVector function;
         function.ReadString(std::string_view(txt_wxueImageFunction));
+        for (const auto& iter: function)
+        {
+            m_source->writeLine(wxue::string_view(iter.ToStdString()), indent::none);
+        }
+        m_source->writeLine();
+    }
+
+    if (m_NeedIconBundleFunction)
+    {
+        wxue::StringVector function;
+        function.ReadString(std::string_view(txt_wxueIconBundleFunctions));
         for (const auto& iter: function)
         {
             m_source->writeLine(wxue::string_view(iter.ToStdString()), indent::none);
@@ -506,6 +552,7 @@ void CppCodeGenerator::InitializeGenerationState()
     m_NeedArtProviderHeader = false;
     m_NeedHeaderFunction = false;
     m_NeedImageFunction = false;
+    m_NeedIconBundleFunction = false;
     m_NeedSVGFunction = false;
 }
 

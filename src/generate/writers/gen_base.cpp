@@ -585,7 +585,19 @@ void BaseCodeGenerator::ProcessFormIcon(Node* node)
                 }
                 else if (parts[IndexType] == "Embed")
                 {
-                    m_NeedImageFunction = true;
+                    // An embedded ICO/CUR file contains every icon size, so C++ code uses
+                    // wxueIcons()/wxueIconBundle() rather than the single-image wxueImage().
+                    EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+                    if (embed && m_language == GenLang::cplusplus &&
+                        (embed->base_image().type == wxBITMAP_TYPE_ICO ||
+                         embed->base_image().type == wxBITMAP_TYPE_CUR))
+                    {
+                        m_NeedIconBundleFunction = true;
+                    }
+                    else
+                    {
+                        m_NeedImageFunction = true;
+                    }
                 }
                 else if (parts[IndexType] == "Art")
                 {
@@ -615,6 +627,15 @@ void BaseCodeGenerator::ProcessChildEmbedType(const wxue::StringVector& parts, b
             return;
         }
 
+        if (EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(parts[IndexImage]);
+            embed && m_language == GenLang::cplusplus &&
+            (embed->base_image().type == wxBITMAP_TYPE_ICO ||
+             embed->base_image().type == wxBITMAP_TYPE_CUR))
+        {
+            m_NeedIconBundleFunction = true;
+            return;
+        }
+
         m_NeedImageFunction = true;
         return;
     }
@@ -634,7 +655,16 @@ void BaseCodeGenerator::ProcessChildEmbedType(const wxue::StringVector& parts, b
                 if (ProjectImages.GetBundleFuncName(embed).empty() &&
                     !(m_language == GenLang::cplusplus && CommonArtHeaderProvidesImage(embed)))
                 {
-                    m_NeedImageFunction = true;
+                    if (m_language == GenLang::cplusplus &&
+                        (embed->base_image().type == wxBITMAP_TYPE_ICO ||
+                         embed->base_image().type == wxBITMAP_TYPE_CUR))
+                    {
+                        m_NeedIconBundleFunction = true;
+                    }
+                    else
+                    {
+                        m_NeedImageFunction = true;
+                    }
                 }
             }
         }

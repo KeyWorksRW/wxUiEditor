@@ -6,8 +6,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-15-2026]
 
+#include <algorithm>
 #include <filesystem>
 #include <format>
+#include <map>
+#include <vector>
 
 #include "import_wxsmith.h"
 
@@ -16,6 +19,130 @@
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "utils.h"           // Utility functions that work with properties
+
+// wxWidgets XRC allows an <object_ref> element anywhere an <object> element may appear. XRC
+// replaces the reference with a copy of the named object, so the import expands each reference into
+// a copy of the target element instead of discarding it (wxUiEditor has no reference support).
+
+static constexpr int MAX_OBJECT_REF_DEPTH = 20;
+
+static bool IsXrcElement(const pugi::xml_node& node, std::string_view name)
+{
+    return node.type() == pugi::node_element &&
+           wxue::is_sameas(node.name(), name, wxue::CASE::either);
+}
+
+// Recursively index every named <object> element in document order. The first definition of a name
+// wins; later duplicates are ignored.
+static void IndexNamedObjects(pugi::xml_node parent,
+                              std::map<std::string, pugi::xml_node>& named_objects)
+{
+    for (pugi::xml_node child: parent.children())
+    {
+        if (child.type() != pugi::node_element)
+        {
+            continue;
+        }
+
+        if (IsXrcElement(child, "object"))
+        {
+            const std::string name(child.attribute("name").value());
+            if (!name.empty())
+            {
+                named_objects.try_emplace(name, child);
+            }
+        }
+
+        IndexNamedObjects(child, named_objects);
+    }
+}
+
+// Attributes on the <object_ref> other than "ref" override or add to the referenced element. This
+// is how <object_ref name="alias" ref="template"/> gives the copy its own name.
+static void MergeRefAttributes(pugi::xml_node clone, const pugi::xml_node& ref_element)
+{
+    for (pugi::xml_attribute ref_attr: ref_element.attributes())
+    {
+        if (wxue::is_sameas(ref_attr.name(), "ref", wxue::CASE::either))
+        {
+            continue;
+        }
+
+        pugi::xml_attribute clone_attr = clone.attribute(ref_attr.name());
+        if (clone_attr)
+        {
+            clone_attr.set_value(ref_attr.value());
+        }
+        else
+        {
+            clone.append_attribute(ref_attr.name()).set_value(ref_attr.value());
+        }
+    }
+}
+
+static pugi::xml_node FindMatchingChild(const pugi::xml_node& clone,
+                                        const pugi::xml_node& override_node)
+{
+    const pugi::xml_attribute override_name = override_node.attribute("name");
+
+    for (pugi::xml_node child: clone.children())
+    {
+        if (!IsXrcElement(child, override_node.name()))
+        {
+            continue;
+        }
+
+        if (!override_name ||
+            wxue::is_sameas(child.attribute("name").value(), override_name.value()))
+        {
+            return child;
+        }
+    }
+
+    return {};
+}
+
+// Approximates XRC's child merge rules: a child of the <object_ref> replaces an existing child of
+// the copy that has the same element name (and the same name attribute when the override carries
+// one); anything else is appended, or prepended when it specifies insert_at="begin".
+static void MergeRefChildren(pugi::xml_node clone, const pugi::xml_node& ref_element)
+{
+    // Collect the override children first -- inserting and removing nodes would otherwise
+    // invalidate the iterator.
+    std::vector<pugi::xml_node> overrides;
+    for (pugi::xml_node child: ref_element.children())
+    {
+        if (child.type() == pugi::node_element)
+        {
+            overrides.push_back(child);
+        }
+    }
+
+    for (pugi::xml_node override_node: overrides)
+    {
+        pugi::xml_node copy;
+        const pugi::xml_node match = FindMatchingChild(clone, override_node);
+        if (match)
+        {
+            copy = clone.insert_copy_before(override_node, match);
+            clone.remove_child(match);
+        }
+        else if (wxue::is_sameas(override_node.attribute("insert_at").value(), "begin",
+                                 wxue::CASE::either))
+        {
+            copy = clone.prepend_copy(override_node);
+        }
+        else
+        {
+            copy = clone.append_copy(override_node);
+        }
+
+        if (copy)
+        {
+            std::ignore = copy.remove_attribute("insert_at");
+        }
+    }
+}
 
 WxSmith::WxSmith() = default;
 
@@ -26,7 +153,7 @@ bool WxSmith::Import(const std::string& filename, bool write_doc, bool allow_ui)
     {
         return false;
     }
-    const pugi::xml_node root = result.value().first_child();
+    pugi::xml_node root = result.value().first_child();
 
     if (!wxue::is_sameas(root.name(), "wxsmith", wxue::CASE::either) &&
         !wxue::is_sameas(root.name(), "resource", wxue::CASE::either))
@@ -44,6 +171,10 @@ bool WxSmith::Import(const std::string& filename, bool write_doc, bool allow_ui)
 
     try
     {
+        // Must be done before any node is created -- XRC <object_ref> elements are expanded in
+        // place so that CreateXrcNode() only ever sees <object> elements.
+        ExpandObjectRefs(root);
+
         m_project = NodeCreation.CreateNode(gen_Project, nullptr).first;
         for (auto& iter: root.children())
         {
@@ -98,6 +229,94 @@ bool WxSmith::Import(const std::string& filename, bool write_doc, bool allow_ui)
     }
 
     return true;
+}
+
+void WxSmith::ExpandObjectRefs(pugi::xml_node root)
+{
+    std::map<std::string, pugi::xml_node> named_objects;
+    IndexNamedObjects(root, named_objects);
+
+    const std::vector<std::string> ref_chain;
+    ExpandObjectRefsIn(root, named_objects, ref_chain, 0);
+}
+
+void WxSmith::ExpandObjectRefsIn(pugi::xml_node parent,
+                                 const std::map<std::string, pugi::xml_node>& named_objects,
+                                 const std::vector<std::string>& ref_chain, int depth)
+{
+    // Snapshot the children before mutating the tree -- removing an <object_ref> invalidates its
+    // handle, and inserting a copy shifts the sibling list.
+    std::vector<pugi::xml_node> ref_elements;
+    std::vector<pugi::xml_node> other_elements;
+    for (pugi::xml_node child: parent.children())
+    {
+        if (child.type() != pugi::node_element)
+        {
+            continue;
+        }
+
+        if (IsXrcElement(child, "object_ref"))
+        {
+            ref_elements.push_back(child);
+        }
+        else
+        {
+            other_elements.push_back(child);
+        }
+    }
+
+    for (pugi::xml_node ref_element: ref_elements)
+    {
+        const std::string ref_name(ref_element.attribute("ref").value());
+        if (ref_name.empty())
+        {
+            m_errors.insert("Unable to convert XRC object_ref: missing 'ref' attribute.");
+            parent.remove_child(ref_element);
+            continue;
+        }
+
+        const std::map<std::string, pugi::xml_node>::const_iterator object_iter =
+            named_objects.find(ref_name);
+        if (object_iter == named_objects.end())
+        {
+            m_errors.insert(std::format(
+                "Unable to convert XRC object_ref '{}': no matching named object.", ref_name));
+            parent.remove_child(ref_element);
+            continue;
+        }
+
+        if (depth >= MAX_OBJECT_REF_DEPTH ||
+            std::ranges::find(ref_chain, ref_name) != ref_chain.end())
+        {
+            m_errors.insert(std::format(
+                "Unable to convert XRC object_ref '{}': circular reference.", ref_name));
+            parent.remove_child(ref_element);
+            continue;
+        }
+
+        pugi::xml_node clone = parent.insert_copy_before(object_iter->second, ref_element);
+        if (!clone)
+        {
+            m_errors.insert(std::format(
+                "Unable to convert XRC object_ref '{}': unable to copy the referenced object.",
+                ref_name));
+            parent.remove_child(ref_element);
+            continue;
+        }
+
+        MergeRefAttributes(clone, ref_element);
+        MergeRefChildren(clone, ref_element);
+        parent.remove_child(ref_element);
+
+        std::vector<std::string> child_chain = ref_chain;
+        child_chain.push_back(ref_name);
+        ExpandObjectRefsIn(clone, named_objects, child_chain, depth + 1);
+    }
+
+    for (pugi::xml_node child: other_elements)
+    {
+        ExpandObjectRefsIn(child, named_objects, ref_chain, depth);
+    }
 }
 
 bool WxSmith::HandleUnknownProperty(const pugi::xml_node& xml_obj, Node* node,

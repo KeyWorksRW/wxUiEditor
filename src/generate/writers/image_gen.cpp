@@ -1101,20 +1101,45 @@ void Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
 
     if (is_cpp() && get_bitmap)
     {
-        Eol().Tab() << "wxueImage(";
+        // An ICO/CUR file holds multiple icon sizes while a wxImage only loads one of them.
+        const bool is_icon_file = (embed->base_image().type == wxBITMAP_TYPE_ICO ||
+                                   embed->base_image().type == wxBITMAP_TYPE_CUR);
+        if (is_icon_file)
+        {
+            Eol().Tab() << "wxueIconBundle(";
 
-        name = "wxue_img::" + embed->base_image().array_name;
+            name = "wxue_img::" + embed->base_image().array_name;
 
-        *this << name << ", sizeof(" << name << "))";
-        *this << ".Rescale(";
-        Eol() << "\tFromDIP(" << embed->get_wxSize().x << "), FromDIP(" << embed->get_wxSize().y
-              << "), wxIMAGE_QUALITY_BILINEAR)";
+            *this << name << ", sizeof(" << name << "))";
+            *this << ".GetBitmap(wxDefaultSize)";
+        }
+        else
+        {
+            Eol().Tab() << "wxueImage(";
+
+            name = "wxue_img::" + embed->base_image().array_name;
+
+            *this << name << ", sizeof(" << name << "))";
+            *this << ".Rescale(";
+            Eol() << "\tFromDIP(" << embed->get_wxSize().x << "), FromDIP(" << embed->get_wxSize().y
+                  << "), wxIMAGE_QUALITY_BILINEAR)";
+        }
     }
     else if (bundle->lst_filenames.size() == 1)
     {
         if (is_cpp())
         {
-            Eol().Tab() << "wxueImage(";
+            // An ICO/CUR file holds multiple icon sizes, so build the bundle from a
+            // wxIconBundle rather than loading a single image through wxueImage().
+            if (embed->base_image().type == wxBITMAP_TYPE_ICO ||
+                embed->base_image().type == wxBITMAP_TYPE_CUR)
+            {
+                Eol().Tab() << "wxueIconBundle(";
+            }
+            else
+            {
+                Eol().Tab() << "wxueImage(";
+            }
 
             name = "wxue_img::" + embed->base_image().array_name;
 

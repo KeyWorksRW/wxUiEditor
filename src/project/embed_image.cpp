@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-20-2026]
 
+#include <wx/iconbndl.h>  // For wxIconBundle
 #include <wx/image.h>
 #include <wx/mstream.h>   // For wxMemoryInputStream
 #include <wx/wfstream.h>  // For wxFileInputStream
@@ -82,6 +83,28 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
         wxMemoryInputStream stream(str.data(), org_size);
         image.LoadFile(stream, wxBITMAP_TYPE_XPM);
         return wxBitmapBundle::FromBitmap(image);
+    }
+
+    // An ICO/CUR file holds every icon size in the file. Loading the array through wxImage
+    // would keep only one of them, so build the bundle from a wxIconBundle instead.
+    if ((base_image().type == wxBITMAP_TYPE_ICO || base_image().type == wxBITMAP_TYPE_CUR) &&
+        m_images.size() == 1)
+    {
+        const wxDateTime file_time = base_image().filename.last_write_time();
+        if (file_time != base_image().file_time)
+        {
+            if (!UpdateImage(base_image()))
+            {
+                return wxBitmapBundle();
+            }
+        }
+        wxMemoryInputStream stream(base_image().array_data.data(), base_image().array_size);
+        const wxIconBundle icon_bundle(stream);
+        if (icon_bundle.IsEmpty())
+        {
+            return wxBitmapBundle();
+        }
+        return wxBitmapBundle::FromIconBundle(icon_bundle);
     }
 
     wxVector<wxBitmap> bitmaps;

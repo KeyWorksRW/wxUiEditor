@@ -230,6 +230,7 @@ protected:
     bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
     bool m_NeedSVGFunction { false };        // Set when SVG image type is used
     bool m_NeedImageFunction { false };
+    bool m_NeedIconBundleFunction { false };  // Set when ICO/CUR image needs wxIconBundle
     // NOLINTEND
 private:
     // Helper methods for CollectEventHandlers - reduce function complexity

@@ -638,8 +638,10 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
             if (bundle->lst_filenames.size() == 1)
             {
                 wxue::string name(bundle->lst_filenames[0].filename());
+                bool is_icon_file = false;
 
-                if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                if (EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
+                    embed)
                 {
                     wxue::string function_name = ProjectImages.GetBundleFuncName(embed);
                     if (function_name.empty())
@@ -653,10 +655,21 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
                     }
 
                     name = "wxue_img::" + embed->base_image().array_name;
+                    is_icon_file = (embed->base_image().type == wxBITMAP_TYPE_ICO ||
+                                    embed->base_image().type == wxBITMAP_TYPE_CUR);
                 }
 
-                code << "wxBitmapBundle::FromBitmap(wxueImage(";
-                code << name << ", sizeof(" << name << ")))";
+                if (is_icon_file)
+                {
+                    // An ICO/CUR file can hold multiple icon sizes, so build the bundle from a
+                    // wxIconBundle to keep every size wxWidgets can choose from for the DPI.
+                    code << "wxueIconBundle(" << name << ", sizeof(" << name << "))";
+                }
+                else
+                {
+                    code << "wxBitmapBundle::FromBitmap(wxueImage(";
+                    code << name << ", sizeof(" << name << ")))";
+                }
             }
             else if (bundle->lst_filenames.size() == 2)
             {
@@ -1276,22 +1289,34 @@ wxue::string GenerateIconCode(const wxue::string& description)
         {
             if (bundle->lst_filenames.size() == 1)
             {
-                code << "SetIcon(wxBitmapBundle::FromBitmap(wxueImage(";
                 wxue::string name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 std::ignore = name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
+                bool is_icon_file = false;
                 if (parts[IndexType].starts_with("Embed"))
                 {
                     EmbeddedImage* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->base_image().array_name;
+                        is_icon_file = (embed->base_image().type == wxBITMAP_TYPE_ICO ||
+                                        embed->base_image().type == wxBITMAP_TYPE_CUR);
                     }
                 }
 
-                code << name << ", sizeof(" << name << ")))";
-                code << ".GetIconFor(this));\n";
+                if (is_icon_file)
+                {
+                    // Keep every icon size in the file so the window can pick the size that
+                    // matches the current DPI.
+                    code << "SetIcons(wxueIcons(" << name << ", sizeof(" << name << ")));\n";
+                }
+                else
+                {
+                    code << "SetIcon(wxBitmapBundle::FromBitmap(wxueImage(";
+                    code << name << ", sizeof(" << name << ")))";
+                    code << ".GetIconFor(this));\n";
+                }
             }
             else
             {

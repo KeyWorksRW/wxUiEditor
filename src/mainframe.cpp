@@ -990,7 +990,66 @@ void MainFrame::ChangeEventHandler(NodeEvent* event, std::string_view value)
 {
     if (event && value != event->get_value())
     {
-        PushUndoAction(std::make_shared<ModifyEventAction>(event, value));
+        NodeProperty* style_prop = nullptr;
+        wxue::string new_style;
+
+        // A wxEVT_TEXT_ENTER handler only fires if the control was created with the
+        // wxTE_PROCESS_ENTER style, so add that style when a handler is assigned.
+        if (!value.empty() && event->get_name().is_sameas("wxEVT_TEXT_ENTER"))
+        {
+            if (Node* node = event->getNode(); node)
+            {
+                style_prop = node->get_PropPtr(prop_style);
+                if (style_prop)
+                {
+                    const wxue::string& cur_style = style_prop->as_string();
+                    if (cur_style.contains("wxTE_PROCESS_ENTER"))
+                    {
+                        style_prop = nullptr;
+                    }
+                    else
+                    {
+                        // Not every generator declares wxTE_PROCESS_ENTER as a style option.
+                        bool has_process_enter = false;
+                        for (auto& option: style_prop->get_PropDeclaration()->getOptions())
+                        {
+                            if (option.name == "wxTE_PROCESS_ENTER")
+                            {
+                                has_process_enter = true;
+                                break;
+                            }
+                        }
+
+                        if (!has_process_enter)
+                        {
+                            style_prop = nullptr;
+                        }
+                        else
+                        {
+                            new_style = cur_style;
+                            if (!new_style.empty())
+                            {
+                                new_style << '|';
+                            }
+                            new_style << "wxTE_PROCESS_ENTER";
+                        }
+                    }
+                }
+            }
+        }
+
+        if (style_prop)
+        {
+            auto group = std::make_shared<GroupUndoActions>("change event handler");
+            group->Add(std::make_shared<ModifyEventAction>(event, value));
+            group->Add(std::make_shared<ModifyPropertyAction>(style_prop, new_style));
+            PushUndoAction(group);
+        }
+        else
+        {
+            PushUndoAction(std::make_shared<ModifyEventAction>(event, value));
+        }
+
         UpdateWakaTime();
     }
 }

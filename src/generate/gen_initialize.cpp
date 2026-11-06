@@ -101,6 +101,7 @@
 #include "gen_tree_ctrl.h"         // TreeCtrlGenerator -- wxTreeCtrl generator
 #include "gen_tree_list.h"         // TreeListCtrlGenerator -- wxTreeCtrl component classes
 #include "gen_treebook.h"          // TreebookGenerator -- wxTreebook generator
+#include "gen_vlistbox.h"          // VListBoxGenerator -- wxVListBox generator
 #include "gen_web_view.h"          // WebViewGenerator -- wxWebView generator
 #include "gen_wizard.h"            // WizardFormGenerator -- wxWizard generator
 #include "gen_wrap_sizer.h"        // WrapSizerGenerator -- wxGridSizer generator
@@ -171,6 +172,7 @@ void NodeCreator::InitGenerators()
     SetGenerator<InfoBarBtnGenerator>(gen_infobar_btn);
     SetGenerator<ListBoxGenerator>(gen_wxListBox);
     SetGenerator<HtmlListBoxGenerator>(gen_wxSimpleHtmlListBox);
+    SetGenerator<VListBoxGenerator>(gen_wxVListBox);
     SetGenerator<AuiNotebookGenerator>(gen_wxAuiNotebook);
     SetGenerator<ListbookGenerator>(gen_wxListbook);
     SetGenerator<NotebookGenerator>(gen_wxNotebook);

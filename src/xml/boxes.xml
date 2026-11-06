@@ -224,6 +224,24 @@
             help="Generated when the listbox is double-clicked."/>
     </gen>
 
+    <gen class="wxVListBox" image="wxListBox" type="widget">
+        <inherits class="wxWindow"/>
+        <inherits class="Window Events"/>
+        <inherits class="sizer_child"/>
+        <property name="var_name" type="string">m_vListBox</property>
+        <property name="style" type="bitlist">
+            <option name="wxLB_MULTIPLE"
+                help="Allows multiple selection."/>
+        </property>
+        <property name="focus" type="bool"
+            help="When checked, this control will be set to receive keyboard input when the parent form is first created.">
+            0</property>
+        <event name="wxEVT_LISTBOX" class="wxCommandEvent"
+            help="Generated when an item in the list is selected."/>
+        <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent"
+            help="Generated when the listbox is double-clicked."/>
+    </gen>
+
     <gen class="wxRadioBox" image="radio_box" type="widget">
         <inherits class="Integer Validator"/>
         <inherits class="wxWindow"/>

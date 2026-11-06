@@ -1064,6 +1064,12 @@
                   var_name="menu_item70" />
                 <node
                   class="wxMenuItem"
+                  bitmap="SVG;wxListBox.svg;[24,24]"
+                  id="gen_wxVListBox"
+                  label="VListBox"
+                  var_name="menu_item_VListBox" />
+                <node
+                  class="wxMenuItem"
                   bitmap="SVG;wxEditListBox.svg;[24,24]"
                   id="gen_wxEditableListBox"
                   label="Editable ListBox"
@@ -6366,6 +6372,12 @@
           id="gen_wxCheckListBox"
           label="Insert wxCheckListBox"
           var_name="menu_item_2" />
+        <node
+          class="wxMenuItem"
+          bitmap="SVG;wxListBox.svg;[24,24]"
+          id="gen_wxVListBox"
+          label="Insert wxVListBox"
+          var_name="menu_item_7" />
         <node
           class="wxMenuItem"
           bitmap="SVG;wxEditListBox.svg;[24,24]"

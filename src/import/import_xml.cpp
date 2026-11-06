@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2021-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-15-2026]
+// CR: [11-06-2026]
 
 #include <algorithm>
 #include <array>
@@ -53,7 +53,6 @@ namespace xrc_import
         { "dimension", prop_majorDimension },
         { "effectduration", prop_duration },
         { "empty_cellsize", prop_empty_cell_size },
-        { "enabled", prop_auto_start },
         { "extra-accels", prop_extra_accels },
         { "fg", prop_foreground_colour },
         { "foreground", prop_foreground_colour },
@@ -75,6 +74,7 @@ namespace xrc_import
         { "minpanesize", prop_min_pane_size },
         { "minsize", prop_min_size },
         { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
+        { "null-text", prop_null_text },
         { "oneshot", prop_one_shot },
         { "orient", prop_orientation },
         { "pagesize", prop_page_size },
@@ -361,6 +361,22 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
             {
                 style.Replace("wxLB_EXTENDED", "");
             }
+        }
+        prop->set_value(style);
+    }
+    else if (node->is_Gen(gen_Check3State))
+    {
+        // Check3State's style bitlist does not include wxCHK_3STATE, and the generator adds that
+        // flag itself, so it must not be stored on the node.
+
+        wxString style(xml_prop.text().as_view());
+        if (style.Contains("wxCHK_3STATE|"))
+        {
+            style.Replace("wxCHK_3STATE|", "");
+        }
+        else
+        {
+            style.Replace("wxCHK_3STATE", "");
         }
         prop->set_value(style);
     }
@@ -809,6 +825,104 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 ProcessFont(iter, node);
                 continue;
 
+            // wxWidgets uses <checked>0|1|2</checked> on a 3-state checkbox to set the initial
+            // state. Check3State has no checked property of its own, only initial_state.
+            case prop_checked:
+                {
+                    if (!node->is_Gen(gen_Check3State))
+                    {
+                        break;
+                    }
+
+                    switch (iter.text().as_int())
+                    {
+                        case 1:
+                            std::ignore = node->set_value(prop_initial_state, "wxCHK_CHECKED");
+                            break;
+
+                        case 2:
+                            std::ignore = node->set_value(prop_initial_state, "wxCHK_UNDETERMINED");
+                            break;
+
+                        default:
+                            break;
+                    }
+                    continue;
+                }
+
+            // StatusBarGenerator::GenXrcObject() writes <fields> as the field count, with the
+            // widths and styles in sibling elements. wxUE stores a single string of style|width
+            // pairs separated by semicolons.
+            case prop_fields:
+                {
+                    if (!node->is_Gen(gen_wxStatusBar))
+                    {
+                        break;
+                    }
+
+                    const pugi::xml_node object_node = iter.parent();
+                    const std::string_view widths_view =
+                        object_node.child("widths").text().as_view();
+                    const std::string_view styles_view =
+                        object_node.child("styles").text().as_view();
+                    if (widths_view.empty() && styles_view.empty())
+                    {
+                        // Older versions wrote the complete wxUE string here
+                        break;
+                    }
+
+                    const int field_count = wxue::atoi(iter.text().as_view());
+                    if (field_count < 1)
+                    {
+                        break;
+                    }
+
+                    const wxue::StringVector widths { widths_view, ',' };
+                    const wxue::StringVector styles { styles_view, ',' };
+                    std::string field_list;
+                    for (int index = 0; index < field_count; ++index)
+                    {
+                        if (!field_list.empty())
+                        {
+                            field_list += ';';
+                        }
+
+                        if (index < static_cast<int>(styles.size()) && !styles[index].empty())
+                        {
+                            field_list += styles[index];
+                        }
+                        else
+                        {
+                            field_list += "wxSB_NORMAL";
+                        }
+
+                        field_list += '|';
+
+                        if (index < static_cast<int>(widths.size()) && !widths[index].empty())
+                        {
+                            field_list += widths[index];
+                        }
+                        else
+                        {
+                            field_list += "-1";
+                        }
+                    }
+
+                    std::ignore = node->set_value(prop_fields, field_list);
+                    continue;
+                }
+
+            // GenXrcWindowSettings() writes <help> from prop_context_help, but MapPropName()
+            // resolves "help" to prop_help (the property grid item help). Window nodes have no
+            // prop_help, so the text belongs in prop_context_help.
+            case prop_help:
+                if (!node->HasProp(prop_help) && node->HasProp(prop_context_help))
+                {
+                    std::ignore = node->set_value(prop_context_help, iter.text().as_view());
+                    continue;
+                }
+                break;
+
             default:
                 break;
         }
@@ -871,12 +985,15 @@ namespace xrc_import
         xrc_option,
         xrc_orient,
         xrc_radio,
+        xrc_scrollrate,
         xrc_selected,
         xrc_selection,
         xrc_size,
+        xrc_styles,
         xrc_subclass,
         xrc_tabs,
         xrc_toggle,
+        xrc_widths,
 
     };
 
@@ -900,12 +1017,15 @@ namespace xrc_import
         { "option", xrc_option },
         { "orient", xrc_orient },
         { "radio", xrc_radio },
+        { "scrollrate", xrc_scrollrate },
         { "selected", xrc_selected },
         { "selection", xrc_selection },
         { "size", xrc_size },
+        { "styles", xrc_styles },
         { "subclass", xrc_subclass },
         { "tabs", xrc_tabs },
         { "toggle", xrc_toggle },
+        { "widths", xrc_widths },
 
     });
     // clang-format on
@@ -923,6 +1043,13 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
         switch (result->second)
         {
             case xrc_border:
+                if (node->is_Gen(gen_wxWizard))
+                {
+                    // A wizard uses border as the width of the page area border, not as the
+                    // border size of a sizer item.
+                    std::ignore = node->set_value(prop_border, xml_obj.text().as_view());
+                    return;
+                }
                 std::ignore = node->set_value(prop_border_size, xml_obj.text().as_view());
                 return;
 
@@ -1131,6 +1258,20 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 std::ignore = node->set_value(prop_kind, "wxITEM_RADIO");
                 return;
 
+            case xrc_scrollrate:
+                if (wxue::StringVector mstr { xml_obj.text().as_view(), ',' }; !mstr.empty())
+                {
+                    if (!mstr[0].empty())
+                    {
+                        std::ignore = node->set_value(prop_scroll_rate_x, mstr[0]);
+                    }
+                    if (mstr.size() > 1 && !mstr[1].empty())
+                    {
+                        std::ignore = node->set_value(prop_scroll_rate_y, mstr[1]);
+                    }
+                }
+                return;
+
             case xrc_selected:
                 if (node->is_Gen(gen_oldbookpage) || node->is_Gen(gen_BookPage))
                 {
@@ -1213,6 +1354,16 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 std::ignore = node->set_value(prop_kind, "wxITEM_CHECK");
                 return;
 
+            case xrc_styles:
+            case xrc_widths:
+                // StatusBarGenerator::GenXrcObject() writes these as siblings of <fields>. The
+                // prop_fields handler in ProcessProperties() consumes them.
+                if (node->is_Gen(gen_wxStatusBar))
+                {
+                    return;
+                }
+                break;
+
             default:
                 break;
         }
@@ -1285,6 +1436,17 @@ void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
 void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
                               GenEnum::PropName node_prop)
 {
+    // GenXrcBitmap() adds default_size="W,H" to an SVG bitmap element. When it is present, the
+    // wxUE bitmap string needs to use those dimensions instead of the [-1,-1] default.
+    std::string bitmap_size("[-1,-1]");
+    const pugi::xml_attribute size_attr = xml_obj.attribute("default_size");
+    if (!size_attr.empty() && std::string_view(size_attr.value()).contains(','))
+    {
+        bitmap_size = '[';
+        bitmap_size += size_attr.value();
+        bitmap_size += ']';
+    }
+
     if (!xml_obj.attribute("stock_id").empty())
     {
         std::string bitmap("Art; ");
@@ -1298,7 +1460,8 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
         {
             bitmap += "wxART_OTHER";
         }
-        bitmap += ";[-1,-1]";
+        bitmap += ';';
+        bitmap += bitmap_size;
 
         if (auto* prop = node->get_PropPtr(node_prop); prop)
         {
@@ -1318,7 +1481,8 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
         {
             std::string bitmap("XPM; ");
             bitmap += file.ToStdString();
-            bitmap += ";[-1,-1]";
+            bitmap += ';';
+            bitmap += bitmap_size;
 
             if (auto* prop = node->get_PropPtr(prop_bitmap); prop)
             {
@@ -1342,7 +1506,8 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node,
             wxString relative = filename.GetFullPath();
             wxue::back_slashesto_forward(relative);
             bitmap += relative.ToStdString();
-            bitmap += ";[-1,-1]";
+            bitmap += ';';
+            bitmap += bitmap_size;
 
             if (auto* prop = node->get_PropPtr(prop_bitmap); prop)
             {
@@ -1767,7 +1932,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         for (auto& iter: xml_obj.children())
         {
-            if (iter.value() == "style")
+            if (iter.name() == "style")
             {
                 if (iter.text().as_sview().contains("wxCHK_3STATE"))
                 {
@@ -2103,9 +2268,19 @@ void ImportXML::ProcessFont(const pugi::xml_node& xml_obj, Node* node)
         const FontWeightPairs weight_pair;
         font_info.Weight(weight_pair.GetValue(weight_child.text().as_view()));
     }
-    if (auto underline_child = xml_obj.child("underline"); underline_child)
+    // wxWidgets reads <underlined> and <strikethrough>. Accept <underline> for other tools.
+    pugi::xml_node underlined_child = xml_obj.child("underlined");
+    if (!underlined_child)
     {
-        font_info.Underlined(underline_child.text().as_bool());
+        underlined_child = xml_obj.child("underline");
+    }
+    if (underlined_child)
+    {
+        font_info.Underlined(underlined_child.text().as_bool());
+    }
+    if (auto strike_child = xml_obj.child("strikethrough"); strike_child)
+    {
+        font_info.Strikethrough(strike_child.text().as_bool());
     }
     if (auto face_child = xml_obj.child("face"); face_child)
     {

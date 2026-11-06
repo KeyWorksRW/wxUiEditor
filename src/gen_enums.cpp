@@ -909,6 +909,7 @@ const std::map<GenEnum::GenName, std::string_view> GenEnum::map_GenNames = {
     { gen_wxTreeCtrl, "wxTreeCtrl" },
     { gen_wxTreeListCtrl, "wxTreeListCtrl" },
     { gen_wxTreebook, "wxTreebook" },
+    { gen_wxVListBox, "wxVListBox" },
     { gen_wxWebView, "wxWebView" },
     { gen_wxWizard, "wxWizard" },
     { gen_wxWizardPageSimple, "wxWizardPageSimple" },

@@ -972,6 +972,7 @@ namespace GenEnum
         gen_wxTreeCtrl,
         gen_wxTreeListCtrl,
         gen_wxTreebook,
+        gen_wxVListBox,
         gen_wxWebView,
         gen_wxWizard,
         gen_wxWizardPageSimple,

@@ -520,6 +520,9 @@ bool MainFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString& titl
     auto* menu_item70 = new wxMenuItem(submenu17, gen_wxCheckListBox, "CheckListBox");
     menu_item70->SetBitmap(wxue_img::bundle_wxCheckListBox_svg(24, 24));
     submenu17->Append(menu_item70);
+    auto* menu_item_VListBox = new wxMenuItem(submenu17, gen_wxVListBox, "VListBox");
+    menu_item_VListBox->SetBitmap(wxue_img::bundle_wxListBox_svg(24, 24));
+    submenu17->Append(menu_item_VListBox);
     auto* menu_item71 = new wxMenuItem(submenu17, gen_wxEditableListBox, "Editable ListBox");
     menu_item71->SetBitmap(wxue_img::bundle_wxEditListBox_svg(24, 24));
     submenu17->Append(menu_item71);

@@ -186,6 +186,7 @@ set( file_list
     src/generate/gen_toggle_btn.cpp        # wxToggleButton generator
     src/generate/gen_tree_ctrl.cpp         # wxTreeCtrl generator
     src/generate/gen_tree_list.cpp         # wxTreeListCtrl generator
+    src/generate/gen_vlistbox.cpp          # wxVListBox generator
     src/generate/gen_web_view.cpp          # wxWebView generator
 
     # Non-python widgets

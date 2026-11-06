@@ -172,6 +172,7 @@ The following tables indicate whether or not code is being generated in a specif
 | wxToggleButton         | yes | y       | yes     | yes  | partial | gen_toggle_btn.cpp    |
 | wxTreeCtrl             | yes | y       | yes     | yes  | yes     | gen_tree_ctrl.cpp     |
 | wxTreeListCtrl         | yes | y       | yes     | no   | no      | gen_tree_list.cpp     |
+| wxVListBox             | yes | ---     | ---     | ---  | yes     | gen_vlistbox.cpp      |
 | wxWebView              | yes | y       | yes     | no   | no      | gen_web_view.cpp      |
 | wxWizardPageSimple     | yes | y       | yes     | yes  | yes     | gen_wizard.cpp        |
 

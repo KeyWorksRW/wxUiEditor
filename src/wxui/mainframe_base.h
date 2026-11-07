@@ -58,6 +58,7 @@ protected:
     virtual void OnChangeBorder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
     virtual void OnCodeCompare(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnConvertSvgToIco(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCut(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }

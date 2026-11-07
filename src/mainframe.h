@@ -323,6 +323,7 @@ protected:
     void OnChangeAlignment(wxCommandEvent& event) override;
     void OnChangeBorder(wxCommandEvent& event) override;
     void OnClose(wxCloseEvent& event) override;
+    void OnConvertSvgToIco(wxCommandEvent& event) override;
     void OnCopy(wxCommandEvent& event) override;
     void OnCut(wxCommandEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;

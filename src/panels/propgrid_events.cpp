@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-01-2026]
+// CR: [11-07-2026]
 
 #include <wx/config.h>             // wxConfig base header
 #include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
@@ -162,6 +162,147 @@ void PropGridPanel::OnEventGridExpand(wxPropertyGridEvent& event)
             m_prop_grid->Collapse(grid_property);
         }
     }
+}
+
+// Tracks whether the info-bar message currently displayed was put there by the
+// duplicate-accelerator check. Only that message may be dismissed by this code -- other
+// handlers put their own messages in the same info bar.
+static bool s_accel_warning_shown = false;
+
+static void ShowAccelWarning(const wxString& message, int icon)
+{
+    wxGetFrame().GetPropInfoBar()->ShowMessage(message, icon);
+    s_accel_warning_shown = true;
+}
+
+static void DismissAccelWarning()
+{
+    if (s_accel_warning_shown)
+    {
+        wxGetFrame().GetPropInfoBar()->Dismiss();
+        s_accel_warning_shown = false;
+    }
+}
+
+// Returns the mnemonic character (uppercased) of the first single '&' in the label, or an empty
+// string if the label has no mnemonic. A doubled "&&" is a literal ampersand, not a mnemonic.
+static wxString GetLabelAccelerator(const wxString& label)
+{
+    for (size_t pos = 0; pos < label.length(); ++pos)
+    {
+        if (label[pos] != '&')
+        {
+            continue;
+        }
+
+        if (pos + 1 >= label.length())
+        {
+            // A trailing '&' is not a mnemonic
+            return wxString();
+        }
+
+        if (label[pos + 1] == '&')
+        {
+            ++pos;
+            continue;
+        }
+
+        return label.Mid(pos + 1, 1).MakeUpper();
+    }
+
+    return wxString();
+}
+
+static void CheckDuplicateAccelerator(NodeProperty* prop)
+{
+    if (prop == nullptr || !prop->isProp(prop_label))
+    {
+        return;
+    }
+
+    Node* node = prop->getNode();
+    const wxString accel = GetLabelAccelerator(node->as_wxString(prop_label));
+    if (accel.empty())
+    {
+        DismissAccelWarning();
+        return;
+    }
+
+    if (node->is_Gen(gen_wxMenuItem) || node->is_Gen(gen_submenu))
+    {
+        Node* parent = node->get_Parent();
+        if (parent == nullptr)
+        {
+            DismissAccelWarning();
+            return;
+        }
+
+        const wxString changed_label = node->as_wxString(prop_label);
+        const size_t child_count = parent->get_ChildCount();
+        for (size_t i = 0; i < child_count; ++i)
+        {
+            Node* sibling = parent->get_Child(i);
+            if (sibling == node)
+            {
+                continue;
+            }
+
+            if (!sibling->is_Gen(gen_wxMenuItem) && !sibling->is_Gen(gen_submenu))
+            {
+                continue;
+            }
+
+            if (!sibling->HasValue(prop_label))
+            {
+                continue;
+            }
+
+            const wxString sibling_label = sibling->as_wxString(prop_label);
+            if (GetLabelAccelerator(sibling_label) == accel)
+            {
+                ShowAccelWarning(wxString() << "The accelerator key '&" << accel
+                                            << "' is used by both the \"" << changed_label
+                                            << "\" and \"" << sibling_label
+                                            << "\" menu items. Only the first item can be "
+                                               "activated by this accelerator.",
+                                 wxICON_WARNING);
+                return;
+            }
+        }
+
+        DismissAccelWarning();
+        return;
+    }
+
+    Node* form = node->get_Form();
+    if (form == nullptr)
+    {
+        return;
+    }
+
+    if (!form->is_Gen(gen_wxDialog) && !form->is_Gen(gen_wxPanel))
+    {
+        return;
+    }
+
+    for (NodeProperty* other_prop: form->FindAllChildProperties(prop_label))
+    {
+        if (other_prop == prop)
+        {
+            continue;
+        }
+
+        const wxString other_label = other_prop->as_wxString();
+        if (GetLabelAccelerator(other_label) == accel)
+        {
+            ShowAccelWarning(wxString() << "The accelerator key '&" << accel
+                                        << "' is also used by \"" << other_label << "\".",
+                             wxICON_INFORMATION);
+            return;
+        }
+    }
+
+    DismissAccelWarning();
 }
 
 void PropGridPanel::OnPostPropChange(CustomEvent& event)
@@ -511,6 +652,13 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     else
     {
         wxGetFrame().DismissInfoBar();
+    }
+
+    // Deliberately last: the block above can dismiss the info bar, so this warning must be the
+    // final word on what the user sees.
+    if (prop->isProp(prop_label))
+    {
+        CheckDuplicateAccelerator(prop);
     }
 }
 

@@ -1850,6 +1850,12 @@
               label="&amp;Global Edit Custom IDs..."
               var_name="menu_item_8"
               wxEVT_MENU="OnEditCustomIds" />
+            <node
+              class="wxMenuItem"
+              help="Convert an SVG file into a Windows icon containing 16x16, 32x32, 48x48 and 256x256 images"
+              label="Convert SVG to &amp;Windows Icon..."
+              var_name="menu_item_convert_svg"
+              wxEVT_MENU="OnConvertSvgToIco" />
           </node>
           <node
             class="wxMenu"
@@ -2915,76 +2921,6 @@
       folder_derived_directory="../tools">
       <node
         class="wxDialog"
-        class_name="GenerateDlgBase"
-        title="Generate Code"
-        base_file="./generate_dlg_base.cpp"
-        derived_class_name="GenerateDlg"
-        pure_virtual_functions="1"
-        wxEVT_INIT_DIALOG="OnInit">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="dlg_sizer">
-          <node
-            class="wxStaticText"
-            label="Choose the code you want to generate:" />
-          <node
-            class="wxGridSizer"
-            class_access="protected:"
-            var_name="m_grid_sizer" />
-          <node
-            class="wxStdDialogButtonSizer"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
-        class_name="PreviewSettings"
-        title="Preview"
-        base_file="..\tools\preview_settings"
-        use_derived_class="0"
-        wxEVT_INIT_DIALOG="OnInit">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="dlg_sizer">
-          <node
-            class="wxStaticText"
-            label="Choose what you want to use to display the form." />
-          <node
-            class="wxBoxSizer">
-            <node
-              class="wxRadioButton"
-              class_access="none"
-              label="XRC"
-              style="wxRB_GROUP"
-              var_name="radio_XRC"
-              get_function="is_type_xrc"
-              set_function="set_type_xrc"
-              validator_variable="type_xrc" />
-            <node
-              class="wxRadioButton"
-              label="XRC and C++"
-              var_name="m_radio_XRC_CPP"
-              get_function="is_type_both"
-              set_function="set_type_both"
-              validator_variable="type_xrc_cpp" />
-            <node
-              class="wxRadioButton"
-              class_access="none"
-              label="C++"
-              var_name="radio_CPP"
-              get_function="is_type_cpp"
-              set_function="set_type_cpp"
-              validator_variable="type_cpp" />
-          </node>
-          <node
-            class="wxStdDialogButtonSizer"
-            flags="wxEXPAND" />
-        </node>
-      </node>
-      <node
-        class="wxDialog"
         class_name="GlobalCustomIDSBase"
         title="Globally Add Prefix/Suffix to Custom IDs"
         base_file="global_ids_dlg_base"
@@ -3219,6 +3155,141 @@
             CloseButtonClicked="OnClose" />
         </node>
       </node>
+      <node
+        class="wxDialog"
+        class_name="GenerateDlgBase"
+        title="Generate Code"
+        base_file="./generate_dlg_base.cpp"
+        derived_class_name="GenerateDlg"
+        pure_virtual_functions="1"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxStaticText"
+            label="Choose the code you want to generate:" />
+          <node
+            class="wxGridSizer"
+            class_access="protected:"
+            var_name="m_grid_sizer" />
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="PreviewSettings"
+        title="Preview"
+        base_file="..\tools\preview_settings"
+        use_derived_class="0"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer">
+          <node
+            class="wxStaticText"
+            label="Choose what you want to use to display the form." />
+          <node
+            class="wxBoxSizer">
+            <node
+              class="wxRadioButton"
+              class_access="none"
+              label="XRC"
+              style="wxRB_GROUP"
+              var_name="radio_XRC"
+              get_function="is_type_xrc"
+              set_function="set_type_xrc"
+              validator_variable="type_xrc" />
+            <node
+              class="wxRadioButton"
+              label="XRC and C++"
+              var_name="m_radio_XRC_CPP"
+              get_function="is_type_both"
+              set_function="set_type_both"
+              validator_variable="type_xrc_cpp" />
+            <node
+              class="wxRadioButton"
+              class_access="none"
+              label="C++"
+              var_name="radio_CPP"
+              get_function="is_type_cpp"
+              set_function="set_type_cpp"
+              validator_variable="type_cpp" />
+          </node>
+          <node
+            class="wxStdDialogButtonSizer"
+            flags="wxEXPAND" />
+        </node>
+      </node>
+      <node
+        class="wxDialog"
+        class_name="SvgToIcoDlgBase"
+        style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+        title="Convert SVG to Windows Icon"
+        base_file="./svg_to_ico_dlg_base.cpp"
+        derived_class_name="SvgToIcoDlg"
+        pure_virtual_functions="1"
+        wxEVT_INIT_DIALOG="OnInit">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="dlg_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxFlexGridSizer"
+            growablecols="1"
+            borders="wxLEFT|wxRIGHT|wxTOP"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxStaticText"
+              label="&amp;Source SVG file:"
+              var_name="m_staticSvg"
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="wxFilePickerCtrl"
+              message="Select the source SVG file"
+              var_name="m_fileSvg"
+              wildcard="SVG files|*.svg;*.svgz||"
+              size="300,-1"
+              flags="wxEXPAND"
+              wxEVT_FILEPICKER_CHANGED="OnFileChanged" />
+            <node
+              class="wxStaticText"
+              label="&amp;Destination ICO file:"
+              var_name="m_staticIco"
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="wxFilePickerCtrl"
+              message="Select the destination ICO file"
+              style="wxFLP_SAVE|wxFLP_OVERWRITE_PROMPT|wxFLP_USE_TEXTCTRL"
+              var_name="m_fileIco"
+              wildcard="Icon files|*.ico||"
+              size="300,-1"
+              flags="wxEXPAND"
+              wxEVT_FILEPICKER_CHANGED="OnFileChanged" />
+          </node>
+          <node
+            class="wxStaticText"
+            label=""
+            var_name="m_statusText"
+            wrap="420"
+            borders="wxLEFT|wxRIGHT|wxTOP"
+            flags="wxEXPAND" />
+          <node
+            class="wxStdDialogButtonSizer"
+            Cancel="0"
+            Close="1"
+            var_name="std_btn"
+            flags="wxEXPAND"
+            CloseButtonClicked="OnClose"
+            OKButtonClicked="OnConvert" />
+        </node>
+      </node>
     </node>
     <node
       class="folder"
@@ -3296,10 +3367,10 @@
       <node
         class="wxDialog"
         class_name="MarkStringDlgBase"
-        title="Markup Property"
         style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-        size="820,640"
+        title="Markup Property"
         minimum_size="600,480"
+        size="820,640"
         base_file="markstring_dlg_base"
         derived_class_name="MarkStringDlg"
         pure_virtual_functions="1">
@@ -3310,17 +3381,16 @@
           flags="wxEXPAND">
           <node
             class="wxSplitterWindow"
-            sashgravity="0.5"
             persist_name="MarkStringDlgSash"
-            min_pane_size="150"
+            sashgravity="0.5"
             style="wxSP_LIVE_UPDATE|wxSP_3DSASH"
             flags="wxEXPAND"
             proportion="1">
             <node
               class="wxPanel"
+              var_name="panel2"
               window_style="wxTAB_TRAVERSAL"
-              flags="wxEXPAND"
-              var_name="panel2">
+              flags="wxEXPAND">
               <node
                 class="wxBoxSizer"
                 orientation="wxVERTICAL"
@@ -3337,7 +3407,6 @@
                   style="wxTE_MULTILINE"
                   var_name="m_text"
                   border_size="8"
-                  borders="wxALL"
                   flags="wxEXPAND"
                   proportion="1"
                   wxEVT_TEXT="OnMarkupChanged" />
@@ -3345,9 +3414,9 @@
             </node>
             <node
               class="wxPanel"
+              var_name="panel3"
               window_style="wxTAB_TRAVERSAL"
-              flags="wxEXPAND"
-              var_name="panel3">
+              flags="wxEXPAND">
               <node
                 class="wxBoxSizer"
                 orientation="wxVERTICAL"
@@ -3361,10 +3430,9 @@
                   borders="wxLEFT|wxTOP" />
                 <node
                   class="wxPanel"
-                  window_style="wxBORDER_SIMPLE"
                   minimum_size="-1,60"
+                  window_style="wxBORDER_SIMPLE"
                   border_size="8"
-                  borders="wxALL"
                   flags="wxEXPAND"
                   proportion="1">
                   <node
@@ -3377,7 +3445,6 @@
                       label=""
                       var_name="m_preview"
                       border_size="8"
-                      borders="wxALL"
                       flags="wxEXPAND"
                       proportion="1" />
                     <node
@@ -3478,7 +3545,6 @@
             flags="wxEXPAND" />
           <node
             class="wxStdDialogButtonSizer"
-            var_name="stdBtn"
             flags="wxEXPAND"
             OKButtonClicked="OnOK" />
         </node>
@@ -4836,9 +4902,8 @@
             class="wxGrid"
             cell_vert_alignment="wxALIGN_CENTER"
             col_label_values="Text;Enabled;Show;Tooltip;Help"
-            cols="5"
-            rows="1"
             drag_row_size="0"
+            rows="1"
             selection_mode="wxGridSelectRows"
             flags="wxEXPAND"
             proportion="1" />
@@ -4875,7 +4940,6 @@
           flags="wxEXPAND">
           <node
             class="wxInfoBar"
-            var_name="m_infoBar"
             flags="wxEXPAND"
             proportion="1" />
           <node

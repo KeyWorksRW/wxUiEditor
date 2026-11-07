@@ -364,6 +364,7 @@ set( file_list
     src/tools/compare/diff_viewer.cpp   # Dialog for displaying file differences
     src/tools/generate_dlg.cpp          # Dialog for choosing and generating specific language file(s)
     src/tools/global_ids_dlg.cpp        # Dialog to Globally edit Custom IDs
+    src/tools/svg_to_ico_dlg.cpp       # Dialog for converting an SVG file to a Windows icon
 
     # tools/generate_dlg.cpp        # Dialog for choosing and generating specific language file(s)
     # tools/preview_settings.cpp    # Dialog for setting preview options

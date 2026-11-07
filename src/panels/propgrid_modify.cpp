@@ -334,26 +334,6 @@ void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* gr
     // wxGetFrame().UpdateLanguagePanels();
 }
 
-static void UpdateDescription(const wxString& value, wxString& description,
-                              PropDeclaration* propInfo)
-{
-    for (auto& iter: propInfo->getOptions())
-    {
-        if (iter.name == value.ToStdString())
-        {
-            if (iter.help.empty())
-            {
-                description = value + "\n";
-            }
-            else
-            {
-                description += "\n\n" + value + "\n" + std::string(iter.help);
-            }
-            break;
-        }
-    }
-}
-
 static void UpdateCppMemberPrefix(bool access, wxString& name, Node* node, bool& is_name_changed)
 {
     if (access && name.starts_with("m_"))
@@ -434,14 +414,11 @@ void PropGridPanel::ModifyOptionsProperty(NodeProperty* node_prop, wxPGProperty*
     wxString value = m_prop_grid->GetPropertyValueAsString(grid_prop);
     ModifyProperty(node_prop, value);
 
-    // Update displayed description for the new selection
-    PropDeclaration* propInfo = node_prop->get_PropDeclaration();
-
-    wxString description = GetPropHelp(node_prop);
-    UpdateDescription(value, description, propInfo);
-
+    // Update the displayed description for the new selection. GetPropDescription() reads the
+    // already-updated node value, not the stale value variable above.
+    const wxString description = GetPropDescription(node_prop).wx();
     m_prop_grid->SetPropertyHelpString(grid_prop, description);
-    m_prop_grid->SetDescription(grid_prop->GetLabel(), description);
+    m_prop_grid->ShowDescription(grid_prop->GetLabel(), description);
 
     if (auto* selected_node = wxGetFrame().getSelectedNode(); selected_node)
     {

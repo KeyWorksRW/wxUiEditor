@@ -12,20 +12,18 @@
  * UGLY HACK ALERT!
  *
  * Unlike Menu and Toolbar help where you can specify what statusbar panel to send text to,
- * wxPropertyGridManager will always send help text to statusbar panel #0. Because that text is
- * quite long, we want it to be a variable length field. We also want it to keep displaying for as
- * long at the property is selected. Ideally, we would display regular status text in a fixed panel
- * on the left along with toolbar and menu help, and the propertygrid help text in the right
- * variable length panel. But you can't do that normally because of the fixed panel number
- * wxPropertyGridManager writes to.
+ * wxPropertyGridManager will always send help text to statusbar panel #0. That text is now
+ * rendered in the property panel's description box, so there is no reason to also display it in
+ * the status bar. But you can't stop wxPropertyGridManager from writing to panel #0.
  *
- * To get around this, we create three panels. Panel #0 is the smallest size possible and uses a
- * flat display so that it doesn't actually look like a panel. Panel #1 is a fixed width and used
- * for general status bar text along with toolbar and menu help text. Panel #2 is the variable width
- * which means it will normally be the largest.
+ * To get around this, we create three panels. Panel #0 exists only as a sink for the property
+ * grid's help text: it is the smallest size possible and uses a flat display so that it doesn't
+ * actually look like a panel. Panel #1 is a fixed width and used for general status bar text
+ * along with toolbar and menu help text. Panel #2 is the variable width which means it will
+ * normally be the largest.
  *
  * Next we create a custom statusbar and when it is notified that text was sent to panel #0 it
- * copies it to panel #2 and erases the text in panel #0.
+ * erases that text so it is never drawn.
  *
  * As long as we have a custom bar anyway, we add a setText method that takes a const wxString&.
  */
@@ -42,14 +40,15 @@ public:
     void DoUpdateStatusText(int number) override
     {
         ASSERT(m_panes.size() > static_cast<size_t>(number));
-        const wxString text = GetStatusText(number);
-        if (!text.empty() && number == 0)
+        if (number == 0 && !GetStatusText(number).empty())
         {
-            // This triggers a bounded recursive call to DoUpdateStatusText(0) via
-            // SetStatusText(wxEmptyString, 0). The recursive call finds GetStatusText(0)
-            // empty and skips the body, so recursion terminates after one re-entry.
-            SetStatusText(text, 2);
+            // Discard the property grid's help text -- it is rendered in the property panel's
+            // description box, so it must not reach a visible pane. This triggers a bounded
+            // recursive call to DoUpdateStatusText(0) via SetStatusText(wxEmptyString, 0). The
+            // recursive call finds GetStatusText(0) empty and skips the body, so it falls through
+            // to wxStatusBar::DoUpdateStatusText and recursion terminates after one re-entry.
             SetStatusText(wxEmptyString, 0);
+            return;
         }
         wxStatusBar::DoUpdateStatusText(number);
     }

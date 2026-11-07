@@ -339,6 +339,7 @@ set( file_list
     src/panels/propgrid_modify.cpp     # PropGridPanel modification functions
     src/panels/propgrid_panel.cpp      # Property panel
     src/panels/cstm_propgrid.cpp       # Derived wxPropertyGrid class
+    src/panels/cstm_propman.cpp        # Derived wxPropertyGridManager class with HTML description box
     src/panels/ribbon_tools.cpp        # Displays node creation tools in a wxRibbonBar
 
     src/panels/language_docs.cpp         # Panel for displaying wxWidgets documentation for current language

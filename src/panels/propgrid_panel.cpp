@@ -28,7 +28,6 @@
 #include "base_panel.h"       // BasePanel -- Code generation panel
 #include "category.h"         // NodeCategory class
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
-#include "cstm_propman.h"     // CustomPropertyManager -- Derived wxPropertyGrid class
 #include "font_prop.h"        // FontProperty -- FontProperty class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
@@ -75,10 +74,12 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     m_prop_grid = new CustomPropertyManager;
     m_prop_grid->Create(m_notebook_parent, PROPERTY_ID, wxDefaultPosition, wxDefaultSize,
                         wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
+    m_prop_grid->InitializeHtmlDescription();
 
-    m_event_grid = new wxPropertyGridManager(
-        m_notebook_parent, EVENT_ID, wxDefaultPosition, wxDefaultSize,
-        wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
+    m_event_grid = new CustomPropertyManager;
+    m_event_grid->Create(m_notebook_parent, EVENT_ID, wxDefaultPosition, wxDefaultSize,
+                         wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
+    m_event_grid->InitializeHtmlDescription();
 
     m_notebook_parent->AddPage(m_prop_grid, "Properties", false, wxWithImages::NO_IMAGE);
     m_notebook_parent->AddPage(m_event_grid, "Events", false, wxWithImages::NO_IMAGE);
@@ -126,14 +127,34 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
 
 void PropGridPanel::RestoreDescBoxHeight()
 {
+    // The description box now renders markdown, which needs more room than the previous default.
+    constexpr long DEFAULT_DESC_BOX_HEIGHT = 200;
+    // 100 is the previous default, written by older builds when the user never dragged the
+    // description-box splitter -- treat it as unset so existing installs get the taller box.
+    constexpr long PREVIOUS_DEFAULT_DESC_BOX_HEIGHT = 100;
+
     auto* config = wxConfig::Get();
     config->SetPath(txt_main_window_config);
-    long prop_height = config->ReadLong("prop_height", 100);
-    long event_height = config->ReadLong("event_height", 100);
+    long prop_height = config->ReadLong("prop_height", DEFAULT_DESC_BOX_HEIGHT);
+    long event_height = config->ReadLong("event_height", DEFAULT_DESC_BOX_HEIGHT);
     config->SetPath("/");
+
+    // Migrate only the previous default; arbitrary user-set heights are left untouched.
+    if (prop_height == PREVIOUS_DEFAULT_DESC_BOX_HEIGHT)
+    {
+        prop_height = DEFAULT_DESC_BOX_HEIGHT;
+    }
+    if (event_height == PREVIOUS_DEFAULT_DESC_BOX_HEIGHT)
+    {
+        event_height = DEFAULT_DESC_BOX_HEIGHT;
+    }
 
     m_prop_grid->SetDescBoxHeight(prop_height);
     m_event_grid->SetDescBoxHeight(event_height);
+
+    // The height change moves the description box, so snap the HTML description windows to it.
+    m_prop_grid->SyncDescriptionWindow();
+    m_event_grid->SyncDescriptionWindow();
 }
 
 void PropGridPanel::SaveDescBoxHeight()
@@ -207,7 +228,7 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
                         m_prop_grid->SetPropertyAttribute(grid_prop, wxPG_ATTR_HINT, result->wx());
                     }
                 }
-                m_prop_grid->SetPropertyHelpString(grid_prop, GetPropHelp(prop));
+                m_prop_grid->SetPropertyHelpString(grid_prop, GetPropDescription(prop).wx());
 
                 if (propType == type_id)
                 {
@@ -554,7 +575,7 @@ void PropGridPanel::ReselectItem()
         }
         else
         {
-            m_prop_grid->SetDescription(wxEmptyString, wxEmptyString);
+            m_prop_grid->ClearDescription();
         }
     }
     else if (m_pageName == "Events")
@@ -565,7 +586,7 @@ void PropGridPanel::ReselectItem()
         }
         else
         {
-            m_event_grid->SetDescription(wxEmptyString, wxEmptyString);
+            m_event_grid->ClearDescription();
         }
     }
 }
@@ -758,6 +779,35 @@ wxue::string PropGridPanel::GetPropHelp(NodeProperty* prop) const
             description = prop->get_PropDeclaration()->getDescription();
         }
     }
+    std::ignore = description.Replace("\\n", "\n", true);
+    return description;
+}
+
+wxue::string PropGridPanel::GetPropDescription(NodeProperty* prop) const
+{
+    wxue::string description = GetPropHelp(prop);
+
+    const PropType prop_type = prop->type();
+    if (prop_type == type_option || prop_type == type_editoption)
+    {
+        const std::string& value = prop->as_string();
+        for (const auto& option: prop->get_PropDeclaration()->getOptions())
+        {
+            if (option.name != value || option.help.empty())
+            {
+                continue;
+            }
+
+            if (!description.empty())
+            {
+                description << "\n\n";
+            }
+            description << option.help;
+            break;
+        }
+    }
+
+    // Option help can also contain escaped newlines from the XML declaration files.
     std::ignore = description.Replace("\\n", "\n", true);
     return description;
 }

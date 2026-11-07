@@ -419,9 +419,8 @@ private:
     // function). However, we make these variables in the off chance that we add a function that
     // creates a different layout for the splitters.
 
-    int m_posPropGridStatusField {
-        0
-    };  // This field dynamically aligns underneat the PropertyGrid panel
+    // This is the wide variable-length pane, used for property-grid validation messages.
+    int m_posPropGridStatusField { 2 };
     int m_posRightStatusField { 1 };  // This field is variable length, so it can hold the most text
 
     wxFindReplaceData m_findData;

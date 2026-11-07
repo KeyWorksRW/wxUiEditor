@@ -13,7 +13,8 @@
 #include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
-#include "gen_enums.h"                   // Enumerations for generators
+#include "cstm_propman.h"  // CustomPropertyManager -- Derived wxPropertyGridManager class
+#include "gen_enums.h"     // Enumerations for generators
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
 using namespace GenEnum;
@@ -51,6 +52,11 @@ public:
 
 protected:
     wxue::string GetPropHelp(NodeProperty* prop) const;
+
+    // Returns the property help plus the help for the currently selected option of an option
+    // property, with escaped newlines converted to real newlines.
+    wxue::string GetPropDescription(NodeProperty* prop) const;
+
     wxString GetCategoryDisplayName(const wxString& original);
 
     // Called to determine if a property should be displayed or not
@@ -137,8 +143,8 @@ private:
 
     wxAuiNotebook* m_notebook_parent;
 
-    wxPropertyGridManager* m_prop_grid;
-    wxPropertyGridManager* m_event_grid;
+    CustomPropertyManager* m_prop_grid;
+    CustomPropertyManager* m_event_grid;
 
     std::map<std::string, bool> m_expansion_map;
 

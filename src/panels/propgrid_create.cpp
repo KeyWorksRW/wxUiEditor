@@ -197,7 +197,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
             wxPGProperty* const id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            const wxString description = GetPropHelp(prop);
+            const wxString description = GetPropDescription(prop).wx();
             m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
@@ -211,7 +211,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
         {
             wxPGProperty* const id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            const wxString description = GetPropHelp(prop);
+            const wxString description = GetPropDescription(prop).wx();
             m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
@@ -229,7 +229,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
             wxPGProperty* const id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
-            const wxString description = GetPropHelp(prop);
+            const wxString description = GetPropDescription(prop).wx();
             m_prop_grid->SetPropertyHelpString(id_prop, description);
 
             m_property_map[id_prop] = prop;
@@ -513,7 +513,6 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 PropDeclaration* propInfo = prop->get_PropDeclaration();
 
                 const std::string value = prop->as_string();
-                std::string_view help_text = {};
 
                 wxPGChoices constants;
                 int i = 0;
@@ -528,10 +527,6 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     }
 #endif  // !defined(INTERNAL_TESTING)
                     constants.Add(wxString(iter.name), i++);
-                    if (iter.name == value)
-                    {
-                        help_text = iter.help;
-                    }
                 }
 
                 if (type == type_editoption)
@@ -547,25 +542,8 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
                 new_pg_property->SetValueFromString(value);
 
-                wxue::string description = GetPropHelp(prop);
-                if (description.empty())
-                {
-                    description << value;
-                }
-                else
-                {
-                    description << "\n\n" << value;
-                }
-                if (!help_text.empty())
-                {
-                    if (!description.empty())
-                    {
-                        description << "\n\n";
-                    }
-                    description << help_text;
-                }
-
-                new_pg_property->SetHelpString(description.wx());
+                // Property help plus the selected option's help -- never the bare option value.
+                new_pg_property->SetHelpString(GetPropDescription(prop).wx());
             }
             return new_pg_property;
 

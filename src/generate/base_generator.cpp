@@ -1042,15 +1042,19 @@ void DeclAddVarNameProps(NodeDeclaration* declaration, std::string_view def_valu
 
     PropDeclaration* prop_info =
         DeclAddProp(declaration, prop_class_access, type_option, {}, access);
-    DeclAddOption(prop_info, "none", "Derived classes do not have access to this item.");
-    DeclAddOption(prop_info, "protected:",
-                  "In C++, derived classes can access this item. For other languages, the variable "
-                  "is accessible by other "
-                  "classes and functions.");
-    DeclAddOption(prop_info, "public:",
-                  "In C++, item is added as a public: class member. For other languages, the "
-                  "variable is accessible by "
-                  "other classes and functions.");
+    DeclAddOption(prop_info, "none",
+                  "### Local variable\n"
+                  "In **C++**, the item is a local variable, not a class member.");
+    DeclAddOption(
+        prop_info, "protected:",
+        "### Protected member\n"
+        "In **C++**, derived classes can access this item.\n"
+        "For other languages, the variable is accessible by other classes and functions.");
+    DeclAddOption(
+        prop_info, "public:",
+        "### Public member\n"
+        "In **C++**, the item is added as a public class member.\n"
+        "For other languages, the variable is accessible by other classes and functions.");
 }
 
 void DeclAddEvent(NodeDeclaration* declaration, const std::string& evt_name,

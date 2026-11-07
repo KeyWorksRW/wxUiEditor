@@ -30,6 +30,8 @@ All notable changes to this project will be documented in this file.
 - Any widget added as a direct child of a status bar can be placed in a specific field with the new `field_index`
   property. This generates `wxStatusBar::AddFieldControl()` and requires wxWidgets 3.3 or later (C++ only).
 - C++ code generation for wxAnimationCtrl now uses `wxAnimationBundle` when the project targets wxWidgets 3.3.0 or later.
+- New Convert SVG to Windows Icon command under the Tools menu that converts an SVG file into a Windows icon containing
+  16x16, 32x32, 48x48 and 256x256 images.
 
 ### Changed
 

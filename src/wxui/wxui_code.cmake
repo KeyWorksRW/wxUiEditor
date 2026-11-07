@@ -33,6 +33,7 @@ set (wxue_generated_code
     # Base classes
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/svg_to_ico_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/art_prop_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp

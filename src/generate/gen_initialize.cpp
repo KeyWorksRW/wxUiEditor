@@ -100,6 +100,7 @@
 #include "gen_toolbook.h"          // ToolbookGenerator -- wxToolbook generator
 #include "gen_tree_ctrl.h"         // TreeCtrlGenerator -- wxTreeCtrl generator
 #include "gen_tree_list.h"         // TreeListCtrlGenerator -- wxTreeCtrl component classes
+#include "gen_tree_page.h"         // TreePageGenerator -- Tree page generator
 #include "gen_treebook.h"          // TreebookGenerator -- wxTreebook generator
 #include "gen_vlistbox.h"          // VListBoxGenerator -- wxVListBox generator
 #include "gen_web_view.h"          // WebViewGenerator -- wxWebView generator
@@ -146,6 +147,7 @@ static void SetGenerator(GenName name)
 void NodeCreator::InitGenerators()
 {
     SetGenerator<BookPageGenerator>(gen_BookPage);
+    SetGenerator<TreePageGenerator>(gen_TreePage);
     SetGenerator<PageCtrlGenerator>(gen_PageCtrl);
 
     SetGenerator<WizardPageGenerator>(gen_wxWizardPageSimple);

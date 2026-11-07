@@ -455,6 +455,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
 static const std::map<std::string_view, std::string_view> map_org_widgets = {
     { "BookPage", "wxBookPage" },
+    { "TreePage", "wxBookPage" },
     { "PanelForm", "wxPanel" },
     { "RibbonBar", "wxRibbonBar" },
     { "PopupMenu", "wxMenu" },
@@ -819,6 +820,7 @@ static const std::map<std::string_view, std::string_view> map_convert_classname 
 
 static const std::map<std::string_view, std::string_view> map_convert_nonwx_classname = {
     { "BookPage", "book_ctrl_base" },
+    { "TreePage", "book_ctrl_base" },
     { "dataViewColumn", "data_view_ctrl" },
     { "dataViewListColumn", "data_view_list_ctrl" },
     { "PanelForm", "panel" },
@@ -880,6 +882,7 @@ static const std::initializer_list<GenType> parentless_types = {
 
     type_aui_tool,
     type_bookpage,
+    type_treepage,
     type_ctx_menu,
     type_data_list,
     type_data_string,
@@ -991,13 +994,14 @@ void DeclAddOption(PropDeclaration* prop_info, std::string_view name, std::strin
 
 // var_names for these generators will default to "none" for class access
 // inline const GenName set_no_class_access[] = {
-static constexpr frozen::set<GenName, 29> set_no_class_access = frozen::make_set<GenName>({
+static constexpr frozen::set<GenName, 30> set_no_class_access = frozen::make_set<GenName>({
 
     gen_BookPage,
     gen_CloseButton,
     gen_StaticCheckboxBoxSizer,
     gen_StaticRadioBtnBoxSizer,
     gen_TextSizer,
+    gen_TreePage,
     gen_VerticalBoxSizer,
     gen_auitool,
     gen_auitool_label,

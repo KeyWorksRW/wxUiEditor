@@ -202,6 +202,7 @@ set( file_list
     src/generate/gen_simplebook.cpp       # wxSimplebook generator
     src/generate/gen_toolbook.cpp         # wxToolbook generator
     src/generate/gen_treebook.cpp         # wxTreebook generator
+    src/generate/gen_tree_page.cpp        # Tree page generator
 
     # Containers
     src/generate/gen_collapsible.cpp      # wxCollapsiblePane generator

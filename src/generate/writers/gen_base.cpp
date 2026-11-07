@@ -81,7 +81,7 @@ wxue::string BaseCodeGenerator::GetDeclaration(Node* node)
     {
         code << "wxPGProperty* " << node->get_NodeName() << ';';
     }
-    else if (class_name == "BookPage")
+    else if (class_name == "BookPage" || class_name == "TreePage")
     {
         code << "wxPanel* " << node->get_NodeName() << ';';
     }

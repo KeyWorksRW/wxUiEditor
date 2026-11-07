@@ -579,6 +579,7 @@ static constexpr auto lst_select_nodes = std::to_array<GenEnum::GenName>({
 
     gen_BookPage,
     gen_PageCtrl,
+    gen_TreePage,
     gen_propGridPage,
     gen_ribbonButton,
     gen_ribbonTool,
@@ -614,7 +615,7 @@ void MockupContent::SelectBookPage(Node* node)
 
     size_t sel_pos = 0;
 
-    if (parent->is_Gen(gen_BookPage))
+    if (parent->is_Gen(gen_BookPage) || parent->is_Gen(gen_TreePage))
     {
         parent = parent->get_Parent();
         if (!parent)
@@ -657,7 +658,7 @@ void MockupContent::SelectBookPage(Node* node)
         }
         if (parent->is_Gen(gen_wxTreebook))
         {
-            if (child->is_Gen(gen_BookPage))
+            if (child->is_Gen(gen_BookPage) || child->is_Gen(gen_TreePage))
             {
                 bool is_node_found { false };
                 for (const auto& grand_child: child->get_ChildNodePtrs())
@@ -667,7 +668,7 @@ void MockupContent::SelectBookPage(Node* node)
                         is_node_found = true;
                         break;
                     }
-                    if (grand_child->is_Gen(gen_BookPage))
+                    if (grand_child->is_Gen(gen_BookPage) || grand_child->is_Gen(gen_TreePage))
                     {
                         ++sel_pos;
                     }
@@ -820,7 +821,7 @@ void MockupContent::OnNodeSelected(Node* node)
         return;
     }
 
-    if (node->is_Gen(gen_BookPage) || node->is_Gen(gen_PageCtrl))
+    if (node->is_Gen(gen_BookPage) || node->is_Gen(gen_TreePage) || node->is_Gen(gen_PageCtrl))
     {
         SelectBookPage(node);
         return;

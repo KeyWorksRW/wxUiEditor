@@ -129,7 +129,7 @@ wxue::string GenerateQuotedString(const wxue::string& str)
 
 
 // List of valid component parent types
-static constexpr std::array<GenType, 11> s_GenParentTypes = {
+static constexpr std::array<GenType, 12> s_GenParentTypes = {
     type_auinotebook,
     type_bookpage,
     type_choicebook,
@@ -140,6 +140,7 @@ static constexpr std::array<GenType, 11> s_GenParentTypes = {
     type_ribbonpanel,
     type_simplebook,
     type_splitter,
+    type_treepage,
     type_wizardpagesimple,
 };
 

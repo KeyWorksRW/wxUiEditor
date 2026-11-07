@@ -228,10 +228,12 @@ void Node::PostProcessNewNode(NodeSharedPtr& new_node, GenName name)
         case gen_wxChoicebook:
         case gen_wxListbook:
         case gen_wxAuiNotebook:
+        case gen_wxTreebook:
             PostProcessBook(new_node.get());
             break;
 
         case gen_BookPage:
+        case gen_TreePage:
         case gen_wxWizardPageSimple:
             PostProcessPage(new_node.get());
             break;

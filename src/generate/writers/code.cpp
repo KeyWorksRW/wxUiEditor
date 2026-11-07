@@ -802,7 +802,7 @@ std::string Code::DetermineClassName(bool use_generic, wxue::string_view overrid
         return std::string(class_name);
     }
 
-    if (m_node->is_Gen(gen_BookPage))
+    if (m_node->is_Gen(gen_BookPage) || m_node->is_Gen(gen_TreePage))
     {
         return "wxPanel";
     }
@@ -955,7 +955,7 @@ constexpr auto s_GenParentTypes = std::to_array<GenType>(
     { type_aui_toolbar, type_auinotebook, type_bookpage, type_choicebook, type_container,
       type_listbook, type_notebook, type_panel, type_propgridpage, type_ribbonbar,
       type_ribbonbar_form, type_ribbonpanel, type_simplebook, type_splitter, type_statusbar,
-      type_toolbar, type_wizardpagesimple });
+      type_toolbar, type_treepage, type_wizardpagesimple });
 
 void Code::AddFormParentName()
 {

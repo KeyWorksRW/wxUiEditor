@@ -21,6 +21,18 @@ NodeCreator& NodeCreation = NodeCreator::get_Instance();  // NOLINT (cppcheck-su
 using namespace GenEnum;
 using enum Node::Validity;
 
+// A BookPage can never be a child of another BookPage, so when the prospective parent is a
+// wxTreebook (or a page of one) the requested BookPage must become a TreePage.
+static GenName RedirectToTreePage(GenName name, const Node* parent)
+{
+    if (name == gen_BookPage && parent &&
+        (parent->is_Gen(gen_wxTreebook) || parent->is_Type(type_treepage)))
+    {
+        return gen_TreePage;
+    }
+    return name;
+}
+
 NodeDeclaration* NodeCreator::get_NodeDeclaration(std::string_view class_name)
 {
     if (auto result = rmap_GenNames.find(class_name); result != rmap_GenNames.end())
@@ -116,6 +128,8 @@ std::pair<NodeSharedPtr, Node::Validity> NodeCreator::CreateNode(GenName name, N
         return { NodeSharedPtr(), valid_node };
     }
 
+    name = RedirectToTreePage(name, parent);
+
     auto* node_decl = ResolveNodeDeclaration(name);
     if (!node_decl)
     {
@@ -192,8 +206,8 @@ NodeDeclaration* NodeCreator::ResolveNodeDeclaration(GenName name) const
     return nullptr;
 }
 
-Node::Validity NodeCreator::ValidateParentConstraints(GenName name, NodeDeclaration* node_decl,
-                                                      Node* parent)
+Node::Validity NodeCreator::ValidateParentConstraints([[maybe_unused]] GenName name,
+                                                      NodeDeclaration* node_decl, Node* parent)
 {
     // Check for widgets which can ONLY have a frame for a parent.
     if (node_decl->is_Type(type_statusbar) || node_decl->is_Type(type_menubar) ||
@@ -212,14 +226,6 @@ Node::Validity NodeCreator::ValidateParentConstraints(GenName name, NodeDeclarat
             return invalid_tool_grandparent;
         }
     }
-    else if (name == gen_BookPage && parent->is_Type(type_bookpage))
-    {
-        auto* grand_parent = parent->get_Parent();
-        if (!grand_parent || !grand_parent->is_Gen(gen_wxTreebook))
-        {
-            return invalid_page_grandparent;
-        }
-    }
 
     return valid_node;
 }
@@ -230,6 +236,14 @@ NodeSharedPtr NodeCreator::AllocateChildNode(GenName name, NodeDeclaration* node
     // required here because AllocateChildNode is called directly by CreateNode, bypassing
     // CanParentAcceptChild().
     if (node_decl->is_Type(type_infobarbtn) && !parent->is_Gen(gen_wxInfoBar))
+    {
+        return {};
+    }
+
+    // type_notebook is shared by wxNotebook, wxToolbook and wxTreebook -- type_treepage is only
+    // valid for a wxTreebook.
+    if (node_decl->is_Type(type_treepage) && parent->is_Type(type_notebook) &&
+        !parent->is_Gen(gen_wxTreebook))
     {
         return {};
     }
@@ -326,6 +340,8 @@ Node* NodeCreator::is_ValidCreateParent(GenName name, Node* parent, bool use_rec
         return nullptr;
     }
 
+    name = RedirectToTreePage(name, parent);
+
     auto* node_decl = ResolveNodeDeclaration(name);
     if (!node_decl)
     {
@@ -349,15 +365,6 @@ Node* NodeCreator::is_ValidCreateParent(GenName name, Node* parent, bool use_rec
             return nullptr;
         }
     }
-    else if (name == gen_BookPage && parent->is_Type(type_bookpage))
-    {
-        if (auto* grandfather = parent->get_Parent(); grandfather)
-        {
-            return is_ValidCreateParent(name, grandfather);
-        }
-
-        return nullptr;
-    }
 
     if (CanParentAcceptChild(node_decl, parent))
     {
@@ -378,6 +385,14 @@ Node* NodeCreator::is_ValidCreateParent(GenName name, Node* parent, bool use_rec
 bool NodeCreator::CanParentAcceptChild(NodeDeclaration* node_decl, Node* parent)
 {
     if (node_decl->is_Type(type_infobarbtn) && !parent->is_Gen(gen_wxInfoBar))
+    {
+        return false;
+    }
+
+    // type_notebook is shared by wxNotebook, wxToolbook and wxTreebook -- type_treepage is only
+    // valid for a wxTreebook.
+    if (node_decl->is_Type(type_treepage) && parent->is_Type(type_notebook) &&
+        !parent->is_Gen(gen_wxTreebook))
     {
         return false;
     }

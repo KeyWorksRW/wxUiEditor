@@ -100,7 +100,9 @@ int GenerateXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
             // all BookPages to be children of the wxTreebook with a depth parameter indicating if
             // it is a sub-page or not.
 
-            if (child->is_Gen(gen_BookPage) && child->get_Parent()->is_Gen(gen_BookPage))
+            if ((child->is_Type(type_treepage) || child->is_Type(type_bookpage)) &&
+                (child->get_Parent()->is_Type(type_treepage) ||
+                 child->get_Parent()->is_Type(type_bookpage)))
             {
                 int depth = 0;
                 actual_object = object;

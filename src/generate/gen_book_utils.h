@@ -17,6 +17,9 @@ class Code;
 // pages.
 bool isBookDisplayImages(Node* node);
 
+// Returns true if the node is a page of a book (BookPage or TreePage).
+bool is_BookPageNode(Node* node);
+
 // This will walk through all of a book's pages to see if any of them have an image. This
 // will handle wxTreebook with an unlimited number of nested sub pages.
 bool isBookHasImage(Node* node);

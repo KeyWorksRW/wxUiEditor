@@ -104,6 +104,7 @@ public:
         // ChangeTo_TREE_BOOK,
 
         AddImage,
+        ReloadImage,
 
         NewChildSpacer,
         NewSiblingSpacer,

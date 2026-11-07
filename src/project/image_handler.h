@@ -141,6 +141,13 @@ public:
     // Returns nullptr if the image is not found
     EmbeddedImage* FindEmbedded(std::string_view);
 
+    // Re-reads the embedded image file(s) from disk even if the file's modification time has not
+    // changed. Used by the Navigation panel's "Reread image from disk" command.
+    //
+    // Returns false if description is not an embedded image, the image is not part of the
+    // project, or no image file could be read.
+    bool ReloadEmbeddedImage(wxue::string_view description);
+
     // Returns false if the new art folder does not exist.
     bool ArtFolderChanged();
 

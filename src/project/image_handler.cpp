@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-20-2026]
+// CR: [11-07-2026]
 
 #include <array>
 #include <cstdint>
@@ -159,6 +159,46 @@ void ImageHandler::UpdateImageForm(const wxue::string& description)
             embed->set_Form(owning_form);
         }
     }
+}
+
+bool ImageHandler::ReloadEmbeddedImage(wxue::string_view description)
+{
+    // The stored filenames are relative to the project directory.
+    const wxue::SaveCwd save_cwd(wxue::restore_cwd);
+    Project.ChangeDir();
+
+    const wxue::StringVector parts(description, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+    if (parts.size() <= IndexImage || parts[IndexImage].empty())
+    {
+        return false;
+    }
+
+    if (!parts[IndexType].starts_with("Embed") && !parts[IndexType].starts_with("SVG"))
+    {
+        return false;
+    }
+
+    EmbeddedImage* embed = GetEmbeddedImage(parts[IndexImage]);
+    if (!embed)
+    {
+        return false;
+    }
+
+    // A bundle stores one ImageInfo per resolution, so every variant has to be re-read.
+    size_t reload_count = 0;
+    for (auto& image_info: embed->get_ImageInfos())
+    {
+        if (!image_info.filename.file_exists())
+        {
+            continue;
+        }
+        if (embed->UpdateImage(image_info))
+        {
+            ++reload_count;
+        }
+    }
+
+    return (reload_count > 0);
 }
 
 void ImageHandler::Initialize(NodeSharedPtr project, bool allow_ui)

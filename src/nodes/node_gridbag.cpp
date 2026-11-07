@@ -76,6 +76,10 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     if (dlg.GetRow() > m_max_row)
     {
         wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer));
+        if (auto* nav_panel = wxGetFrame().getNavigationPanel())
+        {
+            nav_panel->RefreshGridBagDisplay(gbsizer);
+        }
         return true;
     }
 
@@ -110,6 +114,10 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 
         wxGetFrame().PushUndoAction(
             std::make_shared<AppendGridBagAction>(new_node, gbsizer, pos_append));
+        if (auto* nav_panel = wxGetFrame().getNavigationPanel())
+        {
+            nav_panel->RefreshGridBagDisplay(gbsizer);
+        }
         return true;
     }
 
@@ -140,6 +148,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 
     gbsizer->AddChild(insert_pos, new_node);
     new_node->set_Parent(gbsizer);
+    GridBagSort(gbsizer);
     undo_cmd->Update();
     wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
     wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);

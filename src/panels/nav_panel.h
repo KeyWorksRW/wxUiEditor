@@ -55,6 +55,10 @@ public:
     // children have been sorted.
     void RefreshParent(Node* parent);
 
+    // Sorts the children of a wxGridBagSizer by row/column (the order used when the project is
+    // saved and reloaded) and rebuilds its navigation display, preserving the current selection.
+    void RefreshGridBagDisplay(Node* gridbag);
+
     // This will expand the specified node and collapse all other siblings
     void ExpandCollapse(Node* node);
 

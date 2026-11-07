@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2024 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-15-2026]
+// CR: [11-07-2026]
 
 #include <filesystem>
 #include <set>
@@ -288,6 +288,18 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         get_GenName = gen_auitool;
     }
 
+    // wxFormBuilder allows a wxMenu as a child of a panel or form. wxUiEditor only permits a wxMenu
+    // inside a wxMenuBar, so convert it into a wxContextMenuEvent instead. The node must be a
+    // direct child of the form -- that is the only placement where the C++ generator emits a
+    // working context-menu handler.
+    bool is_ctx_menu = false;
+    if (get_GenName == gen_wxMenu && parent != nullptr && !parent->is_MenuBar())
+    {
+        is_ctx_menu = true;
+        get_GenName = gen_wxContextMenuEvent;
+        parent = parent->get_Form() ? parent->get_Form() : parent;
+    }
+
     NodeSharedPtr newobject = NodeCreation.CreateNode(get_GenName, parent).first;
     if (!newobject && parent)
     {
@@ -337,6 +349,22 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (!m_class_decoration.empty() && newobject->is_Form())
     {
         newobject->set_value(prop_class_decoration, m_class_decoration);
+    }
+
+    if (is_ctx_menu && parent)
+    {
+        // The generator only emits the handler when the form's wxEVT_CONTEXT_MENU event names the
+        // same handler as the wxContextMenuEvent node, so keep both values in sync.
+        if (NodeEvent* event = parent->get_Event("wxEVT_CONTEXT_MENU"); event != nullptr)
+        {
+            wxue::string handler = event->get_value();
+            if (handler.empty())
+            {
+                handler = "OnContextMenu";
+            }
+            std::ignore = newobject->set_value(prop_handler_name, handler);
+            event->set_value(handler);
+        }
     }
 
     if (get_GenName == gen_ribbonButton || get_GenName == gen_ribbonTool)
@@ -1066,6 +1094,12 @@ void FormBuilder::ProcessXmlProperties(pugi::xml_node& xml_obj, Node* newobject,
 
             if (prop_name == "name")
             {
+                // A wxContextMenuEvent has no var_name property, and HandleNameProperty() would
+                // assert on the missing property.
+                if (newobject->is_Gen(gen_wxContextMenuEvent))
+                {
+                    continue;
+                }
                 HandleNameProperty(xml_prop, newobject);
                 continue;
             }

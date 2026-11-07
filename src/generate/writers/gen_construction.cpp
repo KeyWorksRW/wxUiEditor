@@ -32,6 +32,7 @@ GenType aftercode_types[] = {
     type_notebook,
     type_auinotebook,
     type_treelistctrl,
+    type_treepage,
     gen_type_unknown
 };
 // clang-format on

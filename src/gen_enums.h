@@ -230,6 +230,7 @@ namespace GenEnum
         prop_enable_user_code,
         prop_end_colour,
         prop_eol_mode,
+        prop_expanded,
         prop_extra_accels,
         prop_extra_style,
         prop_factor,

@@ -19,11 +19,18 @@ public:
 
     bool ConstructionCode(Code& code) override;
 
+    bool AfterChildrenCode(Code& code) override;
+
+    void AfterCreation(wxObject* wxobject, wxWindow* wxparent, Node* node,
+                       bool is_preview) override;
+
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
     int GenXrcObject(Node* node, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node* node, std::set<std::string>& /* handlers */) override;
+
+    void ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop) override;
 
 private:
     bool AddTreebookSubPage(Node* node, wxPanel* widget, Node* node_parent);

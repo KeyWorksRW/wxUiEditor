@@ -424,6 +424,8 @@
         <property name="label" type="string_escapes">page</property>
         <property name="select" type="bool"
             help="Select Page when Adding">0</property>
+        <property name="expanded" type="bool"
+            help="Expand this page's subpages when the page is added. Disabled if the page has no subpages.">0</property>
         <property name="bitmap" type="image"
             help="Page Image (not all books use this)"/>
     </gen>

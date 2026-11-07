@@ -6,8 +6,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [11-07-2026]
 
-#include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
-#include <wx/treebook.h>  // wxTreebook: wxNotebook-like control presenting pages in a tree
+#include <wx/bookctrl.h>          // wxBookCtrlBase: common base class for wxList/Tree/Notebook
+#include <wx/propgrid/manager.h>  // wxPropertyGridManager
+#include <wx/treebook.h>          // wxTreebook: wxNotebook-like control presenting pages in a tree
 
 #include "gen_book_utils.h"  // Common Book utilities
 #include "gen_common.h"      // GeneratorLibrary -- Generator classes
@@ -33,6 +34,58 @@ static Node* Get_OwnerTreebook(Node* node)
         }
     }
     return nullptr;
+}
+
+// Returns the wxTreebook page index for node. Pages are added depth-first, so the index is
+// the number of TreePage nodes that precede node in a depth-first walk of the owning treebook.
+static int GetTreebookPageIndex(Node* node)
+{
+    Node* treebook = Get_OwnerTreebook(node);
+    if (!treebook)
+    {
+        return -1;
+    }
+
+    int page_index = 0;
+    bool found = false;
+
+    auto walk_tree = [&](Node* parent, auto&& self) -> void
+    {
+        for (const auto& child: parent->get_ChildNodePtrs())
+        {
+            if (child.get() == node)
+            {
+                found = true;
+                return;
+            }
+            if (child->is_Type(type_treepage))
+            {
+                ++page_index;
+                self(child.get(), self);
+                if (found)
+                {
+                    return;
+                }
+            }
+        }
+    };
+
+    walk_tree(treebook, walk_tree);
+
+    return found ? page_index : -1;
+}
+
+// Returns true if node has at least one direct child that is a TreePage.
+static bool HasTreebookSubPage(const Node* node)
+{
+    for (const auto& child: node->get_ChildNodePtrs())
+    {
+        if (child->is_Type(type_treepage))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Helper for adding a page as a sub-page of a wxTreebook
@@ -203,6 +256,30 @@ bool TreePageGenerator::ConstructionCode(Code& code)
     return true;
 }
 
+bool TreePageGenerator::AfterChildrenCode(Code& code)
+{
+    Node* node = code.node();
+    if (!node->as_bool(prop_expanded) || !HasTreebookSubPage(node))
+    {
+        return false;
+    }
+
+    Node* treebook = Get_OwnerTreebook(node);
+    if (!treebook)
+    {
+        return false;
+    }
+
+    const int page_index = GetTreebookPageIndex(node);
+    if (page_index < 0)
+    {
+        return false;
+    }
+
+    code.Eol().NodeName(treebook).Function("ExpandNode(").itoa(page_index).EndFunction();
+    return true;
+}
+
 bool TreePageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
                                     std::set<std::string>& set_hdr, GenLang /* language */)
 {
@@ -241,4 +318,52 @@ int TreePageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 void TreePageGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxBookCtrlXmlHandlerBase");
+}
+
+void TreePageGenerator::AfterCreation(wxObject* wxobject, [[maybe_unused]] wxWindow* wxparent,
+                                      Node* node, [[maybe_unused]] bool is_preview)
+{
+    if (!node->as_bool(prop_expanded) || !HasTreebookSubPage(node))
+    {
+        return;
+    }
+
+    Node* treebook = Get_OwnerTreebook(node);
+    if (!treebook)
+    {
+        return;
+    }
+
+    wxObject* treebook_obj = getMockup()->GetMockupContent()->Get_wxObject(treebook);
+    wxTreebook* tree = wxDynamicCast(treebook_obj, wxTreebook);
+    wxWindow* page = wxDynamicCast(wxobject, wxWindow);
+    if (!tree || !page)
+    {
+        return;
+    }
+
+    if (int index = tree->FindPage(page); index >= 0)
+    {
+        tree->ExpandNode(index);
+    }
+}
+
+void TreePageGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
+                                          NodeProperty* changed_prop)
+{
+    if (auto* pg_prop = prop_grid->GetProperty("expanded"); pg_prop)
+    {
+        bool has_subpage = false;
+        for (const auto& child: changed_prop->getNode()->get_ChildNodePtrs())
+        {
+            if (child->is_Type(type_treepage))
+            {
+                has_subpage = true;
+                break;
+            }
+        }
+        pg_prop->Enable(has_subpage);
+    }
+
+    BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
 }

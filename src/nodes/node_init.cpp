@@ -52,6 +52,7 @@ constexpr auto set_no_class_access = frozen::make_set<GenName>({
 
     gen_BookPage,
     gen_CloseButton,
+    gen_TreePage,
     gen_StaticCheckboxBoxSizer,
     gen_StaticRadioBtnBoxSizer,
     gen_TextSizer,
@@ -102,10 +103,12 @@ constexpr auto lstParentChild = std::to_array<ParentChild>({
 
     ParentChild { .parent = type_bookpage, .child = type_gbsizer, .max_children = one },
     ParentChild { .parent = type_bookpage, .child = type_sizer, .max_children = one },
-    ParentChild { .parent = type_bookpage,
-                  .child = type_bookpage,
-                  .max_children = infinite },  // only valid when grandparent is a wxTreebook
     ParentChild { .parent = type_bookpage, .child = type_widget, .max_children = infinite },
+
+    ParentChild { .parent = type_treepage, .child = type_gbsizer, .max_children = one },
+    ParentChild { .parent = type_treepage, .child = type_sizer, .max_children = one },
+    ParentChild { .parent = type_treepage, .child = type_treepage, .max_children = infinite },
+    ParentChild { .parent = type_treepage, .child = type_widget, .max_children = infinite },
 
     ParentChild { .parent = type_page, .child = type_auinotebook, .max_children = one },
     ParentChild { .parent = type_page, .child = type_choicebook, .max_children = one },
@@ -133,6 +136,12 @@ constexpr auto lstParentChild = std::to_array<ParentChild>({
     ParentChild { .parent = type_listbook, .child = type_page, .max_children = infinite },
     ParentChild { .parent = type_notebook, .child = type_bookpage, .max_children = infinite },
     ParentChild { .parent = type_notebook, .child = type_page, .max_children = infinite },
+
+    // This must be gated by gen_wxTreebook: NodeCreator::CanParentAcceptChild,
+    // NodeCreator::AllocateChildNode and Node::is_ChildAllowed all reject type_treepage unless the
+    // parent is a wxTreebook. The parent remains type_notebook because it is shared by wxNotebook,
+    // wxToolbook and wxTreebook.
+    ParentChild { .parent = type_notebook, .child = type_treepage, .max_children = infinite },
     ParentChild { .parent = type_simplebook, .child = type_bookpage, .max_children = infinite },
     ParentChild { .parent = type_simplebook, .child = type_page, .max_children = infinite },
 

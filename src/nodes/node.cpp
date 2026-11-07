@@ -294,15 +294,16 @@ bool Node::is_ChildAllowed(NodeDeclaration* child)
 
     if (max_children == child_count::infinite)
     {
-        // We have to special-case book pages since a book page can only be a child of a book page
-        // if the grandparent is a wxTreebook.
-        if (is_Type(type_bookpage) && child->get_GenType() == type_bookpage)
+        // type_notebook is shared by wxNotebook, wxToolbook and wxTreebook -- a TreePage is only
+        // valid for a wxTreebook. A wxTreebook only takes TreePage pages.
+        if (child->get_GenType() == type_treepage && is_Type(type_notebook) &&
+            !is_Gen(gen_wxTreebook))
         {
-            const Node* grandparent = get_Parent();
-            if (!grandparent || !grandparent->is_Gen(gen_wxTreebook))
-            {
-                return false;
-            }
+            return false;
+        }
+        if (child->get_GenType() == type_bookpage && is_Gen(gen_wxTreebook))
+        {
+            return false;
         }
         return true;
     }
@@ -950,7 +951,7 @@ std::pair<NodeSharedPtr, Node::Validity>
 #if defined(_WIN32)
         // In a Windows build, the default background colour of white doesn't match the normal
         // background color of the parent so we set it to the more normal Windows colour.
-        if (name == gen_BookPage)
+        if (name == gen_BookPage || name == gen_TreePage)
         {
             if (NodeProperty* prop = new_node->get_PropPtr(prop_background_colour); prop)
             {

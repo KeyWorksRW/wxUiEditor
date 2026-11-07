@@ -576,11 +576,16 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             {
                 m_node->get_Parent()->CreateToolNode(gen_BookPage);
             }
+            if (m_node->is_Gen(gen_TreePage))
+            {
+                m_node->get_Parent()->CreateToolNode(gen_TreePage);
+            }
             if (m_node->is_Gen(gen_wxWizardPageSimple))
             {
                 m_node->get_Parent()->CreateToolNode(gen_wxWizardPageSimple);
             }
-            if (!m_node->is_Gen(gen_BookPage) && !m_node->is_Gen(gen_wxWizardPageSimple))
+            if (!m_node->is_Gen(gen_BookPage) && !m_node->is_Gen(gen_TreePage) &&
+                !m_node->is_Gen(gen_wxWizardPageSimple))
             {
                 wxGetFrame().CreateToolNode(gen_wxPanel);
             }
@@ -911,6 +916,7 @@ void NavPopupMenu::MenuAddCommands()
             break;
 
         case gen_BookPage:
+        case gen_TreePage:
             add_sizer = true;
             Append(std::to_underlying(Menu::AddPage), "Add Page");
             break;

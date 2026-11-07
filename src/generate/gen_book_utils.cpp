@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-30-2026]
+// CR: [11-07-2026]
 
 #include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
 
@@ -17,16 +17,21 @@
 
 #include "gen_book_utils.h"
 
+bool is_BookPageNode(Node* node)
+{
+    return node->is_Type(type_bookpage) || node->is_Type(type_treepage);
+}
+
 bool isBookDisplayImages(Node* node)
 {
-    if (!node->is_Gen(gen_BookPage))
+    if (!is_BookPageNode(node))
     {
         return node->as_bool(prop_display_images);
     }
-    for (const Node* node_parent = node->get_Parent(); node_parent;
+    for (Node* node_parent = node->get_Parent(); node_parent;
          node_parent = node_parent->get_Parent())
     {
-        if (!node_parent->is_Gen(gen_BookPage))
+        if (!is_BookPageNode(node_parent))
         {
             return node_parent->as_bool(prop_display_images);
         }
@@ -36,11 +41,11 @@ bool isBookDisplayImages(Node* node)
 
 bool isBookHasImage(Node* node)
 {
-    const bool is_book = !node->is_Gen(gen_BookPage);
+    const bool is_book = !is_BookPageNode(node);
 
     for (const auto& child_node: node->get_ChildNodePtrs())
     {
-        if (child_node->is_Gen(gen_BookPage))
+        if (is_BookPageNode(child_node.get()))
         {
             if (child_node->HasValue(prop_bitmap))
             {
@@ -53,7 +58,7 @@ bool isBookHasImage(Node* node)
 
             for (const auto& grand_child: child_node->get_ChildNodePtrs())
             {
-                if (grand_child->is_Gen(gen_BookPage))
+                if (is_BookPageNode(grand_child.get()))
                 {
                     const bool result = isBookHasImage(grand_child.get());
                     if (result)
@@ -110,7 +115,7 @@ void BookCtorAddImagelist(Code& code)
                 {
                     for (const auto& child_node: parent->get_ChildNodePtrs())
                     {
-                        if (child_node->is_Gen(gen_BookPage))
+                        if (is_BookPageNode(child_node.get()))
                         {
                             if (child_node->HasValue(prop_bitmap))
                             {
@@ -176,7 +181,7 @@ void BookCtorAddImagelist(Code& code)
                 {
                     for (const auto& child_node: parent->get_ChildNodePtrs())
                     {
-                        if (child_node->is_Gen(gen_BookPage))
+                        if (is_BookPageNode(child_node.get()))
                         {
                             if (child_node->HasValue(prop_bitmap))
                             {
@@ -237,7 +242,7 @@ void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
 {
     for (const auto& child_node: node->get_ChildNodePtrs())
     {
-        if (child_node->is_Gen(gen_BookPage))
+        if (is_BookPageNode(child_node.get()))
         {
             if (child_node->HasValue(prop_bitmap))
             {
@@ -252,7 +257,7 @@ void AddTreebookImageCode(wxue::string& code, Node* child_node, size_t& image_in
 {
     for (const auto& grand_child: child_node->get_ChildNodePtrs())
     {
-        if (grand_child->is_Gen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
+        if (is_BookPageNode(grand_child.get()) && grand_child->HasValue(prop_bitmap))
         {
             code << "\n\tauto img_" << image_index << " = ";
             code << GenerateBitmapCode(grand_child->as_string(prop_bitmap)) << ";";
@@ -276,7 +281,7 @@ int GetTreebookImageIndex(Node* node)
     ASSERT(treebook);
     if (!treebook)
         return 0;
-    while (treebook->is_Gen(gen_BookPage))
+    while (treebook && is_BookPageNode(treebook))
     {
         treebook = treebook->get_Parent();
     }
@@ -296,7 +301,7 @@ int GetTreebookImageIndex(Node* node)
             {
                 ++idx_image;
             }
-            if (child->is_Gen(gen_BookPage))
+            if (is_BookPageNode(child.get()))
             {
                 self(child.get(), self);
                 if (found)

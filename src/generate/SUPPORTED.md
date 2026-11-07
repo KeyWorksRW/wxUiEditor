@@ -191,6 +191,7 @@ The following tables indicate whether or not code is being generated in a specif
 | PropertyGridPage   | yes | y    | yes    | ---  | no  | grid_widgets.cpp     |
 | Spacer             | yes | yes  | yes    | yes  | yes | gen_spacer_sizer.cpp |
 | TreeListCtrlColumn | yes | y    | ---    | ---  | no  | gen_tree_list.cpp    |
+| TreePage           | yes | yes  | yes    | yes  | yes | gen_tree_page.cpp    |
 | wxContextMenuEvent | yes | n    | no     | ---  | no  | gen_ctx_menu.cpp     |
 | wxTextProofOptions | yes | no   | no     | ---  | --- | ---                  |
 | wxSizerFlags       | yes | no   | yes    | yes  | no  | ---                  |

@@ -210,6 +210,7 @@ const std::map<GenEnum::PropName, std::string_view> GenEnum::map_PropNames = {
     { prop_enable_user_code, "enable_user_code" },
     { prop_end_colour, "end_colour" },
     { prop_eol_mode, "eol_mode" },
+    { prop_expanded, "expanded" },
     { prop_extra_accels, "extra_accels" },
     { prop_extra_style, "extra_style" },
     { prop_factor, "factor" },

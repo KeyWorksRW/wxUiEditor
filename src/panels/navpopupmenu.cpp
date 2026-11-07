@@ -7,7 +7,6 @@
 // CR: [11-07-2026]
 
 #include <array>
-#include <bit>  // std::to_underlying
 #include <optional>
 #include <string_view>
 #include <tuple>  // std::ignore
@@ -41,15 +40,36 @@ struct StdButtonInfo
 };
 
 static constexpr std::array<StdButtonInfo, 9> STD_BUTTONS = { {
-    { "wxID_OK", prop_OK, "OKButtonClicked", "OK" },
-    { "wxID_YES", prop_Yes, "YesButtonClicked", "Yes" },
-    { "wxID_SAVE", prop_Save, "SaveButtonClicked", "Save" },
-    { "wxID_APPLY", prop_Apply, "ApplyButtonClicked", "" },
-    { "wxID_NO", prop_No, "NoButtonClicked", "No" },
-    { "wxID_CANCEL", prop_Cancel, "CancelButtonClicked", "Cancel" },
-    { "wxID_CLOSE", prop_Close, "CloseButtonClicked", "Close" },
-    { "wxID_HELP", prop_Help, "HelpButtonClicked", "" },
-    { "wxID_CONTEXT_HELP", prop_ContextHelp, "ContextHelpButtonClicked", "" },
+    { .id = "wxID_OK", .flag = prop_OK, .clicked_event = "OKButtonClicked", .default_name = "OK" },
+    { .id = "wxID_YES",
+      .flag = prop_Yes,
+      .clicked_event = "YesButtonClicked",
+      .default_name = "Yes" },
+    { .id = "wxID_SAVE",
+      .flag = prop_Save,
+      .clicked_event = "SaveButtonClicked",
+      .default_name = "Save" },
+    { .id = "wxID_APPLY",
+      .flag = prop_Apply,
+      .clicked_event = "ApplyButtonClicked",
+      .default_name = "" },
+    { .id = "wxID_NO", .flag = prop_No, .clicked_event = "NoButtonClicked", .default_name = "No" },
+    { .id = "wxID_CANCEL",
+      .flag = prop_Cancel,
+      .clicked_event = "CancelButtonClicked",
+      .default_name = "Cancel" },
+    { .id = "wxID_CLOSE",
+      .flag = prop_Close,
+      .clicked_event = "CloseButtonClicked",
+      .default_name = "Close" },
+    { .id = "wxID_HELP",
+      .flag = prop_Help,
+      .clicked_event = "HelpButtonClicked",
+      .default_name = "" },
+    { .id = "wxID_CONTEXT_HELP",
+      .flag = prop_ContextHelp,
+      .clicked_event = "ContextHelpButtonClicked",
+      .default_name = "" },
 } };
 
 static std::optional<StdButtonInfo> GetStdButtonInfo(std::string_view button_id)
@@ -98,8 +118,8 @@ static wxue::string GetEmbeddedImageDescription(Node* node)
 // Adds the "Reread image from disk" command for the embedded image identified by description.
 static void AddReloadImageCommand(NavPopupMenu* menu, const wxue::string& description)
 {
-    wxMenuItem* menu_item = menu->Append(std::to_underlying(NavPopupMenu::Menu::ReloadImage),
-                                         "Reread image from disk");
+    wxMenuItem* menu_item =
+        menu->Append(std::to_underlying(NavPopupMenu::Menu::ReloadImage), "Reread image from disk");
     menu_item->SetBitmap(GetSvgImage("bitmap", wxGetFrame().GetMenuDpiSize()));
     menu->Bind(
         wxEVT_MENU,
@@ -945,8 +965,7 @@ void NavPopupMenu::MenuAddCommands()
     // A widget that displays an embedded image (e.g. wxStaticBitmap) can also re-read that image
     // from disk. The image may have been added directly to the form or to an Images list; either
     // way it is stored in the project's embedded-image map.
-    if (const wxue::string description = GetEmbeddedImageDescription(m_node);
-        !description.empty())
+    if (const wxue::string description = GetEmbeddedImageDescription(m_node); !description.empty())
     {
         AddReloadImageCommand(this, description);
         AddSeparatorIfNeeded();

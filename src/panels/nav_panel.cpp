@@ -28,6 +28,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
+#include "node_gridbag.h"     // GridBag class
 #include "preferences.h"      // Prefs -- Set/Get wxUiEditor preferences
 #include "project_handler.h"  // ProjectHandler class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
@@ -513,6 +514,35 @@ void NavigationPanel::RefreshParent(Node* parent)
     ExpandAllNodes(parent);
 }
 
+void NavigationPanel::RefreshGridBagDisplay(Node* gridbag)
+{
+    if (!gridbag || !gridbag->is_Gen(gen_wxGridBagSizer))
+    {
+        return;
+    }
+
+    // The navigation display for a wxGridBagSizer must match row/column order, which is also the
+    // order used when the project is saved and reloaded. See issue #994.
+    GridBag::GridBagSort(gridbag);
+
+    const wxWindowUpdateLocker freeze(this);
+
+    Node* selected = m_pMainFrame ? m_pMainFrame->getSelectedNode() : nullptr;
+    const bool was_suspended = m_isSelChangeSuspended;
+    m_isSelChangeSuspended = true;
+
+    RefreshParent(gridbag);
+
+    m_isSelChangeSuspended = was_suspended;
+
+    if (const NodeTreeMap::iterator iter = m_node_tree_map.find(selected);
+        iter != m_node_tree_map.end())
+    {
+        m_tree_ctrl->EnsureVisible(iter->second);
+        m_tree_ctrl->SelectItem(iter->second);
+    }
+}
+
 void NavigationPanel::InsertNode(Node* node)
 {
     Node* node_parent = node->get_Parent();
@@ -906,6 +936,15 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
             found_iter != m_node_tree_map.end())
         {
             UpdateDisplayName(found_iter->second, found_iter->first);
+        }
+    }
+    else if (prop->isProp(prop_row) || prop->isProp(prop_column))
+    {
+        Node* node = prop->getNode();
+        Node* parent = node ? node->get_Parent() : nullptr;
+        if (parent && parent->is_Gen(gen_wxGridBagSizer))
+        {
+            RefreshGridBagDisplay(parent);
         }
     }
 }

@@ -54,9 +54,9 @@ END
 // remains consistent on all systems.
 
 #if !defined(_DEBUG)
-IDI_APPICON                 ICON        "wxUiEditor.ico"
+IDI_APPICON                 ICON        "art_src/wxUiEditor.ico"
 #else
-IDI_APPICON                 ICON        "Debug.ico"
+IDI_APPICON                 ICON        "art_src/debug_logo.ico"
 #endif
 
 #if !defined(_MAC)

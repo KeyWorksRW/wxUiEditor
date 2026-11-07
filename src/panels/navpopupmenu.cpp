@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [11-04-2026]
+// CR: [11-07-2026]
 
 #include <array>
 #include <bit>  // std::to_underlying
@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <wx/artprov.h>   // wxArtProvider class
+#include <wx/msgdlg.h>    // wxMessageDialog
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "navpopupmenu.h"  // NavPopupMenu
@@ -23,12 +24,13 @@
 #include "clipboard.h"       // Handles reading and writing OS clipboard data
 #include "gen_common.h"      // Common component functions
 #include "gen_enums.h"
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "nav_panel.h"     // NavigationPanel -- Navigation Panel
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"         // Utility functions that work with properties
+#include "image_handler.h"  // ImageHandler -- ProjectImages
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "nav_panel.h"      // NavigationPanel -- Navigation Panel
+#include "node.h"           // Node class
+#include "node_creator.h"   // NodeCreator class
+#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"          // Utility functions that work with properties
 
 struct StdButtonInfo
 {
@@ -60,6 +62,62 @@ static std::optional<StdButtonInfo> GetStdButtonInfo(std::string_view button_id)
         }
     }
     return std::nullopt;
+}
+
+// Returns the bitmap property value that refers to an embedded image that is part of the
+// project, or an empty string if the node has no such property.
+static wxue::string GetEmbeddedImageDescription(Node* node)
+{
+    for (auto& prop: node->get_PropsVector())
+    {
+        if (prop.type() != type_image || !prop.HasValue())
+        {
+            continue;
+        }
+
+        const wxue::StringVector parts(prop.as_string(), BMP_PROP_SEPARATOR, wxue::TRIM::both);
+        if (parts.size() <= IndexImage || parts[IndexImage].empty())
+        {
+            continue;
+        }
+
+        if (!parts[IndexType].starts_with("Embed") && !parts[IndexType].starts_with("SVG"))
+        {
+            continue;
+        }
+
+        if (ProjectImages.GetEmbeddedImage(parts[IndexImage]))
+        {
+            return prop.as_string();
+        }
+    }
+
+    return {};
+}
+
+// Adds the "Reread image from disk" command for the embedded image identified by description.
+static void AddReloadImageCommand(NavPopupMenu* menu, const wxue::string& description)
+{
+    wxMenuItem* menu_item = menu->Append(std::to_underlying(NavPopupMenu::Menu::ReloadImage),
+                                         "Reread image from disk");
+    menu_item->SetBitmap(GetSvgImage("bitmap", wxGetFrame().GetMenuDpiSize()));
+    menu->Bind(
+        wxEVT_MENU,
+        [description](wxCommandEvent&)
+        {
+            if (ProjectImages.ReloadEmbeddedImage(description))
+            {
+                wxGetFrame().FireProjectUpdatedEvent();
+            }
+            else
+            {
+                wxMessageDialog(wxGetMainFrame()->getWindow(),
+                                "Unable to reread the image file from disk.", "Reread Image",
+                                wxOK | wxICON_ERROR)
+                    .ShowModal();
+            }
+        },
+        std::to_underlying(NavPopupMenu::Menu::ReloadImage));
 }
 
 // The sizers the conversion command needs to locate.
@@ -873,10 +931,25 @@ void NavPopupMenu::MenuAddCommands()
                 std::to_underlying(Menu::AddImage));
             return;
         }
+        if (m_node->is_Gen(gen_embedded_image))
+        {
+            AddReloadImageCommand(this, m_node->as_string(prop_bitmap));
+            return;
+        }
         if (!m_node->is_Gen(gen_wxWizard) && !m_node->is_ToolBar())
         {
             return;
         }
+    }
+
+    // A widget that displays an embedded image (e.g. wxStaticBitmap) can also re-read that image
+    // from disk. The image may have been added directly to the form or to an Images list; either
+    // way it is stored in the project's embedded-image map.
+    if (const wxue::string description = GetEmbeddedImageDescription(m_node);
+        !description.empty())
+    {
+        AddReloadImageCommand(this, description);
+        AddSeparatorIfNeeded();
     }
 
     if (m_node->is_Gen(gen_wxStatusBar))

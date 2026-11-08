@@ -50,9 +50,10 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     staticText->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
-    m_classname = new wxTextCtrl(this, wxID_ANY, "MyDialogBase");
+    m_classname = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    m_classname->SetHint("MyDialogBase");
     m_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
-    m_classname->SetToolTip("Change this to something unique to your project.");
+    m_classname->SetToolTip("Enter a unique class name for your project.");
     box_sizer_2->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
     parent_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
@@ -123,6 +124,7 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_BUTTON, &NewDialog::OnOK, this, wxID_OK);
     m_check_tabs->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {
@@ -154,7 +156,10 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/msgdlg.h>
+
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
+#include "gen_enums.h"            // GenLang
 #include "mainframe.h"            // MainFrame -- Main window frame
 #include "new_common.h"           // Contains code common between all new_ dialogs
 #include "node.h"                 // Node class
@@ -165,10 +170,17 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 auto NewDialog::OnInit(wxInitDialogEvent& event) -> void
 {
     event.Skip();  // transfer all validator data to their windows and update UI
+    m_classname->SetFocus();
+    VerifyClassName();
 }
 
 auto NewDialog::CreateNode() -> void
 {
+    if (m_base_class.empty())
+    {
+        return;
+    }
+
     auto form_node = NodeCreation.CreateNode(gen_wxDialog, nullptr).first;
     ASSERT(form_node);
 
@@ -221,10 +233,7 @@ auto NewDialog::CreateNode() -> void
     }
 
     form_node->set_value(prop_class_name, m_base_class.utf8_string());
-    if (form_node->as_string(prop_class_name) != form_node->get_PropDefaultValue(prop_class_name))
-    {
-        UpdateFormClass(form_node.get());
-    }
+    UpdateFormClass(form_node.get());
 
     auto parent_node = wxGetFrame().getSelectedNode();
     if (!parent_node)
@@ -249,23 +258,53 @@ auto NewDialog::CreateNode() -> void
 // Called whenever m_classname changes
 auto NewDialog::VerifyClassName() -> void
 {
-    if (!IsClassNameUnique(m_classname->GetValue()))
-    {
-        if (!m_is_info_shown)
-        {
-            m_infoBar->ShowMessage("This class name is already in use.", wxICON_WARNING);
-            FindWindow(GetAffirmativeId())->Disable();
-            Fit();
-            m_is_info_shown = true;
-        }
-        return;
-    }
+    const wxString class_name = m_classname->GetValue();
+    // An empty class name is invalid, but it is not a duplicate -- no info-bar warning for it.
+    const bool is_valid = !class_name.empty() && IsClassNameUnique(class_name);
+    const bool is_duplicate = !class_name.empty() && !is_valid;
 
-    if (m_is_info_shown)
+    if (is_duplicate && !m_is_info_shown)
+    {
+        m_infoBar->ShowMessage("This class name is already in use.", wxICON_WARNING);
+        m_is_info_shown = true;
+        Fit();
+    }
+    else if (!is_duplicate && m_is_info_shown)
     {
         m_is_info_shown = false;
         m_infoBar->Dismiss();
-        FindWindow(GetAffirmativeId())->Enable();
         Fit();
     }
+
+    if (auto* ok_button = FindWindow(GetAffirmativeId()); ok_button)
+    {
+        ok_button->Enable(is_valid);
+    }
+}
+
+auto NewDialog::OnOK(wxCommandEvent& /* event unused */) -> void
+{
+    if (!Validate() || !TransferDataFromWindow())
+    {
+        return;
+    }
+
+    // Only C++ has full support for deriving from the generated class, so only ask
+    // about the "Base" suffix when C++ is the code generation language.
+    if (Project.get_CodePreference() == GenLang::cplusplus && !m_base_class.empty() &&
+        !m_base_class.EndsWith("Base"))
+    {
+        wxString msg;
+        msg << "You did not add \"Base\" to the class name.\n\n"
+            << "In C++, wxUiEditor creates a base class that you derive from. Adding "
+               "\"Base\" to the class name also adds \"_base\" to the base file name and "
+               "creates a derived class file that you can edit.\n\n"
+            << "Add \"Base\" to the class name?";
+        if (wxMessageBox(msg, "New Dialog", wxYES_NO | wxICON_QUESTION, this) == wxYES)
+        {
+            m_base_class << "Base";
+        }
+    }
+
+    EndModal(wxID_OK);
 }

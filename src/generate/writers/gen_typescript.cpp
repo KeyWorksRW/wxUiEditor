@@ -320,7 +320,7 @@ void TypeScriptCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_t
         m_header->Clear();
     }
     m_source->Clear();
-    m_source->SetTabToSpaces(GetLanguageTraits(m_language)->indent_size);
+    SetLanguageIndent(m_source, m_language);
     m_source->SetLastLineBlank();
 
     // File header comment
@@ -347,7 +347,8 @@ void TypeScriptCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_t
     // Build the constructor body into memory first -- the imports can only be determined once the
     // generated text is known.
     TypeScriptBodyWriter body_writer;
-    body_writer.SetTabToSpaces(GetLanguageTraits(m_language)->indent_size);
+    body_writer.SetTabToSpaces(GetLanguageIndentSize(m_language),
+                               GetLanguageIndentWithTabs(m_language));
     // Two levels: one for the class body, one for the constructor body.
     body_writer.Indent();
     body_writer.Indent();

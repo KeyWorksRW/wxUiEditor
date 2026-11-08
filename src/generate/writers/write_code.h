@@ -27,7 +27,7 @@ public:
     WriteCode() {};
     virtual ~WriteCode() {};
 
-    void SetTabToSpaces(int tab_to_spaces = 4);
+    void SetTabToSpaces(int tab_to_spaces = 4, bool use_tabs = false);
 
     void Indent() { ++m_indent; }
     void Unindent()

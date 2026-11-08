@@ -342,6 +342,19 @@
 		<property name="cpp_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			110</property>
+		<property name="cpp_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			4</property>
+		<property name="cpp_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			PascalCase</property>
 		<property name="trailing_return_type" type="bool"
 			help="If checked, this will generate functions with a trailing return type instead of a leading return type.">
 			0</property>
@@ -394,6 +407,19 @@
 		<property name="fortran_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			80</property>
+		<property name="fortran_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			3</property>
+		<property name="fortran_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			snake_case</property>
 		<property name="fortran_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
@@ -410,6 +436,19 @@
 		<property name="go_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			90</property>
+		<property name="go_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			4</property>
+		<property name="go_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			PascalCase</property>
 		<property name="go_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
@@ -423,6 +462,19 @@
 		<property name="julia_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			92</property>
+		<property name="julia_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			4</property>
+		<property name="julia_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			snake_case</property>
 		<property name="julia_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
@@ -436,6 +488,19 @@
 		<property name="lua_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			80</property>
+		<property name="lua_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			4</property>
+		<property name="lua_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			snake_case</property>
 		<property name="lua_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
@@ -449,6 +514,19 @@
 		<property name="typescript_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			80</property>
+		<property name="typescript_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			4</property>
+		<property name="typescript_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			PascalCase</property>
 		<property name="typescript_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
@@ -462,6 +540,19 @@
 		<property name="rust_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			100</property>
+		<property name="rust_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			4</property>
+		<property name="rust_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			snake_case</property>
 		<property name="rust_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block."/>
 	</gen>
@@ -482,6 +573,19 @@
 		<property name="python_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			90</property>
+		<property name="python_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			4</property>
+		<property name="python_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			PascalCase</property>
 		<property name="python_project_preamble" type="code_edit"
 			help="Code to generate at the top of every source file after the comment block and before the first import statement."/>
 	</gen>
@@ -497,6 +601,19 @@
 		<property name="ruby_line_length" type="uint"
 			help="Specifies a guideline for generated code line length. Most lines will be wrapped so that they do not exceed this length.">
 			80</property>
+		<property name="ruby_indent" type="option"
+			help="Number of spaces to use for each indentation level in generated code. Select tab to indent using tab characters.">
+			<option name="2"/>
+			<option name="3"/>
+			<option name="4"/>
+			<option name="tab"/>
+			2</property>
+		<property name="ruby_function_case" type="option"
+			help="Casing to use for function and method names in generated code.">
+			<option name="PascalCase"/>
+			<option name="camelCase"/>
+			<option name="snake_case"/>
+			snake_case</property>
 		<property name="disable_rubo_cop" type="bool"
 			help="If checked, all RuboCop warnings will be disabled within the generated code."> 0</property>
 		<property name="ruby_project_preamble" type="code_edit"

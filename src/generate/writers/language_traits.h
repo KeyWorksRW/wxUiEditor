@@ -130,6 +130,22 @@ struct LanguageTraits
 // languages (XRC, XML) or unrecognized values.
 [[nodiscard]] const LanguageTraits* GetLanguageTraits(GenLang language);
 
+// Number of spaces per indentation level for the language, honoring the project's
+// <lang>_indent property; returns the language default when unset. When the project
+// selected "tab", this returns the language's default width (used for line-length math).
+[[nodiscard]] int GetLanguageIndentSize(GenLang language);
+
+// True when the project's <lang>_indent property is "tab".
+[[nodiscard]] bool GetLanguageIndentWithTabs(GenLang language);
+
+// Function/method casing for the language, honoring the project's
+// <lang>_function_case property; returns the language default when unset.
+[[nodiscard]] LanguageTraits::MethodCase GetLanguageMethodCase(GenLang language);
+
+// Configures the writer's indentation from the language traits plus the project's
+// <lang>_indent option.
+void SetLanguageIndent(WriteCode* source, GenLang language);
+
 // Abstract base class for language-specific code generation strategies.
 // Concrete implementations are created per-language (CppStrategy, PythonStrategy, etc.)
 // via CreateLanguageStrategy(). The hierarchy is:

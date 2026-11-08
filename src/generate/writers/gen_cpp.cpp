@@ -587,6 +587,8 @@ auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 
     m_header->Clear();
     m_source->Clear();
+    SetLanguageIndent(m_source, m_language);
+    SetLanguageIndent(m_header, m_language);
     m_source->SetLastLineBlank();
     m_header->SetLastLineBlank();
 

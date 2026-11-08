@@ -235,8 +235,8 @@ void BaseCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
             code.reserve(Project.as_size_t(prop_cpp_line_length) + 16);
             // SVG images store the original size in the high 32 bits
             size_t max_pos = (iter_array->base_image().array_size & 0xFFFFFFFF);
-            code << "const unsigned char " << iter_array->base_image().array_name << '[' << max_pos
-                 << "] {";
+            code << "extern const unsigned char " << iter_array->base_image().array_name << '['
+                 << max_pos << "] {";
             m_source->writeLine(code);
             if (progress && ++progress_count % result::progress_image_step == 0)
             {
@@ -270,6 +270,18 @@ void BaseCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 
         for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
+            const wxue::StringVector parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                           wxue::TRIM::both);
+            if (parts.size() <= IndexImage)
+            {
+                continue;
+            }
+            if (ProjectImages.IsBundleMemberOfAnotherImage(parts[IndexImage], m_form_node))
+            {
+                // This image's data and accessor are generated as part of another child's
+                // bundle, so it must not get a second bundle function here.
+                continue;
+            }
             if (const auto* bundle =
                     ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())
@@ -391,6 +403,18 @@ void BaseCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
 
         for (const auto& child: m_form_node->get_ChildNodePtrs())
         {
+            const wxue::StringVector parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                           wxue::TRIM::both);
+            if (parts.size() <= IndexImage)
+            {
+                continue;
+            }
+            if (ProjectImages.IsBundleMemberOfAnotherImage(parts[IndexImage], m_form_node))
+            {
+                // This image's data and accessor are generated as part of another child's
+                // bundle, so it must not get a second bundle declaration here.
+                continue;
+            }
             if (const auto* bundle =
                     ProjectImages.GetPropertyImageBundle(child->as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())

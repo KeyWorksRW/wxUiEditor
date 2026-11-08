@@ -1759,9 +1759,10 @@ void CppCodeGenerator::WriteImagePreConstruction(Code& code)
     bool is_namespace_written = false;
     for (const auto* iter_array: m_embedded_images)
     {
-        // If the image is in ImagesForm then it's header file will be included which already
-        // has the extern declarations.
-        if (iter_array->get_Form() == Project.get_ImagesForm())
+        // If the Images List header declares the arrays as extern, then it is included by the
+        // forms that use the images and no declaration is needed here.
+        if (iter_array->get_Form() == Project.get_ImagesForm() &&
+            Project.get_ImagesForm()->as_bool(prop_add_externs))
         {
             continue;
         }
@@ -1993,7 +1994,9 @@ void CppCodeGenerator::WriteImagePostHeader()
     bool is_namespace_written = false;
     for (const auto* iter_array: m_embedded_images)
     {
-        if (iter_array->get_Form() == images_form)
+        // If the Images List header declares the arrays as extern, then it is included by the
+        // forms that use the images and no declaration is needed here.
+        if (iter_array->get_Form() == images_form && images_form->as_bool(prop_add_externs))
         {
             continue;
         }

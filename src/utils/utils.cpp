@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-16-2026]
+// CR: [11-08-2026]
 
 #include <array>
 #include <cstddef>
@@ -499,12 +499,17 @@ wxue::string CreateDerivedFilename(Node* form_node, const wxue::string& class_na
         filename = form_node->as_string(prop_derived_class_name);
     }
 
+    // The base_file property may or may not include a file extension, so strip any extension
+    // before testing for the "_base" suffix.
+    wxue::string base_file(form_node->as_string(prop_base_file));
+    base_file.remove_extension();
+
     if (filename.ends_with("Derived"))
     {
         filename.erase(filename.size() - (sizeof("Derived") - 1));
         filename += "_derived";
     }
-    else if (!form_node->as_string(prop_base_file).ends_with("_base"))
+    else if (!base_file.ends_with("_base"))
     {
         filename += "_derived";
     }

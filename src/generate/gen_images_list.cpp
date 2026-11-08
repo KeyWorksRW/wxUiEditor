@@ -16,6 +16,7 @@
 
 #include "bitmaps.h"          // Contains various images handling functions
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common component functions
 #include "image_handler.h"    // ImageHandler class
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
@@ -333,7 +334,8 @@ void BaseCodeGenerator::GenerateImagesForm(wxProgressDialog* progress)
                     }
                     else
                     {
-                        code = "wxVector<wxBitmap> bitmaps;\n";
+                        code = (UseStdContainers() ? "std::vector<wxBitmap> bitmaps;\n" :
+                                                     "wxVector<wxBitmap> bitmaps;\n");
                         for (const auto& iter: bundle->lst_filenames)
                         {
                             // wxue::string name(iter.filename());

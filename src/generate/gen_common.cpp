@@ -23,6 +23,7 @@
 #include "node_creator.h"     // NodeCreator class
 #include "project_handler.h"  // ProjectHandler class
 #include "utils.h"            // Utility functions that work with properties
+#include "version.h"          // Version numbers and other constants
 #include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 #include "wxue_namespace/wxue.h"  // wxue namespace functions
@@ -46,6 +47,11 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
     {
         set_hdr.insert(include);
     }
+}
+
+bool UseStdContainers()
+{
+    return Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0;
 }
 
 static wxue::string ConvertToCodeString(const wxue::string& text);
@@ -542,7 +548,9 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
             }
             else
             {
-                code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                code << "{\n\t\t\t"
+                     << (UseStdContainers() ? "std::vector<wxBitmap> bitmaps;\n" :
+                                              "wxVector<wxBitmap> bitmaps;\n");
                 for (const auto& iter: bundle->lst_filenames)
                 {
                     wxue::string name(iter.filename());
@@ -699,7 +707,9 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
             }
             else if (bundle->lst_filenames.size() > 2)
             {
-                code << "{\n\twxVector<wxBitmap> bitmaps;\n";
+                code << "{\n\t"
+                     << (UseStdContainers() ? "std::vector<wxBitmap> bitmaps;\n" :
+                                              "wxVector<wxBitmap> bitmaps;\n");
                 for (const auto& iter: bundle->lst_filenames)
                 {
                     if (auto* embed = ProjectImages.GetEmbeddedImage(iter); embed)
@@ -1486,7 +1496,15 @@ bool BitmapList(Code& code, const GenEnum::PropName prop)
     {
         code.Str("auto make_").NodeName() << "_bundle = [&]() -> wxBitmapBundle";
     }
-    code.OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
+    code.OpenBrace();
+    if (UseStdContainers())
+    {
+        code.Add("std::vector<wxBitmap> bitmaps;");
+    }
+    else
+    {
+        code.Add("wxVector<wxBitmap> bitmaps;");
+    }
 
     for (const auto& iter: bundle->lst_filenames)
     {

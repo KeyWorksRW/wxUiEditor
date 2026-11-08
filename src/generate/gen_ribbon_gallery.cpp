@@ -251,7 +251,8 @@ void RibbonGalleryGenerator::GenerateGalleryItems(Node* gallery_node, WriteCode*
                 item_code.ParentName().Function("Append(");
                 item_code << "[&]()";
                 item_code.OpenBrace();
-                item_code << "wxVector<wxBitmap> bitmaps;";
+                item_code << (UseStdContainers() ? "std::vector<wxBitmap> bitmaps;" :
+                                                   "wxVector<wxBitmap> bitmaps;");
 
                 for (const wxue::string& filename: bundle->lst_filenames)
                 {

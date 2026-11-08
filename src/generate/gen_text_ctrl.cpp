@@ -185,11 +185,26 @@ bool TextCtrlGenerator::SettingsCode(Code& code)
         if (code.is_cpp())
         {
             code.EnableAutoLineBreak(false);
-            code.Eol(eol_if_needed).Add("{").Eol().Tab().Add("wxArrayString tmp_array;").Eol();
+            code.Eol(eol_if_needed).Add("{").Eol().Tab();
+            if (UseStdContainers())
+            {
+                code.Add("std::vector<wxString> tmp_array;").Eol();
+            }
+            else
+            {
+                code.Add("wxArrayString tmp_array;").Eol();
+            }
             auto array = code.node()->as_ArrayString(prop_auto_complete);
             for (auto& iter: array)
             {
-                code.Tab().Add("tmp_array.Add(").QuotedString(iter) << ");";
+                if (UseStdContainers())
+                {
+                    code.Tab().Add("tmp_array.push_back(").QuotedString(iter) << ");";
+                }
+                else
+                {
+                    code.Tab().Add("tmp_array.Add(").QuotedString(iter) << ");";
+                }
                 code.Eol();
             }
             code.Tab() << code.node()->get_NodeName() << "->AutoComplete(tmp_array);";

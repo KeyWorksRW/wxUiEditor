@@ -48,7 +48,15 @@ bool EditListBoxGenerator::SettingsCode(Code& code)
         auto array = code.node()->as_ArrayString(prop_contents);
         if (code.is_cpp())
         {
-            code.OpenBrace().Str("wxArrayString tmp_array;");
+            code.OpenBrace();
+            if (UseStdContainers())
+            {
+                code.Str("std::vector<wxString> tmp_array;");
+            }
+            else
+            {
+                code.Str("wxArrayString tmp_array;");
+            }
             for (auto& iter: array)
             {
                 code.Eol().Str("tmp_array.push_back(wxString::FromUTF8(\"") << iter << "\"));";

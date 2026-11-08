@@ -40,7 +40,12 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 // wxCollapsiblePane parents as well as "normal" parents
 wxue::string get_ParentName(Node* node, GenLang language);
 
-// Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
+// Returns true when the project targets C++ wxWidgets 3.3.0 or later. In that case generated
+// code must use std:: containers, because the wxWidgets container classes are legacy there.
+bool UseStdContainers();
+
+// Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector/std::vector
+// generated.
 //
 // Set is_single to true for a non-button control.
 bool GenBtnBitmapCode(Node* node, wxue::string& code, bool is_single = false);
@@ -54,11 +59,13 @@ wxue::string GenerateBitmapCode(const wxue::string& description);
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
+// std::vector<wxBitmap> is generated instead if the project targets wxWidgets 3.3 or later.
+//
 // If svg_size_def has both components greater than zero, it replaces the recorded size of an
 // SVG bitmap -- only wxStaticBitmap::Scale_Fill passes this so that the SVG is rasterized at
 // the size it will be drawn at.
 //
-// Returns true if the returned string contains a wxVector.
+// Returns true if the returned string contains a wxVector or std::vector.
 bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
                         const wxSize& svg_size_def = wxDefaultSize);
 

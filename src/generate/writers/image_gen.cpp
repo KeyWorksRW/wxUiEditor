@@ -1226,7 +1226,15 @@ void Code::GenerateEmbedBundle(const wxue::StringVector& parts, bool get_bitmap)
         {
             Indent();
             Eol().Str("[&]()");
-            OpenBrace().Add("wxVector<wxBitmap> bitmaps;");
+            OpenBrace();
+            if (UseStdContainers())
+            {
+                Add("std::vector<wxBitmap> bitmaps;");
+            }
+            else
+            {
+                Add("wxVector<wxBitmap> bitmaps;");
+            }
 
             for (const auto& iter: bundle->lst_filenames)
             {

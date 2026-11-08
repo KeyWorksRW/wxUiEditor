@@ -81,6 +81,9 @@ bool RearrangeCtrlGenerator::ConstructionCode(Code& code)
     code.Comma();
     if (code.is_cpp())
     {
+        // wxRearrangeCtrl's constructor requires wxArrayInt and wxArrayString arguments; wxArrayInt
+        // has no converting constructor taking a standard vector, so the wx types must be used
+        // even when generating wxWidgets 3.3 code.
         code += "wxArrayInt(), wxArrayString()";
     }
     else

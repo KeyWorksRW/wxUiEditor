@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [11-07-2026]
+// CR: [11-08-2026]
 
 #include <wx/config.h>             // wxConfig base header
 #include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
@@ -999,6 +999,10 @@ void PropGridPanel::OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop
         {
             ChangeBaseDirectory(value);
         }
+        else if (prop->isProp(prop_art_directory))
+        {
+            ChangeArtDirectory(value);
+        }
         else
         {
             wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
@@ -1053,9 +1057,56 @@ void PropGridPanel::ChangeDerivedDirectory(wxue::string& path)
     Project.InvalidateDerivedFileCache();
 }
 
+void PropGridPanel::ChangeArtDirectory(wxue::string& path)
+{
+    wxue::string old_path = Project.as_string(prop_art_directory);
+    old_path.backslashestoforward();
+    if (!old_path.empty() && old_path.back() == '/')
+    {
+        old_path.pop_back();
+    }
+    path.backslashestoforward();
+    if (path == "./")
+    {
+        path.clear();
+    }
+    if (!path.empty() && path.back() == '/')
+    {
+        path.pop_back();
+    }
+
+    if (old_path == path)
+    {
+        return;
+    }
+
+    auto undo_art = std::make_shared<ModifyProperties>("Art directory");
+    undo_art->addProperty(Project.get_ProjectNode()->get_PropPtr(prop_art_directory), path);
+
+    // Image paths written by the image property dialogs are relative to the project directory and
+    // may be prefixed with the art directory, so they have to move with it. See issue #1670.
+    if (!old_path.empty())
+    {
+        std::vector<std::pair<NodeProperty*, wxue::string>> changes;
+        Project.CollectArtDirectoryChanges(old_path, path, changes);
+
+        for (auto& [prop, value]: changes)
+        {
+            undo_art->addProperty(prop, value);
+        }
+    }
+
+    wxGetFrame().PushUndoAction(undo_art);
+}
+
 void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
 {
-    const auto& old_path = Project.as_string(prop_base_directory);
+    wxue::string old_path = Project.as_string(prop_base_directory);
+    old_path.backslashestoforward();
+    if (!old_path.empty() && old_path.back() == '/')
+    {
+        old_path.pop_back();
+    }
     path.backslashestoforward();
     if (path == "./")
     {
@@ -1076,7 +1127,7 @@ void PropGridPanel::ChangeBaseDirectory(wxue::string& path)
     {
         if (form->HasValue(prop_base_file))
         {
-            wxue::string cur_path = form->as_string(prop_base_directory);
+            wxue::string cur_path = form->as_string(prop_base_file);
             cur_path.backslashestoforward();
             cur_path.remove_filename();
             if (cur_path.size() && cur_path.back() == '/')

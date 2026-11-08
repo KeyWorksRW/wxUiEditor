@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-12-2026]
+// CR: [11-08-2026]
 
 #include <array>
 #include <tuple>
@@ -239,12 +239,26 @@ void ModifyPropertyAction::Change()
 {
     m_property->set_value(m_change_value);
 
+    if (m_property->isProp(prop_art_directory) || m_property->isProp(prop_xrc_art_directory))
+    {
+        // Every embedded image was resolved against the old art directory, so the cache has to be
+        // rebuilt from the new location. See issue #1670.
+        Project.ReinitializeImageHandler();
+    }
+
     wxGetFrame().FirePropChangeEvent(m_property);
 }
 
 void ModifyPropertyAction::Revert()
 {
     m_property->set_value(m_revert_value);
+
+    if (m_property->isProp(prop_art_directory) || m_property->isProp(prop_xrc_art_directory))
+    {
+        // Every embedded image was resolved against the old art directory, so the cache has to be
+        // rebuilt from the new location. See issue #1670.
+        Project.ReinitializeImageHandler();
+    }
 
     wxGetFrame().FirePropChangeEvent(m_property);
 }
@@ -261,6 +275,11 @@ ModifyProperties::ModifyProperties(std::string_view undo_string, bool fire_event
 
 void ModifyProperties::addProperty(NodeProperty* prop, std::string_view value)
 {
+    if (prop->isProp(prop_art_directory) || prop->isProp(prop_xrc_art_directory))
+    {
+        m_images_invalidated = true;
+    }
+
     MULTI_PROP& entry = m_properties.emplace_back();
     entry.property = prop;
     entry.change_value = value;
@@ -282,6 +301,12 @@ void ModifyProperties::Change()
         iter.property->set_value(iter.change_value);
     }
 
+    if (m_images_invalidated)
+    {
+        // Embedded images were resolved against the old art directory. See issue #1670.
+        Project.ReinitializeImageHandler();
+    }
+
     if (m_fire_events)
     {
         wxGetFrame().FireMultiPropEvent(this);
@@ -293,6 +318,12 @@ void ModifyProperties::Revert()
     for (auto& iter: m_properties)
     {
         iter.property->set_value(iter.revert_value);
+    }
+
+    if (m_images_invalidated)
+    {
+        // Embedded images were resolved against the old art directory. See issue #1670.
+        Project.ReinitializeImageHandler();
     }
 
     if (m_fire_events)

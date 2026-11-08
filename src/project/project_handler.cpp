@@ -469,6 +469,84 @@ bool ProjectHandler::UpdatePathsAfterSaveAs(const wxFileName& new_project_file)
     return changed;
 }
 
+// Collects image/animation properties below node whose stored path begins with old_prefix,
+// rewriting that prefix to new_prefix. Nothing is modified.
+static void CollectArtChangesRecursive(Node* node, const wxue::string& old_prefix,
+                                       const wxue::string& new_prefix,
+                                       std::vector<std::pair<NodeProperty*, wxue::string>>& changes)
+{
+    for (auto& child_ptr: node->get_ChildNodePtrs())
+    {
+        Node* child = child_ptr.get();
+
+        for (auto& prop: child->get_PropsVector())
+        {
+            if ((prop.type() != type_image && prop.type() != type_animation) || !prop.HasValue())
+            {
+                continue;
+            }
+
+            const wxue::string original = prop.as_string();
+            wxue::StringVector parts(original, BMP_PROP_SEPARATOR, wxue::TRIM::both);
+            if (parts.size() <= IndexImage)
+            {
+                continue;
+            }
+
+            // Art-provider ids are wxART_ constants, not file paths
+            if (parts[IndexType] == "Art")
+            {
+                continue;
+            }
+
+            wxue::string image = parts[IndexImage];
+            image.backslashestoforward();
+            if (!image.starts_with(old_prefix))
+            {
+                continue;
+            }
+
+            wxue::string image_path = new_prefix;
+            image_path += image.substr(old_prefix.size());
+
+            // Rebuild using the original part text so size info such as "[16,16]" is kept
+            wxue::string new_value = parts[IndexType];
+            new_value << BMP_PROP_SEPARATOR << image_path;
+            for (size_t index = IndexSize; index < parts.size(); ++index)
+            {
+                new_value << BMP_PROP_SEPARATOR << parts[index];
+            }
+
+            if (new_value != original)
+            {
+                changes.emplace_back(&prop, new_value);
+            }
+        }
+
+        if (child->get_ChildCount())
+        {
+            CollectArtChangesRecursive(child, old_prefix, new_prefix, changes);
+        }
+    }
+}
+
+void ProjectHandler::CollectArtDirectoryChanges(
+    const wxue::string& old_dir, const wxue::string& new_dir,
+    std::vector<std::pair<NodeProperty*, wxue::string>>& changes)
+{
+    if (!m_project_node)
+    {
+        return;
+    }
+
+    // Only rewrite paths that explicitly carry the old art directory prefix. Bare filenames
+    // resolve through art_directory and must be left alone.
+    const wxue::string old_prefix = old_dir + "/";
+    const wxue::string new_prefix = new_dir.empty() ? wxue::string() : new_dir + "/";
+
+    CollectArtChangesRecursive(m_project_node.get(), old_prefix, new_prefix, changes);
+}
+
 wxue::string ProjectHandler::get_BaseDirectory(Node* node, GenLang language) const
 {
     if (!node || node == m_project_node.get())

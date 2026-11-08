@@ -23,20 +23,151 @@
 #include <wx/sizer.h>             // provide wxSizer class for layout
 #include <wx/statbox.h>           // wxStaticBox base header
 #include <wx/statline.h>          // wxStaticLine class interface
+#include <wx/textctrl.h>          // wxTextCtrl: a single line text control
+#include <wx/valnum.h>            // wxIntegerValidator and wxFloatingPointValidator
+#include <wx/valtext.h>           // wxTextValidator
 #include <wx/wupdlock.h>          // wxWindowUpdateLocker prevents window redrawing
 
 #include "mockup_content.h"
 
-#include "base_generator.h"   // BaseGenerator -- Base Generator class
-#include "image_handler.h"    // ProjectImages -- ImageHandler singleton
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "mockup_parent.h"    // Top-level MockUp Parent window
-#include "mockup_wizard.h"    // MockupWizard Mock Up class
-#include "node.h"             // Node class
-#include "node_creator.h"     // NodeCreator class
-#include "node_decl.h"        // NodeDeclaration class
-#include "project_handler.h"  // ProjectHandler class
-#include "utils.h"            // Utility functions that work with properties
+#include "base_generator.h"                     // BaseGenerator -- Base Generator class
+#include "image_handler.h"                      // ProjectImages -- ImageHandler singleton
+#include "mainframe.h"                          // MainFrame -- Main window frame
+#include "mockup_parent.h"                      // Top-level MockUp Parent window
+#include "mockup_wizard.h"                      // MockupWizard Mock Up class
+#include "node.h"                               // Node class
+#include "node_creator.h"                       // NodeCreator class
+#include "node_decl.h"                          // NodeDeclaration class
+#include "project_handler.h"                    // ProjectHandler class
+#include "utils.h"                              // Utility functions that work with properties
+#include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
+
+// Returns the wxFILTER_* bits listed in the validator_style property. Tokens are compared exactly
+// so that wxFILTER_ALPHA is not matched inside wxFILTER_ALPHANUMERIC.
+static long GetTextFilterStyle(const Node* node)
+{
+    long filter_style = wxFILTER_NONE;
+    const wxue::StringVector styles(node->as_string(prop_validator_style), '|', wxue::TRIM::both);
+    for (const auto& style: styles)
+    {
+        if (style == "wxFILTER_EMPTY")
+        {
+            filter_style |= wxFILTER_EMPTY;
+        }
+        else if (style == "wxFILTER_ASCII")
+        {
+            filter_style |= wxFILTER_ASCII;
+        }
+        else if (style == "wxFILTER_ALPHA")
+        {
+            filter_style |= wxFILTER_ALPHA;
+        }
+        else if (style == "wxFILTER_ALPHANUMERIC")
+        {
+            filter_style |= wxFILTER_ALPHANUMERIC;
+        }
+        else if (style == "wxFILTER_DIGITS")
+        {
+            filter_style |= wxFILTER_DIGITS;
+        }
+        else if (style == "wxFILTER_NUMERIC")
+        {
+            filter_style |= wxFILTER_NUMERIC;
+        }
+        else if (style == "wxFILTER_INCLUDE_LIST")
+        {
+            filter_style |= wxFILTER_INCLUDE_LIST;
+        }
+        else if (style == "wxFILTER_EXCLUDE_LIST")
+        {
+            filter_style |= wxFILTER_EXCLUDE_LIST;
+        }
+        else if (style == "wxFILTER_INCLUDE_CHAR_LIST")
+        {
+            filter_style |= wxFILTER_INCLUDE_CHAR_LIST;
+        }
+        else if (style == "wxFILTER_EXCLUDE_CHAR_LIST")
+        {
+            filter_style |= wxFILTER_EXCLUDE_CHAR_LIST;
+        }
+        else if (style == "wxFILTER_XDIGITS")
+        {
+            filter_style |= wxFILTER_XDIGITS;
+        }
+        else if (style == "wxFILTER_SPACE")
+        {
+            filter_style |= wxFILTER_SPACE;
+        }
+    }
+    return filter_style;
+}
+
+// Returns the wxNUM_VAL_* bits listed in the validator_style property.
+static int GetNumValidatorStyle(const Node* node)
+{
+    int num_style = wxNUM_VAL_DEFAULT;
+    const wxue::StringVector styles(node->as_string(prop_validator_style), '|', wxue::TRIM::both);
+    for (const auto& style: styles)
+    {
+        if (style == "wxNUM_VAL_THOUSANDS_SEPARATOR")
+        {
+            num_style |= wxNUM_VAL_THOUSANDS_SEPARATOR;
+        }
+        else if (style == "wxNUM_VAL_ZERO_AS_BLANK")
+        {
+            num_style |= wxNUM_VAL_ZERO_AS_BLANK;
+        }
+        else if (style == "wxNUM_VAL_NO_TRAILING_ZEROES")
+        {
+            num_style |= wxNUM_VAL_NO_TRAILING_ZEROES;
+        }
+        else if (style == "wxNUM_VAL_SIGN_PLUS")
+        {
+            num_style |= wxNUM_VAL_SIGN_PLUS;
+        }
+        else if (style == "wxNUM_VAL_SIGN_SPACE")
+        {
+            num_style |= wxNUM_VAL_SIGN_SPACE;
+        }
+    }
+    return num_style;
+}
+
+template <typename T>
+static void SetIntegerValidator(const Node* node, wxWindow* window)
+{
+    wxIntegerValidator<T> validator(nullptr, GetNumValidatorStyle(node));
+    if (node->HasValue(prop_minValue))
+    {
+        validator.SetMin(static_cast<T>(node->as_int(prop_minValue)));
+    }
+    if (node->HasValue(prop_maxValue))
+    {
+        validator.SetMax(static_cast<T>(node->as_int(prop_maxValue)));
+    }
+    window->SetValidator(validator);
+}
+
+template <typename T>
+static void SetFloatingPointValidator(const Node* node, wxWindow* window)
+{
+    wxFloatingPointValidator<T> validator(nullptr, GetNumValidatorStyle(node));
+    // A precision of -1 means "use the maximum precision for the type", which is what the default
+    // constructor already does -- and what the generated code gets when it omits the argument.
+    if (const int precision = node->as_int(prop_precision); precision > 0)
+    {
+        validator.SetPrecision(static_cast<unsigned>(precision));
+    }
+    if (node->HasValue(prop_minValue))
+    {
+        validator.SetMin(node->as_double(prop_minValue));
+    }
+    if (node->HasValue(prop_maxValue))
+    {
+        validator.SetMax(node->as_double(prop_maxValue));
+    }
+    window->SetValidator(validator);
+}
 
 // If the project specifies a common art header, then any images the header declares will not be
 // embedded in generated code. The mockup still needs the pixel data for those images, so we
@@ -547,6 +678,71 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* 
     if (const wxue::string& tooltip = node->as_string(prop_tooltip); !tooltip.empty())
     {
         window->SetToolTip(tooltip.wx());
+    }
+
+    // Match the Mockup behaviour to the validator that C++ code generation would produce.
+    // wxWindowBase::SetValidator() clones the validator and owns the clone, so passing a
+    // temporary is safe. A null value pointer is used because the Mockup must not run
+    // TransferToWindow (that would replace the design-time value with an empty variable).
+    if (node->HasValue(prop_validator_variable))
+    {
+        if (wxDynamicCast(window, wxTextCtrl))
+        {
+            const std::string_view validator_type = node->get_ValidatorType();
+            if (validator_type == "wxTextValidator")
+            {
+                window->SetValidator(wxTextValidator(GetTextFilterStyle(node), nullptr));
+            }
+            else if (validator_type == "wxIntegerValidator")
+            {
+                const wxue::string& data_type = node->as_string(prop_validator_data_type);
+                if (data_type == "short")
+                {
+                    SetIntegerValidator<short>(node, window);
+                }
+                else if (data_type == "long")
+                {
+                    SetIntegerValidator<long>(node, window);
+                }
+                else if (data_type == "long long")
+                {
+                    SetIntegerValidator<long long>(node, window);
+                }
+                else if (data_type == "unsigned short")
+                {
+                    SetIntegerValidator<unsigned short>(node, window);
+                }
+                else if (data_type == "unsigned int")
+                {
+                    SetIntegerValidator<unsigned int>(node, window);
+                }
+                else if (data_type == "unsigned long")
+                {
+                    SetIntegerValidator<unsigned long>(node, window);
+                }
+                else if (data_type == "unsigned long long")
+                {
+                    SetIntegerValidator<unsigned long long>(node, window);
+                }
+                else
+                {
+                    SetIntegerValidator<int>(node, window);
+                }
+            }
+            else if (validator_type == "wxFloatingPointValidator")
+            {
+                if (node->as_string(prop_validator_data_type) == "float")
+                {
+                    SetFloatingPointValidator<float>(node, window);
+                }
+                else
+                {
+                    SetFloatingPointValidator<double>(node, window);
+                }
+            }
+            // wxGenericValidator only transfers data and has no keystroke filtering, so there is
+            // nothing the Mockup can reproduce without the user's C++ variable.
+        }
     }
 }
 

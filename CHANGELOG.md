@@ -76,6 +76,8 @@ All notable changes to this project will be documented in this file.
   Only the indentation common to every line of the lambda body is removed (issue #1005).
 
 ### Fixed
+- The Mockup window now applies wxTextValidator/wxIntegerValidator/wxFloatingPointValidator settings, so keystroke
+  filtering matches the generated code (issue #1308).
 - Fixed generation of event handlers in C++ derived classes.
 - Fixed inability to hand-edit the location of a generated file
 - Add missing events to wxPropertyGrid and wxPropertyGridManager

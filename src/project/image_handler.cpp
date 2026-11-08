@@ -275,7 +275,21 @@ bool ImageHandler::CheckNode(Node* node)
 
             if (node_form->is_Gen(gen_Images))
             {
-                if (embed->get_Form() != node_form)
+                // Every image in the bundle must be owned by the Images List, otherwise its
+                // array would be emitted in the source file of whichever form created it.
+                if (const auto* bundle = GetPropertyImageBundle(iter.as_string()); bundle)
+                {
+                    for (const auto& filename: bundle->lst_filenames)
+                    {
+                        if (auto* bundle_embed = GetEmbeddedImage(filename);
+                            bundle_embed && bundle_embed->get_Form() != node_form)
+                        {
+                            bundle_embed->set_Form(node_form);
+                            is_changed = true;
+                        }
+                    }
+                }
+                else if (embed->get_Form() != node_form)
                 {
                     embed->set_Form(node_form);
                     is_changed = true;
@@ -973,6 +987,15 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
                 const size_t idx = embed ? embed->get_ImageInfos().size() - 1 : 0;
                 if (!embed)
                 {
+                    // An image may already be embedded as a member of a bundle owned by the
+                    // Images List. Ownership must not be reassigned to the form that merely
+                    // references the image standalone, so return the existing entry as-is.
+                    if (auto result = m_map_embedded.find(path.filename().as_str());
+                        result != m_map_embedded.end())
+                    {
+                        return result->second.get();
+                    }
+
                     m_map_embedded[path.filename().as_str()] =
                         std::make_unique<EmbeddedImage>(path, form);
                     embed = m_map_embedded[path.filename().as_str()].get();
@@ -1509,6 +1532,39 @@ bool ImageHandler::AddXpmBundleImage(const wxue::string& path, Node* form)
     return true;
 }
 
+bool ImageHandler::IsBundleMemberOfAnotherImage(const wxue::string& filename,
+                                                const Node* images_form)
+{
+    const Node* form = images_form ? images_form : Project.get_ImagesForm();
+    if (!form)
+    {
+        return false;
+    }
+
+    const wxue::string base_name = wxue::string(filename).filename();
+    for (const auto& child: form->get_ChildNodePtrs())
+    {
+        const wxue::StringVector parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
+                                       wxue::TRIM::both);
+        const auto* bundle = GetPropertyImageBundle(&parts);
+        if (!bundle || bundle->lst_filenames.size() < 2)
+        {
+            continue;
+        }
+
+        // Index 0 is the bundle's base image, which does have a bundle function of its own.
+        for (size_t idx = 1; idx < bundle->lst_filenames.size(); ++idx)
+        {
+            if (base_name.is_sameas(bundle->lst_filenames[idx].filename()))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 wxue::string ImageHandler::GetBundleFuncName(const wxue::string& description)
 {
     wxue::string name;
@@ -1541,6 +1597,10 @@ wxue::string ImageHandler::GetBundleFuncName(const wxue::string& description)
                     // changed.
                     ASSERT(embed);
                     if (!embed)
+                    {
+                        return name;
+                    }
+                    if (IsBundleMemberOfAnotherImage(parts[IndexImage]))
                     {
                         return name;
                     }
@@ -1589,6 +1649,10 @@ wxue::string ImageHandler::GetBundleFuncName(const wxue::StringVector* parts)
                 if ((*parts)[0] == form_image_parts[0] &&
                     (*parts)[1].filename() == form_image_parts[1].filename())
                 {
+                    if (IsBundleMemberOfAnotherImage((*parts)[IndexImage]))
+                    {
+                        break;
+                    }
                     if (const auto* bundle = GetPropertyImageBundle(parts);
                         bundle && bundle->lst_filenames.size())
                     {
@@ -1627,7 +1691,8 @@ wxue::string ImageHandler::GetBundleFuncName(const EmbeddedImage* embed, wxSize 
 // NOLINT (cppcheck-suppress)
 {
     wxue::string name;
-    if (!embed || embed->get_Form() != Project.get_ImagesForm())
+    if (!embed || embed->get_Form() != Project.get_ImagesForm() ||
+        IsBundleMemberOfAnotherImage(embed->base_image().filename))
     {
         return name;
     }

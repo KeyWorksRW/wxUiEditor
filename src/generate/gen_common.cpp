@@ -676,77 +676,37 @@ bool GenerateBundleCode(const wxue::string& description, wxue::string& code,
             {
                 wxue::string first_name;
                 wxue::string second_name;
-                wxue::string first_function;
-                wxue::string second_function;
 
+                // A bundle must always load each member as a single image. Secondary members have
+                // no bundle function of their own, so GetBundleFuncName() must not be used here.
                 if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                 {
-                    first_function = ProjectImages.GetBundleFuncName(embed);
-                    if (first_function.empty())
-                    {
-                        first_function = CommonArtEmbedBundleName(embed);
-                    }
                     first_name = "wxue_img::" + embed->base_image().array_name;
                 }
                 if (auto* embed = ProjectImages.GetEmbeddedImage(bundle->lst_filenames[1]); embed)
                 {
-                    second_function = ProjectImages.GetBundleFuncName(embed);
-                    if (second_function.empty())
-                    {
-                        second_function = CommonArtEmbedBundleName(embed);
-                    }
                     second_name = "wxue_img::" + embed->base_image().array_name;
                 }
                 code << "wxBitmapBundle::FromBitmaps(\n\t\t";
-                if (!first_function.empty())
-                {
-                    code << first_function;
-                }
-                else
-                {
-                    code << "wxueImage(";
-                    code << first_name << ", sizeof(" << first_name
-                         << "))";  // one less closing parenthesis
-                }
+                code << "wxueImage(";
+                code << first_name << ", sizeof(" << first_name
+                     << "))";  // one less closing parenthesis
                 code << ",\n\t\t";
 
-                if (!second_function.empty())
-                {
-                    code << second_function;
-                }
-                else
-                {
-                    code << "wxueImage(";
-                    code << second_name << ", sizeof(" << second_name << "))";
-                }
+                code << "wxueImage(";
+                code << second_name << ", sizeof(" << second_name << "))";
                 code << ")";  // Close FromBitmaps()
             }
             else if (bundle->lst_filenames.size() > 2)
             {
-                wxue::string name;
-                wxue::string function;
-
                 code << "{\n\twxVector<wxBitmap> bitmaps;\n";
                 for (const auto& iter: bundle->lst_filenames)
                 {
                     if (auto* embed = ProjectImages.GetEmbeddedImage(iter); embed)
                     {
-                        function = ProjectImages.GetBundleFuncName(embed);
-                        if (function.empty())
-                        {
-                            function = CommonArtEmbedBundleName(embed);
-                        }
-                        name = "wxue_img::" + embed->base_image().array_name;
-                    }
-                    code << "\tbitmaps.push_back(";
-                    if (!function.empty())
-                    {
-                        code << function << ");\n";
-                    }
-                    else
-                    {
-                        code << "wxueImage(";
-                        code << name << ", sizeof(" << name << ")));\n";
+                        const wxue::string name = "wxue_img::" + embed->base_image().array_name;
+                        code << "\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name
+                             << ")));\n";
                     }
                 }
 

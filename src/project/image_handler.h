@@ -115,6 +115,12 @@ public:
     // If there is an Images List containing this image, return it's function name
     wxue::string GetBundleFuncName(const EmbeddedImage* embed, wxSize svg_size = wxDefaultSize);
 
+    // Returns true if filename is a member of a multi-image bundle defined by a child of the
+    // Images List, but is not that bundle's first (base) image. Such an image has no bundle
+    // function of its own, so callers must load it as a single image.
+    bool IsBundleMemberOfAnotherImage(const wxue::string& filename,
+                                      const Node* images_form = nullptr);
+
     ImageBundle* ProcessBundleProperty(const wxue::StringVector* parts, Node* node);
 
     ImageBundle* ProcessBundleProperty(const wxue::string& description, Node* node);

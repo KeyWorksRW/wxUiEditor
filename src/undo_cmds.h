@@ -114,6 +114,10 @@ public:
 private:
     std::vector<MULTI_PROP> m_properties;
     bool m_fire_events { true };
+
+    // Set when one of the properties is an art directory, meaning every embedded image has to be
+    // re-resolved after Change() or Revert(). See issue #1670.
+    bool m_images_invalidated { false };
 };
 
 // Specify event and value.

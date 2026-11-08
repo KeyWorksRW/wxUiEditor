@@ -10,6 +10,7 @@
 #include <cstdint>        // for std::uint8_t
 #include <unordered_map>  // for std::unordered_map
 #include <utility>        // for pair<>, to_underlying
+#include <vector>         // for std::vector
 
 #include "gen_enums.h"                   // Enumerations for generators
 #include "node.h"                        // Node class
@@ -141,6 +142,12 @@ public:
     // path so they still resolve to the same files after the move. Returns true if anything
     // changed.
     bool UpdatePathsAfterSaveAs(const wxFileName& new_project_file);
+
+    // Collects (property, new value) pairs for every image/animation property below the project
+    // node whose stored path starts with old_dir + "/", rewriting that prefix to new_dir + "/".
+    // Nothing is modified; the caller applies the changes as a single undoable action.
+    void CollectArtDirectoryChanges(const wxue::string& old_dir, const wxue::string& new_dir,
+                                    std::vector<std::pair<NodeProperty*, wxue::string>>& changes);
 
     // If the node is within a folder, and the folder specifies a directory, then that
     // directory is returned. Otherwise the project base directory is returned.

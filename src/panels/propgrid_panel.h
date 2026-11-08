@@ -110,6 +110,7 @@ protected:
     void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
     void ChangeDerivedDirectory(wxue::string& path);
     void ChangeBaseDirectory(wxue::string& path);
+    void ChangeArtDirectory(wxue::string& path);
 
     // Event handlers
 

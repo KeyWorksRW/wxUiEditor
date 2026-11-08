@@ -742,9 +742,12 @@ void PropGridPanel::CreatePropCategory(wxue::string_view name, Node* node,
     }
 
     const GenLang generate_languages = Project.get_GenerateLanguages();
+    const GenLang category_lang = ConvertToGenLang(name);
 
-    // Ignore if the user doesn't want to generate this language
-    if (!(ConvertToGenLang(name) & generate_languages))
+    // Ignore if the user doesn't want to generate this language. A Folder can override the
+    // project's code preference, in which case the categories for that language must still be
+    // shown -- otherwise generated code has properties that cannot be edited. See issue #1706.
+    if (!(category_lang & generate_languages) && category_lang != Project.get_CodePreference(node))
     {
         return;
     }

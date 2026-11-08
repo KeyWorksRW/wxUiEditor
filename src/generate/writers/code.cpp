@@ -290,10 +290,6 @@ void Code::Init(Node* node, GenLang language)
 
     if (m_traits)
     {
-        if (m_traits->indent_size != 4)
-        {
-            m_indent_size = m_traits->indent_size;
-        }
         m_language_wxPrefix = m_traits->wx_prefix;
 
         // Class/type names may use a different prefix than constants -- TypeScript emits bare
@@ -301,6 +297,9 @@ void Code::Init(Node* node, GenLang language)
         m_language_classPrefix =
             m_traits->class_prefix.empty() ? m_traits->wx_prefix : m_traits->class_prefix;
     }
+
+    m_indent_size = GetLanguageIndentSize(language);
+    m_method_case = GetLanguageMethodCase(language);
 
     m_break_length = GetLineBreakLength(language);
 
@@ -561,7 +560,7 @@ Code& Code::ClassMethod(wxue::string_view function_name)
     ASSERT(m_traits);
     ASSERT_MSG(!function_name.empty(), "function_name must not be empty");
     *this += m_traits->scope_operator;
-    switch (m_traits->method_case)
+    switch (m_method_case)
     {
         case LanguageTraits::MethodCase::snake_case:
             *this += ConvertToSnakeCase(function_name);
@@ -577,7 +576,7 @@ Code& Code::ClassMethod(wxue::string_view function_name)
             break;
 
         case LanguageTraits::MethodCase::pascal_case:
-            ASSERT_MSG(m_traits->method_case == LanguageTraits::MethodCase::pascal_case,
+            ASSERT_MSG(m_method_case == LanguageTraits::MethodCase::pascal_case,
                        "expected pascal_case");
             *this += function_name;
             break;
@@ -591,7 +590,7 @@ Code& Code::VariableMethod(wxue::string_view function_name)
     ASSERT(m_traits);
     ASSERT_MSG(!function_name.empty(), "function_name must not be empty");
     *this += '.';
-    switch (m_traits->method_case)
+    switch (m_method_case)
     {
         case LanguageTraits::MethodCase::snake_case:
             *this += ConvertToSnakeCase(function_name);
@@ -607,7 +606,7 @@ Code& Code::VariableMethod(wxue::string_view function_name)
             break;
 
         case LanguageTraits::MethodCase::pascal_case:
-            ASSERT_MSG(m_traits->method_case == LanguageTraits::MethodCase::pascal_case,
+            ASSERT_MSG(m_method_case == LanguageTraits::MethodCase::pascal_case,
                        "expected pascal_case");
             *this += function_name;
             break;
@@ -624,7 +623,7 @@ Code& Code::FormFunction(wxue::string_view text)
     {
         *this += "self.";
     }
-    switch (m_traits->method_case)
+    switch (m_method_case)
     {
         case LanguageTraits::MethodCase::snake_case:
             *this += ConvertToSnakeCase(text);
@@ -638,7 +637,7 @@ Code& Code::FormFunction(wxue::string_view text)
             }
             break;
         case LanguageTraits::MethodCase::pascal_case:
-            ASSERT_MSG(m_traits->method_case == LanguageTraits::MethodCase::pascal_case,
+            ASSERT_MSG(m_method_case == LanguageTraits::MethodCase::pascal_case,
                        "expected pascal_case");
             *this += text;
             break;
@@ -1097,7 +1096,7 @@ Code& Code::ValidParentName()
 Code& Code::SizerFlagsFunction(wxue::string_view function_name)
 {
     *this += '.';
-    switch (m_traits->method_case)
+    switch (m_method_case)
     {
         case LanguageTraits::MethodCase::snake_case:
             *this += ConvertToSnakeCase(function_name);

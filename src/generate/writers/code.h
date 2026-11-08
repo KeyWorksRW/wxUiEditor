@@ -786,6 +786,7 @@ private:
     Node* m_node;
     GenLang m_language;
     const LanguageTraits* m_traits { nullptr };
+    LanguageTraits::MethodCase m_method_case { LanguageTraits::MethodCase::pascal_case };
 
     // These are changed on a per-language basis in Code::Init()
     wxue::string m_language_wxPrefix { "wx" };

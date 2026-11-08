@@ -273,10 +273,16 @@ void WriteCode::write(wxue::string_view code, bool auto_indent)
     }
 }
 
-void WriteCode::SetTabToSpaces(int tab_to_spaces)
+void WriteCode::SetTabToSpaces(int tab_to_spaces, bool use_tabs)
 {
     m_TabSpaces.clear();
     m_tab_to_spaces = tab_to_spaces;
+    if (use_tabs)
+    {
+        m_TabSpaces.push_back('\t');
+        return;
+    }
+
     for (int i = 0; i < tab_to_spaces; ++i)
     {
         m_TabSpaces.push_back(' ');

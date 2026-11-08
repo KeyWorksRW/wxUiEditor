@@ -8,6 +8,8 @@
 
 #include "language_traits.h"
 
+#include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 #include "strategy_cpp.h"
 #include "strategy_fortran.h"
 #include "strategy_go.h"
@@ -17,6 +19,7 @@
 #include "strategy_ruby.h"
 #include "strategy_rust.h"
 #include "strategy_typescript.h"
+#include "write_code.h"  // WriteCode class
 
 // clang-format off
 
@@ -392,6 +395,129 @@ const LanguageTraits* GetLanguageTraits(GenLang language)
         default:
             return nullptr;
     }
+}
+
+// Maps a language to the project properties that control its generated formatting.
+struct LanguageFormatProps
+{
+    GenEnum::PropName indent_prop;
+    GenEnum::PropName function_case_prop;
+};
+
+static LanguageFormatProps GetLanguageFormatProps(GenLang language)
+{
+    switch (language)
+    {
+        case GenLang::cplusplus:
+            return { GenEnum::prop_cpp_indent, GenEnum::prop_cpp_function_case };
+
+        case GenLang::python:
+            return { GenEnum::prop_python_indent, GenEnum::prop_python_function_case };
+
+        case GenLang::ruby:
+            return { GenEnum::prop_ruby_indent, GenEnum::prop_ruby_function_case };
+
+        case GenLang::fortran:
+            return { GenEnum::prop_fortran_indent, GenEnum::prop_fortran_function_case };
+
+        case GenLang::go:
+            return { GenEnum::prop_go_indent, GenEnum::prop_go_function_case };
+
+        case GenLang::julia:
+            return { GenEnum::prop_julia_indent, GenEnum::prop_julia_function_case };
+
+        case GenLang::luajit:
+            return { GenEnum::prop_lua_indent, GenEnum::prop_lua_function_case };
+
+        case GenLang::rust:
+            return { GenEnum::prop_rust_indent, GenEnum::prop_rust_function_case };
+
+        case GenLang::typescript:
+            return { GenEnum::prop_typescript_indent, GenEnum::prop_typescript_function_case };
+
+        default:
+            return { GenEnum::prop_unknown, GenEnum::prop_unknown };
+    }
+}
+
+// Returns the stored project property value, or nullptr when the project node is missing or the
+// property does not exist.
+static const wxue::string* GetProjectPropValue(GenEnum::PropName prop_name)
+{
+    if (prop_name == GenEnum::prop_unknown)
+    {
+        return nullptr;
+    }
+
+    Node* project_node = Project.get_ProjectNode();
+    if (!project_node || !project_node->HasProp(prop_name))
+    {
+        return nullptr;
+    }
+
+    return &project_node->as_string(prop_name);
+}
+
+int GetLanguageIndentSize(GenLang language)
+{
+    const LanguageTraits* traits = GetLanguageTraits(language);
+    const int default_indent = traits ? traits->indent_size : 4;
+
+    const wxue::string* value = GetProjectPropValue(GetLanguageFormatProps(language).indent_prop);
+    if (!value || value->is_sameas("tab"))
+    {
+        return default_indent;
+    }
+
+    const int indent_spaces = value->atoi();
+    if (indent_spaces < 2 || indent_spaces > 8)
+    {
+        return default_indent;
+    }
+
+    return indent_spaces;
+}
+
+bool GetLanguageIndentWithTabs(GenLang language)
+{
+    const wxue::string* value = GetProjectPropValue(GetLanguageFormatProps(language).indent_prop);
+    return value && value->is_sameas("tab");
+}
+
+LanguageTraits::MethodCase GetLanguageMethodCase(GenLang language)
+{
+    const LanguageTraits* traits = GetLanguageTraits(language);
+    const LanguageTraits::MethodCase default_case =
+        traits ? traits->method_case : LanguageTraits::MethodCase::pascal_case;
+
+    const wxue::string* value =
+        GetProjectPropValue(GetLanguageFormatProps(language).function_case_prop);
+    if (!value)
+    {
+        return default_case;
+    }
+
+    if (value->is_sameas("camelCase"))
+    {
+        return LanguageTraits::MethodCase::camel_case;
+    }
+    if (value->is_sameas("snake_case"))
+    {
+        return LanguageTraits::MethodCase::snake_case;
+    }
+
+    // "PascalCase" and any unrecognized value fall back to the language default.
+    return default_case;
+}
+
+void SetLanguageIndent(WriteCode* source, GenLang language)
+{
+    if (!source)
+    {
+        return;
+    }
+
+    source->SetTabToSpaces(GetLanguageIndentSize(language), GetLanguageIndentWithTabs(language));
 }
 
 std::unique_ptr<LanguageStrategy> CreateLanguageStrategy(GenLang language)

@@ -4,18 +4,22 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [11-07-2026]
+// CR: [11-08-2026]
 
+#include <algorithm>
 #include <array>
 #include <cstdint>
 #include <format>
+#include <optional>
 #include <sstream>  // For std::ostringstream
-#include <tuple>    // for std::ignore
+#include <string_view>
+#include <tuple>  // for std::ignore
 #include <utility>
 #include <vector>
 
 #include <wx/animate.h>   // wxAnimation and wxAnimationCtrl
 #include <wx/artprov.h>   // wxArtProvider class
+#include <wx/dir.h>       // wxDir class
 #include <wx/dirdlg.h>    // wxDirDialog base class
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/mstream.h>   // Memory stream classes
@@ -106,6 +110,166 @@ namespace
         }
 
         return nullptr;
+    }
+
+    // Returns the scale factor for a wxWidgets resolution directory name such as "1.5x" or
+    // "2.0x". The name must be exactly a number with an optional single decimal point followed
+    // by 'x', and the numeric value must be greater than 1.0 -- otherwise std::nullopt.
+    std::optional<double> GetResolutionScale(std::string_view dir_name)
+    {
+        if (dir_name.size() < 2 || (dir_name.back() != 'x' && dir_name.back() != 'X'))
+        {
+            return std::nullopt;
+        }
+
+        const std::string_view number(dir_name.substr(0, dir_name.size() - 1));
+        bool has_decimal = false;
+        size_t digit_count = 0;
+        for (const char character: number)
+        {
+            if (wxue::is_digit(character))
+            {
+                ++digit_count;
+            }
+            else if (character == '.' && !has_decimal)
+            {
+                has_decimal = true;
+            }
+            else
+            {
+                return std::nullopt;
+            }
+        }
+
+        if (digit_count == 0)
+        {
+            return std::nullopt;
+        }
+
+        // Only digits and at most one decimal point remain, so stod() cannot fail.
+        const double scale = std::stod(std::string(number));
+        if (scale <= 1.0)
+        {
+            return std::nullopt;
+        }
+        return scale;
+    }
+
+    // Returns the name of the immediate parent directory of path if that directory is a
+    // resolution directory, otherwise an empty string.
+    wxue::string GetResolutionDir(wxue::string_view path)
+    {
+        const wxue::string_view filename = path.filename();
+        if (filename.empty() || filename.size() >= path.size())
+        {
+            return {};
+        }
+
+        wxue::string dir_path(path.substr(0, path.size() - filename.size()));
+        while (!dir_path.empty() && (dir_path.back() == '/' || dir_path.back() == '\\'))
+        {
+            dir_path.pop_back();
+        }
+
+        const wxue::string_view dir_name = dir_path.filename();
+        if (!GetResolutionScale(dir_name))
+        {
+            return {};
+        }
+        return dir_name.as_str();
+    }
+
+    // Returns the m_map_embedded key for an image -- the basename normally, or
+    // "<resolution-dir>/<basename>" when the image lives inside a resolution directory. Without
+    // this, "2.0x/icon.png" would collide with "icon.png" and never be emitted as its own array.
+    wxue::string GetEmbeddedKey(wxue::string_view path)
+    {
+        const wxue::string resolution_dir = GetResolutionDir(path);
+        if (resolution_dir.empty())
+        {
+            return path.filename().as_str();
+        }
+
+        wxue::string key(resolution_dir);
+        key << '/' << path.filename();
+        return key;
+    }
+
+    // Builds a unique C++ array name for an image inside a resolution directory by inserting the
+    // directory name before the extension: "2.0x/icon.png" -> "icon_2_0x_png".
+    //
+    // Returns an empty string if the image is not inside a resolution directory.
+    wxue::string GetResolutionArrayName(const wxue::string& path)
+    {
+        const wxue::string resolution_dir = GetResolutionDir(path);
+        if (resolution_dir.empty())
+        {
+            return {};
+        }
+
+        const wxue::string_view filename = path.filename();
+        const wxue::string_view extension = path.extension();
+        wxue::string array_source(filename.as_str());
+        array_source.erase(array_source.size() - extension.size());
+        array_source << '_' << wxue::string_view(resolution_dir) << extension;
+
+        const std::optional<wxue::string> var_name = FileNameToVarName(array_source);
+        return var_name.value_or(wxue::string());
+    }
+
+    // Returns the paths of every resolution-directory variant of base_path, ordered by increasing
+    // scale. A directory is only included if it actually holds a file with the same filename as
+    // base_path, which is the convention wxBitmapBundle::FromFiles() uses.
+    std::vector<wxue::string> GetResolutionVariantPaths(const wxue::string& base_path)
+    {
+        std::vector<std::pair<double, wxue::string>> variants;
+
+        const wxFileName base_file(base_path.wx());
+        const wxue::string parent_dir(base_file.GetPath().ToStdString());
+
+        // A bare filename (no directory component) is valid: the image sits next to the project
+        // file, so resolution subdirectories of the current directory must still be searched.
+        wxDir dir(parent_dir.empty() ? wxString(".") : parent_dir.wx());
+        if (!dir.IsOpened())
+        {
+            return {};
+        }
+
+        const wxue::string base_filename(base_path.filename().as_str());
+        wxString dir_name;
+        for (bool is_more = dir.GetFirst(&dir_name, wxEmptyString, wxDIR_DIRS); is_more;
+             is_more = dir.GetNext(&dir_name))
+        {
+            const wxue::string resolution_dir(dir_name.ToStdString());
+            const std::optional<double> scale = GetResolutionScale(resolution_dir);
+            if (!scale)
+            {
+                continue;
+            }
+
+            wxue::string variant_path(parent_dir);
+            variant_path.append_filename(resolution_dir);
+            variant_path.append_filename(base_filename);
+            if (!variant_path.file_exists())
+            {
+                continue;
+            }
+            variants.emplace_back(scale.value(), variant_path);
+        }
+
+        std::ranges::sort(variants,
+                          [](const std::pair<double, wxue::string>& lhs,
+                             const std::pair<double, wxue::string>& rhs)
+                          {
+                              return lhs.first < rhs.first;
+                          });
+
+        std::vector<wxue::string> variant_paths;
+        for (const auto& variant: variants)
+        {
+            variant_paths.emplace_back(variant.second);
+        }
+        return variant_paths;
     }
 }  // namespace
 
@@ -229,7 +393,8 @@ bool ImageHandler::UpdateEmbedNodes()
 
 EmbeddedImage* ImageHandler::FindEmbedded(std::string_view filename)
 {
-    if (auto result = m_map_embedded.find(filename); result != m_map_embedded.end())
+    const wxue::string key = GetEmbeddedKey(wxue::string_view(filename));
+    if (auto result = m_map_embedded.find(key); result != m_map_embedded.end())
     {
         return result->second.get();
     }
@@ -483,7 +648,7 @@ wxImage ImageHandler::GetPropertyBitmap(const wxue::StringVector* parts, bool ch
 
 EmbeddedImage* ImageHandler::GetEmbeddedImage(wxue::string_view path)
 {
-    if (auto result = m_map_embedded.find(path.filename()); result != m_map_embedded.end())
+    if (auto result = m_map_embedded.find(GetEmbeddedKey(path)); result != m_map_embedded.end())
     {
         return result->second.get();
     }
@@ -513,7 +678,7 @@ bool ImageHandler::AddEmbeddedImage(wxue::string path, Node* form, bool is_anima
         }
     }
 
-    if (m_map_embedded.contains(path.filename().as_str()))
+    if (m_map_embedded.contains(GetEmbeddedKey(path)))
     {
         return false;
     }
@@ -600,9 +765,9 @@ bool ImageHandler::AddNewEmbeddedImage(const wxue::string& path, Node* form)
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                const wxue::string filename = path.filename().as_str();
-                m_map_embedded[filename] = std::make_unique<EmbeddedImage>(path, form);
-                auto* embed = m_map_embedded[filename].get();
+                const wxue::string embed_key = GetEmbeddedKey(path);
+                m_map_embedded[embed_key] = std::make_unique<EmbeddedImage>(path, form);
+                auto* embed = m_map_embedded[embed_key].get();
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG,
                 // since we might end up with better compression.
@@ -715,7 +880,7 @@ void ImageHandler::CollectNodeBundles(Node* node, Node* form)
                 wxue::ViewVector parts(value, BMP_PROP_SEPARATOR, wxue::TRIM::both);
                 if (!parts[IndexImage].empty())
                 {
-                    if (!m_map_embedded.contains(parts[IndexImage].filename()))
+                    if (!m_map_embedded.contains(GetEmbeddedKey(parts[IndexImage])))
                     {
                         AddEmbeddedImage(parts[IndexImage], form);
                     }
@@ -960,6 +1125,22 @@ void ImageHandler::AddScalableBundleVariants(wxue::string& path, Node* form, Emb
             break;
         }
     }
+
+    // wxWidgets also supports higher resolutions stored in subdirectories ("1.5x/icon.png",
+    // "2.0x/icon.png"). These are in addition to the filename suffix variants above and are
+    // added in order of increasing scale.
+    for (wxue::string variant_path: GetResolutionVariantPaths(path))
+    {
+        if (std::ranges::find(img_bundle.lst_filenames, variant_path) !=
+            img_bundle.lst_filenames.end())
+        {
+            continue;
+        }
+        if (AddEmbeddedBundleImage(variant_path, form, embed))
+        {
+            img_bundle.lst_filenames.emplace_back(variant_path);
+        }
+    }
 }
 
 EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* form,
@@ -990,15 +1171,23 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
                     // An image may already be embedded as a member of a bundle owned by the
                     // Images List. Ownership must not be reassigned to the form that merely
                     // references the image standalone, so return the existing entry as-is.
-                    if (auto result = m_map_embedded.find(path.filename().as_str());
+                    const wxue::string embed_key = GetEmbeddedKey(path);
+                    if (auto result = m_map_embedded.find(embed_key);
                         result != m_map_embedded.end())
                     {
                         return result->second.get();
                     }
 
-                    m_map_embedded[path.filename().as_str()] =
-                        std::make_unique<EmbeddedImage>(path, form);
-                    embed = m_map_embedded[path.filename().as_str()].get();
+                    m_map_embedded[embed_key] = std::make_unique<EmbeddedImage>(path, form);
+                    embed = m_map_embedded[embed_key].get();
+
+                    // A variant inside a resolution directory must not reuse the base image's
+                    // array name, or the base array would be generated twice.
+                    const wxue::string resolution_name = GetResolutionArrayName(path);
+                    if (!resolution_name.empty())
+                    {
+                        embed->base_image().array_name = resolution_name;
+                    }
                     embed->SetEmbedSize(image);
                 }
                 else if (idx != 0)
@@ -1006,7 +1195,12 @@ EmbeddedImage* ImageHandler::AddEmbeddedBundleImage(wxue::string& path, Node* fo
                     embed->get_ImageInfo(idx).filename = path;
                     embed->get_ImageInfo(idx).file_time =
                         embed->get_ImageInfo(idx).filename.last_write_time();
-                    if (auto result = FileNameToVarName(path.filename()); result)
+                    const wxue::string resolution_name = GetResolutionArrayName(path);
+                    if (!resolution_name.empty())
+                    {
+                        embed->get_ImageInfo(idx).array_name = resolution_name;
+                    }
+                    else if (auto result = FileNameToVarName(path.filename()); result)
                     {
                         embed->get_ImageInfo(idx).array_name = result.value();
                     }
@@ -1234,6 +1428,42 @@ void ImageHandler::AddNonEmbeddedScalableVariants(const wxue::StringVector* part
             img_bundle.lst_filenames.emplace_back(path);
         }
     }
+
+    // wxWidgets also supports higher resolutions stored in subdirectories ("1.5x/icon.png").
+    // Each candidate is built from the property's own path so it stays relative to the base the
+    // project uses, and is accepted only if it can be resolved.
+    wxue::string base_path((*parts)[IndexImage]);
+    if (!TryResolvePathWithArtDir(base_path))
+    {
+        return;
+    }
+
+    for (const wxue::string& variant_path: GetResolutionVariantPaths(base_path))
+    {
+        const wxue::string resolution_dir = GetResolutionDir(variant_path);
+        if (resolution_dir.empty())
+        {
+            continue;
+        }
+
+        wxue::string candidate((*parts)[IndexImage]);
+        size_t insert_pos = candidate.find_filename();
+        if (insert_pos == wxue::string::npos)
+        {
+            insert_pos = 0;
+        }
+        candidate.insert(insert_pos, wxue::string(resolution_dir) << '/');
+        if (!TryResolvePathWithArtDir(candidate))
+        {
+            continue;
+        }
+        if (std::ranges::find(img_bundle.lst_filenames, candidate) !=
+            img_bundle.lst_filenames.end())
+        {
+            continue;
+        }
+        img_bundle.lst_filenames.emplace_back(candidate);
+    }
 }
 
 void ImageHandler::UpdateBundle(const wxue::StringVector* parts, Node* node)
@@ -1422,8 +1652,9 @@ bool ImageHandler::AddSvgBundleImage(wxue::string& path, Node* form)
 
     wxMemoryOutputStream memory_stream;
     wxZlibOutputStream save_stream(memory_stream, wxZ_BEST_COMPRESSION);
-    m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>(path, form);
-    auto* embed = m_map_embedded[path.filename().as_str()].get();
+    const wxue::string embed_key = GetEmbeddedKey(path);
+    m_map_embedded[embed_key] = std::make_unique<EmbeddedImage>(path, form);
+    auto* embed = m_map_embedded[embed_key].get();
 
     uint64_t org_size = (stream.GetLength() & 0xFFFFFFFF);
 
@@ -1507,8 +1738,9 @@ bool ImageHandler::AddXpmBundleImage(const wxue::string& path, Node* form)
         return false;
     }
 
-    m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>(path, form);
-    auto* embed = m_map_embedded[path.filename().as_str()].get();
+    const wxue::string embed_key = GetEmbeddedKey(path);
+    m_map_embedded[embed_key] = std::make_unique<EmbeddedImage>(path, form);
+    auto* embed = m_map_embedded[embed_key].get();
     embed->SetEmbedSize(image);
 
     wxMemoryOutputStream memory_stream;
@@ -1541,7 +1773,9 @@ bool ImageHandler::IsBundleMemberOfAnotherImage(const wxue::string& filename,
         return false;
     }
 
-    const wxue::string base_name = wxue::string(filename).filename();
+    const wxue::string base_path = wxue::string(filename);
+    const wxue::string base_name = base_path.filename().as_str();
+    const wxue::string base_resolution = GetResolutionDir(base_path);
     for (const auto& child: form->get_ChildNodePtrs())
     {
         const wxue::StringVector parts(child->as_string(prop_bitmap), BMP_PROP_SEPARATOR,
@@ -1553,9 +1787,17 @@ bool ImageHandler::IsBundleMemberOfAnotherImage(const wxue::string& filename,
         }
 
         // Index 0 is the bundle's base image, which does have a bundle function of its own.
+        //
+        // The full path is compared first because a variant inside a resolution directory has the
+        // same basename as its bundle's base image -- comparing basenames alone would wrongly
+        // treat the base image as a bundle member and suppress its bundle function. The basename
+        // fallback keeps callers that pass a project-relative path working as before.
         for (size_t idx = 1; idx < bundle->lst_filenames.size(); ++idx)
         {
-            if (base_name.is_sameas(bundle->lst_filenames[idx].filename()))
+            if (base_path.is_sameas(bundle->lst_filenames[idx], wxue::CASE::either) ||
+                (base_name.is_sameas(bundle->lst_filenames[idx].filename(), wxue::CASE::either) &&
+                 base_resolution.is_sameas(GetResolutionDir(bundle->lst_filenames[idx]),
+                                           wxue::CASE::either)))
             {
                 return true;
             }

@@ -20,6 +20,8 @@
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 #include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
 
+#include <wx/msgdlg.h>  // wxMessageBox
+
 void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
 {
     m_isPropChangeSuspended = true;
@@ -117,7 +119,9 @@ void PropGridPanel::ModifyBitlistProperty(NodeProperty* node_prop, wxPGProperty*
 
 void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
 {
-    if (!m_prop_grid->GetPropertyValueAsBool(grid_prop))
+    const bool is_checked = m_prop_grid->GetPropertyValueAsBool(grid_prop);
+
+    if (!is_checked)
     {
         Node* node = node_prop->getNode();
         if (node->is_Gen(gen_wxStdDialogButtonSizer))
@@ -130,7 +134,45 @@ void PropGridPanel::ModifyBoolProperty(NodeProperty* node_prop, wxPGProperty* gr
             }
         }
     }
-    ModifyProperty(node_prop, m_prop_grid->GetPropertyValueAsBool(grid_prop) ? "1" : "0");
+
+    if (node_prop->isProp(prop_use_derived_class))
+    {
+        Node* node = node_prop->getNode();
+        NodeProperty* private_prop =
+            node->HasProp(prop_private_members) ? node->get_PropPtr(prop_private_members) : nullptr;
+
+        // Member access is only generated for C++
+        if (private_prop != nullptr && Project.get_CodePreference(node) == GenLang::cplusplus)
+        {
+            const bool make_private = !is_checked;
+            if (private_prop->as_bool() != make_private)
+            {
+                wxString msg = is_checked ?
+                                   "Change all class member variables back to protected:?\n\n"
+                                   "A derived class needs protected: access to its member "
+                                   "variables." :
+                                   "Change all class member variables to private:?\n\n"
+                                   "A class that is not derived usually keeps its member variables "
+                                   "private.";
+
+                if (wxMessageBox(msg, "Member Variable Access", wxYES_NO | wxICON_QUESTION,
+                                 wxGetMainFrame()) == wxYES)
+                {
+                    auto group =
+                        std::make_shared<GroupUndoActions>("Change member variable access", node);
+                    group->Add(
+                        std::make_shared<ModifyPropertyAction>(node_prop, is_checked ? "1" : "0"));
+                    group->Add(std::make_shared<ModifyPropertyAction>(private_prop,
+                                                                      make_private ? "1" : "0"));
+                    wxGetFrame().PushUndoAction(group);
+                    Project.InvalidateDerivedFileCache();
+                    return;
+                }
+            }
+        }
+    }
+
+    ModifyProperty(node_prop, is_checked ? "1" : "0");
 
     if (node_prop->isProp(prop_use_derived_class))
     {

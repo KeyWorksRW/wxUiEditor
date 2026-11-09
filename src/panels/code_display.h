@@ -7,6 +7,10 @@
 
 #pragma once
 
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include <wx/panel.h>
 
 #include "codedisplay_base.h"
@@ -16,6 +20,7 @@
 #include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
 class wxFindDialogEvent;
+class wxStyledTextEvent;
 class Node;
 
 // CodeDisplayBase creates and initializes a wxStyledTextCtrl (scintilla) control, and places
@@ -47,12 +52,24 @@ protected:
     void OnRibbonToolSelected(Node* node);
     void OnEmbedImageSelected(Node* node);
     void OnFind(wxFindDialogEvent& event);
+    void OnHotSpotClick(wxStyledTextEvent& event);
 
     // The following function is required to inherit from WriteCode
 
     void doWrite(std::string_view code) override;
 
 private:
+    struct Hotspot
+    {
+        int start { 0 };         // byte offset in the Scintilla document
+        int end { 0 };           // one past the last byte
+        std::string class_name;  // wxWidgets class name, e.g. "wxButton"
+    };
+
+    // Scan the generated text for known wxWidgets class spellings and style them as hotspots.
+    void ApplyClassHotspots();
+
     wxue::ViewVector m_view;
     GenLang m_panel_type;
+    std::vector<Hotspot> m_hotspots;
 };

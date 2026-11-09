@@ -6,8 +6,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-06-2026]
 
+#include <memory>
 #include <string>
 #include <string_view>
+
+#include <wx/utils.h>  // wxLaunchDefaultBrowser
 
 #if wxUSE_WEBVIEW
     #include <wx/webview.h>
@@ -19,6 +22,7 @@
 #include "cstm_event.h"               // CustomEvent -- Custom Event class
 #include "helptext/doc_view_frame.h"  // ResolveDocsZipPath
 #include "helptext/doc_view_panel.h"  // DocViewPanel -- embedded wxWidgets docs viewer
+#include "language_traits.h"          // CreateLanguageStrategy, LanguageStrategy
 #include "mainframe.h"                // MainFrame -- Main window frame
 #include "node.h"                     // Node class
 #include "project_handler.h"          // ProjectHandler -- Project file handler
@@ -64,6 +68,101 @@ void LanguageDocs::ActivatePage()
 
         default:
             break;  // Currently, none of the other panels have documentation
+    }
+}
+
+wxString GetWxClassDocsURL(std::string_view class_name, GenLang language)
+{
+    if (!class_name.starts_with("wx") || (language != GenLang::python && language != GenLang::ruby))
+    {
+        return {};
+    }
+
+    const std::unique_ptr<LanguageStrategy> strategy = CreateLanguageStrategy(language);
+    if (!strategy)
+    {
+        return {};
+    }
+
+    // MapClassName() expands module prefixes, e.g. "wxCalendarCtrl" -> "wx.adv.CalendarCtrl"
+    // for Python and "Wx::AuiToolBar" -> "Wx::AUI::AuiToolBar" for Ruby.
+    const std::string mapped = strategy->MapClassName(class_name);
+
+    if (language == GenLang::python)
+    {
+        wxString url("https://docs.wxpython.org/");
+        url += wxString::FromUTF8(mapped);
+        url += ".html";
+        return url;
+    }
+
+    std::string ruby_path(mapped);
+    size_t sep_pos = ruby_path.find("::");
+    while (sep_pos != std::string::npos)
+    {
+        ruby_path.replace(sep_pos, 2, "/");
+        sep_pos = ruby_path.find("::", sep_pos + 1);
+    }
+
+    wxString url("https://mcorino.github.io/wxRuby3/");
+    url += wxString::FromUTF8(ruby_path);
+    url += ".html";
+    return url;
+}
+
+bool LanguageDocs::ShowClassDocs(std::string_view class_name, GenLang language)
+{
+    switch (language)
+    {
+        case GenLang::cplusplus:
+            {
+                m_toolBar->ToggleTool(ID_CPLUS, true);
+                m_toolBar->ToggleTool(ID_PYTHON, false);
+                m_toolBar->ToggleTool(ID_RUBY, false);
+                m_language = GenLang::cplusplus;
+
+                ShowDocViewChild();
+
+                if (m_doc_view_panel == nullptr || !m_doc_view_panel->IsArchiveOpen())
+                {
+                    return false;
+                }
+
+                std::string page_name(class_name);
+                page_name += ".md";
+                return m_doc_view_panel->DisplayPage(page_name);
+            }
+
+        case GenLang::python:
+        case GenLang::ruby:
+            {
+                const bool is_python = (language == GenLang::python);
+                m_toolBar->ToggleTool(ID_CPLUS, false);
+                m_toolBar->ToggleTool(ID_PYTHON, is_python);
+                m_toolBar->ToggleTool(ID_RUBY, !is_python);
+                m_language = language;
+
+                ShowWebViewChild();
+
+                const wxString url = GetWxClassDocsURL(class_name, language);
+                if (url.empty())
+                {
+                    return false;
+                }
+
+#if wxUSE_WEBVIEW
+                if (m_webview != nullptr)
+                {
+                    m_webview->LoadURL(url);
+                    return true;
+                }
+#endif
+                std::ignore = wxLaunchDefaultBrowser(url);
+                return true;
+            }
+
+        default:
+            return false;
     }
 }
 

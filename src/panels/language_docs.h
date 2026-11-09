@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include <string_view>
+
+#include <wx/string.h>  // wxString
+
 #include "language_docs_base.h"
 
 class CustomEvent;
@@ -24,6 +28,10 @@ public:
     ~LanguageDocs() override;
 
     void ActivatePage();
+
+    // Display the documentation page for a wxWidgets class in the given language.
+    // Returns false when the class has no documentation for that language.
+    bool ShowClassDocs(std::string_view class_name, GenLang language);
 
 protected:
     void OnNodeSelected(CustomEvent& event);
@@ -59,3 +67,8 @@ private:
 
     GenLang m_language { GenLang::cplusplus };
 };
+
+// Returns the web documentation URL for a wxWidgets class in a language that is
+// documented on the web (Python, Ruby). Returns an empty wxString for C++ and for
+// languages without web documentation.
+wxString GetWxClassDocsURL(std::string_view class_name, GenLang language);

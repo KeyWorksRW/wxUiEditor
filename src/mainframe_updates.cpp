@@ -7,6 +7,7 @@
 // CR: [06-27-2026]
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
+#include <wx/utils.h>        // wxLaunchDefaultBrowser
 #include <wx/wupdlock.h>     // wxWindowUpdateLocker prevents window redrawing
 
 #include "wxue_namespace/wxue_string.h"  // wxue::string
@@ -284,6 +285,33 @@ void MainFrame::UpdateMoveMenu()
     m_menuEdit->Enable(id_MoveDown, node->MoveNode(MoveDirection::Down, true));
     m_menuEdit->Enable(id_MoveLeft, node->MoveNode(MoveDirection::Left, true));
     m_menuEdit->Enable(id_MoveRight, node->MoveNode(MoveDirection::Right, true));
+}
+
+bool MainFrame::ShowClassDocs(std::string_view class_name, GenLang language)
+{
+    if (m_languageDocsPanel != nullptr)
+    {
+        const int page = m_notebook->GetPageIndex(m_languageDocsPanel);
+        if (page != wxNOT_FOUND && m_notebook->GetSelection() != page)
+        {
+            m_notebook->SetSelection(page);
+        }
+
+        if (m_languageDocsPanel->ShowClassDocs(class_name, language))
+        {
+            return true;
+        }
+    }
+
+    // Fallback for builds without the docs panel or without a webview.
+    const wxString url = GetWxClassDocsURL(class_name, language);
+    if (!url.empty())
+    {
+        std::ignore = wxLaunchDefaultBrowser(url);
+        return true;
+    }
+
+    return false;
 }
 
 void MainFrame::UpdateStatusWidths()

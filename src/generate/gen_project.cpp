@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
 #include <utility>
@@ -117,6 +118,42 @@ bool ProjectGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePrope
         }
     }
     return true;
+}
+
+void ProjectGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid,
+                                         NodeProperty* changed_prop)
+{
+    Node* node = changed_prop->getNode();
+
+    // These gates depend on saved node values rather than only on the property that changed,
+    // because the grid is rebuilt from scratch whenever the Project node is selected.
+    if (auto* pg_setting = prop_grid->GetProperty("cmake_file"); pg_setting)
+    {
+        pg_setting->Enable(node->as_bool(prop_generate_cmake));
+    }
+
+    if (auto* pg_setting = prop_grid->GetProperty("cmake_varname"); pg_setting)
+    {
+        pg_setting->Enable(node->as_bool(prop_generate_cmake));
+    }
+
+    if (auto* pg_setting = prop_grid->GetProperty("combined_xrc_file"); pg_setting)
+    {
+        pg_setting->Enable(node->as_bool(prop_combine_all_forms));
+    }
+
+    if (auto* pg_setting = prop_grid->GetProperty("xrc_indent_attributes"); pg_setting)
+    {
+        pg_setting->Enable(!node->as_bool(prop_xrc_no_whitespace));
+    }
+
+    if (auto* pg_setting = prop_grid->GetProperty("xrc_indent_with_spaces"); pg_setting)
+    {
+        pg_setting->Enable(!node->as_bool(prop_xrc_no_whitespace) &&
+                           node->as_bool(prop_xrc_indent_attributes));
+    }
+
+    BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
 }
 
 bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)

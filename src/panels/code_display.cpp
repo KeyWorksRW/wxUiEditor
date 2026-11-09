@@ -6,9 +6,16 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-01-2026]
 
+#include <cctype>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
+
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/msgdlg.h>       // common header and base class for wxMessageDialog
+#include <wx/stc/stc.h>      // wxStyledTextEvent
 
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
@@ -16,6 +23,7 @@
 #include "code.h"              // Code -- Helper class for generating code
 #include "font_prop.h"         // FontProp -- Font properties
 #include "image_handler.h"     // ImageHandler class
+#include "language_traits.h"   // LanguageTraits, GetLanguageTraits()
 #include "mainframe.h"         // MainFrame -- Main window frame
 #include "node.h"              // Node class
 #include "node_creator.h"      // NodeCreator -- Class used to create nodes
@@ -60,6 +68,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
 
     Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
+
+    m_scintilla->Bind(wxEVT_STC_HOTSPOT_CLICK, &CodeDisplay::OnHotSpotClick, this);
 }
 
 void CodeDisplay::OnFind(wxFindDialogEvent& event)
@@ -105,6 +115,7 @@ void CodeDisplay::Clear()
 {
     m_view.clear();
     m_view.GetBuffer().clear();
+    m_hotspots.clear();
 
     m_scintilla->SetReadOnly(false);
     m_scintilla->ClearAll();
@@ -124,6 +135,8 @@ void CodeDisplay::CodeGenerationComplete()
     m_scintilla->SetEmptySelection(0);
 
     m_view.ParseBuffer();
+
+    ApplyClassHotspots();
 }
 
 void CodeDisplay::OnNodeSelected(Node* node)
@@ -375,4 +388,189 @@ void CodeDisplay::SetColor(int style, const wxColour& color)
 void CodeDisplay::SetCodeFont(const wxFont& font)
 {
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+    m_scintilla->StyleSetFont(wxSTC_STYLE_MAX, font);
+}
+
+// Builds a map from the spelling that appears in generated code to the wxWidgets class
+// name. This mirrors Code::AddClassNameForLanguage() in code_add.cpp -- it must not use
+// LanguageStrategy::MapClassName() because that adds module prefixes (e.g. "wx.adv.")
+// that the generated code does not contain.
+static std::unordered_map<std::string, std::string> BuildHotspotClassNameMap(GenLang language)
+{
+    std::unordered_map<std::string, std::string> class_map;
+
+    const LanguageTraits* traits = GetLanguageTraits(language);
+    if (traits == nullptr)
+    {
+        return class_map;
+    }
+
+    const std::string_view class_prefix = traits->class_prefix;
+
+    for (const NodeDeclaration* decl: NodeCreation.get_NodeDeclarationArray())
+    {
+        if (decl == nullptr)
+        {
+            continue;
+        }
+
+        const std::string_view decl_name = decl->get_DeclName();
+        if (!decl_name.starts_with("wx"))
+        {
+            continue;
+        }
+
+        std::string key(class_prefix);
+        key += decl_name.substr(2);
+        class_map.emplace(std::move(key), std::string(decl_name));
+    }
+
+    return class_map;
+}
+
+static const std::unordered_map<std::string, std::string>& GetHotspotClassNameMap(GenLang language)
+{
+    static const std::unordered_map<std::string, std::string> cpp_map =
+        BuildHotspotClassNameMap(GenLang::cplusplus);
+    static const std::unordered_map<std::string, std::string> python_map =
+        BuildHotspotClassNameMap(GenLang::python);
+    static const std::unordered_map<std::string, std::string> ruby_map =
+        BuildHotspotClassNameMap(GenLang::ruby);
+
+    switch (language)
+    {
+        case GenLang::python:
+            return python_map;
+
+        case GenLang::ruby:
+            return ruby_map;
+
+        default:
+            return cpp_map;
+    }
+}
+
+void CodeDisplay::ApplyClassHotspots()
+{
+    m_hotspots.clear();
+
+    if (m_panel_type != GenLang::cplusplus && m_panel_type != GenLang::python &&
+        m_panel_type != GenLang::ruby)
+    {
+        return;
+    }
+
+    const std::unordered_map<std::string, std::string>& class_map =
+        GetHotspotClassNameMap(m_panel_type);
+    if (class_map.empty())
+    {
+        return;
+    }
+
+    const std::string& buffer = m_view.GetBuffer();
+
+    const bool is_python = (m_panel_type == GenLang::python);
+    const bool is_ruby = (m_panel_type == GenLang::ruby);
+
+    // Python class names contain a '.', Ruby class names contain ':', so those characters are
+    // part of a token in those languages. Tokens never start with either character.
+    auto is_token_char = [is_python, is_ruby](char ch) -> bool
+    {
+        if (ch == '_' || std::isalnum(static_cast<unsigned char>(ch)) != 0)
+        {
+            return true;
+        }
+        if (is_python)
+        {
+            return ch == '.';
+        }
+        if (is_ruby)
+        {
+            return ch == ':';
+        }
+        return false;
+    };
+
+    size_t pos = 0;
+    const size_t buffer_size = buffer.size();
+    while (pos < buffer_size)
+    {
+        const char start_ch = buffer[pos];
+        if (start_ch != '_' && std::isalpha(static_cast<unsigned char>(start_ch)) == 0)
+        {
+            ++pos;
+            continue;
+        }
+
+        const size_t token_start = pos;
+        while (pos < buffer_size && is_token_char(buffer[pos]))
+        {
+            ++pos;
+        }
+
+        std::string_view candidate(buffer.data() + token_start, pos - token_start);
+
+        // Cheap rejection of tokens that cannot be a wxWidgets class.
+        if (is_ruby ? !candidate.starts_with("Wx") : !candidate.starts_with("wx"))
+        {
+            continue;
+        }
+
+        while (!candidate.empty())
+        {
+            const std::string lookup(candidate);
+            if (const auto iter = class_map.find(lookup); iter != class_map.end())
+            {
+                m_hotspots.push_back(
+                    Hotspot { .start = static_cast<int>(token_start),
+                              .end = static_cast<int>(token_start + candidate.size()),
+                              .class_name = iter->second });
+                break;
+            }
+
+            if (m_panel_type == GenLang::cplusplus)
+            {
+                break;
+            }
+
+            // Strip the trailing member so that "wx.Button.GetValue" matches "wx.Button".
+            const size_t sep_pos = is_ruby ? candidate.rfind("::") : candidate.rfind('.');
+            if (sep_pos == std::string_view::npos)
+            {
+                break;
+            }
+            candidate = candidate.substr(0, sep_pos);
+        }
+    }
+
+    if (m_hotspots.empty())
+    {
+        return;
+    }
+
+    // wxSTC_STYLE_MAX (255) is a free style -- the last predefined style is 39.
+    const int hotspot_style = wxSTC_STYLE_MAX;
+    m_scintilla->StyleSetFont(hotspot_style, m_scintilla->StyleGetFont(wxSTC_STYLE_DEFAULT));
+    m_scintilla->StyleSetForeground(hotspot_style, *wxBLUE);
+    m_scintilla->StyleSetUnderline(hotspot_style, true);
+    m_scintilla->StyleSetHotSpot(hotspot_style, true);
+
+    for (const auto& hotspot: m_hotspots)
+    {
+        m_scintilla->StartStyling(hotspot.start);
+        m_scintilla->SetStyling(hotspot.end - hotspot.start, hotspot_style);
+    }
+}
+
+void CodeDisplay::OnHotSpotClick(wxStyledTextEvent& event)
+{
+    const int pos = event.GetPosition();
+    for (const auto& hotspot: m_hotspots)
+    {
+        if (pos >= hotspot.start && pos < hotspot.end)
+        {
+            wxGetFrame().ShowClassDocs(hotspot.class_name, m_panel_type);
+            return;
+        }
+    }
 }

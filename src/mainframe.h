@@ -103,6 +103,11 @@ public:
     wxAuiNotebook* getTopNotebook() { return m_notebook; }
     LanguageDocs* getLanguageDocsPanel() { return m_languageDocsPanel; }
 
+    // Display documentation for a wxWidgets class in the Docs panel, switching the panel
+    // to the language of the source-code view that requested it. Returns true when the
+    // documentation was displayed or handed to the default browser.
+    bool ShowClassDocs(std::string_view class_name, GenLang language);
+
     ImportPanel* getImportPanel() { return m_importPanel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler)

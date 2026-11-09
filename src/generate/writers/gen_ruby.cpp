@@ -315,7 +315,8 @@ auto RubyCodeGenerator::GenerateConstructionCode(Code& code) -> void
         {
             // Persistence for these controls is C++ only (wxPersistentCheckBox and
             // wxPersistentRadioButton have no Ruby equivalent).
-            const bool is_cpp_only = node->is_Gen(gen_wxCheckBox) || node->is_Gen(gen_Check3State) ||
+            const bool is_cpp_only = node->is_Gen(gen_wxCheckBox) ||
+                                     node->is_Gen(gen_Check3State) ||
                                      node->is_Gen(gen_wxRadioButton);
             if (!is_cpp_only)
             {

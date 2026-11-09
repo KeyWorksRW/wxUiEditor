@@ -836,7 +836,7 @@ bool App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
         is_project_loaded = Project.ImportProject(filename, false);
     }
     else if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
-        !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
+             !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
     {
         is_project_loaded = Project.ImportProject(filename, generate_type == 0);
     }

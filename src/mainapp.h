@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [11-09-2026]
 
 #pragma once
 
@@ -134,7 +135,7 @@ private:
     [[nodiscard]] static bool FindProjectFile(wxString& filename);
 
     static bool LoadProjectFile(const wxue::string& filename, size_t generate_type,
-                                bool& is_project_loaded);
+                                bool& is_project_loaded, bool force_import = false);
 
     static void LogGenerationResults(GenResults& results, std::vector<std::string>& class_list,
                                      bool test_only, std::string_view language_type);

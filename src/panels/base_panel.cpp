@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-01-2026]
+// CR: [11-09-2026]
 
 #include <tuple>  // std::ignore
 
@@ -15,12 +15,13 @@
 
 #include "base_panel.h"
 
-#include "code_display.h"     // CodeDisplay -- CodeDisplay class
-#include "cstm_event.h"       // CustomEvent -- Custom Event class
-#include "gen_xrc.h"          // BaseXrcGenerator -- Generate XRC file
-#include "mainframe.h"        // MainFrame -- Main window frame
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
+#include "code_display.h"       // CodeDisplay -- CodeDisplay class
+#include "cstm_event.h"         // CustomEvent -- Custom Event class
+#include "gen_xrc.h"            // BaseXrcGenerator -- Generate XRC file
+#include "mainframe.h"          // MainFrame -- Main window frame
+#include "node.h"               // Node class
+#include "project_handler.h"    // ProjectHandler class
+#include "xrc_preview_panel.h"  // XrcPreviewPanel -- live XRC preview
 
 #include "gen_cpp.h"      // CppCodeGenerator -- Generate C++ code
 #include "gen_python.h"   // PythonCodeGenerator -- Generate wxPython code
@@ -118,6 +119,9 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
         m_notebook->AddPage(m_source_panel, "source", false, wxWithImages::NO_IMAGE);
         m_hdr_info_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hdr_info_panel, "info", false, wxWithImages::NO_IMAGE);
+
+        m_xrc_preview_panel = new XrcPreviewPanel(m_notebook);
+        m_notebook->AddPage(m_xrc_preview_panel, "Preview", false, wxWithImages::NO_IMAGE);
     }
     else
     {
@@ -186,6 +190,17 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, GenLang panel_type) : w
          });
 
     Bind(EVT_NodeSelected, &BasePanel::OnNodeSelected, this);
+
+    m_notebook->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED,
+                     [this](wxAuiNotebookEvent& event)
+                     {
+                         event.Skip();
+                         if (m_xrc_preview_panel &&
+                             m_notebook->GetCurrentPage() == m_xrc_preview_panel && m_preview_dirty)
+                         {
+                             UpdateXrcPreview();
+                         }
+                     });
 
     frame->AddCustomEventHandler(GetEventHandler());
 }
@@ -310,6 +325,11 @@ void BasePanel::GenerateBaseClass()
             {
                 m_derived_hdr_panel->Clear();
             }
+            if (m_xrc_preview_panel)
+            {
+                // Leave m_preview_dirty set so the next switch to the Preview page rebuilds it.
+                m_xrc_preview_panel->ShowForm(nullptr);
+            }
             return;
         }
     }
@@ -360,6 +380,19 @@ void BasePanel::GenerateBaseClass()
                 m_hdr_info_panel->CodeGenerationComplete();
             }
         }
+
+        if (m_xrc_preview_panel)
+        {
+            if (m_notebook->GetCurrentPage() == m_xrc_preview_panel)
+            {
+                UpdateXrcPreview();
+            }
+            else
+            {
+                // The form changed, so the currently displayed preview is stale.
+                m_preview_dirty = true;
+            }
+        }
         return;
     }
 
@@ -385,6 +418,17 @@ void BasePanel::GenerateBaseClass()
     {
         m_derived_hdr_panel->CodeGenerationComplete();
     }
+}
+
+void BasePanel::UpdateXrcPreview()
+{
+    if (!m_xrc_preview_panel)
+    {
+        return;
+    }
+
+    m_preview_dirty = false;
+    m_xrc_preview_panel->ShowForm(m_cur_form ? m_cur_form : wxGetFrame().getSelectedForm());
 }
 
 void BasePanel::OnNodeSelected(CustomEvent& event)

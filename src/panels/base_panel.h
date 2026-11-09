@@ -4,6 +4,7 @@
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+// CR: [11-09-2026]
 
 #pragma once
 
@@ -14,6 +15,7 @@
 class CodeDisplay;
 class CustomEvent;
 class MainFrame;
+class XrcPreviewPanel;
 
 class wxAuiNotebook;
 class wxFindDialogEvent;
@@ -53,12 +55,20 @@ public:
 
 protected:
 private:
+    void UpdateXrcPreview();
+
     CodeDisplay* m_source_panel;
     CodeDisplay* m_hdr_info_panel;  // Header, inherit, info panel
     CodeDisplay* m_derived_src_panel { nullptr };
     CodeDisplay* m_derived_hdr_panel { nullptr };
     wxAuiNotebook* m_notebook;
     Node* m_cur_form { nullptr };
+
+    // Only created for GenLang::xrc
+    XrcPreviewPanel* m_xrc_preview_panel { nullptr };
+
+    // True when the preview contents no longer reflect the form and must be rebuilt
+    bool m_preview_dirty { true };
 
     GenLang m_panel_type;
 };

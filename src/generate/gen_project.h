@@ -24,6 +24,8 @@ public:
 #endif  // _DEBUG
 
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
+
+    void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
 };
 
 class FolderGenerator : public BaseGenerator

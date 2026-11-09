@@ -16,6 +16,7 @@ tests/*
 !tests/import_tests/
 !tests/scripts/
 !tests/unit/
+!tests/issues/
 deno.jsonc
 
 # Ignore clangd cache

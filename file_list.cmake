@@ -329,6 +329,7 @@ set( file_list
 
     # ############################ Panels ##############################
     src/panels/base_panel.cpp         # Code generation panel
+    src/panels/xrc_preview_panel.cpp  # Live XRC preview page for the XRC panel
     src/panels/code_display.cpp       # Display code in scintilla control
 
     # internal/import_panel.cpp  # Internal-only panel to display original Import file

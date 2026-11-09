@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-12-2026]
+// CR: [11-09-2026]
 
 #include "previews.h"
 
@@ -12,6 +12,7 @@
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/mstream.h>      // Memory stream classes
+#include <wx/panel.h>        // wxPanel class
 #include <wx/sizer.h>        // provide wxSizer class for layout
 #include <wx/wizard.h>       // wxWizard class: a GUI control presenting the user with a
 #include <wx/xml/xml.h>      // wxXmlDocument - XML parser & data holder class
@@ -266,18 +267,7 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
 
     wxXmlResource* xrc_resource = wxXmlResource::Get();
 
-    if (!g_isXrcResourceInitialized)
-    {
-        g_isXrcResourceInitialized = true;
-
-        xrc_resource->InitAllHandlers();
-        xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
-        xrc_resource->AddHandler(new wxAuiXmlHandler);
-        xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
-        xrc_resource->AddHandler(new wxRibbonXmlHandler);
-        xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
-        xrc_resource->AddHandler(new wxPropertyGridXmlHandler);
-    }
+    InitXrcHandlers();
 
     // This needs to be outside of the try block so that xrc_resource->Unload(res_name) can
     // be called after the catch block.
@@ -405,6 +395,78 @@ void PreviewXrc(std::string& doc_str, GenEnum::GenName gen_name, Node* form_node
     }
 
     xrc_resource->Unload(res_name);
+}
+
+void InitXrcHandlers()
+{
+    if (g_isXrcResourceInitialized)
+    {
+        return;
+    }
+    g_isXrcResourceInitialized = true;
+
+    wxXmlResource* xrc_resource = wxXmlResource::Get();
+
+    xrc_resource->InitAllHandlers();
+    xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
+    xrc_resource->AddHandler(new wxAuiXmlHandler);
+    xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
+    xrc_resource->AddHandler(new wxRibbonXmlHandler);
+    xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
+    xrc_resource->AddHandler(new wxPropertyGridXmlHandler);
+}
+
+wxPanel* LoadXrcPanel(const std::string& xrc_str, wxWindow* parent, const wxString& panel_name,
+                      wxString& err_msg)
+{
+    InitXrcHandlers();
+
+    wxXmlResource* xrc_resource = wxXmlResource::Get();
+
+    // Deliberately a different name than the modal preview uses so that the two resources can
+    // never interfere with each other.
+    const wxString res_name("wxuiPanelPreview");
+    xrc_resource->Unload(res_name);
+
+    wxPanel* panel { nullptr };
+
+    try
+    {
+        wxMemoryInputStream stream(xrc_str.c_str(), xrc_str.size());
+        wxXmlParseError err_details;
+        auto xml_doc = std::make_unique<wxXmlDocument>(wxXmlDocument());
+
+        if (!xml_doc->Load(stream, wxXMLDOC_NONE, &err_details))
+        {
+            err_msg = wxString("Parsing error: ")
+                      << err_details.message << " at line: " << err_details.line
+                      << ", column: " << err_details.column << '.';
+        }
+        else if (!xrc_resource->LoadDocument(xml_doc.release(), res_name))
+        {
+            err_msg = "wxXmlResource could not parse the XRC data.";
+        }
+        else
+        {
+            // Relative bitmap paths in the XRC need to resolve against the art directory.
+            const wxue::SaveCwd save_cwd(wxue::restore_cwd);
+            wxSetWorkingDirectory(Project.ArtDirectory().wx());
+
+            panel = xrc_resource->LoadPanel(parent, panel_name);
+            if (!panel)
+            {
+                err_msg = wxString("Could not load ") << panel_name << " resource.";
+            }
+        }
+    }
+    catch (const std::exception& err)
+    {
+        err_msg = err.what();
+    }
+
+    xrc_resource->Unload(res_name);
+
+    return panel;
 }
 
 void MainFrame::PreviewCpp(Node* form_node)

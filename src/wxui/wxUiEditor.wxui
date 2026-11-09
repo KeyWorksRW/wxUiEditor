@@ -7227,6 +7227,15 @@
             wxEVT_CHECKBOX="OnChangeLimit" />
         </node>
         <node
+          class="wxRadioBox"
+          var_name="m_radio_insert"
+          label="Insert"
+          contents="Insert above selection;Insert below selection;Insert as child of selection"
+          selection="1"
+          majorDimension="0"
+          style="rows"
+          wxEVT_RADIOBOX="OnInsertMode" />
+        <node
           class="wxBoxSizer"
           var_name="box_sizer_3"
           flags="wxEXPAND"

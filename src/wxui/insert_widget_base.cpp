@@ -50,6 +50,17 @@ bool InsertWidgetBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
+    wxString radio_insert_choices[] = {
+        "Insert above selection",
+        "Insert below selection",
+        "Insert as child of selection"
+    };
+    // Trailing spaces added to avoid clipping
+    m_radio_insert = new wxRadioBox(this, wxID_ANY, "Insert", wxDefaultPosition, wxDefaultSize, 3, radio_insert_choices, 0,
+        wxRA_SPECIFY_ROWS);
+    m_radio_insert->SetSelection(1);
+    box_sizer->Add(m_radio_insert, wxSizerFlags().Border(wxALL));
+
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 
     m_listbox = new wxListBox(this, wxID_ANY, wxDefaultPosition, FromDIP(wxSize(-1, 300)), 0, nullptr, wxLB_SINGLE|wxLB_SORT);
@@ -95,6 +106,7 @@ bool InsertWidgetBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
             m_stdBtn->GetAffirmativeButton()->Enable();
         });
     m_listbox->Bind(wxEVT_LISTBOX_DCLICK, &InsertWidgetBase::OnListBoxDblClick, this);
+    m_radio_insert->Bind(wxEVT_RADIOBOX, &InsertWidgetBase::OnInsertMode, this);
     m_text_name->Bind(wxEVT_TEXT, &InsertWidgetBase::OnNameText, this);
 
     return true;

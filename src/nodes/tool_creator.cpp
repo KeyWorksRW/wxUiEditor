@@ -578,7 +578,7 @@ std::expected<bool, std::string> Node::CreateToolNode(GenName name, int pos)
     return true;
 }
 
-void MainFrame::CreateToolNode(GenName name)
+void MainFrame::CreateToolNode(GenName name, int pos)
 {
     if (!m_selected_node)
     {
@@ -586,25 +586,36 @@ void MainFrame::CreateToolNode(GenName name)
         return;
     }
 
-    if (name == gen_tool &&
-        (m_selected_node->is_Type(type_aui_toolbar) || m_selected_node->is_Type(type_aui_tool)))
+    Node* target = m_selected_node.get();
+    if (pos >= 0)
+    {
+        if (!target->is_Form() && target->get_Parent())
+        {
+            target = target->get_Parent();
+        }
+        else
+        {
+            pos = -1;
+        }
+    }
+
+    if (name == gen_tool && (target->is_Type(type_aui_toolbar) || target->is_Type(type_aui_tool)))
     {
         name = gen_auitool;
     }
 
     if (name == gen_dataViewColumn &&
-        (m_selected_node->is_Gen(gen_wxDataViewListCtrl) ||
-         (m_selected_node->get_Parent() &&
-          m_selected_node->get_Parent()->is_Gen(gen_wxDataViewListCtrl))))
+        (target->is_Gen(gen_wxDataViewListCtrl) ||
+         (target->get_Parent() && target->get_Parent()->is_Gen(gen_wxDataViewListCtrl))))
     {
         // wxDataViewListCtrl only accepts dataViewListColumn children.
         name = gen_dataViewListColumn;
     }
 
-    std::expected<bool, std::string> result = m_selected_node->CreateToolNode(name);
+    std::expected<bool, std::string> result = target->CreateToolNode(name, pos);
     if (!result)
     {
-        if (m_selected_node->is_Gen(gen_wxSplitterWindow))
+        if (target->is_Gen(gen_wxSplitterWindow))
         {
             return;  // The user has already been notified of the problem
         }
@@ -647,8 +658,13 @@ void MainFrame::CreateToolNode(GenName name)
                                              map_GenNames.contains(name) ?
                                                  map_GenNames.at(name) :
                                                  std::string_view { "(unknown)" },
-                                             m_selected_node->get_DeclName()));
+                                             target->get_DeclName()));
             }
         }
     }
+}
+
+void MainFrame::CreateToolNode(GenName name)
+{
+    CreateToolNode(name, -1);
 }

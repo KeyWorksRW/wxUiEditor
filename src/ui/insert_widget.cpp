@@ -13,6 +13,19 @@
 #include "node_creator.h"     // NodeCreator -- Class used to create nodes
 #include "project_handler.h"  // ProjectHandler class
 
+// Returns true if the node can accept at least one child node type.
+static bool CanHaveChildren(Node* node)
+{
+    for (auto* decl: NodeCreation.get_NodeDeclarationArray())
+    {
+        if (decl && node->is_ChildAllowed(decl))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 InsertWidget::InsertWidget(wxWindow* parent)
 {
     std::ignore = Create(parent);
@@ -25,6 +38,23 @@ void MainFrame::OnInsertWidget(wxCommandEvent& /* event unused */)
     {
         if (auto result = rmap_GenNames.find(dialog.GetWidget()); result != rmap_GenNames.end())
         {
+            const InsertWidget::InsertMode mode = dialog.GetInsertMode();
+            if (mode != InsertWidget::InsertMode::Child)
+            {
+                Node* selected = wxGetFrame().getSelectedNode();
+                if (selected && !selected->is_Form() && selected->get_Parent())
+                {
+                    Node* parent = selected->get_Parent();
+                    int pos = static_cast<int>(parent->get_ChildPosition(selected));
+                    if (mode == InsertWidget::InsertMode::Below)
+                    {
+                        ++pos;
+                    }
+                    CreateToolNode(result->second, pos);
+                    return;
+                }
+                // No usable sibling position -- fall back to inserting as a child.
+            }
             CreateToolNode(result->second);
             return;
         }
@@ -33,14 +63,57 @@ void MainFrame::OnInsertWidget(wxCommandEvent& /* event unused */)
     }
 }
 
+InsertWidget::InsertMode InsertWidget::GetInsertMode() const
+{
+    if (!m_radio_insert)
+    {
+        return InsertMode::Child;
+    }
+    switch (m_radio_insert->GetSelection())
+    {
+        case 0:
+            return InsertMode::Above;
+        case 1:
+            return InsertMode::Below;
+        default:
+            return InsertMode::Child;
+    }
+}
+
+void InsertWidget::OnInsertMode(wxCommandEvent& /* event unused */)
+{
+    RebuildList();
+}
+
 void InsertWidget::OnInit(wxInitDialogEvent& /* event unused */)
 {
-    // If no node is selected, then if we limit the list to children, there will
-    // be nothing in the list. Instead, uncheck the limit, and disable it.
-    if (auto node = wxGetFrame().getSelectedNode(); !node)
+    Node* selected = wxGetFrame().getSelectedNode();
+    if (!selected)
     {
+        // If no node is selected, then if we limit the list to children, there will
+        // be nothing in the list. Instead, uncheck the limit, and disable it.
         m_limit_to_children->SetValue(false);
         m_limit_to_children->Disable();
+    }
+    else
+    {
+        // A sibling can only be created when the selection is not a form and its parent
+        // accepts at least one child type.
+        Node* parent = selected->get_Parent();
+        const bool can_insert_sibling = parent && !selected->is_Form() && CanHaveChildren(parent);
+        const bool can_insert_child = CanHaveChildren(selected);
+        if (can_insert_child && !can_insert_sibling)
+        {
+            // Inserting as a child is the only mode that can work, so select it and
+            // disable the two sibling modes.
+            m_radio_insert->SetSelection(2);
+            m_radio_insert->Enable(0, false);
+            m_radio_insert->Enable(1, false);
+        }
+        else if (!can_insert_child && can_insert_sibling)
+        {
+            m_radio_insert->Enable(2, false);
+        }
     }
 
     m_stdBtn->GetAffirmativeButton()->Disable();
@@ -72,6 +145,13 @@ void InsertWidget::RebuildList()
     if (!node)
     {
         node = Project.get_ProjectNode();
+    }
+    // When inserting a sibling, the new node's parent will determine what is allowed, so
+    // retarget to the parent before the allowable-children checks below.
+    if (m_radio_insert && m_radio_insert->GetSelection() != 2 && !node->is_Form() &&
+        node->get_Parent())
+    {
+        node = node->get_Parent();
     }
     // type_widgets cannot have children, so change the "selected" node to the parent
     if (node->is_Type(type_widget) && node->get_Parent())

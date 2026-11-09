@@ -349,6 +349,7 @@ set( file_list
     src/project/data_handler.cpp           # DataHandler class
     src/project/embed_image.cpp            # class to manage images stored in the generated code
     src/project/image_handler.cpp          # ProjectImage class
+    src/project/nano_svg_bundle.cpp        # wxBitmapBundleImpl that rasterizes SVG with NanoSVG
     src/project/loadproject.cpp            # Load wxUiEditor project
     src/project/project_handler.cpp        # ProjectHandler class
     src/project/saveproject.cpp            # Save a wxUiEditor project file

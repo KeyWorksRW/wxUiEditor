@@ -411,6 +411,10 @@ target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 # application's.
 set(WXUI_INCLUDE_DIRS
     ${wxWidgets_SOURCE_DIR}/include
+    # The NanoSVG copy bundled with recent wxWidgets supports CSS <style> classes, which
+    # wxWidgets 3.2 does not. src/project/nano_svg_bundle.cpp therefore compiles the older NanoSVG
+    # vendored in 3rdparty/nanosvg/src so the Mockup matches what a wxWidgets 3.2 app rasterizes.
+    ${CMAKE_CURRENT_LIST_DIR}/3rdparty/nanosvg/src
 )
 
 if(WIN32)

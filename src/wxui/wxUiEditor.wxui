@@ -5422,10 +5422,10 @@
               alignment="wxALIGN_CENTER_VERTICAL" />
             <node
               class="wxTextCtrl"
-              value="MyDialogBase"
+              hint="MyDialogBase"
               var_name="m_classname"
               validator_variable="m_base_class"
-              tooltip="Change this to something unique to your project."
+              tooltip="Enter a unique class name for your project."
               proportion="1"
               wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
           </node>
@@ -5488,7 +5488,8 @@
           </node>
           <node
             class="wxStdDialogButtonSizer"
-            flags="wxEXPAND" />
+            flags="wxEXPAND"
+            OKButtonClicked="OnOK" />
         </node>
       </node>
       <node

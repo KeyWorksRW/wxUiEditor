@@ -42,6 +42,7 @@ protected:
     // Event handlers
 
     void OnInit(wxInitDialogEvent& event);
+    void OnOK(wxCommandEvent& event);
 
 private:
 
@@ -50,7 +51,7 @@ private:
     bool m_has_std_btns { true };
     bool m_has_tabs { false };
     int m_num_tabs { 3 };
-    wxString m_base_class { "MyDialogBase" };
+    wxString m_base_class;
     wxString m_title;
 
     // Class member variables

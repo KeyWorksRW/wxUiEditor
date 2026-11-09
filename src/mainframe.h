@@ -201,6 +201,10 @@ public:
     // specific components.
     void CreateToolNode(GenEnum::GenName name);
 
+    // If pos >= 0, the node is created as a sibling of the selected node at pos within the
+    // selected node's parent.
+    void CreateToolNode(GenEnum::GenName name, int pos);
+
     wxFileHistory& getFileHistory() { return m_FileHistory; }
 
     // This does an exact comparison, so file needs to be identical to what was added to the

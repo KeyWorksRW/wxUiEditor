@@ -21,6 +21,7 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/listbox.h>
+#include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 
@@ -44,6 +45,7 @@ protected:
 
     virtual void OnChangeLimit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnInsertMode(wxCommandEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnListBoxDblClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNameText(wxCommandEvent& event) { event.Skip(); }
@@ -53,6 +55,7 @@ protected:
 
     wxCheckBox* m_limit_to_children;
     wxListBox* m_listbox;
+    wxRadioBox* m_radio_insert;
     wxStdDialogButtonSizer* m_stdBtn;
     wxTextCtrl* m_text_name;
 };

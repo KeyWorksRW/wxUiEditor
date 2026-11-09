@@ -18,13 +18,22 @@ public:
     InsertWidget() {}  // If you use this constructor, you must call Create(parent)
     InsertWidget(wxWindow* parent);
 
+    enum class InsertMode
+    {
+        Above,
+        Below,
+        Child
+    };
+
     wxue::string GetWidget() { return m_widget; }
+    InsertMode GetInsertMode() const;
 
 protected:
     // Handlers for InsertWidgetBase events
 
     void OnInit(wxInitDialogEvent& event) override;
     void OnChangeLimit(wxCommandEvent& event) override;
+    void OnInsertMode(wxCommandEvent& event) override;
     void OnNameText(wxCommandEvent& event) override;
     void OnListBoxDblClick(wxCommandEvent& event) override;
     void OnOK(wxCommandEvent& event) override;

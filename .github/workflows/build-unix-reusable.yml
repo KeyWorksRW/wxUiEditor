@@ -50,11 +50,11 @@ jobs:
       if: inputs.runner-type != 'self-hosted'
       run: |
         sudo apt-get update
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble main'
-        sudo apt-get update
-        sudo apt-get install -y libgtk-3-dev clang-20 llvm-20-tools g++-14
-        clang-20 --version
+        # Install the distro's default clang via the unversioned metapackage --
+        # no LLVM apt repo and no pinned release. This tracks whatever clang the
+        # runner image ships, so it stays current without workflow edits.
+        sudo apt-get install -y libgtk-3-dev g++ clang
+        clang --version
         cmake --version
 
     - name: Setup sccache
@@ -75,7 +75,16 @@ jobs:
     # ── Standard build ─────────────────────────────────────────────────────
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -G "Ninja Multi-Config" -DCMAKE_C_COMPILER=clang-20 -DCMAKE_CXX_COMPILER=clang++-20
+      env:
+        CC: clang
+        CXX: clang++
+      run: |
+        # CC/CXX name the unversioned compilers, so the build uses the runner's
+        # default clang (the distro package on GitHub-hosted runners, or
+        # whatever clang is on PATH on a self-hosted runner) -- never a pinned
+        # major version.
+        "$CXX" --version
+        cmake -B ${{github.workspace}}/build -G "Ninja Multi-Config"
 
     - name: Build wxUiEditor
       run: cmake --build ${{github.workspace}}/build -j$(nproc) --config ${{inputs.build-type}} --target wxUiEditor

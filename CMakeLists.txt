@@ -563,14 +563,26 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "wxUiEditor")
 set(CPACK_PACKAGE_EXECUTABLES "wxUiEditor" "wxUiEditor")
 set(CPACK_CREATE_DESKTOP_LINKS wxUiEditor)
 
-set(CPACK_NSIS_MUI_ICON ${CMAKE_CURRENT_LIST_DIR}/art_src/wxUiEditor.ico)
-set(CPACK_NSIS_MUI_UNIICO ${CMAKE_CURRENT_LIST_DIR}/art_src/wxUiEditor.ico)
+set(CPACK_NSIS_MUI_ICON ${CMAKE_CURRENT_LIST_DIR}/src/art_src/wxUiEditor.ico)
+# CPack reads CPACK_NSIS_MUI_UNIICON (two I's) -- the old misspelling set the
+# installer icon twice and left the uninstaller using the NSIS default.
+set(CPACK_NSIS_MUI_UNIICON ${CMAKE_CURRENT_LIST_DIR}/src/art_src/wxUiEditor.ico)
 set(CPACK_NSIS_INSTALLED_ICON_NAME bin/wxUiEditor.exe)
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL YES)
 set(CPACK_NSIS_MUI_FINISHPAGE_RUN wxUiEditor.exe)
 set(CPACK_NSIS_BRANDING_TEXT "KeyWorks Software")
 set(CPACK_NSIS_BRANDING_TEXT_TRIM_POSITION CENTER)
 set(CPACK_NSIS_MODIFY_PATH YES)
+
+# A missing icon only fails much later, inside makensis, as an opaque "Problem
+# running NSIS command" plus a log file nobody looks at. Report it here instead.
+if(WIN32)
+    foreach(_nsis_icon "${CPACK_NSIS_MUI_ICON}" "${CPACK_NSIS_MUI_UNIICON}")
+        if(NOT EXISTS "${_nsis_icon}")
+            message(FATAL_ERROR "NSIS icon not found: ${_nsis_icon}")
+        endif()
+    endforeach()
+endif()
 
 set(CPACK_RPM_PACKAGE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/EULA.TXT)
 set(CPACK_RPM_PACKAGE_VENDOR "KeyWorks Software")

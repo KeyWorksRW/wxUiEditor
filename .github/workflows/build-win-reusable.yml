@@ -111,6 +111,15 @@ jobs:
         cd build
         cpack -G NSIS -C ${{inputs.build-type}}
 
+    # makensis reports the actual error only in this log file, so surface it
+    # instead of failing with just "Problem running NSIS command".
+    - name: Show NSIS log (packaging failed)
+      if: ${{ failure() && inputs.create-setup }}
+      shell: pwsh
+      run: |
+        $log = Join-Path $env:GITHUB_WORKSPACE 'build/_CPack_Packages/win64/NSIS/NSISOutput.log'
+        if (Test-Path $log) { Get-Content -Path $log } else { Write-Host "Missing $log" }
+
     # Setup installers come from the MSVC build. Otherwise the standalone exe is
     # uploaded: the MSVC multi-config generator writes
     # bin/<config>/wxUiEditor.exe.

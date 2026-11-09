@@ -21,6 +21,9 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr,
                      GenLang /* language */) override;
 
+    auto isLanguagePropSupported(Node* node, GenLang language, GenEnum::PropName prop)
+        -> std::optional<wxue::string> override;
+
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
     void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
 

@@ -14,7 +14,9 @@
 #include "gen_xrc_utils.h"               // Common XRC generating functions
 #include "mainframe.h"                   // MainFrame -- Main window frame
 #include "node.h"                        // Node class
+#include "project_handler.h"             // ProjectHandler class
 #include "utils.h"                       // Utility functions that work with properties
+#include "version.h"                     // Version numbers and other constants
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 #include "gen_radio_btn.h"
@@ -105,8 +107,27 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     {
         set_src.insert("#include <wx/valgen.h>");
     }
+    if (node->HasValue(prop_persist_name) &&
+        Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
+    {
+        set_src.insert("#if wxCHECK_VERSION(3, 3, 1)\n#include <wx/persist/radiobut.h>\n#endif");
+    }
 
     return true;
+}
+
+auto RadioButtonGenerator::isLanguagePropSupported(Node* node, GenLang language,
+                                                   GenEnum::PropName prop)
+    -> std::optional<wxue::string>
+{
+    if (prop == prop_persist_name && language == GenLang::cplusplus &&
+        Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0)
+    {
+        return "persist_name requires wxWidgets 3.3.1 or later; no persistence code is generated "
+               "for the project's wxWidgets version.";
+    }
+
+    return BaseGenerator::isLanguagePropSupported(node, language, prop);
 }
 
 bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop,
@@ -150,6 +171,29 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
         // Note that we allow this property change since we don't know which radio button the user
         // will want to change (none if they plan on adding more radio buttons in between the two
         // groups)
+        return true;
+    }
+
+    if (prop->isProp(prop_persist_name))
+    {
+        if (m_info_warning)
+        {
+            wxGetFrame().DismissInfoBar();
+            m_info_warning = false;
+        }
+
+        // wxPersistentRadioButton asserts unless the button has wxRB_GROUP and does not have
+        // wxRB_SINGLE, so warn the user rather than generating code that will trip the assert.
+        const wxue::string style = node->as_string(prop_style);
+        if (!style.contains("wxRB_GROUP") || style.contains("wxRB_SINGLE"))
+        {
+            wxGetFrame().ShowInfoBarMsg(
+                "Persistence requires the first radio button in a group (wxRB_GROUP style); "
+                "wxRB_SINGLE is not supported.",
+                wxICON_WARNING);
+            m_info_warning = true;
+        }
+
         return true;
     }
 

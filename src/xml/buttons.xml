@@ -9,6 +9,8 @@
         <property name="var_name" type="string">m_checkBox</property>
         <property name="label" type="string_escapes">My Checkbox</property>
         <property name="checked" type="bool">0</property>
+        <property name="persist_name" type="string"
+            help="If a name is specified, wxPersistenceManager will be used to save/restore the state of the checkbox. Requires wxWidgets 3.3.1 or later (C++ only)."/>
         <property name="style" type="bitlist">
             <option name="wxALIGN_RIGHT"
                 help="Aligns the checkbox to the right of the text instead of the left."/>
@@ -31,6 +33,8 @@
                 help="The checkbox is checked."/>
 			<option name="wxCHK_UNDETERMINED"
                 help="The checkbox is undetermined."/>wxCHK_UNCHECKED</property>
+        <property name="persist_name" type="string"
+            help="If a name is specified, wxPersistenceManager will be used to save/restore the state of the checkbox (3-state values are supported). Requires wxWidgets 3.3.1 or later (C++ only)."/>
         <property name="style" type="bitlist">
             <!-- wxALIGN_RIGHT needs to be first for code generation to work properly -->
             <option name="wxALIGN_RIGHT"
@@ -50,6 +54,8 @@
         <property name="var_name" type="string">m_radioBtn</property>
         <property name="label" type="string_escapes">My RadioBtn</property>
         <property name="checked" type="bool">0</property>
+        <property name="persist_name" type="string"
+            help="If a name is specified, wxPersistenceManager will be used to save/restore which radio button is selected in the group. Only valid on the first radio button in a group (wxRB_GROUP style); wxRB_SINGLE is not supported. Requires wxWidgets 3.3.1 or later (C++ only)."/>
         <property name="style" type="bitlist">
             <option name="wxRB_GROUP"
                 help="Marks the beginning of a new group of radio buttons."/>

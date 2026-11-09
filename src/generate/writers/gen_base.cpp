@@ -27,6 +27,7 @@
 #include "node_decl.h"                        // NodeDeclaration class
 #include "project_handler.h"                  // ProjectHandler class
 #include "utils.h"                            // Utility functions that work with properties
+#include "version.h"                          // Version numbers and other constants
 #include "write_code.h"                       // Write code to Scintilla or file
 #include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
@@ -806,9 +807,41 @@ void BaseCodeGenerator::AddPersistCode(Node* node)
 {
     if (node->HasValue(prop_persist_name))
     {
-        wxue::string code("wxPersistentRegisterAndRestore(");
-        code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
-        m_source->writeLine(code);
+        // wxPersistentCheckBox and wxPersistentRadioButton were added in wxWidgets 3.3.1 along with
+        // their headers, so no persistence code can be generated for older wxWidgets versions.
+        const bool is_new_persist_type = node->is_Gen(gen_wxCheckBox) ||
+                                         node->is_Gen(gen_Check3State) ||
+                                         node->is_Gen(gen_wxRadioButton);
+
+        // wxPersistentRadioButton only supports the first radio button of a group; wx asserts
+        // when the button is missing wxRB_GROUP or has wxRB_SINGLE.
+        bool skip_persist = false;
+        if (node->is_Gen(gen_wxRadioButton))
+        {
+            const wxue::string style = node->as_string(prop_style);
+            skip_persist = !style.contains("wxRB_GROUP") || style.contains("wxRB_SINGLE");
+        }
+
+        if (is_new_persist_type &&
+            Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0)
+        {
+            skip_persist = true;
+        }
+
+        if (!skip_persist)
+        {
+            if (is_new_persist_type)
+            {
+                m_source->writeLine("#if wxCHECK_VERSION(3, 3, 1)");
+            }
+            wxue::string code("wxPersistentRegisterAndRestore(");
+            code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
+            m_source->writeLine(code);
+            if (is_new_persist_type)
+            {
+                m_source->writeLine("#endif");
+            }
+        }
     }
 
     for (const auto& child: node->get_ChildNodePtrs())

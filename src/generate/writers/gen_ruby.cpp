@@ -313,9 +313,18 @@ auto RubyCodeGenerator::GenerateConstructionCode(Code& code) -> void
     {
         if (node->HasValue(prop_persist_name))
         {
-            wxue::string code("Wx.persistent_register_and_restore(");
-            code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name) << "\");";
-            m_source->writeLine(code);
+            // Persistence for these controls is C++ only (wxPersistentCheckBox and
+            // wxPersistentRadioButton have no Ruby equivalent).
+            const bool is_cpp_only = node->is_Gen(gen_wxCheckBox) ||
+                                     node->is_Gen(gen_Check3State) ||
+                                     node->is_Gen(gen_wxRadioButton);
+            if (!is_cpp_only)
+            {
+                wxue::string code("Wx.persistent_register_and_restore(");
+                code << node->get_NodeName() << ", \"" << node->as_string(prop_persist_name)
+                     << "\");";
+                m_source->writeLine(code);
+            }
         }
 
         for (const auto& child: node->get_ChildNodePtrs())

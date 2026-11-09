@@ -32,6 +32,11 @@ All notable changes to this project will be documented in this file.
 - C++ code generation for wxAnimationCtrl now uses `wxAnimationBundle` when the project targets wxWidgets 3.3.0 or later.
 - New Convert SVG to Windows Icon command under the Tools menu that converts an SVG file into a Windows icon containing
   16x16, 32x32, 48x48 and 256x256 images.
+- wxCheckBox, 3-state checkbox and wxRadioButton now support the `persist_name` property, which generates
+  `wxPersistentRegisterAndRestore()` calls using `wxPersistentCheckBox` and `wxPersistentRadioButton`. Because
+  these classes were added in wxWidgets 3.3.1, neither the include nor the call is generated when the project
+  targets an older wxWidgets version, and for 3.3.0 projects the generated code is wrapped in
+  `#if wxCHECK_VERSION(3, 3, 1)`.
 
 ### Changed
 

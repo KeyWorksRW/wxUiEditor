@@ -11,7 +11,9 @@
 #include "gen_common.h"                  // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"               // Common XRC generating functions
 #include "node.h"                        // Node class
+#include "project_handler.h"             // ProjectHandler class
 #include "utils.h"                       // Utility functions that work with properties
+#include "version.h"                     // Version numbers and other constants
 #include "wxue_namespace/wxue_string.h"  // wxue::string, wxue::string_view
 
 #include "gen_checkbox.h"
@@ -80,7 +82,26 @@ bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     {
         set_src.insert("#include <wx/valgen.h>");
     }
+    if (node->HasValue(prop_persist_name) &&
+        Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
+    {
+        set_src.insert("#if wxCHECK_VERSION(3, 3, 1)\n#include <wx/persist/checkbox.h>\n#endif");
+    }
     return true;
+}
+
+auto CheckBoxGenerator::isLanguagePropSupported(Node* node, GenLang language,
+                                                GenEnum::PropName prop)
+    -> std::optional<wxue::string>
+{
+    if (prop == prop_persist_name && language == GenLang::cplusplus &&
+        Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0)
+    {
+        return "persist_name requires wxWidgets 3.3.1 or later; no persistence code is generated "
+               "for the project's wxWidgets version.";
+    }
+
+    return BaseGenerator::isLanguagePropSupported(node, language, prop);
 }
 
 int CheckBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -213,6 +234,11 @@ bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
                                        std::set<std::string>& set_hdr, GenLang /* language */)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
+    if (node->HasValue(prop_persist_name) &&
+        Project.get_LangVersion(GenLang::cplusplus) >= CPP_WIDGETS_VERSION_3_3_0)
+    {
+        set_src.insert("#if wxCHECK_VERSION(3, 3, 1)\n#include <wx/persist/checkbox.h>\n#endif");
+    }
     // 3-state checkboxes don't support validators
     return true;
 }
@@ -257,4 +283,18 @@ int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
 void Check3StateGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxCheckBoxXmlHandler");
+}
+
+auto Check3StateGenerator::isLanguagePropSupported(Node* node, GenLang language,
+                                                   GenEnum::PropName prop)
+    -> std::optional<wxue::string>
+{
+    if (prop == prop_persist_name && language == GenLang::cplusplus &&
+        Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0)
+    {
+        return "persist_name requires wxWidgets 3.3.1 or later; no persistence code is generated "
+               "for the project's wxWidgets version.";
+    }
+
+    return BaseGenerator::isLanguagePropSupported(node, language, prop);
 }

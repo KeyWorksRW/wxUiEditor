@@ -835,6 +835,13 @@ void CppCodeGenerator::ProcessOrderDependentIncludes(std::set<std::string>& src_
 
 CppCodeGenerator::IncludeGroup CppCodeGenerator::GetIncludeGroup(std::string_view include)
 {
+    if (include.starts_with("#if"))
+    {
+        // Multi-line conditional include block (e.g. "#if wxCHECK_VERSION(...)\n#include
+        // <...>\n#endif")
+        return IncludeGroup::wx;
+    }
+
     if (!include.starts_with("#include <"))
     {
         // Covers quoted includes as well as forward declarations such as "class wxButton;"

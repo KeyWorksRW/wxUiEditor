@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-04-2026]
+// CR: [11-09-2026]
 
 #include <chrono>
 #include <utility>  // std::to_underlying
@@ -252,20 +252,25 @@ int App::OnRun()
     parser.AddLongOption("form", "limit generation to specified form class name",
                          wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
 
-    parser.AddLongOption("gen_cpp", "generate C++ files and exit");
-    parser.AddLongOption("gen_python", "generate python files and exit");
+    // The project filename is taken from the positional "Project filename" parameter, which
+    // allows a value-less --import switch to be combined with any generation switch.
+    parser.AddLongSwitch("gen_cpp", "generate C++ files and exit");
+    parser.AddLongSwitch("gen_python", "generate python files and exit");
 
-    parser.AddLongOption("gen_fortran", "generate Fortran files and exit");
-    parser.AddLongOption("gen_go", "generate Go files and exit");
-    parser.AddLongOption("gen_julia", "generate Julia files and exit");
-    parser.AddLongOption("gen_luajit", "generate LuaJIT files and exit");
-    parser.AddLongOption("gen_ruby", "generate ruby files and exit");
-    parser.AddLongOption("gen_rust", "generate Rust files and exit");
-    parser.AddLongOption("gen_typescript", "generate TypeScript files and exit");
+    parser.AddLongSwitch("gen_fortran", "generate Fortran files and exit");
+    parser.AddLongSwitch("gen_go", "generate Go files and exit");
+    parser.AddLongSwitch("gen_julia", "generate Julia files and exit");
+    parser.AddLongSwitch("gen_luajit", "generate LuaJIT files and exit");
+    parser.AddLongSwitch("gen_ruby", "generate ruby files and exit");
+    parser.AddLongSwitch("gen_rust", "generate Rust files and exit");
+    parser.AddLongSwitch("gen_typescript", "generate TypeScript files and exit");
 
-    parser.AddLongOption("gen_xrc", "generate XRC files and exit");
+    parser.AddLongSwitch("gen_xrc", "generate XRC files and exit");
 
-    parser.AddLongOption("gen_all", "generate all language files and exit");
+    parser.AddLongSwitch("gen_all", "generate all language files and exit");
+
+    parser.AddLongSwitch("import",
+                         "import the project filename instead of loading a .wxui project");
 
     // verify_* options generate code internally and compare against existing files on disk.
     // If differences are detected, the diff output is written to a .log file (same name as the
@@ -321,12 +326,11 @@ int App::OnRun()
                          wxCMD_LINE_HIDDEN);
 
     // Just a quick way to python, and ruby
-    parser.AddLongOption("gen_quick", "generate all script files and exit", wxCMD_LINE_VAL_STRING,
-                         wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("gen_quick", "generate all script files and exit", wxCMD_LINE_HIDDEN);
 
     // Primarily used for codegen_test/ but could be used for other coverage testing as well.
-    parser.AddLongOption("gen_coverage", "generate all language types for test coverage",
-                         wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+    parser.AddLongSwitch("gen_coverage", "generate all language types for test coverage",
+                         wxCMD_LINE_HIDDEN);
 
     // TODO: [Randalphwa - 11-29-2025] Add an "-auto_load" hidden switch that will find all the
     // *.wxui files in the current directory. If there's only one, set that as the project file. If
@@ -767,17 +771,9 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
     // Check gen_* options (mutually exclusive)
     for (const auto& [option_name, option_type]: gen_options)
     {
-        wxString option_filename;
-        if (parser.Found(wxString(option_name), &option_filename))
+        if (parser.FoundSwitch(wxString(option_name)) == wxCMD_SWITCH_ON)
         {
             generate_type = option_type;
-
-            // Store the filename from the option value
-            if (!option_filename.empty())
-            {
-                s_filename = option_filename;
-                ProcessFilename(s_filename);
-            }
 
             if (option_name == "gen_coverage")
             {
@@ -833,9 +829,13 @@ std::pair<size_t, bool> App::ParseGenerationType(wxCmdLineParser& parser)
 
 // Helper: Load or import the project file
 bool App::LoadProjectFile(const wxue::string& filename, size_t generate_type,
-                          bool& is_project_loaded)
+                          bool& is_project_loaded, bool force_import)
 {
-    if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
+    if (force_import)
+    {
+        is_project_loaded = Project.ImportProject(filename, false);
+    }
+    else if (!filename.extension().is_sameas(PROJECT_FILE_EXTENSION, wxue::CASE::either) &&
         !filename.extension().is_sameas(PROJECT_LEGACY_FILE_EXTENSION, wxue::CASE::either))
     {
         is_project_loaded = Project.ImportProject(filename, generate_type == 0);
@@ -973,7 +973,10 @@ size_t App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResult
 
 int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 {
-    if (!parser.GetParamCount() && !parser.GetArguments().size())
+    const bool is_import = (parser.FoundSwitch("import") == wxCMD_SWITCH_ON);
+
+    // An explicit --import must never fall through to the GUI, even without a filename.
+    if (!is_import && !parser.GetParamCount() && !parser.GetArguments().size())
     {
         return cmd_no_params;
     }
@@ -996,6 +999,24 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
 
     if (generate_type == 0)
     {
+        if (is_import)
+        {
+            if (filename_str.empty())
+            {
+                return 1;
+            }
+
+            wxue::string import_filename = filename_str;
+            import_filename.make_absolute();
+            wxue::string import_log_file = import_filename;
+            import_log_file.replace_extension(".log");
+            m_cmdline_log.clear();
+            m_cmdline_log.emplace_back(
+                wxue::string("Error: --import requires a --gen_* switch (for example --gen_cpp)"));
+            std::ignore = m_cmdline_log.WriteFile(import_log_file);
+            return 1;
+        }
+
         if (filename_str.empty())
         {
             return cmd_no_params;
@@ -1005,6 +1026,11 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
     }
 
     // If we get here then we were asked to generate at least one language type
+
+    if (is_import && filename_str.empty())
+    {
+        return 1;
+    }
 
     wxue::string filename = filename_str;
     filename.make_absolute();
@@ -1027,11 +1053,18 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
     results.StartClock();
 #endif
 
-    LoadProjectFile(filename, generate_type, is_project_loaded);
+    LoadProjectFile(filename, generate_type, is_project_loaded, is_import);
     if (!is_project_loaded)
     {
         m_cmdline_log.clear();
-        m_cmdline_log.emplace_back(wxue::string("Unable to load project file: ") += filename);
+        if (is_import)
+        {
+            m_cmdline_log.emplace_back(wxue::string("Unable to import project file: ") += filename);
+        }
+        else
+        {
+            m_cmdline_log.emplace_back(wxue::string("Unable to load project file: ") += filename);
+        }
         std::ignore = m_cmdline_log.WriteFile(log_file);
         return cmd_gen_project_not_loaded;
     }

@@ -17,10 +17,31 @@
 
 #include "embed_image.h"
 
-#include "mainframe.h"  // for wxGetMainFrame()
-#include "pugixml.hpp"  // For XML parsing of SVG files
-#include "utils.h"      // For FileNameToVarName()
+#include "mainframe.h"        // for wxGetMainFrame()
+#include "nano_svg_bundle.h"  // CreateNanoSVGBundle()
+#include "project_handler.h"  // Project, ProjectHandler::get_LangVersion()
+#include "pugixml.hpp"        // For XML parsing of SVG files
+#include "utils.h"            // For FileNameToVarName()
+#include "version.h"          // CPP_WIDGETS_VERSION_3_3_0
 #include "wxue_namespace/wxue_string.h"
+
+namespace
+{
+    // Only C++/XRC projects can still target wxWidgets 3.2, which rasterizes SVG with the NanoSVG
+    // copy embedded in wxWidgets. wxWidgets 3.3.0 and later always use LunaSVG, and every other
+    // language binding is built on 3.4+, so those must keep the LunaSVG preview.
+    bool UseNanoSVG()
+    {
+        const GenLang languages = Project.get_GenerateLanguages();
+        if (!(languages & GenLang::cplusplus) && !(languages & GenLang::xrc))
+        {
+            return false;
+        }
+        const bool use_nano =
+            Project.get_LangVersion(GenLang::cplusplus) < CPP_WIDGETS_VERSION_3_3_0;
+        return use_nano;
+    }
+}  // namespace
 
 EmbeddedImage::EmbeddedImage(wxue::string_view path, Node* form)
 {
@@ -73,8 +94,13 @@ wxBitmapBundle EmbeddedImage::get_bundle(wxSize override_size)
         }
         if (base_image().type == wxBITMAP_TYPE_SVG)
         {
-            return wxBitmapBundle::FromSVG(str.data(),
-                                           override_size == wxDefaultSize ? m_size : override_size);
+            const wxSize effective_size = override_size == wxDefaultSize ? m_size : override_size;
+            if (UseNanoSVG())
+            {
+                return CreateNanoSVGBundle(str.data(), static_cast<size_t>(org_size),
+                                           effective_size);
+            }
+            return wxBitmapBundle::FromSVG(str.data(), effective_size);
         }
         // base_image().type == wxBITMAP_TYPE_XPM
         ASSERT(base_image().type == wxBITMAP_TYPE_XPM);

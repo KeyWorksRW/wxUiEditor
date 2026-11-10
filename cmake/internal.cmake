@@ -30,6 +30,7 @@ if(INTERNAL_BLD_TESTING)
         src/internal/viewdetails_dlg.cpp
         src/internal/xrc_list_dlg.cpp
         src/internal/ui_harness.cpp            # Drive the editor UI from a script (agent debugger)
+        src/internal/verify_sample_dlg.cpp     # Check and launch a generated language sample
         src/tests/test_xrc_import.cpp          # XRC Import tests
 
         ${wxue_internal_generated_code}

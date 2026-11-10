@@ -16,10 +16,7 @@
 #include <wx/choice.h>
 #include <wx/dir.h>
 #include <wx/filename.h>
-#include <wx/font.h>
 #include <wx/process.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/utils.h>
 
@@ -32,26 +29,73 @@
 
 struct SampleRecipe
 {
-    const wchar_t* label;       // shown in the wxChoice
-    const wchar_t* extension;   // e.g. L".ts", used to locate the generated file
-    const wchar_t* check_exe;   // empty wchar_t string when there is no checker
-    const wchar_t* check_args;  // may contain {file}
-    const wchar_t* run_exe;
-    const wchar_t* run_args;  // may contain {file}
-    GenLang lang;             // passed to ProjectHandler to resolve the output directory
+    const char* label;       // shown in the wxChoice
+    const char* extension;   // e.g. L".ts", used to locate the generated file
+    const char* check_exe;   // empty wchar_t string when there is no checker
+    const char* check_args;  // may contain {file}
+    const char* run_exe;
+    const char* run_args;  // may contain {file}
+    GenLang lang;          // passed to ProjectHandler to resolve the output directory
 };
 
 // Every entry after the last field is hardcoded for a specific maintainer machine.
 static const std::array<SampleRecipe, 8> s_recipes = { {
-    { L"TypeScript", L".ts", L"deno", L"check {file}", L"kwxts", L"{file}", GenLang::typescript },
-    { L"Python", L".py", L"python", L"-m py_compile {file}", L"python", L"{file}",
-      GenLang::python },
-    { L"Ruby", L".rb", L"ruby", L"-c {file}", L"ruby", L"{file}", GenLang::ruby },
-    { L"LuaJIT", L".lua", L"luajit", L"-bl {file}", L"luajit", L"{file}", GenLang::luajit },
-    { L"Fortran", L".f90", L"", L"", L"quick.exe", L"", GenLang::fortran },
-    { L"Go", L".go", L"go", L"build ./...", L"go", L"run .", GenLang::go },
-    { L"Rust", L".rs", L"cargo", L"check", L"cargo", L"run", GenLang::rust },
-    { L"Julia", L".jl", L"", L"", L"julia", L"--project=. {file}", GenLang::julia },
+    { .label = "TypeScript",
+      .extension = ".ts",
+      .check_exe = "deno",
+      .check_args = "check {file}",
+      .run_exe = "kwxts",
+      .run_args = "{file}",
+      .lang = GenLang::typescript },
+    { .label = "Python",
+      .extension = ".py",
+      .check_exe = "python",
+      .check_args = "-m py_compile {file}",
+      .run_exe = "python",
+      .run_args = "{file}",
+      .lang = GenLang::python },
+    { .label = "Ruby",
+      .extension = ".rb",
+      .check_exe = "ruby",
+      .check_args = "-c {file}",
+      .run_exe = "ruby",
+      .run_args = "{file}",
+      .lang = GenLang::ruby },
+    { .label = "LuaJIT",
+      .extension = ".lua",
+      .check_exe = "luajit",
+      .check_args = "-bl {file}",
+      .run_exe = "luajit",
+      .run_args = "{file}",
+      .lang = GenLang::luajit },
+    { .label = "Fortran",
+      .extension = ".f90",
+      .check_exe = "",
+      .check_args = "",
+      .run_exe = "quick.exe",
+      .run_args = "",
+      .lang = GenLang::fortran },
+    { .label = "Go",
+      .extension = ".go",
+      .check_exe = "go",
+      .check_args = "build ./...",
+      .run_exe = "go",
+      .run_args = "run .",
+      .lang = GenLang::go },
+    { .label = "Rust",
+      .extension = ".rs",
+      .check_exe = "cargo",
+      .check_args = "check",
+      .run_exe = "cargo",
+      .run_args = "run",
+      .lang = GenLang::rust },
+    { .label = "Julia",
+      .extension = ".jl",
+      .check_exe = "",
+      .check_args = "",
+      .run_exe = "julia",
+      .run_args = "--project=. {file}",
+      .lang = GenLang::julia },
 } };
 
 static PropName GetOutputFolderProp(GenLang lang)
@@ -87,7 +131,7 @@ static PropName GetEntryFileProp(GenLang lang)
 // wxExecute takes the command as one string, so any path containing spaces must be quoted.
 // Find the form node that owns the language's file property. These properties live on form
 // nodes (see ProjectHandler::GetBaseFilename), not on the project node.
-static Node* FindFormNodeWithFileProp(Node* node, PropName prop, const wxString& extension)
+static const Node* FindFormNodeWithFileProp(Node* node, PropName prop, const wxString& extension)
 {
     if (!node)
     {
@@ -105,7 +149,7 @@ static Node* FindFormNodeWithFileProp(Node* node, PropName prop, const wxString&
 
     for (auto& child: node->get_ChildNodePtrs())
     {
-        if (Node* found = FindFormNodeWithFileProp(child.get(), prop, extension))
+        if (const Node* found = FindFormNodeWithFileProp(child.get(), prop, extension))
         {
             return found;
         }
@@ -124,9 +168,10 @@ static wxString QuoteIfNeeded(const wxString& text)
     return text;
 }
 
-static wxString BuildCommand(const wxString& exe, const wxString& args, const wxString& entry_file)
+static wxString BuildCommand(const wxString& executable, const wxString& args,
+                             const wxString& entry_file)
 {
-    wxString command = QuoteIfNeeded(exe);
+    wxString command = QuoteIfNeeded(executable);
     if (!args.empty())
     {
         wxString filled_args = args;
@@ -138,56 +183,24 @@ static wxString BuildCommand(const wxString& exe, const wxString& args, const wx
     return command;
 }
 
-VerifySampleDlg::VerifySampleDlg(wxWindow* parent) :
-    wxDialog(parent, wxID_ANY, "Verify Sample App", wxDefaultPosition, wxDefaultSize,
-             wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+VerifySampleDlg::VerifySampleDlg(wxWindow* parent) : VerifySampleBase(parent)
 {
-    auto* main_sizer = new wxBoxSizer(wxVERTICAL);
-
-    auto* target_sizer = new wxBoxSizer(wxHORIZONTAL);
-    target_sizer->Add(new wxStaticText(this, wxID_ANY, "Target:"), wxSizerFlags().CenterVertical());
-    m_choice_lang = new wxChoice(this, wxID_ANY);
     for (const SampleRecipe& recipe: s_recipes)
     {
         m_choice_lang->Append(wxString(recipe.label));
     }
     m_choice_lang->SetSelection(0);
-    target_sizer->Add(m_choice_lang, wxSizerFlags(1).CenterVertical().Border(wxLEFT));
-    main_sizer->Add(target_sizer, wxSizerFlags().Expand().Border());
 
-    m_log = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-                           wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP);
-    m_log->SetFont(wxFont(wxFontInfo().Family(wxFONTFAMILY_TELETYPE)));
-    m_log->SetMinSize(wxSize(700, 400));
-    main_sizer->Add(m_log, wxSizerFlags(1).Expand().Border());
-
-    auto* button_sizer = new wxBoxSizer(wxHORIZONTAL);
-    auto* btn_check = new wxButton(this, wxID_APPLY, "Check");
-    btn_check->SetToolTip("Run the language syntax/compile check and show its output");
-    btn_check->Bind(wxEVT_BUTTON, &VerifySampleDlg::OnCheck, this);
-
-    auto* btn_run = new wxButton(this, wxID_ANY, "Run");
-    btn_run->SetToolTip("Launch the generated GUI app asynchronously");
-    btn_run->Bind(wxEVT_BUTTON, &VerifySampleDlg::OnRun, this);
-
-    auto* btn_kill = new wxButton(this, wxID_ANY, "Kill");
-    btn_kill->SetToolTip("Kill the running app");
-    btn_kill->Bind(wxEVT_BUTTON, &VerifySampleDlg::OnKill, this);
-
-    auto* btn_close = new wxButton(this, wxID_CLOSE, "Close");
-    btn_close->Bind(wxEVT_BUTTON, &VerifySampleDlg::OnClose, this);
-
-    button_sizer->AddStretchSpacer();
-    button_sizer->Add(btn_check, wxSizerFlags().Border(wxRIGHT));
-    button_sizer->Add(btn_run, wxSizerFlags().Border(wxRIGHT));
-    button_sizer->Add(btn_kill, wxSizerFlags().Border(wxRIGHT));
-    button_sizer->Add(btn_close);
-    main_sizer->Add(button_sizer, wxSizerFlags().Expand().Border());
-
-    SetSizerAndFit(main_sizer);
-
+    // wxEVT_CLOSE_WINDOW is bound by the generated base class; wxEVT_END_PROCESS is not a dialog
+    // event, so it must be bound here.
     Bind(wxEVT_END_PROCESS, &VerifySampleDlg::OnEndProcess, this);
-    Bind(wxEVT_CLOSE_WINDOW, &VerifySampleDlg::OnCloseWindow, this);
+    m_choice_lang->Bind(wxEVT_CHOICE, &VerifySampleDlg::OnLanguageChanged, this);
+
+    // The Kill button is a local in the generated base class, so it has no member to reach.
+    m_btn_kill = wxDynamicCast(wxWindow::FindWindowByLabel("Kill", this), wxButton);
+
+    UpdateAppName();
+    UpdateKillButton();
 }
 
 VerifySampleDlg::~VerifySampleDlg()
@@ -207,11 +220,19 @@ void VerifySampleDlg::AppendLog(const wxString& text)
     m_log->AppendText("\n");
 }
 
-wxString VerifySampleDlg::GetOutputDir(GenLang lang) const
+void VerifySampleDlg::UpdateKillButton()
+{
+    if (m_btn_kill)
+    {
+        m_btn_kill->Enable(m_app_pid != 0);
+    }
+}
+
+wxString VerifySampleDlg::GetOutputDir(GenLang lang)
 {
     wxString output_dir;
 
-    Node* project_node = Project.get_ProjectNode();
+    const Node* project_node = Project.get_ProjectNode();
     if (project_node)
     {
         const PropName prop = GetOutputFolderProp(lang);
@@ -242,12 +263,13 @@ wxString VerifySampleDlg::GetOutputDir(GenLang lang) const
 }
 
 wxString VerifySampleDlg::GetEntryFile(GenLang lang, const wxString& output_path,
-                                       const wxString& extension)
+                                       const wxString& extension, bool log_error)
 {
     // Prefer the form node that explicitly names the entry file for this language. Otherwise fall
     // through to the newest-generated-file scan below.
     const PropName prop = GetEntryFileProp(lang);
-    if (Node* form = FindFormNodeWithFileProp(Project.get_ProjectNode(), prop, extension); form)
+    if (const Node* form = FindFormNodeWithFileProp(Project.get_ProjectNode(), prop, extension);
+        form)
     {
         const wxue::string base_file = form->as_string(prop);
         wxue::string merged = output_path;
@@ -278,12 +300,53 @@ wxString VerifySampleDlg::GetEntryFile(GenLang lang, const wxString& output_path
         }
     }
 
-    if (newest_file.empty())
+    if (newest_file.empty() && log_error)
     {
         AppendLog(wxString::Format("error: no \"*%s\" file found in %s", extension, output_path));
     }
 
     return newest_file;
+}
+
+void VerifySampleDlg::UpdateAppName()
+{
+    const int selection = m_choice_lang->GetSelection();
+    const SampleRecipe& recipe = s_recipes[static_cast<size_t>(std::max(0, selection))];
+
+    wxString app_path;
+    const wxString output_dir = GetOutputDir(recipe.lang);
+    if (!output_dir.empty())
+    {
+        const wxString run_args(recipe.run_args);
+        if (run_args.Contains("{file}"))
+        {
+            app_path = GetEntryFile(recipe.lang, output_dir, recipe.extension, false);
+        }
+        else if (wxFileName(recipe.run_exe).HasExt())
+        {
+            // Languages such as Fortran run a built executable that lives in the output dir.
+            app_path = wxFileName(output_dir, recipe.run_exe).GetFullPath();
+        }
+        else
+        {
+            // Go and Rust are launched by their toolchain from the output dir, so that directory
+            // is the only meaningful location to show.
+            app_path = output_dir;
+        }
+    }
+
+    if (app_path.empty())
+    {
+        app_path = "(no app found for this target)";
+    }
+
+    m_app_name->SetLabel(app_path);
+    Layout();
+}
+
+void VerifySampleDlg::OnLanguageChanged(wxCommandEvent& /* event */)
+{
+    UpdateAppName();
 }
 
 void VerifySampleDlg::OnCheck(wxCommandEvent& /* event */)
@@ -312,14 +375,14 @@ void VerifySampleDlg::OnCheck(wxCommandEvent& /* event */)
     }
 
     const wxString command = BuildCommand(recipe.check_exe, check_args, entry_file);
-    const wxString cwd = output_dir;
+    const wxString working_dir = output_dir;
 
     m_log->Freeze();
     {
-        wxBusyCursor busy_cursor;
+        const wxBusyCursor busy_cursor;
 
         wxExecuteEnv env;
-        env.cwd = cwd;
+        env.cwd = working_dir;
 
         // This is the only deadlock-free way to capture both streams synchronously. Note that
         // this blocks the UI while a slow checker runs (the first cargo check or go build can
@@ -330,7 +393,7 @@ void VerifySampleDlg::OnCheck(wxCommandEvent& /* event */)
             wxExecute(command, out, err, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE, &env);
 
         AppendLog(wxString::Format("check: %s", command));
-        AppendLog(wxString::Format("cwd:   %s", cwd));
+        AppendLog(wxString::Format("cwd:   %s", working_dir));
         AppendLog(wxString::Format("exit:  %ld", result_code));
 
         if (out.IsEmpty() && err.IsEmpty())
@@ -384,7 +447,9 @@ void VerifySampleDlg::OnRun(wxCommandEvent& /* event */)
     env.cwd = output_dir;  // samples are always run from the project's output dir for this language
 
     m_process = new wxProcess(this);
-    m_app_pid = wxExecute(command, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE, m_process, &env);
+    // wxEXEC_HIDE_CONSOLE sets STARTF_USESHOWWINDOW/SW_HIDE in the child STARTUPINFO on MSW, which
+    // also hides the sample app's first top-level window -- not just its console.
+    m_app_pid = wxExecute(command, wxEXEC_ASYNC, m_process, &env);
     if (m_app_pid == 0)
     {
         delete m_process;
@@ -395,6 +460,7 @@ void VerifySampleDlg::OnRun(wxCommandEvent& /* event */)
 
     AppendLog(wxString::Format("launched pid %ld: %s", m_app_pid, command));
     AppendLog(wxString::Format("cwd: %s", env.cwd));
+    UpdateKillButton();
 }
 
 void VerifySampleDlg::OnKill(wxCommandEvent& /* event */)
@@ -426,6 +492,7 @@ void VerifySampleDlg::OnKill(wxCommandEvent& /* event */)
         m_process = nullptr;
     }
     m_app_pid = 0;
+    UpdateKillButton();
 }
 
 void VerifySampleDlg::OnClose(wxCommandEvent& /* event */)
@@ -465,4 +532,5 @@ void VerifySampleDlg::OnEndProcess(wxProcessEvent& event)
         m_process = nullptr;
     }
     m_app_pid = 0;
+    UpdateKillButton();
 }

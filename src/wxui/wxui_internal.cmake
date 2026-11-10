@@ -15,6 +15,7 @@ set (wxue_internal_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/../internal/generated/node_search_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/generated/undo_info_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/generated/unused_gen_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../internal/generated/verify_sample_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/generated/viewdetails_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../internal/generated/xrc_list_dlg_base.cpp
 

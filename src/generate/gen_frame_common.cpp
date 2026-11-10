@@ -138,8 +138,8 @@ static void ConstructionCodeRuby(Code& code, FrameType frame_type)
     code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE")).Str("style = ").Style();
     if (code.HasValue(prop_window_name))
     {
-        code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() +
-                                     2);
+        code.Comma().CheckLineLength(sizeof("name = ") +
+                                     code.node()->as_string(prop_window_name).size() + 2);
         code.Str("name = ").QuotedString(prop_window_name);
     }
 
@@ -429,7 +429,12 @@ bool FrameCommon::SettingsCode(Code& code, FrameType frame_type)
     }
     else if (code.get_language() == GenLang::ruby)
     {
-        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
+        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style");
+        if (code.HasValue(prop_window_name))
+        {
+            code.Comma().Str("name");
+        }
+        code.Str(")\n");
     }
     else
     {

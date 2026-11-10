@@ -412,6 +412,14 @@ Code& Code::OpenBrace(bool all_languages)
         Indent();
         Eol();
     }
+    else
+    {
+        // Python and Ruby have no block delimiters, so the block is expressed purely by
+        // indentation: the body must start on its own line, one level deeper. Indent before
+        // Eol() so that the tab for the deeper level is emitted for the new body line.
+        Indent();
+        Eol(eol_if_needed);
+    }
 
     return *this;
 }

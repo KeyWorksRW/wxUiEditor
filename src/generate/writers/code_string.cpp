@@ -172,7 +172,9 @@ Code& Code::AddQuotedText(wxue::string_view text, bool translate)
         }
         else
         {
-            Function("wxGetTranslation");
+            // Free function, not a method: pass the trailing '(' and disable the operator so the
+            // closing ')' appended below completes the call for Python and Ruby alike.
+            Function("wxGetTranslation(", false);
         }
     }
 

@@ -1120,5 +1120,92 @@
           OKButtonClicked="OnOK" />
       </node>
     </node>
+    <node
+      class="wxDialog"
+      class_name="VerifySampleBase"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Verify Sample App"
+      base_file="verify_sample_base"
+      derived_class_name="VerifySampleDlg"
+      derived_file="../verify_sample_dlg.cpp"
+      wxEVT_CLOSE_WINDOW="OnCloseWindow">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="main_sizer">
+        <node
+          class="wxBoxSizer"
+          var_name="target_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Target:"
+            var_name="static_target"
+            alignment="wxALIGN_CENTER_VERTICAL"
+            borders="" />
+          <node
+            class="wxChoice"
+            var_name="m_choice_lang"
+            alignment="wxALIGN_CENTER_VERTICAL"
+            borders="wxLEFT"
+            proportion="1" />
+        </node>
+        <node
+          class="wxStaticBox"
+          label="app_name"
+          var_name="m_app_name"
+          flags="wxEXPAND" />
+        <node
+          class="wxTextCtrl"
+          style="wxTE_MULTILINE|wxTE_READONLY|wxTE_DONTWRAP"
+          var_name="m_log"
+          font="teletype"
+          minimum_size="700,400"
+          flags="wxEXPAND"
+          proportion="1" />
+        <node
+          class="wxBoxSizer"
+          var_name="button_sizer"
+          flags="wxEXPAND">
+          <node
+            class="spacer"
+            proportion="1" />
+          <node
+            class="wxButton"
+            class_access="none"
+            label="Check"
+            var_name="btn_check"
+            id="wxID_APPLY"
+            tooltip="Run the language syntax/compile check and show its output"
+            borders="wxRIGHT"
+            wxEVT_BUTTON="OnCheck" />
+          <node
+            class="wxButton"
+            class_access="none"
+            label="Run"
+            var_name="btn_run"
+            tooltip="Launch the generated GUI app asynchronously"
+            borders="wxRIGHT"
+            wxEVT_BUTTON="OnRun" />
+          <node
+            class="wxButton"
+            class_access="none"
+            label="Kill"
+            var_name="btn_kill"
+            tooltip="Kill the running app"
+            borders="wxRIGHT"
+            wxEVT_BUTTON="OnKill" />
+          <node
+            class="wxButton"
+            class_access="none"
+            label="Close"
+            var_name="btn_close"
+            id="wxID_CLOSE"
+            borders=""
+            wxEVT_BUTTON="OnClose" />
+        </node>
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

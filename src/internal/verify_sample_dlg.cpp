@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <array>
 #include <map>
+#include <tuple>
 
 #include <wx/button.h>
 #include <wx/choice.h>
@@ -97,6 +98,9 @@ static const std::array<SampleRecipe, 8> s_recipes = { {
       .run_args = "--project=. {file}",
       .lang = GenLang::julia },
 } };
+
+// How often the redirected stdout/stderr pipes of the running app are drained into the log.
+constexpr int OUTPUT_POLL_MS = 100;
 
 static PropName GetOutputFolderProp(GenLang lang)
 {
@@ -196,6 +200,9 @@ VerifySampleDlg::VerifySampleDlg(wxWindow* parent) : VerifySampleBase(parent)
     Bind(wxEVT_END_PROCESS, &VerifySampleDlg::OnEndProcess, this);
     m_choice_lang->Bind(wxEVT_CHOICE, &VerifySampleDlg::OnLanguageChanged, this);
 
+    m_output_timer.SetOwner(this);
+    Bind(wxEVT_TIMER, &VerifySampleDlg::OnOutputTimer, this);
+
     // The Kill button is a local in the generated base class, so it has no member to reach.
     m_btn_kill = wxDynamicCast(wxWindow::FindWindowByLabel("Kill", this), wxButton);
 
@@ -205,6 +212,16 @@ VerifySampleDlg::VerifySampleDlg(wxWindow* parent) : VerifySampleBase(parent)
 
 VerifySampleDlg::~VerifySampleDlg()
 {
+    m_output_timer.Stop();
+
+    if (m_app_pid != 0)
+    {
+        // The dialog can be destroyed without going through OnClose (e.g. when the main frame
+        // closes), so the app and its shell must not outlive the dialog.
+        std::ignore = wxProcess::Kill(static_cast<int>(m_app_pid), wxSIGKILL, wxKILL_CHILDREN);
+        m_app_pid = 0;
+    }
+
     if (m_process)
     {
         // Detached wxProcess deletes itself when the app terminates, so no dangling pointer can
@@ -225,6 +242,166 @@ void VerifySampleDlg::UpdateKillButton()
     if (m_btn_kill)
     {
         m_btn_kill->Enable(m_app_pid != 0);
+    }
+}
+
+void VerifySampleDlg::TerminateApp()
+{
+    if (m_app_pid == 0)
+    {
+        return;
+    }
+
+    const long pid = m_app_pid;
+
+    m_output_timer.Stop();
+
+    // wxKILL_CHILDREN is required: a console app such as python.exe owns its console window
+    // (hosted by conhost.exe) as a child process, so killing only the app leaves the shell
+    // window open.
+    const wxKillError kill_result =
+        wxProcess::Kill(static_cast<int>(pid), wxSIGKILL, wxKILL_CHILDREN);
+    if (kill_result == wxKILL_OK)
+    {
+        AppendLog(wxString::Format("terminated app and shell (pid %ld)", pid));
+    }
+    else
+    {
+        AppendLog(wxString::Format("wxKill failed for app pid %ld (error %d)", pid,
+                                   static_cast<int>(kill_result)));
+    }
+
+    // The app may have written output right before it was killed.
+    DrainRemainingOutput();
+
+    if (m_process)
+    {
+        // Kill() never delivers wxEVT_END_PROCESS, so this object's notification was not processed
+        // by us. Per wxProcess ownership rules we must Detach() and let it delete itself --
+        // deleting it here would be a double free.
+        m_process->Detach();
+        m_process = nullptr;
+    }
+
+    m_app_pid = 0;
+    UpdateKillButton();
+}
+
+void VerifySampleDlg::OnOutputTimer(wxTimerEvent& /* event */)
+{
+    std::ignore = ReadProcessOutput();
+}
+
+bool VerifySampleDlg::ReadProcessOutput()
+{
+    if (!m_process)
+    {
+        return false;
+    }
+
+    std::array<char, 4096> buffer {};
+    bool read_any = false;
+
+    // Bound the work per poll so an app that streams output cannot starve the UI -- the next
+    // timer tick picks up whatever is left.
+    constexpr size_t MAX_READS_PER_POLL = 16;
+    for (size_t read_count = 0; read_count < MAX_READS_PER_POLL; ++read_count)
+    {
+        bool read_something = false;
+
+        // IsInputAvailable()/IsErrorAvailable() use PeekNamedPipe, so the Read() calls below
+        // cannot block waiting for data that has not been written yet.
+        if (m_process->IsInputAvailable())
+        {
+            const size_t bytes_read =
+                m_process->GetInputStream()->Read(buffer.data(), buffer.size()).LastRead();
+            if (bytes_read != 0)
+            {
+                m_stdout_buffer.append(buffer.data(), bytes_read);
+                DrainOutputBuffer(m_stdout_buffer, false);
+                read_something = true;
+            }
+        }
+
+        if (m_process->IsErrorAvailable())
+        {
+            const size_t bytes_read =
+                m_process->GetErrorStream()->Read(buffer.data(), buffer.size()).LastRead();
+            if (bytes_read != 0)
+            {
+                m_stderr_buffer.append(buffer.data(), bytes_read);
+                DrainOutputBuffer(m_stderr_buffer, true);
+                read_something = true;
+            }
+        }
+
+        if (!read_something)
+        {
+            break;
+        }
+        read_any = true;
+    }
+
+    return read_any;
+}
+
+void VerifySampleDlg::DrainRemainingOutput()
+{
+    // A poll is bounded so a live app cannot starve the UI, but once the app has exited the pipe
+    // may still hold more than one poll's worth -- a long Julia or Deno stack trace, for example.
+    // Keep draining until the pipe is empty, with a hard cap so a grandchild that inherited the
+    // write handle cannot spin this loop forever.
+    constexpr int MAX_DRAIN_PASSES = 64;
+    for (int pass = 0; pass < MAX_DRAIN_PASSES; ++pass)
+    {
+        if (!ReadProcessOutput())
+        {
+            break;
+        }
+    }
+
+    FlushOutputBuffers();
+}
+
+void VerifySampleDlg::DrainOutputBuffer(std::string& buffer, bool is_stderr)
+{
+    // Only whole lines are logged: a read can end in the middle of a line, and the remainder has to
+    // stay buffered until its newline arrives.
+    size_t newline_pos = buffer.find('\n');
+    while (newline_pos != std::string::npos)
+    {
+        std::string line = buffer.substr(0, newline_pos);
+        buffer.erase(0, newline_pos + 1);
+        if (!line.empty() && line.back() == '\r')
+        {
+            line.pop_back();
+        }
+        LogOutputLine(is_stderr, line);
+        newline_pos = buffer.find('\n');
+    }
+}
+
+void VerifySampleDlg::LogOutputLine(bool is_stderr, const std::string& line)
+{
+    const wxString text = wxString::FromUTF8(line);
+    const wxString prefix = is_stderr ? wxString("err: ") : wxString("out: ");
+    m_output_seen = true;
+    AppendLog(prefix + text);
+}
+
+void VerifySampleDlg::FlushOutputBuffers()
+{
+    // A final write may not have been newline-terminated, so emit whatever is left.
+    if (!m_stdout_buffer.empty())
+    {
+        LogOutputLine(false, m_stdout_buffer);
+        m_stdout_buffer.clear();
+    }
+
+    if (!m_stderr_buffer.empty())
+    {
+        LogOutputLine(true, m_stderr_buffer);
+        m_stderr_buffer.clear();
     }
 }
 
@@ -443,13 +620,24 @@ void VerifySampleDlg::OnRun(wxCommandEvent& /* event */)
 
     const wxString command = BuildCommand(recipe.run_exe, run_args, entry_file);
 
+    m_stdout_buffer.clear();
+    m_stderr_buffer.clear();
+    m_output_seen = false;
+
     wxExecuteEnv env;
     env.cwd = output_dir;  // samples are always run from the project's output dir for this language
 
     m_process = new wxProcess(this);
-    // wxEXEC_HIDE_CONSOLE sets STARTF_USESHOWWINDOW/SW_HIDE in the child STARTUPINFO on MSW, which
-    // also hides the sample app's first top-level window -- not just its console.
-    m_app_pid = wxExecute(command, wxEXEC_ASYNC, m_process, &env);
+    // Redirecting stdio makes the launcher's console output readable through GetInputStream() /
+    // GetErrorStream(). Every launcher in s_recipes is a console process -- the python, ruby and
+    // julia interpreters as well as the kwxts.exe and kwxlua.exe wrappers -- so without this the
+    // diagnostic they print (an uncaught exception traceback, for example) dies with the console.
+    m_process->Redirect();
+
+    // wxEXEC_SHOW_CONSOLE is required: redirecting stdio makes wxWidgets add
+    // STARTF_USESHOWWINDOW/SW_HIDE on MSW by default, which also hides the sample app's first
+    // top-level window -- not just its console.
+    m_app_pid = wxExecute(command, wxEXEC_ASYNC | wxEXEC_SHOW_CONSOLE, m_process, &env);
     if (m_app_pid == 0)
     {
         delete m_process;
@@ -461,6 +649,9 @@ void VerifySampleDlg::OnRun(wxCommandEvent& /* event */)
     AppendLog(wxString::Format("launched pid %ld: %s", m_app_pid, command));
     AppendLog(wxString::Format("cwd: %s", env.cwd));
     UpdateKillButton();
+
+    // Poll the redirected pipes so console output is shown while the app is still running.
+    m_output_timer.Start(OUTPUT_POLL_MS);
 }
 
 void VerifySampleDlg::OnKill(wxCommandEvent& /* event */)
@@ -471,49 +662,21 @@ void VerifySampleDlg::OnKill(wxCommandEvent& /* event */)
         return;
     }
 
-    const long pid = m_app_pid;
-    const wxKillError kill_result = wxProcess::Kill(static_cast<int>(pid), wxSIGKILL);
-    if (kill_result == wxKILL_OK)
-    {
-        AppendLog(wxString::Format("killed app pid %ld", pid));
-    }
-    else
-    {
-        AppendLog(wxString::Format("wxKill failed for app pid %ld (error %d)", pid,
-                                   static_cast<int>(kill_result)));
-    }
-
-    if (m_process)
-    {
-        // Kill() never delivers wxEVT_END_PROCESS, so this object's notification was not processed
-        // by us. Per wxProcess ownership rules we must Detach() and let it delete itself --
-        // deleting it here would be a double free.
-        m_process->Detach();
-        m_process = nullptr;
-    }
-    m_app_pid = 0;
-    UpdateKillButton();
+    TerminateApp();
 }
 
 void VerifySampleDlg::OnClose(wxCommandEvent& /* event */)
 {
-    if (m_app_pid != 0)
-    {
-        // Deliberately leave the app running -- use Kill if you want it gone.
-        AppendLog(
-            wxString::Format("closing dialog; app pid %ld still running (use Kill)", m_app_pid));
-    }
+    // Closing the dialog must not leave the app or its console/shell window behind.
+    TerminateApp();
 
     EndModal(wxID_CLOSE);
 }
 
 void VerifySampleDlg::OnCloseWindow(wxCloseEvent& event)
 {
-    if (m_app_pid != 0)
-    {
-        AppendLog(
-            wxString::Format("closing dialog; app pid %ld still running (use Kill)", m_app_pid));
-    }
+    // Closing the dialog must not leave the app or its console/shell window behind.
+    TerminateApp();
 
     event.Skip();
 }
@@ -523,7 +686,20 @@ void VerifySampleDlg::OnEndProcess(wxProcessEvent& event)
     const int pid = event.GetPid();
     const int exit_code = event.GetExitCode();
 
+    m_output_timer.Stop();
+
+    // Drain what the app wrote before terminating -- the streams close with the process, so
+    // anything still buffered would otherwise be lost.
+    DrainRemainingOutput();
+
     AppendLog(wxString::Format("app pid %d exited with %d", pid, exit_code));
+
+    if (!m_output_seen)
+    {
+        // Distinguishes "the app printed nothing" from "capture is broken" -- a console app that
+        // dies silently is a different problem than a missing redirect.
+        AppendLog("(the app wrote nothing to stdout or stderr)");
+    }
 
     // Processing wxEVT_END_PROCESS makes the handler responsible for deleting the wxProcess.
     if (m_process)

@@ -170,10 +170,17 @@ Code& Code::AddQuotedText(wxue::string_view text, bool translate)
                 *this += "_(";
             }
         }
+        else if (is_ruby())
+        {
+            // wxRuby3 does not bind wxGetTranslation as a module function (Wx.get_translation
+            // raises NoMethodError). wxLocale#get_string() is the documented equivalent -- it
+            // calls wxGetTranslation() internally.
+            *this += "Wx::Locale.new.get_string(";
+        }
         else
         {
-            // Free function, not a method: pass the trailing '(' and disable the operator so the
-            // closing ')' appended below completes the call for Python and Ruby alike.
+            // Python free function: pass the trailing '(' and disable the operator so the
+            // closing ')' appended below completes the call.
             Function("wxGetTranslation(", false);
         }
     }

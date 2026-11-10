@@ -136,6 +136,35 @@ static std::string_view GetSelectedString(const glz::generic& object)
     return {};
 }
 
+// Returns the string value of the property with the given (lower-case) label, or an empty string.
+static std::string GetPropertyValue(const glz::generic& object, std::string_view label)
+{
+    if (const auto& properties = FindValue(object, "m_properties"); properties.is_array())
+    {
+        for (const auto& iter: properties.get_array())
+        {
+            if (const auto& label_value = FindValue(iter, "m_label"); label_value.is_string())
+            {
+                // wxCrafter serializes labels with a trailing colon (e.g. "Name:"), so strip a
+                // single trailing ':' before comparing against the requested label.
+                std::string label_text = label_value.get<std::string>();
+                if (!label_text.empty() && label_text.back() == ':')
+                {
+                    label_text.pop_back();
+                }
+                if (wxue::is_sameas(label_text, label, wxue::CASE::either))
+                {
+                    if (const auto& prop_value = FindValue(iter, "m_value"); prop_value.is_string())
+                    {
+                        return prop_value.get<std::string>();
+                    }
+                }
+            }
+        }
+    }
+    return {};
+}
+
 // If the array contains strings, this will collect them into a vector.
 static std::vector<std::string> GetStringVector(const glz::generic& array)
 {
@@ -447,6 +476,50 @@ void WxCrafter::ProcessChild(Node* parent, const glz::generic& object)
             }
             return;
         }
+        if (value.as<int>() == 4480)
+        {
+            // wxUiEditor doesn't support wxAUI docking, so unwrap the wxAuiManager pseudo-window --
+            // its panes and toolbar become ordinary children of the manager's parent.
+
+            if (const auto& children = FindValue(object, "m_children"); children.is_array())
+            {
+                for (const auto& child: children.get_array())
+                {
+                    if (!child.is_object())
+                    {
+                        m_errors.emplace(std::format(
+                            "Invalid wxCrafter file -- child of {} is not a JSON object.",
+                            map_GenNames.at(get_GenName)));
+                        continue;
+                    }
+
+                    ProcessChild(parent, child);
+                }
+            }
+            return;
+        }
+        if (value.as<int>() == 4506 || value.as<int>() == 4507)
+        {
+            // wxGrid column/row labels -- wxUiEditor stores these as semicolon-separated
+            // string lists on the parent wxGrid rather than as child nodes.
+            if (parent->is_Gen(gen_wxGrid))
+            {
+                const auto prop =
+                    value.as<int>() == 4506 ? prop_col_label_values : prop_row_label_values;
+                const std::string label = GetPropertyValue(object, "name");
+                if (!label.empty())
+                {
+                    std::string labels = parent->as_string(prop);
+                    if (!labels.empty())
+                    {
+                        labels += ';';
+                    }
+                    labels += label;
+                    parent->set_value(prop, labels);
+                }
+            }
+            return;
+        }
 
         MSG_ERROR(std::format("Unrecognized child type: {}", value.as<int>()));
         // m_errors.emplace("Unrecognized child type!");
@@ -468,9 +541,22 @@ void WxCrafter::ProcessChild(Node* parent, const glz::generic& object)
         }
     }
 
-    if (get_GenName == gen_tool && parent->is_Gen(gen_wxAuiToolBar))
+    if (get_GenName == gen_AuiToolBar)
+    {
+        // Top-level form in wxCrafter, but only the control can be nested inside another window.
+        get_GenName = gen_wxAuiToolBar;
+    }
+
+    if (get_GenName == gen_tool &&
+        (parent->is_Gen(gen_wxAuiToolBar) || parent->is_Gen(gen_AuiToolBar)))
     {
         get_GenName = gen_auitool;
+    }
+
+    if (get_GenName == gen_dataViewColumn && parent->is_Gen(gen_wxDataViewListCtrl))
+    {
+        // wxDataViewListCtrl only accepts dataViewListColumn children.
+        get_GenName = gen_dataViewListColumn;
     }
 
     NodeSharedPtr new_node = NodeCreation.CreateNode(get_GenName, parent).first;
@@ -1078,6 +1164,12 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const glz::generic& val
 {
     GenEnum::PropName prop_name = prop_unknown;
 
+    if (node->is_Gen(gen_wxDataViewCtrl) && (wxue::is_sameas(name, "generated model class name") ||
+                                             wxue::is_sameas(name, "container item has columns")))
+    {
+        return prop_processed;
+    }
+
     if (const auto* result = map_crafter_props.find(name); result != map_crafter_props.end())
     {
         prop_name = result->second;
@@ -1086,7 +1178,8 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const glz::generic& val
     {
         if (wxue::is_sameas(name, "name"))
         {
-            if (node->is_Gen(gen_TreeListCtrlColumn))
+            if (node->is_Gen(gen_TreeListCtrlColumn) || node->is_Gen(gen_dataViewColumn) ||
+                node->is_Gen(gen_dataViewListColumn))
             {
                 prop_name = prop_label;
             }
@@ -1488,6 +1581,70 @@ void WxCrafter::KnownProperty(Node* node, const glz::generic& value, GenEnum::Pr
     if (prop_name == prop_kind && node->is_Gen(gen_ribbonTool))
     {
         node->set_value(prop_kind, GetSelectedString(value));
+    }
+
+    if (node->is_Gen(gen_dataViewColumn) || node->is_Gen(gen_dataViewListColumn))
+    {
+        if (prop_name == prop_type)
+        {
+            const std::string_view col_type = GetSelectedString(value);
+            if (!col_type.empty())
+            {
+                if (wxue::is_sameas(col_type, "check"))
+                {
+                    node->set_value(prop_type, "Toggle");
+                }
+                else if (wxue::is_sameas(col_type, "icontext"))
+                {
+                    node->set_value(prop_type, "IconText");
+                }
+                else if (wxue::is_sameas(col_type, "progress"))
+                {
+                    node->set_value(prop_type, "Progress");
+                }
+                else if (wxue::is_sameas(col_type, "bitmap") && node->is_Gen(gen_dataViewColumn))
+                {
+                    node->set_value(prop_type, "Bitmap");
+                }
+                else if (wxue::is_sameas(col_type, "date") && node->is_Gen(gen_dataViewColumn))
+                {
+                    node->set_value(prop_type, "Date");
+                }
+                else
+                {
+                    // "text", "choice" and anything unrecognized, plus options not supported
+                    // by a wxDataViewListCtrl column (bitmap/date), fall back to Text.
+                    node->set_value(prop_type, "Text");
+                }
+            }
+            return;
+        }
+        if (prop_name == prop_mode)
+        {
+            if (const std::string_view cell_mode = GetSelectedString(value); !cell_mode.empty())
+            {
+                node->set_value(prop_mode, cell_mode);
+            }
+            return;
+        }
+        if (prop_name == prop_alignment)
+        {
+            // wxCrafter's "Alignment" choice property arrives as prop_alignment.
+            if (const std::string_view col_align = GetSelectedString(value); !col_align.empty())
+            {
+                node->set_value(prop_align, col_align);
+            }
+            return;
+        }
+        if (prop_name == prop_flags)
+        {
+            // wxCrafter serializes "Column Flags" as a colStringValue, not m_value.
+            if (const auto& flags = FindValue(value, "stringValue"); flags.is_string())
+            {
+                node->set_value(prop_flags, flags.get<std::string>());
+            }
+            return;
+        }
     }
 
     if (prop_name != prop_unknown)

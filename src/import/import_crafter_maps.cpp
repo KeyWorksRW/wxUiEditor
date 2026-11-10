@@ -73,7 +73,9 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4467, gen_wxStdDialogButtonSizer },  // verified
     { 4469, gen_wxDataViewListCtrl },
     { 4470, gen_wxDataViewTreeCtrl },
-    { 4471, gen_wxBannerWindow },         // verified
+    { 4471, gen_wxBannerWindow },  // verified
+    { 4472, gen_dataViewColumn },
+    { 4473, gen_wxDataViewCtrl },
     { 4474, gen_wxCommandLinkButton },    // verified
     { 4475, gen_wxCollapsiblePane },      // verified
     { 4477, gen_wxInfoBar },              // verified
@@ -99,16 +101,18 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4502, gen_ribbonTool },             // toggle tool
     { 4503, gen_ribbonSeparator },        // verified
     { 4504, gen_toolSeparator },
-    { 4509, gen_wxTreeListCtrl },      // verified
-    { 4510, gen_TreeListCtrlColumn },  // verified
-    { 4511, gen_wxSimplebook },        // verified
-    { 4513, gen_wxToggleButton },      // verified
-    { 4519, gen_wxAnimationCtrl },     // needs support for load and play
+    { 4509, gen_wxTreeListCtrl },        // verified
+    { 4510, gen_TreeListCtrlColumn },    // verified
+    { 4511, gen_wxSimplebook },          // verified
+    { 4513, gen_wxBitmapToggleButton },  // verified
+    { 4518, gen_AuiToolBar },            // verified
+    { 4519, gen_wxAnimationCtrl },       // needs support for load and play
     { 4520, gen_wxBitmapComboBox },
-    { 4521, gen_wxRearrangeCtrl },      // verified
-    { 4522, gen_wxSimpleHtmlListBox },  // verified
-    { 4523, gen_wxActivityIndicator },  // verified
-    { 4524, gen_wxTimePickerCtrl },     // verified
+    { 4521, gen_wxRearrangeCtrl },         // verified
+    { 4522, gen_wxSimpleHtmlListBox },     // verified
+    { 4523, gen_wxActivityIndicator },     // verified
+    { 4524, gen_wxTimePickerCtrl },        // verified
+    { 4525, gen_wxPopupTransientWindow },  // verified
 
     { 4414,
       gen_unknown },  // column header for wxListView, supported directly as a wxListView property
@@ -116,8 +120,6 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4476, gen_unknown },  // "pane" for gen_wxCollapsiblePane -- supported directly
 
     { 4455, gen_unknown /* WXTREEBOOK_SUB_PAGE */ },
-    { 4472, gen_unknown /* WXDATAVIEWCOL */ },
-    { 4473, gen_unknown /* WXDATAVIEWTREELISTCTRL */ },
     { 4478, gen_unknown /* WXINFOBARBUTTON */ },
     { 4480, gen_unknown /* WXAUIMANAGER */ },
     { 4481, gen_unknown /* WXIMAGELIST */ },
@@ -129,11 +131,10 @@ constexpr auto map_id_generator = frozen::make_map<int, GenEnum::GenName>({
     { 4507, gen_unknown /* WXGRIDROW */ },
     { 4508, gen_unknown /* WXMEDIACTRL */ },
     { 4512, gen_unknown /* WXTASKBARICON */ },
-    { 4514, gen_unknown /* WXAUITOOLBARLABEL */ },
-    { 4515, gen_unknown /* WXAUITOOLBARITEM_SPACE */ },
-    { 4516, gen_unknown /* WXAUITOOLBARITEM_STRETCHSPACE */ },
-    { 4517, gen_unknown /* WXTOOLBARITEM_STRETCHSPACE */ },
-    { 4518, gen_unknown /* WXAUITOOLBARTOPLEVEL */ },
+    { 4514, gen_auitool_label /* WXAUITOOLBARLABEL */ },
+    { 4515, gen_auitool_spacer /* WXAUITOOLBARITEM_SPACE */ },
+    { 4516, gen_auitool_stretchable /* WXAUITOOLBARITEM_STRETCHSPACE */ },
+    { 4517, gen_toolStretchable /* WXTOOLBARITEM_STRETCHSPACE */ },
 });
 
 // std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
@@ -147,12 +148,14 @@ constexpr auto map_crafter_props = frozen::make_map<std::string_view, GenEnum::P
     { "allow cell editing", prop_editing },
     { "bg colour", prop_background_colour },
     { "bitmap size", prop_bitmapsize },
+    { "cell mode", prop_mode },
     { "choices", prop_contents },
     { "class decorator", prop_class_decoration },
     { "class name", prop_subclass },
     { "col label horizontal align", prop_col_label_horiz_alignment },
     { "col label vertical align", prop_col_label_vert_alignment },
     { "column flags", prop_flags },
+    { "column type", prop_type },
     { "default button", prop_default },
     { "default path", prop_defaultfolder },
     { "enable window persistency", prop_persist },

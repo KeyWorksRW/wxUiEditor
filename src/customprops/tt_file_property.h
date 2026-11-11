@@ -32,7 +32,7 @@ public:
     bool DoSetAttribute(const wxString& name, wxVariant& value) override;
 
     static wxValidator* GetClassValidator();
-    virtual wxValidator* DoGetValidator() const override;
+    wxValidator* DoGetValidator() const override;
 
 protected:
     bool DisplayEditorDialog(wxPropertyGrid* pg,  // NOLINT: matches base class

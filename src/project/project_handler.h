@@ -340,6 +340,8 @@ private:
                                                    Node*& form) const;
     [[nodiscard]] wxue::string GetProjectOutputPath(GenLang language) const;
     [[nodiscard]] wxue::string GetBaseFilename(Node* form, GenLang language) const;
+    /// Appends base_file to result; a directory-qualified base_file is resolved relative to the
+    /// project file's directory instead, since it already includes the output folder.
     void MergeBaseFilePath(wxue::string& result, const wxue::string& base_file) const;
 
     // Helper functions for FindWxueFunctions complexity reduction

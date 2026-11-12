@@ -671,30 +671,19 @@ wxue::string ProjectHandler::GetBaseFilename(Node* form, GenLang language) const
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void ProjectHandler::MergeBaseFilePath(wxue::string& result, const wxue::string& base_file) const
 {
-    // TODO: [Randalphwa - 01-06-2024] It's possible that the user created the filename using a
-    // folder prefix that is the same as the project's base directory. If that's the case, the
-    // prefix should be removed here.
+    wxue::string file_path = base_file;
+    file_path.backslashestoforward();
 
-    result.backslashestoforward();
-    if (base_file.contains("/"))
+    // The file properties store a directory-qualified name relative to the project file's
+    // directory -- that is what the property editor's file dialogs write. Such a name already
+    // contains the output folder (or an explicit path such as "../kwxFortran/tests/quick/"), so
+    // prefixing result would duplicate the folder. Only a bare filename is merged into result.
+    if (file_path.contains("/"))
     {
-        if (result.back() == '/')
-        {
-            result.pop_back();
-        }
-
-        // If the first part of the base_file is a folder and it matches the last folder in
-        // result, then assume the folder name is duplicated in base_file. Remove the folder
-        // from result before adding the base_file path.
-        if (auto end_folder = base_file.find('/'); end_folder != std::string::npos)
-        {
-            if (result.ends_with(base_file.substr(0, end_folder)))
-            {
-                result.erase(result.size() - end_folder, end_folder);
-            }
-        }
+        result = get_ProjectPath();
     }
-    result.append_filename(base_file);
+
+    result.append_filename(file_path);
     result.make_absolute();
     result.backslashestoforward();
 }

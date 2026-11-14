@@ -1,0 +1,6136 @@
+{
+  "schema": 1,
+  "generated": "2026-11-13",
+  "kwxgen": {
+    "version": "1.0.0",
+    "headers_hash": "3ee30570e758855d",
+    "report": "kwxgen coverage --headers include --defs src/kwx_defs.cpp",
+    "class_count": 819
+  },
+  "port_status": {
+    "fortran": {
+      "path": "C:\\rwCode\\wxLanguages\\kwxFortran\\.private\\samples_status.md",
+      "available": true,
+      "entries": 94,
+      "ports": 12
+    },
+    "go": {
+      "path": "C:\\rwCode\\wxLanguages\\kwxGO\\.private\\samples_status.md",
+      "available": true,
+      "entries": 95,
+      "ports": 9
+    },
+    "julia": {
+      "path": "C:\\rwCode\\wxLanguages\\kwxJulia\\.private\\samples_status.md",
+      "available": true,
+      "entries": 93,
+      "ports": 6
+    },
+    "lua": {
+      "path": "C:\\rwCode\\wxLanguages\\kwxLuaJIT\\.private\\samples_status.md",
+      "available": true,
+      "entries": 93,
+      "ports": 6
+    },
+    "rust": {
+      "path": "C:\\rwCode\\wxLanguages\\kwxRust\\.private\\samples_status.md",
+      "available": true,
+      "entries": 93,
+      "ports": 2
+    },
+    "typescript": {
+      "path": "C:\\rwCode\\wxLanguages\\kwxTypeScript\\.private\\samples_status.md",
+      "available": true,
+      "entries": 93,
+      "ports": 27
+    }
+  },
+  "languages": [
+    "fortran",
+    "go",
+    "julia",
+    "lua",
+    "rust",
+    "typescript"
+  ],
+  "states": [
+    "verified",
+    "absent",
+    "descriptor-missing",
+    "exercised-unverified",
+    "unknown"
+  ],
+  "verified_entries": 48,
+  "counts": {
+    "fortran": {
+      "verified": 19,
+      "absent": 6,
+      "descriptor-missing": 0,
+      "exercised-unverified": 32,
+      "unknown": 33
+    },
+    "go": {
+      "verified": 25,
+      "absent": 2,
+      "descriptor-missing": 0,
+      "exercised-unverified": 55,
+      "unknown": 8
+    },
+    "julia": {
+      "verified": 17,
+      "absent": 8,
+      "descriptor-missing": 0,
+      "exercised-unverified": 31,
+      "unknown": 34
+    },
+    "lua": {
+      "verified": 21,
+      "absent": 2,
+      "descriptor-missing": 0,
+      "exercised-unverified": 48,
+      "unknown": 19
+    },
+    "rust": {
+      "verified": 18,
+      "absent": 11,
+      "descriptor-missing": 0,
+      "exercised-unverified": 0,
+      "unknown": 61
+    },
+    "typescript": {
+      "verified": 23,
+      "absent": 2,
+      "descriptor-missing": 0,
+      "exercised-unverified": 64,
+      "unknown": 1
+    }
+  },
+  "ratchet": [
+    {
+      "class": "wxBoxSizer",
+      "role": "add_sizer"
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "add_window"
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "ctor"
+    },
+    {
+      "class": "wxDialog",
+      "role": "center"
+    },
+    {
+      "class": "wxDialog",
+      "role": "ctor"
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_sizer"
+    },
+    {
+      "class": "wxFont",
+      "role": "create"
+    },
+    {
+      "class": "wxFrame",
+      "role": "bind"
+    },
+    {
+      "class": "wxFrame",
+      "role": "center"
+    },
+    {
+      "class": "wxFrame",
+      "role": "ctor"
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_min_size"
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "ctor"
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "create"
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "ctor"
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_font"
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_value"
+    }
+  ],
+  "rows": [
+    {
+      "class": "wxBitmap",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_bitmap_delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "collpane",
+            "grid",
+            "minimal",
+            "notebook",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxBitmap",
+      "role": "from_base64",
+      "verified_count": 5,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_bitmap_create_from_base64",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewBitmapFromBase64",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "wxBitmap_CreateFromBase64",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "CreateFromBase64",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Bitmap::create_from_base64",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "createWxBitmapFromBase64",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxBitmap",
+      "role": "get_bitmap",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_static_bitmap_get_bitmap",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "GetBitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "get_bitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "GetBitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "StaticBitmap::get_bitmap",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "GetBitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "calendar",
+            "combo",
+            "display",
+            "font",
+            "layout",
+            "menu",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "add_sizer",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_sizer_add_sizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "AddSizerFlags",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "add_sizer!",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "AddSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Sizer::add_sizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "AddSizer",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "add_spacer",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_box_sizer_add_spacer",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "AddSpacer",
+          "reason": "port-grep",
+          "ports": [
+            "collpane",
+            "combo",
+            "font"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "add_spacer",
+          "reason": "port-grep",
+          "ports": [
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "AddSpacer",
+          "reason": "port-grep",
+          "ports": [
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "BoxSizer::add_spacer",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "AddSpacer",
+          "reason": "port-grep",
+          "ports": [
+            "collpane",
+            "combo",
+            "dialogs",
+            "font",
+            "popup",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "add_window",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_sizer_add_window",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "AddWindowFlags",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "add_window!",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "AddWindow",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Sizer::add_window",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "AddWindow",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "ctor",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_box_sizer_create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewBoxSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "wxBoxSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "BoxSizer::new",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "createWxBoxSizer",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_object_delete",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "destroy",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "go": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "lua": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "typescript": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxBoxSizer",
+      "role": "ptr",
+      "verified_count": 3,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "BoxSizer::as_ptr",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "ptr",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "bind",
+      "verified_count": 5,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_bind",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "Base.bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "EvtHandler::bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "Bind",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "bind_id",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_bind",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "BindId",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.bind",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "EvtHandler::bind",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "center",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_window_center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "center!",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Window::center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "Center",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "ctor",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_dialog_create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewDialog",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "wxDialog",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Dialog::new",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "createWxDialog",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_delete",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "destroy",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::destroy",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "popup",
+            "propgrid",
+            "richtext",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "end_modal",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_dialog_end_modal",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "EndModal",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "end_modal!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "EndModal",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Dialog::end_modal",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "EndModal",
+          "reason": "port-grep",
+          "ports": [
+            "dialogs"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "hide",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_window_hide",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "hide",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::hide",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "grid",
+            "layout",
+            "menu",
+            "notebook",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "ptr",
+      "verified_count": 3,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Ptr",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Dialog::as_ptr",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "ptr",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_affirmative_id",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_dialog_set_affirmative_id",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "SetAffirmativeId",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_affirmative_id!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "SetAffirmativeId",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Dialog::set_affirmative_id",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "unknown",
+          "symbol": "SetAffirmativeId",
+          "reason": "",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_escape_id",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_dialog_set_escape_id",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "SetEscapeId",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_escape_id!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "SetEscapeId",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Dialog::set_escape_id",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetEscapeId",
+          "reason": "port-grep",
+          "ports": [
+            "dialogs"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_font",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_font",
+          "reason": "port-grep",
+          "ports": [
+            "combo",
+            "font"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetFont",
+          "reason": "port-grep",
+          "ports": [
+            "combo",
+            "font",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_font",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetFont",
+          "reason": "port-grep",
+          "ports": [
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_font",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetFont",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "caret",
+            "combo",
+            "dialogs",
+            "drawing",
+            "font",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_icon",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_top_level_window_set_icon",
+          "reason": "port-grep",
+          "ports": [
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetIcon",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_icon!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetIcon",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "TopLevelWindow::set_icon",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetIcon",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "event",
+            "font",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_min_size",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_top_level_window_set_min_size",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetMinSize",
+          "reason": "port-grep",
+          "ports": [
+            "font",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_min_size!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "SetMinSize",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "TopLevelWindow::set_min_size",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetMinSize",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "display",
+            "event",
+            "preferences",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_size",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_size",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_size!",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "caret"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_size",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "combo",
+            "dialogs",
+            "drawing",
+            "menu",
+            "popup",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_sizer",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_window_set_sizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "SetSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "set_sizer!",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "SetSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Window::set_sizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "SetSizer",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "set_title",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_top_level_window_set_title",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetTitle",
+          "reason": "port-grep",
+          "ports": [
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_title!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "SetTitle",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "TopLevelWindow::set_title",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetTitle",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "menu",
+            "notebook",
+            "propgrid"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "show",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_dialog_show",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.show",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Dialog::show",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxDialog",
+      "role": "show_modal",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_dialog_show_modal",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "ShowModal",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "show_modal",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "ShowModal",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Dialog::show_modal",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "ShowModal",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "collpane",
+            "combo",
+            "dialogs",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "popup",
+            "propgrid",
+            "richtext",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFont",
+      "role": "create",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_font_create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewFont",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "wxFont",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Font::new",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "createWxFont",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxFont",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_font_delete",
+          "reason": "port-grep",
+          "ports": [
+            "combo",
+            "font",
+            "grid"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "bind",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_evt_handler_bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "Base.bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "EvtHandler::bind",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "Bind",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "bind_id",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_bind",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "BindId",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.bind",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "EvtHandler::bind",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "center",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_window_center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "center!",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Window::center",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "Center",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "create_statusbar",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_frame_create_status_bar",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "collpane",
+            "font",
+            "minimal",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "CreateStatusBar",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "collpane",
+            "font",
+            "minimal",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "create_status_bar",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "CreateStatusBar",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Frame::create_status_bar",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "CreateStatusBar",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "caret",
+            "collpane",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "layout",
+            "menu",
+            "minimal",
+            "popup",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "ctor",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_frame_create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewFrame",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "wxFrame",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Frame::new",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "createWxFrame",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_delete",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "destroy",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::destroy",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "popup",
+            "propgrid",
+            "richtext",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "hide",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_window_hide",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "hide",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::hide",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "grid",
+            "layout",
+            "menu",
+            "notebook",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "ptr",
+      "verified_count": 3,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Ptr",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Frame::as_ptr",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "ptr",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_font",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_font",
+          "reason": "port-grep",
+          "ports": [
+            "combo",
+            "font"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetFont",
+          "reason": "port-grep",
+          "ports": [
+            "combo",
+            "font",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_font",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetFont",
+          "reason": "port-grep",
+          "ports": [
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_font",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetFont",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "caret",
+            "combo",
+            "dialogs",
+            "drawing",
+            "font",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_icon",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_frame_set_icon",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "collpane",
+            "font",
+            "grid",
+            "minimal",
+            "notebook"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetIcon",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_icon!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetIcon",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Frame::set_icon",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetIcon",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "event",
+            "font",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_menubar",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_frame_set_menu_bar",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "minimal",
+            "notebook",
+            "preferences",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetMenuBar",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_menu_bar!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetMenuBar",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Frame::set_menu_bar",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetMenuBar",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_min_size",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_top_level_window_set_min_size",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "SetMinSize",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "set_min_size!",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "SetMinSize",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "TopLevelWindow::set_min_size",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "SetMinSize",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_size",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_size",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_size!",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "caret"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_size",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "combo",
+            "dialogs",
+            "drawing",
+            "menu",
+            "popup",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_sizer",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_sizer",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "notebook",
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetSizer",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_sizer!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetSizer",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_sizer",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetSizer",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "event",
+            "font",
+            "layout",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "set_title",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_frame_set_title",
+          "reason": "port-grep",
+          "ports": [
+            "notebook"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetTitle",
+          "reason": "port-grep",
+          "ports": [
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_title!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "SetTitle",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Frame::set_title",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetTitle",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "menu",
+            "notebook",
+            "propgrid"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxFrame",
+      "role": "show",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "minimal",
+            "notebook",
+            "preferences",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.show",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::show",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "align_h",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_sizer_flags_center_horizontal",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "Align",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "center_horizontal!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "CenterHorizontal",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::center_horizontal",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "CenterHorizontal",
+          "reason": "port-grep",
+          "ports": [
+            "event"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "align_v",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_sizer_flags_center_vertical",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "Align",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "center_vertical!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "CenterVertical",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::center_vertical",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "CenterVertical",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "dialogs",
+            "display",
+            "layout",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "border",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_sizer_flags_border",
+          "reason": "port-grep",
+          "ports": [
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Border",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "border!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Border",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::border",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Border",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "calendar",
+            "collpane",
+            "combo",
+            "dialogs",
+            "display",
+            "event",
+            "font",
+            "layout",
+            "popup",
+            "preferences",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "bottom",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_sizer_flags_bottom",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Bottom",
+          "reason": "port-grep",
+          "ports": [
+            "notebook"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "bottom!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Bottom",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::bottom",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Bottom",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "notebook",
+            "richtext",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "ctor",
+      "verified_count": 1,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_sizer_flags_create",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewSizerFlags",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "wxSizerFlags",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Create",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::new",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "createWxSizerFlags",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "config",
+            "dialogs",
+            "display",
+            "layout",
+            "popup",
+            "preferences",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_sizer_flags_delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "expand",
+      "verified_count": 1,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_sizer_flags_expand",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Expand",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "expand!",
+          "reason": "port-grep",
+          "ports": [
+            "about"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Expand",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::expand",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Expand",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "notebook",
+            "popup",
+            "preferences",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "left",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_sizer_flags_left",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Left",
+          "reason": "port-grep",
+          "ports": [
+            "collpane",
+            "notebook"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "left!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Left",
+          "reason": "port-grep",
+          "ports": [
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::left",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Left",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "collpane",
+            "dialogs",
+            "grid",
+            "notebook",
+            "richtext",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "proportion",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_sizer_flags_proportion",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Proportion",
+          "reason": "port-grep",
+          "ports": [
+            "collpane"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "proportion!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Proportion",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::proportion",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Proportion",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "layout"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "right",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_sizer_flags_right",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Right",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "collpane",
+            "combo",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "right!",
+          "reason": "port-grep",
+          "ports": [
+            "about"
+          ]
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Right",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::right",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Right",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "aui",
+            "collpane",
+            "dialogs",
+            "layout",
+            "menu",
+            "notebook",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxSizerFlags",
+      "role": "top",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_sizer_flags_top",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Top",
+          "reason": "port-grep",
+          "ports": [
+            "notebook"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "top!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Top",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "SizerFlags::top",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Top",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "notebook",
+            "richtext",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "ctor",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_static_bitmap_create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewStaticBitmap",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "wxStaticBitmap",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "StaticBitmap::new",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "createWxStaticBitmap",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_static_bitmap_delete",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "destroy",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::destroy",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "popup",
+            "propgrid",
+            "richtext",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "hide",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_window_hide",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "hide",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::hide",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "grid",
+            "layout",
+            "menu",
+            "notebook",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "ptr",
+      "verified_count": 3,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "StaticBitmap::as_ptr",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "ptr",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "set_bitmap",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_static_bitmap_set_bitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetBitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_bitmap!",
+          "reason": "port-grep",
+          "ports": [
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetBitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "StaticBitmap::set_bitmap",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetBitmap",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "display",
+            "menu",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "set_min_size",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_min_size",
+          "reason": "port-grep",
+          "ports": [
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetMinSize",
+          "reason": "port-grep",
+          "ports": [
+            "font",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_min_size!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "SetMinSize",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_min_size",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetMinSize",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "display",
+            "event",
+            "preferences",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "set_size",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_size",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_size!",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "caret"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_size",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "combo",
+            "dialogs",
+            "drawing",
+            "menu",
+            "popup",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStaticBitmap",
+      "role": "show",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "minimal",
+            "notebook",
+            "preferences",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.show",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::show",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "add_button",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_std_dialog_button_sizer_add_button",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "AddButton",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "add_button!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "AddButton",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "StdDialogButtonSizer::add_button",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "AddButton",
+          "reason": "port-grep",
+          "ports": [
+            "dialogs"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "add_window",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_sizer_add_window",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "notebook",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "AddWindowFlags",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "add_window!",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "AddWindow",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Sizer::add_window",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "AddWindow",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "create",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_dialog_create_std_dialog_button_sizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "CreateStdDialogButtonSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "wxStdDialogButtonSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "CreateStdDialogButtonSizer",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "StdDialogButtonSizer::new",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "CreateStdDialogButtonSizer",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "ctor",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_std_dialog_button_sizer_create",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "NewStdDialogButtonSizer",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "wxStdDialogButtonSizer",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "CreateStdDialogButtonSizer",
+          "reason": "port-grep",
+          "ports": [
+            "calendar"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "StdDialogButtonSizer::new",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "CreateStdDialogButtonSizer",
+          "reason": "port-grep",
+          "ports": [
+            "calendar",
+            "dialogs",
+            "event"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_object_delete",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "destroy",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "go": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "lua": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        },
+        "typescript": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_method",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "ptr",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Ptr",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Ptr",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "StdDialogButtonSizer::as_ptr",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "ptr",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxStdDialogButtonSizer",
+      "role": "realize",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_std_dialog_button_sizer_realize",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "unknown",
+          "symbol": "Realize",
+          "reason": "",
+          "ports": []
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "realize!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "Realize",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "StdDialogButtonSizer::realize",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Realize",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "richtext",
+            "toolbar"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "bind",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_bind",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.bind",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "EvtHandler::bind",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "bind_id",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_bind",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "BindId",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.bind",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "EvtHandler::bind",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Bind",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "ctor",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_text_ctrl_create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "NewTextCtrl",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "wxTextCtrl",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Create",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "TextCtrl::new",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "createWxTextCtrl",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "delete",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_evt_handler_delete",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "Base.delete!",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "caret",
+            "minimal",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:not_supported",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Delete",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "archive",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "destroy",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::destroy",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Destroy",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "popup",
+            "propgrid",
+            "richtext",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "hide",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_window_hide",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "hide",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::hide",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Hide",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "grid",
+            "layout",
+            "menu",
+            "notebook",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "ptr",
+      "verified_count": 3,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "absent",
+          "symbol": "",
+          "reason": "unsupported:no_naming",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "Ptr",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "TextCtrl::as_ptr",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "ptr",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_font",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_window_set_font",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "SetFont",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "set_font",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "SetFont",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "Window::set_font",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "SetFont",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_label",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "unknown",
+          "symbol": "wx_control_set_label",
+          "reason": "",
+          "ports": []
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetLabel",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "collpane",
+            "font"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_label!",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "popup"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetLabel",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Control::set_label",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetLabel",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "calendar",
+            "collpane",
+            "dialogs",
+            "layout",
+            "popup",
+            "preferences",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_min_size",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_min_size",
+          "reason": "port-grep",
+          "ports": [
+            "preferences"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetMinSize",
+          "reason": "port-grep",
+          "ports": [
+            "font",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_min_size!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "unknown",
+          "symbol": "SetMinSize",
+          "reason": "",
+          "ports": []
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_min_size",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetMinSize",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "dialogs",
+            "display",
+            "event",
+            "preferences",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_size",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_size",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "exercised-unverified",
+          "symbol": "set_size!",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "caret"
+          ]
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_size",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetSize",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "combo",
+            "dialogs",
+            "drawing",
+            "menu",
+            "popup",
+            "propgrid",
+            "toolbar",
+            "widgets"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_size_hints",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_set_size_hints",
+          "reason": "port-grep",
+          "ports": [
+            "grid"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "SetSizeHints",
+          "reason": "port-grep",
+          "ports": [
+            "calendar",
+            "collpane",
+            "combo",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "set_size_hints!",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "SetSizeHints",
+          "reason": "port-grep",
+          "ports": [
+            "calendar",
+            "combo",
+            "grid"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::set_size_hints",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "SetSizeHints",
+          "reason": "port-grep",
+          "ports": [
+            "aui",
+            "calendar",
+            "collpane",
+            "combo",
+            "dialogs",
+            "event",
+            "layout",
+            "propgrid"
+          ]
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "set_value",
+      "verified_count": 6,
+      "ratchet": true,
+      "cells": {
+        "fortran": {
+          "state": "verified",
+          "symbol": "wx_text_ctrl_set_value",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "go": {
+          "state": "verified",
+          "symbol": "SetValue",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "julia": {
+          "state": "verified",
+          "symbol": "set_value!",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "lua": {
+          "state": "verified",
+          "symbol": "SetValue",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "rust": {
+          "state": "verified",
+          "symbol": "TextCtrl::set_value",
+          "reason": "verified.json",
+          "ports": []
+        },
+        "typescript": {
+          "state": "verified",
+          "symbol": "SetValue",
+          "reason": "verified.json",
+          "ports": []
+        }
+      }
+    },
+    {
+      "class": "wxTextCtrl",
+      "role": "show",
+      "verified_count": 0,
+      "ratchet": false,
+      "cells": {
+        "fortran": {
+          "state": "exercised-unverified",
+          "symbol": "wx_window_show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "grid",
+            "minimal",
+            "notebook",
+            "preferences",
+            "wizard"
+          ]
+        },
+        "go": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "calendar",
+            "collpane",
+            "combo",
+            "font",
+            "minimal",
+            "notebook",
+            "propgrid"
+          ]
+        },
+        "julia": {
+          "state": "unknown",
+          "symbol": "Base.show",
+          "reason": "",
+          "ports": []
+        },
+        "lua": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "animate",
+            "calendar",
+            "combo",
+            "grid",
+            "minimal",
+            "splash"
+          ]
+        },
+        "rust": {
+          "state": "unknown",
+          "symbol": "Window::show",
+          "reason": "",
+          "ports": []
+        },
+        "typescript": {
+          "state": "exercised-unverified",
+          "symbol": "Show",
+          "reason": "port-grep",
+          "ports": [
+            "about",
+            "animate",
+            "aui",
+            "calendar",
+            "caret",
+            "collpane",
+            "combo",
+            "config",
+            "dialogs",
+            "display",
+            "drawing",
+            "event",
+            "font",
+            "grid",
+            "layout",
+            "menu",
+            "minimal",
+            "notebook",
+            "popup",
+            "preferences",
+            "propgrid",
+            "richtext",
+            "splash",
+            "toolbar",
+            "widgets",
+            "wizard"
+          ]
+        }
+      }
+    }
+  ],
+  "form": {
+    "project": "quick.wxui",
+    "nodes": [
+      {
+        "name": "kwxMainFrame",
+        "class": "wxFrame",
+        "requirements": [
+          {
+            "class": "wxFrame",
+            "role": "ctor"
+          },
+          {
+            "class": "wxFrame",
+            "role": "set_title"
+          },
+          {
+            "class": "wxFrame",
+            "role": "set_min_size"
+          }
+        ]
+      },
+      {
+        "name": "MainTest",
+        "class": "wxDialog",
+        "requirements": [
+          {
+            "class": "wxDialog",
+            "role": "ctor"
+          },
+          {
+            "class": "wxDialog",
+            "role": "set_title"
+          },
+          {
+            "class": "wxDialog",
+            "role": "set_size"
+          },
+          {
+            "class": "wxDialog",
+            "role": "center"
+          },
+          {
+            "class": "wxDialog",
+            "role": "bind"
+          }
+        ]
+      }
+    ],
+    "violations": [
+      {
+        "name": "kwxMainFrame",
+        "class": "wxFrame",
+        "roles": [
+          "ctor",
+          "set_min_size",
+          "set_title"
+        ],
+        "blocking_langs": [
+          "fortran",
+          "go",
+          "julia",
+          "lua",
+          "rust",
+          "typescript"
+        ]
+      },
+      {
+        "name": "MainTest",
+        "class": "wxDialog",
+        "roles": [
+          "bind",
+          "center",
+          "ctor",
+          "set_size",
+          "set_title"
+        ],
+        "blocking_langs": [
+          "fortran",
+          "go",
+          "julia",
+          "lua",
+          "rust",
+          "typescript"
+        ]
+      }
+    ],
+    "unresolved": [],
+    "unresolved_count": 0
+  }
+}

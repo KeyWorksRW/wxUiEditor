@@ -7,10 +7,17 @@
 
 #include "gen_go.h"
 
-#include <set>
+#include <string>
+#include <string_view>
+
+#include <wx/file.h>
+#include <wx/filename.h>
+#include <wx/utils.h>  // wxGetEnv
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "ffi_emit.h"         // EmitFfiFormBody, GetFfiFormInfo
+#include "ffi_ui.h"           // IsFfiUiLanguage
 #include "gen_common.h"       // Common component functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
@@ -18,10 +25,61 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "write_code.h"       // Write code to Scintilla or file
 
-#include "wxue_namespace/wxue_string.h"  // wxue::string
-
-using namespace code;
 using namespace GenEnum;
+
+namespace gen_go_detail
+{
+    // Reads the module path out of kwxGO/go.mod so the generated import matches the repository
+    // instead of an unrelated hardcoded path. WXUE_KWXGO_DIR overrides the sibling checkout.
+    [[nodiscard]] std::string GetWxModulePath()
+    {
+        wxFileName go_mod;
+        wxString kwxgo_dir;
+        if (wxGetEnv("WXUE_KWXGO_DIR", &kwxgo_dir) && !kwxgo_dir.empty())
+        {
+            go_mod.AssignDir(kwxgo_dir);
+        }
+        else
+        {
+            go_mod.AssignDir(wxString(Project.get_ProjectPath()) + "/../kwxGO");
+            go_mod.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE);
+        }
+        go_mod.SetFullName("go.mod");
+
+        wxFile file;
+        if (file.Open(go_mod.GetFullPath(), wxFile::read))
+        {
+            wxString content;
+            if (file.ReadAll(&content))
+            {
+                const std::string text = content.utf8_string();
+                const size_t module_pos = text.find("module ");
+                if (module_pos != std::string::npos)
+                {
+                    const size_t start = module_pos + 7;
+                    size_t end = text.find_first_of("\r\n", start);
+                    if (end == std::string::npos)
+                    {
+                        end = text.size();
+                    }
+                    std::string module = text.substr(start, end - start);
+                    while (!module.empty() && module.back() == ' ')
+                    {
+                        module.pop_back();
+                    }
+                    if (!module.empty())
+                    {
+                        return module + "/wx";
+                    }
+                }
+            }
+        }
+
+        return "github.com/KeyWorksRW/kwxGO/wx";
+    }
+}  // namespace gen_go_detail
+
+using namespace gen_go_detail;
 
 GoCodeGenerator::GoCodeGenerator(Node* form_node) : BaseCodeGenerator(GenLang::go, form_node) {}
 
@@ -44,7 +102,9 @@ void GoCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         m_header->Clear();
     }
     m_source->Clear();
-    SetLanguageIndent(m_source, m_language);
+    // Go's canonical layout (gofmt) indents with tabs, not spaces; the project's language
+    // indent properties must not override that or the generated file fails `gofmt -l`.
+    m_source->SetTabToSpaces(1, true);
     m_source->SetLastLineBlank();
 
     // File header comment
@@ -56,100 +116,90 @@ void GoCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         return;
     }
 
-    // Package declaration
+    if (!IsFfiUiLanguage(m_language))
+    {
+        return;
+    }
+
+    const FfiFormInfo info = GetFfiFormInfo(m_form_node, m_language);
+    const std::string entry_name = "new" + info.pascal_name;
+    const std::string state_type = info.camel + "State";
+    const bool is_dialog = m_form_node->is_Gen(gen_wxDialog);
+    const std::string form_receiver = is_dialog ? "state.dialog" : "state.frame";
+
     m_source->writeLine("package main");
     m_source->writeLine();
 
-    // Import block
     m_source->writeLine("import (");
     m_source->Indent();
-    m_source->writeLine("\"github.com/aspect-build/rules_go/wx\"");
+    m_source->writeLine("\"unsafe\"");
+    m_source->writeLine();
+    m_source->writeLine("\"" + GetWxModulePath() + "\"");
     m_source->Unindent();
     m_source->writeLine(")");
     m_source->writeLine();
 
-    wxue::string class_name(m_form_node->as_string(prop_class_name));
+    if (is_dialog)
+    {
+        m_source->writeLine("type " + info.camel + " struct {");
+        m_source->Indent();
+        m_source->writeLine("dialog *wx.Dialog");
+        m_source->Unindent();
+        m_source->writeLine("}");
+        m_source->writeLine();
+        m_source->writeLine("func " + entry_name + "(parent unsafe.Pointer) *" + info.camel +
+                            " {");
+        m_source->Indent();
+        m_source->writeLine("state := &" + info.camel + "{}");
+    }
+    else
+    {
+        m_source->writeLine("type " + state_type + " struct {");
+        m_source->Indent();
+        m_source->writeLine("frame *wx.Frame");
+        m_source->Unindent();
+        m_source->writeLine("}");
+        m_source->writeLine();
+        m_source->writeLine("func " + entry_name + "(parent unsafe.Pointer) *wx.Frame {");
+        m_source->Indent();
+        m_source->writeLine("state := &" + state_type + "{}");
+    }
 
-    // Struct type for the form
-    m_source->writeLine(wxue::string("type ") << class_name << " struct {");
-    m_source->Indent();
-    m_source->writeLine("// Widget fields will be added as construction code is generated");
-    m_source->Unindent();
-    m_source->writeLine("}");
-    m_source->writeLine();
-
-    // Constructor function
-    m_source->writeLine(wxue::string("func New")
-                        << class_name << "(parent wx.Window) *" << class_name << " {");
-    m_source->Indent();
-    m_source->writeLine(wxue::string("form := &") << class_name << "{}");
-    m_source->writeLine();
-
-    GenerateConstructionCode(code);
-
-    // Write any embedded images that aren't declared in any gen_Images List.
-    if (m_embedded_images.size())
+    // Embedded images are referenced by the body, so write their constants first. The image
+    // writer starts with its own end-of-line, which supplies the blank line after the state
+    // declaration, so no extra blank is written here.
+    if (!m_embedded_images.empty())
     {
         WriteImageConstruction(code);
         m_source->writeLine();
     }
 
+    std::string declarations;
+    std::string handlers;
+    std::ignore = EmitFfiFormBody(code, m_source, m_form_node, info, form_receiver, declarations,
+                                  handlers);
+
     m_source->writeLine();
-    m_source->writeLine("return form");
+    m_source->writeLine(is_dialog ? "return state" : "return state.frame");
     m_source->Unindent();
     m_source->writeLine("}");
 
-    // Reset indentation
-    m_source->ResetIndent();
-}
-
-auto GoCodeGenerator::GenerateConstructionCode(Code& code) -> void
-{
-    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
-    code.clear();
-    if (generator->ConstructionCode(code))
+    if (!handlers.empty())
     {
-        m_source->writeLine(code);
         m_source->writeLine();
+        // Keep the handler body's indentation: auto_no_whitespace would flatten it against
+        // the left margin, which gofmt rejects.
+        m_source->writeLine(handlers, indent::auto_keep_whitespace);
     }
 
-    code.clear();
-    if (generator->SettingsCode(code))
-    {
-        if (code.size())
-        {
-            m_source->writeLine(code);
-            m_source->writeLine();
-        }
-    }
+    m_source->ResetIndent();
 
-    if (m_form_node->get_PropPtr(prop_window_extra_style))
+    if (wxString sourcemap; wxGetEnv("WXUE_FFI_SOURCEMAP", &sourcemap) && !sourcemap.empty())
     {
-        code.clear();
-        code.GenWindowSettings();
-        if (code.size())
+        auto [output_path, has_base_file] = Project.GetOutputPath(m_form_node, m_language);
+        if (has_base_file)
         {
-            m_source->writeLine(code);
-        }
-    }
-
-    m_source->SetLastLineBlank();
-    for (const auto& child: m_form_node->get_ChildNodePtrs())
-    {
-        if (child->is_Gen(gen_wxContextMenuEvent))
-        {
-            continue;
-        }
-        GenConstruction(child.get());
-    }
-
-    code.clear();
-    if (generator->AfterChildrenCode(code))
-    {
-        if (code.size())
-        {
-            m_source->writeLine();
-            m_source->writeLine(code);
+            WriteFfiSourceMap(output_path.c_str());
         }
     }
 }

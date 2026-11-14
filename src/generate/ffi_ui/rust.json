@@ -1,0 +1,1304 @@
+{
+   "schema": 1,
+   "lang": "rust",
+   "generated_by": {
+      "tool": "kwxgen",
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d",
+      "profile": "full"
+   },
+   "naming": {
+      "class_type": "non-owning Copy newtype: pub struct Frame(pub(crate) Window)",
+      "constant": "constants::NAME (a const, or an accessor fn when no value is known)",
+      "constructor": "associated fn Type::new; Type::new_full keeps every parameter",
+      "method": "inherent &self method, snake_case",
+      "module": "src/<snake_case>.rs, declared in lib.rs as pub mod <snake_case>"
+   },
+   "classes": {
+      "wxBoxSizer": {
+         "type": "BoxSizer",
+         "idiom": "builder",
+         "ctor": {
+            "symbol": "BoxSizer::new",
+            "params": [
+               {
+                  "name": "orient",
+                  "type": "i32"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "BoxSizer"
+         },
+         "roles": {
+            "add_sizer": {
+               "symbol": "Sizer::add_sizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "&impl WxSizer"
+                  },
+                  {
+                     "name": "option",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "flag",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "border",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "user_data",
+                     "type": "*mut c_void"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxSizer"
+            },
+            "add_spacer": {
+               "symbol": "BoxSizer::add_spacer",
+               "params": [
+                  {
+                     "name": "size",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "returns": "SizerItem"
+            },
+            "add_window": {
+               "symbol": "Sizer::add_window",
+               "params": [
+                  {
+                     "name": "window",
+                     "type": "&impl WxWindow"
+                  },
+                  {
+                     "name": "option",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "flag",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "border",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "user_data",
+                     "type": "*mut c_void"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxSizer"
+            },
+            "ptr": {
+               "symbol": "BoxSizer::as_ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "HORIZONTAL": "constants::HORIZONTAL()",
+            "VERTICAL": "constants::VERTICAL()"
+         }
+      },
+      "wxDialog": {
+         "type": "Dialog",
+         "idiom": "builder",
+         "ctor": {
+            "symbol": "Dialog::new",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "&impl WxWindow"
+               },
+               {
+                  "name": "text",
+                  "type": "impl AsRef<str>"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "Dialog",
+            "sentinels": {
+               "id": "-1",
+               "style": "0"
+            }
+         },
+         "roles": {
+            "bind": {
+               "symbol": "EvtHandler::bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "last",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bind_id": {
+               "symbol": "EvtHandler::bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "last",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "center": {
+               "symbol": "Window::center",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "destroy": {
+               "symbol": "Window::destroy",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "end_modal": {
+               "symbol": "Dialog::end_modal",
+               "params": [
+                  {
+                     "name": "ret_code",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Window::hide",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "ptr": {
+               "symbol": "Dialog::as_ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_affirmative_id": {
+               "symbol": "Dialog::set_affirmative_id",
+               "params": [
+                  {
+                     "name": "id",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_escape_id": {
+               "symbol": "Dialog::set_escape_id",
+               "params": [
+                  {
+                     "name": "id",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "Window::set_font",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_icon": {
+               "symbol": "TopLevelWindow::set_icon",
+               "params": [
+                  {
+                     "name": "p_icon",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxTopLevelWindow"
+            },
+            "set_min_size": {
+               "symbol": "TopLevelWindow::set_min_size",
+               "params": [
+                  {
+                     "name": "size",
+                     "type": "Size"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxTopLevelWindow"
+            },
+            "set_size": {
+               "symbol": "Window::set_size",
+               "params": [
+                  {
+                     "name": "rect",
+                     "type": "Rect"
+                  },
+                  {
+                     "name": "size_flags",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_sizer": {
+               "symbol": "Window::set_sizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "&impl WxSizer"
+                  },
+                  {
+                     "name": "delete_old",
+                     "type": "bool"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_title": {
+               "symbol": "TopLevelWindow::set_title",
+               "params": [
+                  {
+                     "name": "p_string",
+                     "type": "impl AsRef<str>"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxTopLevelWindow"
+            },
+            "show": {
+               "symbol": "Dialog::show",
+               "params": [
+                  {
+                     "name": "show",
+                     "type": "bool"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show_modal": {
+               "symbol": "Dialog::show_modal",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "constants::ID_ANY()"
+         }
+      },
+      "wxFrame": {
+         "type": "Frame",
+         "idiom": "builder",
+         "ctor": {
+            "symbol": "Frame::new",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "&impl WxWindow"
+               },
+               {
+                  "name": "text",
+                  "type": "impl AsRef<str>"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "Frame",
+            "sentinels": {
+               "id": "-1",
+               "style": "0"
+            }
+         },
+         "roles": {
+            "bind": {
+               "symbol": "EvtHandler::bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "last",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bind_id": {
+               "symbol": "EvtHandler::bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "last",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "center": {
+               "symbol": "Window::center",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "create_statusbar": {
+               "symbol": "Frame::create_status_bar",
+               "params": [
+                  {
+                     "name": "number",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "style",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "id",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "returns": "StatusBar"
+            },
+            "destroy": {
+               "symbol": "Window::destroy",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "hide": {
+               "symbol": "Window::hide",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "ptr": {
+               "symbol": "Frame::as_ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "Window::set_font",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_icon": {
+               "symbol": "Frame::set_icon",
+               "params": [
+                  {
+                     "name": "icon",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_menubar": {
+               "symbol": "Frame::set_menu_bar",
+               "params": [
+                  {
+                     "name": "menubar",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "TopLevelWindow::set_min_size",
+               "params": [
+                  {
+                     "name": "size",
+                     "type": "Size"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxTopLevelWindow"
+            },
+            "set_size": {
+               "symbol": "Window::set_size",
+               "params": [
+                  {
+                     "name": "rect",
+                     "type": "Rect"
+                  },
+                  {
+                     "name": "size_flags",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_sizer": {
+               "symbol": "Window::set_sizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "&impl WxSizer"
+                  },
+                  {
+                     "name": "delete_old",
+                     "type": "bool"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_title": {
+               "symbol": "Frame::set_title",
+               "params": [
+                  {
+                     "name": "text",
+                     "type": "impl AsRef<str>"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Window::show",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            }
+         },
+         "constants": {
+            "DEFAULT_FRAME_STYLE": "constants::DEFAULT_FRAME_STYLE()",
+            "ID_ANY": "constants::ID_ANY()"
+         }
+      },
+      "wxSizerFlags": {
+         "type": "SizerFlags",
+         "idiom": "builder",
+         "ctor": {
+            "symbol": "SizerFlags::new",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "i32"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "SizerFlags"
+         },
+         "roles": {
+            "align_h": {
+               "symbol": "SizerFlags::center_horizontal",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "align_v": {
+               "symbol": "SizerFlags::center_vertical",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "border": {
+               "symbol": "SizerFlags::border",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bottom": {
+               "symbol": "SizerFlags::bottom",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "expand": {
+               "symbol": "SizerFlags::expand",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "left": {
+               "symbol": "SizerFlags::left",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "proportion": {
+               "symbol": "SizerFlags::proportion",
+               "params": [
+                  {
+                     "name": "proportion",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "right": {
+               "symbol": "SizerFlags::right",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "top": {
+               "symbol": "SizerFlags::top",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ALIGN_BOTTOM": "constants::ALIGN_BOTTOM()",
+            "ALIGN_CENTER": "constants::ALIGN_CENTER()",
+            "ALIGN_LEFT": "constants::ALIGN_LEFT()",
+            "ALIGN_RIGHT": "constants::ALIGN_RIGHT()",
+            "ALIGN_TOP": "constants::ALIGN_TOP()",
+            "ALL": "constants::ALL()",
+            "EXPAND": "constants::EXPAND()"
+         }
+      },
+      "wxStaticBitmap": {
+         "type": "StaticBitmap",
+         "idiom": "builder",
+         "ctor": {
+            "symbol": "StaticBitmap::new",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "&impl WxWindow"
+               },
+               {
+                  "name": "bitmap",
+                  "type": "&impl WxBitmap"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "StaticBitmap",
+            "sentinels": {
+               "id": "-1",
+               "style": "0"
+            }
+         },
+         "roles": {
+            "destroy": {
+               "symbol": "Window::destroy",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "hide": {
+               "symbol": "Window::hide",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "ptr": {
+               "symbol": "StaticBitmap::as_ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_bitmap": {
+               "symbol": "StaticBitmap::set_bitmap",
+               "params": [
+                  {
+                     "name": "bitmap",
+                     "type": "&impl WxBitmap"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "Window::set_min_size",
+               "params": [
+                  {
+                     "name": "size",
+                     "type": "Size"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_size": {
+               "symbol": "Window::set_size",
+               "params": [
+                  {
+                     "name": "rect",
+                     "type": "Rect"
+                  },
+                  {
+                     "name": "size_flags",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "show": {
+               "symbol": "Window::show",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            }
+         },
+         "constants": {
+            "ID_ANY": "constants::ID_ANY()"
+         }
+      },
+      "wxStdDialogButtonSizer": {
+         "type": "StdDialogButtonSizer",
+         "idiom": "builder",
+         "ctor": {
+            "symbol": "StdDialogButtonSizer::new",
+            "params": [],
+            "idiom": "builder",
+            "returns": "StdDialogButtonSizer"
+         },
+         "roles": {
+            "add_button": {
+               "symbol": "StdDialogButtonSizer::add_button",
+               "params": [
+                  {
+                     "name": "button",
+                     "type": "&impl WxButton"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "add_window": {
+               "symbol": "Sizer::add_window",
+               "params": [
+                  {
+                     "name": "window",
+                     "type": "&impl WxWindow"
+                  },
+                  {
+                     "name": "option",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "flag",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "border",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "user_data",
+                     "type": "*mut c_void"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxSizer"
+            },
+            "ptr": {
+               "symbol": "StdDialogButtonSizer::as_ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "realize": {
+               "symbol": "StdDialogButtonSizer::realize",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {}
+      },
+      "wxTextCtrl": {
+         "type": "TextCtrl",
+         "idiom": "builder",
+         "ctor": {
+            "symbol": "TextCtrl::new",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "&impl WxWindow"
+               },
+               {
+                  "name": "text",
+                  "type": "impl AsRef<str>"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "TextCtrl",
+            "sentinels": {
+               "id": "-1",
+               "style": "0"
+            }
+         },
+         "roles": {
+            "bind": {
+               "symbol": "EvtHandler::bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "last",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bind_id": {
+               "symbol": "EvtHandler::bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "last",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Window::destroy",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "hide": {
+               "symbol": "Window::hide",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "ptr": {
+               "symbol": "TextCtrl::as_ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "Window::set_font",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "&impl WxObject"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_label": {
+               "symbol": "Control::set_label",
+               "params": [
+                  {
+                     "name": "text",
+                     "type": "impl AsRef<str>"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxControl"
+            },
+            "set_min_size": {
+               "symbol": "Window::set_min_size",
+               "params": [
+                  {
+                     "name": "size",
+                     "type": "Size"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_size": {
+               "symbol": "Window::set_size",
+               "params": [
+                  {
+                     "name": "rect",
+                     "type": "Rect"
+                  },
+                  {
+                     "name": "size_flags",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_size_hints": {
+               "symbol": "Window::set_size_hints",
+               "params": [
+                  {
+                     "name": "min_w",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "min_h",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "max_w",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "max_h",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "inc_w",
+                     "type": "i32"
+                  },
+                  {
+                     "name": "inc_h",
+                     "type": "i32"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            },
+            "set_value": {
+               "symbol": "TextCtrl::set_value",
+               "params": [
+                  {
+                     "name": "value",
+                     "type": "impl AsRef<str>"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Window::show",
+               "params": [],
+               "idiom": "method-on-self",
+               "owner": "wxWindow"
+            }
+         },
+         "constants": {
+            "ID_ANY": "constants::ID_ANY()"
+         }
+      }
+   },
+   "sizers": {
+      "wxBoxSizer": {
+         "ctor": {
+            "symbol": "BoxSizer::new",
+            "params": [
+               {
+                  "name": "orient",
+                  "type": "i32"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "BoxSizer"
+         },
+         "add_window": {
+            "symbol": "Sizer::add_window",
+            "params": [
+               {
+                  "name": "window",
+                  "type": "&impl WxWindow"
+               },
+               {
+                  "name": "option",
+                  "type": "i32"
+               },
+               {
+                  "name": "flag",
+                  "type": "i32"
+               },
+               {
+                  "name": "border",
+                  "type": "i32"
+               },
+               {
+                  "name": "user_data",
+                  "type": "*mut c_void"
+               }
+            ],
+            "idiom": "method-on-self",
+            "owner": "wxSizer"
+         },
+         "add_sizer": {
+            "symbol": "Sizer::add_sizer",
+            "params": [
+               {
+                  "name": "sizer",
+                  "type": "&impl WxSizer"
+               },
+               {
+                  "name": "option",
+                  "type": "i32"
+               },
+               {
+                  "name": "flag",
+                  "type": "i32"
+               },
+               {
+                  "name": "border",
+                  "type": "i32"
+               },
+               {
+                  "name": "user_data",
+                  "type": "*mut c_void"
+               }
+            ],
+            "idiom": "method-on-self",
+            "owner": "wxSizer"
+         },
+         "add_spacer": {
+            "symbol": "BoxSizer::add_spacer",
+            "params": [
+               {
+                  "name": "size",
+                  "type": "i32"
+               }
+            ],
+            "idiom": "method-on-self",
+            "returns": "SizerItem"
+         }
+      },
+      "flags": {
+         "ctor": {
+            "symbol": "SizerFlags::new",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "i32"
+               }
+            ],
+            "idiom": "builder",
+            "returns": "SizerFlags"
+         },
+         "proportion": {
+            "symbol": "SizerFlags::proportion",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "i32"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "expand": {
+            "symbol": "SizerFlags::expand",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "border": {
+            "symbol": "SizerFlags::border",
+            "params": [
+               {
+                  "name": "direction",
+                  "type": "i32"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "left": {
+            "symbol": "SizerFlags::left",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "right": {
+            "symbol": "SizerFlags::right",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "top": {
+            "symbol": "SizerFlags::top",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "bottom": {
+            "symbol": "SizerFlags::bottom",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "align_h": {
+            "symbol": "SizerFlags::center_horizontal",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "align_v": {
+            "symbol": "SizerFlags::center_vertical",
+            "params": [],
+            "idiom": "method-on-self"
+         }
+      }
+   },
+   "events": {
+      "bind": {
+         "symbol": "EvtHandler::bind",
+         "params": [
+            {
+               "name": "first",
+               "type": "i32"
+            },
+            {
+               "name": "last",
+               "type": "i32"
+            },
+            {
+               "name": "type_",
+               "type": "i32"
+            },
+            {
+               "name": "closure",
+               "type": "&impl WxObject"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "bind_id": {
+         "symbol": "EvtHandler::bind",
+         "params": [
+            {
+               "name": "first",
+               "type": "i32"
+            },
+            {
+               "name": "last",
+               "type": "i32"
+            },
+            {
+               "name": "type_",
+               "type": "i32"
+            },
+            {
+               "name": "closure",
+               "type": "&impl WxObject"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "handler_type": "&impl WxObject (a crate::closure::Closure handle)"
+   },
+   "bitmap": {
+      "from_base64": {
+         "symbol": "Bitmap::create_from_base64",
+         "params": [
+            {
+               "name": "base64",
+               "type": "*mut c_void"
+            },
+            {
+               "name": "len",
+               "type": "usize"
+            },
+            {
+               "name": "bitmap_type",
+               "type": "i32"
+            }
+         ],
+         "idiom": "constructor",
+         "returns": "Bitmap"
+      },
+      "get_bitmap": {
+         "symbol": "StaticBitmap::get_bitmap",
+         "params": [
+            {
+               "name": "ref_",
+               "type": "&impl WxBitmap"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "delete": {
+         "symbol": "",
+         "params": [],
+         "idiom": "unsupported",
+         "reason": "not_supported"
+      }
+   },
+   "font": {
+      "create": {
+         "symbol": "Font::new",
+         "params": [
+            {
+               "name": "point_size",
+               "type": "i32"
+            },
+            {
+               "name": "family",
+               "type": "i32"
+            },
+            {
+               "name": "weight",
+               "type": "i32"
+            },
+            {
+               "name": "underlined",
+               "type": "bool"
+            },
+            {
+               "name": "face",
+               "type": "impl AsRef<str>"
+            },
+            {
+               "name": "enc",
+               "type": "i32"
+            }
+         ],
+         "idiom": "builder",
+         "returns": "Font",
+         "sentinels": {
+            "style": "0"
+         }
+      },
+      "delete": {
+         "symbol": "",
+         "params": [],
+         "idiom": "unsupported",
+         "reason": "not_supported"
+      }
+   },
+   "std_buttons": {
+      "create": {
+         "symbol": "StdDialogButtonSizer::new",
+         "params": [],
+         "idiom": "builder",
+         "returns": "StdDialogButtonSizer"
+      },
+      "add_button": {
+         "symbol": "StdDialogButtonSizer::add_button",
+         "params": [
+            {
+               "name": "button",
+               "type": "&impl WxButton"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "realize": {
+         "symbol": "StdDialogButtonSizer::realize",
+         "params": [],
+         "idiom": "method-on-self"
+      }
+   },
+   "app": {
+      "entry": "main",
+      "entry_signature": "fn main()",
+      "set_top_window": {
+         "symbol": "",
+         "params": [],
+         "idiom": "unsupported",
+         "reason": "hand_maintained"
+      },
+      "emit_entry": false
+   },
+   "unsupported": [
+      {
+         "class": "wxFrame",
+         "role": "delete",
+         "reason": "not_supported"
+      },
+      {
+         "class": "wxDialog",
+         "role": "delete",
+         "reason": "not_supported"
+      },
+      {
+         "class": "wxTextCtrl",
+         "role": "delete",
+         "reason": "not_supported"
+      },
+      {
+         "class": "wxBoxSizer",
+         "role": "destroy",
+         "reason": "no_method"
+      },
+      {
+         "class": "wxBoxSizer",
+         "role": "delete",
+         "reason": "not_supported"
+      },
+      {
+         "class": "wxStaticBitmap",
+         "role": "delete",
+         "reason": "not_supported"
+      },
+      {
+         "class": "wxStdDialogButtonSizer",
+         "role": "destroy",
+         "reason": "no_method"
+      },
+      {
+         "class": "wxStdDialogButtonSizer",
+         "role": "delete",
+         "reason": "not_supported"
+      },
+      {
+         "class": "wxSizerFlags",
+         "role": "delete",
+         "reason": "not_supported"
+      }
+   ]
+}

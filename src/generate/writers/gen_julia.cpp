@@ -7,10 +7,14 @@
 
 #include "gen_julia.h"
 
-#include <set>
+#include <string>
+
+#include <wx/utils.h>  // wxGetEnv
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "ffi_emit.h"         // EmitFfiFormBody, GetFfiFormInfo
+#include "ffi_ui.h"           // IsFfiUiLanguage
 #include "gen_common.h"       // Common component functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
@@ -18,9 +22,6 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "write_code.h"       // Write code to Scintilla or file
 
-#include "wxue_namespace/wxue_string.h"  // wxue::string
-
-using namespace code;
 using namespace GenEnum;
 
 JuliaCodeGenerator::JuliaCodeGenerator(Node* form_node) :
@@ -59,79 +60,62 @@ void JuliaCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         return;
     }
 
-    // Module imports
-    m_source->writeLine("using WxWidgets");
-    m_source->writeLine();
-
-    wxue::string class_name(m_form_node->as_string(prop_class_name));
-
-    // Julia uses a function to create the form (no classes needed)
-    m_source->writeLine(wxue::string("function create_") << class_name << "(parent)");
-    m_source->Indent();
-
-    GenerateConstructionCode(code);
-
-    // Write any embedded images that aren't declared in any gen_Images List.
-    if (m_embedded_images.size())
+    if (!IsFfiUiLanguage(m_language))
     {
-        WriteImageConstruction(code);
-        m_source->writeLine();
+        return;
     }
 
+    const FfiFormInfo info = GetFfiFormInfo(m_form_node, m_language);
+    const std::string entry_name = "create_" + info.snake;
+    // The Julia idiomatic layer names its types after the wx class (`wxFrame`, `wxDialog`);
+    // `Frame`/`Dialog` are not defined by the port, and a return-type annotation is
+    // evaluated when the function is defined, so the generated file would not load with
+    // those names.
+    const std::string return_type = m_form_node->is_Gen(gen_wxDialog) ? "wxDialog" : "wxFrame";
+
+    m_source->writeLine("using WxWidgets");
+    if (!m_embedded_images.empty())
+    {
+        // An embedded bitmap is decoded from its base64 constant by BitmapExpr().
+        m_source->writeLine("import Base64");
+    }
+    m_source->writeLine();
+
+    // Every wrapper constructor takes the parent as `Union{wxWindow, Nothing}` (a raw handle
+    // cannot be converted back into a wrapper object), which is the shape the port's samples
+    // use: `wxFrame(nothing, ...)` for a top-level form, the parent form for a dialog.
+    m_source->writeLine("function " + entry_name +
+                        "(parent::Union{wxWindow, Nothing})::" + return_type);
+    m_source->Indent();
+
+    if (!m_embedded_images.empty())
+    {
+        WriteImageConstruction(code);
+    }
+
+    std::string declarations;
+    std::string handlers;
+    std::ignore = EmitFfiFormBody(code, m_source, m_form_node, info, "frame", declarations, handlers);
+
+    m_source->writeLine();
+    m_source->writeLine("return frame");
     m_source->Unindent();
     m_source->writeLine("end");
 
-    // Reset indentation
-    m_source->ResetIndent();
-}
-
-auto JuliaCodeGenerator::GenerateConstructionCode(Code& code) -> void
-{
-    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
-    code.clear();
-    if (generator->ConstructionCode(code))
+    if (!handlers.empty())
     {
-        m_source->writeLine(code);
         m_source->writeLine();
+        m_source->writeLine(handlers);
     }
 
-    code.clear();
-    if (generator->SettingsCode(code))
-    {
-        if (code.size())
-        {
-            m_source->writeLine(code);
-            m_source->writeLine();
-        }
-    }
+    m_source->ResetIndent();
 
-    if (m_form_node->get_PropPtr(prop_window_extra_style))
+    if (wxString sourcemap; wxGetEnv("WXUE_FFI_SOURCEMAP", &sourcemap) && !sourcemap.empty())
     {
-        code.clear();
-        code.GenWindowSettings();
-        if (code.size())
+        auto [output_path, has_base_file] = Project.GetOutputPath(m_form_node, m_language);
+        if (has_base_file)
         {
-            m_source->writeLine(code);
-        }
-    }
-
-    m_source->SetLastLineBlank();
-    for (const auto& child: m_form_node->get_ChildNodePtrs())
-    {
-        if (child->is_Gen(gen_wxContextMenuEvent))
-        {
-            continue;
-        }
-        GenConstruction(child.get());
-    }
-
-    code.clear();
-    if (generator->AfterChildrenCode(code))
-    {
-        if (code.size())
-        {
-            m_source->writeLine();
-            m_source->writeLine(code);
+            WriteFfiSourceMap(output_path.c_str());
         }
     }
 }

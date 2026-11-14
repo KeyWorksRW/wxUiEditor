@@ -29,6 +29,7 @@
 
 #include "code.h"
 
+#include "ffi_ui.h"                             // kwxFFI UI descriptor + role resolver
 #include "image_gen.h"                          // Functions for generating embedded images
 #include "node.h"                               // Node class
 #include "project_handler.h"                    // ProjectHandler class
@@ -315,6 +316,18 @@ void Code::Init(Node* node, GenLang language)
 
     // Reserve large enough for multiple lines -- goal is to avoid multiple reallocations
     reserve(256);  // NOLINT (magic number) // cppcheck-suppress constLiteral
+
+    // Go has no line-length limit and gofmt owns wrapping; an automatic break inserted inside
+    // an expression produces a layout gofmt rewrites, so the generated file fails `gofmt -l`.
+    // Fortran free form cannot break a statement without a trailing `&`, so an inserted break
+    // would split one statement into two invalid lines.
+    // Lua has no line-length limit either, and a break inserted directly after `local x =`
+    // leaves the assignment expression on the following line -- legal but unreadable, and it
+    // makes every emitted statement span several lines.
+    if (language == GenLang::go || language == GenLang::fortran || language == GenLang::luajit)
+    {
+        m_auto_break = false;
+    }
 }
 
 Code& Code::CheckLineLength(size_t next_str_size)
@@ -776,6 +789,638 @@ Code& Code::CreateClass(bool use_generic, wxue::string_view override_name, bool 
     AddSubclassParams();
 
     return *this;
+}
+
+// ==================== kwxFFI descriptor-driven primitives ====================
+
+namespace code_detail
+{
+    // "TextCtrl::as_ptr" -> "as_ptr"; "Frame::new" -> "new".
+    [[nodiscard]] std::string StripTypePrefix(std::string_view symbol)
+    {
+        if (const size_t pos = symbol.rfind("::"); pos != std::string_view::npos)
+        {
+            return std::string(symbol.substr(pos + 2));
+        }
+        return std::string(symbol);
+    }
+
+    // "Base.bind" -> "bind"; used for Julia's generated helpers.
+    [[nodiscard]] std::string StripBasePrefix(std::string_view symbol)
+    {
+        constexpr std::string_view base_prefix = "Base.";
+        if (symbol.starts_with(base_prefix))
+        {
+            return std::string(symbol.substr(base_prefix.size()));
+        }
+        return std::string(symbol);
+    }
+
+    [[nodiscard]] std::string ClassType(const FfiUiDescriptor& descriptor,
+                                        std::string_view wx_class)
+    {
+        if (const auto iter = descriptor.classes.find(wx_class);
+            iter != descriptor.classes.end() && !iter->second.type.empty())
+        {
+            return iter->second.type;
+        }
+        return std::string(wx_class);
+    }
+
+    // TypeScript wrapper parameters declared `bigint` (the C i64/usize parameters) reject a
+    // `number` literal, while the descriptor's constants and sizes are numbers. Wrap the value
+    // explicitly. Every other language takes it unchanged.
+    [[nodiscard]] std::string CoerceParam(GenLang language, std::string_view param_type,
+                                          std::string_view value)
+    {
+        if (language == GenLang::typescript && param_type == "bigint" && !value.empty() &&
+            !std::string_view(value).starts_with("BigInt("))
+        {
+            return "BigInt(" + std::string(value) + ")";
+        }
+        if (language == GenLang::fortran && param_type.starts_with("integer(c_long)") &&
+            !value.empty() && !std::string_view(value).starts_with("int("))
+        {
+            // Constants are declared integer(c_int); the wrapper's c_long dummy needs the
+            // explicit conversion when the two kinds differ (LP64 platforms).
+            return "int(" + std::string(value) + ", kind=c_long)";
+        }
+        if (language == GenLang::rust && param_type.starts_with('&') && !value.empty() &&
+            !std::string_view(value).starts_with('&'))
+        {
+            // The kwxRust wrapper takes the wrapper object itself (`&impl WxWindow`,
+            // `&impl WxBitmap`), not the native handle the pointer-oriented ports pass.
+            return "&" + std::string(value);
+        }
+        return std::string(value);
+    }
+
+    [[nodiscard]] std::string CombineArgs(std::string_view first, std::string_view second)
+    {
+        if (first.empty())
+        {
+            return std::string(second);
+        }
+        if (second.empty())
+        {
+            return std::string(first);
+        }
+        return std::string(first) + ", " + std::string(second);
+    }
+
+    // Renders `<prefix><symbol>(args)` for a callable whose idiom is constructor/builder/
+    // procedure. `wx_class` selects the module table LuaJIT prefixes with.
+    void AppendConstructorCall(Code& code, GenLang language, const FfiUiDescriptor& descriptor,
+                               const FfiUiCall& call, std::string_view wx_class,
+                               std::string_view args)
+    {
+        switch (language)
+        {
+            case GenLang::fortran:
+                code += call.symbol;
+                break;
+            case GenLang::go:
+                code << "wx." << call.symbol;
+                break;
+            case GenLang::julia:
+                code += call.symbol;
+                break;
+            case GenLang::luajit:
+                // The per-class wrapper modules are re-exported by kwxffi_idiomatic_gen, the
+                // port's documented master module (`local wx = require(
+                // "kwxffi_idiomatic_gen")` -> wx.wxButton.Create(...)). The `wx` module
+                // (lua/wx/init.lua) owns constants, event types and the idiomatic method
+                // overrides. gen_luajit.cpp emits both requires under exactly these names.
+                code << "wx_classes." << ClassType(descriptor, wx_class) << '.' << call.symbol;
+                break;
+            case GenLang::rust:
+                // Every kwxRust wrapper type is a module-level struct (wx::frame::Frame), and
+                // the generated form imports each type it uses by name, so the associated
+                // function is spelled `Frame::new(...)` -- `wx::Frame::new` names no item.
+                code += call.symbol;
+                break;
+            case GenLang::typescript:
+                code += call.symbol;
+                break;
+            default:
+                code += call.symbol;
+                break;
+        }
+        code << '(' << args << ')';
+        if (language == GenLang::typescript)
+        {
+            // Every TypeScript wrapper factory is declared `| null`. The generated form only
+            // builds the natives the wrapper always produces, so assert non-null here instead of
+            // threading a null check through every subsequent statement.
+            code += '!';
+        }
+    }
+}  // namespace code_detail
+
+using namespace code_detail;
+
+// The C1 contract specifies a nullable probe, so the pointer return is intentional.
+// NOLINTNEXTLINE(modernize-use-expected)
+const FfiUiDescriptor* Code::FfiDescriptor() const
+{
+    if (!is_ffi())
+    {
+        return nullptr;
+    }
+    return GetFfiUiDescriptor(m_language);
+}
+
+bool Code::FfiResolve(std::string_view wx_class, std::string_view role, FfiUiCall& out) const
+{
+    const FfiUiDescriptor* descriptor = FfiDescriptor();
+    if (!descriptor)
+    {
+        return false;
+    }
+
+    if (ResolveRole(*descriptor, wx_class, role, out))
+    {
+        return true;
+    }
+
+    ReportUnsupportedRole(*descriptor, wx_class, role);
+    return false;
+}
+
+bool Code::FfiCtor(std::string_view wx_class, std::string_view args, std::string_view receiver)
+{
+    FfiUiCall call;
+    if (!FfiResolve(wx_class, "ctor", call))
+    {
+        return false;
+    }
+
+    const FfiUiDescriptor* descriptor = FfiDescriptor();
+    if (!descriptor)
+    {
+        return false;
+    }
+
+    if (!receiver.empty())
+    {
+        *this += receiver;
+        *this += " = ";
+    }
+
+    AppendConstructorCall(*this, m_language, *descriptor, call, wx_class, args);
+    return true;
+}
+
+bool Code::FfiMethod(std::string_view wx_class, std::string_view role, std::string_view receiver,
+                     std::string_view args)
+{
+    FfiUiCall call;
+    if (!FfiResolve(wx_class, role, call))
+    {
+        return false;
+    }
+
+    if (call.idiom == "constructor" || call.idiom == "builder")
+    {
+        return FfiCtor(wx_class, args);
+    }
+
+    switch (m_language)
+    {
+        case GenLang::fortran:
+            // A module subroutine must be invoked with CALL; a module function must not.
+            if (call.returns.empty())
+            {
+                *this << "call ";
+            }
+            *this << call.symbol << '(' << CombineArgs(receiver, args) << ')';
+            break;
+        case GenLang::julia:
+            // The Julia idiomatic layer is a set of snake_case functions taking the object as
+            // its first argument (`set_title!(obj, text)`); there is no method-on-self syntax.
+            // An empty receiver (a `procedure` role such as `bitmap.from_base64`) therefore
+            // becomes a plain free-function call rather than a leading `.symbol(...)`.
+            *this << StripBasePrefix(call.symbol) << '(' << CombineArgs(receiver, args) << ')';
+            break;
+        case GenLang::luajit:
+            *this << receiver << ':' << call.symbol << '(' << args << ')';
+            break;
+        case GenLang::rust:
+            *this << receiver << '.' << StripTypePrefix(call.symbol) << '(' << args << ')';
+            break;
+        default:
+            *this << receiver << '.' << call.symbol << '(' << args << ')';
+            break;
+    }
+
+    return true;
+}
+
+bool Code::FfiParentMethod(std::string_view wx_class, std::string_view role,
+                           std::string_view parent, std::string_view args)
+{
+    FfiUiCall call;
+    if (!FfiResolve(wx_class, role, call))
+    {
+        return false;
+    }
+
+    if (call.idiom == "constructor" || call.idiom == "builder")
+    {
+        return FfiCtor(wx_class, args);
+    }
+
+    switch (m_language)
+    {
+        case GenLang::fortran:
+            // A module subroutine must be invoked with CALL; a module function must not.
+            if (call.returns.empty())
+            {
+                *this << "call ";
+            }
+            *this << call.symbol << '(' << CombineArgs(parent, args) << ')';
+            break;
+        case GenLang::julia:
+            *this << call.symbol << '(' << CombineArgs(parent, args) << ')';
+            break;
+        case GenLang::luajit:
+            *this << parent << ':' << call.symbol << '(' << args << ')';
+            break;
+        case GenLang::rust:
+            *this << parent << '.' << StripTypePrefix(call.symbol) << '(' << args << ')';
+            break;
+        default:
+            *this << parent << '.' << call.symbol << '(' << args << ')';
+            break;
+    }
+
+    if (m_language == GenLang::typescript && !call.returns.empty())
+    {
+        // The wrapper's Create* methods return the new object or null.
+        *this += '!';
+    }
+
+    return true;
+}
+
+bool Code::FfiBind(std::string_view wx_class, std::string_view receiver, std::string_view args)
+{
+    return FfiMethod(wx_class, "bind", receiver, args);
+}
+
+bool Code::FfiSizerItem(std::string_view sizer_name, std::string_view item_name, bool item_is_sizer,
+                        int proportion, std::string_view flag_expr, int border,
+                        std::string_view flags_ptr)
+{
+    const std::string_view role = item_is_sizer ? "add_sizer" : "add_window";
+    FfiUiCall call;
+    if (!FfiResolve("wxBoxSizer", role, call))
+    {
+        return false;
+    }
+
+    // Fill each argument from the descriptor's parameter name, so a language whose add callable
+    // takes a built wxSizerFlags handle and one that takes a numeric mask both work.
+    std::string args;
+    for (const FfiUiParam& param: call.params)
+    {
+        if (param.name == "self")
+        {
+            // method-on-self passes the receiver separately.
+            continue;
+        }
+
+        std::string value = "0";
+        if (param.name == "sizer" || param.name == "window")
+        {
+            value = std::string(item_name);
+        }
+        else if (param.name == "option" || param.name == "proportion")
+        {
+            value = std::to_string(proportion);
+        }
+        else if (param.name == "flags" && !flags_ptr.empty())
+        {
+            value = std::string(flags_ptr);
+        }
+        else if (param.name == "flag")
+        {
+            value = std::string(flag_expr);
+        }
+        else if (param.name == "border")
+        {
+            value = std::to_string(border);
+        }
+        else if (param.name == "userData" || param.name == "userdata" || param.name == "user_data")
+        {
+            value = FfiNullLiteral();
+        }
+
+        value = CoerceParam(m_language, param.type, value);
+
+        if (!args.empty())
+        {
+            args += ", ";
+        }
+        args += value;
+    }
+
+    return FfiMethod("wxBoxSizer", role, sizer_name, args);
+}
+
+bool Code::FfiFlags(std::string_view receiver, int proportion, bool expand,
+                    std::string_view border_expr)
+{
+    const FfiUiDescriptor* descriptor = FfiDescriptor();
+    if (!descriptor)
+    {
+        return false;
+    }
+
+    // The sizer-flags callables live in the descriptor's `sizers.flags` block -- ResolveRole()
+    // does not route the flags constructor through `classes`, so look it up directly.
+    const FfiUiCallMap::const_iterator ctor_iter = descriptor->sizers.find("flags.ctor");
+    if (ctor_iter == descriptor->sizers.end() || !ctor_iter->second.IsUsable())
+    {
+        ReportUnsupportedRole(*descriptor, "wxSizerFlags", "ctor");
+        return false;
+    }
+
+    const FfiUiCall& ctor = ctor_iter->second;
+    switch (m_language)
+    {
+        case GenLang::go:
+            *this << receiver << " := wx." << ctor.symbol << '(' << proportion << ')';
+            break;
+        case GenLang::typescript:
+        case GenLang::julia:
+        case GenLang::fortran:
+            *this << receiver << " = " << ctor.symbol << '(' << proportion << ')';
+            break;
+        case GenLang::luajit:
+            *this << "local " << receiver << " = wx." << ctor.symbol << '(' << proportion << ')';
+            break;
+        default:
+            *this << receiver << " = wx::" << ctor.symbol << '(' << proportion << ')';
+            break;
+    }
+
+    // `border_expr` is rendered by the caller with the language spelling of the wrapper
+    // constants; each step stays a separate statement because the wrapper's builder methods
+    // return void in Go, LuaJIT and Fortran.
+    if (expand)
+    {
+        *this += '\n';
+        std::ignore = FfiMethod("wxSizerFlags", "expand", receiver);
+    }
+    if (!border_expr.empty())
+    {
+        *this += '\n';
+        std::ignore = FfiMethod("wxSizerFlags", "border", receiver, border_expr);
+    }
+
+    return true;
+}
+
+bool Code::FfiStockButton(std::string_view parent_name, std::string_view button_name,
+                          std::string_view flags_expr, bool flags_used)
+{
+    FfiUiCall create_call;
+    if (!FfiResolve("wxStdDialogButtonSizer", "create", create_call))
+    {
+        return false;
+    }
+
+    // The mask parameter is named `flags`; a method-on-parent create also carries the receiver
+    // as its first parameter, so the first parameter is not necessarily the mask.
+    std::string args;
+    if (flags_used)
+    {
+        std::string flags_type;
+        for (const FfiUiParam& param: create_call.params)
+        {
+            if (param.name == "flags")
+            {
+                flags_type = param.type;
+                break;
+            }
+        }
+        if (flags_type.empty() && create_call.params.size() == 1)
+        {
+            flags_type = create_call.params.front().type;
+        }
+        args = CoerceParam(m_language, flags_type, flags_expr);
+    }
+
+    // Emits the create expression only: the caller owns the assignment prefix (the languages
+    // disagree on `=`, `:=`, `local`, `let`) and emits `realize` as its own statement.
+    if (create_call.idiom == "method-on-parent")
+    {
+        return FfiParentMethod("wxStdDialogButtonSizer", "create", parent_name, args);
+    }
+
+    if (m_language == GenLang::rust && create_call.idiom == "builder" && create_call.params.empty())
+    {
+        // The descriptor's std_buttons.create is the port's zero-argument factory, which cannot
+        // express the button mask (a kwxgen descriptor defect, filed in kwxFfiIssues.md). The
+        // kwxRust dialog exposes `Dialog::create_std_button_sizer(flags)` -- the same shape the
+        // Go, TypeScript, Lua and Julia ports use -- and Realize() runs inside it. The wrapper
+        // returns Option, so the assignment unwraps it where the value is produced.
+        *this << parent_name << ".create_std_button_sizer(" << args
+              << ").expect(\"CreateStdDialogButtonSizer returned null\")";
+        return true;
+    }
+
+    if (m_language == GenLang::julia && create_call.params.empty())
+    {
+        // The Julia descriptor records wxStdDialogButtonSizer's empty factory, which cannot
+        // express the button mask (a kwxgen descriptor defect, filed in kwxFfiIssues.md). The
+        // Julia idiomatic layer realizes the buttons through wxDialog's own method instead --
+        // `create_std_dialog_button_sizer(obj, flags)` -- and Realize() runs inside it, which
+        // is the same shape the Go, TypeScript and Lua ports expose.
+        *this << "create_std_dialog_button_sizer(" << parent_name << ", " << args << ')';
+        return true;
+    }
+
+    const FfiUiDescriptor* descriptor = FfiDescriptor();
+    if (!descriptor)
+    {
+        return false;
+    }
+
+    // Constructor/builder/procedure: prefix the std_buttons.create symbol the way the language
+    // wraps a free function. Do not delegate to FfiCtor(), which resolves `classes.ctor` and
+    // would report a different (and wrong) role.
+    std::ignore = button_name;
+    AppendConstructorCall(*this, m_language, *descriptor, create_call, "wxStdDialogButtonSizer",
+                          args);
+    return true;
+}
+
+bool Code::FfiBitmap(std::string_view role, std::string_view receiver, std::string_view args)
+{
+    FfiUiCall call;
+    if (!FfiResolve("wxBitmap", role, call))
+    {
+        return false;
+    }
+
+    if (call.idiom == "constructor")
+    {
+        const FfiUiDescriptor* descriptor = FfiDescriptor();
+        if (!descriptor)
+        {
+            return false;
+        }
+        if (!receiver.empty())
+        {
+            *this += receiver;
+            *this += " = ";
+        }
+        AppendConstructorCall(*this, m_language, *descriptor, call, "wxBitmap", args);
+        return true;
+    }
+
+    return FfiMethod("wxBitmap", role, receiver, args);
+}
+
+bool Code::FfiFont(std::string_view receiver, std::string_view args)
+{
+    FfiUiCall call;
+    if (!FfiResolve("wxFont", "create", call))
+    {
+        return false;
+    }
+
+    const FfiUiDescriptor* descriptor = FfiDescriptor();
+    if (!descriptor)
+    {
+        return false;
+    }
+
+    if (!receiver.empty())
+    {
+        *this += receiver;
+        *this += " = ";
+    }
+    AppendConstructorCall(*this, m_language, *descriptor, call, "wxFont", args);
+    return true;
+}
+
+bool Code::FfiPtr(std::string_view wx_class, std::string_view receiver)
+{
+    if (m_language == GenLang::typescript)
+    {
+        // The TypeScript wrapper exposes the native pointer as the read-only `ptr` getter, not
+        // as a method -- selecting the spelling from the role keeps the descriptor authoritative.
+        FfiUiCall call;
+        if (!FfiResolve(wx_class, "ptr", call))
+        {
+            return false;
+        }
+        *this << receiver << '.' << call.symbol;
+        return true;
+    }
+
+    return FfiMethod(wx_class, "ptr", receiver);
+}
+std::string Code::FfiPointerAccessor() const
+{
+    const FfiUiDescriptor* descriptor = FfiDescriptor();
+    if (!descriptor)
+    {
+        return {};
+    }
+    const FfiUiStringMap::const_iterator iter = descriptor->naming.find("pointer_accessor");
+    return iter == descriptor->naming.end() ? std::string() : iter->second;
+}
+
+bool Code::FfiDelete(std::string_view wx_class, std::string_view receiver)
+{
+    return FfiMethod(wx_class, "delete", receiver);
+}
+
+std::string Code::FfiConstant(std::string_view name) const
+{
+    switch (m_language)
+    {
+        case GenLang::go:
+        case GenLang::luajit:
+            return "wx." + std::string(name);
+        case GenLang::typescript:
+            // kwx_constants_gen.ts exports the bare constant name (EXPAND, ID_ANY, ...).
+            return std::string(name);
+        case GenLang::julia:
+            // Constants live in the KwxFFI submodule (the wrapper exports the module, not the
+            // 800-odd constant functions); samples spell them `KwxFFI.ID_ANY()`.
+            return "KwxFFI." + std::string(name) + "()";
+        case GenLang::fortran:
+            return "wx" + std::string(name) + "()";
+        case GenLang::rust:
+            // Events live in `wx::events`; every other constant in `wx::constants`. Both
+            // modules expose accessor functions rather than consts, so the call needs `()`.
+            if (std::string_view(name).starts_with("EVT_"))
+            {
+                return "events::" + std::string(name) + "()";
+            }
+            return "constants::" + std::string(name) + "()";
+        default:
+            return "wx" + std::string(name);
+    }
+}
+
+std::string Code::FfiCoerceParam(std::string_view param_type, std::string_view value) const
+{
+    return CoerceParam(m_language, param_type, value);
+}
+
+std::string Code::FfiStringLiteral(std::string_view text) const
+{
+    std::string result("\"");
+    for (const char character: text)
+    {
+        if (character == '\\' || character == '"')
+        {
+            result += '\\';
+        }
+        result += character;
+    }
+    result += '"';
+    return result;
+}
+
+bool Code::FfiStringTakesPointer() const
+{
+    return m_language == GenLang::typescript;
+}
+
+std::string Code::FfiNullLiteral() const
+{
+    switch (m_language)
+    {
+        case GenLang::go:
+        case GenLang::luajit:
+            return "nil";
+        case GenLang::typescript:
+            return "null";
+        case GenLang::julia:
+            return "C_NULL";
+        case GenLang::rust:
+            return "std::ptr::null_mut()";
+        case GenLang::fortran:
+            return "c_null_ptr";
+        default:
+            return "nullptr";
+    }
+}
+
+std::string Code::FfiBoolLiteral(bool value) const
+{
+    if (m_language == GenLang::fortran)
+    {
+        return value ? ".true." : ".false.";
+    }
+    return value ? "true" : "false";
 }
 
 bool Code::HandleCppSubclass()

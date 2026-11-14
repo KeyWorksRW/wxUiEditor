@@ -7,10 +7,15 @@
 
 #include "gen_luajit.h"
 
-#include <set>
+#include <string>
+#include <vector>
+
+#include <wx/utils.h>  // wxGetEnv
 
 #include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
+#include "ffi_emit.h"         // EmitFfiFormBody, GetFfiFormInfo
+#include "ffi_ui.h"           // IsFfiUiLanguage
 #include "gen_common.h"       // Common component functions
 #include "image_gen.h"        // Functions for generating embedded images
 #include "image_handler.h"    // ImageHandler class
@@ -18,10 +23,27 @@
 #include "project_handler.h"  // ProjectHandler class
 #include "write_code.h"       // Write code to Scintilla or file
 
-#include "wxue_namespace/wxue_string.h"  // wxue::string
-
-using namespace code;
 using namespace GenEnum;
+
+namespace gen_luajit_detail
+{
+    // Collects the creation-entry body so the module table (and any handler definitions) can be
+    // written around it once the body is known.
+    class LuaBodyWriter : public WriteCode
+    {
+    public:
+        void Clear() override { m_lines.clear(); }
+        [[nodiscard]] const std::vector<std::string>& GetLines() const { return m_lines; }
+
+    protected:
+        void doWrite(std::string_view text) override { m_lines.emplace_back(text); }
+
+    private:
+        std::vector<std::string> m_lines;
+    };
+}  // namespace gen_luajit_detail
+
+using namespace gen_luajit_detail;
 
 LuaJITCodeGenerator::LuaJITCodeGenerator(Node* form_node) :
     BaseCodeGenerator(GenLang::luajit, form_node)
@@ -34,8 +56,6 @@ void LuaJITCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_language = language;
     m_panel_type = panel_type;
     ASSERT(m_language == GenLang::luajit);
-    Code code(m_form_node, m_language);
-
     m_embedded_images.clear();
     SetImagesForm();
     std::set<std::string> img_include_set;
@@ -59,92 +79,74 @@ void LuaJITCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         return;
     }
 
-    // Module requires
+    if (!IsFfiUiLanguage(m_language))
+    {
+        return;
+    }
+
+    const FfiFormInfo info = GetFfiFormInfo(m_form_node, m_language);
+
+    LuaBodyWriter body;
+    body.SetTabToSpaces(GetLanguageIndentSize(m_language), GetLanguageIndentWithTabs(m_language));
+    body.Indent();
+
+    Code body_code(m_form_node, m_language);
+    if (!m_embedded_images.empty())
+    {
+        WriteImageConstruction(body_code);
+    }
+    std::string declarations;
+    std::string handlers;
+    std::ignore =
+        EmitFfiFormBody(body_code, &body, m_form_node, info, "frame", declarations, handlers);
+
+    // The generated module loads the three runtime modules it needs and nothing else:
+    //   ffi        LuaJIT's built-in FFI (only for the embedded-bitmap byte view).
+    //   wx         lua/wx/init.lua -- constants, event types and the idiomatic method overrides;
+    //              its first statement requires kwxffi_gen, which performs the single ffi.cdef +
+    //              ffi.load, so a generated form must not declare any C type of its own.
+    //   wx_classes kwxffi_idiomatic_gen -- the per-class wrapper modules
+    //              (wx_classes.wxFrame.Create, wx_classes.wxTextCtrl.Create, ...).
     m_source->writeLine("local ffi = require(\"ffi\")");
     m_source->writeLine("local wx = require(\"wx\")");
+    m_source->writeLine("local wx_classes = require(\"kwxffi_idiomatic_gen\")");
     m_source->writeLine();
 
-    wxue::string class_name(m_form_node->as_string(prop_class_name));
-
-    // LuaJIT module table
-    m_source->writeLine(wxue::string("local ") << class_name << " = {}");
-    m_source->writeLine();
-
-    // Constructor function
-    m_source->writeLine(wxue::string("function ") << class_name << ".new(parent)");
-    m_source->Indent();
-    m_source->writeLine("local self = {}");
-    m_source->writeLine();
-
-    GenerateConstructionCode(code);
-
-    // Write any embedded images that aren't declared in any gen_Images List.
-    if (m_embedded_images.size())
+    if (!handlers.empty())
     {
-        WriteImageConstruction(code);
+        m_source->writeLine(handlers);
         m_source->writeLine();
     }
 
+    m_source->writeLine("local M = {}");
     m_source->writeLine();
-    m_source->writeLine("return self");
+    m_source->writeLine("function M.create(parent)");
+    m_source->Indent();
+    m_source->writeLine();
+
+    for (const std::string& line: body.GetLines())
+    {
+        if (!line.empty())
+        {
+            m_source->writeLine(line, indent::none);
+        }
+    }
+
+    m_source->writeLine();
+    m_source->writeLine("return frame");
     m_source->Unindent();
     m_source->writeLine("end");
     m_source->writeLine();
+    m_source->writeLine("return M");
 
-    // Return module
-    m_source->writeLine(wxue::string("return ") << class_name);
-
-    // Reset indentation
     m_source->ResetIndent();
-}
 
-auto LuaJITCodeGenerator::GenerateConstructionCode(Code& code) -> void
-{
-    auto* generator = m_form_node->get_NodeDeclaration()->get_Generator();
-    code.clear();
-    if (generator->ConstructionCode(code))
+    if (wxString sourcemap; wxGetEnv("WXUE_FFI_SOURCEMAP", &sourcemap) && !sourcemap.empty())
     {
-        m_source->writeLine(code);
-        m_source->writeLine();
-    }
-
-    code.clear();
-    if (generator->SettingsCode(code))
-    {
-        if (code.size())
+        auto [output_path, has_base_file] = Project.GetOutputPath(m_form_node, m_language);
+        if (has_base_file)
         {
-            m_source->writeLine(code);
-            m_source->writeLine();
-        }
-    }
-
-    if (m_form_node->get_PropPtr(prop_window_extra_style))
-    {
-        code.clear();
-        code.GenWindowSettings();
-        if (code.size())
-        {
-            m_source->writeLine(code);
-        }
-    }
-
-    m_source->SetLastLineBlank();
-    for (const auto& child: m_form_node->get_ChildNodePtrs())
-    {
-        if (child->is_Gen(gen_wxContextMenuEvent))
-        {
-            continue;
-        }
-        GenConstruction(child.get());
-    }
-
-    code.clear();
-    if (generator->AfterChildrenCode(code))
-    {
-        if (code.size())
-        {
-            m_source->writeLine();
-            m_source->writeLine(code);
+            WriteFfiSourceMap(output_path.c_str());
         }
     }
 }

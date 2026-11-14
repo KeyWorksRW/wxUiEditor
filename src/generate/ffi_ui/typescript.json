@@ -1,0 +1,1424 @@
+{
+   "schema": 1,
+   "lang": "typescript",
+   "generated_by": {
+      "tool": "kwxgen",
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d",
+      "profile": "full"
+   },
+   "naming": {
+      "class_type": "export class named exactly like the wx class in TsClassFileName(), e.g. wxFrame in wxFrame_gen.ts",
+      "constant": "export const NAME: number in kwx_constants_gen.ts",
+      "constructor": "module-level factory TsFactoryName(), e.g. createWxFrame(...) in wxFrame_gen.ts",
+      "event_bind": "Bind(first, last, type, closure) on the wrapper class",
+      "method": "PascalCase instance method on the wrapper class, e.g. frame.SetTitle(text)",
+      "module": "one ES module per class (wx<Class>_gen.ts) re-exported by kwx_gen.ts"
+   },
+   "classes": {
+      "wxBoxSizer": {
+         "type": "wxBoxSizer",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "createWxBoxSizer",
+            "params": [
+               {
+                  "name": "orient",
+                  "type": "number"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxBoxSizer"
+         },
+         "roles": {
+            "add_sizer": {
+               "symbol": "AddSizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "Pointer"
+                  },
+                  {
+                     "name": "option",
+                     "type": "number"
+                  },
+                  {
+                     "name": "flag",
+                     "type": "number"
+                  },
+                  {
+                     "name": "border",
+                     "type": "number"
+                  },
+                  {
+                     "name": "userData",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "add_spacer": {
+               "symbol": "AddSpacer",
+               "params": [
+                  {
+                     "name": "size",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "add_window": {
+               "symbol": "AddWindow",
+               "params": [
+                  {
+                     "name": "window",
+                     "type": "Pointer"
+                  },
+                  {
+                     "name": "option",
+                     "type": "number"
+                  },
+                  {
+                     "name": "flag",
+                     "type": "number"
+                  },
+                  {
+                     "name": "border",
+                     "type": "number"
+                  },
+                  {
+                     "name": "userData",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "HORIZONTAL": "HORIZONTAL",
+            "VERTICAL": "VERTICAL"
+         }
+      },
+      "wxDialog": {
+         "type": "wxDialog",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "createWxDialog",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "number"
+               },
+               {
+                  "name": "text",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "left",
+                  "type": "number"
+               },
+               {
+                  "name": "top",
+                  "type": "number"
+               },
+               {
+                  "name": "width",
+                  "type": "number"
+               },
+               {
+                  "name": "height",
+                  "type": "number"
+               },
+               {
+                  "name": "style",
+                  "type": "number"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxDialog"
+         },
+         "roles": {
+            "bind": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "number"
+                  },
+                  {
+                     "name": "last",
+                     "type": "number"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "number"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bind_id": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "number"
+                  },
+                  {
+                     "name": "last",
+                     "type": "number"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "number"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "center": {
+               "symbol": "Center",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "end_modal": {
+               "symbol": "EndModal",
+               "params": [
+                  {
+                     "name": "retCode",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_affirmative_id": {
+               "symbol": "SetAffirmativeId",
+               "params": [
+                  {
+                     "name": "id",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_escape_id": {
+               "symbol": "SetEscapeId",
+               "params": [
+                  {
+                     "name": "id",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "SetFont",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_icon": {
+               "symbol": "SetIcon",
+               "params": [
+                  {
+                     "name": "pIcon",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "number"
+                  },
+                  {
+                     "name": "y",
+                     "type": "number"
+                  },
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_sizer": {
+               "symbol": "SetSizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "Pointer"
+                  },
+                  {
+                     "name": "deleteOld",
+                     "type": "boolean"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_title": {
+               "symbol": "SetTitle",
+               "params": [
+                  {
+                     "name": "pString",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [
+                  {
+                     "name": "show",
+                     "type": "boolean"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show_modal": {
+               "symbol": "ShowModal",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxFrame": {
+         "type": "wxFrame",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "createWxFrame",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "number"
+               },
+               {
+                  "name": "text",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "left",
+                  "type": "number"
+               },
+               {
+                  "name": "top",
+                  "type": "number"
+               },
+               {
+                  "name": "width",
+                  "type": "number"
+               },
+               {
+                  "name": "height",
+                  "type": "number"
+               },
+               {
+                  "name": "style",
+                  "type": "number"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxFrame"
+         },
+         "roles": {
+            "bind": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "number"
+                  },
+                  {
+                     "name": "last",
+                     "type": "number"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "number"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bind_id": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "number"
+                  },
+                  {
+                     "name": "last",
+                     "type": "number"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "number"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "center": {
+               "symbol": "Center",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "create_statusbar": {
+               "symbol": "CreateStatusBar",
+               "params": [
+                  {
+                     "name": "number",
+                     "type": "number"
+                  },
+                  {
+                     "name": "style",
+                     "type": "number"
+                  },
+                  {
+                     "name": "id",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "SetFont",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_icon": {
+               "symbol": "SetIcon",
+               "params": [
+                  {
+                     "name": "icon",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_menubar": {
+               "symbol": "SetMenuBar",
+               "params": [
+                  {
+                     "name": "menubar",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "number"
+                  },
+                  {
+                     "name": "y",
+                     "type": "number"
+                  },
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_sizer": {
+               "symbol": "SetSizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "Pointer"
+                  },
+                  {
+                     "name": "deleteOld",
+                     "type": "boolean"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_title": {
+               "symbol": "SetTitle",
+               "params": [
+                  {
+                     "name": "text",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "DEFAULT_FRAME_STYLE": "DEFAULT_FRAME_STYLE",
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxSizerFlags": {
+         "type": "wxSizerFlags",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "createWxSizerFlags",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "number"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxSizerFlags"
+         },
+         "roles": {
+            "align_h": {
+               "symbol": "CenterHorizontal",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "align_v": {
+               "symbol": "CenterVertical",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "border": {
+               "symbol": "Border",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bottom": {
+               "symbol": "Bottom",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "expand": {
+               "symbol": "Expand",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "left": {
+               "symbol": "Left",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "proportion": {
+               "symbol": "Proportion",
+               "params": [
+                  {
+                     "name": "proportion",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "right": {
+               "symbol": "Right",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "top": {
+               "symbol": "Top",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ALIGN_BOTTOM": "ALIGN_BOTTOM",
+            "ALIGN_CENTER": "ALIGN_CENTER",
+            "ALIGN_LEFT": "ALIGN_LEFT",
+            "ALIGN_RIGHT": "ALIGN_RIGHT",
+            "ALIGN_TOP": "ALIGN_TOP",
+            "ALL": "ALL",
+            "EXPAND": "EXPAND"
+         }
+      },
+      "wxStaticBitmap": {
+         "type": "wxStaticBitmap",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "createWxStaticBitmap",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "number"
+               },
+               {
+                  "name": "bitmap",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "left",
+                  "type": "number"
+               },
+               {
+                  "name": "top",
+                  "type": "number"
+               },
+               {
+                  "name": "width",
+                  "type": "number"
+               },
+               {
+                  "name": "height",
+                  "type": "number"
+               },
+               {
+                  "name": "style",
+                  "type": "number"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxStaticBitmap"
+         },
+         "roles": {
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_bitmap": {
+               "symbol": "SetBitmap",
+               "params": [
+                  {
+                     "name": "bitmap",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "number"
+                  },
+                  {
+                     "name": "y",
+                     "type": "number"
+                  },
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxStdDialogButtonSizer": {
+         "type": "wxStdDialogButtonSizer",
+         "idiom": "method-on-parent",
+         "ctor": {
+            "symbol": "CreateStdDialogButtonSizer",
+            "params": [
+               {
+                  "name": "flags",
+                  "type": "bigint"
+               }
+            ],
+            "idiom": "method-on-parent",
+            "owner": "wxDialog",
+            "returns": "wxStdDialogButtonSizer"
+         },
+         "roles": {
+            "add_button": {
+               "symbol": "AddButton",
+               "params": [
+                  {
+                     "name": "button",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "add_window": {
+               "symbol": "AddWindow",
+               "params": [
+                  {
+                     "name": "window",
+                     "type": "Pointer"
+                  },
+                  {
+                     "name": "option",
+                     "type": "number"
+                  },
+                  {
+                     "name": "flag",
+                     "type": "number"
+                  },
+                  {
+                     "name": "border",
+                     "type": "number"
+                  },
+                  {
+                     "name": "userData",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "realize": {
+               "symbol": "Realize",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxTextCtrl": {
+         "type": "wxTextCtrl",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "createWxTextCtrl",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "number"
+               },
+               {
+                  "name": "text",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "left",
+                  "type": "number"
+               },
+               {
+                  "name": "top",
+                  "type": "number"
+               },
+               {
+                  "name": "width",
+                  "type": "number"
+               },
+               {
+                  "name": "height",
+                  "type": "number"
+               },
+               {
+                  "name": "style",
+                  "type": "bigint"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxTextCtrl"
+         },
+         "roles": {
+            "bind": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "number"
+                  },
+                  {
+                     "name": "last",
+                     "type": "number"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "number"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bind_id": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "first",
+                     "type": "number"
+                  },
+                  {
+                     "name": "last",
+                     "type": "number"
+                  },
+                  {
+                     "name": "type_",
+                     "type": "number"
+                  },
+                  {
+                     "name": "closure",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "SetFont",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_label": {
+               "symbol": "SetLabel",
+               "params": [
+                  {
+                     "name": "text",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "number"
+                  },
+                  {
+                     "name": "y",
+                     "type": "number"
+                  },
+                  {
+                     "name": "width",
+                     "type": "number"
+                  },
+                  {
+                     "name": "height",
+                     "type": "number"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size_hints": {
+               "symbol": "SetSizeHints",
+               "params": [
+                  {
+                     "name": "minW",
+                     "type": "number"
+                  },
+                  {
+                     "name": "minH",
+                     "type": "number"
+                  },
+                  {
+                     "name": "maxW",
+                     "type": "number"
+                  },
+                  {
+                     "name": "maxH",
+                     "type": "number"
+                  },
+                  {
+                     "name": "incW",
+                     "type": "number"
+                  },
+                  {
+                     "name": "incH",
+                     "type": "number"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_value": {
+               "symbol": "SetValue",
+               "params": [
+                  {
+                     "name": "value",
+                     "type": "Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      }
+   },
+   "sizers": {
+      "wxBoxSizer": {
+         "ctor": {
+            "symbol": "createWxBoxSizer",
+            "params": [
+               {
+                  "name": "orient",
+                  "type": "number"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxBoxSizer"
+         },
+         "add_window": {
+            "symbol": "AddWindow",
+            "params": [
+               {
+                  "name": "window",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "option",
+                  "type": "number"
+               },
+               {
+                  "name": "flag",
+                  "type": "number"
+               },
+               {
+                  "name": "border",
+                  "type": "number"
+               },
+               {
+                  "name": "userData",
+                  "type": "Pointer"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "add_sizer": {
+            "symbol": "AddSizer",
+            "params": [
+               {
+                  "name": "sizer",
+                  "type": "Pointer"
+               },
+               {
+                  "name": "option",
+                  "type": "number"
+               },
+               {
+                  "name": "flag",
+                  "type": "number"
+               },
+               {
+                  "name": "border",
+                  "type": "number"
+               },
+               {
+                  "name": "userData",
+                  "type": "Pointer"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "add_spacer": {
+            "symbol": "AddSpacer",
+            "params": [
+               {
+                  "name": "size",
+                  "type": "number"
+               }
+            ],
+            "idiom": "method-on-self"
+         }
+      },
+      "flags": {
+         "ctor": {
+            "symbol": "createWxSizerFlags",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "number"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxSizerFlags"
+         },
+         "proportion": {
+            "symbol": "Proportion",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "number"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "expand": {
+            "symbol": "Expand",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "border": {
+            "symbol": "Border",
+            "params": [
+               {
+                  "name": "direction",
+                  "type": "number"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "left": {
+            "symbol": "Left",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "right": {
+            "symbol": "Right",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "top": {
+            "symbol": "Top",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "bottom": {
+            "symbol": "Bottom",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "align_h": {
+            "symbol": "CenterHorizontal",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "align_v": {
+            "symbol": "CenterVertical",
+            "params": [],
+            "idiom": "method-on-self"
+         }
+      }
+   },
+   "events": {
+      "bind": {
+         "symbol": "Bind",
+         "params": [
+            {
+               "name": "first",
+               "type": "number"
+            },
+            {
+               "name": "last",
+               "type": "number"
+            },
+            {
+               "name": "type_",
+               "type": "number"
+            },
+            {
+               "name": "closure",
+               "type": "Pointer"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "bind_id": {
+         "symbol": "Bind",
+         "params": [
+            {
+               "name": "first",
+               "type": "number"
+            },
+            {
+               "name": "last",
+               "type": "number"
+            },
+            {
+               "name": "type_",
+               "type": "number"
+            },
+            {
+               "name": "closure",
+               "type": "Pointer"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "handler_type": "(closure: Pointer) => void  // native callback, wrapped with createWxClosure"
+   },
+   "bitmap": {
+      "from_base64": {
+         "symbol": "createWxBitmapFromBase64",
+         "params": [
+            {
+               "name": "base64",
+               "type": "Pointer"
+            },
+            {
+               "name": "len",
+               "type": "bigint"
+            },
+            {
+               "name": "bitmap_type",
+               "type": "number"
+            }
+         ],
+         "idiom": "constructor",
+         "returns": "wxBitmap"
+      },
+      "get_bitmap": {
+         "symbol": "GetBitmap",
+         "params": [
+            {
+               "name": "ref",
+               "type": "Pointer"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "delete": {
+         "symbol": "Delete",
+         "params": [],
+         "idiom": "method-on-self"
+      }
+   },
+   "font": {
+      "create": {
+         "symbol": "createWxFont",
+         "params": [
+            {
+               "name": "pointSize",
+               "type": "number"
+            },
+            {
+               "name": "family",
+               "type": "number"
+            },
+            {
+               "name": "style",
+               "type": "number"
+            },
+            {
+               "name": "weight",
+               "type": "number"
+            },
+            {
+               "name": "underlined",
+               "type": "boolean"
+            },
+            {
+               "name": "face",
+               "type": "Pointer"
+            },
+            {
+               "name": "enc",
+               "type": "number"
+            }
+         ],
+         "idiom": "constructor",
+         "returns": "wxFont"
+      },
+      "delete": {
+         "symbol": "Delete",
+         "params": [],
+         "idiom": "method-on-self"
+      }
+   },
+   "std_buttons": {
+      "create": {
+         "symbol": "CreateStdDialogButtonSizer",
+         "params": [
+            {
+               "name": "flags",
+               "type": "bigint"
+            }
+         ],
+         "idiom": "method-on-parent",
+         "owner": "wxDialog",
+         "returns": "wxStdDialogButtonSizer"
+      },
+      "add_button": {
+         "symbol": "AddButton",
+         "params": [
+            {
+               "name": "button",
+               "type": "Pointer"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "realize": {
+         "symbol": "Realize",
+         "params": [],
+         "idiom": "method-on-self"
+      }
+   },
+   "app": {
+      "entry": "run",
+      "entry_signature": "run(): number  // src/kwxApp.ts (hand-maintained)",
+      "set_top_window": {
+         "symbol": "",
+         "params": [],
+         "idiom": "unsupported",
+         "reason": "hand_maintained"
+      },
+      "emit_entry": false
+   },
+   "unsupported": [
+      {
+         "class": "wxBoxSizer",
+         "role": "destroy",
+         "reason": "no_method"
+      },
+      {
+         "class": "wxStdDialogButtonSizer",
+         "role": "destroy",
+         "reason": "no_method"
+      }
+   ]
+}

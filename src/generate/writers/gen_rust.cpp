@@ -7,10 +7,19 @@
 
 #include "gen_rust.h"
 
+#include <string>
+
+#include <wx/utils.h>  // wxGetEnv
+
+#include "base_generator.h"   // BaseGenerator -- Base widget generator class
 #include "code.h"             // Code -- Helper class for generating code
-#include "gen_enums.h"        // Enumerations for generators
-#include "language_traits.h"  // GetLanguageTraits()
+#include "ffi_emit.h"         // EmitFfiFormBody, GetFfiFormInfo
+#include "ffi_ui.h"           // IsFfiUiLanguage
+#include "gen_common.h"       // Common component functions
+#include "image_gen.h"        // Functions for generating embedded images
+#include "image_handler.h"    // ImageHandler class
 #include "node.h"             // Node class
+#include "project_handler.h"  // ProjectHandler class
 #include "write_code.h"       // Write code to Scintilla or file
 
 using namespace GenEnum;
@@ -25,8 +34,13 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_language = language;
     m_panel_type = panel_type;
     ASSERT(m_language == GenLang::rust);
-    // Constructed for parity with the other generators; the stub does not emit code from it.
-    [[maybe_unused]] const Code code(m_form_node, m_language);
+    Code code(m_form_node, m_language);
+
+    m_embedded_images.clear();
+    SetImagesForm();
+    std::set<std::string> img_include_set;
+    CollectImageHeaders(m_form_node, img_include_set);
+    ParseImageProperties(m_form_node);
 
     if (m_header)
     {
@@ -45,7 +59,82 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         return;
     }
 
-    // Deliberate stub -- no widget construction code is emitted yet. This keeps the Rust
-    // panel renderable without asserting while the real generator is written.
-    m_source->writeLine("// Rust code generation for this form is not yet implemented.");
+    if (!IsFfiUiLanguage(m_language))
+    {
+        return;
+    }
+
+    const FfiFormInfo info = GetFfiFormInfo(m_form_node, m_language);
+    const bool is_dialog = m_form_node->is_Gen(gen_wxDialog);
+    const std::string entry_name = "create_" + info.snake;
+    const std::string form_receiver = is_dialog ? "dialog" : "frame";
+    // C3 spells the result `Option<wx::Frame>`, but the generated crate has no crate-root
+    // re-export -- every wrapper type lives in its own module (wx::frame::Frame). The
+    // qualified path is the only spelling that names the port's type; recorded in
+    // kwxLedger.md Phase 13.
+    const std::string return_type = is_dialog ? "wx::dialog::Dialog" : "wx::frame::Frame";
+
+    // The generated form is a module of the hand-written runner, so an inner attribute is
+    // legal here. Every wrapper type is imported unconditionally: the node set is not known
+    // until EmitFfiFormBody() runs, and an unused import must not fail the build.
+    m_source->writeLine("#![allow(unused_imports)]");
+    m_source->writeLine();
+    m_source->writeLine("use std::os::raw::c_void;");
+    m_source->writeLine();
+    m_source->writeLine("use wx::bitmap::Bitmap;");
+    m_source->writeLine("use wx::box_sizer::BoxSizer;");
+    m_source->writeLine("use wx::closure::Closure;");
+    m_source->writeLine("use wx::constants;");
+    m_source->writeLine("use wx::dialog::Dialog;");
+    m_source->writeLine("use wx::events;");
+    m_source->writeLine("use wx::font::Font;");
+    m_source->writeLine("use wx::frame::Frame;");
+    m_source->writeLine("use wx::static_bitmap::StaticBitmap;");
+    m_source->writeLine("use wx::std_dialog_button_sizer::StdDialogButtonSizer;");
+    m_source->writeLine("use wx::support::NO_PARENT;");
+    m_source->writeLine("use wx::text_ctrl::TextCtrl;");
+    m_source->writeLine();
+
+    m_source->writeLine("pub fn " + entry_name + "(parent: *mut c_void) -> Option<" + return_type +
+                        "> {");
+    m_source->Indent();
+    // The kwxRust constructors take `&impl WxWindow` and expose no public way to wrap a raw
+    // parent handle, so the forms are created parentless and the runner keeps the frame as
+    // the top window. Filed in kwxFfiIssues.md.
+    m_source->writeLine("let _ = parent;");
+    m_source->writeLine();
+
+    if (!m_embedded_images.empty())
+    {
+        WriteImageConstruction(code);
+        m_source->writeLine();
+    }
+
+    std::string declarations;
+    std::string handlers;
+    std::ignore = EmitFfiFormBody(code, m_source, m_form_node, info, form_receiver, declarations,
+                                  handlers, "&NO_PARENT");
+
+    m_source->writeLine();
+    m_source->writeLine("Some(" + form_receiver + ")");
+    m_source->Unindent();
+    m_source->writeLine("}");
+
+    if (!handlers.empty())
+    {
+        m_source->writeLine();
+        // The handler body's indentation is part of its shape; the writer must not flatten it.
+        m_source->writeLine(handlers, indent::auto_keep_whitespace);
+    }
+
+    m_source->ResetIndent();
+
+    if (wxString sourcemap; wxGetEnv("WXUE_FFI_SOURCEMAP", &sourcemap) && !sourcemap.empty())
+    {
+        auto [output_path, has_base_file] = Project.GetOutputPath(m_form_node, m_language);
+        if (has_base_file)
+        {
+            WriteFfiSourceMap(output_path.c_str());
+        }
+    }
 }

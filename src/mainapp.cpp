@@ -6,23 +6,33 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [11-09-2026]
 
+#include <algorithm>
 #include <chrono>
+#include <format>
+#include <ranges>
+#include <string_view>
+#include <tuple>
 #include <utility>  // std::to_underlying
+#include <vector>
 
-#include <wx/arrstr.h>   // wxArrayString class
-#include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command
-#include <wx/config.h>   // wxConfig base header
-#include <wx/cshelp.h>   // Context-sensitive help support classes
-#include <wx/dir.h>      // wxDir is a class for enumerating the files in a directory
-#include <wx/filedlg.h>  // wxFileDialog base header
-#include <wx/msgdlg.h>   // wxMessageDialog
-#include <wx/msgout.h>   // wxMessageOutput and related classes
-#include <wx/sysopt.h>   // wxSystemOptions
-#include <wx/utils.h>    // Miscellaneous utilities
+#include <wx/arrstr.h>    // wxArrayString class
+#include <wx/cmdline.h>   // wxCmdLineParser and related classes for parsing the command
+#include <wx/config.h>    // wxConfig base header
+#include <wx/cshelp.h>    // Context-sensitive help support classes
+#include <wx/dir.h>       // wxDir is a class for enumerating the files in a directory
+#include <wx/filedlg.h>   // wxFileDialog base header
+#include <wx/log.h>       // wxLogStderr
+#include <wx/msgdlg.h>    // wxMessageDialog
+#include <wx/msgout.h>    // wxMessageOutput and related classes
+#include <wx/sysopt.h>    // wxSystemOptions
+#include <wx/utils.h>     // Miscellaneous utilities
+#include <wx/wfstream.h>  // wxFFile
 
 #include "mainapp.h"
 
 #include "cli_ui_guard.h"              // cli_ui::InstallModalGuard
+#include "conformance_kit.h"            // WriteConformanceKit -- generated conformance kit
+#include "ffi_ui.h"                    // FfiUiDescriptor load and role resolution
 #include "gen_common.h"                // Common component functions
 #include "gen_results.h"               // Code generation file writing functions
 #include "internal/msg_logging.h"      // MsgLogging -- Message logging class
@@ -31,6 +41,7 @@
 #include "node_creator.h"              // NodeCreator class
 #include "preferences.h"               // Set/Get wxUiEditor preferences
 #include "project_handler.h"           // ProjectHandler class
+#include "supported_matrix.h"          // WriteSupportedMatrix -- full capability matrix
 #include "utils.h"                     // Utility functions that work with properties
 #include "verify_codegen.h"  // VerifyCodeGen -- Verify that code generation did not change
 #include "verify_import.h"   // VerifyImport -- Verify that importing a project file did not change
@@ -148,6 +159,259 @@ static wxString& GetCommandLineFilename(wxCmdLineParser& parser)
     // Otherwise s_filename may have been set by ParseGenerationType
 
     return s_filename;
+}
+// ######################## --dump_ui_ir support ########################
+
+// Appends `text` with JSON string escaping. The surrounding quotes are added by
+// AppendJsonString.
+static void AppendJsonEscaped(std::string& json, std::string_view text)
+{
+    for (const char character: text)
+    {
+        switch (character)
+        {
+            case '"':
+                json += "\\\"";
+                break;
+            case '\\':
+                json += "\\\\";
+                break;
+            case '\b':
+                json += "\\b";
+                break;
+            case '\f':
+                json += "\\f";
+                break;
+            case '\n':
+                json += "\\n";
+                break;
+            case '\r':
+                json += "\\r";
+                break;
+            case '\t':
+                json += "\\t";
+                break;
+            default:
+                if (static_cast<unsigned char>(character) < 0x20)
+                {
+                    json += std::format("\\u{:04x}", static_cast<unsigned int>(
+                                                         static_cast<unsigned char>(character)));
+                }
+                else
+                {
+                    json += character;
+                }
+                break;
+        }
+    }
+}
+
+static void AppendJsonString(std::string& json, std::string_view text)
+{
+    json += '"';
+    AppendJsonEscaped(json, text);
+    json += '"';
+}
+
+static void AddRoleUsed(std::vector<std::string>& roles, std::string_view role)
+{
+    if (std::ranges::find(roles, role) == roles.end())
+    {
+        roles.emplace_back(role);
+    }
+}
+
+// Derives the role set a node's properties require, per C2 in .private/kwxPlan.md.
+static std::vector<std::string> GetRolesUsed(Node* node)
+{
+    std::vector<std::string> roles;
+    AddRoleUsed(roles, "ctor");
+
+    if (node->is_Gen(gen_wxStdDialogButtonSizer))
+    {
+        AddRoleUsed(roles, "create");
+        AddRoleUsed(roles, "add_button");
+        AddRoleUsed(roles, "realize");
+    }
+
+    if (node->HasValue(prop_value))
+    {
+        AddRoleUsed(roles, "set_value");
+    }
+
+    if (node->HasValue(prop_font))
+    {
+        AddRoleUsed(roles, "set_font");
+        AddRoleUsed(roles, "create");
+        AddRoleUsed(roles, "delete");
+    }
+
+    if (node->HasValue(prop_bitmap))
+    {
+        AddRoleUsed(roles, "from_base64");
+        AddRoleUsed(roles, "get_bitmap");
+        AddRoleUsed(roles, "set_bitmap");
+        AddRoleUsed(roles, "delete");
+    }
+
+    if (const Node* parent = node->get_Parent(); parent && parent->is_Sizer())
+    {
+        AddRoleUsed(roles, node->is_Sizer() ? "add_sizer" : "add_window");
+
+        if (node->HasValue(prop_proportion) && node->as_int(prop_proportion) != 0)
+        {
+            AddRoleUsed(roles, "proportion");
+        }
+        if (node->HasProp(prop_flags) && node->as_string(prop_flags).contains("wxEXPAND"))
+        {
+            AddRoleUsed(roles, "expand");
+        }
+        if (node->HasValue(prop_border) && node->as_int(prop_border) > 0)
+        {
+            AddRoleUsed(roles, "border");
+        }
+    }
+
+    for (const auto& event: node->get_MapEvents() | std::views::values)
+    {
+        if (!event.get_value().empty())
+        {
+            AddRoleUsed(roles, "bind");
+            break;
+        }
+    }
+
+    return roles;
+}
+
+// Depth-first collection of every instantiated widget/sizer below `parent`.
+static void CollectInstantiatedNodes(Node* parent, std::vector<Node*>& nodes)
+{
+    for (size_t index = 0; index < parent->get_ChildCount(); ++index)
+    {
+        Node* child = parent->get_Child(index);
+        if (child->is_Widget() || child->is_Sizer())
+        {
+            nodes.emplace_back(child);
+        }
+        CollectInstantiatedNodes(child, nodes);
+    }
+}
+
+// Depth-first collection of forms, descending through folders and other non-form nodes.
+static void CollectForms(Node* parent, std::vector<Node*>& forms)
+{
+    for (size_t index = 0; index < parent->get_ChildCount(); ++index)
+    {
+        Node* child = parent->get_Child(index);
+        if (child->is_Form())
+        {
+            forms.emplace_back(child);
+        }
+        else
+        {
+            CollectForms(child, forms);
+        }
+    }
+}
+
+static std::string_view GetNodeClass(Node* node)
+{
+    const std::map<GenName, std::string_view>::const_iterator iter =
+        map_GenNames.find(node->get_GenName());
+    if (iter != map_GenNames.end())
+    {
+        return iter->second;
+    }
+    return node->get_DeclName();
+}
+
+// Writes the schema-1 language-neutral IR described by C2 in .private/kwxPlan.md.
+static bool WriteUiIr(const wxString& output_path)
+{
+    Node* project_node = Project.get_ProjectNode();
+    if (!project_node)
+    {
+        return false;
+    }
+
+    std::vector<Node*> forms;
+    CollectForms(project_node, forms);
+
+    std::string json;
+    json += "{\n   \"schema\": 1,\n   \"project\": ";
+    AppendJsonString(json, std::string_view(Project.get_ProjectFile()));
+    json += ",\n   \"forms\": [";
+
+    bool first_form = true;
+    for (Node* form: forms)
+    {
+        if (!first_form)
+        {
+            json += ',';
+        }
+        first_form = false;
+
+        std::string_view class_name = form->as_view(prop_class_name);
+        if (class_name.empty())
+        {
+            class_name = form->get_NodeName();
+        }
+
+        json += "\n      {\n         \"class_name\": ";
+        AppendJsonString(json, class_name);
+        json += ",\n         \"node_class\": ";
+        AppendJsonString(json, GetNodeClass(form));
+        json += ",\n         \"children\": [";
+
+        std::vector<Node*> nodes;
+        CollectInstantiatedNodes(form, nodes);
+
+        bool first_node = true;
+        for (Node* node: nodes)
+        {
+            if (!first_node)
+            {
+                json += ',';
+            }
+            first_node = false;
+
+            json += "\n            { \"node_class\": ";
+            AppendJsonString(json, GetNodeClass(node));
+            json += ", \"var_name\": ";
+            AppendJsonString(json, node->get_NodeName());
+            json += ", \"roles_used\": [";
+
+            const std::vector<std::string> roles = GetRolesUsed(node);
+            for (size_t index = 0; index < roles.size(); ++index)
+            {
+                if (index > 0)
+                {
+                    json += ", ";
+                }
+                AppendJsonString(json, roles[index]);
+            }
+
+            json += "], \"in_sizer\": ";
+            const Node* parent = node->get_Parent();
+            json += (parent && parent->is_Sizer()) ? "true" : "false";
+            json += " }";
+        }
+
+        json += "\n         ]\n      }";
+    }
+
+    json += "\n   ]\n}\n";
+
+    wxFFile file(output_path, "wb");
+    if (!file.IsOpened())
+    {
+        wxLogStderr(nullptr).LogText(wxString("Unable to write UI IR: ") + output_path);
+        return false;
+    }
+
+    file.Write(json.data(), json.size());
+    return file.Close();
 }
 
 #if defined(_WIN32)
@@ -332,6 +596,18 @@ int App::OnRun()
     parser.AddLongSwitch("gen_coverage", "generate all language types for test coverage",
                          wxCMD_LINE_HIDDEN);
 
+    // Writes the language-neutral UI IR consumed by `kwxgen check-ui`, then exits.
+    parser.AddLongOption("dump_ui_ir", "write the project's UI IR and exit", wxCMD_LINE_VAL_STRING,
+                         wxCMD_LINE_HIDDEN);
+
+    // Writes the full pair-level capability matrix (.private/kwxSupported.md), then exits.
+    parser.AddLongOption("gen_supported", "write the full kwx supported matrix and exit",
+                         wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
+    // Writes the conformance kit (one minimal .wxui per generator class), then exits.
+    parser.AddLongOption("gen_conformance", "write the conformance kit and exit",
+                         wxCMD_LINE_VAL_STRING, wxCMD_LINE_HIDDEN);
+
     // TODO: [Randalphwa - 11-29-2025] Add an "-auto_load" hidden switch that will find all the
     // *.wxui files in the current directory. If there's only one, set that as the project file. If
     // there's more than one, load a dialog to let the user select which project file to load.
@@ -407,6 +683,59 @@ int App::OnRun()
         m_docViewFrame->Show();
         SetTopWindow(m_docViewFrame);
         return wxApp::OnRun();
+    }
+
+    // --dump_ui_ir: write the language-neutral UI IR consumed by `kwxgen check-ui`, then exit.
+    if (wxString ir_output; parser.Found("dump_ui_ir", &ir_output))
+    {
+        Project.set_UiAllowed(false);
+
+        wxue::string project_filename = GetCommandLineFilename(parser);
+        if (project_filename.empty())
+        {
+            wxLogStderr(nullptr).LogText("--dump_ui_ir requires a project filename");
+            return 1;
+        }
+        project_filename.make_absolute();
+
+        if (!Project.LoadProject(project_filename, false) || !Project.get_ProjectNode())
+        {
+            wxLogStderr(nullptr).LogText(wxString("Unable to load project file: ") +
+                                         wxString(project_filename.c_str()));
+            return 1;
+        }
+
+        return WriteUiIr(ir_output) ? 0 : 1;
+    }
+
+    // --gen_supported: write the pair-level capability matrix, then exit. It joins the generator
+    // library against the six descriptors and coverage.json, so no project is loaded.
+    if (wxString supported_path; parser.Found("gen_supported", &supported_path))
+    {
+        Project.set_UiAllowed(false);
+
+        if (supported_path.empty())
+        {
+            wxLogStderr(nullptr).LogText("--gen_supported requires an output path");
+            return 1;
+        }
+
+        return WriteSupportedMatrix(supported_path.utf8_string()) ? 0 : 1;
+    }
+
+    // --gen_conformance: write the generated conformance kit, then exit. It walks the generator
+    // library, so no project is loaded.
+    if (wxString kit_directory; parser.Found("gen_conformance", &kit_directory))
+    {
+        Project.set_UiAllowed(false);
+
+        if (kit_directory.empty())
+        {
+            wxLogStderr(nullptr).LogText("--gen_conformance requires an output directory");
+            return 1;
+        }
+
+        return WriteConformanceKit(kit_directory.utf8_string()) ? 0 : 1;
     }
 
 #if defined(INTERNAL_TESTING)
@@ -918,6 +1247,13 @@ size_t App::GenerateAllLanguages(size_t generate_type, bool test_only, GenResult
     {
         if (generate_type & std::to_underlying(language))
         {
+            // The FFI writers consume the kwxgen descriptor; load it once here so a missing or
+            // stale descriptor is reported before any FFI file is written.
+            if (IsFfiUiLanguage(language))
+            {
+                std::ignore = GetFfiUiDescriptor(language);
+            }
+
             results.Clear();
             class_list.clear();
 
@@ -1073,8 +1409,15 @@ int App::Generate(wxCmdLineParser& parser, bool& is_project_loaded)
     std::vector<std::string> class_list;
     const std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
+    ResetFfiUiDiagnosticCount();
     const size_t generate_errors =
         GenerateAllLanguages(generate_type, test_only, results, class_list);
+
+    if (const std::size_t ffi_diagnostics = GetFfiUiDiagnosticCount(); ffi_diagnostics > 0)
+    {
+        wxue::string& summary = m_cmdline_log.emplace_back();
+        summary << "FFI: " << ffi_diagnostics << " unsupported role call(s) reported";
+    }
 
     wxue::string& log_msg = m_cmdline_log.emplace_back();
     const std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();

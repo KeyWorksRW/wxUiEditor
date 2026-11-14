@@ -1,0 +1,389 @@
+{
+  "schema": 1,
+  "entries": [
+    {
+      "lang": "go",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxSizerFlags",
+      "roles": ["ctor", "expand"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    }
+  ]
+}

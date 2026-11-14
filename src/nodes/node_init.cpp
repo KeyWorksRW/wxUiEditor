@@ -472,6 +472,11 @@ void NodeCreator::Initialize()
         GenEnum::rmap_PropNames[iter.second] = iter.first;
     }
 
+    // The embedded interface data spells the LuaJIT per-form output-file property
+    // "luajit_file"; the property enum spells it "lua_file" (the spelling Phase 5 writes into
+    // quick.wxui). Accept both so the declaration resolves instead of being dropped.
+    GenEnum::rmap_PropNames["luajit_file"] = GenEnum::prop_lua_file;
+
     for (const auto& iter: map_PropMacros)
     {
         map_MacroProps[iter.second] = iter.first;

@@ -283,7 +283,7 @@
 	</gen>
 
 	<gen class="kwxLuaJIT Settings" type="interface">
-		<property name="luajit_file" type="file"
+		<property name="lua_file" type="file"
 			help="The filename to use if generating code for kwxLuaJIT."/>
 		<property name="insert_luajit_code" type="code_edit"
 			help="Specify the code to insert into the luajit file after the generated statements. This can be any valid luajit code for use before the class definition."/>

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "tool": "kwxgen",
+  "descriptors": {
+    "fortran": {
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d"
+    },
+    "go": {
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d"
+    },
+    "julia": {
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d"
+    },
+    "lua": {
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d"
+    },
+    "rust": {
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d"
+    },
+    "typescript": {
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d"
+    }
+  }
+}

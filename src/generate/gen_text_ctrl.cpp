@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <string>
+
 #include <wx/infobar.h>           // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 #include <wx/textctrl.h>  // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
@@ -101,13 +103,115 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, [[maybe_unused]] Node
     return false;
 }
 
+// Returns the expression for the parent window of a kwxFFI factory call. TypeScript children live
+// inside a generated class, so the form is reached through the class's form field.
+static std::string GetTypeScriptParentRef(Node* node)
+{
+    Node* parent = node->get_Parent();
+    std::string parent_ref = "this.";
+    if (parent->is_Form())
+    {
+        if (parent->is_Gen(gen_wxWizard))
+        {
+            parent_ref += "wizard";
+        }
+        else if (parent->is_Gen(gen_wxDialog) || parent->is_Gen(gen_wxPropertySheetDialog))
+        {
+            parent_ref += "dialog";
+        }
+        else
+        {
+            // wxFrame and the popup windows are all held in the class's "frame" field.
+            parent_ref += "frame";
+        }
+    }
+    else
+    {
+        parent_ref += parent->get_NodeName(GenLang::typescript);
+    }
+    return parent_ref + ".ptr";
+}
+
+// kwxFFI constructs through factory functions: the text is a wxString pointer, the position and
+// size are four separate integers, and the style is a BigInt. The factory returns a nullable
+// wrapper, so the result is asserted non-null with '!'.
+static bool ConstructionCodeTypeScript(Code& code)
+{
+    const std::string node_name(code.node()->get_NodeName(GenLang::typescript));
+    const std::string value_var = node_name + "Str";
+    const std::string parent_ref = GetTypeScriptParentRef(code.node());
+    const std::string stmt_end(code.get_traits().stmt_end);
+
+    code.Str("const ").Str(value_var).Str(" = createWxString(");
+    code.QuotedString(prop_value);
+    code.Str(")").Str(stmt_end).Eol();
+
+    // The assignment is deliberately kept on a single line, so line breaking is disabled while
+    // it is assembled.
+    code.EnableAutoLineBreak(false);
+    code.Str("this.").Str(node_name).Str(" = createWxTextCtrl(").Str(parent_ref).Comma();
+    if (code.HasValue(prop_id))
+    {
+        code.Add(prop_id);
+    }
+    else
+    {
+        code.Add("wxID_ANY");
+    }
+    code.Comma().Str(value_var).Str(".ptr").Comma();
+
+    const wxPoint position = code.node()->as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+    {
+        code.Str("-1").Comma().Str("-1");
+    }
+    else
+    {
+        code.itoa(position.x).Comma().itoa(position.y);
+    }
+    code.Comma();
+
+    const wxSize size = code.node()->as_wxSize(prop_size);
+    if (size == wxDefaultSize)
+    {
+        code.Str("-1").Comma().Str("-1");
+    }
+    else
+    {
+        code.itoa(size.x).Comma().itoa(size.y);
+    }
+    code.Comma();
+
+    if (code.HasValue(prop_style) || code.HasValue(prop_window_style))
+    {
+        code.Str("BigInt(");
+        code.Style();
+        code.Str(")");
+    }
+    else
+    {
+        code.Str("0n");
+    }
+    code.Str(")!").Str(stmt_end);
+    code.EnableAutoLineBreak(true);
+
+    code.Eol();
+    code.Str(value_var).Str(".Delete()").Str(stmt_end);
+
+    return true;
+}
+
 bool TextCtrlGenerator::ConstructionCode(Code& code)
 {
+    if (code.is_typescript())
+    {
+        return ConstructionCodeTypeScript(code);
+    }
+
     code.AddAuto().NodeName().CreateClass();
     code.ValidParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
     code.QuotedString(prop_value);
     code.PosSizeFlags(code::allow_scaling, true);
-
     return true;
 }
 

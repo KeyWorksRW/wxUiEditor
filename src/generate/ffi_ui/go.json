@@ -1,0 +1,1337 @@
+{
+   "schema": 1,
+   "lang": "go",
+   "generated_by": {
+      "tool": "kwxgen",
+      "version": "1.0.0",
+      "headers_hash": "3ee30570e758855d",
+      "profile": "full"
+   },
+   "naming": {
+      "class_type": "exported struct StripPrefix(wxClass) embedding its wrapped parent, e.g. type Frame struct{ TopLevelWindow }",
+      "constant": "package-level var in constants_gen.go, e.g. ID_ANY = cgo_expwxID_ANY()",
+      "constructor": "package function New<Type><Suffix>(...) *Type (GoConstructorName) in <type>_gen.go",
+      "event_bind": "Bind (hand-maintained wx/event.go)",
+      "method": "method func (o *Type) Method(...) on the wrapper struct (SafeGoIdentifier)",
+      "module": "Go package wx (package wx)",
+      "pointer_accessor": ".Ptr()"
+   },
+   "classes": {
+      "wxBoxSizer": {
+         "type": "BoxSizer",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "NewBoxSizer",
+            "params": [
+               {
+                  "name": "orient",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxBoxSizer"
+         },
+         "roles": {
+            "add_sizer": {
+               "symbol": "AddSizerFlags",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "unsafe.Pointer"
+                  },
+                  {
+                     "name": "flags",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "add_spacer": {
+               "symbol": "AddSpacer",
+               "params": [
+                  {
+                     "name": "size",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "add_window": {
+               "symbol": "AddWindowFlags",
+               "params": [
+                  {
+                     "name": "window",
+                     "type": "unsafe.Pointer"
+                  },
+                  {
+                     "name": "flags",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "Ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "HORIZONTAL": "HORIZONTAL",
+            "VERTICAL": "VERTICAL"
+         }
+      },
+      "wxDialog": {
+         "type": "Dialog",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "NewDialog",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "unsafe.Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "int"
+               },
+               {
+                  "name": "text",
+                  "type": "string"
+               },
+               {
+                  "name": "left",
+                  "type": "int"
+               },
+               {
+                  "name": "top",
+                  "type": "int"
+               },
+               {
+                  "name": "width",
+                  "type": "int"
+               },
+               {
+                  "name": "height",
+                  "type": "int"
+               },
+               {
+                  "name": "style",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxDialog"
+         },
+         "roles": {
+            "bind": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "evtType",
+                     "type": "int"
+                  },
+                  {
+                     "name": "fn",
+                     "type": "EventHandler"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "reason": "hand_maintained"
+            },
+            "bind_id": {
+               "symbol": "BindId",
+               "params": [
+                  {
+                     "name": "evtType",
+                     "type": "int"
+                  },
+                  {
+                     "name": "id",
+                     "type": "int"
+                  },
+                  {
+                     "name": "fn",
+                     "type": "EventHandler"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "reason": "hand_maintained"
+            },
+            "center": {
+               "symbol": "Center",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "end_modal": {
+               "symbol": "EndModal",
+               "params": [
+                  {
+                     "name": "retCode",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "Ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_affirmative_id": {
+               "symbol": "SetAffirmativeId",
+               "params": [
+                  {
+                     "name": "id",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_escape_id": {
+               "symbol": "SetEscapeId",
+               "params": [
+                  {
+                     "name": "id",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "SetFont",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_icon": {
+               "symbol": "SetIcon",
+               "params": [
+                  {
+                     "name": "pIcon",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "int"
+                  },
+                  {
+                     "name": "y",
+                     "type": "int"
+                  },
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_sizer": {
+               "symbol": "SetSizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "unsafe.Pointer"
+                  },
+                  {
+                     "name": "deleteOld",
+                     "type": "bool"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_title": {
+               "symbol": "SetTitle",
+               "params": [
+                  {
+                     "name": "pString",
+                     "type": "string"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [
+                  {
+                     "name": "show",
+                     "type": "bool"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show_modal": {
+               "symbol": "ShowModal",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxFrame": {
+         "type": "Frame",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "NewFrame",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "unsafe.Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "int"
+               },
+               {
+                  "name": "text",
+                  "type": "string"
+               },
+               {
+                  "name": "left",
+                  "type": "int"
+               },
+               {
+                  "name": "top",
+                  "type": "int"
+               },
+               {
+                  "name": "width",
+                  "type": "int"
+               },
+               {
+                  "name": "height",
+                  "type": "int"
+               },
+               {
+                  "name": "style",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxFrame"
+         },
+         "roles": {
+            "bind": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "evtType",
+                     "type": "int"
+                  },
+                  {
+                     "name": "fn",
+                     "type": "EventHandler"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "reason": "hand_maintained"
+            },
+            "bind_id": {
+               "symbol": "BindId",
+               "params": [
+                  {
+                     "name": "evtType",
+                     "type": "int"
+                  },
+                  {
+                     "name": "id",
+                     "type": "int"
+                  },
+                  {
+                     "name": "fn",
+                     "type": "EventHandler"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "reason": "hand_maintained"
+            },
+            "center": {
+               "symbol": "Center",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "create_statusbar": {
+               "symbol": "CreateStatusBar",
+               "params": [
+                  {
+                     "name": "number",
+                     "type": "int"
+                  },
+                  {
+                     "name": "style",
+                     "type": "int"
+                  },
+                  {
+                     "name": "id",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "Ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "SetFont",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_icon": {
+               "symbol": "SetIcon",
+               "params": [
+                  {
+                     "name": "icon",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_menubar": {
+               "symbol": "SetMenuBar",
+               "params": [
+                  {
+                     "name": "menubar",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "int"
+                  },
+                  {
+                     "name": "y",
+                     "type": "int"
+                  },
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_sizer": {
+               "symbol": "SetSizer",
+               "params": [
+                  {
+                     "name": "sizer",
+                     "type": "unsafe.Pointer"
+                  },
+                  {
+                     "name": "deleteOld",
+                     "type": "bool"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_title": {
+               "symbol": "SetTitle",
+               "params": [
+                  {
+                     "name": "text",
+                     "type": "string"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "DEFAULT_FRAME_STYLE": "DEFAULT_FRAME_STYLE",
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxSizerFlags": {
+         "type": "SizerFlags",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "NewSizerFlags",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxSizerFlags"
+         },
+         "roles": {
+            "align_h": {
+               "symbol": "Align",
+               "params": [
+                  {
+                     "name": "alignment",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "align_v": {
+               "symbol": "Align",
+               "params": [
+                  {
+                     "name": "alignment",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "border": {
+               "symbol": "Border",
+               "params": [
+                  {
+                     "name": "direction",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "bottom": {
+               "symbol": "Bottom",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "expand": {
+               "symbol": "Expand",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "left": {
+               "symbol": "Left",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "proportion": {
+               "symbol": "Proportion",
+               "params": [
+                  {
+                     "name": "proportion",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "right": {
+               "symbol": "Right",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "top": {
+               "symbol": "Top",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ALIGN_BOTTOM": "ALIGN_BOTTOM",
+            "ALIGN_CENTER": "ALIGN_CENTER",
+            "ALIGN_LEFT": "ALIGN_LEFT",
+            "ALIGN_RIGHT": "ALIGN_RIGHT",
+            "ALIGN_TOP": "ALIGN_TOP",
+            "ALL": "ALL",
+            "EXPAND": "EXPAND"
+         }
+      },
+      "wxStaticBitmap": {
+         "type": "StaticBitmap",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "NewStaticBitmap",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "unsafe.Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "int"
+               },
+               {
+                  "name": "bitmap",
+                  "type": "unsafe.Pointer"
+               },
+               {
+                  "name": "left",
+                  "type": "int"
+               },
+               {
+                  "name": "top",
+                  "type": "int"
+               },
+               {
+                  "name": "width",
+                  "type": "int"
+               },
+               {
+                  "name": "height",
+                  "type": "int"
+               },
+               {
+                  "name": "style",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxStaticBitmap"
+         },
+         "roles": {
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "Ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_bitmap": {
+               "symbol": "SetBitmap",
+               "params": [
+                  {
+                     "name": "bitmap",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "int"
+                  },
+                  {
+                     "name": "y",
+                     "type": "int"
+                  },
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxStdDialogButtonSizer": {
+         "type": "StdDialogButtonSizer",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "NewStdDialogButtonSizer",
+            "params": [],
+            "idiom": "constructor",
+            "returns": "wxStdDialogButtonSizer"
+         },
+         "roles": {
+            "add_button": {
+               "symbol": "AddButton",
+               "params": [
+                  {
+                     "name": "button",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "add_window": {
+               "symbol": "AddWindowFlags",
+               "params": [
+                  {
+                     "name": "window",
+                     "type": "unsafe.Pointer"
+                  },
+                  {
+                     "name": "flags",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "Ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "realize": {
+               "symbol": "Realize",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      },
+      "wxTextCtrl": {
+         "type": "TextCtrl",
+         "idiom": "constructor",
+         "ctor": {
+            "symbol": "NewTextCtrl",
+            "params": [
+               {
+                  "name": "parent",
+                  "type": "unsafe.Pointer"
+               },
+               {
+                  "name": "id",
+                  "type": "int"
+               },
+               {
+                  "name": "text",
+                  "type": "string"
+               },
+               {
+                  "name": "left",
+                  "type": "int"
+               },
+               {
+                  "name": "top",
+                  "type": "int"
+               },
+               {
+                  "name": "width",
+                  "type": "int"
+               },
+               {
+                  "name": "height",
+                  "type": "int"
+               },
+               {
+                  "name": "style",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxTextCtrl"
+         },
+         "roles": {
+            "bind": {
+               "symbol": "Bind",
+               "params": [
+                  {
+                     "name": "evtType",
+                     "type": "int"
+                  },
+                  {
+                     "name": "fn",
+                     "type": "EventHandler"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "reason": "hand_maintained"
+            },
+            "bind_id": {
+               "symbol": "BindId",
+               "params": [
+                  {
+                     "name": "evtType",
+                     "type": "int"
+                  },
+                  {
+                     "name": "id",
+                     "type": "int"
+                  },
+                  {
+                     "name": "fn",
+                     "type": "EventHandler"
+                  }
+               ],
+               "idiom": "method-on-self",
+               "reason": "hand_maintained"
+            },
+            "delete": {
+               "symbol": "Delete",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "destroy": {
+               "symbol": "Destroy",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "hide": {
+               "symbol": "Hide",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "ptr": {
+               "symbol": "Ptr",
+               "params": [],
+               "idiom": "method-on-self"
+            },
+            "set_font": {
+               "symbol": "SetFont",
+               "params": [
+                  {
+                     "name": "font",
+                     "type": "unsafe.Pointer"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_label": {
+               "symbol": "SetLabel",
+               "params": [
+                  {
+                     "name": "text",
+                     "type": "string"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_min_size": {
+               "symbol": "SetMinSize",
+               "params": [
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size": {
+               "symbol": "SetSize",
+               "params": [
+                  {
+                     "name": "x",
+                     "type": "int"
+                  },
+                  {
+                     "name": "y",
+                     "type": "int"
+                  },
+                  {
+                     "name": "width",
+                     "type": "int"
+                  },
+                  {
+                     "name": "height",
+                     "type": "int"
+                  },
+                  {
+                     "name": "sizeFlags",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_size_hints": {
+               "symbol": "SetSizeHints",
+               "params": [
+                  {
+                     "name": "minW",
+                     "type": "int"
+                  },
+                  {
+                     "name": "minH",
+                     "type": "int"
+                  },
+                  {
+                     "name": "maxW",
+                     "type": "int"
+                  },
+                  {
+                     "name": "maxH",
+                     "type": "int"
+                  },
+                  {
+                     "name": "incW",
+                     "type": "int"
+                  },
+                  {
+                     "name": "incH",
+                     "type": "int"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "set_value": {
+               "symbol": "SetValue",
+               "params": [
+                  {
+                     "name": "value",
+                     "type": "string"
+                  }
+               ],
+               "idiom": "method-on-self"
+            },
+            "show": {
+               "symbol": "Show",
+               "params": [],
+               "idiom": "method-on-self"
+            }
+         },
+         "constants": {
+            "ID_ANY": "ID_ANY"
+         }
+      }
+   },
+   "sizers": {
+      "wxBoxSizer": {
+         "ctor": {
+            "symbol": "NewBoxSizer",
+            "params": [
+               {
+                  "name": "orient",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxBoxSizer"
+         },
+         "add_window": {
+            "symbol": "AddWindowFlags",
+            "params": [
+               {
+                  "name": "window",
+                  "type": "unsafe.Pointer"
+               },
+               {
+                  "name": "flags",
+                  "type": "unsafe.Pointer"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "add_sizer": {
+            "symbol": "AddSizerFlags",
+            "params": [
+               {
+                  "name": "sizer",
+                  "type": "unsafe.Pointer"
+               },
+               {
+                  "name": "flags",
+                  "type": "unsafe.Pointer"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "add_spacer": {
+            "symbol": "AddSpacer",
+            "params": [
+               {
+                  "name": "size",
+                  "type": "int"
+               }
+            ],
+            "idiom": "method-on-self"
+         }
+      },
+      "flags": {
+         "ctor": {
+            "symbol": "NewSizerFlags",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "int"
+               }
+            ],
+            "idiom": "constructor",
+            "returns": "wxSizerFlags"
+         },
+         "proportion": {
+            "symbol": "Proportion",
+            "params": [
+               {
+                  "name": "proportion",
+                  "type": "int"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "expand": {
+            "symbol": "Expand",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "border": {
+            "symbol": "Border",
+            "params": [
+               {
+                  "name": "direction",
+                  "type": "int"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "left": {
+            "symbol": "Left",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "right": {
+            "symbol": "Right",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "top": {
+            "symbol": "Top",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "bottom": {
+            "symbol": "Bottom",
+            "params": [],
+            "idiom": "method-on-self"
+         },
+         "align_h": {
+            "symbol": "Align",
+            "params": [
+               {
+                  "name": "alignment",
+                  "type": "int"
+               }
+            ],
+            "idiom": "method-on-self"
+         },
+         "align_v": {
+            "symbol": "Align",
+            "params": [
+               {
+                  "name": "alignment",
+                  "type": "int"
+               }
+            ],
+            "idiom": "method-on-self"
+         }
+      }
+   },
+   "events": {
+      "bind": {
+         "symbol": "Bind",
+         "params": [
+            {
+               "name": "evtType",
+               "type": "int"
+            },
+            {
+               "name": "fn",
+               "type": "EventHandler"
+            }
+         ],
+         "idiom": "method-on-self",
+         "reason": "hand_maintained"
+      },
+      "bind_id": {
+         "symbol": "BindId",
+         "params": [
+            {
+               "name": "evtType",
+               "type": "int"
+            },
+            {
+               "name": "id",
+               "type": "int"
+            },
+            {
+               "name": "fn",
+               "type": "EventHandler"
+            }
+         ],
+         "idiom": "method-on-self",
+         "reason": "hand_maintained"
+      },
+      "handler_type": "EventHandler"
+   },
+   "bitmap": {
+      "from_base64": {
+         "symbol": "NewBitmapFromBase64",
+         "params": [
+            {
+               "name": "base64",
+               "type": "unsafe.Pointer"
+            },
+            {
+               "name": "len",
+               "type": "int"
+            },
+            {
+               "name": "bitmap_type",
+               "type": "int"
+            }
+         ],
+         "idiom": "constructor"
+      },
+      "get_bitmap": {
+         "symbol": "GetBitmap",
+         "params": [
+            {
+               "name": "ref",
+               "type": "unsafe.Pointer"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "delete": {
+         "symbol": "Delete",
+         "params": [],
+         "idiom": "method-on-self"
+      }
+   },
+   "font": {
+      "create": {
+         "symbol": "NewFont",
+         "params": [
+            {
+               "name": "pointSize",
+               "type": "int"
+            },
+            {
+               "name": "family",
+               "type": "int"
+            },
+            {
+               "name": "style",
+               "type": "int"
+            },
+            {
+               "name": "weight",
+               "type": "int"
+            },
+            {
+               "name": "underlined",
+               "type": "bool"
+            },
+            {
+               "name": "face",
+               "type": "string"
+            },
+            {
+               "name": "enc",
+               "type": "int"
+            }
+         ],
+         "idiom": "constructor"
+      },
+      "delete": {
+         "symbol": "Delete",
+         "params": [],
+         "idiom": "method-on-self"
+      }
+   },
+   "std_buttons": {
+      "create": {
+         "symbol": "CreateStdDialogButtonSizer",
+         "params": [
+            {
+               "name": "flags",
+               "type": "int"
+            }
+         ],
+         "idiom": "method-on-parent",
+         "owner": "wxDialog",
+         "returns": "sizer_handle"
+      },
+      "add_button": {
+         "symbol": "AddButton",
+         "params": [
+            {
+               "name": "button",
+               "type": "unsafe.Pointer"
+            }
+         ],
+         "idiom": "method-on-self"
+      },
+      "realize": {
+         "symbol": "Realize",
+         "params": [],
+         "idiom": "method-on-self"
+      }
+   },
+   "app": {
+      "entry": "Run",
+      "entry_signature": "func Run(onInit func() bool)",
+      "set_top_window": {
+         "symbol": "",
+         "params": [],
+         "idiom": "unsupported",
+         "reason": "hand_maintained"
+      },
+      "emit_entry": false
+   },
+   "unsupported": [
+      {
+         "class": "wxBoxSizer",
+         "role": "destroy",
+         "reason": "no_method"
+      },
+      {
+         "class": "wxStdDialogButtonSizer",
+         "role": "destroy",
+         "reason": "no_method"
+      }
+   ]
+}

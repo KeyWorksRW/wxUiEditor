@@ -22,6 +22,8 @@
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 
 class EmbeddedImage;
+struct FfiUiCall;
+struct FfiUiDescriptor;
 struct ImageBundle;
 
 namespace code
@@ -378,6 +380,83 @@ public:
         }
         return *this;
     }
+
+    // ---- kwxFFI descriptor-driven primitives --------------------------------------------
+    //
+    // Every one of these resolves its callable through ResolveRole() before emitting. When the
+    // descriptor has no usable entry for (wx_class, role) the primitive reports one diagnostic
+    // naming the language, class and role, and appends nothing. They are only meaningful for
+    // FFI languages; the non-FFI languages never call them.
+
+    // Returns the descriptor for the current language, or nullptr when it cannot be loaded.
+    [[nodiscard]] const FfiUiDescriptor* FfiDescriptor() const;
+
+    // Resolves (wx_class, role), reporting a diagnostic and returning false on failure.
+    [[nodiscard]] bool FfiResolve(std::string_view wx_class, std::string_view role,
+                                  FfiUiCall& out) const;
+
+    // Emits a constructor call: `<prefix><symbol>(args)`. `receiver` is prepended as
+    // `<receiver> = ` when non-empty. Returns false (and emits nothing) when the class has no
+    // usable constructor.
+    bool FfiCtor(std::string_view wx_class, std::string_view args, std::string_view receiver = {});
+
+    // Emits `<receiver><op><symbol>(args)` for a role whose idiom is method-on-self.
+    bool FfiMethod(std::string_view wx_class, std::string_view role, std::string_view receiver,
+                   std::string_view args = {});
+
+    // Emits the same call with `parent` as the receiver for method-on-parent roles.
+    bool FfiParentMethod(std::string_view wx_class, std::string_view role, std::string_view parent,
+                         std::string_view args = {});
+
+    // Emits the descriptor's event `bind` call on `receiver`.
+    bool FfiBind(std::string_view wx_class, std::string_view receiver, std::string_view args = {});
+
+    // Emits the descriptor's add call for a box-sizer item, filling each argument from the
+    // parameter names the descriptor records (`window`/`sizer`, `option`, `flag`, `border`,
+    // `userData`). `flags_ptr` supplies the built-wxSizerFlags argument for a descriptor whose
+    // add callable takes a handle (`flags`) instead of a numeric mask (`flag`).
+    bool FfiSizerItem(std::string_view sizer_name, std::string_view item_name, bool item_is_sizer,
+                      int proportion, std::string_view flag_expr, int border,
+                      std::string_view flags_ptr = {});
+
+    // Emits a wxSizerFlags chain: constructor, then proportion/expand/border calls.
+    bool FfiFlags(std::string_view receiver, int proportion, bool expand,
+                  std::string_view border_expr);
+
+    // Emits the standard dialog button sizer: create on the descriptor's receiver, then realize.
+    bool FfiStockButton(std::string_view parent_name, std::string_view button_name,
+                        std::string_view flags_expr, bool flags_used);
+
+    // Emits `bitmap.from_base64`/`bitmap.get_bitmap` into `receiver`.
+    bool FfiBitmap(std::string_view role, std::string_view receiver, std::string_view args);
+
+    // Emits `font.create` into `receiver`.
+    bool FfiFont(std::string_view receiver, std::string_view args);
+
+    // Appends the descriptor's pointer-accessor for `wx_class` (e.g. `.Ptr()`).
+    bool FfiPtr(std::string_view wx_class, std::string_view receiver);
+
+    // The descriptor's `naming.pointer_accessor` for the current language (`.Ptr()` for Go), or
+    // an empty string when the language's descriptor does not record one. Wrapper objects become
+    // the handle a wrapper function expects by appending this accessor.
+    [[nodiscard]] std::string FfiPointerAccessor() const;
+
+    // Emits the descriptor's delete call for `wx_class` on `receiver`.
+    bool FfiDelete(std::string_view wx_class, std::string_view receiver);
+
+    // Language spelling for a wx constant given without its `wx` prefix ("ID_ANY").
+    [[nodiscard]] std::string FfiConstant(std::string_view name) const;
+
+    // Renders `value` for a descriptor parameter declared `param_type`, coercing a TypeScript
+    // number to the wrapper's bigint parameter. Other languages take the value unchanged.
+    [[nodiscard]] std::string FfiCoerceParam(std::string_view param_type,
+                                             std::string_view value) const;
+
+    // Language spelling for a string literal, or for the pointer a wrapper expects.
+    [[nodiscard]] std::string FfiStringLiteral(std::string_view text) const;
+    [[nodiscard]] bool FfiStringTakesPointer() const;
+    [[nodiscard]] std::string FfiNullLiteral() const;
+    [[nodiscard]] std::string FfiBoolLiteral(bool value) const;
 
     // Use this for wxWidgets types such as wxDefaultPosition, wxNullBitmap, etc.
     // Python will replace the "wx" with "wx."

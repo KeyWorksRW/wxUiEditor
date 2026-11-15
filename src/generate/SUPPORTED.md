@@ -1,1 +1,1 @@
-Superseded by the generated capability matrix at `.private/kwxSupported.md` — regenerate it with `wxUiEditor --gen_supported .private/kwxSupported.md` (or `scripts\kwx_coverage.cmd`); do not edit either file by hand.
+Superseded by the generated capability matrix at `.private/kwxSupported.md` — regenerate it with `wxUiEditor --gen_supported .private/kwxSupported.md` (or `bash .tts/kwx_coverage.sh`); do not edit either file by hand.

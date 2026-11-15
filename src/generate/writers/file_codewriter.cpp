@@ -622,13 +622,19 @@ bool FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content)
 
     if (wxGetApp().is_Generating() || (flags & code::flag_no_ui))
     {
-        // Command-line generation has no UI to prompt for folder creation. Record the cause so
-        // the log file names the missing directory instead of only the file that was skipped.
-        if (wxGetApp().is_Generating())
+        // Command-line generation is unattended, so the "create it?" prompt cannot be asked.
+        // Creating the directory is the answer that prompt exists to collect: refusing made every
+        // headless run into a new output folder fail, which is what the conformance kit
+        // (gen/<lang>/...) hit for most of its forms.
+        if (wxFileName::Mkdir(out_dir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
         {
-            wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
-            log_msg << "Error: the output directory does not exist: " << out_dir.utf8_string();
+            return 0;
         }
+
+        // Record the cause so the log file names the missing directory instead of only the file
+        // that was skipped.
+        wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+        log_msg << "Error: the output directory could not be created: " << out_dir.utf8_string();
         return write_no_folder;
     }
 

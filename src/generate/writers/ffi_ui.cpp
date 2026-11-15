@@ -376,7 +376,7 @@ static bool ParseDescriptor(const glz::generic& document, FfiUiDescriptor& descr
 }
 
 // Fails when the descriptor was built from a different header surface than manifest.json
-// records -- i.e. kwxFFI changed and scripts/gen_ffi_ui.cmd was not re-run.
+// records -- i.e. kwxFFI changed and .tts/gen_ffi_ui.sh was not re-run.
 static bool VerifyAgainstManifest(const wxString& dir_path, const FfiUiDescriptor& descriptor)
 {
     const wxString manifest_path = dir_path + "manifest.json";
@@ -410,7 +410,7 @@ static bool VerifyAgainstManifest(const wxString& dir_path, const FfiUiDescripto
     {
         ReportDiagnostic(wxString::Format(
             "FFI UI descriptor '%s.json' was built from headers %s but manifest.json records "
-            "%s -- re-run scripts/gen_ffi_ui.cmd",
+            "%s -- re-run .tts/gen_ffi_ui.sh",
             wxString(descriptor.lang.c_str()), wxString(descriptor.headers_hash.c_str()),
             wxString(manifest_hash.c_str())));
         return false;

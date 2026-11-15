@@ -25,6 +25,7 @@
 #include <frozen/map.h>
 #include <frozen/set.h>
 
+#include <cctype>
 #include <cstddef>
 
 #include "code.h"
@@ -42,7 +43,7 @@ using namespace code;
 // clang-format off
 
 // This maps just the prefix
-static const view_map s_short_python_map
+const view_map g_map_python_const_prefix
 {
     { "wxAUI_", "wx.aui."},
     { "wxCAL_", "wx.adv."},
@@ -1522,7 +1523,18 @@ Code& Code::NodeName(Node* node)
             *this += "self.";
         }
     }
-    else if (is_ruby() && !node->is_Form() && !node->is_Local() && node_name[0] != '@')
+    else if (is_ruby() && node->is_Form())
+    {
+        // A Ruby class name must be a constant. A project class name such as `kwxMainFrame`
+        // would otherwise emit `class kwxMainFrame < Wx::Frame`, which is a SyntaxError.
+        if (!node_name.empty() && node_name.front() >= 'a' && node_name.front() <= 'z')
+        {
+            *this += static_cast<char>(std::toupper(static_cast<unsigned char>(node_name.front())));
+            *this += node_name.substr(1);
+            return *this;
+        }
+    }
+    else if (is_ruby() && !node->is_Local() && node_name[0] != '@')
     {
         *this += "@";
     }

@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 /*
-    The kit is generated output: scripts/conformance.cmd regenerates it before every sweep and it
+    The kit is generated output: .tts/conformance.sh regenerates it before every sweep and it
     must never be hand-edited.
 
     Every file is derived from the compiled generator library only:
@@ -343,7 +343,7 @@ static std::vector<std::pair<std::string, std::string>> GetPropertyAttributes(
 }
 
 // Per-language output files, so a generation run writes inside the kit and never into one of the
-// six repositories. `scripts/conformance.cmd` creates `gen/<language>/` before generating.
+// six repositories. `.tts/conformance.sh` creates `gen/<language>/` before generating.
 static std::vector<std::pair<std::string, std::string>> GetLanguageFileAttributes(
     const KitEntry& entry)
 {

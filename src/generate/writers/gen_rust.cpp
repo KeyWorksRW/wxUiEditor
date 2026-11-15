@@ -89,6 +89,13 @@ void RustCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_source->writeLine("use wx::events;");
     m_source->writeLine("use wx::font::Font;");
     m_source->writeLine("use wx::frame::Frame;");
+    // The menu tree (wxMenuBar > wxMenu) and the status bar / rich text control are wrapper types
+    // the form constructs by name. The import list is unconditional because the node set is not
+    // known until EmitFfiFormBody() runs, and `#![allow(unused_imports)]` covers the rest.
+    m_source->writeLine("use wx::menu::Menu;");
+    m_source->writeLine("use wx::menu_bar::MenuBar;");
+    m_source->writeLine("use wx::rich_text_ctrl::RichTextCtrl;");
+    m_source->writeLine("use wx::status_bar::StatusBar;");
     m_source->writeLine("use wx::static_bitmap::StaticBitmap;");
     m_source->writeLine("use wx::std_dialog_button_sizer::StdDialogButtonSizer;");
     m_source->writeLine("use wx::support::NO_PARENT;");

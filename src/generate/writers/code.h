@@ -77,6 +77,9 @@ using namespace code;
 using view_map = std::map<std::string_view, std::string_view, std::less<>>;
 
 extern const view_map g_map_python_prefix;
+// Maps a wx constant family prefix to the Python submodule that owns it (wxRE_ ->
+// wx.richtext.). Python does not re-export those constants at the top level.
+extern const view_map g_map_python_const_prefix;
 extern const view_map g_map_ruby_prefix;
 
 // Returns true if value exists in one of the use Wx qw(...) declarations.

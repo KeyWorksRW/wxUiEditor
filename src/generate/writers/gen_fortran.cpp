@@ -70,7 +70,7 @@ void FortranCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type
     m_source->writeLine("module " + module);
     m_source->Indent();
     m_source->writeLine("use, intrinsic :: iso_c_binding");
-    for (const std::string& use_module: GetFortranUseModules(m_language))
+    for (const std::string& use_module: GetFortranUseModules(m_language, m_form_node))
     {
         m_source->writeLine("use " + use_module);
     }
@@ -89,8 +89,7 @@ void FortranCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type
     // body constructs `form_window` from `parent_window`, and `form` receives form_window%ptr.
     const std::string form_class(m_form_node->get_DeclName());
     m_source->writeLine("type(wxwindow_t) :: parent_window");
-    m_source->writeLine("type(" + GetFortranLocalType(m_language, form_class) +
-                        ") :: form_window");
+    m_source->writeLine("type(" + GetFortranLocalType(m_language, form_class) + ") :: form_window");
 
     std::string declarations;
     std::string handlers;

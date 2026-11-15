@@ -284,13 +284,69 @@ static std::vector<std::string> GetRolesUsed(Node* node)
     return roles;
 }
 
-// Depth-first collection of every instantiated widget/sizer below `parent`.
+// Returns true when the node's generator constructs a wx class of its own inside the form, so the FFI
+// emitters must resolve a descriptor class and a role set for it.
+//
+// Excluded are pseudo nodes that only describe a parent's properties (sizeritem, spacer, toolbar
+// tools, ribbon buttons, data view columns, property grid items, timers) and the project bookkeeping
+// nodes (folders, images, data).
+//
+// Node::is_Widget() is true only for `type_widget`, so a panel, notebook, data view, property grid,
+// splitter, toolbar or bar is not a widget. Testing `is_Widget() || is_Sizer()` alone silently dropped
+// every such class from the IR: measured 2026-11-14, a form declaring wxPanel emitted only the panel's
+// wxTextCtrl child, and `quick.wxui`'s wxMenuBar, wxMenu, wxMenuItem and wxStatusBar were absent.
+static bool IsInstantiatedNode(const Node* node)
+{
+    if (node->is_Widget() || node->is_Sizer() || node->is_MenuBar() || node->is_Menu() ||
+        node->is_StatusBar() || node->is_ToolBar() || node->is_RibbonBar())
+    {
+        return true;
+    }
+
+    switch (node->get_GenType())
+    {
+        case GenEnum::type_container:
+        case GenEnum::type_panel:
+        case GenEnum::type_notebook:
+        case GenEnum::type_auinotebook:
+        case GenEnum::type_choicebook:
+        case GenEnum::type_listbook:
+        case GenEnum::type_simplebook:
+        case GenEnum::type_bookpage:
+        case GenEnum::type_oldbookpage:
+        case GenEnum::type_treepage:
+        case GenEnum::type_splitter:
+        case GenEnum::type_staticbox:
+        case GenEnum::type_dataviewctrl:
+        case GenEnum::type_dataviewlistctrl:
+        case GenEnum::type_dataviewtreectrl:
+        case GenEnum::type_propgrid:
+        case GenEnum::type_propgridman:
+        case GenEnum::type_propgridpage:
+        case GenEnum::type_treelistctrl:
+        case GenEnum::type_wizardpagesimple:
+        case GenEnum::type_infobarbtn:
+        case GenEnum::type_menuitem:
+        case GenEnum::type_ctx_menu:
+        case GenEnum::type_ribbonpage:
+        case GenEnum::type_ribbonpanel:
+        case GenEnum::type_ribbonbuttonbar:
+        case GenEnum::type_ribbontoolbar:
+        case GenEnum::type_ribbongallery:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+// Depth-first collection of every instantiated class below `parent`.
 static void CollectInstantiatedNodes(Node* parent, std::vector<Node*>& nodes)
 {
     for (size_t index = 0; index < parent->get_ChildCount(); ++index)
     {
         Node* child = parent->get_Child(index);
-        if (child->is_Widget() || child->is_Sizer())
+        if (IsInstantiatedNode(child))
         {
             nodes.emplace_back(child);
         }

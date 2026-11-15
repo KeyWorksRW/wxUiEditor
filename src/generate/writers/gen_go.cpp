@@ -33,17 +33,37 @@ namespace gen_go_detail
     // instead of an unrelated hardcoded path. WXUE_KWXGO_DIR overrides the sibling checkout.
     [[nodiscard]] std::string GetWxModulePath()
     {
-        wxFileName go_mod;
         wxString kwxgo_dir;
-        if (wxGetEnv("WXUE_KWXGO_DIR", &kwxgo_dir) && !kwxgo_dir.empty())
+        if (!(wxGetEnv("WXUE_KWXGO_DIR", &kwxgo_dir) && !kwxgo_dir.empty()))
         {
-            go_mod.AssignDir(kwxgo_dir);
+            // The form may live several levels below the wxLanguages root -- the conformance kit
+            // sits in quick/tests/conformance -- so the sibling checkout is not always at
+            // <project path>/../kwxGO. Search upward instead of probing one fixed relative path,
+            // which logged a "can't open file" error for every kit form.
+            wxFileName dir;
+            dir.AssignDir(wxString(Project.get_ProjectPath()));
+            dir.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE);
+
+            kwxgo_dir.clear();
+            for (int depth = 0; depth < 5 && dir.GetDirCount() > 0; ++depth)
+            {
+                const wxString candidate = dir.GetPathWithSep() + "kwxGO";
+                if (wxFileName::FileExists(candidate + "/go.mod"))
+                {
+                    kwxgo_dir = candidate;
+                    break;
+                }
+                dir.RemoveLastDir();
+            }
+
+            if (kwxgo_dir.empty())
+            {
+                return "github.com/KeyWorksRW/kwxGO/wx";
+            }
         }
-        else
-        {
-            go_mod.AssignDir(wxString(Project.get_ProjectPath()) + "/../kwxGO");
-            go_mod.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE);
-        }
+
+        wxFileName go_mod;
+        go_mod.AssignDir(kwxgo_dir);
         go_mod.SetFullName("go.mod");
 
         wxFile file;
@@ -147,8 +167,7 @@ void GoCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
         m_source->Unindent();
         m_source->writeLine("}");
         m_source->writeLine();
-        m_source->writeLine("func " + entry_name + "(parent unsafe.Pointer) *" + info.camel +
-                            " {");
+        m_source->writeLine("func " + entry_name + "(parent unsafe.Pointer) *" + info.camel + " {");
         m_source->Indent();
         m_source->writeLine("state := &" + info.camel + "{}");
     }
@@ -176,8 +195,8 @@ void GoCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 
     std::string declarations;
     std::string handlers;
-    std::ignore = EmitFfiFormBody(code, m_source, m_form_node, info, form_receiver, declarations,
-                                  handlers);
+    std::ignore =
+        EmitFfiFormBody(code, m_source, m_form_node, info, form_receiver, declarations, handlers);
 
     m_source->writeLine();
     m_source->writeLine(is_dialog ? "return state" : "return state.frame");

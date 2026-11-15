@@ -20,6 +20,20 @@
 
 // clang-format on
 
+// Returns the Python submodule prefix that owns a wx constant family (wxRE_ -> wx.richtext.),
+// or an empty view when the constant is exposed directly on the wx module.
+[[nodiscard]] static std::string_view GetPythonConstantPrefix(wxue::string_view text)
+{
+    for (const auto& [prefix, module_prefix]: g_map_python_const_prefix)
+    {
+        if (text.starts_with(prefix))
+        {
+            return module_prefix;
+        }
+    }
+    return {};
+}
+
 void Code::AddClassNameForLanguage(const std::string& class_name)
 {
     if (is_cpp())
@@ -31,7 +45,18 @@ void Code::AddClassNameForLanguage(const std::string& class_name)
     // Handle non-C++ languages
     if (class_name.starts_with("wx"))
     {
-        *this << m_language_classPrefix << class_name.substr(2);
+        // Python keeps several classes in a submodule (wx.richtext.RichTextCtrl) and generates the
+        // matching import from the same map. Emitting the top-level `wx.` prefix there raises
+        // AttributeError when the generated form is run.
+        const view_map::const_iterator python_prefix = g_map_python_prefix.find(class_name);
+        if (is_python() && python_prefix != g_map_python_prefix.end())
+        {
+            *this << python_prefix->second << class_name.substr(2);
+        }
+        else
+        {
+            *this << m_language_classPrefix << class_name.substr(2);
+        }
     }
     else
     {
@@ -250,8 +275,18 @@ Code& Code::AddCombinedValues(wxue::string_view text)
         }
         if (iter.is_sameprefix("wx") && !is_cpp())
         {
-            CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
-            *this << m_language_wxPrefix << iter.substr(2);
+            const std::string_view module_prefix =
+                is_python() ? GetPythonConstantPrefix(iter) : std::string_view {};
+            if (!module_prefix.empty())
+            {
+                CheckLineLength(module_prefix.size() + iter.size() - 2);
+                *this << module_prefix << iter.substr(2);
+            }
+            else
+            {
+                CheckLineLength(m_language_wxPrefix.size() + iter.size() - 2);
+                *this << m_language_wxPrefix << iter.substr(2);
+            }
         }
         else
         {
@@ -266,6 +301,16 @@ Code& Code::AddCombinedValues(wxue::string_view text)
 // Helper method: Handle wx-prefixed constants with language transformations
 Code& Code::AddWxPrefixedConstant(wxue::string_view text)
 {
+    if (is_python())
+    {
+        const std::string_view module_prefix = GetPythonConstantPrefix(text);
+        if (!module_prefix.empty())
+        {
+            CheckLineLength(module_prefix.size() + text.size() - 2);
+            *this << module_prefix << text.substr(2);
+            return *this;
+        }
+    }
     CheckLineLength(m_language_wxPrefix.size() + text.size() - 2);
     *this << m_language_wxPrefix << text.substr(2);
     return *this;

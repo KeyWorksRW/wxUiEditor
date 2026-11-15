@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <set>
 #include <string_view>
 #include <vector>
 
@@ -79,6 +80,8 @@ namespace ffi_emit_detail
         bool ignored_logical_declared { false };
         bool ignored_integer_declared { false };
         bool ok { true };
+        // Makes the generated menu-item locals unique when a menu carries more than one item.
+        int menu_item_count { 0 };
     };
 
     // Fortran uses IOR for a flag mask; every other backend joins with the bitwise-or operator.
@@ -312,6 +315,10 @@ namespace ffi_emit_detail
         {
             return "std_btn";
         }
+        if (class_name == "wxMenuItem")
+        {
+            return "menu_item";
+        }
         return class_name;
     }
 
@@ -384,6 +391,12 @@ namespace ffi_emit_detail
         if (wx_class == "wxDialog")
         {
             return "DEFAULT_DIALOG_STYLE";
+        }
+        if (wx_class == "wxStatusBar")
+        {
+            // create_statusbar(number, style, id) takes the status bar's own style; a node that
+            // sets nothing creates the default single-field bar every port creates.
+            return "STB_DEFAULT_STYLE";
         }
         return {};
     }
@@ -609,13 +622,44 @@ namespace ffi_emit_detail
         }
         if (param_name == "id")
         {
+            // A node that names its own id must construct with it; the default property value is
+            // wxID_ANY, so a control that does not override it emits exactly what it did before.
+            if (node->HasValue(prop_id))
+            {
+                const std::string id_value = RenderConstants(code, node->as_string(prop_id));
+                if (!id_value.empty())
+                {
+                    return id_value;
+                }
+            }
             return code.FfiConstant("ID_ANY");
+        }
+        if (param_name == "number")
+        {
+            // create_statusbar(number, style, id): the field count. A new-style field list counts
+            // its entries; the old style stores the count as an integer; the default is one.
+            if (node->is_Gen(gen_wxStatusBar))
+            {
+                const std::vector<NODEPROP_STATUSBAR_FIELD> fields =
+                    node->as_statusbar_fields(prop_fields);
+                if (!fields.empty())
+                {
+                    return std::to_string(fields.size());
+                }
+                return std::to_string(std::max(1, node->as_int(prop_fields)));
+            }
+            return "1";
         }
         if (param_name == "text" || param_name == "title")
         {
             if (is_form)
             {
                 return StringArg(code, node->as_string(prop_title));
+            }
+            if (node->is_Gen(gen_wxMenu) || node->is_Gen(gen_wxMenuItem))
+            {
+                // A menu and a menu item carry their caption in `label` (`&File`), not `value`.
+                return StringArg(code, node->as_string(prop_label));
             }
             return StringArg(code, node->as_string(prop_value));
         }
@@ -631,13 +675,39 @@ namespace ffi_emit_detail
         }
         if (param_name == "width" || param_name == "height")
         {
-            const wxSize size = node->as_wxSize(prop_size);
+            wxSize size = node->as_wxSize(prop_size);
+            if (!is_form && size == wxDefaultSize)
+            {
+                // A child of a frame with no sizer keeps its -1,-1 geometry, because flags and
+                // proportion are inert without a sizer -- that is what made wxRichTextCtrl a
+                // zero-size control and failed A10. Fall back to the form-declared minimum_size
+                // (400,250 in quick.wxui) so the control is constructed with a real size.
+                size = node->as_wxSize(prop_minimum_size);
+            }
             const int value = param_name == "width" ? size.x : size.y;
             return std::to_string(value);
         }
         if (param_name == "style")
         {
             std::string styles;
+            if (node->is_Gen(gen_wxStatusBar))
+            {
+                // The status bar's style lives in prop_style (see gen_status_bar.cpp);
+                // prop_window_style is the generic window fallback. See kwxCycle.md 5.6.
+                if (node->HasValue(prop_style))
+                {
+                    styles = RenderConstants(code, node->as_string(prop_style));
+                }
+                else if (node->HasValue(prop_window_style))
+                {
+                    styles = RenderConstants(code, node->as_string(prop_window_style));
+                }
+                if (!styles.empty())
+                {
+                    return styles;
+                }
+                return code.FfiConstant("STB_DEFAULT_STYLE");
+            }
             if (node->HasValue(prop_style))
             {
                 styles = RenderConstants(code, node->as_string(prop_style));
@@ -660,6 +730,27 @@ namespace ffi_emit_detail
         {
             return node->HasValue(prop_flags) ? RenderConstants(code, node->as_string(prop_flags)) :
                                                 "0";
+        }
+        if (param_name == "helpstr" || param_name == "help")
+        {
+            // NewMenuItemEx(id, text, helpstr, itemkind, submenu): a menu item with no help text
+            // still needs an empty string, not the generic `0` fallback.
+            return StringArg(code, "");
+        }
+        if (param_name == "itemkind" || param_name == "kind")
+        {
+            return "0";  // wxITEM_NORMAL
+        }
+        if (param_name == "submenu")
+        {
+            // Only a ctor whose submenu parameter accepts "no submenu" is usable; see
+            // EmitMenuItem(). Julia spells the absence as `nothing`, the pointer-typed ports use
+            // their null literal.
+            if (ctx.language == GenLang::julia)
+            {
+                return "nothing";
+            }
+            return code.FfiNullLiteral();
         }
         if (param_name == "bitmap")
         {
@@ -686,6 +777,13 @@ namespace ffi_emit_detail
         std::string args;
         for (const FfiUiParam& param: ctor.params)
         {
+            if (param.name == "self")
+            {
+                // A procedure-idiom role, such as Fortran's create_statusbar(self, number, style,
+                // id), repeats the receiver as its first parameter; FfiMethod() prepends the
+                // receiver itself, so it must not be rendered a second time.
+                continue;
+            }
             const std::string value = ctx.code.FfiCoerceParam(
                 param.type, ArgForParam(ctx, node, param.name, is_form, parent_expr));
             if (value.empty())
@@ -826,7 +924,13 @@ namespace ffi_emit_detail
                 return std::string(expression.GetView());
             }
         }
-        return name;
+        // A class that publishes no pointer role still has a native handle: Go exposes `.Ptr()`
+        // on every wrapper (descriptor `naming.pointer_accessor`) and TypeScript the `ptr` getter.
+        // Without this, the menu-bar attach and the sizer/append calls handed the wrapper object to
+        // a parameter declared `unsafe.Pointer`/`Pointer` (measured: Go and TypeScript build
+        // errors on `frame.SetMenuBar(menubar)`).
+        const Code handle_expression(node, language);
+        return AsHandle(handle_expression, name);
     }
 
     // The expression that turns a wrapper object back into the handle the wrapper functions
@@ -1130,17 +1234,189 @@ namespace ffi_emit_detail
         }
     }
 
+    // A constructor parameter is nullable when the language's "no value" literal type-checks for
+    // it. Only a menu item whose `submenu` parameter is nullable can be constructed: Fortran's
+    // wx_menu_item_create_ex takes `class(wxmenu_t)` and cannot express "no submenu".
+    [[nodiscard]] bool CtorParamIsNullable(std::string_view param_type)
+    {
+        return param_type == "unsafe.Pointer" || param_type == "Pointer" ||
+               param_type.contains("Nothing") || param_type.contains("Option") ||
+               param_type.contains("ptr") || param_type.ends_with('*');
+    }
+
+    // Emits one wxMenuItem.  The preferred shape is the descriptor's `wxMenu.append_by_id`
+    // role -- the call every port proves (`AppendById`, `append_by_id!`, `Menu::append_by_id`,
+    // `wx_menu_append_by_id`).  It carries the item's id and needs no wxMenuItem constructor,
+    // which is why lua and rust (a parameterless ctor) and fortran (its `submenu` parameter
+    // cannot be absent) can emit it.  The ctor + `append` pair stays as the fallback for a
+    // descriptor that publishes only the item shape.
+    void EmitMenuItem(EmitContext& ctx, Node* item_node, const std::string& menu_name)
+    {
+        if (HasRole(ctx.language, "wxMenu", "append_by_id"))
+        {
+            FfiUiCall append_call;
+            if (!ctx.code.FfiResolve("wxMenu", "append_by_id", append_call))
+            {
+                ctx.ok = false;
+                return;
+            }
+            EmitMethodStatement(ctx, item_node, "wxMenu", "append_by_id", menu_name,
+                                CtorArgs(ctx, item_node, append_call, false, menu_name), "wxMenu",
+                                menu_name);
+            return;
+        }
+
+        FfiUiCall ctor;
+        if (!ctx.code.FfiResolve("wxMenuItem", "ctor", ctor))
+        {
+            ctx.ok = false;
+            return;
+        }
+
+        bool constructible = false;
+        for (const FfiUiParam& param: ctor.params)
+        {
+            if (param.name == "id")
+            {
+                constructible = true;
+            }
+            if ((param.name == "submenu" || param.name == "sub_menu") &&
+                !CtorParamIsNullable(param.type))
+            {
+                constructible = false;
+            }
+        }
+        if (!constructible)
+        {
+            return;
+        }
+
+        std::string name = MakeIdentifier(DefaultVarName(item_node), ctx.language);
+        if (ctx.menu_item_count > 0)
+        {
+            name += '_';
+            name += std::to_string(ctx.menu_item_count + 1);
+        }
+        ++ctx.menu_item_count;
+
+        if (ctx.language == GenLang::fortran)
+        {
+            ctx.declarations += "    type(" + GetFortranLocalType(ctx.language, "wxMenuItem") +
+                                ") :: " + name + "\n";
+        }
+
+        Code statement(item_node, ctx.language);
+        BeginAssign(statement, ctx.language, name, true);
+        if (!statement.FfiCtor("wxMenuItem", CtorArgs(ctx, item_node, ctor, false, menu_name)))
+        {
+            ctx.ok = false;
+            return;
+        }
+        WriteStatement(ctx, statement, "wxMenuItem", name, "ctor", "ctor");
+
+        const std::string item_ref = MethodArg(ctx.code, PointerRef(ctx.language, item_node, name));
+        EmitMethodStatement(ctx, item_node, "wxMenu", "append", menu_name, item_ref, "wxMenu",
+                            name);
+    }
+
+    // Emits one wxMenu, its items, and the descriptor's `wxMenuBar.append(menu, title)` call.
+    void EmitMenu(EmitContext& ctx, Node* menu_node, const std::string& bar_name)
+    {
+        const std::string menu_name = NodeVarName(menu_node, ctx.language);
+        if (ctx.language == GenLang::fortran)
+        {
+            ctx.declarations += "    type(" + GetFortranLocalType(ctx.language, "wxMenu") +
+                                ") :: " + menu_name + "\n";
+        }
+
+        FfiUiCall ctor;
+        if (!ctx.code.FfiResolve("wxMenu", "ctor", ctor))
+        {
+            ctx.ok = false;
+            return;
+        }
+
+        Code statement(menu_node, ctx.language);
+        BeginAssign(statement, ctx.language, menu_name, true);
+        if (!statement.FfiCtor("wxMenu", CtorArgs(ctx, menu_node, ctor, false, bar_name)))
+        {
+            ctx.ok = false;
+            return;
+        }
+        WriteStatement(ctx, statement, "wxMenu", menu_name, "ctor", "ctor");
+
+        for (const auto& item: menu_node->get_ChildNodePtrs())
+        {
+            if (item->is_Gen(gen_wxMenuItem))
+            {
+                EmitMenuItem(ctx, item.get(), menu_name);
+            }
+        }
+
+        const std::string menu_ref =
+            MethodArg(ctx.code, PointerRef(ctx.language, menu_node, menu_name));
+        const std::string title = StringArg(ctx.code, menu_node->as_string(prop_label));
+        EmitMethodStatement(ctx, menu_node, "wxMenuBar", "append", bar_name,
+                            menu_ref + ", " + title, "wxMenuBar", menu_name);
+    }
+
+    // A menu bar constructs itself but is not a sizer child, and it owns a menu tree the generic
+    // widget path cannot reach. Measured 2026-11-14: every backend emitted the bar's constructor
+    // and dropped its wxMenu/wxMenuItem children, so the frame had an empty menu bar.
+    void EmitMenuBar(EmitContext& ctx, Node* bar_node, const std::string& parent_expr)
+    {
+        const std::string bar_name = NodeVarName(bar_node, ctx.language);
+        if (ctx.language == GenLang::fortran)
+        {
+            ctx.declarations += "    type(" + GetFortranLocalType(ctx.language, "wxMenuBar") +
+                                ") :: " + bar_name + "\n";
+        }
+
+        FfiUiCall ctor;
+        if (!ctx.code.FfiResolve("wxMenuBar", "ctor", ctor))
+        {
+            ctx.ok = false;
+            return;
+        }
+
+        Code statement(bar_node, ctx.language);
+        BeginAssign(statement, ctx.language, bar_name, true);
+        if (!statement.FfiCtor("wxMenuBar", CtorArgs(ctx, bar_node, ctor, false, parent_expr)))
+        {
+            ctx.ok = false;
+            return;
+        }
+        WriteStatement(ctx, statement, "wxMenuBar", bar_name, "ctor", "ctor");
+
+        for (const auto& menu: bar_node->get_ChildNodePtrs())
+        {
+            if (menu->is_Gen(gen_wxMenu))
+            {
+                EmitMenu(ctx, menu.get(), bar_name);
+            }
+        }
+    }
+
     void EmitWidget(EmitContext& ctx, Node* node, const std::string& parent_expr, bool in_sizer)
     {
+        if (node->is_MenuBar())
+        {
+            EmitMenuBar(ctx, node, parent_expr);
+            return;
+        }
         const std::string wx_class(node->get_DeclName());
         const std::string name = NodeVarName(node, ctx.language);
 
         const bool has_value = node->HasValue(prop_value);
         const bool has_font = node->HasValue(prop_font);
         // A widget nothing refers to again must not be bound to a variable in Go: an unused
-        // local is a compile error, while a bare call statement is legal.
+        // local is a compile error, while a bare call statement is legal. A menu bar and a status
+        // bar are referenced again by the attach calls below, so they always need the variable --
+        // measured 2026-11-14: without this, Go emitted `_ = wx.NewMenuBar(0)` followed by
+        // `state.frame.SetMenuBar(menubar)`, which does not compile.
+        const bool is_attached_bar = node->is_MenuBar() || node->is_StatusBar();
         const bool needs_variable =
-            in_sizer || has_value || has_font || ctx.language != GenLang::go;
+            in_sizer || has_value || has_font || is_attached_bar || ctx.language != GenLang::go;
 
         if (ctx.language == GenLang::fortran && needs_variable)
         {
@@ -1412,37 +1688,77 @@ namespace ffi_emit_detail
 }  // namespace ffi_emit_detail
 
 using namespace ffi_emit_detail;
-std::vector<std::string> GetFortranUseModules(GenLang language)
-{
-    std::vector<std::string> modules { "kwx_types", "kwxffi" };
 
-    if (const FfiUiDescriptor* descriptor = GetFfiUiDescriptor(language); descriptor != nullptr)
+// Adds one class's module and the module of every role owner it can emit. Only the classes the
+// form actually uses are considered: the descriptor also publishes classes kwxFortran has no
+// module for (kwxPGProperty) and spells acronym classes the way its own naming rule splits them
+// (wxAuiMDIChildFrame -> wx_aui_m_d_i_child_frame, while the built module is
+// wx_aui_mdi_child_frame), so importing the whole descriptor cannot compile.
+static void AddFortranClassModules(const FfiUiDescriptor& descriptor, GenLang language,
+                                   std::string_view wx_class, std::set<std::string>& modules)
+{
+    modules.insert(MakeIdentifier(wx_class, language));
+
+    if (const FfiUiClassMap::const_iterator class_iter = descriptor.classes.find(wx_class);
+        class_iter != descriptor.classes.end())
     {
-        for (const std::pair<const std::string, FfiUiClass>& class_entry: descriptor->classes)
+        for (const auto& role_entry: class_iter->second.roles)
         {
-            modules.emplace_back(MakeIdentifier(class_entry.first, language));
-            for (const std::pair<const std::string, FfiUiCall>& role_entry:
-                 class_entry.second.roles)
+            if (!role_entry.second.owner.empty())
             {
-                if (!role_entry.second.owner.empty())
-                {
-                    modules.emplace_back(MakeIdentifier(role_entry.second.owner, language));
-                }
-            }
-        }
-        for (const std::string_view event_key:
-             { std::string_view("bind"), std::string_view("bind_id") })
-        {
-            const FfiUiCallMap::const_iterator event_iter = descriptor->events.find(event_key);
-            if (event_iter != descriptor->events.end() && !event_iter->second.owner.empty())
-            {
-                modules.emplace_back(MakeIdentifier(event_iter->second.owner, language));
+                modules.insert(MakeIdentifier(role_entry.second.owner, language));
             }
         }
     }
 
-    // The font and bitmap blocks name module procedures whose classes are not part of the
-    // required-class list; their modules still have to be imported.
+    // Sizers are keyed "wxBoxSizer.<role>" in their own block.
+    const std::string prefix = std::string(wx_class) + ".";
+    for (const auto& role_entry: descriptor.sizers)
+    {
+        if (role_entry.first.starts_with(prefix) && !role_entry.second.owner.empty())
+        {
+            modules.insert(MakeIdentifier(role_entry.second.owner, language));
+        }
+    }
+}
+
+static void CollectFortranNodeModules(const FfiUiDescriptor& descriptor, GenLang language,
+                                      Node* node, std::set<std::string>& modules)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+    AddFortranClassModules(descriptor, language, std::string(node->get_DeclName()), modules);
+    for (const auto& child: node->get_ChildNodePtrs())
+    {
+        CollectFortranNodeModules(descriptor, language, child.get(), modules);
+    }
+}
+
+std::vector<std::string> GetFortranUseModules(GenLang language, Node* form)
+{
+    std::vector<std::string> modules { "kwx_types", "kwxffi" };
+
+    if (const FfiUiDescriptor* descriptor = GetFfiUiDescriptor(language);
+        descriptor != nullptr && form != nullptr)
+    {
+        std::set<std::string> used;
+        CollectFortranNodeModules(*descriptor, language, form, used);
+
+        // A std-button sizer is realized on its owning dialog, which is not a node the tree names.
+        for (const auto& role_entry: descriptor->std_buttons)
+        {
+            if (!role_entry.second.owner.empty())
+            {
+                used.insert(MakeIdentifier(role_entry.second.owner, language));
+            }
+        }
+
+        modules.insert(modules.end(), used.begin(), used.end());
+    }
+
+    // The font and bitmap blocks name module procedures whose classes are not nodes.
     modules.emplace_back(MakeIdentifier("wxFont", language));
     modules.emplace_back(MakeIdentifier("wxBitmap", language));
 
@@ -1525,7 +1841,81 @@ bool EmitFfiFormBody(Code& code, WriteCode* writer, Node* form, const FfiFormInf
             EmitStdButtons(ctx, child.get(), {});
             continue;
         }
+        if (child->is_Gen(gen_wxStatusBar) &&
+            HasRole(ctx.language, std::string(form->get_DeclName()), "create_statusbar"))
+        {
+            // A status bar is attached, not parented. The form publishes create_statusbar(), so
+            // constructing the bar here and then attaching it would build two bars (A9).
+            continue;
+        }
         EmitWidget(ctx, child.get(), parent_ptr, false);
+    }
+
+    // A menu bar constructs itself but is not a sizer child, so it needs an explicit attach call or
+    // the constructed object is unreachable. Measured 2026-11-14: every backend emitted the
+    // constructor and then discarded the handle, so `quick.wxui`'s menu bar never appeared in any
+    // generated form. The role key is the descriptor's spelling, `set_menubar` (not
+    // `set_menu_bar`), and all six descriptors publish it: go `SetMenuBar`, rust
+    // `Frame::set_menu_bar`, julia `set_menu_bar!`, lua, typescript, fortran
+    // `wx_frame_set_menu_bar`.
+    //
+    // The status bar is emitted below instead of in the child loop: no descriptor attaches a
+    // pre-built wxStatusBar; what the form publishes is `create_statusbar(number, style, id)`,
+    // which creates and attaches in one call. Emitting the ctor and then `create_statusbar` would
+    // build two status bars, so the ctor path is replaced rather than followed -- see
+    // `.private/kwxCycle.md` section 5.6 for the argument mapping.
+    for (const auto& child: form->get_ChildNodePtrs())
+    {
+        if (!child->is_MenuBar())
+        {
+            continue;
+        }
+        const std::string bar_name = NodeVarName(child.get(), ctx.language);
+        const std::string bar_ref =
+            MethodArg(ctx.code, PointerRef(ctx.language, child.get(), bar_name));
+        EmitMethodStatement(ctx, form, std::string(form->get_DeclName()), "set_menubar",
+                            form_receiver, bar_ref, std::string(form->get_DeclName()),
+                            form_receiver);
+    }
+
+    // Attach the form's status bar through the descriptor's create_statusbar role. The child loop
+    // above skipped the detached ctor when this role resolves. Fortran's create_statusbar is a
+    // module function, so its result is assigned to the bar's local; every other backend allows a
+    // bare call statement.
+    for (const auto& child: form->get_ChildNodePtrs())
+    {
+        if (!child->is_Gen(gen_wxStatusBar))
+        {
+            continue;
+        }
+        FfiUiCall status_call;
+        if (!ctx.code.FfiResolve(std::string(form->get_DeclName()), "create_statusbar",
+                                 status_call))
+        {
+            ctx.ok = false;
+            continue;
+        }
+        const std::string bar_name = NodeVarName(child.get(), ctx.language);
+        const std::string args = CtorArgs(ctx, child.get(), status_call, false, parent_ptr);
+        if (ctx.language == GenLang::fortran)
+        {
+            ctx.declarations += "    type(" +
+                                GetFortranLocalType(ctx.language, child->get_DeclName()) +
+                                ") :: " + bar_name + "\n";
+        }
+        Code statement(child.get(), ctx.language);
+        if (ctx.language == GenLang::fortran)
+        {
+            BeginAssign(statement, ctx.language, bar_name, true);
+        }
+        if (!statement.FfiMethod(std::string(form->get_DeclName()), "create_statusbar",
+                                 form_receiver, args))
+        {
+            ctx.ok = false;
+            continue;
+        }
+        WriteStatement(ctx, statement, std::string(child->get_DeclName()), bar_name,
+                       "create_statusbar", "create_statusbar");
     }
 
     // Attach the form's first sizer

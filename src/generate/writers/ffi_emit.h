@@ -22,10 +22,10 @@ class WriteCode;
 // snake "quick_dialog", pascal "QuickDialog" (the C3 acceptance spelling).
 struct FfiFormInfo
 {
-    std::string basename;  // raw output basename, e.g. quick_mainframe
-    std::string snake;     // quick_main_frame
+    std::string basename;     // raw output basename, e.g. quick_mainframe
+    std::string snake;        // quick_main_frame
     std::string pascal_name;  // QuickMainFrame
-    std::string camel;     // quickMainFrame
+    std::string camel;        // quickMainFrame
 };
 
 // Derives the C3 names from the output path configured for the form. Falls back to the form's
@@ -63,8 +63,10 @@ struct FfiSourceMapEntry
 [[nodiscard]] std::string GetFortranLocalType(GenLang language, std::string_view wx_class);
 
 // Module names a generated Fortran form module must `use`: kwx_types, kwxffi, one module per
-// descriptor class, and one module per class that owns a role's procedure. Sorted and unique.
-[[nodiscard]] std::vector<std::string> GetFortranUseModules(GenLang language);
+// class the form names (and per class that owns one of its roles' procedures). Derived from the
+// form tree, never from the whole descriptor: a descriptor class with no matching module, or an
+// acronym the naming rule splits differently from kwxFortran's own spelling, must not be imported.
+[[nodiscard]] std::vector<std::string> GetFortranUseModules(GenLang language, Node* form);
 
 // Source-map records for the last EmitFfiFormBody() call in this process.
 [[nodiscard]] const std::vector<FfiSourceMapEntry>& GetFfiSourceMapEntries();

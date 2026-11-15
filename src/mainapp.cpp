@@ -1264,8 +1264,7 @@ void App::LogGenerationResults(GenResults& results, std::vector<std::string>& cl
     else
     {
         wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
-        log_msg << "All " << results.GetFileCount() << " generated " << language_type
-                << " files are current";
+        log_msg << "All generated " << language_type << " files are current";
     }
 
     for (auto& iter: results.GetMsgs())

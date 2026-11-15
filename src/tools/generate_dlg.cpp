@@ -323,7 +323,7 @@ void MainFrame::ShowGenerationResults(const GenResults& results)
     else if (results.GetFileCount())
     {
         wxString msg;
-        msg << '\n' << "All " << results.GetFileCount() << " generated files are current";
+        msg << '\n' << "All generated files are current";
         wxMessageBox(msg, "Code Generation", wxOK, this);
     }
 }

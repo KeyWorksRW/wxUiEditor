@@ -40,9 +40,6 @@ protected:
     void OnOutputTimer(wxTimerEvent& event);
 
 private:
-    static wxString GetOutputDir(GenLang lang);
-    wxString GetEntryFile(GenLang lang, const wxString& output_path, const wxString& extension,
-                          bool log_error = true);
     void UpdateAppName();
     void AppendLog(const wxString& text);
     void UpdateKillButton();

@@ -12,16 +12,18 @@
 
 #include <wx/utils.h>  // wxGetEnv
 
-#include "base_generator.h"   // BaseGenerator -- Base widget generator class
-#include "code.h"             // Code -- Helper class for generating code
-#include "ffi_emit.h"         // EmitFfiFormBody, GetFfiFormInfo
-#include "ffi_ui.h"           // IsFfiUiLanguage
-#include "gen_common.h"       // Common component functions
-#include "image_gen.h"        // Functions for generating embedded images
-#include "image_handler.h"    // ImageHandler class
-#include "node.h"             // Node class
-#include "project_handler.h"  // ProjectHandler class
-#include "write_code.h"       // Write code to Scintilla or file
+#include "base_generator.h"                   // BaseGenerator -- Base widget generator class
+#include "code.h"                             // Code -- Helper class for generating code
+#include "ffi_emit.h"                         // EmitFfiFormBody, GetFfiFormInfo
+#include "ffi_ui.h"                           // IsFfiUiLanguage
+#include "gen_common.h"                       // Common component functions
+#include "image_gen.h"                        // Functions for generating embedded images
+#include "image_handler.h"                    // ImageHandler class
+#include "node.h"                             // Node class
+#include "project_handler.h"                  // ProjectHandler class
+#include "write_code.h"                       // Write code to Scintilla or file
+#include "wxue_namespace/wxue_string.h"       // wxue::string
+#include "wxue_namespace/wxue_view_vector.h"  // wxue::ViewVector
 
 using namespace GenEnum;
 
@@ -32,14 +34,14 @@ namespace gen_luajit_detail
     class LuaBodyWriter : public WriteCode
     {
     public:
-        void Clear() override { m_lines.clear(); }
-        [[nodiscard]] const std::vector<std::string>& GetLines() const { return m_lines; }
+        void Clear() override { m_text.clear(); }
+        [[nodiscard]] const wxue::string& GetText() const { return m_text; }
 
     protected:
-        void doWrite(std::string_view text) override { m_lines.emplace_back(text); }
+        void doWrite(std::string_view text) override { m_text += text; }
 
     private:
-        std::vector<std::string> m_lines;
+        wxue::string m_text;
     };
 }  // namespace gen_luajit_detail
 
@@ -124,12 +126,15 @@ void LuaJITCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_source->Indent();
     m_source->writeLine();
 
-    for (const std::string& line: body.GetLines())
+    const wxue::ViewVector body_lines(body.GetText(), '\n');
+    size_t line_count = body_lines.size();
+    while (line_count > 0 && body_lines[line_count - 1].empty())
     {
-        if (!line.empty())
-        {
-            m_source->writeLine(line, indent::none);
-        }
+        --line_count;
+    }
+    for (size_t index = 0; index < line_count; ++index)
+    {
+        m_source->writeLine(body_lines[index], indent::none);
     }
 
     m_source->writeLine();

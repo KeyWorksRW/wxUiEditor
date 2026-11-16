@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2022-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [11-03-2026]
+// CR: [11-15-2026]
 
 /*
 
@@ -496,14 +496,37 @@ void Code::CloseFontBrace()
 void Code::InsertLineBreak(size_t cur_pos)
 {
     ASSERT(cur_pos > 1 && cur_pos <= size());
+    // Eol().Tab() -- the break CheckLineLength() emits -- adds m_indent tabs plus one, so an
+    // insertion-only break has to produce the same indentation or wrapped argument lists
+    // would not line up. If a break already begins at cur_pos (CheckLineLength() wrapped this
+    // same position first), that newline is reused rather than duplicated -- inserting a second
+    // one would leave a tab-only blank line ahead of the wrapped argument.
+    const std::string indentation(static_cast<size_t>(m_indent) + 1, '\t');
+
+    // Walk back over the leading tabs of the current line to determine whether cur_pos is
+    // already the first character of that line.
+    size_t line_start = cur_pos;
+    while (line_start > 0 && at(line_start - 1) == '\t')
+    {
+        --line_start;
+    }
+    const bool is_at_line_start = (line_start == 0 || at(line_start - 1) == '\n');
+
     if (at(cur_pos - 1) == ' ')
     {
         at(cur_pos - 1) = '\n';
-        insert(cur_pos, "\t");
+        insert(cur_pos, indentation);
+    }
+    else if (is_at_line_start)
+    {
+        // The break already exists -- normalize the indentation run instead of adding a
+        // second newline.
+        replace(line_start, cur_pos - line_start, indentation);
+        cur_pos = line_start + indentation.size();
     }
     else
     {
-        insert(cur_pos, "\n");
+        insert(cur_pos, "\n" + indentation);
     }
     m_break_at = cur_pos + m_break_length;
     m_minimum_length = cur_pos + 10;  // NOLINT (magic number) // cppcheck-suppress magicLiteral

@@ -47,8 +47,12 @@ struct SampleRecipe
 //   - Go's go build/go run need the CGO_CFLAGS/CGO_LDFLAGS that build_quick.cmd sets, so the
 //     already-built bin/Debug/quick.exe is launched from its package directory instead.
 //   - Rust has no Cargo.toml at the repo root, hence --manifest-path.
-// The hand-written quick_main.* entry files are what call main; the generated quick_mainframe.* /
-// quick_dlg.* form modules only define functions, so launching one of those opens no window.
+//   - Python and Ruby are launched directly from the generated module (quick_mainframe.py /
+//     quick_mainframe.rb); the hand-written App bootstrap sits below the "End of generated code"
+//     marker, so each generated module is runnable on its own.
+// For the other languages the hand-written quick_main.* entry file is what calls main; their
+// generated quick_mainframe.* / quick_dlg.* form modules only define functions, so launching one of
+// those would open no window.
 static const std::array<SampleRecipe, 8> s_recipes = { {
     { .label = "TypeScript",
       .extension = ".ts",
@@ -61,21 +65,21 @@ static const std::array<SampleRecipe, 8> s_recipes = { {
       .lang = GenLang::typescript },
     { .label = "Python",
       .extension = ".py",
-      .entry_file = "",
-      .checker_exe = "",
-      .checker_args = "",
-      .runner_exe = "",
-      .runner_args = "",
-      .working_dir = "",
+      .entry_file = "python/quick_mainframe.py",
+      .checker_exe = "python",
+      .checker_args = "-m py_compile python/quick_mainframe.py",
+      .runner_exe = "python",
+      .runner_args = "python/quick_mainframe.py",
+      .working_dir = ".",
       .lang = GenLang::python },
     { .label = "Ruby",
       .extension = ".rb",
-      .entry_file = "",
-      .checker_exe = "",
-      .checker_args = "",
-      .runner_exe = "",
-      .runner_args = "",
-      .working_dir = "",
+      .entry_file = "ruby/quick_mainframe.rb",
+      .checker_exe = "ruby",
+      .checker_args = "-c ruby/quick_mainframe.rb",
+      .runner_exe = "ruby",
+      .runner_args = "ruby/quick_mainframe.rb",
+      .working_dir = ".",
       .lang = GenLang::ruby },
     { .label = "LuaJIT",
       .extension = ".lua",
@@ -226,16 +230,6 @@ struct SampleTarget
 
 static SampleTarget ResolveSampleTarget(const SampleRecipe& recipe)
 {
-    // The Python and Ruby repos contain generated form modules only -- there is no quick_main.py /
-    // quick_main.rb, so nothing exists to check or launch.
-    if (recipe.runner_exe[0] == 0)
-    {
-        return { .repo_root = wxEmptyString,
-                 .reason = wxString::Format(
-                     "no runnable entry script for %s: this project generates form modules only",
-                     wxString(recipe.label)) };
-    }
-
     const PropName prop = GetEntryFileProp(recipe.lang);
     const Node* form = FindFormNodeWithFileProp(Project.get_ProjectNode(), prop, recipe.extension);
     const wxString property_value = (form != nullptr) ? form->as_string(prop).wx() : wxString();
@@ -252,14 +246,29 @@ static SampleTarget ResolveSampleTarget(const SampleRecipe& recipe)
     file_path.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE);
     const wxString file_dir = file_path.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
 
-    const wxString repo_root = FindRepoRoot(file_dir);
+    wxString repo_root = FindRepoRoot(file_dir);
     if (repo_root.empty())
     {
-        return { .repo_root = wxEmptyString,
-                 .reason = wxString::Format(
-                     "error: no sample repository (build_quick.cmd) above %s resolved from the "
-                     "form's %s file property",
-                     file_dir, wxString(recipe.label)) };
+        // The Python and Ruby generated modules live in subdirectories of the project directory
+        // itself, and that directory carries no build_quick.cmd -- so the project directory is the
+        // repository root for them. A file outside the project directory means the project is
+        // genuinely misconfigured.
+        const wxString project_dir = Project.get_ProjectPath().wx();
+        wxFileName project_path(project_dir, wxEmptyString);
+        project_path.MakeAbsolute();
+        if (file_path.GetPath(wxPATH_GET_VOLUME)
+                .StartsWith(project_path.GetPath(wxPATH_GET_VOLUME)))
+        {
+            repo_root = project_dir;
+        }
+        else
+        {
+            return { .repo_root = wxEmptyString,
+                     .reason = wxString::Format(
+                         "error: no sample repository (build_quick.cmd) above %s resolved from "
+                         "the form's %s file property",
+                         file_dir, wxString(recipe.label)) };
+        }
     }
 
     if (recipe.entry_file[0] != 0)

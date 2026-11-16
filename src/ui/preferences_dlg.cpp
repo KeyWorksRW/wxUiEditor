@@ -118,7 +118,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     checkBox_wakatime->SetValue(true);
     checkBox_wakatime->SetValidator(wxGenericValidator(&m_isWakaTimeEnabled));
     checkBox_wakatime->SetToolTip(
-    "If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
+        "If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
     box_sizer3->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
 
     m_check_svg_bitmaps = new wxCheckBox(page_general, wxID_ANY, "Default SVG bitmaps");
@@ -181,14 +181,14 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_cpp_line_length = new wxTextCtrl(page_cpp, wxID_ANY, "110");
     text_cpp_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_cpp_line_length));
     text_cpp_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer->Add(text_cpp_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer_2->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     m_check_cpp_snake_case = new wxCheckBox(page_cpp, wxID_ANY, "Default variables should use snake_case");
     m_check_cpp_snake_case->SetToolTip(
-    "By default, default variables use camelCase. Check this to use snake_case instead (e.g., foo_bar instead of fooBar)");
+        "By default, default variables use camelCase. Check this to use snake_case instead (e.g., foo_bar instead of fooBar)");
     page_sizer_2->Add(m_check_cpp_snake_case, wxSizerFlags().Border(wxALL));
 
     auto* box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
@@ -256,7 +256,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_python_line_length = new wxTextCtrl(page_python, wxID_ANY, "90");
     text_python_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_python_line_length));
     text_python_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer_3->Add(text_python_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer_3->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
@@ -323,7 +323,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_ruby_line_length = new wxTextCtrl(page_ruby, wxID_ANY, "80");
     text_ruby_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_ruby_line_length));
     text_ruby_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer_4->Add(text_ruby_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer_4->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
@@ -386,7 +386,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_fortran_line_length = new wxTextCtrl(page_fortran, wxID_ANY, "80");
     text_fortran_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_fortran_line_length));
     text_fortran_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer13_10->Add(text_fortran_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer5_10->Add(box_sizer13_10, wxSizerFlags().Border(wxALL));
@@ -448,7 +448,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_go_line_length = new wxTextCtrl(page_go, wxID_ANY, "80");
     text_go_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_go_line_length));
     text_go_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer13_11->Add(text_go_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer5_11->Add(box_sizer13_11, wxSizerFlags().Border(wxALL));
@@ -510,7 +510,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_julia_line_length = new wxTextCtrl(page_julia, wxID_ANY, "80");
     text_julia_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_julia_line_length));
     text_julia_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer13_12->Add(text_julia_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer5_12->Add(box_sizer13_12, wxSizerFlags().Border(wxALL));
@@ -572,7 +572,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_luajit_line_length = new wxTextCtrl(page_luajit, wxID_ANY, "80");
     text_luajit_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_luajit_line_length));
     text_luajit_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer13_13->Add(text_luajit_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer5_13->Add(box_sizer13_13, wxSizerFlags().Border(wxALL));
@@ -634,7 +634,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_typescript_line_length = new wxTextCtrl(page_typescript, wxID_ANY, "80");
     text_typescript_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_typescript_line_length));
     text_typescript_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer13_14->Add(text_typescript_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer5_14->Add(box_sizer13_14, wxSizerFlags().Border(wxALL));
@@ -696,7 +696,7 @@ bool PreferencesDlg::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto* text_rust_line_length = new wxTextCtrl(page_rust, wxID_ANY, "100");
     text_rust_line_length->SetValidator(wxTextValidator(wxFILTER_DIGITS, &m_rust_line_length));
     text_rust_line_length->SetToolTip(
-    "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
+        "Most generated code will not exceed this length. This will be the initial value when a new project is created.");
     box_sizer13_15->Add(text_rust_line_length, wxSizerFlags().Border(wxALL));
 
     page_sizer5_15->Add(box_sizer13_15, wxSizerFlags().Border(wxALL));

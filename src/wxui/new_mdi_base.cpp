@@ -124,7 +124,7 @@ bool NewMdiFormBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     description->SetHint("Text");
     description->SetValidator(wxTextValidator(wxFILTER_NONE, &m_description));
     description->SetToolTip(
-    "A short description of what the template is for. This string will be displayed in the file filter list of Windows file selectors. ");
+        "A short description of what the template is for. This string will be displayed in the file filter list of Windows file selectors. ");
     flex_grid_sizer->Add(description, wxSizerFlags().Expand().Border(wxALL));
 
     auto* staticText_10 = new wxStaticText(static_box_3->GetStaticBox(), wxID_ANY, "Class name:");

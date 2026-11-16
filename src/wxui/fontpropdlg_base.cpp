@@ -70,7 +70,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_staticSystemSample = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "Sample");
     m_staticSystemSample->SetToolTip(
-    "This sample text will show you how the text will look on the current operating system. The font will be different when your program is used on a different operating systems.");
+        "This sample text will show you how the text will look on the current operating system. The font will be different when your program is used on a different operating systems.");
     box_sizer_12->Add(m_staticSystemSample, wxSizerFlags(1).Center().Border(wxALL));
 
     box_sizer_10->Add(box_sizer_12, wxSizerFlags(1).Expand().Border(wxALL));
@@ -145,7 +145,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_comboFacenames->Append("default");
     m_comboFacenames->SetStringSelection("default");
     m_comboFacenames->SetToolTip(
-    "Leave Facename set to default to create a font that isn\'t dependent on a user\'s installed fonts.");
+        "Leave Facename set to default to create a font that isn\'t dependent on a user\'s installed fonts.");
     box_sizer_8->Add(m_comboFacenames, wxSizerFlags().Expand().Border(wxALL));
 
     box_sizer_3->Add(box_sizer_8, wxSizerFlags(1).Expand().Border(wxALL));

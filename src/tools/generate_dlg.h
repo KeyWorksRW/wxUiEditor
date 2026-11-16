@@ -36,6 +36,10 @@ protected:
 
     void OnInit(wxInitDialogEvent& event) override;
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    void OnSelectAll(wxCommandEvent& event);
+#endif
+
 private:
     wxCheckBox* m_checkBaseCode { nullptr };
     wxCheckBox* m_checkDerived { nullptr };

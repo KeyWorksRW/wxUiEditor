@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/button.h>    // wxButton -- used by the debug-only Select All handler
 #include <wx/config.h>    // wxConfig base header
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
@@ -35,6 +36,31 @@ static bool gen_typescript_code = false;
 static bool gen_xrc_code = false;
 
 constexpr int generation_timer_interval_ms = 250;
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+// Returns true if any form in the node tree contributes an output file for the given language.
+static bool HasOutputFile(Node* node, GenLang language)
+{
+    for (const auto& child: node->get_ChildNodePtrs())
+    {
+        if (child->is_Form())
+        {
+            auto [path, has_base_file] = Project.GetOutputPath(child.get(), language);
+            if (has_base_file)
+            {
+                return true;
+            }
+        }
+        if (HasOutputFile(child.get(), language))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 // This generates the base class files. For the derived class files, see GenInheritedClass()
 // in generate/writers/gen_codefiles.cpp
@@ -462,9 +488,59 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_grid_sizer->Add(m_checkXRC, wxSizerFlags().Border(wxALL));
     }
 
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    auto* select_all = new wxButton(this, wxID_ANY, "Select &All");
+    select_all->SetToolTip("Select every language that has at least one output file");
+    if (wxSizer* dlg_sizer = GetSizer(); dlg_sizer != nullptr)
+    {
+        // Insert above the standard OK/Cancel row rather than below it.
+        dlg_sizer->Insert(dlg_sizer->GetItemCount() - 1, select_all, wxSizerFlags().Border(wxALL));
+    }
+    select_all->Bind(wxEVT_BUTTON, &GenerateDlg::OnSelectAll, this);
+#endif
+
     // You have to reset minimum size to allow the window to shrink
     SetMinSize(wxSize(-1, -1));
     Fit();
 
     event.Skip();
 }
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+
+void GenerateDlg::OnSelectAll(wxCommandEvent& /* event */)
+{
+    struct LanguageCheckbox
+    {
+        GenLang language;
+        wxCheckBox* checkbox;
+        bool* value;
+    };
+    const LanguageCheckbox languages[] = {
+        { GenLang::cplusplus, m_checkBaseCode, &m_gen_base_code },
+        { GenLang::python, m_checkPython, &m_gen_python_code },
+        { GenLang::ruby, m_checkRuby, &m_gen_ruby_code },
+        { GenLang::fortran, m_checkFortran, &m_gen_fortran_code },
+        { GenLang::go, m_checkGo, &m_gen_go_code },
+        { GenLang::julia, m_checkJulia, &m_gen_julia_code },
+        { GenLang::luajit, m_checkLuaJIT, &m_gen_luajit_code },
+        { GenLang::rust, m_checkRust, &m_gen_rust_code },
+        { GenLang::typescript, m_checkTypeScript, &m_gen_typescript_code },
+        { GenLang::xrc, m_checkXRC, &m_gen_xrc_code },
+    };
+    for (const auto& entry: languages)
+    {
+        if (entry.checkbox == nullptr)
+        {
+            continue;  // this language is not offered for the current project
+        }
+        if (!HasOutputFile(Project.get_ProjectNode(), entry.language))
+        {
+            continue;
+        }
+        entry.checkbox->SetValue(true);
+        *entry.value = true;
+    }
+}
+
+#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)

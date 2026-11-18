@@ -46,10 +46,10 @@ namespace
             { "verify_luajit", GenLang::luajit },
             { "verify_rust", GenLang::rust },
             { "verify_typescript", GenLang::typescript },
-            // Matches --gen_all (App::ParseGenerationType), which deliberately excludes the KWX
-            // languages (fortran/go/julia/luajit/typescript): those are not per-form and have no
-            // base-file/output-path properties, so the per-form compare path cannot verify them
-            // (GetBaseFilename() has no entry for them and asserts when called).
+            // Matches --gen_all (App::ParseGenerationType), which covers only the three original
+            // languages. The KWX languages are verified individually: every one of them has its
+            // own base-file and output-path properties (Project.GetOutputPath handles all of
+            // them), and GenerateLanguageForm is the per-form generate-and-compare path.
             { "verify_all", GenLang::cplusplus | GenLang::python | GenLang::ruby },
         });
 
@@ -271,6 +271,7 @@ namespace
         GenLang::go,
         GenLang::julia,
         GenLang::luajit,
+        GenLang::rust,
         GenLang::typescript,
     });
 

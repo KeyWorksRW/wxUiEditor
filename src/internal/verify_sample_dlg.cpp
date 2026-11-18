@@ -195,8 +195,9 @@ static wxString ResolveRelativePath(const wxString& base_dir, const wxString& pa
 
 // The repository root is the directory holding build_quick.cmd. A form's language file property
 // points into that repo (e.g. ../kwxTypeScript/tests/quick/quick_mainframe.ts), which is the only
-// anchor that works for every language -- the output-folder properties are project-level and
-// Fortran has none at all.
+// anchor that works for every language -- the output-folder properties are per-project or
+// per-folder and may be left unset, while a path-qualified file property always resolves against
+// the project file's directory.
 static wxString FindRepoRoot(const wxString& start_dir)
 {
     constexpr int MAX_ANCESTOR_LEVELS = 3;

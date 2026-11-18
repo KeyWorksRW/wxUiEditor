@@ -11,7 +11,7 @@
 #include <wx/sizer.h>
 #include <wx/valgen.h>
 
-#include "generate_dlg_base.h"
+#include "../wxui/generate_dlg_base.h"
 
 class GenerateDlg : public GenerateDlgBase
 {

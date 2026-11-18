@@ -8,6 +8,7 @@
 #include <wx/button.h>    // wxButton -- used by the debug-only Select All handler
 #include <wx/config.h>    // wxConfig base header
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
+#include <wx/panel.h>     // wxPanel -- hosts disabled checkboxes so their tooltip can be shown
 
 #include <format>
 
@@ -37,9 +38,8 @@ static bool gen_xrc_code = false;
 
 constexpr int generation_timer_interval_ms = 250;
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
 // Returns true if any form in the node tree contributes an output file for the given language.
+// Not guarded by _DEBUG/INTERNAL_TESTING because OnInit() uses it in every configuration.
 static bool HasOutputFile(Node* node, GenLang language)
 {
     for (const auto& child: node->get_ChildNodePtrs())
@@ -59,8 +59,6 @@ static bool HasOutputFile(Node* node, GenLang language)
     }
     return false;
 }
-
-#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 // This generates the base class files. For the derived class files, see GenInheritedClass()
 // in generate/writers/gen_codefiles.cpp
@@ -404,14 +402,29 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     const bool show_cpp_section = (languages & GenLang::cplusplus) || gen_base_code;
     const bool show_derived = gen_derived_code || Project.HasMissingDerivedFiles();
 
+    // Adds a checkbox for the given language. When no form in the project produces an output file
+    // for that language, the checkbox is disabled and its value forced off.
+    auto add_language_checkbox = [this](GenLang language, bool gen_flag, bool& value,
+                                        wxCheckBox*& checkbox, const wxString& label)
+    {
+        value = gen_flag;
+        checkbox = new wxCheckBox(this, wxID_ANY, label);
+        checkbox->SetValidator(wxGenericValidator(&value));
+
+        if (!HasOutputFile(Project.get_ProjectNode(), language))
+        {
+            checkbox->Enable(false);
+            checkbox->SetValue(false);
+        }
+        m_grid_sizer->Add(checkbox, wxSizerFlags().Border(wxALL));
+    };
+
     if (show_cpp_section || show_derived)
     {
         if (show_cpp_section)
         {
-            m_gen_base_code = gen_base_code;
-            m_checkBaseCode = new wxCheckBox(this, wxID_ANY, "C++ &Base");
-            m_checkBaseCode->SetValidator(wxGenericValidator(&m_gen_base_code));
-            m_grid_sizer->Add(m_checkBaseCode, wxSizerFlags().Border(wxALL));
+            add_language_checkbox(GenLang::cplusplus, gen_base_code, m_gen_base_code,
+                                  m_checkBaseCode, "C++ &Base");
         }
 
         if (show_derived)
@@ -426,66 +439,44 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
 
     if (languages & GenLang::python || gen_python_code)
     {
-        m_gen_python_code = gen_python_code;
-        m_checkPython = new wxCheckBox(this, wxID_ANY, "Python");
-        m_checkPython->SetValidator(wxGenericValidator(&m_gen_python_code));
-        m_grid_sizer->Add(m_checkPython, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::python, gen_python_code, m_gen_python_code, m_checkPython,
+                              "Python");
     }
     if (languages & GenLang::ruby || gen_ruby_code)
     {
-        m_gen_ruby_code = gen_ruby_code;
-        m_checkRuby = new wxCheckBox(this, wxID_ANY, "Ruby");
-        m_checkRuby->SetValidator(wxGenericValidator(&m_gen_ruby_code));
-        m_grid_sizer->Add(m_checkRuby, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::ruby, gen_ruby_code, m_gen_ruby_code, m_checkRuby, "Ruby");
     }
     if (languages & GenLang::fortran || gen_fortran_code)
     {
-        m_gen_fortran_code = gen_fortran_code;
-        m_checkFortran = new wxCheckBox(this, wxID_ANY, "Fortran");
-        m_checkFortran->SetValidator(wxGenericValidator(&m_gen_fortran_code));
-        m_grid_sizer->Add(m_checkFortran, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::fortran, gen_fortran_code, m_gen_fortran_code,
+                              m_checkFortran, "Fortran");
     }
     if (languages & GenLang::go || gen_go_code)
     {
-        m_gen_go_code = gen_go_code;
-        m_checkGo = new wxCheckBox(this, wxID_ANY, "GO");
-        m_checkGo->SetValidator(wxGenericValidator(&m_gen_go_code));
-        m_grid_sizer->Add(m_checkGo, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::go, gen_go_code, m_gen_go_code, m_checkGo, "GO");
     }
     if (languages & GenLang::julia || gen_julia_code)
     {
-        m_gen_julia_code = gen_julia_code;
-        m_checkJulia = new wxCheckBox(this, wxID_ANY, "Julia");
-        m_checkJulia->SetValidator(wxGenericValidator(&m_gen_julia_code));
-        m_grid_sizer->Add(m_checkJulia, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::julia, gen_julia_code, m_gen_julia_code, m_checkJulia,
+                              "Julia");
     }
     if (languages & GenLang::luajit || gen_luajit_code)
     {
-        m_gen_luajit_code = gen_luajit_code;
-        m_checkLuaJIT = new wxCheckBox(this, wxID_ANY, "LuaJIT");
-        m_checkLuaJIT->SetValidator(wxGenericValidator(&m_gen_luajit_code));
-        m_grid_sizer->Add(m_checkLuaJIT, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::luajit, gen_luajit_code, m_gen_luajit_code, m_checkLuaJIT,
+                              "LuaJIT");
     }
     if (languages & GenLang::rust || gen_rust_code)
     {
-        m_gen_rust_code = gen_rust_code;
-        m_checkRust = new wxCheckBox(this, wxID_ANY, "Rust");
-        m_checkRust->SetValidator(wxGenericValidator(&m_gen_rust_code));
-        m_grid_sizer->Add(m_checkRust, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::rust, gen_rust_code, m_gen_rust_code, m_checkRust, "Rust");
     }
     if (languages & GenLang::typescript || gen_typescript_code)
     {
-        m_gen_typescript_code = gen_typescript_code;
-        m_checkTypeScript = new wxCheckBox(this, wxID_ANY, "TypeScript");
-        m_checkTypeScript->SetValidator(wxGenericValidator(&m_gen_typescript_code));
-        m_grid_sizer->Add(m_checkTypeScript, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::typescript, gen_typescript_code, m_gen_typescript_code,
+                              m_checkTypeScript, "TypeScript");
     }
     if (languages & GenLang::xrc || gen_xrc_code)
     {
-        m_gen_xrc_code = gen_xrc_code;
-        m_checkXRC = new wxCheckBox(this, wxID_ANY, "XRC");
-        m_checkXRC->SetValidator(wxGenericValidator(&m_gen_xrc_code));
-        m_grid_sizer->Add(m_checkXRC, wxSizerFlags().Border(wxALL));
+        add_language_checkbox(GenLang::xrc, gen_xrc_code, m_gen_xrc_code, m_checkXRC, "XRC");
     }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
@@ -516,18 +507,20 @@ void GenerateDlg::OnSelectAll(wxCommandEvent& /* event */)
         wxCheckBox* checkbox;
         bool* value;
     };
-    const LanguageCheckbox languages[] = {
-        { GenLang::cplusplus, m_checkBaseCode, &m_gen_base_code },
-        { GenLang::python, m_checkPython, &m_gen_python_code },
-        { GenLang::ruby, m_checkRuby, &m_gen_ruby_code },
-        { GenLang::fortran, m_checkFortran, &m_gen_fortran_code },
-        { GenLang::go, m_checkGo, &m_gen_go_code },
-        { GenLang::julia, m_checkJulia, &m_gen_julia_code },
-        { GenLang::luajit, m_checkLuaJIT, &m_gen_luajit_code },
-        { GenLang::rust, m_checkRust, &m_gen_rust_code },
-        { GenLang::typescript, m_checkTypeScript, &m_gen_typescript_code },
-        { GenLang::xrc, m_checkXRC, &m_gen_xrc_code },
-    };
+    const std::array<LanguageCheckbox, 10> languages = { {
+        { .language = GenLang::cplusplus, .checkbox = m_checkBaseCode, .value = &m_gen_base_code },
+        { .language = GenLang::python, .checkbox = m_checkPython, .value = &m_gen_python_code },
+        { .language = GenLang::ruby, .checkbox = m_checkRuby, .value = &m_gen_ruby_code },
+        { .language = GenLang::fortran, .checkbox = m_checkFortran, .value = &m_gen_fortran_code },
+        { .language = GenLang::go, .checkbox = m_checkGo, .value = &m_gen_go_code },
+        { .language = GenLang::julia, .checkbox = m_checkJulia, .value = &m_gen_julia_code },
+        { .language = GenLang::luajit, .checkbox = m_checkLuaJIT, .value = &m_gen_luajit_code },
+        { .language = GenLang::rust, .checkbox = m_checkRust, .value = &m_gen_rust_code },
+        { .language = GenLang::typescript,
+          .checkbox = m_checkTypeScript,
+          .value = &m_gen_typescript_code },
+        { .language = GenLang::xrc, .checkbox = m_checkXRC, .value = &m_gen_xrc_code },
+    } };
     for (const auto& entry: languages)
     {
         if (entry.checkbox == nullptr)

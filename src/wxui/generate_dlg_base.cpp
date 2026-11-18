@@ -25,13 +25,16 @@ bool GenerateDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     }
 
     auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    dlg_sizer->SetMinSize(350, 120);
 
-    m_staticText = new wxStaticText(this, wxID_ANY, "Choose the code you want to generate:");
-    dlg_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
+    m_html_win = new wxHtmlWindow(this);
+    m_html_win->SetPage("Choose the code you want to generate<br>(<i>if disabled, then there is not output file</i>)");
+    m_html_win->SetMinSize(FromDIP(wxSize(-1, 40)));
+    dlg_sizer->Add(m_html_win, wxSizerFlags().Expand().Border(wxALL));
 
-    m_grid_sizer = new wxGridSizer(2, 0, 0);
+    m_grid_sizer = new wxGridSizer(3, 0, 0);
 
-    dlg_sizer->Add(m_grid_sizer, wxSizerFlags().Border(wxALL));
+    dlg_sizer->Add(m_grid_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

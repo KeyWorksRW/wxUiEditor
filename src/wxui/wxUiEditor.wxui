@@ -3166,14 +3166,21 @@
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"
-          var_name="dlg_sizer">
+          var_name="dlg_sizer"
+          minimum_size="350,120">
           <node
-            class="wxStaticText"
-            label="Choose the code you want to generate:" />
+            class="wxHtmlWindow"
+            html_content="Choose the code you want to generate&lt;br>(&lt;i>if disabled, then there is not output file&lt;/i>)"
+            var_name="m_html_win"
+            minimum_size="-1,40"
+            flags="wxEXPAND" />
           <node
             class="wxGridSizer"
             class_access="protected:"
-            var_name="m_grid_sizer" />
+            cols="3"
+            var_name="m_grid_sizer"
+            flags="wxEXPAND"
+            proportion="1" />
           <node
             class="wxStdDialogButtonSizer"
             flags="wxEXPAND" />
@@ -7228,12 +7235,11 @@
         </node>
         <node
           class="wxRadioBox"
-          var_name="m_radio_insert"
-          label="Insert"
           contents="Insert above selection;Insert below selection;Insert as child of selection"
+          label="Insert"
           selection="1"
-          majorDimension="0"
           style="rows"
+          var_name="m_radio_insert"
           wxEVT_RADIOBOX="OnInsertMode" />
         <node
           class="wxBoxSizer"

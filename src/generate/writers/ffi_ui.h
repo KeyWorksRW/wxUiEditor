@@ -113,6 +113,12 @@ struct FfiUiDescriptor
 [[nodiscard]] bool ResolveRole(const FfiUiDescriptor& descriptor, std::string_view wx_class,
                                std::string_view role, FfiUiCall& out);
 
+// A wxUiEditor meta name -- the map_GenNames() value for a pseudo node -- is never a wx class, so
+// a descriptor role lookup on it can only fail, and a Fortran module list built from it names a
+// module that does not exist (`use separator`). Translate it to the class that performs the
+// operation before resolving anything. A real wx class name is returned unchanged.
+[[nodiscard]] std::string_view GetFfiClassName(std::string_view class_name);
+
 // Reports one diagnostic naming the language, class, role and, when the descriptor records it,
 // the reason code. Each report is counted so the command-line summary can state the total.
 void ReportUnsupportedRole(const FfiUiDescriptor& descriptor, std::string_view wx_class,

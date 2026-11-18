@@ -20,6 +20,7 @@
     diagnostic. It never throws, never writes a file, and never blocks generation.
 */
 
+#include <array>
 #include <memory>
 #include <set>
 #include <tuple>
@@ -482,6 +483,28 @@ bool IsFfiUiLanguage(GenLang language)
 std::string GetFfiUiDirPath()
 {
     return FindDescriptorDir().utf8_string();
+}
+
+std::string_view GetFfiClassName(std::string_view class_name)
+{
+    // A separator is a wxMenuItem whose kind wxMenuItemBase() takes from the id, so
+    // `wxMenu::Append(wxID_SEPARATOR)` sets wxITEM_SEPARATOR (wxWidgets src/common/menucmn.cpp) --
+    // exactly what the `wxMenu.append_by_id` role emits. A submenu node is a wxMenu handed to the
+    // parent through AppendSubMenu. Neither meta name is a wx class, so a descriptor role lookup
+    // on it can only fail.
+    static constexpr std::array<std::pair<std::string_view, std::string_view>, 2> s_meta_classes { {
+        { "separator", "wxMenuItem" },
+        { "submenu", "wxMenu" },
+    } };
+
+    for (const auto& [meta_name, ffi_class_name]: s_meta_classes)
+    {
+        if (meta_name == class_name)
+        {
+            return ffi_class_name;
+        }
+    }
+    return class_name;
 }
 
 // The C1 contract specifies a nullable probe, so the pointer return is intentional.

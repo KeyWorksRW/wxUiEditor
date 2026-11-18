@@ -371,15 +371,17 @@ static void CollectForms(Node* parent, std::vector<Node*>& forms)
     }
 }
 
+// The inventory name of `node` for `--dump_ui_ir`. A meta name (`separator`, `submenu`) is not a
+// class any kwx descriptor can resolve, so it is translated to the class that performs the
+// operation.
 static std::string_view GetNodeClass(Node* node)
 {
-    const std::map<GenName, std::string_view>::const_iterator iter =
-        map_GenNames.find(node->get_GenName());
-    if (iter != map_GenNames.end())
+    std::string_view class_name = node->get_DeclName();
+    if (const auto iter = map_GenNames.find(node->get_GenName()); iter != map_GenNames.end())
     {
-        return iter->second;
+        class_name = iter->second;
     }
-    return node->get_DeclName();
+    return GetFfiClassName(class_name);
 }
 
 // Writes the schema-1 language-neutral IR described by C2 in .private/kwxPlan.md.

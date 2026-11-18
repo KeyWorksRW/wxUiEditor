@@ -656,9 +656,11 @@ namespace ffi_emit_detail
             {
                 return StringArg(code, node->as_string(prop_title));
             }
-            if (node->is_Gen(gen_wxMenu) || node->is_Gen(gen_wxMenuItem))
+            if (node->is_Gen(gen_wxMenu) || node->is_Gen(gen_wxMenuItem) ||
+                node->is_Gen(gen_submenu))
             {
                 // A menu and a menu item carry their caption in `label` (`&File`), not `value`.
+                // A submenu node is a wxMenu as well, so its caption lives in `label` too.
                 return StringArg(code, node->as_string(prop_label));
             }
             return StringArg(code, node->as_string(prop_value));
@@ -1319,6 +1321,134 @@ namespace ffi_emit_detail
                             name);
     }
 
+    // A separator is not a widget: wxWidgets appends it as a wxMenuItem whose kind
+    // wxMenuItemBase() takes from the id, so `menu->Append(wxID_SEPARATOR)` is the documented
+    // spelling (wx src/common/menucmn.cpp). Emitting the descriptor's `wxMenu.append_by_id` role
+    // with the ID_SEPARATOR constant therefore needs no new descriptor role and stays
+    // descriptor-authoritative.
+    void EmitMenuSeparator(EmitContext& ctx, Node* separator_node, const std::string& menu_name)
+    {
+        const std::string id = ctx.code.FfiConstant("ID_SEPARATOR");
+        EmitMethodStatement(ctx, separator_node, "wxMenu", "append_by_id", menu_name, id, "wxMenu",
+                            menu_name);
+    }
+
+    void EmitMenuChildren(EmitContext& ctx, Node* menu_node, const std::string& menu_name);
+
+    // wxWidgets spells a submenu attach `wxMenu::AppendSubMenu(submenu, text)` or
+    // `Append(id, text, submenu)`. The descriptor publishes no role for either call, so the call
+    // is spelled per lane; the corpus proves every spelling:
+    //   kwxGO/wx/menu_gen.go                    AppendSubMenu(submenu, text, help)
+    //   kwxFortran samples/dialogs/dialogs.f90  wx_menu_append_sub(menu, id, text, submenu, help)
+    //   kwxJulia samples/dialogs/frame.jl       append_sub!(menu, id, text, submenu, help)
+    //   kwxLuaJIT/wx/wxmenu_gen.lua             M:AppendSub(id, text, submenu, help)
+    //   kwxRust/wx/src/menu.rs                  append_sub_menu(&submenu, text, help)
+    //   kwxTypeScript/wx/wxMenu_gen.ts          AppendSub(id, text, submenu, help)
+    void EmitSubMenuAppend(EmitContext& ctx, Node* submenu_node,
+                           const std::string& parent_menu_name, const std::string& submenu_name)
+    {
+        const std::string label = StringArg(ctx.code, submenu_node->as_string(prop_label));
+        std::string id = RenderConstants(ctx.code, submenu_node->as_string(prop_id));
+        if (id.empty())
+        {
+            // The property default is wxID_ANY, so RenderConstants already yields the right
+            // constant; this only covers an id the constants table cannot resolve.
+            id = ctx.code.FfiConstant("ID_ANY");
+        }
+        const std::string sub_ref =
+            MethodArg(ctx.code, PointerRef(ctx.language, submenu_node, submenu_name));
+        const std::string empty_help = StringArg(ctx.code, "");
+
+        Code statement(submenu_node, ctx.language);
+        switch (ctx.language)
+        {
+            case GenLang::go:
+                statement.Str(parent_menu_name).Str(".AppendSubMenu(").Str(sub_ref);
+                statement.Str(", ").Str(label).Str(", ").Str(empty_help).Str(")");
+                break;
+            case GenLang::fortran:
+                statement.Str("call wx_menu_append_sub(").Str(parent_menu_name);
+                statement.Str(", ").Str(id).Str(", ").Str(label);
+                statement.Str(", ").Str(submenu_name).Str(", ").Str(empty_help).Str(")");
+                break;
+            case GenLang::julia:
+                statement.Str("append_sub!(").Str(parent_menu_name).Str(", ").Str(id);
+                statement.Str(", ").Str(label).Str(", ").Str(submenu_name);
+                statement.Str(", ").Str(empty_help).Str(")");
+                break;
+            case GenLang::luajit:
+                statement.Str(parent_menu_name).Str(":AppendSub(").Str(id).Str(", ").Str(label);
+                statement.Str(", ").Str(submenu_name).Str(", ").Str(empty_help).Str(")");
+                break;
+            case GenLang::rust:
+                statement.Str(parent_menu_name).Str(".append_sub_menu(").Str(sub_ref);
+                statement.Str(", ").Str(label).Str(", ").Str(empty_help).Str(")");
+                break;
+            case GenLang::typescript:
+                statement.Str(parent_menu_name).Str(".AppendSub(").Str(id).Str(", ").Str(label);
+                statement.Str(", ").Str(sub_ref).Str(", ").Str(ctx.code.FfiNullLiteral()).Str(")");
+                break;
+            default:
+                ctx.ok = false;
+                return;
+        }
+        WriteStatement(ctx, statement, "wxMenu", submenu_name, "append_sub", "append_sub");
+    }
+
+    // A submenu node is a wxMenu attached to its parent menu instead of to the menu bar, so it
+    // constructs exactly as EmitMenu() does and then recurses -- which is what allows a submenu
+    // nested inside a submenu to any depth.
+    void EmitSubMenu(EmitContext& ctx, Node* submenu_node, const std::string& parent_menu_name)
+    {
+        const std::string submenu_name = NodeVarName(submenu_node, ctx.language);
+        if (ctx.language == GenLang::fortran)
+        {
+            ctx.declarations += "    type(" + GetFortranLocalType(ctx.language, "wxMenu") +
+                                ") :: " + submenu_name + "\n";
+        }
+
+        FfiUiCall ctor;
+        if (!ctx.code.FfiResolve("wxMenu", "ctor", ctor))
+        {
+            ctx.ok = false;
+            return;
+        }
+
+        Code statement(submenu_node, ctx.language);
+        BeginAssign(statement, ctx.language, submenu_name, true);
+        if (!statement.FfiCtor("wxMenu",
+                               CtorArgs(ctx, submenu_node, ctor, false, parent_menu_name)))
+        {
+            ctx.ok = false;
+            return;
+        }
+        WriteStatement(ctx, statement, "wxMenu", submenu_name, "ctor", "ctor");
+
+        EmitMenuChildren(ctx, submenu_node, submenu_name);
+        EmitSubMenuAppend(ctx, submenu_node, parent_menu_name, submenu_name);
+    }
+
+    // The children of a menu are not widgets: an item, a separator and a nested submenu each
+    // attach themselves to the menu they were created for.
+    void EmitMenuChildren(EmitContext& ctx, Node* menu_node, const std::string& menu_name)
+    {
+        for (const auto& item: menu_node->get_ChildNodePtrs())
+        {
+            if (item->is_Gen(gen_wxMenuItem))
+            {
+                EmitMenuItem(ctx, item.get(), menu_name);
+            }
+            else if (item->is_Gen(gen_separator))
+            {
+                EmitMenuSeparator(ctx, item.get(), menu_name);
+            }
+            else if (item->is_Gen(gen_submenu))
+            {
+                EmitSubMenu(ctx, item.get(), menu_name);
+            }
+        }
+    }
+
     // Emits one wxMenu, its items, and the descriptor's `wxMenuBar.append(menu, title)` call.
     void EmitMenu(EmitContext& ctx, Node* menu_node, const std::string& bar_name)
     {
@@ -1345,13 +1475,7 @@ namespace ffi_emit_detail
         }
         WriteStatement(ctx, statement, "wxMenu", menu_name, "ctor", "ctor");
 
-        for (const auto& item: menu_node->get_ChildNodePtrs())
-        {
-            if (item->is_Gen(gen_wxMenuItem))
-            {
-                EmitMenuItem(ctx, item.get(), menu_name);
-            }
-        }
+        EmitMenuChildren(ctx, menu_node, menu_name);
 
         const std::string menu_ref =
             MethodArg(ctx.code, PointerRef(ctx.language, menu_node, menu_name));
@@ -1729,7 +1853,8 @@ static void CollectFortranNodeModules(const FfiUiDescriptor& descriptor, GenLang
     {
         return;
     }
-    AddFortranClassModules(descriptor, language, std::string(node->get_DeclName()), modules);
+    AddFortranClassModules(descriptor, language, std::string(GetFfiClassName(node->get_DeclName())),
+                           modules);
     for (const auto& child: node->get_ChildNodePtrs())
     {
         CollectFortranNodeModules(descriptor, language, child.get(), modules);

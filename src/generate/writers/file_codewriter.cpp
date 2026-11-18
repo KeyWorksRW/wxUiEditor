@@ -249,6 +249,53 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
     return (m_flags & flag_test_only) ? write_needed : WriteToFile();
 }
 
+void FileCodeWriter::AppendFileTrailer(GenLang language, Node* node, int flags)
+{
+    ASSERT_MSG(m_buffer.empty(), "AppendFileTrailer expects an empty buffer");
+
+    m_language = language;
+    m_node = node;
+    m_flags = flags;
+
+    // AppendEndOfFileBlock() resets m_fake_content_pos / m_fake_trailing_statement.
+    m_block_length = GetBlockLength(language);
+    AppendEndOfFileBlock();
+
+    if (!m_filename.FileExists())
+    {
+        // New file: the end block plus any fake trailing statement is exactly what WriteFile()
+        // would create, so there is nothing else to append.
+        return;
+    }
+
+    m_additional_content = -1;
+    m_comment_line_to_find = GetCommentLineToFind(language);
+    if (m_comment_line_to_find.empty())
+    {
+        return;  // entire file is generated code
+    }
+
+    if (ReadOriginalFile(false) != 0)
+    {
+        return;  // exists but unreadable
+    }
+
+    m_org_file.ReadString(std::string_view(m_org_buffer));
+
+    const std::ptrdiff_t line = FindAdditionalContentIndex();
+    if (line == -1)
+    {
+        AppendMissingCommentBlockWarning();
+        return;
+    }
+
+    if (m_org_file.size() > static_cast<size_t>(line))
+    {
+        m_additional_content = line;
+        std::ignore = AppendOriginalUserContent(0);
+    }
+}
+
 [[nodiscard]] std::string_view FileCodeWriter::GetKwxEndBlock(GenLang language)
 {
     switch (language)

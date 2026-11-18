@@ -60,6 +60,13 @@ public:
     [[nodiscard]] auto WriteFile(GenLang language, int flags = code::flag_none,
                                  Node* node = nullptr) -> int;
 
+    // Appends only the file trailer that WriteFile() would produce: the end-of-file comment
+    // block plus any user content preserved from the file currently on disk. No comparison, no
+    // write. Used by the DEBUG-only code display panels so they mirror the real file.
+    //
+    // Must be called on a writer whose buffer is empty. Never touches the disk.
+    void AppendFileTrailer(GenLang language, Node* node, int flags = code::flag_none);
+
 protected:
     void doWrite(std::string_view code) override { m_buffer += std::string(code); };
 

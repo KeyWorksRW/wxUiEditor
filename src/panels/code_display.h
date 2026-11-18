@@ -48,6 +48,12 @@ public:
 
     wxStyledTextCtrl* GetTextCtrl() { return m_scintilla; };
 
+#if defined(_DEBUG)
+    // Remembers the file that the displayed text would replace, then marks added/changed lines
+    // relative to it when generation completes.
+    void SetComparisonFile(std::string_view file_path) override;
+#endif  // _DEBUG
+
 protected:
     void OnRibbonToolSelected(Node* node);
     void OnEmbedImageSelected(Node* node);
@@ -68,6 +74,14 @@ private:
 
     // Scan the generated text for known wxWidgets class spellings and style them as hotspots.
     void ApplyClassHotspots();
+
+#if defined(_DEBUG)
+    // Diff the displayed text against m_comparison_file and mark added (margin arrow + green
+    // tint) and changed (margin square + amber tint) lines.
+    void ApplyChangeMarks();
+
+    std::string m_comparison_file;
+#endif  // _DEBUG
 
     wxue::ViewVector m_view;
     GenLang m_panel_type;

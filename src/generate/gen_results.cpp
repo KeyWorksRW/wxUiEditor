@@ -290,6 +290,133 @@ void GenResults::CollectFormsFromNodes()
     }
 }
 
+#if defined(_DEBUG)
+// Returns the file that would be written to disk for the form currently shown in a display
+// panel. Mirrors the path derivation in GenerateCppForm() and GenerateLanguageForm() so that the
+// displayed text can be compared against the file it would replace.
+static wxue::string GetDisplayFilePath(Node* form, GenLang language, PANEL_PAGE panel_page)
+{
+    auto [path, has_base_file] = Project.GetOutputPath(form, language);
+    if (!has_base_file)
+    {
+        return {};
+    }
+
+    if (language == GenLang::cplusplus)
+    {
+        // Get file extensions from project settings
+        std::string source_ext(".cpp");
+        std::string header_ext(".h");
+
+        if (const auto& ext_prop = Project.as_view(prop_source_ext); !ext_prop.empty())
+        {
+            source_ext = ext_prop;
+        }
+        if (const auto& ext_prop = Project.as_view(prop_header_ext); !ext_prop.empty())
+        {
+            header_ext = ext_prop;
+        }
+
+        wxue::string result(path);
+        result.replace_extension(panel_page == PANEL_PAGE::HDR_INFO_PANEL ? header_ext :
+                                                                            source_ext);
+        return result;
+    }
+
+    // Determine file extension based on target language
+    std::string_view file_ext;
+    switch (language)
+    {
+        case GenLang::python:
+            file_ext = ".py";
+            break;
+        case GenLang::ruby:
+            file_ext = ".rb";
+            break;
+        case GenLang::fortran:
+            file_ext = ".f90";
+            break;
+        case GenLang::go:
+            file_ext = ".go";
+            break;
+        case GenLang::julia:
+            file_ext = ".jl";
+            break;
+        case GenLang::luajit:
+            file_ext = ".lua";
+            break;
+        case GenLang::rust:
+            file_ext = ".rs";
+            break;
+        case GenLang::typescript:
+            file_ext = ".ts";
+            break;
+        case GenLang::xrc:
+            file_ext = ".xrc";
+            break;
+        default:
+            return {};
+    }
+
+    wxue::string src_path(path);
+    // Check extension on the filename only, not the full path
+    // (path may contain dots in directory names like "C:/Users/user.name/...")
+    const wxue::string_view filename_only(src_path.filename());
+    if (filename_only.extension().empty())
+    {
+        src_path += file_ext;
+    }
+
+    return src_path;
+}
+
+// Appends the tail that WriteFile() would produce so the display panel shows the file exactly as
+// it would be written. The text is appended with doWrite() rather than write()/writeLine() because
+// those apply indentation logic to the appended text.
+static void AppendDisplayTrailer(Node* form, GenLang language, PANEL_PAGE panel_page,
+                                 WriteCode* src, WriteCode* hdr)
+{
+    if (language == GenLang::xrc)
+    {
+        return;
+    }
+    if (panel_page == PANEL_PAGE::DERIVED_SRC_PANEL || panel_page == PANEL_PAGE::DERIVED_HDR_PANEL)
+    {
+        return;
+    }
+
+    WriteCode* target = src;
+    if (language == GenLang::cplusplus)
+    {
+        target = (panel_page == PANEL_PAGE::HDR_INFO_PANEL) ? hdr : src;
+    }
+    if (target == nullptr)
+    {
+        return;
+    }
+
+    const wxue::string path = GetDisplayFilePath(form, language, panel_page);
+    if (path.empty())
+    {
+        return;
+    }
+
+    // GenerateCppForm() sets this flag for the header writer and clears it for the source writer.
+    int flags = 0;
+    if (language == GenLang::cplusplus && panel_page == PANEL_PAGE::HDR_INFO_PANEL &&
+        form->as_bool(prop_no_closing_brace))
+    {
+        flags |= code::flag_add_closing_brace;
+    }
+
+    FileCodeWriter writer(path);
+    writer.AppendFileTrailer(language, form, flags);
+
+    target->doWrite(writer.GetString());
+    target->SetComparisonFile(std::string(path));
+}
+#endif  // _DEBUG
+
 bool GenResults::GenerateForDisplay()
 {
     ASSERT_MSG(!m_target_nodes.empty(), "GenerateForDisplay called with no target forms");
@@ -377,6 +504,10 @@ bool GenResults::GenerateForDisplay()
 
     // Generate the code using the panel page for line tracking
     code_generator->GenerateClass(m_languages, m_panel_page);
+
+#if defined(_DEBUG)
+    AppendDisplayTrailer(form, m_languages, m_panel_page, m_display_src, m_display_hdr);
+#endif  // _DEBUG
 
     return true;
 }

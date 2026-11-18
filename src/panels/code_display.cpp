@@ -14,10 +14,15 @@
 
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
+#include <wx/filename.h>     // wxFileName::FileExists
 #include <wx/msgdlg.h>       // common header and base class for wxMessageDialog
 #include <wx/stc/stc.h>      // wxStyledTextEvent
 
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
+
+#if defined(_DEBUG)
+    #include "../tools/compare/diff.h"  // Diff::Compare, DiffResult, DiffType
+#endif                                  // _DEBUG
 
 #include "base_panel.h"        // BasePanel -- Code generation panel
 #include "code.h"              // Code -- Helper class for generating code
@@ -49,6 +54,15 @@ extern const char* g_xrc_keywords;
 
 const int node_marker = 1;
 
+#if defined(_DEBUG)
+// Margin 1 markers: a filled arrow for added lines, a small square for changed lines. The
+// distinct shapes keep the two states readable for colour-blind users.
+constexpr int added_marker = 2;
+constexpr int modified_marker = 3;
+constexpr int added_indicator = 0;
+constexpr int modified_indicator = 1;
+#endif  // _DEBUG
+
 CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
     CodeDisplayBase(parent),
     m_panel_type(panel_type)
@@ -65,6 +79,36 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
     // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
+
+#if defined(_DEBUG)
+    m_scintilla->MarkerDefine(added_marker, wxSTC_MARK_SHORTARROW, wxNullColour,
+                              wxColour(46, 160, 67));
+    m_scintilla->MarkerDefine(modified_marker, wxSTC_MARK_SMALLRECT, wxNullColour,
+                              wxColour(204, 122, 0));
+    m_scintilla->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
+    m_scintilla->SetMarginMask(1, (1 << added_marker) | (1 << modified_marker));
+    m_scintilla->SetMarginSensitive(1, false);
+    m_scintilla->SetMarginWidth(1, 0);
+
+    // The base class sets margin 0's mask to ~wxSTC_MASK_FOLDERS. Restrict it to the node marker
+    // so change markers can never appear next to the node bookmark.
+    m_scintilla->SetMarginMask(0, 1 << node_marker);
+
+    // Added lines get a translucent green box, changed lines a translucent amber box. The box is
+    // alpha-blended over the existing style background and drawn under the text, so it works with
+    // any user colour scheme and keeps every syntax colour readable.
+    m_scintilla->IndicatorSetStyle(added_indicator, wxSTC_INDIC_ROUNDBOX);
+    m_scintilla->IndicatorSetForeground(added_indicator, wxColour(46, 160, 67));
+    m_scintilla->IndicatorSetAlpha(added_indicator, 40);
+    m_scintilla->IndicatorSetOutlineAlpha(added_indicator, 150);
+    m_scintilla->IndicatorSetUnder(added_indicator, true);
+
+    m_scintilla->IndicatorSetStyle(modified_indicator, wxSTC_INDIC_ROUNDBOX);
+    m_scintilla->IndicatorSetForeground(modified_indicator, wxColour(204, 122, 0));
+    m_scintilla->IndicatorSetAlpha(modified_indicator, 48);
+    m_scintilla->IndicatorSetOutlineAlpha(modified_indicator, 170);
+    m_scintilla->IndicatorSetUnder(modified_indicator, true);
+#endif  // _DEBUG
 
     Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
@@ -117,6 +161,11 @@ void CodeDisplay::Clear()
     m_view.GetBuffer().clear();
     m_hotspots.clear();
 
+#if defined(_DEBUG)
+    m_comparison_file.clear();
+    m_scintilla->SetMarginWidth(1, 0);  // ClearAll() below drops all markers/indicators
+#endif                                  // _DEBUG
+
     m_scintilla->SetReadOnly(false);
     m_scintilla->ClearAll();
 }
@@ -137,7 +186,150 @@ void CodeDisplay::CodeGenerationComplete()
     m_view.ParseBuffer();
 
     ApplyClassHotspots();
+
+#if defined(_DEBUG)
+    ApplyChangeMarks();
+#endif  // _DEBUG
 }
+
+#if defined(_DEBUG)
+
+void CodeDisplay::SetComparisonFile(std::string_view file_path)
+{
+    m_comparison_file = file_path;
+}
+
+void CodeDisplay::ApplyChangeMarks()
+{
+    if (m_comparison_file.empty())
+    {
+        return;
+    }
+
+    const wxString file_name = wxString::FromUTF8(m_comparison_file.c_str());
+    if (!wxFileName::FileExists(file_name))
+    {
+        return;
+    }
+
+    wxue::ViewVector disk_lines;
+    if (!disk_lines.ReadFile(file_name))
+    {
+        return;
+    }
+    if (disk_lines.empty() || m_view.empty())
+    {
+        return;
+    }
+
+    // Diff::ComputeLCS allocates (N+1)*(M+1) size_t cells; skip absurdly large files rather than
+    // allocate a huge table.
+    if (disk_lines.size() > 4000 || m_view.size() > 4000)
+    {
+        return;
+    }
+
+    const DiffResult diff = Diff::Compare(disk_lines, m_view, 0);  // 0 == keep every line
+    if (!diff.has_differences)
+    {
+        return;
+    }
+
+    std::vector<DiffType> kinds(m_view.size(), DiffType::unchanged);
+
+    // Every entry that is not `deleted` occupies one line of the displayed document; `deleted`
+    // entries carry empty text and advance only the original file. A run between two unchanged
+    // lines that contains a deletion is a replacement (modified); a run of additions only is new
+    // content (added).
+    size_t display_line = 0;
+    size_t run_first_line = 0;
+    bool run_active = false;
+    bool run_has_deleted = false;
+
+    auto close_run = [&]()
+    {
+        if (!run_active)
+        {
+            return;
+        }
+        const DiffType run_kind = run_has_deleted ? DiffType::modified : DiffType::added;
+        for (size_t line = run_first_line; line < display_line && line < kinds.size(); ++line)
+        {
+            kinds[line] = run_kind;
+        }
+        run_active = false;
+        run_has_deleted = false;
+    };
+
+    for (const DiffLine& diff_line: diff.right_lines)
+    {
+        if (diff_line.type == DiffType::unchanged)
+        {
+            close_run();
+            ++display_line;
+            continue;
+        }
+
+        if (!run_active)
+        {
+            run_active = true;
+            run_first_line = display_line;
+        }
+        if (diff_line.type == DiffType::deleted)
+        {
+            run_has_deleted = true;
+        }
+        else
+        {
+            ++display_line;
+        }
+    }
+    close_run();
+
+    m_scintilla->SetIndicatorCurrent(added_indicator);
+    m_scintilla->IndicatorClearRange(0, m_scintilla->GetLength());
+    m_scintilla->SetIndicatorCurrent(modified_indicator);
+    m_scintilla->IndicatorClearRange(0, m_scintilla->GetLength());
+
+    const int line_count = m_scintilla->GetLineCount();
+    bool any_marked = false;
+
+    for (size_t line = 0; line < kinds.size(); ++line)
+    {
+        const DiffType kind = kinds[line];
+        if (kind == DiffType::unchanged)
+        {
+            continue;
+        }
+        if (line >= static_cast<size_t>(line_count))
+        {
+            break;
+        }
+
+        const bool is_added = (kind == DiffType::added);
+        const int marker = is_added ? added_marker : modified_marker;
+        const int indicator = is_added ? added_indicator : modified_indicator;
+        const int line_number = static_cast<int>(line);
+
+        m_scintilla->MarkerAdd(line_number, marker);
+
+        m_scintilla->SetIndicatorCurrent(indicator);
+        const int line_start = m_scintilla->PositionFromLine(line_number);
+        const int line_end = m_scintilla->GetLineEndPosition(line_number);
+        if (line_end > line_start)
+        {
+            m_scintilla->IndicatorFillRange(line_start, line_end - line_start);
+        }
+        any_marked = true;
+    }
+
+    if (any_marked)
+    {
+        m_scintilla->SetMarginWidth(1, FromDIP(16));
+    }
+}
+
+#endif  // _DEBUG
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {

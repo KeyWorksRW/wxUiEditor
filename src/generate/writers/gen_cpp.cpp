@@ -592,8 +592,11 @@ auto CppCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
     m_source->SetLastLineBlank();
     m_header->SetLastLineBlank();
 
-    // Only write the header comment block when writing to file, not for display
+    // Write the header comment block when writing to file, and in a _DEBUG build also when
+    // generating for display so the panel matches what is written to disk.
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
+#endif  // _DEBUG
     {
         m_header->writeLine(txt_SlashCmtBlock);
         m_source->writeLine(txt_SlashCmtBlock);

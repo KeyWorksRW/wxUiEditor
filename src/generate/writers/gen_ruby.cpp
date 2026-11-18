@@ -79,18 +79,6 @@ end
 
 // clang-format on
 
-#ifdef _DEBUG
-// clang-format off
-static const std::vector<wxue::string> disable_list = {
-    "Metrics/MethodLength",
-    "Metrics/ParameterLists",
-    "Style/Documentation",
-    "Style/BlockComments",
-    "Metrics/AbcSize",
-};
-// clang-format on
-#endif  // _DEBUG
-
 RubyCodeGenerator::RubyCodeGenerator(Node* form_node) : BaseCodeGenerator(GenLang::ruby, form_node)
 {
 }
@@ -113,12 +101,6 @@ auto RubyCodeGenerator::WriteSourceHeader() -> void
 {
 #ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
-#else
-    if (m_panel_type != PANEL_PAGE::NOT_PANEL)
-    {
-        m_source->writeLine("# The following comment block is only displayed in a _DEBUG build, or "
-                            "when written to a file.\n\n");
-    }
 #endif  // _DEBUG
     {
         m_source->writeLine(txt_RubyCmtBlock);
@@ -411,23 +393,11 @@ auto RubyCodeGenerator::WriteEmbeddedImages(Code& code) -> void
 
 auto RubyCodeGenerator::WriteRuboCopFooter() -> void
 {
-#ifndef _DEBUG
-    if (m_panel_type == PANEL_PAGE::NOT_PANEL)
-#endif  // _DEBUG
+    if (Project.as_bool(prop_disable_rubo_cop))
     {
-        if (Project.as_bool(prop_disable_rubo_cop))
-        {
-            m_source->writeLine();
-#ifdef _DEBUG
-            for (const auto& iter: disable_list)
-            {
-                m_source->writeLine("# rubocop:enable " + iter);
-            }
-#else
-            m_source->writeLine("# rubocop:enable all");
-#endif  // _DEBUG
-            m_source->writeLine();
-        }
+        m_source->writeLine();
+        m_source->writeLine("# rubocop:enable all");
+        m_source->writeLine();
     }
 }
 

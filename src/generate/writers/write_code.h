@@ -68,6 +68,13 @@ public:
     // Derived class provides this to write text to whatever output device is being used
     virtual void doWrite(std::string_view code) = 0;
 
+#if defined(_DEBUG)
+    // DEBUG-only hook. Display panels override this to remember the file whose contents the
+    // displayed text would replace, so that added/changed lines can be marked once all of the
+    // text is in the control.
+    virtual void SetComparisonFile(std::string_view /* file_path */) {}
+#endif  // _DEBUG
+
     [[nodiscard]] auto get_Indentation() const { return m_indent; }
 
 protected:

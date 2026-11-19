@@ -7,7 +7,7 @@
 // CR: [07-16-2026]
 #include <wx/stc/stc.h>
 
-#include "font_prop.h"    // FontProperty -- Font properties
+#include "font_prop.h"     // FontProperty -- Font properties
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 #include "preferences.h"   // Prefs -- Set/Get wxUiEditor preferences
 #include "utils.h"         // WXDLLIMPEXP_BASE -- Miscellaneous utilities

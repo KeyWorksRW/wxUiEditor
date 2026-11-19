@@ -9,7 +9,10 @@
 // If this constructor is used, the caller must call Create(parent)
 UnusedGenerators::UnusedGenerators() {}
 
-UnusedGenerators::UnusedGenerators(wxWindow* parent) { Create(parent); }
+UnusedGenerators::UnusedGenerators(wxWindow* parent)
+{
+    Create(parent);
+}
 
 void UnusedGenerators::OnInit(wxInitDialogEvent& /* event unused */)
 {

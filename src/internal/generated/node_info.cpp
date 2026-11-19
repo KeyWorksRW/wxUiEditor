@@ -9,7 +9,10 @@
 // If this constructor is used, the caller must call Create(parent)
 NodeInfo::NodeInfo() {}
 
-NodeInfo::NodeInfo(wxWindow* parent) { Create(parent); }
+NodeInfo::NodeInfo(wxWindow* parent)
+{
+    Create(parent);
+}
 
 void NodeInfo::OnInit(wxInitDialogEvent& /* event unused */)
 {

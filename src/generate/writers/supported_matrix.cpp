@@ -298,7 +298,7 @@ static void LoadXrcClasses(const glz::generic& document, ClassMatrix& class_matr
     }
 }
 
-// Loads coverage.json. Returns false only when the report is missing or unparseable, because a
+// Loads coverage.json. Returns false only when the report is missing or unparsable, because a
 // matrix built without it would silently claim `unknown` for pairs the coverage run resolved.
 static bool LoadCoverage(const std::string& file_path, CoverageTable& table, CoverageMeta& meta,
                          ClassMatrix& class_matrix)

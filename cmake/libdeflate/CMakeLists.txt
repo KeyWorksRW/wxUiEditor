@@ -93,9 +93,10 @@ add_library(libdeflate_static STATIC ${LIBDEFLATE_ALL_SOURCES})
 # transitively — no need for explicit ${libdeflate_SOURCE_DIR} elsewhere.
 target_include_directories(libdeflate_static PUBLIC "${libdeflate_SOURCE_DIR}")
 
-# Always optimize for size, never debug, regardless of parent build config
+# Optimize for size, regardless of parent build config -- except for MSVC Debug,
+# where cl.exe injects /RTC1 and rejects any /O option other than /Od (D8016).
 if(MSVC)
-    target_compile_options(libdeflate_static PRIVATE /O1)
+    target_compile_options(libdeflate_static PRIVATE $<$<NOT:$<CONFIG:Debug>>:/O1>)
 else()
     target_compile_options(libdeflate_static PRIVATE -Os)
 endif()

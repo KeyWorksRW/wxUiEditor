@@ -61,6 +61,7 @@
 #include "internal/msg_logging.h"   // MsgLogging -- Message logging class
 #include "internal/node_info.h"     // NodeInfo
 #include "internal/undo_info.h"     // UndoInfo
+#include "internal/verify_sample_dlg.h"  // VerifySampleDlg
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     #include "internal/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
@@ -90,6 +91,7 @@ enum class MenuIDs : int
     id_ShowLogger,
     id_XrcPreviewDlg,
     id_UndoInfo,
+    id_VerifySample,
     id_AssertionTest,
 };
 
@@ -212,6 +214,10 @@ MainFrame::MainFrame() :
     menuInternal->AppendSeparator();
     menuInternal->Append(std::to_underlying(MenuIDs::id_OpenDocViewer), "&Documentation Viewer...",
                          "Documentation Viewer");
+
+    menuInternal->AppendSeparator();
+    menuInternal->Append(std::to_underlying(MenuIDs::id_VerifySample), "Verify &Sample App...",
+                         "Check and launch the app generated for a language target");
 
     m_menubar->Append(menuInternal, "&Internal");
 
@@ -378,6 +384,16 @@ MainFrame::MainFrame() :
             }
         },
         std::to_underlying(MenuIDs::id_OpenDocViewer));
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            VerifySampleDlg dialog(this);
+            dialog.ShowModal();
+        },
+        std::to_underlying(MenuIDs::id_VerifySample));
+
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(),
          std::to_underlying(MenuIDs::id_DebugCurrentTest));
 #endif

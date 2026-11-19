@@ -74,7 +74,11 @@ auto PythonCodeGenerator::InitializeThreads(std::set<std::string>& img_include_s
 
 auto PythonCodeGenerator::WriteSourceHeader() -> void
 {
+    // Write the comment block when writing to file, and in a _DEBUG build also when generating
+    // for display so the panel matches what is written to disk.
+#ifndef _DEBUG
     if (m_panel_type == PANEL_PAGE::NOT_PANEL)
+#endif  // _DEBUG
     {
         m_source->writeLine(txt_PythonCmtBlock);
         // Python style guidelines want a module document string

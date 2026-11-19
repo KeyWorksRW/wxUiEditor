@@ -60,6 +60,13 @@ public:
     [[nodiscard]] auto WriteFile(GenLang language, int flags = code::flag_none,
                                  Node* node = nullptr) -> int;
 
+    // Appends only the file trailer that WriteFile() would produce: the end-of-file comment
+    // block plus any user content preserved from the file currently on disk. No comparison, no
+    // write. Used by the DEBUG-only code display panels so they mirror the real file.
+    //
+    // Must be called on a writer whose buffer is empty. Never touches the disk.
+    void AppendFileTrailer(GenLang language, Node* node, int flags = code::flag_none);
+
 protected:
     void doWrite(std::string_view code) override { m_buffer += std::string(code); };
 
@@ -70,6 +77,14 @@ private:
     // character
     [[nodiscard]] static auto GetCommentLineToFind(GenLang language) -> std::string_view;
 
+    // Returns the "End of generated code" block for a kwx language (typescript, go, julia,
+    // luajit, fortran, rust), or an empty view for any other language.
+    [[nodiscard]] static auto GetKwxEndBlock(GenLang language) -> std::string_view;
+
+    // Returns the comment marker used by a kwx language (// for typescript/go/rust, # for julia,
+    // -- for luajit, ! for fortran), or an empty view for any other language.
+    [[nodiscard]] static auto GetKwxCommentPrefix(GenLang language) -> std::string_view;
+
     [[nodiscard]] static auto GetBlockLength(GenLang language) -> size_t;
     [[nodiscard]] auto IsOldStyleFile() -> bool;
 
@@ -79,8 +94,9 @@ private:
     // All Append...() functions append to m_buffer
 
     // Add the "End of generated code" comment block and fake user content (Ruby 'end',
-    // C++ '};', Perl '1;') appropriate for the language. Sets m_fake_content_pos to mark
-    // where fake content starts so it can be removed later if needed.
+    // C++ '};') appropriate for the language. Sets m_fake_content_pos and
+    // m_fake_trailing_statement to mark where fake content starts so it can be removed later
+    // if needed.
     void AppendEndOfFileBlock();
     void AppendMissingCommentBlockWarning();
 
@@ -92,9 +108,9 @@ private:
 
     // Language-specific end-of-file block handlers
     void AppendCppEndBlock();
-    void AppendPerlEndBlock();
     void AppendPythonEndBlock();
     void AppendRubyEndBlock();
+    void AppendKwxEndBlock();
 
     // This reads the original file into m_org_buffer
     [[nodiscard]] auto ReadOriginalFile(bool is_comparing) -> int;
@@ -118,10 +134,14 @@ private:
     // Used to preserve user-added code when regenerating files.
     std::ptrdiff_t m_additional_content { -1 };
 
-    // Position in m_buffer where fake content (Ruby 'end', C++ '};', Perl '1;') starts.
+    // Position in m_buffer where fake content (Ruby 'end', C++ '};') starts.
     // 0 means no fake content was added. Used to remove fake content when preserving
     // original file content instead.
     size_t m_fake_content_pos { 0 };
+
+    // Leading text of the fake trailing statement appended after the end block ("end" for
+    // Ruby, "return M" for LuaJIT). Empty when the language has no fake trailing statement.
+    std::string_view m_fake_trailing_statement;
 
     std::string m_org_buffer;
     wxue::ViewVector m_org_file;

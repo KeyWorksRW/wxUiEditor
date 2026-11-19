@@ -136,7 +136,7 @@ static void ConstructionCodeRuby(Code& code)
     if (code.HasValue(prop_window_name))
     {
         code.Comma().CheckLineLength(std::string_view("name = ").size() +
-                                     code.as_string(prop_window_name).size() + 2);
+                                     code.node()->as_string(prop_window_name).size() + 2);
         code.Str("name = ").QuotedString(prop_window_name);
     }
 
@@ -382,7 +382,12 @@ bool DialogFormGenerator::SettingsCode(Code& code)
             code.AddComment("Scaling of pos and size are handled after the dialog")
                 .AddComment("has been created and controls added.");
         }
-        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style, name)\n");
+        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style");
+        if (code.HasValue(prop_window_name))
+        {
+            code.Comma().Str("name");
+        }
+        code.Str(")\n");
     }
 
     if (code.HasValue(prop_extra_style))

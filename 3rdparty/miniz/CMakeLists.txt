@@ -37,9 +37,11 @@ target_compile_definitions(miniz INTERFACE MINIZ_STATIC_DEFINE)
 # Don't define zlib-compatible static inline stubs — we use mz_ names directly.
 target_compile_definitions(miniz INTERFACE MINIZ_NO_ZLIB_COMPATIBLE_NAMES)
 
-# Always optimize for size, never debug, regardless of the parent build config.
+# Optimize for size, regardless of the parent build config -- except for MSVC
+# Debug, where cl.exe injects /RTC1 and rejects any /O option other than /Od
+# (D8016).
 if(MSVC)
-    target_compile_options(miniz PRIVATE /O1)
+    target_compile_options(miniz PRIVATE $<$<NOT:$<CONFIG:Debug>>:/O1>)
 else()
     target_compile_options(miniz PRIVATE -Os)
 endif()

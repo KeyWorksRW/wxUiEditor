@@ -138,8 +138,8 @@ static void ConstructionCodeRuby(Code& code, FrameType frame_type)
     code.Comma().CheckLineLength(sizeof("style = Wx::DEFAULT_FRAME_STYLE")).Str("style = ").Style();
     if (code.HasValue(prop_window_name))
     {
-        code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() +
-                                     2);
+        code.Comma().CheckLineLength(sizeof("name = ") +
+                                     code.node()->as_string(prop_window_name).size() + 2);
         code.Str("name = ").QuotedString(prop_window_name);
     }
 
@@ -346,7 +346,8 @@ bool FrameCommon::ConstructionCode(Code& code, FrameType frame_type)
 
 bool FrameCommon::SettingsCode(Code& code, FrameType frame_type)
 {
-    if (!code.node()->is_PropValue(prop_variant, "normal"))
+    // TypeScript has no unqualified SetWindowVariant() call -- the form field carries it.
+    if (!code.is_typescript() && !code.node()->is_PropValue(prop_variant, "normal"))
     {
         code.Eol(eol_if_empty).FormFunction("SetWindowVariant(");
         if (code.node()->is_PropValue(prop_variant, "small"))
@@ -429,15 +430,19 @@ bool FrameCommon::SettingsCode(Code& code, FrameType frame_type)
     }
     else if (code.get_language() == GenLang::ruby)
     {
-        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style)\n");
-    }
-    else
-    {
-        return false;
+        code.Eol(eol_if_needed).Str("super(parent, id, title, pos, size, style");
+        if (code.HasValue(prop_window_name))
+        {
+            code.Comma().Str("name");
+        }
+        code.Str(")\n");
     }
 
-    if (isScalingEnabled(code.node(), prop_pos, code.get_language()) ||
-        isScalingEnabled(code.node(), prop_size, code.get_language()))
+    // TypeScript skips the Create()/super() call entirely: the kwxFFI factory has already
+    // created the window, so execution continues with the size handling below.
+    if (code.get_traits().is_cpp_family() &&
+        (isScalingEnabled(code.node(), prop_pos, code.get_language()) ||
+         isScalingEnabled(code.node(), prop_size, code.get_language())))
     {
         code.Eol(eol_if_needed).BeginConditional();
         code.Str("pos != ").AddConstant("wxDefaultPosition").AddConditionalOr();
@@ -454,20 +459,47 @@ bool FrameCommon::SettingsCode(Code& code, FrameType frame_type)
     const wxSize max_size = frame->as_wxSize(prop_maximum_size);
     if (min_size != wxDefaultSize)
     {
-        code.Eol()
-            .FormFunction("SetMinSize(")
-            .WxSize(prop_minimum_size, code::force_scaling)
-            .EndFunction();
+        if (code.is_typescript())
+        {
+            // kwxFFI signature: SetMinSize(width: number, height: number)
+            code.Eol()
+                .Str(code.get_traits().self_reference)
+                .Str(".frame.SetMinSize(")
+                .itoa(min_size.x)
+                .Comma()
+                .itoa(min_size.y)
+                .EndFunction();
+        }
+        else
+        {
+            code.Eol()
+                .FormFunction("SetMinSize(")
+                .WxSize(prop_minimum_size, code::force_scaling)
+                .EndFunction();
+        }
     }
     if (max_size != wxDefaultSize)
     {
-        code.Eol()
-            .FormFunction("SetMaxSize(")
-            .WxSize(prop_maximum_size, code::force_scaling)
-            .EndFunction();
+        if (code.is_typescript())
+        {
+            code.Eol()
+                .Str(code.get_traits().self_reference)
+                .Str(".frame.SetMaxSize(")
+                .itoa(max_size.x)
+                .Comma()
+                .itoa(max_size.y)
+                .EndFunction();
+        }
+        else
+        {
+            code.Eol()
+                .FormFunction("SetMaxSize(")
+                .WxSize(prop_maximum_size, code::force_scaling)
+                .EndFunction();
+        }
     }
 
-    if (code.HasValue(prop_window_extra_style))
+    if (!code.is_typescript() && code.HasValue(prop_window_extra_style))
     {
         code.Eol(eol_if_needed).FormFunction("SetExtraStyle(").FormFunction("GetExtraStyle");
         if (!code.get_traits().removes_empty_parens)

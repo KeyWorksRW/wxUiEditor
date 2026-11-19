@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-12-2026]
 
+#include <array>
 #include <unordered_map>
 
 // auto-generated: wxui/eventhandler_dlg_base.h and wxui/eventhandler_dlg_base.cpp
@@ -53,6 +54,14 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     m_is_typescript_enabled(m_gen_languages & GenLang::typescript),
     m_is_rust_enabled(m_gen_languages & GenLang::rust)
 {
+    InitCodeDisplay(m_cpp_stc_lambda);
+    InitCodeDisplay(m_go_stc_lambda);
+    InitCodeDisplay(m_julia_stc_lambda);
+    InitCodeDisplay(m_luajit_stc_lambda);
+    InitCodeDisplay(m_ruby_stc_lambda);
+    InitCodeDisplay(m_rust_stc_lambda);
+    InitCodeDisplay(m_typescript_stc_lambda);
+
     m_value = event->get_value().wx();
     if (m_is_cpp_enabled)
     {
@@ -852,20 +861,22 @@ void EventHandlerDlg::Update_m_value()
 }
 
 // For a single language, there is no language prefix unless it's a lambda. For multiple
-// languages, the prefix specifies the language ([python:...] and/or [ruby:...]). Since C++ is
-// the default, it is not specified.
+// languages, the prefix specifies the language ([perl:...], [python:...] and/or [ruby:...]). Since
+// C++ is the default, it is not specified. [perl:...] is written by projects created before Perl
+// support was dropped; leaving it in the value makes the C++ handler look like a lambda.
 
 // This is a static function
 
 std::string EventHandlerDlg::GetCppValue(std::string_view value)
 {
-    if (auto pos = value.find("[python:"); pos != wxue::npos)
+    constexpr std::array<std::string_view, 3> language_prefixes = { "[perl:", "[python:",
+                                                                    "[ruby:" };
+    for (const std::string_view prefix: language_prefixes)
     {
-        value.remove_suffix(value.size() - pos);
-    }
-    if (auto pos = value.find("[ruby:"); pos != wxue::npos)
-    {
-        value.remove_suffix(value.size() - pos);
+        if (auto pos = value.find(prefix); pos != wxue::npos)
+        {
+            value.remove_suffix(value.size() - pos);
+        }
     }
 
     return std::string(value);

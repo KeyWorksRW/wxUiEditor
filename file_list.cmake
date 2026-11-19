@@ -89,6 +89,10 @@ set( file_list
     src/generate/writers/strategy_typescript.cpp  # TypeScriptStrategy -- TypeScript language strategy
     src/generate/writers/comment_blocks.cpp    # Shared generated comment blocks
     src/generate/writers/common_strings.cpp    # Common strings used by code generators
+    src/generate/writers/ffi_ui.cpp            # FfiUiDescriptor load and role resolution
+    src/generate/writers/ffi_emit.cpp          # Emit a form body from the FFI descriptor
+    src/generate/writers/supported_matrix.cpp  # Full pair-level kwxSupported.md generator
+    src/generate/writers/conformance_kit.cpp   # Generated conformance kit (one .wxui per class)
 
     src/generate/writers/file_codewriter.cpp   # FileCodeWriter -- Class to write code to disk
     src/generate/writers/gen_base.cpp          # BaseCodeGenerator -- Generate Src and Hdr files for Base and Derived Class

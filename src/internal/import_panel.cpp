@@ -37,11 +37,6 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
     auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
     m_scintilla = new wxStyledTextCtrl(this, wxID_ANY);
 
-    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
-    // which is not cross-platform. See issue #597.
-    const wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
-
     // These are settings used in codedisplay_base
     m_scintilla->SetWrapMode(wxSTC_WRAP_WHITESPACE);
     m_scintilla->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
@@ -60,6 +55,8 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
     m_scintilla->SetUseTabs(false);
     m_scintilla->SetTabWidth(4);
     m_scintilla->SetBackSpaceUnIndents(true);
+
+    InitCodeDisplay(m_scintilla);
 
     SetStcColors(m_scintilla, GenLang::xrc);
 

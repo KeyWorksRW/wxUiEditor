@@ -6,6 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-30-2026]
 
+#include <algorithm>  // For std::count
+
 #include <wx/file.h>      // wxFile - encapsulates low-level "file descriptor"
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
@@ -26,7 +28,7 @@ using namespace code;
 //
 // The approach is:
 // 1. Generate code and append end-of-file comment block with "fake" user content
-//    (Ruby 'end', C++ '};', Perl '1;') - this ensures new files are complete.
+//    (Ruby 'end', C++ '};') - this ensures new files are complete.
 // 2. If file exists, compare buffers to detect changes.
 // 3. If original file has content after its comment block, remove the fake content
 //    we added and replace it with the original file's content (preserving user edits).
@@ -57,7 +59,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
     if (!m_file_exists)
     {
         // File doesn't exist. The end-of-file block and fake user content (Ruby 'end',
-        // C++ '};', Perl '1;') were already added by AppendEndOfFileBlock().
+        // C++ '};') were already added by AppendEndOfFileBlock().
         // For new files, we keep this fake content to make them syntactically complete.
         return (flags & flag_test_only) ? write_needed : WriteToFile();
     }
@@ -88,7 +90,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
     }
 
     // At this point, m_buffer contains newly generated code WITH fake user content already
-    // appended (Ruby 'end', C++ '};', Perl '1;'). m_org_buffer contains the original file.
+    // appended (Ruby 'end', C++ '};'). m_org_buffer contains the original file.
     // m_fake_content_pos marks where we can erase the fake content if we need to preserve
     // original content instead.
     //
@@ -116,24 +118,24 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
             return write_current;
         }
 
-        // Same size but different content. For Ruby, user may have modified/removed
-        // the comment after 'end', which doesn't require an update. Fall through to
-        // Branch 2 logic which handles this case.
+        // Same size but different content. If the language has a fake trailing statement, the
+        // user may have modified or removed the comment after it, which doesn't require an
+        // update. Fall through to Branch 2 logic which handles this case.
     }
 
-    // ========== BRANCH 2: Handle Ruby files with special 'end' statement handling ==========
-    // For Ruby files: We only care that buffer up to </auto-generated> matches, and that
-    // there's an 'end' statement in the original. User may have modified or removed the
-    // comment, added blank lines, or added their own content - none require an update.
+    // ========== BRANCH 2: Handle fake trailing statement (Ruby `end`, LuaJIT `return M`) ======
+    // We only care that buffer up to </auto-generated> matches, and that the fake trailing
+    // statement is in the original. User may have modified or removed the comment, added blank
+    // lines, or added their own content - none require an update.
     // This handles all size comparisons (same size, larger, or smaller original) in one place.
-    if (m_language == GenLang::ruby && m_fake_content_pos > 0 &&
+    if (!m_fake_trailing_statement.empty() && m_fake_content_pos > 0 &&
         m_org_buffer.size() >= m_fake_content_pos)
     {
         // Compare up to the end of </auto-generated> line (before fake content)
         if (std::equal(m_buffer.begin(), m_buffer.begin() + m_fake_content_pos,
                        m_org_buffer.begin()))
         {
-            // Generated code matches. Now verify there's an 'end' statement somewhere
+            // Generated code matches. Now verify the fake trailing statement is somewhere
             // after the </auto-generated> marker in the original file.
             const std::string_view remaining =
                 std::string_view(m_org_buffer).substr(m_fake_content_pos);
@@ -142,24 +144,25 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
             const size_t first_non_ws = remaining.find_first_not_of(" \t\r\n");
             if (first_non_ws != std::string_view::npos)
             {
-                // There's content after </auto-generated> - check if it starts with 'end'
+                // There's content after </auto-generated> - check if it starts with the fake
+                // trailing statement.
                 const std::string_view content_start = remaining.substr(first_non_ws);
-                if (content_start.starts_with("end"))
+                if (content_start.starts_with(m_fake_trailing_statement))
                 {
-                    // Original file has 'end' statement - file is current, no write needed.
+                    // Original file has the trailing statement - file is current, no write needed.
                     return write_current;
                 }
             }
-            // No 'end' found - fall through to write the file with proper ending
+            // Trailing statement not found - fall through to write the file with proper ending
         }
         // Content before </auto-generated> differs - fall through to Branch 3
     }
 
-    // ========== BRANCH 2b: Handle non-Ruby files where original is larger ==========
-    if (m_language != GenLang::ruby && m_org_buffer.size() > m_buffer.size())
+    // ========== BRANCH 2b: Handle files without a fake trailing statement, original larger ====
+    if (m_fake_trailing_statement.empty() && m_org_buffer.size() > m_buffer.size())
     {
-        // Non-Ruby languages: Original file has more content than our buffer.
-        // Check if our new buffer matches the beginning portion of the original.
+        // Languages without a fake trailing statement: Original file has more content than our
+        // buffer. Check if our new buffer matches the beginning portion of the original.
         if (std::equal(m_buffer.begin(), m_buffer.end(), m_org_buffer.begin()))
         {
             // New generated code matches the prefix of the original file exactly.
@@ -170,10 +173,10 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
         // New buffer doesn't match prefix - fall through to Branch 3 to handle differences
     }
 
-    // ========== BRANCH 2c: Handle non-Ruby files where buffers are same size ==========
-    if (m_language != GenLang::ruby && m_org_buffer.size() == m_buffer.size())
+    // ========== BRANCH 2c: Handle files without a fake trailing statement, same size =========
+    if (m_fake_trailing_statement.empty() && m_org_buffer.size() == m_buffer.size())
     {
-        // Non-Ruby, same size but different content - try to append original user content.
+        // Same size but different content - try to append original user content.
         const size_t begin_user_content = m_buffer.size();
         std::ignore = AppendOriginalUserContent(begin_user_content);
 
@@ -246,8 +249,102 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
     return (m_flags & flag_test_only) ? write_needed : WriteToFile();
 }
 
+void FileCodeWriter::AppendFileTrailer(GenLang language, Node* node, int flags)
+{
+    ASSERT_MSG(m_buffer.empty(), "AppendFileTrailer expects an empty buffer");
+
+    m_language = language;
+    m_node = node;
+    m_flags = flags;
+
+    // AppendEndOfFileBlock() resets m_fake_content_pos / m_fake_trailing_statement.
+    m_block_length = GetBlockLength(language);
+    AppendEndOfFileBlock();
+
+    if (!m_filename.FileExists())
+    {
+        // New file: the end block plus any fake trailing statement is exactly what WriteFile()
+        // would create, so there is nothing else to append.
+        return;
+    }
+
+    m_additional_content = -1;
+    m_comment_line_to_find = GetCommentLineToFind(language);
+    if (m_comment_line_to_find.empty())
+    {
+        return;  // entire file is generated code
+    }
+
+    if (ReadOriginalFile(false) != 0)
+    {
+        return;  // exists but unreadable
+    }
+
+    m_org_file.ReadString(std::string_view(m_org_buffer));
+
+    const std::ptrdiff_t line = FindAdditionalContentIndex();
+    if (line == -1)
+    {
+        AppendMissingCommentBlockWarning();
+        return;
+    }
+
+    if (m_org_file.size() > static_cast<size_t>(line))
+    {
+        m_additional_content = line;
+        std::ignore = AppendOriginalUserContent(0);
+    }
+}
+
+[[nodiscard]] std::string_view FileCodeWriter::GetKwxEndBlock(GenLang language)
+{
+    switch (language)
+    {
+        case GenLang::typescript:
+            return end_typescript_block;
+        case GenLang::go:
+            return end_go_block;
+        case GenLang::julia:
+            return end_julia_block;
+        case GenLang::luajit:
+            return end_luajit_block;
+        case GenLang::fortran:
+            return end_fortran_block;
+        case GenLang::rust:
+            return end_rust_block;
+        default:
+            return {};
+    }
+}
+
+[[nodiscard]] std::string_view FileCodeWriter::GetKwxCommentPrefix(GenLang language)
+{
+    switch (language)
+    {
+        case GenLang::typescript:
+        case GenLang::go:
+        case GenLang::rust:
+            return "//";
+        case GenLang::julia:
+            return "#";
+        case GenLang::luajit:
+            return "--";
+        case GenLang::fortran:
+            return "!";
+        default:
+            return {};
+    }
+}
+
 [[nodiscard]] std::string_view FileCodeWriter::GetCommentLineToFind(GenLang language)
 {
+    if (const std::string_view kwx_block = GetKwxEndBlock(language); !kwx_block.empty())
+    {
+        // The kwx end blocks start on their first comment line, so the line to search for is
+        // everything up to the first newline.
+        return kwx_block.substr(0, kwx_block.find('\n'));
+    }
+
     if (language == GenLang::cplusplus)
     {
         return GetCppEndCommentLine();
@@ -266,6 +363,11 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
 
 [[nodiscard]] size_t FileCodeWriter::GetBlockLength(GenLang language)
 {
+    if (const std::string_view kwx_block = GetKwxEndBlock(language); !kwx_block.empty())
+    {
+        return std::count(kwx_block.begin(), kwx_block.end(), '\n');
+    }
+
     if (language == GenLang::cplusplus)
     {
         return GetCppEndBlockLength();
@@ -385,7 +487,7 @@ int FileCodeWriter::WriteFile(GenLang language, int flags,
     const std::ptrdiff_t user_content_start = auto_generated_end_index + 1;
 
     // Step 4: Return the line after </auto-generated> as the start of user content.
-    // We do NOT skip fake content (Ruby 'end', C++ '};', Perl '1;') here because:
+    // We do NOT skip fake content (Ruby 'end', C++ '};') here because:
     // - If there's real user content, it may appear BEFORE the closing statement
     // - The original file's structure should be preserved exactly
     // - AppendEndOfFileBlock() will only add fake content for NEW files
@@ -433,6 +535,7 @@ void FileCodeWriter::AppendRubyEndBlock()
     m_buffer += end_ruby_block;
     // Record position where fake content would start
     m_fake_content_pos = m_buffer.size();
+    m_fake_trailing_statement = "end";
 
     if (m_node && !m_node->is_Gen(GenEnum::gen_Images) && !m_node->is_Gen(GenEnum::gen_Data))
     {
@@ -445,11 +548,34 @@ void FileCodeWriter::AppendRubyEndBlock()
     else
     {
         m_fake_content_pos = 0;  // No fake content for Images/Data
+        m_fake_trailing_statement = {};
+    }
+}
+
+void FileCodeWriter::AppendKwxEndBlock()
+{
+    m_buffer += GetKwxEndBlock(m_language);
+    m_fake_content_pos = 0;
+    m_fake_trailing_statement = {};
+
+    if (m_language == GenLang::luajit)
+    {
+        // `return M` must be the last statement of a Lua chunk, so nothing may follow it.
+        // Record where it starts so the preservation path can replace it with the original
+        // user content, which is then responsible for ending the file with `return M`.
+        m_fake_content_pos = m_buffer.size();
+        m_fake_trailing_statement = "return M";
+        m_buffer += "\nreturn M\n";
     }
 }
 
 void FileCodeWriter::AppendEndOfFileBlock()
 {
+    // Reset the fake-content tracking so a reused writer object cannot carry the previous file's
+    // trailing statement into the preservation branches.
+    m_fake_content_pos = 0;
+    m_fake_trailing_statement = {};
+
     switch (m_language)
     {
         case GenLang::cplusplus:
@@ -461,6 +587,14 @@ void FileCodeWriter::AppendEndOfFileBlock()
         case GenLang::ruby:
             AppendRubyEndBlock();
             break;
+        case GenLang::typescript:
+        case GenLang::go:
+        case GenLang::julia:
+        case GenLang::luajit:
+        case GenLang::fortran:
+        case GenLang::rust:
+            AppendKwxEndBlock();
+            break;
         default:
             break;
     }
@@ -468,7 +602,11 @@ void FileCodeWriter::AppendEndOfFileBlock()
 
 void FileCodeWriter::AppendMissingCommentBlockWarning()
 {
-    const char* const comment_char = (m_language == GenLang::cplusplus) ? "//" : "#";
+    std::string_view comment_char = GetKwxCommentPrefix(m_language);
+    if (comment_char.empty())
+    {
+        comment_char = (m_language == GenLang::cplusplus) ? "//" : "#";
+    }
 
     m_buffer += "\n";
     m_buffer += comment_char;
@@ -622,13 +760,19 @@ bool FileCodeWriter::AppendOriginalUserContent(size_t begin_new_user_content)
 
     if (wxGetApp().is_Generating() || (flags & code::flag_no_ui))
     {
-        // Command-line generation has no UI to prompt for folder creation. Record the cause so
-        // the log file names the missing directory instead of only the file that was skipped.
-        if (wxGetApp().is_Generating())
+        // Command-line generation is unattended, so the "create it?" prompt cannot be asked.
+        // Creating the directory is the answer that prompt exists to collect: refusing made every
+        // headless run into a new output folder fail, which is what the conformance kit
+        // (gen/<lang>/...) hit for most of its forms.
+        if (wxFileName::Mkdir(out_dir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
         {
-            wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
-            log_msg << "Error: the output directory does not exist: " << out_dir.utf8_string();
+            return 0;
         }
+
+        // Record the cause so the log file names the missing directory instead of only the file
+        // that was skipped.
+        wxue::string& log_msg = wxGetApp().get_CmdLineLog().emplace_back();
+        log_msg << "Error: the output directory could not be created: " << out_dir.utf8_string();
         return write_no_folder;
     }
 

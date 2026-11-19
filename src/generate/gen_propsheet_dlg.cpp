@@ -146,8 +146,8 @@ static void ConstructionCodeRuby(Code& code)
         .Style();
     if (code.HasValue(prop_window_name))
     {
-        code.Comma().CheckLineLength(sizeof("name = ") + code.as_string(prop_window_name).size() +
-                                     2);
+        code.Comma().CheckLineLength(sizeof("name = ") +
+                                     code.node()->as_string(prop_window_name).size() + 2);
         code.Str("name = ").QuotedString(prop_window_name);
     }
 
@@ -178,7 +178,12 @@ static void ConstructionCodeRuby(Code& code)
         code.FormFunction("SetSheetOuterBorder(").Add(prop_outer_border).EndFunction().Eol();
     }
 
-    code.Eol().Str("create(parent, id, title, pos, size, style, name)").Eol();
+    code.Eol().Str("create(parent, id, title, pos, size, style");
+    if (node->HasValue(prop_window_name))
+    {
+        code.Comma().Str("name");
+    }
+    code.Str(")").Eol();
     code.Eol().FormFunction("CreateButtons(").Add(prop_buttons).EndFunction().Eol();
 }
 

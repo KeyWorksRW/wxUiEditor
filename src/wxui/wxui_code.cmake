@@ -31,9 +31,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/wxue_data.cpp
 
     # Base classes
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/generate_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../tools/global_ids_dlg_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/svg_to_ico_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/art_prop_dlg_gen.cpp
     ${CMAKE_CURRENT_LIST_DIR}/code_compare_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
@@ -44,6 +42,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/eventhandler_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/fontpropdlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/generate_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/generate_xrc_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/grid_property_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
@@ -58,6 +57,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/radiobox_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/svg_to_ico_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/sys_header_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/xrccompare_base.cpp
 

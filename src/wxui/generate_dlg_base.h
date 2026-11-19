@@ -15,8 +15,8 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/html/htmlwin.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
 
 class GenerateDlgBase : public wxDialog
 {
@@ -41,7 +41,7 @@ protected:
     // Class member variables
 
     wxGridSizer* m_grid_sizer;
-    wxStaticText* m_staticText;
+    wxHtmlWindow* m_html_win;
 };
 
 // ************* End of generated code ***********

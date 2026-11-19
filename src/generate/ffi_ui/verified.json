@@ -1,0 +1,773 @@
+{
+  "schema": 1,
+  "entries": [
+    {
+      "lang": "go",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxSizerFlags",
+      "roles": ["ctor", "expand"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "go",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-12"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "julia",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor", "ptr"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "lua",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxFrame",
+      "roles": ["ctor", "set_min_size", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxTextCtrl",
+      "roles": ["ctor", "set_value", "set_font"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxDialog",
+      "roles": ["ctor", "set_sizer", "center", "bind"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_window", "add_sizer"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxFont",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxStaticBitmap",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxBitmap",
+      "roles": ["from_base64"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "rust",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "probe",
+      "evidence": "tests/quick_probe VERDICT PASS 2026-11-13"
+    },
+    {
+      "lang": "go",
+      "class": "wxFrame",
+      "roles": ["ctor", "bind", "center", "set_menubar", "set_min_size"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_mainframe.go.map.json"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxFrame",
+      "roles": ["ctor", "bind", "center", "set_menubar", "set_min_size"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_mainframe.ts.map.json"
+    },
+    {
+      "lang": "julia",
+      "class": "wxFrame",
+      "roles": ["ctor", "bind", "center", "set_menubar", "set_min_size"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_mainframe.jl.map.json"
+    },
+    {
+      "lang": "lua",
+      "class": "wxFrame",
+      "roles": ["ctor", "bind", "center", "set_menubar", "set_min_size"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_mainframe.lua.map.json"
+    },
+    {
+      "lang": "rust",
+      "class": "wxFrame",
+      "roles": ["ctor", "bind", "center", "set_menubar", "set_min_size"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_mainframe.rs.map.json"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxFrame",
+      "roles": ["ctor", "center", "set_menubar", "set_min_size"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_mainframe.f90.map.json"
+    },
+    {
+      "lang": "go",
+      "class": "wxMenuBar",
+      "roles": ["ctor", "append"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_mainframe.go.map.json"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxMenuBar",
+      "roles": ["ctor", "append"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_mainframe.ts.map.json"
+    },
+    {
+      "lang": "julia",
+      "class": "wxMenuBar",
+      "roles": ["ctor", "append"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_mainframe.jl.map.json"
+    },
+    {
+      "lang": "lua",
+      "class": "wxMenuBar",
+      "roles": ["ctor", "append"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_mainframe.lua.map.json"
+    },
+    {
+      "lang": "rust",
+      "class": "wxMenuBar",
+      "roles": ["ctor", "append"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_mainframe.rs.map.json"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxMenuBar",
+      "roles": ["ctor", "append"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_mainframe.f90.map.json"
+    },
+    {
+      "lang": "go",
+      "class": "wxMenu",
+      "roles": ["ctor", "append_by_id"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_mainframe.go.map.json"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxMenu",
+      "roles": ["ctor", "append_by_id"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_mainframe.ts.map.json"
+    },
+    {
+      "lang": "julia",
+      "class": "wxMenu",
+      "roles": ["ctor", "append_by_id"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_mainframe.jl.map.json"
+    },
+    {
+      "lang": "lua",
+      "class": "wxMenu",
+      "roles": ["ctor", "append_by_id"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_mainframe.lua.map.json"
+    },
+    {
+      "lang": "rust",
+      "class": "wxMenu",
+      "roles": ["ctor", "append_by_id"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_mainframe.rs.map.json"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxMenu",
+      "roles": ["ctor", "append_by_id"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_mainframe.f90.map.json"
+    },
+    {
+      "lang": "go",
+      "class": "wxStatusBar",
+      "roles": ["create_statusbar"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_mainframe.go.map.json; create_statusbar is called on the form (wxFrame); the status-bar node records the pair"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxStatusBar",
+      "roles": ["create_statusbar"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_mainframe.ts.map.json; create_statusbar is called on the form (wxFrame); the status-bar node records the pair"
+    },
+    {
+      "lang": "julia",
+      "class": "wxStatusBar",
+      "roles": ["create_statusbar"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_mainframe.jl.map.json; create_statusbar is called on the form (wxFrame); the status-bar node records the pair"
+    },
+    {
+      "lang": "lua",
+      "class": "wxStatusBar",
+      "roles": ["create_statusbar"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_mainframe.lua.map.json; create_statusbar is called on the form (wxFrame); the status-bar node records the pair"
+    },
+    {
+      "lang": "rust",
+      "class": "wxStatusBar",
+      "roles": ["create_statusbar"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_mainframe.rs.map.json; create_statusbar is called on the form (wxFrame); the status-bar node records the pair"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxStatusBar",
+      "roles": ["create_statusbar"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_mainframe.f90.map.json; create_statusbar is called on the form (wxFrame); the status-bar node records the pair"
+    },
+    {
+      "lang": "go",
+      "class": "wxRichTextCtrl",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_mainframe.go.map.json"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxRichTextCtrl",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_mainframe.ts.map.json"
+    },
+    {
+      "lang": "julia",
+      "class": "wxRichTextCtrl",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_mainframe.jl.map.json"
+    },
+    {
+      "lang": "lua",
+      "class": "wxRichTextCtrl",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_mainframe.lua.map.json"
+    },
+    {
+      "lang": "rust",
+      "class": "wxRichTextCtrl",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_mainframe.rs.map.json"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxRichTextCtrl",
+      "roles": ["ctor"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_mainframe.f90.map.json"
+    },
+    {
+      "lang": "go",
+      "class": "wxDialog",
+      "roles": ["ctor", "bind", "center", "set_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_dlg.go.map.json"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxDialog",
+      "roles": ["ctor", "bind", "center", "set_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_dlg.ts.map.json"
+    },
+    {
+      "lang": "julia",
+      "class": "wxDialog",
+      "roles": ["ctor", "bind", "center", "set_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_dlg.jl.map.json"
+    },
+    {
+      "lang": "lua",
+      "class": "wxDialog",
+      "roles": ["ctor", "bind", "center", "set_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_dlg.lua.map.json"
+    },
+    {
+      "lang": "rust",
+      "class": "wxDialog",
+      "roles": ["ctor", "bind", "center", "set_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_dlg.rs.map.json"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxDialog",
+      "roles": ["ctor", "center", "set_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_dlg.f90.map.json"
+    },
+    {
+      "lang": "go",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_dlg.go.map.json"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_dlg.ts.map.json"
+    },
+    {
+      "lang": "julia",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_dlg.jl.map.json"
+    },
+    {
+      "lang": "lua",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_dlg.lua.map.json"
+    },
+    {
+      "lang": "rust",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_dlg.rs.map.json"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxBoxSizer",
+      "roles": ["ctor", "add_sizer"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_dlg.f90.map.json"
+    },
+    {
+      "lang": "go",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create", "flags"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_go_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/go_dlg.go.map.json"
+    },
+    {
+      "lang": "typescript",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_typescript_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/typescript_dlg.ts.map.json"
+    },
+    {
+      "lang": "julia",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_julia_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/julia_dlg.jl.map.json"
+    },
+    {
+      "lang": "lua",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_lua_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/lua_dlg.lua.map.json"
+    },
+    {
+      "lang": "rust",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_rust_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/rust_dlg.rs.map.json"
+    },
+    {
+      "lang": "fortran",
+      "class": "wxStdDialogButtonSizer",
+      "roles": ["create"],
+      "state": "verified",
+      "source": "quick",
+      "evidence": "verify_all -Target quick 2026-11-14 VERDICT ALL PASS (6/6); A8/A9/A10 PASS in .private/logs/verify_fortran_quick.log; pairs from the WXUE_FFI_SOURCEMAP=1 generation recorded at .private/logs/quick_pairs/fortran_dlg.f90.map.json"
+    }
+  ]
+}

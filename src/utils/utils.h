@@ -132,6 +132,12 @@ ClassOverrideType GetClassOverrideType(Node* node);
 void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer = true,
                   bool add_keywords = true);
 
+// Applies the user's code-display font to every Scintilla style and switches the control to
+// DirectWrite rendering so that a ligature-capable font (Fira Code is the default) shows its
+// programming ligatures. Ports without DirectWrite ignore the request. Call this BEFORE
+// SetStcColors() -- it clears all styles, which would otherwise wipe the syntax colours.
+void InitCodeDisplay(wxStyledTextCtrl* scintilla);
+
 // If the string is a filename without an extension, append the project's header file
 // extension. If force is true, any existing extension is replaced with the project's
 // header file extension.

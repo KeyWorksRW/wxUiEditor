@@ -459,11 +459,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 base64_encode(iter_array->base_image().array_data.data(),
                               iter_array->base_image().array_size & ARRAY_SIZE_MASK, m_language);
 
-            // The base64_encode() helper prefixes every data line with a quote and suffixes
-            // every line (including the last) with a continuation operator. The header line is
-            // responsible for the assignment, and the trailing continuation is stripped from
-            // the final data line.
             std::string_view suffix_to_strip;
+            // Go's assignment line carries the first literal so gofmt keeps it as one line.
+            std::string deferred_header;
             if (code.is_fortran())
             {
                 code.Eol()
@@ -476,7 +474,12 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 code.Eol().Str(b64_name).Str(" = &");
                 suffix_to_strip = " // &";
             }
-            else if (code.is_go() || code.is_typescript())
+            else if (code.is_go())
+            {
+                deferred_header = "const " + std::string(b64_name) + " = ";
+                suffix_to_strip = " +";
+            }
+            else if (code.is_typescript())
             {
                 code.Eol().Str("const ").Str(b64_name).Str(" = ");
                 suffix_to_strip = " +";
@@ -489,7 +492,9 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
             }
             else if (code.is_julia())
             {
-                code.Eol().Str("const ").Str(b64_name).Str(" = ");
+                // Julia's generated form emits the constant inside the entry function, and Julia
+                // rejects a `const` declaration on a local variable.
+                code.Eol().Str(b64_name).Str(" = ");
                 suffix_to_strip = " *";
             }
             else if (code.is_luajit())
@@ -520,9 +525,39 @@ void BaseCodeGenerator::WriteImageConstruction(Code& code)
                 // emitted constant remains valid Rust.
                 code.Str("\"\")");
             }
-            m_source->writeLine(code);
-            code.clear();
-            m_source->writeLine(encoded);
+            if (!deferred_header.empty())
+            {
+                // Write the comment line by itself, then the assignment with the first literal
+                // appended, so the statement keeps gofmt's single-line shape.
+                if (!code.empty())
+                {
+                    m_source->writeLine(code);
+                    code.clear();
+                }
+                if (encoded.empty())
+                {
+                    m_source->writeLine(deferred_header + "\"\"");
+                }
+                else
+                {
+                    std::string first_fragment = std::move(encoded.front());
+                    encoded.erase(encoded.begin());
+                    if (!first_fragment.empty() && first_fragment.front() == '\t')
+                    {
+                        first_fragment.erase(0, 1);
+                    }
+                    std::vector<std::string> lines;
+                    lines.push_back(deferred_header + first_fragment);
+                    lines.insert(lines.end(), encoded.begin(), encoded.end());
+                    m_source->writeLine(lines);
+                }
+            }
+            else
+            {
+                m_source->writeLine(code);
+                code.clear();
+                m_source->writeLine(encoded);
+            }
             m_source->writeLine();
         }
     }

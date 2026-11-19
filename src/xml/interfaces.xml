@@ -283,7 +283,7 @@
 	</gen>
 
 	<gen class="kwxLuaJIT Settings" type="interface">
-		<property name="luajit_file" type="file"
+		<property name="lua_file" type="file"
 			help="The filename to use if generating code for kwxLuaJIT."/>
 		<property name="insert_luajit_code" type="code_edit"
 			help="Specify the code to insert into the luajit file after the generated statements. This can be any valid luajit code for use before the class definition."/>
@@ -413,7 +413,7 @@
 			<option name="3"/>
 			<option name="4"/>
 			<option name="tab"/>
-			3</property>
+			4</property>
 		<property name="fortran_function_case" type="option"
 			help="Casing to use for function and method names in generated code.">
 			<option name="PascalCase"/>
@@ -442,7 +442,7 @@
 			<option name="3"/>
 			<option name="4"/>
 			<option name="tab"/>
-			4</property>
+			tab</property>
 		<property name="go_function_case" type="option"
 			help="Casing to use for function and method names in generated code.">
 			<option name="PascalCase"/>
@@ -520,7 +520,7 @@
 			<option name="3"/>
 			<option name="4"/>
 			<option name="tab"/>
-			4</property>
+			2</property>
 		<property name="typescript_function_case" type="option"
 			help="Casing to use for function and method names in generated code.">
 			<option name="PascalCase"/>

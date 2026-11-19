@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Version of wxFileProperty specific to wxUiEditor
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2024-2025 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2024-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 // CR: [07-12-2026]
@@ -18,14 +18,15 @@
 wxPG_IMPLEMENT_PROPERTY_CLASS(ttFileProperty, wxEditorDialogProperty, TextCtrlAndButton);
 
 ttFileProperty::ttFileProperty(NodeProperty* prop) :
-    wxEditorDialogProperty(wxString(prop->get_DeclName()), wxPG_LABEL)
+    wxEditorDialogProperty(wxString(prop->get_DeclName()), wxPG_LABEL),
+    m_prop(prop)
 {
-    m_prop = prop;
     SetValue(prop->value().wx());
 }
 
 ttFileProperty::ttFileProperty(const wxString& label, const wxString& name, const wxString& value) :
-    wxEditorDialogProperty(label, name)
+    wxEditorDialogProperty(label, name),
+    m_prop(nullptr)
 {
     ASSERT_MSG(false, "This constructor should not be called -- m_prop will not be set!");
     SetValue(value);
@@ -93,6 +94,92 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg,  // NOLINT: matches
             }
             title = "TypeScript filename";
             wildcard = "TypeScript Files|*.ts;*.tsx";
+            break;
+
+        case prop_fortran_file:
+            if (folder && folder->HasValue(prop_folder_fortran_output_folder))
+            {
+                root_path.AssignDir(folder->as_string(prop_folder_fortran_output_folder));
+            }
+            else if (Project.get_ProjectNode()->HasValue(prop_fortran_output_folder))
+            {
+                root_path.AssignDir(
+                    Project.get_ProjectNode()->as_string(prop_fortran_output_folder));
+            }
+            else
+            {
+                root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
+            title = "Fortran filename";
+            wildcard = "Fortran Files|*.f90;*.f95;*.f03;*.f08";
+            break;
+
+        case prop_go_file:
+            if (folder && folder->HasValue(prop_folder_go_output_folder))
+            {
+                root_path.AssignDir(folder->as_string(prop_folder_go_output_folder));
+            }
+            else if (Project.get_ProjectNode()->HasValue(prop_go_output_folder))
+            {
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_go_output_folder));
+            }
+            else
+            {
+                root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
+            title = "Go filename";
+            wildcard = "Go Files|*.go";
+            break;
+
+        case prop_julia_file:
+            if (folder && folder->HasValue(prop_folder_julia_output_folder))
+            {
+                root_path.AssignDir(folder->as_string(prop_folder_julia_output_folder));
+            }
+            else if (Project.get_ProjectNode()->HasValue(prop_julia_output_folder))
+            {
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_julia_output_folder));
+            }
+            else
+            {
+                root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
+            title = "Julia filename";
+            wildcard = "Julia Files|*.jl";
+            break;
+
+        case prop_lua_file:
+            if (folder && folder->HasValue(prop_folder_lua_output_folder))
+            {
+                root_path.AssignDir(folder->as_string(prop_folder_lua_output_folder));
+            }
+            else if (Project.get_ProjectNode()->HasValue(prop_lua_output_folder))
+            {
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_lua_output_folder));
+            }
+            else
+            {
+                root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
+            title = "Lua filename";
+            wildcard = "Lua Files|*.lua";
+            break;
+
+        case prop_rust_file:
+            if (folder && folder->HasValue(prop_folder_rust_output_folder))
+            {
+                root_path.AssignDir(folder->as_string(prop_folder_rust_output_folder));
+            }
+            else if (Project.get_ProjectNode()->HasValue(prop_rust_output_folder))
+            {
+                root_path.AssignDir(Project.get_ProjectNode()->as_string(prop_rust_output_folder));
+            }
+            else
+            {
+                root_path.AssignDir(Project.get_wxFileName()->GetPath());
+            }
+            title = "Rust filename";
+            wildcard = "Rust Files|*.rs";
             break;
 
         case prop_python_file:

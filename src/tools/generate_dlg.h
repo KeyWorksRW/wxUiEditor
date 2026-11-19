@@ -11,7 +11,7 @@
 #include <wx/sizer.h>
 #include <wx/valgen.h>
 
-#include "generate_dlg_base.h"
+#include "../wxui/generate_dlg_base.h"
 
 class GenerateDlg : public GenerateDlgBase
 {
@@ -35,6 +35,10 @@ protected:
     // Event handlers
 
     void OnInit(wxInitDialogEvent& event) override;
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    void OnSelectAll(wxCommandEvent& event);
+#endif
 
 private:
     wxCheckBox* m_checkBaseCode { nullptr };

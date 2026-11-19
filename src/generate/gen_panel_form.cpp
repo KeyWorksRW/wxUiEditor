@@ -125,7 +125,7 @@ bool PanelFormGenerator::ConstructionCode(Code& code)
         if (code.HasValue(prop_window_name))
         {
             code.Comma().CheckLineLength(sizeof("name = ") +
-                                         code.as_string(prop_window_name).size() + 2);
+                                         code.node()->as_string(prop_window_name).size() + 2);
             code.Str("name = ").QuotedString(prop_window_name);
         }
 
@@ -195,7 +195,12 @@ bool PanelFormGenerator::SettingsCode(Code& code)
     }
     else if (code.is_ruby())
     {
-        code.Eol(eol_if_needed).Str("super(parent, id, pos, size, style, name)");
+        code.Eol(eol_if_needed).Str("super(parent, id, pos, size, style");
+        if (code.HasValue(prop_window_name))
+        {
+            code.Comma().Str("name");
+        }
+        code.Str(")");
         // REVIEW: [Randalphwa - 07-17-2023] The following doesn't work with an error that
         // Wx::Panel.create doesn't exist. code.Eol(eol_if_needed).Str("return false unless
         // Wx::Panel.create(parent, id, pos, size, style, name)");

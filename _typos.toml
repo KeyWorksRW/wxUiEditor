@@ -54,6 +54,8 @@ theater = "theatre"
 # wxWidgets misspellings
 MINIMISE = "MINIMISE"
 
+Organiser = "Oraniser"
+
 # Third-party or generated identifiers that aren't actually typos
 [default.extend-identifiers]
 # These get checked as whole identifiers before word-splitting

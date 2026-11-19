@@ -8,9 +8,13 @@
 
 // See also: ui/preferences_dlg.cpp and ui/preferences_dlg.h
 
-#include <wx/config.h>  // wxConfig base header
+#include <wx/config.h>    // wxConfig base header
+#include <wx/fontenum.h>  // wxFontEnumerator
+#include <wx/settings.h>  // wxSystemSettings
 
 #include "preferences.h"
+
+#include "font_prop.h"  // FontProperty -- Font properties
 
 Prefs& UserPrefs = Prefs::getInstance();
 
@@ -89,6 +93,30 @@ void Prefs::ReadConfig()
     m_icon_size = config->Read("icon_size", 20);
 
     m_code_display_font = config->Read("code_display_font", "");
+
+    if (!m_code_display_font.empty())
+    {
+        // A stored font that resolves to the system GUI font was never an actual choice -- earlier
+        // versions wrote the resolved system font back whenever the Preferences dialog was OK'd.
+        // Treat it as unset so the default font below is used instead.
+        const wxFont stored_font = FontProperty(m_code_display_font.ToStdView()).GetFont();
+        const wxFont sys_font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        if (stored_font.GetFaceName() == sys_font.GetFaceName() && !stored_font.IsFixedWidth())
+        {
+            m_code_display_font.clear();
+        }
+    }
+
+    if (m_code_display_font.empty() && wxFontEnumerator::IsValidFacename("Fira Code"))
+    {
+        // Fira Code is the default code-display font only when it is actually installed. An empty
+        // preference keeps its original meaning: use the system GUI font.
+        FontProperty font_prop;
+        font_prop.Family(wxFONTFAMILY_DEFAULT)
+            .FaceName("Fira Code")
+            .PointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
+        m_code_display_font = font_prop.as_string();
+    }
 
     config->SetPath("/");
 }

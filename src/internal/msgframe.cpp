@@ -125,7 +125,7 @@ MsgFrame::MsgFrame(std::vector<wxString>* pMsgs, bool* pDestroyed, wxWindow* par
     // must outlive the FontProperty construction.
     const wxue::string code_font = UserPrefs.get_CodeDisplayFont();
     const FontProperty font_prop(code_font.ToStdView());
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
+    InitCodeDisplay(m_scintilla);
     m_textCtrl->SetFont(font_prop.GetFont());
 
     wxTextAttr textAttr(clr_fg, clr_bg);

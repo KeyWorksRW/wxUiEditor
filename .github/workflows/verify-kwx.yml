@@ -1,0 +1,752 @@
+name: verify-kwx
+
+# The cycle gate for all eight repositories.
+#
+# Everything is built from source in this workflow: wxUiEditor (Debug), kwxgen
+# (Release) and the six kwx language repositories. No unpublished binary is
+# consumed. The generation binary is ALWAYS bin/Debug/wxUiEditorD.exe --
+# bin/Release/wxUiEditor.exe is the interactive editor, and
+# bin/Debug/wxUiEditor.exe / bin/Release/wxUiEditorD.exe are hardlinks of the
+# opposite configuration, so neither is ever a gate input.
+#
+# Layout: every checkout is a sibling under the workspace, which is the same
+# shape the `.tts` gates expect locally (C:\rwCode\wxLanguages\<repo>). The
+# scripts resolve ROOT from their own path and SIBLING as ROOT/.., so the
+# workspace root must hold wxUiEditor, kwxFFI, quick and the six kwx repos.
+#
+# Trigger policy (recorded in .private/kwxCycle.md §11):
+#   pull_request   build-editor, build-kwxgen, generate and emitter run and are
+#                  merge-blocking. `port` runs only when the PR carries the
+#                  `ci-port` label, because it re-proves assertions against
+#                  hand-written code no PR in this repository can change.
+#   schedule       all five jobs, including port (daily drift check).
+#   dispatch       all five; `full` forces port on any ref.
+#
+# Never report PASS from a build alone. Both GUI jobs end with a guard that
+# requires a driven verdict for every lane: a lane whose drive column is `-`
+# (the runner could not enumerate windows) fails the job with a named reason.
+
+on:
+  workflow_dispatch:
+    inputs:
+      full:
+        description: 'Also run the six-lane port job on this ref'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-kwx-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # CI makes the language repositories skip compile_commands.json generation.
+  CI: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # build-editor: the generation binary, Debug configuration (wxUiEditorD.exe).
+  # ---------------------------------------------------------------------------
+  build-editor:
+    name: build editor (Debug gate binary)
+    runs-on: windows-2025-vs2026
+    # A Debug build of wxWidgets plus the editor is the long pole of this job.
+    timeout-minutes: 350
+    steps:
+      - name: Checkout wxUiEditor
+        uses: actions/checkout@v7
+        with:
+          path: wxUiEditor
+
+      - name: Setup CMake 4.2+
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '~4.2.0'
+
+      - name: Create dummy wxWidgetsDocs.zip (skip the docs build)
+        shell: pwsh
+        run: |
+          # build_docs.cmake only checks existence and CMakeRC embeds the bytes,
+          # so any content is enough for link-time verification.
+          New-Item -ItemType Directory -Force -Path wxUiEditor/build/archive | Out-Null
+          echo "Dummy wxWidgets docs archive for link-time verification" > wxUiEditor/build/archive/wxWidgetsDocs.zip
+
+      - name: Configure CMake (Debug)
+        run: cmake -G "Visual Studio 18 2026" -S wxUiEditor -B wxUiEditor/build -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build wxUiEditor (Debug)
+        run: cmake --build wxUiEditor/build --config Debug --target wxUiEditor
+
+      - name: Require the Debug generation binary
+        shell: pwsh
+        run: |
+          $bin = 'wxUiEditor/bin/Debug/wxUiEditorD.exe'
+          if (-not (Test-Path $bin)) {
+            throw "Expected the Debug generator at '$bin'. The gates never use bin/Release/wxUiEditor.exe, and bin/Debug/wxUiEditor.exe is a hardlink of the Release build."
+          }
+          Write-Host "Generation binary: $bin"
+
+      - name: Upload the Debug generation binary
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: wxui-editor-debug
+          path: wxUiEditor/bin/Debug/wxUiEditorD.exe
+          if-no-files-found: error
+          retention-days: 3
+
+  # ---------------------------------------------------------------------------
+  # build-kwxgen: descriptor generator, built from the kwxFFI source tree.
+  # ---------------------------------------------------------------------------
+  build-kwxgen:
+    name: build kwxgen (Release)
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - name: Checkout kwxFFI
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxFFI
+          path: kwxFFI
+
+      - name: Setup CMake 4.2+
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '~4.2.0'
+
+      # kwxgen is a standalone CMake project under kwxFFI/kwxgen; configuring it
+      # directly avoids building kwxFFI and wxWidgets for a generator-only job.
+      # CMAKE_RUNTIME_OUTPUT_DIRECTORY in kwxgen/CMakeLists.txt resolves to
+      # kwxFFI/kwxgen/bin/<Config>, which is the path .tts/gen_ffi_ui.sh looks for.
+      - name: Configure kwxgen
+        run: cmake -G "Visual Studio 18 2026" -S kwxFFI/kwxgen -B kwxFFI/kwxgen/build-ci -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build kwxgen (Release)
+        run: cmake --build kwxFFI/kwxgen/build-ci --config Release --target kwxgen
+
+      - name: Require kwxgen.exe
+        shell: pwsh
+        run: |
+          $bin = 'kwxFFI/kwxgen/bin/Release/kwxgen.exe'
+          if (-not (Test-Path $bin)) {
+            throw "Expected kwxgen at '$bin'."
+          }
+          Write-Host "kwxgen: $bin ($((Get-Item $bin).Length) bytes)"
+
+      - name: Upload kwxgen
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: kwxgen-release
+          path: kwxFFI/kwxgen/bin/Release/kwxgen.exe
+          if-no-files-found: error
+          retention-days: 3
+
+  # ---------------------------------------------------------------------------
+  # generate: gaps (form + 161-form kit) and the nine-language + XRC matrix.
+  # No GUI is involved, so this is the cheap PR gate on the emitter surface.
+  # ---------------------------------------------------------------------------
+  generate:
+    name: generate reports
+    needs: [build-editor, build-kwxgen, port]
+    if: ${{ always() && needs.build-editor.result == 'success' && needs.build-kwxgen.result == 'success' }}
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 120
+    env:
+      CI: true
+    steps:
+      - name: Checkout wxUiEditor
+        uses: actions/checkout@v7
+        with:
+          path: wxUiEditor
+
+      - name: Checkout kwxFFI
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxFFI
+          path: kwxFFI
+
+      - name: Checkout quick (the cycle form and the conformance kit)
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/quick
+          path: quick
+
+      - name: Checkout kwxFortran
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxFortran
+          path: kwxFortran
+
+      - name: Checkout kwxGO
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxGO
+          path: kwxGO
+
+      - name: Checkout kwxJulia
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxJulia
+          path: kwxJulia
+
+      - name: Checkout kwxLuaJIT
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxLuaJIT
+          path: kwxLuaJIT
+
+      - name: Checkout kwxRust
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxRust
+          path: kwxRust
+
+      - name: Checkout kwxTypeScript
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxTypeScript
+          path: kwxTypeScript
+
+      - name: Download the Debug generation binary
+        uses: actions/download-artifact@v7
+        with:
+          name: wxui-editor-debug
+          path: wxUiEditor/bin/Debug
+
+      - name: Download kwxgen
+        uses: actions/download-artifact@v7
+        with:
+          name: kwxgen-release
+          path: kwxFFI/kwxgen/bin/Release
+
+      # `verified-port` is read only from this cycle's drive logs
+      # (.private/logs/verify_<lang>_port.log). The port job uploads them when
+      # it ran; on a PR without the `ci-port` label that artifact does not
+      # exist, so this download is allowed to fail and the matrix keeps those
+      # cells `unknown` (never `verified-port`). The report is still honest.
+      - name: Restore the port drive logs (when this run produced them)
+        id: port_logs
+        continue-on-error: true
+        uses: actions/download-artifact@v7
+        with:
+          name: kwx-port-logs
+          path: .
+
+      - name: Report the available drive evidence
+        shell: pwsh
+        run: |
+          $logs = 'wxUiEditor/.private/logs'
+          $found = @(Get-ChildItem -Path $logs -Filter 'verify_*_port.log' -ErrorAction SilentlyContinue)
+          Write-Host "Port drive logs in this run: $($found.Count)/6"
+          if ($found.Count -lt 6) {
+            Write-Host "::notice::$($found.Count)/6 port drive logs are present; port pairs without a log stay 'unknown', never 'verified-port'."
+          }
+          if (-not (Test-Path (Join-Path $logs 'verify_cpp_cpp.log'))) {
+            Write-Host "::notice::No C++ baseline drive log in this run; c++ cells that need drive evidence stay 'unknown'."
+          }
+
+      # kwx_coverage.ps1 resolves kwxgen as kwxFFI/bin/Release/kwxgen.exe first
+      # (or from PATH); gen_ffi_ui.sh resolves kwxFFI/kwxgen/bin/Release. Make
+      # both spellings resolve to the same artifact.
+      - name: Publish kwxgen where every .tts script looks
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path kwxFFI/bin/Release | Out-Null
+          Copy-Item kwxFFI/kwxgen/bin/Release/kwxgen.exe kwxFFI/bin/Release/kwxgen.exe -Force
+          (Resolve-Path kwxFFI/kwxgen/bin/Release).Path | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Regenerate the six descriptors
+        working-directory: wxUiEditor
+        shell: bash
+        run: bash .tts/gen_ffi_ui.sh
+
+      - name: Gap matrix - the form
+        working-directory: wxUiEditor
+        shell: bash
+        run: bash .tts/kwx_gaps.sh
+
+      - name: Gap matrix - the 161-form kit
+        working-directory: wxUiEditor
+        shell: bash
+        run: bash .tts/kwx_gaps.sh -KitDirectory ../quick/tests/conformance
+
+      - name: Install the native probe runtimes (python and ruby)
+        shell: pwsh
+        run: |
+          # kwx_coverage.ps1 proves the python and ruby cells by importing the
+          # native binding and running the generated module. Without these
+          # runtimes the uploaded matrix would silently lose every verified
+          # python/ruby cell (59 each in .private/kwxCycle.md §10).
+          python -m pip install --quiet --disable-pip-version-check wxPython
+          if ($LASTEXITCODE -ne 0) { throw "wxPython install failed (exit $LASTEXITCODE)." }
+          python -c "import wx; print('wxPython', wx.version())"
+          if ($LASTEXITCODE -ne 0) { throw "wxPython is not importable after install." }
+
+          gem install wxruby3 -v 2.0.0 --no-document
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "::warning::wxRuby3 2.0.0 could not be installed; the ruby probe will record 'binding probe failed' in the uploaded coverage report instead of verified cells."
+          }
+          else {
+            ruby -e "require 'wx'; puts 'wxRuby ' + Wx::WXRUBY_VERSION"
+          }
+
+      - name: Coverage report (nine languages + XRC)
+        working-directory: wxUiEditor
+        shell: bash
+        run: bash .tts/kwx_coverage.sh
+
+      - name: Supported matrix (--gen_supported)
+        working-directory: wxUiEditor
+        shell: pwsh
+        run: |
+          & ./bin/Debug/wxUiEditorD.exe --gen_supported .private/kwxSupported.md
+          if ($LASTEXITCODE -ne 0) {
+            throw "--gen_supported exited $LASTEXITCODE."
+          }
+
+      - name: Verify the reports
+        working-directory: wxUiEditor
+        shell: pwsh
+        run: |
+          $required = @(
+            '.private/kwxGaps.md',
+            '.private/kwxGaps.tsv',
+            '.private/kwxSupported.md',
+            '.private/kwxBacklog.md',
+            'src/generate/ffi_ui/coverage.json'
+          )
+          foreach ($file in $required) {
+            if (-not (Test-Path $file)) { throw "Missing report: $file" }
+            if ((Get-Item $file).Length -eq 0) { throw "Empty report: $file" }
+          }
+          $table_rows = (Select-String -Path '.private/kwxSupported.md' -Pattern '^\|').Count
+          if ($table_rows -lt 700) {
+            throw "kwxSupported.md has $table_rows table rows; expected at least 700 (657 pair rows plus generator classes)."
+          }
+          Write-Host "Reports OK: kwxSupported.md has $table_rows table rows."
+
+      - name: Upload the reports
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: kwx-reports
+          path: |
+            wxUiEditor/.private/kwxGaps.md
+            wxUiEditor/.private/kwxGaps.json
+            wxUiEditor/.private/kwxGaps.tsv
+            wxUiEditor/.private/kwxSupported.md
+            wxUiEditor/.private/kwxBacklog.md
+            wxUiEditor/.private/kwxLedger.md
+            wxUiEditor/src/generate/ffi_ui/coverage.json
+            wxUiEditor/src/generate/ffi_ui/manifest.json
+          if-no-files-found: warn
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # port: the six hand-ported references, built and driven (no generation).
+  # PR: only with the `ci-port` label. Daily and dispatch: always.
+  # ---------------------------------------------------------------------------
+  port:
+    name: port lanes (six languages)
+    needs: build-editor
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci-port') || github.event.inputs.full == 'true' }}
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 350
+    env:
+      CI: true
+    steps:
+      - name: Checkout wxUiEditor
+        uses: actions/checkout@v7
+        with:
+          path: wxUiEditor
+
+      - name: Checkout kwxFFI
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxFFI
+          path: kwxFFI
+
+      - name: Checkout quick
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/quick
+          path: quick
+
+      - name: Checkout kwxFortran
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxFortran
+          path: kwxFortran
+
+      - name: Checkout kwxGO
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxGO
+          path: kwxGO
+
+      - name: Checkout kwxJulia
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxJulia
+          path: kwxJulia
+
+      - name: Checkout kwxLuaJIT
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxLuaJIT
+          path: kwxLuaJIT
+
+      - name: Checkout kwxRust
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxRust
+          path: kwxRust
+
+      - name: Checkout kwxTypeScript
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxTypeScript
+          path: kwxTypeScript
+
+      - name: Download the Debug generation binary
+        uses: actions/download-artifact@v7
+        with:
+          name: wxui-editor-debug
+          path: wxUiEditor/bin/Debug
+
+      - name: Setup CMake 4.2+
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '~4.2.0'
+          ninjaVersion: 'latest'
+
+      - name: Setup MSYS2 toolchain (clang64 + ucrt64 gfortran)
+        shell: pwsh
+        run: |
+          # The language presets and kwxGO's build_quick_port.cmd resolve
+          # clang/clang++ from C:\msys64\clang64 and gfortran from
+          # C:\msys64\ucrt64 -- the same compilers the local lanes use.
+          $msys_bash = 'C:\msys64\usr\bin\bash.exe'
+          if (-not (Test-Path $msys_bash)) {
+            choco install msys2 --params="/InstallDir:C:\msys64" -y --no-progress
+          }
+          if (-not (Test-Path $msys_bash)) {
+            throw "MSYS2 is not installed at C:\msys64."
+          }
+          & $msys_bash -lc "pacman -Sy --noconfirm --needed mingw-w64-clang-x86_64-toolchain mingw-w64-ucrt-x86_64-gcc-fortran"
+          if ($LASTEXITCODE -ne 0) { throw "pacman failed (exit $LASTEXITCODE)." }
+          "C:\msys64\clang64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          "C:\msys64\ucrt64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Pin the cgo toolchain to the local lane's clang
+        shell: pwsh
+        run: |
+          # MANDATORY: the Go lane must compile with the same clang the local
+          # lane uses. The local lane has been observed failing inside cgo on
+          # msys64 clang 21 headers (.private/kwxCycle.md §5.5); a lane that
+          # cannot compile must fail this job, never be skipped or upgraded to
+          # PASS. If msys2 moves to a newer clang, this step fails loudly and
+          # the pin is updated deliberately.
+          $clang = 'C:\msys64\clang64\bin\clang.exe'
+          if (-not (Test-Path $clang)) {
+            throw "cgo pin: '$clang' is missing; build_quick_port.cmd hardcodes it for CC/CXX."
+          }
+          $first = (& $clang --version | Select-Object -First 1)
+          if ($first -notmatch '^clang version 21\.') {
+            throw "cgo pin: expected clang 21 from msys64 clang64 (the version the local Go lane uses), got '$first'. Refusing to run the Go lane on a different compiler."
+          }
+          Write-Host "cgo pinned to $clang ($first)"
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.6'
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.13.3'
+
+      - name: Setup Rust (gnullvm host, as pinned by rust-toolchain.toml)
+        shell: pwsh
+        run: |
+          rustup toolchain install stable-x86_64-pc-windows-gnullvm --profile minimal --component rustfmt --component clippy
+          if ($LASTEXITCODE -ne 0) { throw "rustup failed to install the gnullvm toolchain (exit $LASTEXITCODE)." }
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Prepare the six language libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_repo() {
+            local repo="$1" preset="$2" config="$3"
+            echo "::group::configure $repo ($preset)"
+            ( cd "$repo" && cmake --preset "$preset" )
+            echo "::endgroup::"
+            echo "::group::build $repo ($config)"
+            ( cd "$repo" && cmake --build build --config "$config" )
+            echo "::endgroup::"
+          }
+          build_repo kwxGO         ninja-clang   Debug
+          build_repo kwxFortran    ninja-gfortran Debug
+          build_repo kwxJulia      ninja-clang   Release
+          build_repo kwxLuaJIT     ninja-clang   Release
+          build_repo kwxRust       ninja-clang   Debug
+          build_repo kwxTypeScript ninja-clang   Release
+
+      - name: Run the six port lanes
+        working-directory: wxUiEditor
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash .tts/verify_all.sh -Target port -BudgetSeconds 7200 -LaneTimeoutSeconds 1800 | tee "$GITHUB_WORKSPACE/verify-port.txt"
+
+      - name: Require a driven verdict (never a build-only pass)
+        if: always()
+        shell: pwsh
+        run: |
+          $out = Join-Path $env:GITHUB_WORKSPACE 'verify-port.txt'
+          if (-not (Test-Path $out)) {
+            throw "verify_all produced no output; the port gate did not run."
+          }
+          $lines = Get-Content -LiteralPath $out
+          $summary = ($lines | Where-Object { $_ -match '^VERDICT ' } | Select-Object -Last 1)
+          if ($summary -notmatch '^VERDICT ALL PASS \(6/6\)') {
+            throw "verify_all verdict was '$summary' -- a partial or failed run is never a pass."
+          }
+          $rows = @($lines | Where-Object { $_ -match '^(typescript|luajit|julia|go|fortran|rust)\|' })
+          if ($rows.Count -ne 6) {
+            throw "verify_all table has $($rows.Count) lanes, expected 6."
+          }
+          foreach ($row in $rows) {
+            $columns = $row.Split('|')
+            $language = $columns[0]
+            $drive = $columns[4]
+            if ($drive -eq '-') {
+              throw "port: the GUI drive did not run for '$language' (drive column '-'). This runner cannot enumerate windows, and a build-only lane is never a pass."
+            }
+            if ($drive -ne '0') {
+              throw "port: the GUI drive for '$language' exited $drive."
+            }
+          }
+          Write-Host "All six port lanes were driven (drive exit 0)."
+
+      - name: Upload the lane logs
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: kwx-port-logs
+          path: |
+            verify-port.txt
+            wxUiEditor/.private/logs/
+          if-no-files-found: warn
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # emitter: generate, build and drive the six emitters against quick.wxui.
+  # This is the enforcement gate the cycle objective names.
+  # ---------------------------------------------------------------------------
+  emitter:
+    name: emitter lanes (six languages)
+    needs: build-editor
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 350
+    env:
+      CI: true
+    steps:
+      - name: Checkout wxUiEditor
+        uses: actions/checkout@v7
+        with:
+          path: wxUiEditor
+
+      - name: Checkout kwxFFI
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxFFI
+          path: kwxFFI
+
+      - name: Checkout quick
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/quick
+          path: quick
+
+      - name: Checkout kwxFortran
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxFortran
+          path: kwxFortran
+
+      - name: Checkout kwxGO
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxGO
+          path: kwxGO
+
+      - name: Checkout kwxJulia
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxJulia
+          path: kwxJulia
+
+      - name: Checkout kwxLuaJIT
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxLuaJIT
+          path: kwxLuaJIT
+
+      - name: Checkout kwxRust
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxRust
+          path: kwxRust
+
+      - name: Checkout kwxTypeScript
+        uses: actions/checkout@v7
+        with:
+          repository: KeyWorksRW/kwxTypeScript
+          path: kwxTypeScript
+
+      - name: Download the Debug generation binary
+        uses: actions/download-artifact@v7
+        with:
+          name: wxui-editor-debug
+          path: wxUiEditor/bin/Debug
+
+      - name: Setup CMake 4.2+
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '~4.2.0'
+          ninjaVersion: 'latest'
+
+      - name: Setup MSYS2 toolchain (clang64 + ucrt64 gfortran)
+        shell: pwsh
+        run: |
+          $msys_bash = 'C:\msys64\usr\bin\bash.exe'
+          if (-not (Test-Path $msys_bash)) {
+            choco install msys2 --params="/InstallDir:C:\msys64" -y --no-progress
+          }
+          if (-not (Test-Path $msys_bash)) {
+            throw "MSYS2 is not installed at C:\msys64."
+          }
+          & $msys_bash -lc "pacman -Sy --noconfirm --needed mingw-w64-clang-x86_64-toolchain mingw-w64-ucrt-x86_64-gcc-fortran"
+          if ($LASTEXITCODE -ne 0) { throw "pacman failed (exit $LASTEXITCODE)." }
+          "C:\msys64\clang64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          "C:\msys64\ucrt64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Pin the cgo toolchain to the local lane's clang
+        shell: pwsh
+        run: |
+          $clang = 'C:\msys64\clang64\bin\clang.exe'
+          if (-not (Test-Path $clang)) {
+            throw "cgo pin: '$clang' is missing; build_quick.cmd hardcodes it for CC/CXX."
+          }
+          $first = (& $clang --version | Select-Object -First 1)
+          if ($first -notmatch '^clang version 21\.') {
+            throw "cgo pin: expected clang 21 from msys64 clang64 (the version the local Go lane uses), got '$first'. Refusing to run the Go lane on a different compiler."
+          }
+          Write-Host "cgo pinned to $clang ($first)"
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.6'
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.13.3'
+
+      - name: Setup Rust (gnullvm host, as pinned by rust-toolchain.toml)
+        shell: pwsh
+        run: |
+          rustup toolchain install stable-x86_64-pc-windows-gnullvm --profile minimal --component rustfmt --component clippy
+          if ($LASTEXITCODE -ne 0) { throw "rustup failed to install the gnullvm toolchain (exit $LASTEXITCODE)." }
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Prepare the six language libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_repo() {
+            local repo="$1" preset="$2" config="$3"
+            echo "::group::configure $repo ($preset)"
+            ( cd "$repo" && cmake --preset "$preset" )
+            echo "::endgroup::"
+            echo "::group::build $repo ($config)"
+            ( cd "$repo" && cmake --build build --config "$config" )
+            echo "::endgroup::"
+          }
+          build_repo kwxGO         ninja-clang   Debug
+          build_repo kwxFortran    ninja-gfortran Debug
+          build_repo kwxJulia      ninja-clang   Release
+          build_repo kwxLuaJIT     ninja-clang   Release
+          build_repo kwxRust       ninja-clang   Debug
+          build_repo kwxTypeScript ninja-clang   Release
+
+      # -RefreshGaps makes the run refresh the gap table in THIS job. Without
+      # it verify_all only notes a missing/stale .private/kwxGaps.tsv and a
+      # dropped node could still read PASS. kwx_gaps runs before the lanes, one
+      # at a time, which is the rule the .tts scripts document.
+      - name: Run the six emitter lanes
+        working-directory: wxUiEditor
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash .tts/verify_all.sh -Target quick -RefreshGaps -BudgetSeconds 7200 -LaneTimeoutSeconds 1800 | tee "$GITHUB_WORKSPACE/verify-quick.txt"
+
+      - name: Require a driven verdict (never a build-only pass)
+        if: always()
+        shell: pwsh
+        run: |
+          $out = Join-Path $env:GITHUB_WORKSPACE 'verify-quick.txt'
+          if (-not (Test-Path $out)) {
+            throw "verify_all produced no output; the emitter gate did not run."
+          }
+          $lines = Get-Content -LiteralPath $out
+          $summary = ($lines | Where-Object { $_ -match '^VERDICT ' } | Select-Object -Last 1)
+          if ($summary -notmatch '^VERDICT ALL PASS \(6/6\)') {
+            throw "verify_all verdict was '$summary' -- a partial or failed run is never a pass."
+          }
+          $rows = @($lines | Where-Object { $_ -match '^(typescript|luajit|julia|go|fortran|rust)\|' })
+          if ($rows.Count -ne 6) {
+            throw "verify_all table has $($rows.Count) lanes, expected 6."
+          }
+          foreach ($row in $rows) {
+            $columns = $row.Split('|')
+            $language = $columns[0]
+            $gen = $columns[2]
+            $drive = $columns[4]
+            if ($gen -eq '-') {
+              throw "emitter: generation did not run for '$language' (gen column '-')."
+            }
+            if ($drive -eq '-') {
+              throw "emitter: the GUI drive did not run for '$language' (drive column '-'). This runner cannot enumerate windows, and a build-only lane is never a pass."
+            }
+            if ($drive -ne '0') {
+              throw "emitter: the GUI drive for '$language' exited $drive."
+            }
+          }
+          Write-Host "All six emitter lanes generated, built and were driven."
+
+      - name: Upload the lane logs
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: kwx-emitter-logs
+          path: |
+            verify-quick.txt
+            wxUiEditor/.private/logs/
+            wxUiEditor/.private/kwxGaps.md
+            wxUiEditor/.private/kwxGaps.tsv
+          if-no-files-found: warn
+          retention-days: 7

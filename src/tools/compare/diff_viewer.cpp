@@ -14,6 +14,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
+#include "utils.h"                       // Miscellaneous utility functions
 #include "wxue_namespace/wxue_string.h"  // wxue::string
 
 DiffViewer::DiffViewer(wxWindow* parent, const std::vector<FileDiff>& diffs) :
@@ -107,6 +108,8 @@ void DiffViewer::SetupTextControl(wxStyledTextCtrl* ctrl)
 {
     ctrl->SetReadOnly(false);  // Temporarily allow modifications for setup
 
+    InitCodeDisplay(ctrl);
+
     // Basic setup
     ctrl->StyleClearAll();
     ctrl->SetLexer(wxSTC_LEX_CPP);
@@ -127,10 +130,6 @@ void DiffViewer::SetupTextControl(wxStyledTextCtrl* ctrl)
     // Style 3: Modified lines (yellow background)
     ctrl->StyleSetForeground(3, wxColour(0, 0, 0));
     ctrl->StyleSetBackground(3, wxColour(255, 255, 200));
-
-    // Font
-    wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     ctrl->SetReadOnly(true);
 }

@@ -117,6 +117,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_cpp_stc_lambda->SetMarginSensitive(0, false);
         m_cpp_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_cpp_stc_lambda->SetUseTabs(false);
+        m_cpp_stc_lambda->SetTabWidth(4);
         m_cpp_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_cpp_stc_lambda->SetMinSize(FromDIP(wxSize(400, 200)));
@@ -225,6 +226,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_go_stc_lambda->SetMarginSensitive(0, false);
         m_go_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_go_stc_lambda->SetUseTabs(false);
+        m_go_stc_lambda->SetTabWidth(4);
         m_go_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_go_stc_lambda->SetMinSize(FromDIP(wxSize(400, 200)));
@@ -304,6 +306,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_julia_stc_lambda->SetMarginSensitive(0, false);
         m_julia_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_julia_stc_lambda->SetUseTabs(false);
+        m_julia_stc_lambda->SetTabWidth(4);
         m_julia_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_julia_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
@@ -383,6 +386,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_luajit_stc_lambda->SetMarginSensitive(0, false);
         m_luajit_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_luajit_stc_lambda->SetUseTabs(false);
+        m_luajit_stc_lambda->SetTabWidth(4);
         m_luajit_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_luajit_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
@@ -510,6 +514,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_ruby_stc_lambda->SetMarginSensitive(0, false);
         m_ruby_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_ruby_stc_lambda->SetUseTabs(false);
+        m_ruby_stc_lambda->SetTabWidth(4);
         m_ruby_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_ruby_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
@@ -589,6 +594,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_typescript_stc_lambda->SetMarginSensitive(0, false);
         m_typescript_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_typescript_stc_lambda->SetUseTabs(false);
+        m_typescript_stc_lambda->SetTabWidth(4);
         m_typescript_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_typescript_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));
@@ -668,6 +674,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_rust_stc_lambda->SetMarginSensitive(0, false);
         m_rust_stc_lambda->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_rust_stc_lambda->SetUseTabs(false);
+        m_rust_stc_lambda->SetTabWidth(4);
         m_rust_stc_lambda->SetBackSpaceUnIndents(true);
     }
     m_rust_stc_lambda->SetMinSize(FromDIP(wxSize(400, -1)));

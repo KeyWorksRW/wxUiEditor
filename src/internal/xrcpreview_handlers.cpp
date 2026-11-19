@@ -61,12 +61,11 @@ extern const char* g_xrc_keywords;
 
 void XrcPreview::OnInit(wxInitDialogEvent& event)
 {
+    InitCodeDisplay(m_scintilla);
+
     SetStcColors(m_scintilla, GenLang::xrc, false, true);
 
     m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
-
-    const FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 

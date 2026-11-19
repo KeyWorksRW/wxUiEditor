@@ -67,16 +67,9 @@ CodeDisplay::CodeDisplay(wxWindow* parent, GenLang panel_type) :
     CodeDisplayBase(parent),
     m_panel_type(panel_type)
 {
+    InitCodeDisplay(m_scintilla);
+
     SetStcColors(m_scintilla, panel_type);
-
-    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename
-    // which is not cross-platform. See issue #597.
-
-    const FontProperty font_prop(UserPrefs.get_CodeDisplayFont().ToStdView());
-    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
-
-    // wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    // m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 

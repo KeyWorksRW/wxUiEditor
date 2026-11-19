@@ -6680,6 +6680,7 @@
           indentation_guides="real"
           read_only="1"
           symbol_margin="0"
+          tab_width="4"
           use_tabs="0"
           wrap_indent_mode="indent"
           wrap_mode="whitespace"

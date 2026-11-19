@@ -28,6 +28,8 @@ EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlD
     SetTitle((wxue::string() << prop->get_DeclName() << " property editor").wx());
     m_value = prop->as_wxString();
 
+    InitCodeDisplay(m_scintilla);
+
     SetStcColors(m_scintilla, GenLang::xml, false, false);
 };
 

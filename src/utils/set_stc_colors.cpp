@@ -7,6 +7,7 @@
 // CR: [07-16-2026]
 #include <wx/stc/stc.h>
 
+#include "font_prop.h"    // FontProperty -- Font properties
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 #include "preferences.h"   // Prefs -- Set/Get wxUiEditor preferences
 #include "utils.h"         // WXDLLIMPEXP_BASE -- Miscellaneous utilities
@@ -681,4 +682,28 @@ void SetStcColors(wxStyledTextCtrl* stc, GenLang language, bool set_lexer, bool 
             SetXmlDefaultColors(stc, set_lexer, add_keywords, theme);
             break;
     }
+}
+
+void InitCodeDisplay(wxStyledTextCtrl* scintilla)
+{
+    if (scintilla == nullptr)
+    {
+        return;
+    }
+
+    // Ligatures are an OpenType substitution, which requires shaped text. The GDI surface that
+    // Scintilla uses by default draws glyph by glyph and can never ligate.
+    scintilla->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+
+    // ToStdView() returns a view into the string, so the string must outlive the FontProperty
+    // constructed from it.
+    const wxue::string code_font = UserPrefs.get_CodeDisplayFont();
+    const FontProperty font_prop(code_font.ToStdView());
+    scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font_prop.GetFont());
+
+    // StyleSetFont() only touches STYLE_DEFAULT. Lexer styles (keywords, comments, strings)
+    // keep whatever face they had, which would leave most of the code in a different font and
+    // without ligatures. StyleClearAll() copies the default style into every style, so it must
+    // run before the syntax colours are applied -- it would otherwise reset them.
+    scintilla->StyleClearAll();
 }

@@ -54,6 +54,14 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) :
     m_is_typescript_enabled(m_gen_languages & GenLang::typescript),
     m_is_rust_enabled(m_gen_languages & GenLang::rust)
 {
+    InitCodeDisplay(m_cpp_stc_lambda);
+    InitCodeDisplay(m_go_stc_lambda);
+    InitCodeDisplay(m_julia_stc_lambda);
+    InitCodeDisplay(m_luajit_stc_lambda);
+    InitCodeDisplay(m_ruby_stc_lambda);
+    InitCodeDisplay(m_rust_stc_lambda);
+    InitCodeDisplay(m_typescript_stc_lambda);
+
     m_value = event->get_value().wx();
     if (m_is_cpp_enabled)
     {

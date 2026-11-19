@@ -54,7 +54,7 @@ expressed as declarative data. Every code generator accesses traits through the 
 | Trait | Type | Purpose | C++ | Python | Ruby | Fortran | Go | Julia | LuaJIT | Perl | Rust |
 |-------|------|---------|-----|--------|------|---------|----|-------|--------|------|------|
 | `line_comment` | `string_view` | Comment prefix (with trailing space) | `"// "` | `"# "` | `"# "` | `"! "` | `"// "` | `"# "` | `"-- "` | `"# "` | `"// "` |
-| `indent_size` | `int` | Spaces per indent level | `4` | `4` | `2` | `3` | `4` | `4` | `4` | `4` | `4` |
+| `indent_size` | `int` | Spaces per indent level | `4` | `4` | `2` | `4` | `4` | `4` | `4` | `4` | `4` |
 | `line_offset` | `size_t` | Indent multiplier for line break calculation | `1` | `1` | `1` | `1` | `1` | `1` | `1` | `1` | `1` |
 | `stmt_end` | `string_view` | Statement terminator | `";"` | `""` | `""` | `""` | `""` | `""` | `""` | `";"` | `";"` |
 

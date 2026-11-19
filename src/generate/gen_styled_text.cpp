@@ -1106,9 +1106,12 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     {
         code.Eol(eol_if_needed).NodeName().Function("SetUseTabs(").False().EndFunction();
     }
-    else if (code.IntValue(prop_tab_width) != 8)
+    // The default tab width is 8, so only set a different width. This is independent of
+    // use_tabs -- a read-only display shows tab-indented code at this width even though it
+    // would insert spaces if it were editable.
+    if (code.IntValue(prop_tab_width) != 8)
     {
-        code.Eol().NodeName().Function("SetTabWidth(").as_string(prop_tab_width).EndFunction();
+        code.Eol(eol_if_needed).NodeName().Function("SetTabWidth(").as_string(prop_tab_width).EndFunction();
     }
 
     // Default is true, so only set if false

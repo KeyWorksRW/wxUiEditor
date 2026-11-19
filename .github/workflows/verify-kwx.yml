@@ -27,15 +27,6 @@ name: verify-kwx
 # (the runner could not enumerate windows) fails the job with a named reason.
 
 on:
-  pull_request:
-    paths:
-      - '.tts/**'
-      - '.github/workflows/**'
-      - 'src/generate/**'
-      - 'src/customprops/**'
-      - 'src/mainapp.cpp'
-  schedule:
-    - cron: '43 6 * * *'
   workflow_dispatch:
     inputs:
       full:

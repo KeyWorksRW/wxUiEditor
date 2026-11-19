@@ -105,8 +105,7 @@ endif()
 # ###################### Compiler/Link options #######################
 if(MSVC)
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
-
-    set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
+    # Release keeps the CMake defaults for MSVC: /O2 /Ob2 /DNDEBUG
 
     # Use dynamic runtime (/MD for Release, /MDd for Debug)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")

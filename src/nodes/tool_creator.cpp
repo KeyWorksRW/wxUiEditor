@@ -109,6 +109,13 @@ void Node::AdjustNameForFrameForm(GenName& name)
 
 bool Node::CreateFolderNode(GenName& name)
 {
+    // A node inside a linked project is read-only, and the link folder itself must not gain
+    // children. Report the request as handled so no generic error dialog is shown.
+    if (is_ReadOnly() || is_LinkedProject())
+    {
+        return true;
+    }
+
     if (!is_FormParent() && !is_Form())
     {
         wxMessageBox("A folder can only be created when a form, another folder or the project "
@@ -417,6 +424,13 @@ void SetUniqueRibbonToolID(Node* node)
 
 std::expected<bool, std::string> Node::CreateToolNode(GenName name, int pos)
 {
+    // A node inside a linked project is read-only, and the link folder itself must not gain
+    // children. Report the request as handled so no generic error dialog is shown.
+    if (is_ReadOnly() || is_LinkedProject())
+    {
+        return true;
+    }
+
     AdjustNameForFrameForm(name);
 
     if (is_Gen(gen_Project))

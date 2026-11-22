@@ -156,6 +156,17 @@ public:
         return (is_Gen(gen_folder) || is_Gen(gen_sub_folder) || is_Gen(gen_data_folder));
     }
 
+    // Returns true if this is a folder node with a non-empty link_project property.
+    [[nodiscard]] bool is_LinkedProject() const noexcept;
+
+    // Returns the nearest linked folder in this node's ancestry (or this node if it is a linked
+    // folder). Returns nullptr when no linked folder is found. Read-only for callers that only
+    // need to inspect the folder.
+    [[nodiscard]] const Node* get_LinkedProjectFolder() const noexcept;
+
+    // Returns true when this node is below a linked folder, but is not the linked folder itself.
+    [[nodiscard]] bool is_ReadOnly() const noexcept;
+
     bool is_Widget() const noexcept { return is_Type(type_widget); }
     bool is_Wizard() const noexcept { return is_Type(type_wizard); }
     bool is_MenuBar() const noexcept

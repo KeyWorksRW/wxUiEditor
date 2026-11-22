@@ -6,7 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CR: [06-30-2026]
 
-#include <cstring>  // for std::memcmp
+#include <algorithm>  // for std::find, std::remove_if
+#include <cstring>    // for std::memcmp
 #include <format>
 #include <future>    // for std::async, std::future
 #include <memory>    // for std::shared_ptr, std::make_shared
@@ -14,6 +15,7 @@
 #include <utility>   // std::to_underlying
 
 #include <wx/file.h>     // wxFile - raw file I/O
+#include <wx/log.h>      // wxLogStderr
 #include <wx/progdlg.h>  // wxProgressDialog
 #include <wx/thread.h>   // wxThread::IsMain()
 
@@ -22,6 +24,7 @@
 #include "../tools/compare/diff.h"  // Diff -- Compare for file diffs
 #include "file_codewriter.h"        // FileCodeWriter -- Write code to disk with test mode support
 #include "gen_common.h"             // GeneratorLibrary
+#include "linked_project.h"         // ValidateAllLinkedProjects
 #include "mainapp.h"                // wxGetApp()
 #include "mainframe.h"              // MainFrame -- Main window frame
 #include "node.h"                   // Node class
@@ -190,6 +193,44 @@ bool GenResults::Generate()
         return GenerateForDisplay();
     }
 
+    // Re-validate every linked file against its current on-disk content before generating. A
+    // link that no longer validates must not contribute any form, even though the in-memory tree
+    // still holds the nodes loaded from the last valid version.
+    std::vector<Node*> invalid_folders;
+    std::vector<wxue::string> link_errors;
+    if (!ValidateAllLinkedProjects(invalid_folders, link_errors) && !invalid_folders.empty())
+    {
+        m_target_nodes.erase(
+            std::remove_if(m_target_nodes.begin(), m_target_nodes.end(),
+                           [&invalid_folders](Node* form)
+                           {
+                               const Node* link_folder = form->get_LinkedProjectFolder();
+                               return link_folder &&
+                                      std::find(invalid_folders.begin(), invalid_folders.end(),
+                                                link_folder) != invalid_folders.end();
+                           }),
+            m_target_nodes.end());
+
+        wxue::string combined_errors;
+        for (const wxue::string& error: link_errors)
+        {
+            if (!combined_errors.empty())
+            {
+                combined_errors << "\n";
+            }
+            combined_errors << error;
+        }
+
+        if (Project.is_UiAllowed())
+        {
+            wxGetFrame().ShowInfoBarMsg(combined_errors.ToStdString());
+        }
+        else
+        {
+            wxLogStderr(nullptr).LogText(combined_errors.wx());
+        }
+    }
+
     const bool comparison_only = (m_mode == Mode::compare_only);
 
 #if defined(INTERNAL_TESTING)
@@ -214,6 +255,11 @@ bool GenResults::Generate()
 
                 for (auto* form: m_target_nodes)
                 {
+                    if (!Project.IsLinkGenerationEnabled(form))
+                    {
+                        continue;
+                    }
+
                     if (GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only))
                     {
                         generate_result = true;
@@ -374,7 +420,7 @@ static wxue::string GetDisplayFilePath(Node* form, GenLang language, PANEL_PAGE 
 // it would be written. The text is appended with doWrite() rather than write()/writeLine() because
 // those apply indentation logic to the appended text.
 static void AppendDisplayTrailer(Node* form, GenLang language, PANEL_PAGE panel_page,
-                                 WriteCode* src, WriteCode* hdr)
+                                 WriteCode* src, WriteCode* hdr_write)
 {
     if (language == GenLang::xrc)
     {
@@ -388,7 +434,7 @@ static void AppendDisplayTrailer(Node* form, GenLang language, PANEL_PAGE panel_
     WriteCode* target = src;
     if (language == GenLang::cplusplus)
     {
-        target = (panel_page == PANEL_PAGE::HDR_INFO_PANEL) ? hdr : src;
+        target = (panel_page == PANEL_PAGE::HDR_INFO_PANEL) ? hdr_write : src;
     }
     if (target == nullptr)
     {
@@ -609,6 +655,7 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
             // Non-combined mode: use GenerateLanguageForm for each form
             std::vector<Node*> forms;
             Project.CollectForms(forms);
+            RemoveFormsWithoutOutputPath(forms);
 
             // Note that we do *not* use a progress dialog for XRC generation here even if
             // requested to. XRC generation is so fast, that we should be able to handle
@@ -1157,6 +1204,13 @@ void GenResults::RemoveFormsWithoutOutputPath(std::vector<Node*>& forms)
     forms.erase(std::remove_if(forms.begin(), forms.end(),
                                [this](Node* form)
                                {
+                                   // A form adopted from a linked file is generated only when
+                                   // the link folder enables code generation.
+                                   if (!Project.IsLinkGenerationEnabled(form))
+                                   {
+                                       return true;
+                                   }
+
                                    auto [path, has_base_file] =
                                        Project.GetOutputPath(form, m_languages);
                                    return !has_base_file;
@@ -1270,6 +1324,13 @@ bool GenResults::GenerateCombinedXrcFile(bool comparison_only)
 
     for (auto* form: forms)
     {
+        // A form adopted from a linked file is included only when the link folder enables
+        // code generation.
+        if (!Project.IsLinkGenerationEnabled(form))
+        {
+            continue;
+        }
+
         // Skip unsupported form types
         if (form->is_Gen(gen_Images) || form->is_Gen(gen_Data) ||
             form->is_Gen(gen_wxPopupTransientWindow))

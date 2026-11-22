@@ -34,6 +34,9 @@ public:
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
+    // The parent is read-only when the new node is inserted into a linked project.
+    [[nodiscard]] bool IsReadOnly() const override;
+
 private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_old_selected;
@@ -55,6 +58,9 @@ public:
     void Revert() override;
 
     size_t GetMemorySize() override { return sizeof(*this); }
+
+    // The stored node or its parent is read-only when the node is removed from a linked project.
+    [[nodiscard]] bool IsReadOnly() const override;
 
 private:
     NodeSharedPtr m_parent;
@@ -79,6 +85,8 @@ public:
     {
         return sizeof(*this) + m_revert_value.size() + m_change_value.size() + 2;
     }
+
+    [[nodiscard]] bool IsReadOnly() const override;
 
 private:
     NodeProperty* m_property;
@@ -111,6 +119,9 @@ public:
 
     size_t GetMemorySize() override;
 
+    // True when any stored property belongs to a node inside a linked project.
+    [[nodiscard]] bool IsReadOnly() const override;
+
 private:
     std::vector<MULTI_PROP> m_properties;
     bool m_fire_events { true };
@@ -118,6 +129,40 @@ private:
     // Set when one of the properties is an art directory, meaning every embedded image has to be
     // re-resolved after Change() or Revert(). See issue #1670.
     bool m_images_invalidated { false };
+};
+
+// Replaces the link_project value of a folder and reloads the linked file as a single undoable
+// action. Used for linking, relinking and unlinking alike.
+class LinkProjectAction : public UndoAction
+{
+public:
+    // folder must be a gen_folder. new_value may be absolute or relative -- it is stored relative
+    // to the project path, the same way a ModifyPropertyAction stores a file property. An empty
+    // new_value unlinks the folder and removes the forms adopted from the linked file.
+    LinkProjectAction(Node* folder, std::string_view new_value);
+
+    void Change() override;
+    void Revert() override;
+
+    // The +2 is to account for the trailing zero in each wxue::string value.
+    size_t GetMemorySize() override
+    {
+        return sizeof(*this) + m_revert_value.size() + m_change_value.size() + 2;
+    }
+
+    // A link folder itself is always editable -- only the content it adopts is read-only.
+    [[nodiscard]] bool IsReadOnly() const override { return false; }
+
+private:
+    // Sets link_project to value and reloads. When the load is refused (the user declined to
+    // replace the existing children) or fails validation, fallback is restored so the property
+    // grid matches the tree. replace_silently is used by undo/redo, where the user already asked
+    // for the state change and must not be prompted again.
+    void ApplyLink(const wxue::string& value, const wxue::string& fallback, bool replace_silently);
+
+    NodeSharedPtr m_folder;
+    wxue::string m_revert_value;
+    wxue::string m_change_value;
 };
 
 // Specify event and value.
@@ -132,6 +177,8 @@ public:
     {
         return sizeof(*this) + m_revert_value.size() + m_change_value.size();
     }
+
+    [[nodiscard]] bool IsReadOnly() const override;
 
 private:
     NodeEvent* m_event;
@@ -153,6 +200,8 @@ public:
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
+    [[nodiscard]] bool IsReadOnly() const override;
+
 private:
     NodeSharedPtr m_parent;
     size_t m_change_pos;
@@ -173,6 +222,9 @@ public:
     [[nodiscard]] Node* getNode() { return m_node.get(); }
 
     size_t GetMemorySize() override { return sizeof(*this); }
+
+    // The moved node and both its old and new parent must be editable.
+    [[nodiscard]] bool IsReadOnly() const override;
 
 private:
     NodeSharedPtr m_change_parent;
@@ -197,6 +249,8 @@ public:
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
+    [[nodiscard]] bool IsReadOnly() const override;
+
 private:
     NodeSharedPtr m_old_node;
     NodeSharedPtr m_parent;
@@ -216,6 +270,8 @@ public:
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
+    [[nodiscard]] bool IsReadOnly() const override;
+
 private:
     NodeSharedPtr m_old_node;
     NodeSharedPtr m_parent;
@@ -231,6 +287,9 @@ public:
     void Revert() override;
 
     size_t GetMemorySize() override { return sizeof(*this); }
+
+    // The parent is read-only when the node is appended to a linked project.
+    [[nodiscard]] bool IsReadOnly() const override;
 
 private:
     NodeSharedPtr m_parent;
@@ -258,6 +317,8 @@ public:
 
     size_t GetMemorySize() override { return sizeof(*this); }
 
+    [[nodiscard]] bool IsReadOnly() const override;
+
 private:
     NodeSharedPtr m_cur_gbsizer;
     NodeSharedPtr m_old_gbsizer;
@@ -277,7 +338,7 @@ public:
     [[nodiscard]] NodeSharedPtr GetOldNode() override { return m_old_project; }
 
 protected:
-    void SortFolder(Node* folder);
+    static void SortFolder(Node* folder);
 
 private:
     NodeSharedPtr m_old_project;

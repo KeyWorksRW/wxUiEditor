@@ -84,6 +84,12 @@
 			<option name="TypeScript"/>
 			<option name="Rust"/>
 			<option name="XRC"/>C++</property>
+        <property name="link_project" type="file"
+            help="Path to another .wxui file. Its forms are loaded into this folder as read-only content and are never written back."/>
+        <property name="link_generate_code" type="bool"
+            help="When checked, forms loaded from link_project are included in code generation.">1</property>
+        <property name="art_directory" type="path"
+            help="Overrides the art directory of the linked project. Only used when link_project is set."/>
     </gen>
 
     <gen class="sub_folder" image="folder" type="sub_folder">

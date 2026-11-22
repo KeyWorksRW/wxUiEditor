@@ -182,7 +182,11 @@ bool ProjectHandler::LoadProject(const wxue::string& file, bool allow_ui)
     // let Project.is_UiAllowed() report the wrong value for the rest of the run.
     Project.Initialize(project, allow_ui);
     Project.set_ProjectFile(file);
-    ProjectImages.CollectBundles();
+
+    // Linked content must be in the tree before bundles, image-form assignment,
+    // img_list::UpdateImagesList(), and FixDuplicateVarNames() run.
+    std::ignore = Project.LoadLinkedProjects(allow_ui);
+    Project.ReinitializeImageHandler();
 
     // Imported projects start with an older version so that they pass through the old project
     // fixups.

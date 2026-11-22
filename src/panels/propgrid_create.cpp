@@ -567,6 +567,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_folder_cmake_file:
                     case prop_folder_combined_xrc_file:
                     case prop_initial_filename:
+                    case prop_link_project:
                     case prop_output_file:
                     case prop_python_combined_file:
                     case prop_python_file:

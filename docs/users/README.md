@@ -5,6 +5,7 @@ Documentation for developers using wxUiEditor to create wxWidgets applications.
 ## Features & Guides
 
 - [Images](images.md) - Working with images and bitmaps
+- [Linked projects](link_project.md) - Sharing forms from another `.wxui` file
 - [XRC Import/Export](XRC.md) - XRC file support
 
 ## Import from Other Tools

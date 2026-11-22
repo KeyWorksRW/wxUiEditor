@@ -118,6 +118,13 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
         }
     }
 
+    // Linked content is never serialized into the owning project file -- the folder and its
+    // link_project property are saved, and its children are reloaded from the linked file.
+    if (is_LinkedProject())
+    {
+        return;
+    }
+
     for (const auto& child: m_children)
     {
         pugi::xml_node child_element = node.append_child("node");

@@ -204,6 +204,34 @@ Node* Node::get_Folder() noexcept  // NOLINT (cppcheck-suppress)
     return nullptr;
 }
 
+bool Node::is_LinkedProject() const noexcept
+{
+    return is_Folder() && HasValue(prop_link_project);
+}
+
+const Node* Node::get_LinkedProjectFolder() const noexcept
+{
+    if (is_LinkedProject())
+    {
+        return this;
+    }
+
+    for (const Node* parent = get_Parent(); parent; parent = parent->get_Parent())
+    {
+        if (parent->is_LinkedProject())
+        {
+            return parent;
+        }
+    }
+
+    return nullptr;
+}
+
+bool Node::is_ReadOnly() const noexcept
+{
+    return get_LinkedProjectFolder() != nullptr && !is_LinkedProject();
+}
+
 Node* Node::get_ValidFormParent() noexcept
 {
     Node* parent = this;
@@ -917,6 +945,13 @@ std::pair<NodeSharedPtr, Node::Validity>
     Node::CreateChildNode(GenName name, bool verify_language_support, int pos)
 
 {
+    // Nothing may be created inside a linked project: not below a link folder, and not as a child
+    // of the link folder itself. is_ReadOnly() is a plain parent walk, so this check is cheap.
+    if (is_ReadOnly() || is_LinkedProject())
+    {
+        return { nullptr, invalid_child };
+    }
+
     MainFrame& frame = wxGetFrame();
 
     auto [new_node_result, new_node_code] =

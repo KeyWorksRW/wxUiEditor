@@ -173,6 +173,40 @@ public:
     // This includes forms in folders and sub-folders
     void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
 
+    // Loads every folder that references an external .wxui file in its link_project property.
+    //
+    // Linked files are re-read from disk and fully re-validated on every call -- no parsed
+    // document or validation result is cached between loads.
+    bool LoadLinkedProjects(bool allow_ui);
+
+    // Loads (or reloads) the linked file referenced by folder's link_project property.
+    bool LoadLinkedProject(Node* folder, bool allow_ui);
+
+    // Removes the forms and folders adopted from a linked file. The folder itself is kept.
+    void UnloadLinkedProject(Node* folder);
+
+    // Unloads then reloads the linked file for folder.
+    bool ReloadLinkedProject(Node* folder, bool allow_ui);
+
+    // Returns true when code generation should include form. Forms that do not belong to a
+    // linked project are always included; a form adopted from a linked file is included only
+    // when its link folder's link_generate_code property is set.
+    [[nodiscard]] bool IsLinkGenerationEnabled(Node* form) const
+    {
+        if (!form)
+        {
+            return false;
+        }
+
+        const Node* link_folder = form->get_LinkedProjectFolder();
+        if (!link_folder)
+        {
+            return true;
+        }
+
+        return link_folder->as_bool(prop_link_generate_code);
+    }
+
     // Returns the first project child that is a form, or nullptr if no form children found.
     Node* get_FirstFormChild(Node* node = nullptr) const;
 
@@ -188,6 +222,7 @@ public:
     [[nodiscard]] int get_ProjectVersion() const { return m_ProjectVersion; }
     [[nodiscard]] int get_OriginalProjectVersion() const { return m_OriginalProjectVersion; }
     void ForceProjectVersion(int version) { m_ProjectVersion = version; }
+    void ForceOriginalProjectVersion(int version) { m_OriginalProjectVersion = version; }
 
     // Call this after the user has been warned about saving a project file that is incompatible
     // with older versions of wxUiEditor
@@ -200,6 +235,7 @@ public:
 
     // Call set_ProjectUpdated() if the project file's minimum version needs to be updated
     void set_ProjectUpdated() { m_isProject_updated = true; }
+    void set_ProjectUpdated(bool value) { m_isProject_updated = value; }
     // Call is_ProjectUpdated() to determine if the project file's minimum version needs to be
     // updated
     [[nodiscard]] bool is_ProjectUpdated() const { return m_isProject_updated; }

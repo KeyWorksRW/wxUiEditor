@@ -24,6 +24,15 @@
 
 void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
 {
+    // Changing link_project has to reload the linked file, so it must never fall through to the
+    // generic ModifyPropertyAction below.
+    if (prop->isProp(prop_link_project))
+    {
+        wxGetFrame().PushUndoAction(
+            std::make_shared<LinkProjectAction>(prop->getNode(), str.ToStdString()));
+        return;
+    }
+
     m_isPropChangeSuspended = true;
     if (prop->get_name() == prop_id)
     {
@@ -333,6 +342,16 @@ void PropGridPanel::ModifyEmbeddedProperty(NodeProperty* node_prop, wxPGProperty
 
 void PropGridPanel::ModifyFileProperty(NodeProperty* node_prop, wxPGProperty* grid_prop)
 {
+    if (node_prop->isProp(prop_link_project))
+    {
+        // The file may be typed or picked from the dialog -- LinkProjectAction normalizes it
+        // relative to the project path before storing it.
+        const wxue::string new_value = grid_prop->GetValueAsString().utf8_string();
+        wxGetFrame().PushUndoAction(
+            std::make_shared<LinkProjectAction>(node_prop->getNode(), new_value));
+        return;
+    }
+
     if (node_prop->isProp(prop_data_file))
     {
         wxue::string newValue =

@@ -47,6 +47,8 @@
 #include "utils.h"            // Utility functions that work with properties
 #include "version.h"          // Version information for wxUiEditor and wxWidgets
 
+#include "project/linked_watcher.h"  // LinkedProjectWatcher -- watch linked files
+
 #include "newdialogs/new_mdi.h"  // NewMdiForm -- Dialog for creating a new MDI application
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
@@ -262,6 +264,7 @@ MainFrame::MainFrame() :
     Bind(wxEVT_TIMER, &MainFrame::OnGenerationTimer, this, m_generation_timer.GetId());
 
     Bind(EVT_NodeSelected, &MainFrame::OnNodeSelected, this);
+    Bind(EVT_ReloadLinkedProject, &MainFrame::OnReloadLinkedProject, this);
 
     Bind(EVT_EventHandlerChanged,
          [this](CustomEvent&)
@@ -366,7 +369,7 @@ MainFrame::MainFrame() :
 
     Bind(
         wxEVT_MENU,
-        [this]([[maybe_unused]] wxCommandEvent& evt)
+        [this]([[maybe_unused]] wxCommandEvent& event)
         {
             DocViewFrame* doc_frame = wxGetApp().getDocViewFrame();
             if (doc_frame != nullptr)
@@ -1089,6 +1092,13 @@ void MainFrame::RemoveFileFromHistory(std::string_view file)
 
 void MainFrame::PushUndoAction(const UndoActionPtr& cmd, bool add_to_stack)
 {
+    // A single gate for every mutation path: an action that would change a node inside a linked
+    // (read-only) project is refused before it can alter the tree or the undo stack.
+    if (cmd->IsReadOnly())
+    {
+        return;
+    }
+
     m_isProject_modified = true;
     if (!add_to_stack)
     {

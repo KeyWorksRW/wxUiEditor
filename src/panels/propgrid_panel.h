@@ -51,16 +51,16 @@ public:
     void OnNodePropChange(CustomEvent& event);
 
 protected:
-    wxue::string GetPropHelp(NodeProperty* prop) const;
+    static wxue::string GetPropHelp(NodeProperty* prop);
 
     // Returns the property help plus the help for the currently selected option of an option
     // property, with escaped newlines converted to real newlines.
-    wxue::string GetPropDescription(NodeProperty* prop) const;
+    static wxue::string GetPropDescription(NodeProperty* prop);
 
-    wxString GetCategoryDisplayName(const wxString& original);
+    static wxString GetCategoryDisplayName(const wxString& original);
 
     // Called to determine if a property should be displayed or not
-    bool IsPropAllowed(Node* node, NodeProperty* prop);
+    static bool IsPropAllowed(Node* node, NodeProperty* prop);
 
     // Called after a property has been changed. Used to display info-bar notification if
     // needed.

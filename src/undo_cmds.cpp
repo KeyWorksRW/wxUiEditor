@@ -8,6 +8,7 @@
 
 #include <array>
 #include <tuple>
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "undo_cmds.h"
@@ -21,50 +22,47 @@
 #include "project_handler.h"      // ProjectHandler class
 #include "utils.h"                // Utility functions that work with properties
 
-namespace
+// When an image node is added to or removed from an Images List, the form used by code
+// generation for that image must be recalculated. See issue #1534.
+static void UpdateImageFormForNode(Node* node)
 {
-    // When an image node is added to or removed from an Images List, the form used by code
-    // generation for that image must be recalculated. See issue #1534.
-    void UpdateImageFormForNode(Node* node)
+    if (node->is_Gen(gen_embedded_image))
     {
-        if (node->is_Gen(gen_embedded_image))
-        {
-            ProjectImages.UpdateImageForm(node->as_string(prop_bitmap));
-        }
+        ProjectImages.UpdateImageForm(node->as_string(prop_bitmap));
+    }
+}
+
+static bool ContainsImagesForm(Node* node)
+{
+    if (node->is_Gen(gen_Images))
+    {
+        return true;
     }
 
-    bool ContainsImagesForm(Node* node)
+    // The Images form can live inside a project-level folder.
+    if (node->is_Gen(gen_folder) || node->is_Gen(gen_sub_folder))
     {
-        if (node->is_Gen(gen_Images))
+        for (const auto& child: node->get_ChildNodePtrs())
         {
-            return true;
-        }
-
-        // The Images form can live inside a project-level folder.
-        if (node->is_Gen(gen_folder) || node->is_Gen(gen_sub_folder))
-        {
-            for (const auto& child: node->get_ChildNodePtrs())
+            if (ContainsImagesForm(child.get()))
             {
-                if (ContainsImagesForm(child.get()))
-                {
-                    return true;
-                }
+                return true;
             }
         }
-
-        return false;
     }
 
-    // Removing or restoring an Images form invalidates ImageHandler's cached bundles and
-    // embedded images, so it has to be rebuilt from the current node tree. See issue #1291.
-    void ReinitializeImagesForNode(Node* node)
+    return false;
+}
+
+// Removing or restoring an Images form invalidates ImageHandler's cached bundles and
+// embedded images, so it has to be rebuilt from the current node tree. See issue #1291.
+static void ReinitializeImagesForNode(Node* node)
+{
+    if (ContainsImagesForm(node))
     {
-        if (ContainsImagesForm(node))
-        {
-            Project.ReinitializeImageHandler();
-        }
+        Project.ReinitializeImageHandler();
     }
-}  // namespace
+}
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -148,6 +146,11 @@ void InsertNodeAction::Revert()
     }
 }
 
+bool InsertNodeAction::IsReadOnly() const
+{
+    return m_parent && m_parent->is_ReadOnly();
+}
+
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
 
 RemoveNodeAction::RemoveNodeAction(Node* node, std::string_view undo_str, bool AddToClipboard) :
@@ -212,6 +215,11 @@ void RemoveNodeAction::Revert()
     }
 }
 
+bool RemoveNodeAction::IsReadOnly() const
+{
+    return (m_node && m_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
+}
+
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, std::string_view value) :
@@ -261,6 +269,12 @@ void ModifyPropertyAction::Revert()
     }
 
     wxGetFrame().FirePropChangeEvent(m_property);
+}
+
+bool ModifyPropertyAction::IsReadOnly() const
+{
+    const Node* node = m_property ? m_property->getNode() : nullptr;
+    return node && node->is_ReadOnly();
 }
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
@@ -334,13 +348,124 @@ void ModifyProperties::Revert()
 
 size_t ModifyProperties::GetMemorySize()
 {
-    size_t total = sizeof(*this) + m_properties.size() * sizeof(MULTI_PROP);
+    size_t total = sizeof(*this) + (m_properties.size() * sizeof(MULTI_PROP));
     for (auto& iter: m_properties)
     {
         // The +2 is to account for the trailing zero in each std::string value.
         total += (iter.change_value.size() + iter.revert_value.size() + 2);
     }
     return total;
+}
+
+bool ModifyProperties::IsReadOnly() const
+{
+    for (const auto& iter: m_properties)
+    {
+        const Node* node = iter.property ? iter.property->getNode() : nullptr;
+        if (node && node->is_ReadOnly())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+///////////////////////////////// LinkProjectAction ////////////////////////////////////
+
+LinkProjectAction::LinkProjectAction(Node* folder, std::string_view new_value) :
+    m_folder(folder ? folder->get_SharedPtr() : NodeSharedPtr())
+{
+    m_undo_string = "change link_project";
+
+    if (m_folder && m_folder->HasProp(prop_link_project))
+    {
+        m_revert_value = m_folder->as_string(prop_link_project);
+    }
+
+    // Store the value relative to the project path, the same way a file property is stored.
+    // A relative value is resolved against the project directory (never the current working
+    // directory) because that is how the loader resolves link_project.
+    wxue::string normalized(new_value);
+    if (!normalized.empty())
+    {
+        wxFileName file(normalized.wx());
+        if (!file.IsAbsolute())
+        {
+            file.MakeAbsolute(Project.get_ProjectPath().wx());
+        }
+        file.MakeRelativeTo(Project.get_ProjectPath().wx());
+        normalized = file.GetFullPath().ToStdString();
+        normalized.backslashestoforward();
+    }
+    m_change_value = normalized;
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
+}
+
+void LinkProjectAction::Change()
+{
+    ApplyLink(m_change_value, m_revert_value, false);
+}
+
+void LinkProjectAction::Revert()
+{
+    ApplyLink(m_revert_value, m_change_value, true);
+}
+
+void LinkProjectAction::ApplyLink(const wxue::string& value, const wxue::string& fallback,
+                                  bool replace_silently)
+{
+    if (!m_folder || !m_folder->HasProp(prop_link_project))
+    {
+        return;
+    }
+
+    NodeProperty* property = m_folder->get_PropPtr(prop_link_project);
+    if (property->as_string() == value)
+    {
+        // Nothing to apply -- this is the case when the user refused to replace the existing
+        // children and the property was already put back.
+        return;
+    }
+
+    property->set_value(value);
+
+    bool load_succeeded = true;
+    if (value.empty())
+    {
+        Project.UnloadLinkedProject(m_folder.get());
+    }
+    else if (replace_silently)
+    {
+        // Undo/redo: the user already asked for this state, so replace the children without a
+        // second confirmation.
+        load_succeeded = Project.ReloadLinkedProject(m_folder.get(), Project.is_UiAllowed());
+    }
+    else
+    {
+        // LoadLinkedProject (not ReloadLinkedProject) replaces the children itself, and only
+        // after the user confirms that the existing children may be discarded.
+        load_succeeded = Project.LoadLinkedProject(m_folder.get(), Project.is_UiAllowed());
+    }
+
+    if (!load_succeeded)
+    {
+        // The load was refused or failed. Put the property back so the property grid matches the
+        // tree, and silently re-read the previous link in case the failure happened after its
+        // children had already been unloaded.
+        property->set_value(fallback);
+        if (!fallback.empty())
+        {
+            std::ignore = Project.ReloadLinkedProject(m_folder.get(), false);
+        }
+    }
+
+    wxGetFrame().FirePropChangeEvent(property);
+    if (NavigationPanel* nav_panel = wxGetFrame().getNavigationPanel(); nav_panel != nullptr)
+    {
+        nav_panel->RefreshParent(m_folder.get());
+    }
 }
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
@@ -366,6 +491,12 @@ void ModifyEventAction::Revert()
 {
     m_event->set_value(m_revert_value);
     wxGetFrame().FireChangeEventHandler(m_event);
+}
+
+bool ModifyEventAction::IsReadOnly() const
+{
+    const Node* node = m_event ? m_event->getNode() : nullptr;
+    return node && node->is_ReadOnly();
 }
 
 ///////////////////////////////// ChangePositionAction ////////////////////////////////////
@@ -403,6 +534,11 @@ void ChangePositionAction::Revert()
     {
         wxGetFrame().SelectNode(m_node);
     }
+}
+
+bool ChangePositionAction::IsReadOnly() const
+{
+    return (m_node && m_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
 }
 
 ///////////////////////////////// ChangeSizerType ////////////////////////////////////
@@ -474,6 +610,11 @@ void ChangeSizerType::Revert()
     {
         wxGetFrame().SelectNode(m_old_node.get());
     }
+}
+
+bool ChangeSizerType::IsReadOnly() const
+{
+    return (m_old_node && m_old_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
 }
 
 ///////////////////////////////// ChangeNodeType ////////////////////////////////////
@@ -624,6 +765,11 @@ void ChangeNodeType::Revert()
     }
 }
 
+bool ChangeNodeType::IsReadOnly() const
+{
+    return (m_old_node && m_old_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
+}
+
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
 
 ChangeParentAction::ChangeParentAction(Node* node, Node* parent, int pos)
@@ -715,6 +861,13 @@ void ChangeParentAction::Revert()
     }
 }
 
+bool ChangeParentAction::IsReadOnly() const
+{
+    return (m_node && m_node->is_ReadOnly()) ||
+           (m_change_parent && m_change_parent->is_ReadOnly()) ||
+           (m_revert_parent && m_revert_parent->is_ReadOnly());
+}
+
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
 
 AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) :
@@ -778,6 +931,11 @@ void AppendGridBagAction::Revert()
     {
         wxGetFrame().SelectNode(m_old_selected.get());
     }
+}
+
+bool AppendGridBagAction::IsReadOnly() const
+{
+    return m_parent && m_parent->is_ReadOnly();
 }
 
 ///////////////////////////////// GridBagAction ////////////////////////////////////
@@ -877,6 +1035,11 @@ void GridBagAction::Update()
     nav_panel->AddAllChildren(m_cur_gbsizer.get());
     nav_panel->ExpandAllNodes(m_cur_gbsizer.get());
     nav_panel->Thaw();
+}
+
+bool GridBagAction::IsReadOnly() const
+{
+    return m_cur_gbsizer && m_cur_gbsizer->is_ReadOnly();
 }
 
 ///////////////////////////////// SortProjectAction ////////////////////////////////////

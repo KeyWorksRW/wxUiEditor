@@ -37,6 +37,11 @@ public:
     virtual size_t GetMemorySize() = 0;
     [[nodiscard]] virtual NodeSharedPtr GetOldNode() { return nullptr; }
 
+    // Returns true when applying or reverting this action would modify a node inside a linked
+    // (read-only) project. MainFrame::PushUndoAction refuses such an action, so a derived class
+    // must report every node it changes.
+    [[nodiscard]] virtual bool IsReadOnly() const { return false; }
+
     const wxue::string& GetUndoString() const { return m_undo_string; }
     void SetUndoString(std::string_view str) { m_undo_string = str; }
 
@@ -91,6 +96,9 @@ public:
     void Add(const UndoActionPtr& ptr) { m_actions.push_back(ptr); }
 
     size_t GetMemorySize() override;
+
+    // Returns true when any contained action reports that it would modify a read-only node.
+    [[nodiscard]] bool IsReadOnly() const override;
 
 private:
     std::vector<UndoActionPtr> m_actions;

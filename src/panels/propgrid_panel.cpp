@@ -4,7 +4,7 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [07-01-2026]
+// CR: [11-21-2026]
 
 // See propgrid_events.cpp for event handlers for this class
 // See progrid_modify.cpp for functions that modify properties in the property grid
@@ -23,6 +23,7 @@
 #include <wx/propgrid/advprops.h>  // wxPropertyGrid Advanced Properties (font, colour, etc.)
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/tokenzr.h>            // wxStringTokenizer class
 #include <wx/wupdlock.h>           // wxWindowUpdateLocker prevents window redrawing
 
 #include "propgrid_panel.h"
@@ -70,16 +71,25 @@ static void DisableGridProperty(wxPGProperty* property)
     }
 }
 
-std::map<GenLang, std::string> s_lang_category_prefix;
+const std::map<GenLang, std::string>& PropGridPanel::get_LangCategoryPrefixes()
+{
+    // Built once, on first use. The shift guard keeps the loop terminating even if xrc were the
+    // top bit of size_t.
+    static const std::map<GenLang, std::string> s_lang_category_prefix = []
+    {
+        std::map<GenLang, std::string> prefixes;
+        for (size_t lang = 1; lang != 0 && lang <= std::to_underlying(GenLang::xrc); lang <<= 1)
+        {
+            prefixes[static_cast<GenLang>(lang)] = GenLangToString(static_cast<GenLang>(lang));
+        }
+        return prefixes;
+    }();
+
+    return s_lang_category_prefix;
+}
 
 PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
-    for (size_t lang = 1; lang <= std::to_underlying(GenLang::xrc); lang <<= 1)
-    {
-        s_lang_category_prefix[static_cast<GenLang>(lang)] =
-            GenLangToString(static_cast<GenLang>(lang));
-    }
-
     for (const auto& iter: list_wx_ids)
     {
         m_astr_wx_ids.Add(iter);
@@ -156,10 +166,15 @@ void PropGridPanel::RestoreDescBoxHeight()
     constexpr long PREVIOUS_DEFAULT_DESC_BOX_HEIGHT = 100;
 
     wxConfigBase* config = wxConfig::Get();
+    if (!config)
+    {
+        return;
+    }
+    const wxString saved_path = config->GetPath();
     config->SetPath(txt_main_window_config);
     long prop_height = config->ReadLong("prop_height", DEFAULT_DESC_BOX_HEIGHT);
     long event_height = config->ReadLong("event_height", DEFAULT_DESC_BOX_HEIGHT);
-    config->SetPath("/");
+    config->SetPath(saved_path);
 
     // Migrate only the previous default; arbitrary user-set heights are left untouched.
     if (prop_height == PREVIOUS_DEFAULT_DESC_BOX_HEIGHT)
@@ -182,10 +197,16 @@ void PropGridPanel::RestoreDescBoxHeight()
 void PropGridPanel::SaveDescBoxHeight()
 {
     wxConfigBase* config = wxConfig::Get();
+    if (!config)
+    {
+        return;
+    }
+    const wxString saved_path = config->GetPath();
     config->SetPath(txt_main_window_config);
     config->Write("prop_height", m_prop_grid->GetDescBoxHeight());
     config->Write("event_height", m_event_grid->GetDescBoxHeight());
-    config->SetPath("/");
+    config->SetPath(saved_path);
+    config->Flush();
 }
 
 // static method
@@ -201,13 +222,19 @@ int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flag
     while (strTok.HasMoreTokens())
     {
         const wxString token = strTok.GetNextToken();
+        bool is_known_token = false;
         for (unsigned int index = 0; index < bit_flags.GetCount(); ++index)
         {
             if (bit_flags.GetLabel(index) == token)
             {
                 value |= bit_flags.GetValue(index);
+                is_known_token = true;
                 break;
             }
+        }
+        if (!is_known_token)
+        {
+            MSG_WARNING((wxString("Unknown bitlist value: ") << token).ToStdString());
         }
     }
     return value;
@@ -236,8 +263,8 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
         {
             if (!IsPropAllowed(node, prop))
             {
+                continue;
             }
-            continue;
 
             wxPGProperty* grid_prop = m_prop_grid->Append(CreatePGProperty(prop));
             if (node->is_ReadOnly())
@@ -344,7 +371,26 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
 
     for (size_t i = 0; i < propCount; ++i)
     {
-        ChangeEnableState(node->get_PropPtr(category.get_PropName(i)));
+        const PropName prop_name = category.get_PropName(i);
+        NodeProperty* prop = node->get_PropPtr(prop_name);
+        if (prop != nullptr && prop_set.contains(prop_name) &&
+            !node->get_NodeDeclaration()->IsPropHidden(prop_name) && IsPropAllowed(node, prop))
+        {
+            ChangeEnableState(prop);
+        }
+    }
+
+    // ChangeEnableState can re-enable a row, so re-apply the read-only disable to the rows that
+    // are actually in the grid.
+    if (node->is_ReadOnly())
+    {
+        for (const auto& [grid_prop, prop]: m_property_map)
+        {
+            if (prop != nullptr && prop_set.contains(prop->get_name()))
+            {
+                DisableGridProperty(grid_prop);
+            }
+        }
     }
 
     for (auto& nextCat: category.getCategories())
@@ -357,12 +403,16 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
         const wxPGProperty* catId = nullptr;
         if (is_child_cat)
         {
+            // Create the child with the same display name used to look up the parent, otherwise
+            // AppendIn fails and catId stays null.
+            const wxString child_cat_name = GetCategoryDisplayName(nextCat.GetName());
             catId = m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()),
-                                          new wxPropertyCategory(nextCat.GetName()));
+                                          new wxPropertyCategory(child_cat_name));
         }
         else
         {
-            catId = m_prop_grid->Append(new wxPropertyCategory(nextCat.GetName()));
+            catId = m_prop_grid->Append(
+                new wxPropertyCategory(GetCategoryDisplayName(nextCat.GetName())));
         }
 
         AddProperties(name, node, nextCat, prop_set, true);
@@ -372,10 +422,13 @@ void PropGridPanel::AddProperties(wxue::string_view name, Node* node, NodeCatego
         if (nextCat.GetName() == "Margin Columns" || nextCat.GetName() == "Selections" ||
             nextCat.GetName() == "Tabs and Indentation" || nextCat.GetName() == "Wrapping")
         {
-            m_prop_grid->Collapse(catId);
+            if (catId != nullptr)
+            {
+                m_prop_grid->Collapse(catId);
+            }
         }
         else if (auto found_iter = m_expansion_map.find(nextCat.getName());
-                 found_iter != m_expansion_map.end())
+                 found_iter != m_expansion_map.end() && catId != nullptr)
         {
             if (found_iter->second)
             {
@@ -438,6 +491,10 @@ void PropGridPanel::AddEvents(wxue::string_view name, Node* node, NodeCategory& 
         }
 
         const NodeEventInfo* eventInfo = event->get_EventInfo();
+        if (!eventInfo)
+        {
+            continue;
+        }
 
         {
             ASSERT_MSG(event_set.find(eventName) == event_set.end(),
@@ -675,6 +732,10 @@ void PropGridPanel::ReplaceDerivedName(const wxue::string& formName, NodePropert
 void PropGridPanel::CheckOutputFile(const wxue::string& formName, Node* node)
 {
     Node* form_node = node->get_Form();
+    if (!form_node)
+    {
+        return;
+    }
 
     auto ChangeOutputFile = [&](PropName prop_name)
     {
@@ -691,12 +752,17 @@ void PropGridPanel::CheckOutputFile(const wxue::string& formName, Node* node)
             {
                 return;
             }
+            NodeProperty* output_prop = form_node->get_PropPtr(prop_name);
+            if (output_prop == nullptr)
+            {
+                return;
+            }
             grid_property->SetValueFromString(output_filename.wx());
-            ModifyProperty(form_node->get_PropPtr(prop_name), output_filename);
+            ModifyProperty(output_prop, output_filename);
         }
     };
 
-    switch (Project.get_CodePreference())
+    switch (Project.get_CodePreference(node))
     {
         case GenLang::cplusplus:
             ChangeOutputFile(prop_base_file);

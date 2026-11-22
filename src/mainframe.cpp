@@ -5,7 +5,7 @@
 // Copyright: Copyright (c) 2020-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-27-2026]
+// CR: [11-21-2026]
 
 // mainframe_events.cpp contains the event handlers for the MainFrame class.
 // mainframe_updates.cpp contains the MainFrame::Update...() functions
@@ -453,14 +453,15 @@ void MainFrame::CreateTestingMenuItems(MainFrame* frame)
     frame->m_menuFile->AppendSubMenu(frame->m_submenu_import_recent, "Import &Recent");
 
     wxConfigBase* config = wxConfig::Get();
+    const wxString saved_path = config->GetPath();
     config->SetPath("/debug_history");
     frame->m_ImportHistory.Load(*config);
     frame->m_ImportHistory.UseMenu(frame->m_submenu_import_recent);
     frame->m_ImportHistory.AddFilesToMenu();
-    config->SetPath("/");
+    config->SetPath(saved_path);
 
     frame->Bind(wxEVT_MENU, &MainFrame::OnImportRecent, frame, START_IMPORT_FILE_IDS,
-                START_IMPORT_FILE_IDS + MAX_HISTORY_FILES);
+                START_IMPORT_FILE_IDS + MAX_HISTORY_FILES - 1);
 
     // Experimental menu items
     frame->Bind(
@@ -528,8 +529,8 @@ void MainFrame::ProjectLoaded()
         {
             m_FileHistory.AddFileToHistory(Project.get_ProjectFile());
         }
-        m_isProject_modified = false;
     }
+    m_isProject_modified = false;
 
     m_undo_stack.clear();
     m_undo_stack_size = 0;
@@ -769,13 +770,22 @@ void MainFrame::PasteNode(Node* parent)
         undo_str << m_clipboard->get_DeclName();
 
         const ptrdiff_t pos = parent->FindInsertionPos(m_selected_node);
-        PushUndoAction(
-            std::make_shared<InsertNodeAction>(created_node.get(), parent, undo_str, pos));
+        const UndoActionPtr insert_action =
+            std::make_shared<InsertNodeAction>(created_node.get(), parent, undo_str, pos);
+        if (insert_action->IsReadOnly())
+        {
+            return;
+        }
+        PushUndoAction(insert_action);
         FireCreatedEvent(created_node);
         SelectNode(created_node, evt_flags::fire_event | evt_flags::force_selection);
     };
 
     const NodeSharedPtr new_node = NodeCreation.MakeCopy(m_clipboard.get(), parent);
+    if (!new_node)
+    {
+        return;
+    }
 
     // This makes it possible to switch from a normal child toolbar to a form toolbar and vice
     // versa. Both wxToolBar and wxAuiToolbar are supported
@@ -786,6 +796,9 @@ void MainFrame::PasteNode(Node* parent)
     {
         auto group = std::make_shared<GroupUndoActions>("Paste children", parent);
 
+        // The children being inserted are owned by the local new_node shared_ptr. Correctness
+        // depends on PushUndoAction() running Change() synchronously (or the action taking
+        // ownership) before new_node is destroyed.
         for (auto& child_node: new_node->get_ChildNodePtrs())
         {
             auto insert_action =
@@ -797,19 +810,58 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
     // This makes it possible to paste between a wxToolBar and a wxAuiToolBar and vice versa.
-    // Both a normal child and a form toolbar are supported.
-    if ((parent->is_Gen(gen_AuiToolBar) && new_node->is_Gen(gen_wxToolBar)) ||
-        (parent->is_Gen(gen_wxAuiToolBar) && new_node->is_Gen(gen_wxToolBar)) ||
-        (parent->is_Gen(gen_ToolBar) && new_node->is_Gen(gen_wxAuiToolBar)) ||
-        (parent->is_Gen(gen_wxToolBar) && new_node->is_Gen(gen_wxAuiToolBar)))
+    // Both a normal child and a form toolbar are supported. All eight cross-family pairs are
+    // handled here: a regular toolbar container pasted into an aui toolbar, and the reverse.
+    const bool parent_is_aui = parent->is_Gen(gen_AuiToolBar) || parent->is_Gen(gen_wxAuiToolBar);
+    const bool parent_is_toolbar = parent->is_Gen(gen_ToolBar) || parent->is_Gen(gen_wxToolBar);
+    const bool new_node_is_aui =
+        new_node->is_Gen(gen_AuiToolBar) || new_node->is_Gen(gen_wxAuiToolBar);
+    const bool new_node_is_toolbar =
+        new_node->is_Gen(gen_ToolBar) || new_node->is_Gen(gen_wxToolBar);
+    if ((parent_is_aui && new_node_is_toolbar) || (parent_is_toolbar && new_node_is_aui))
     {
         auto group = std::make_shared<GroupUndoActions>("Paste children", parent);
 
+        // The container family changed, so a plain copy would keep the source generator and
+        // produce children the new parent cannot use. Recreate each tool with the generator the
+        // target family expects, copying over every property both declarations share.
+        const GenName target_tool_gen = parent_is_aui ? gen_auitool : gen_tool;
+
         for (auto& child_node: new_node->get_ChildNodePtrs())
         {
-            // We are changing from a wxToolBar to a wxAuiToolBar, so we need to change the node
-            // type
-            const NodeSharedPtr new_child = NodeCreation.MakeCopy(child_node.get(), parent);
+            NodeSharedPtr new_child;
+            if (child_node->is_Gen(gen_tool) || child_node->is_Gen(gen_auitool))
+            {
+                auto [created_child, child_validity] =
+                    NodeCreation.CreateNode(target_tool_gen, parent);
+                if (child_validity != Node::Validity::valid_node || !created_child)
+                {
+                    continue;
+                }
+
+                for (const auto& iter: child_node->get_NodeDeclaration()->GetPropInfoMap())
+                {
+                    if (created_child->HasProp(iter.second->get_name()))
+                    {
+                        created_child->set_value(
+                            iter.second->get_name(),
+                            child_node->get_PropPtr(iter.second->get_name())->get_value());
+                    }
+                }
+                new_child = created_child;
+            }
+            else
+            {
+                // Labels, spacers and stretchable spacers exist in both families, so a copy is
+                // safe for them.
+                new_child = NodeCreation.MakeCopy(child_node.get(), parent);
+            }
+
+            if (!new_child)
+            {
+                continue;
+            }
+
             auto insert_action =
                 std::make_shared<InsertNodeAction>(new_child.get(), parent, "paste");
             insert_action->SetFireCreatedEvent(true);
@@ -910,7 +962,11 @@ void MainFrame::PasteNode(Node* parent)
     if (parent->is_Gen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(parent);
-        [[maybe_unused]] const bool result = grid_bag.InsertNode(parent, new_node.get());
+        const bool result = grid_bag.InsertNode(parent, new_node.get());
+        if (!result)
+        {
+            wxMessageBox(wxue::string() << "The node could not be placed in the grid bag sizer.");
+        }
         return;
     }
 
@@ -979,16 +1035,39 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
         return false;
     }
 
+    if (flag)
+    {
+        *flag = 0;
+    }
+    if (option)
+    {
+        *option = 0;
+    }
+    if (border)
+    {
+        *border = 0;
+    }
+    if (orient)
+    {
+        *orient = 0;
+    }
+
     const wxSizerFlags prop_flags = m_selected_node->getSizerFlags();
 
     const NodeProperty* propOption = m_selected_node->get_PropPtr(prop_proportion);
-    if (propOption)
+    if (propOption && option)
     {
         *option = prop_flags.GetProportion();
     }
 
-    *flag = prop_flags.GetFlags();
-    *border = prop_flags.GetBorderInPixels();
+    if (flag)
+    {
+        *flag = prop_flags.GetFlags();
+    }
+    if (border)
+    {
+        *border = prop_flags.GetBorderInPixels();
+    }
 
     Node* sizer = m_selected_node->get_Parent();
     if (sizer)
@@ -996,7 +1075,7 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
         if (sizer->is_Gen(gen_wxBoxSizer) || m_selected_node->is_StaticBoxSizer())
         {
             const NodeProperty* propOrient = sizer->get_PropPtr(prop_orientation);
-            if (propOrient)
+            if (propOrient && orient)
             {
                 *orient = propOrient->as_int();
             }
@@ -1135,7 +1214,7 @@ void MainFrame::ShowCheckableMenuItemWarning(Node* node)
     const wxue::string kind = node->as_string(prop_kind);
     if ((kind == "wxITEM_CHECK" || kind == "wxITEM_RADIO") && node->HasValue(prop_bitmap))
     {
-        m_info_bar->ShowMessage(
+        ShowInfoBarMsg(
             "On Windows, a bitmap on a wxITEM_CHECK or wxITEM_RADIO menu item replaces the check "
             "mark. The bitmap is shown when the item is checked; when unchecked, nothing is shown "
             "unless an unchecked bitmap is also set.",
@@ -1145,9 +1224,15 @@ void MainFrame::ShowCheckableMenuItemWarning(Node* node)
 
 BasePanel* MainFrame::GetFirstCodePanel()
 {
-    auto* panel = dynamic_cast<BasePanel*>(m_notebook->GetPage(1));
-    ASSERT_MSG(panel, "Page 1 is not a BasePanel");
-    return panel;
+    const size_t page_count = m_notebook->GetPageCount();
+    for (size_t page = 0; page < page_count; ++page)
+    {
+        if (auto* panel = dynamic_cast<BasePanel*>(m_notebook->GetPage(page)); panel)
+        {
+            return panel;
+        }
+    }
+    return nullptr;
 }
 
 void MainFrame::RemoveCustomEventHandler(wxEvtHandler* handler)

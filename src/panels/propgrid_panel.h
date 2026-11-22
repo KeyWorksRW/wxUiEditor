@@ -59,6 +59,11 @@ protected:
 
     static wxString GetCategoryDisplayName(const wxString& original);
 
+    // Maps every language flag to the prefix used by that language's category names. It is a
+    // single shared table rather than a namespace-scope global so it has no external linkage and
+    // is populated exactly once, on first use.
+    static const std::map<GenLang, std::string>& get_LangCategoryPrefixes();
+
     // Called to determine if a property should be displayed or not
     static bool IsPropAllowed(Node* node, NodeProperty* prop);
 

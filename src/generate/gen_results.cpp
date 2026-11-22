@@ -4,14 +4,17 @@
 // Copyright: Copyright (c) 2020-2025 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [06-30-2026]
+// CR: [11-21-2026]
 
-#include <algorithm>  // for std::find, std::remove_if
+#include <algorithm>  // for std::find, std::max, std::remove_if
+#include <chrono>     // for std::chrono::seconds, std::chrono::milliseconds
 #include <cstring>    // for std::memcmp
 #include <format>
 #include <future>    // for std::async, std::future
 #include <memory>    // for std::shared_ptr, std::make_shared
 #include <optional>  // for std::optional
+#include <thread>    // for std::thread::hardware_concurrency, std::this_thread
+#include <tuple>     // for std::ignore
 #include <utility>   // std::to_underlying
 
 #include <wx/file.h>     // wxFile - raw file I/O
@@ -198,18 +201,21 @@ bool GenResults::Generate()
     // still holds the nodes loaded from the last valid version.
     std::vector<Node*> invalid_folders;
     std::vector<wxue::string> link_errors;
-    if (!ValidateAllLinkedProjects(invalid_folders, link_errors) && !invalid_folders.empty())
+    if (!ValidateAllLinkedProjects(invalid_folders, link_errors))
     {
-        m_target_nodes.erase(
-            std::remove_if(m_target_nodes.begin(), m_target_nodes.end(),
-                           [&invalid_folders](Node* form)
-                           {
-                               const Node* link_folder = form->get_LinkedProjectFolder();
-                               return link_folder &&
-                                      std::find(invalid_folders.begin(), invalid_folders.end(),
-                                                link_folder) != invalid_folders.end();
-                           }),
-            m_target_nodes.end());
+        if (!invalid_folders.empty())
+        {
+            m_target_nodes.erase(
+                std::remove_if(m_target_nodes.begin(), m_target_nodes.end(),
+                               [&invalid_folders](Node* form)
+                               {
+                                   const Node* link_folder = form->get_LinkedProjectFolder();
+                                   return link_folder &&
+                                          std::find(invalid_folders.begin(), invalid_folders.end(),
+                                                    link_folder) != invalid_folders.end();
+                               }),
+                m_target_nodes.end());
+        }
 
         wxue::string combined_errors;
         for (const wxue::string& error: link_errors)
@@ -227,6 +233,9 @@ bool GenResults::Generate()
         }
         else
         {
+            // LogText() takes a plain wxString -- unlike the variadic wxLogError()-style
+            // functions it never treats the text as a format string, so a '%' inside a
+            // linked-project path is emitted verbatim rather than interpreted as a specifier.
             wxLogStderr(nullptr).LogText(combined_errors.wx());
         }
     }
@@ -243,8 +252,14 @@ bool GenResults::Generate()
     bool generate_result = false;
 
     // For form scope, generate directly for each form in m_target_nodes
-    if (m_scope == Scope::form && !m_target_nodes.empty())
+    if (m_scope == Scope::form)
     {
+        // Never fall through to project-wide generation when the target list is empty.
+        if (m_target_nodes.empty())
+        {
+            return false;
+        }
+
         for (auto lang: gen_lang_set)
         {
             if (m_languages & lang)
@@ -654,7 +669,7 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
         {
             // Non-combined mode: use GenerateLanguageForm for each form
             std::vector<Node*> forms;
-            Project.CollectForms(forms);
+            forms = m_target_nodes;
             RemoveFormsWithoutOutputPath(forms);
 
             // Note that we do *not* use a progress dialog for XRC generation here even if
@@ -663,18 +678,7 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
 
             for (auto* form: forms)
             {
-                // CR: 448: Inconsistent result tracking - checking GetUpdatedFiles().size() instead
-                // of the return value from GenerateLanguageForm. This differs from the pattern in
-                // the else branch below (lines 495-501) where the return value is properly checked.
-                // Should use: if (GenerateLanguageForm(form->as_view(prop_class_name), form,
-                // comparison_only)) {
-
-                // TODO: [Randalphwa - 12-31-2025] Above is probably correct, but need to validate
-                // the the XRC code generator returns an expected value.
-                std::ignore =
-                    GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
-
-                if (!GetUpdatedFiles().empty())
+                if (GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only))
                 {
                     generate_result = true;
                 }
@@ -699,9 +703,10 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
             max_progress +=
                 static_cast<int>(img_list->get_ChildCount() / result::progress_image_step);
         }
+        bool show_progress = m_show_progress;
         if (max_progress == 0 && forms.size() < (progress_forms_step * 2))
         {
-            m_show_progress = false;  // No need for progress dialog
+            show_progress = false;  // No need for progress dialog
         }
         else
         {
@@ -709,7 +714,7 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
         }
 
         std::optional<wxProgressDialog> progress;
-        if (m_show_progress && !forms.empty())
+        if (show_progress && !forms.empty())
         {
             progress.emplace(m_progress_title, "Processing forms...", max_progress,
                              wxGetMainFrame(), wxPD_APP_MODAL | wxPD_AUTO_HIDE);
@@ -718,14 +723,7 @@ bool GenResults::GenerateLanguageFiles(GenLang language, bool comparison_only)
         int progress_count = 0;
         for (auto* form: forms)
         {
-            // CR: 495: Inconsistent result tracking - same issue as line 448. Should directly check
-            // the return value from GenerateLanguageForm instead of checking
-            // GetUpdatedFiles().size(). The current approach relies on side effects and doesn't
-            // match the C++ generation pattern in GenerateCppFiles (line 896).
-            std::ignore =
-                GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only);
-
-            if (!GetUpdatedFiles().empty())
+            if (GenerateLanguageForm(form->as_view(prop_class_name), form, comparison_only))
             {
                 generate_result = true;
             }
@@ -899,6 +897,8 @@ bool GenResults::GenerateLanguageForm(std::string_view /* class_name */, Node* f
     if (comparison_only)
     {
         // In compare mode, check if file differs or needs creation
+        // code::write_cant_read and code::write_no_folder share the value -3 and
+        // file_codewriter.h does not separate them, so both are treated as needing a write here.
         if (result == code::write_needed || result == code::write_cant_read)
         {
             if (file_existed)
@@ -1132,9 +1132,10 @@ bool GenResults::GenerateCppFiles(bool comparison_only)
     {
         max_progress += static_cast<int>(img_list->get_ChildCount() / result::progress_image_step);
     }
+    bool show_progress = m_show_progress;
     if (max_progress == 0 && forms.size() < (progress_forms_step * 2))
     {
-        m_show_progress = false;  // No need for progress dialog
+        show_progress = false;  // No need for progress dialog
     }
     else
     {
@@ -1142,7 +1143,7 @@ bool GenResults::GenerateCppFiles(bool comparison_only)
     }
 
     std::optional<wxProgressDialog> progress;
-    if (m_show_progress && !forms.empty())
+    if (show_progress && !forms.empty())
     {
         progress.emplace(m_progress_title, "Processing forms...", max_progress, wxGetMainFrame(),
                          wxPD_APP_MODAL | wxPD_AUTO_HIDE);
@@ -1308,7 +1309,10 @@ bool GenResults::GenerateCombinedXrcFile(bool comparison_only)
         }
     }
 
-    if (output_path.extension().empty())
+    // Check the extension on the filename only, not the full path -- a directory component
+    // may contain a dot, which would make extension() non-empty.
+    const wxue::string_view xrc_filename(output_path.filename());
+    if (xrc_filename.extension().empty())
     {
         output_path.replace_extension(".xrc");
     }
@@ -1318,9 +1322,31 @@ bool GenResults::GenerateCombinedXrcFile(bool comparison_only)
     xrc_gen.AddProjectFlags();
     xrc_gen.AddGeneratedComments();
 
-    // Collect all forms and add them to the XRC document
+    // Collect all forms and add them to the XRC document. The caller may have passed folders
+    // or the project node, so expand each target into its form nodes first.
     std::vector<Node*> forms;
-    forms = m_target_nodes;
+    auto collect_forms = [&forms](auto&& self, Node* node) -> void
+    {
+        if (node->is_Form())
+        {
+            forms.push_back(node);
+            return;
+        }
+        for (const auto& child: node->get_ChildNodePtrs())
+        {
+            self(self, child.get());
+        }
+    };
+    for (Node* target_node: m_target_nodes)
+    {
+        collect_forms(collect_forms, target_node);
+    }
+
+    if (forms.empty())
+    {
+        m_msgs.emplace_back("No forms found for combined XRC generation");
+        return false;
+    }
 
     for (auto* form: forms)
     {
@@ -1372,6 +1398,8 @@ bool GenResults::GenerateCombinedXrcFile(bool comparison_only)
         {
             m_msgs.emplace_back(
                 std::format("Error reading file size: {}", static_cast<std::string>(output_path)));
+            m_updated_files.emplace_back(output_path);
+            IncrementErrorCount();
             return true;
         }
         if (xml_content.size() != static_cast<size_t>(in_size))
@@ -1406,6 +1434,7 @@ bool GenResults::GenerateCombinedXrcFile(bool comparison_only)
     {
         m_msgs.emplace_back(std::format("Cannot create or write to the file: {}",
                                         static_cast<std::string>(output_path)));
+        IncrementErrorCount();
         return false;
     }
 
@@ -1428,7 +1457,10 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
     // This function assumes it is being called from the main thread *only* and as such it does not
     // protect m_pending_diffs from race conditions.
     ASSERT(wxThread::IsMain());
-    while (m_pending_diffs.size() >= std::thread::hardware_concurrency())
+    // hardware_concurrency() can return 0, which would make the condition always true and sleep
+    // forever; clamp to at least one pending diff.
+    const unsigned max_pending = std::max(1U, std::thread::hardware_concurrency());
+    while (m_pending_diffs.size() >= max_pending)
     {
         // Process and remove completed futures
         bool any_removed = false;
@@ -1438,10 +1470,17 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
         {
             if (it->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
             {
-                std::optional<FileDiff> diff = it->get();
-                if (diff.has_value())
+                try
                 {
-                    m_file_diffs.push_back(std::move(*diff));
+                    std::optional<FileDiff> diff = it->get();
+                    if (diff.has_value())
+                    {
+                        m_file_diffs.push_back(std::move(*diff));
+                    }
+                }
+                catch (const std::exception& e)
+                {
+                    m_msgs.emplace_back(std::format("Diff computation error: {}", e.what()));
                 }
                 it = m_pending_diffs.erase(it);
                 any_removed = true;
@@ -1469,6 +1508,8 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
             {
                 FileDiff file_diff;
                 file_diff.filename = path.filename();
+                // form is a borrowed, non-owning pointer. m_file_diffs must be drained (or
+                // cleared) before the form node is deleted or the project is closed.
                 file_diff.form = form;
                 file_diff.is_too_large_to_display = true;
                 return file_diff;
@@ -1507,6 +1548,8 @@ void GenResults::ProcessFileDiff(wxue::string path, std::shared_ptr<std::string>
                 file_diff.original_content = disk_content.GetBuffer();
                 file_diff.new_content = *content;
                 file_diff.diff_result = std::move(diff_result);
+                // Same borrowed, non-owning form pointer as above -- see the note at the
+                // is_too_large_to_display assignment.
                 file_diff.form = form;
                 return file_diff;
             }

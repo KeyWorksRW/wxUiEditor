@@ -46,7 +46,7 @@ public:
 
 private:
     LinkedProjectWatcher();
-    ~LinkedProjectWatcher() override = default;
+    ~LinkedProjectWatcher() override;
 
     // One watched linked file. The watch is placed on the file's directory -- wxFileSystemWatcher
     // only supports watching directories -- and events are matched against file.

@@ -19,6 +19,8 @@ tests/*
 !tests/issues/
 deno.jsonc
 
+src/generate/ffi_ui/*.json
+
 # Ignore clangd cache
 .cache/
 

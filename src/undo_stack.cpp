@@ -114,3 +114,15 @@ size_t GroupUndoActions::GetMemorySize()
     }
     return total;
 }
+
+bool GroupUndoActions::IsReadOnly() const
+{
+    for (const auto& action: m_actions)
+    {
+        if (action->IsReadOnly())
+        {
+            return true;
+        }
+    }
+    return false;
+}

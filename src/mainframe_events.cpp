@@ -25,6 +25,8 @@
 #include "utils.h"            // Utility functions that work with properties
 #include "version.h"          // Version numbers and other constants
 
+#include "project/linked_watcher.h"  // LinkedProjectWatcher -- watch linked files
+
 #include "preferences_dlg.h"  // PreferencesDlg -- Dialog for setting user preferences
 #include "ui/startup_dlg.h"  // StartupDlg -- Dialog to display if wxUE is launched with no arguments
 
@@ -335,6 +337,9 @@ void MainFrame::OnClose(wxCloseEvent& event)
         return;
     }
 
+    // The project is going away, so no watch may fire while the tree is being torn down.
+    LinkedProjectWatcher::getInstance().StopAll();
+
     wxGetApp().setMainFrameClosing();
 
     wxConfigBase* config = wxConfig::Get();
@@ -400,6 +405,12 @@ void MainFrame::OnCut(wxCommandEvent& /* event unused */)
     }
     if (m_selected_node)
     {
+        // A node inside a linked project is read-only, so it cannot be removed.
+        if (m_selected_node->is_ReadOnly())
+        {
+            return;
+        }
+
         m_selected_node->RemoveNode(true);
         UpdateFrame();
     }
@@ -408,6 +419,11 @@ void MainFrame::OnCut(wxCommandEvent& /* event unused */)
 void MainFrame::OnDelete(wxCommandEvent& /* event unused */)
 {
     ASSERT(m_selected_node);
+    if (!m_selected_node || m_selected_node->is_ReadOnly())
+    {
+        return;
+    }
+
     m_selected_node->RemoveNode(false);
     UpdateFrame();
 }
@@ -419,12 +435,23 @@ void MainFrame::OnDifferentProject(wxCommandEvent& /* event unused */)
         return;
     }
 
-    std::ignore = DisplayStartupDlg(m_nav_panel);
+    // A different project replaces the tree, so stop watching the current project's links. If
+    // the startup dialog is cancelled, resume watching them.
+    LinkedProjectWatcher::getInstance().StopAll();
+    if (!DisplayStartupDlg(m_nav_panel))
+    {
+        LinkedProjectWatcher::getInstance().SyncWithProject();
+    }
 }
 
 void MainFrame::OnDuplicate(wxCommandEvent& /* event unused */)
 {
     ASSERT(m_selected_node);
+    if (!m_selected_node || m_selected_node->is_ReadOnly())
+    {
+        return;
+    }
+
     m_selected_node->DuplicateNode();
 }
 
@@ -482,6 +509,8 @@ void MainFrame::OnImportProject([[maybe_unused]] wxCommandEvent& event)
     }
 #endif
 
+    // Importing starts a new project tree.
+    LinkedProjectWatcher::getInstance().StopAll();
     Project.NewProject();
 }
 
@@ -503,6 +532,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
             g_pMsgLogging->Clear();
         }
 #endif
+        LinkedProjectWatcher::getInstance().StopAll();
         Project.ImportProject(file);
     }
     else if (wxMessageBox(wxString::Format("The project file '%s' doesn't exist.\n\nWould you "
@@ -522,6 +552,7 @@ void MainFrame::OnNewProject(wxCommandEvent& /* event unused */)
     }
 
     // true means create an empty project
+    LinkedProjectWatcher::getInstance().StopAll();
     Project.NewProject(true);
 }
 
@@ -573,6 +604,9 @@ void MainFrame::OnOpenProject([[maybe_unused]] wxCommandEvent& event)
     const wxString path = ShowOpenProjectDialog(this);
     if (!path.IsEmpty())
     {
+        // Opening a project replaces the tree, so the previous project's watches must stop
+        // before the new tree is built.
+        LinkedProjectWatcher::getInstance().StopAll();
         const wxue::string filename = path.utf8_string();
         // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui
         // extension
@@ -599,6 +633,9 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 
     if (file.file_exists())
     {
+        // Opening a project replaces the tree, so the previous project's watches must stop
+        // before the new tree is built.
+        LinkedProjectWatcher::getInstance().StopAll();
         std::ignore = Project.LoadProject(file);
     }
     else if (wxMessageBox(wxString::Format("The project file '%s' doesn't exist.\n\nWould you "
@@ -621,6 +658,13 @@ void MainFrame::OnPaste(wxCommandEvent& /* event unused */)
     }
     if (m_selected_node)
     {
+        // A node inside a linked project is read-only, and nothing may be added as a child of a
+        // link folder itself.
+        if (m_selected_node->is_ReadOnly() || m_selected_node->is_LinkedProject())
+        {
+            return;
+        }
+
         PasteNode(m_selected_node.get());
         UpdateFrame();
     }
@@ -644,8 +688,71 @@ void MainFrame::OnReloadProject(wxCommandEvent& /* event unused */)
                           "Are you sure you want to reload the project?",
             "Reload Project", wxICON_WARNING | wxYES_NO) == wxYES)
     {
+        // Reloading rebuilds the entire tree, so the current project's watches must stop first.
+        LinkedProjectWatcher::getInstance().StopAll();
         std::ignore = Project.LoadProject(Project.get_ProjectFile());
     }
+}
+
+// Returns true when target is still part of the tree rooted at node. A reload can stay queued
+// while the project that contained the link folder is replaced, so the folder pointer is checked
+// for membership before it is dereferenced.
+static bool IsInCurrentProjectTree(const Node* node, const Node* target)
+{
+    if (node == target)
+    {
+        return true;
+    }
+
+    for (const auto& child: node->get_ChildNodePtrs())
+    {
+        if (IsInCurrentProjectTree(child.get(), target))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void MainFrame::OnReloadLinkedProject(CustomEvent& event)
+{
+    Node* const folder = event.getNode();
+    const Node* const project_node = Project.get_ProjectNode();
+    if (!folder || !project_node || !IsInCurrentProjectTree(project_node, folder))
+    {
+        return;
+    }
+
+    if (!folder->is_LinkedProject())
+    {
+        return;
+    }
+
+    const wxue::string linked_file = folder->as_string(prop_link_project);
+    if (!Project.ReloadLinkedProject(folder, true))
+    {
+        // The loader has already reported why the reload failed, and the previous children are
+        // still in place, so only the info bar needs to be updated.
+        ShowInfoBarMsg(wxue::string()
+                           << "The linked project could not be reloaded: " << linked_file,
+                       wxICON_WARNING);
+        return;
+    }
+
+    if (NavigationPanel* nav_panel = getNavigationPanel(); nav_panel != nullptr)
+    {
+        nav_panel->RefreshParent(folder);
+    }
+    Project.ReinitializeImageHandler();
+
+    // The replaced nodes may be referenced by undo actions, so the history is no longer valid.
+    m_undo_stack.clear();
+
+    // A linked file changed on disk -- the project itself has no unsaved changes, so the
+    // modified flag is deliberately not touched.
+    ShowInfoBarMsg(wxue::string() << "Reloaded linked project: " << linked_file,
+                   wxICON_INFORMATION);
 }
 
 void MainFrame::OnSaveAsProject(wxCommandEvent& /* event unused */)

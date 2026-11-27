@@ -22,12 +22,14 @@
 
 #include "project_handler.h"
 
-#include "data_handler.h"   // DataHandler class
-#include "image_handler.h"  // ProjectImage class
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "utils.h"          // Miscellaneous utility functions
-#include "version.h"        // Version numbers and other constants
+#include "data_handler.h"    // DataHandler class
+#include "image_handler.h"   // ProjectImage class
+#include "linked_project.h"  // Load and validate linked .wxui projects
+#include "linked_watcher.h"  // LinkedProjectWatcher -- watch linked files for external changes
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "node.h"            // Node class
+#include "utils.h"           // Miscellaneous utility functions
+#include "version.h"         // Version numbers and other constants
 
 #include "wxue_namespace/wxue_string_vector.h"  // wxue::StringVector
 #include "wxue_namespace/wxue_view_vector.h"    // wxue::ViewVector
@@ -126,6 +128,44 @@ void ProjectHandler::CollectForms(std::vector<Node*>& forms, Node* node_start)
             CollectForms(forms, child.get());
         }
     }
+}
+
+bool ProjectHandler::LoadLinkedProjects(bool allow_ui)
+{
+    const bool loaded = LoadAllLinkedProjects(allow_ui);
+    LinkedProjectWatcher::getInstance().SyncWithProject();
+    return loaded;
+}
+
+bool ProjectHandler::LoadLinkedProject(Node* folder, bool allow_ui)
+{
+    const bool loaded = LoadLinkedProjectNode(folder, allow_ui);
+
+    // The link_project value changed (link, relink or undo/redo of either), so the set of files
+    // being watched changed with it.
+    LinkedProjectWatcher::getInstance().SyncWithProject();
+    return loaded;
+}
+
+void ProjectHandler::UnloadLinkedProject(Node* folder)
+{
+    UnloadLinkedProjectNode(folder);
+    LinkedProjectWatcher::getInstance().SyncWithProject();
+}
+
+bool ProjectHandler::ReloadLinkedProject(Node* folder, bool allow_ui)
+{
+    // LoadLinkedProjectNode re-reads and fully re-validates the linked file before it discards
+    // the folder's current children, so a failed reload keeps the previous subtree in place. No
+    // prompt is shown -- a reload never asks the user to confirm discarding children the tree
+    // does not own.
+    const bool loaded = LoadLinkedProjectNode(folder, allow_ui, LinkReload::silent);
+    if (loaded)
+    {
+        LinkedProjectWatcher::getInstance().SyncWithProject();
+    }
+
+    return loaded;
 }
 
 void ProjectHandler::FixupDuplicatedNode(Node* new_node)
@@ -418,6 +458,47 @@ static bool RebaseNodePaths(Node* node, const wxString& old_dir, const wxString&
     return changed;
 }
 
+// Rebases the folder-level link_project and art_directory properties. A link folder's own
+// link_project value is saved, so it must stay resolvable after the project moves. Recursion
+// stops at a link folder because its children are reloaded from the linked file and their paths
+// are never stored in this project.
+static bool RebaseFolderPaths(Node* node, const wxString& old_dir, const wxString& new_dir)
+{
+    bool changed = false;
+
+    for (auto& child_ptr: node->get_ChildNodePtrs())
+    {
+        Node* child = child_ptr.get();
+
+        if (child->is_Folder())
+        {
+            for (const PropName name: { prop_link_project, prop_art_directory })
+            {
+                NodeProperty* prop = child->get_PropPtr(name);
+                if (!prop || !prop->HasValue())
+                {
+                    continue;
+                }
+
+                const wxue::string rebased = RebaseProjectPath(prop->as_string(), old_dir, new_dir);
+                if (rebased != prop->as_string())
+                {
+                    prop->set_value(rebased);
+                    changed = true;
+                }
+            }
+        }
+
+        if (child->get_ChildCount() && !child->is_LinkedProject() &&
+            RebaseFolderPaths(child, old_dir, new_dir))
+        {
+            changed = true;
+        }
+    }
+
+    return changed;
+}
+
 bool ProjectHandler::UpdatePathsAfterSaveAs(const wxFileName& new_project_file)
 {
     if (!m_project_path || !m_project_path->IsOk() || !m_project_node)
@@ -461,6 +542,11 @@ bool ProjectHandler::UpdatePathsAfterSaveAs(const wxFileName& new_project_file)
         }
     }
 
+    if (RebaseFolderPaths(m_project_node.get(), old_dir, new_dir))
+    {
+        changed = true;
+    }
+
     if (RebaseNodePaths(m_project_node.get(), old_dir, new_dir, art_dir_abs))
     {
         changed = true;
@@ -478,6 +564,14 @@ static void CollectArtChangesRecursive(Node* node, const wxue::string& old_prefi
     for (auto& child_ptr: node->get_ChildNodePtrs())
     {
         Node* child = child_ptr.get();
+
+        // Linked image paths are derived from the linked project, not from the outer art
+        // directory, and the resulting ModifyProperties group must not contain read-only
+        // properties.
+        if (child->is_ReadOnly())
+        {
+            continue;
+        }
 
         for (auto& prop: child->get_PropsVector())
         {
@@ -1485,6 +1579,14 @@ void ProjectHandler::FixDuplicateVarNames(bool allow_ui)
     std::unordered_map<Node*, int> form_before_counts;
     std::vector<Node*> all_forms;
     CollectForms(all_forms);
+
+    // Nothing inside a linked folder may be renamed -- those forms belong to the linked file.
+    std::erase_if(all_forms,
+                  [](Node* form)
+                  {
+                      return form->is_ReadOnly();
+                  });
+
     for (Node* form: all_forms)
     {
         const int count = CountLocalDuplicatesInForm(form);

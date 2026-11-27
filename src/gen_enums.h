@@ -503,6 +503,8 @@ namespace GenEnum
         prop_folder_namespace,
         prop_folder_cmake_file,
         prop_folder_cmake_varname,
+        prop_link_project,
+        prop_link_generate_code,
 
         prop_folder_xrc_directory,
         prop_folder_combined_xrc_file,

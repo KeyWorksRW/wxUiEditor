@@ -189,6 +189,10 @@ public:
 
         TestingInfo,
         DebugKeyhh,
+
+        // Link a folder (or the project) to an external .wxui file, or clear an existing link.
+        LinkProject,
+        UnlinkProject,
     };
 
 protected:

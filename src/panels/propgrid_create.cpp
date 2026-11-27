@@ -43,8 +43,6 @@
 #include "../customprops/txt_string_prop.h"     // dialog for editing single-line strings
 #include <frozen/set.h>
 
-extern std::map<GenLang, std::string> s_lang_category_prefix;
-
 // Languages wxUiEditor can actually generate code for. Only searched in a non-testing build -- an
 // INTERNAL_TESTING build offers every declared language -- hence [[maybe_unused]].
 [[maybe_unused]] static constexpr frozen::set<std::string_view, 9> supported_languages =
@@ -567,6 +565,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                     case prop_folder_cmake_file:
                     case prop_folder_combined_xrc_file:
                     case prop_initial_filename:
+                    case prop_link_project:
                     case prop_output_file:
                     case prop_python_combined_file:
                     case prop_python_file:
@@ -1039,7 +1038,7 @@ void PropGridPanel::ProcessFormLanguageCategories(Node* node, NodeDeclaration* d
             // were specified in the XML interface file, so create those here if we
             // haven't seen a language category yet.
 
-            for (auto& iter: s_lang_category_prefix)
+            for (auto& iter: get_LangCategoryPrefixes())
             {
                 if (info_base->get_DeclName().find(iter.second) != std::string_view::npos)
                 {

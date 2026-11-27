@@ -37,6 +37,11 @@ All notable changes to this project will be documented in this file.
   these classes were added in wxWidgets 3.3.1, neither the include nor the call is generated when the project
   targets an older wxWidgets version, and for 3.3.0 projects the generated code is wrapped in
   `#if wxCHECK_VERSION(3, 3, 1)`.
+- Folder nodes can now link to another `.wxui` file with the new `link_project` property. The linked
+  file's forms are loaded into the folder as read-only content and generated into the owning project's
+  output directories, while the linked file itself is never written to. `link_generate_code` excludes
+  the linked forms from generation, and `art_directory` points at the linked project's art files.
+  See [docs/users/link_project.md](docs/users/link_project.md) for details and limitations.
 
 ### Changed
 

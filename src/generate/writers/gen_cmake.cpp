@@ -120,7 +120,15 @@ int WriteCMakeFile(Node* parent_node, GenResults& results, int flag)
 
             if (child->is_Form())
             {
-                if (child->as_bool(prop_use_derived_class))
+                // A form adopted from a linked file is listed only when the link folder enables
+                // code generation. Linked forms never get a derived class file, so they are
+                // always listed with the non-derived forms.
+                if (!Project.IsLinkGenerationEnabled(child.get()))
+                {
+                    continue;
+                }
+
+                if (child->as_bool(prop_use_derived_class) && !child->is_ReadOnly())
                 {
                     derived_forms.push_back(child.get());
                 }

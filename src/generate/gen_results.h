@@ -59,12 +59,12 @@ public:
     // - src/hdr: at least one must be non-null
     // - panel_page: which panel is currently active (for line tracking)
     // Returns false if startNode is Project/Folder or multiple languages specified
-    [[nodiscard]] auto SetDisplayTarget(Node* startNode, GenLang language, WriteCode* src,
-                                        WriteCode* hdr = nullptr,
-                                        PANEL_PAGE panel_page = PANEL_PAGE::NOT_PANEL) -> bool;
+    [[nodiscard]] bool SetDisplayTarget(Node* startNode, GenLang language, WriteCode* src,
+                                        WriteCode* hdr_write = nullptr,
+                                        PANEL_PAGE panel_page = PANEL_PAGE::NOT_PANEL);
 
     // Main entry point - runs generation based on configured mode/nodes/languages
-    [[nodiscard]] auto Generate() -> bool;
+    [[nodiscard]] bool Generate();
 
     // Set the output path for combined file generation
     // This overrides project settings when specified
@@ -75,7 +75,7 @@ public:
     // Requires SetCombinedOutputPath() or project prop_combined_xrc_file to be set.
     // Currently supports GenLang::xrc. Future: Python, Ruby.
     // Returns true if file was written/needs updating, false otherwise.
-    [[nodiscard]] auto GenerateCombinedFile(GenLang language) -> bool;
+    [[nodiscard]] bool GenerateCombinedFile(GenLang language);
 
     void StartClock();
     void EndClock();
@@ -115,8 +115,7 @@ public:
 
     // Generate code files for all forms. If comparison_only is true, only checks if files
     // need updating without writing
-    [[nodiscard]] auto GenerateLanguageFiles(GenLang language, bool comparison_only = false)
-        -> bool;
+    [[nodiscard]] bool GenerateLanguageFiles(GenLang language, bool comparison_only = false);
 
 private:
     // Scope inference from node type
@@ -134,24 +133,24 @@ private:
 
     // Generate C++ code files for all forms in the project
     // If comparison_only is true, only checks if files need updating without writing
-    [[nodiscard]] auto GenerateCppFiles(bool comparison_only = false) -> bool;
+    [[nodiscard]] bool GenerateCppFiles(bool comparison_only = false);
 
     // Generate C++ code for a single form (both .h and .cpp files)
     // In compare mode, captures FileDiff for both files
     // Returns true if any file was updated/needs updating
-    [[nodiscard]] auto GenerateCppForm(Node* form, bool comparison_only = false,
-                                       wxProgressDialog* progress = nullptr) -> bool;
+    [[nodiscard]] bool GenerateCppForm(Node* form, bool comparison_only = false,
+                                       wxProgressDialog* progress = nullptr);
 
     // Returns true if any file was updated
-    [[nodiscard]] auto GenerateLanguageForm(std::string_view class_name, Node* form,
-                                            bool comparison_only = false) -> bool;
+    [[nodiscard]] bool GenerateLanguageForm(std::string_view class_name, Node* form,
+                                            bool comparison_only = false);
 
     // Generate code for display in a panel (no file operations)
-    [[nodiscard]] auto GenerateForDisplay() -> bool;
+    [[nodiscard]] bool GenerateForDisplay();
 
     // Generate all XRC forms into a single combined file
     // In compare mode, captures FileDiff. Returns true if file was updated/needs updating.
-    [[nodiscard]] auto GenerateCombinedXrcFile(bool comparison_only = false) -> bool;
+    [[nodiscard]] bool GenerateCombinedXrcFile(bool comparison_only = false);
 
     // Remove forms from the vector that don't have an output file configured for the current
     // language
@@ -206,7 +205,7 @@ private:
 //
 // ../generate/gen_codefiles.cpp
 [[deprecated("Use GenResults::Generate() with SetNodes(), SetLanguages(GenLang::cplusplus)")]]
-auto GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList = nullptr) -> bool;
+bool GenerateCppFiles(GenResults& results, std::vector<std::string>* pClassList = nullptr);
 
 // ../generate/gen_codefiles.cpp
 void GenInheritedClass(GenResults& results);

@@ -53,6 +53,12 @@ void GenInheritedClass(GenResults& results)
 
     for (const auto& form: forms)
     {
+        // A form inside a linked project never gets a derived class file.
+        if (form->is_ReadOnly())
+        {
+            continue;
+        }
+
         if (const auto& file = form->as_string(prop_derived_file); file.empty())
         {
             continue;

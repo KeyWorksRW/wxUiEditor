@@ -13,6 +13,7 @@
 #include <wx/imaglist.h>  // wxImageList base header
 #include <wx/infobar.h>   // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/panel.h>     // Base header for wxPanel
+#include <wx/settings.h>  // wxSystemSettings
 #include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/toolbar.h>   // wxToolBar interface declaration
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
@@ -367,6 +368,14 @@ void NavigationPanel::OnBeginDrag(wxTreeEvent& event)
     const Node* node = GetNode(m_drag_node);
     if (node)
     {
+        // A node below a link folder is read-only, and the link folder itself must never be
+        // dragged out of its linked subtree.
+        if (node->is_ReadOnly() || node->is_LinkedProject())
+        {
+            event.Veto();
+            return;
+        }
+
         const Node* parent = node->get_Parent();
         if (node->is_Gen(gen_Images) || node->is_Gen(gen_Data) || parent->is_Gen(gen_Images) ||
             parent->is_Gen(gen_Data))
@@ -385,6 +394,12 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
 
     const wxTreeItemId item_dst = event.GetItem();
 
+    Node* node_src = GetNode(item_src);
+    if (!node_src || node_src->is_ReadOnly())
+    {
+        return;
+    }
+
     // ensure that item_dst is not item_src or a child of item_src
     wxTreeItemId item = item_dst;
     while (item.IsOk())
@@ -402,16 +417,14 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         item = m_tree_ctrl->GetItemParent(item);
     }
 
-    Node* node_src = GetNode(item_src);
-    ASSERT(node_src);
-    if (!node_src)
+    Node* node_dst = GetNode(item_dst);
+    ASSERT(node_dst);
+    if (!node_dst)
     {
         return;
     }
 
-    Node* node_dst = GetNode(item_dst);
-    ASSERT(node_dst);
-    if (!node_dst)
+    if (node_dst->is_ReadOnly() || node_dst->is_LinkedProject())
     {
         return;
     }
@@ -467,6 +480,13 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
                          << " can't be dropped onto this target.");
             return;
         }
+    }
+
+    // The destination parent was resolved by walking up the tree, so it may be a link folder or
+    // a node below one even when the item that was dropped on is editable.
+    if (dst_parent->is_ReadOnly() || dst_parent->is_LinkedProject())
+    {
+        return;
     }
 
     if (dst_parent->is_Gen(gen_wxStdDialogButtonSizer))
@@ -561,6 +581,12 @@ void NavigationPanel::InsertNode(Node* node)
     m_node_tree_map[node] = new_item;
     m_tree_node_map[new_item] = node;
 
+    if (node->is_ReadOnly())
+    {
+        m_tree_ctrl->SetItemTextColour(new_item,
+                                       wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+    }
+
     if (node->get_ChildCount())
     {
         AddAllChildren(node);
@@ -593,6 +619,12 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
 
         m_node_tree_map[node] = new_item;
         m_tree_node_map[new_item] = node;
+
+        if (node->is_ReadOnly())
+        {
+            m_tree_ctrl->SetItemTextColour(new_item,
+                                           wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        }
 
         if (node->get_ChildCount())
         {
@@ -712,6 +744,17 @@ wxue::string NavigationPanel::GetDisplayName(Node* node) const
         else
         {
             display_name << " (" << node->get_DeclName() << ")";
+        }
+    }
+
+    if (node->is_LinkedProject())
+    {
+        display_name << " [linked]";
+        const wxue::string link_file = node->as_string(prop_link_project);
+        const wxue::string link_name = link_file.filename();
+        if (!link_name.empty())
+        {
+            display_name << " " << link_name;
         }
     }
 

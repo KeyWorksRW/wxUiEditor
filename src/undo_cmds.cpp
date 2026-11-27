@@ -4,10 +4,11 @@
 // Copyright: Copyright (c) 2021-2026 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
-// CR: [11-08-2026]
+// CR: [11-21-2026]
 
 #include <array>
 #include <tuple>
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "undo_cmds.h"
@@ -21,50 +22,47 @@
 #include "project_handler.h"      // ProjectHandler class
 #include "utils.h"                // Utility functions that work with properties
 
-namespace
+// When an image node is added to or removed from an Images List, the form used by code
+// generation for that image must be recalculated. See issue #1534.
+static void UpdateImageFormForNode(Node* node)
 {
-    // When an image node is added to or removed from an Images List, the form used by code
-    // generation for that image must be recalculated. See issue #1534.
-    void UpdateImageFormForNode(Node* node)
+    if (node->is_Gen(gen_embedded_image))
     {
-        if (node->is_Gen(gen_embedded_image))
-        {
-            ProjectImages.UpdateImageForm(node->as_string(prop_bitmap));
-        }
+        ProjectImages.UpdateImageForm(node->as_string(prop_bitmap));
+    }
+}
+
+static bool ContainsImagesForm(Node* node)
+{
+    if (node->is_Gen(gen_Images))
+    {
+        return true;
     }
 
-    bool ContainsImagesForm(Node* node)
+    // The Images form can live inside a project-level folder.
+    if (node->is_Gen(gen_folder) || node->is_Gen(gen_sub_folder))
     {
-        if (node->is_Gen(gen_Images))
+        for (const auto& child: node->get_ChildNodePtrs())
         {
-            return true;
-        }
-
-        // The Images form can live inside a project-level folder.
-        if (node->is_Gen(gen_folder) || node->is_Gen(gen_sub_folder))
-        {
-            for (const auto& child: node->get_ChildNodePtrs())
+            if (ContainsImagesForm(child.get()))
             {
-                if (ContainsImagesForm(child.get()))
-                {
-                    return true;
-                }
+                return true;
             }
         }
-
-        return false;
     }
 
-    // Removing or restoring an Images form invalidates ImageHandler's cached bundles and
-    // embedded images, so it has to be rebuilt from the current node tree. See issue #1291.
-    void ReinitializeImagesForNode(Node* node)
+    return false;
+}
+
+// Removing or restoring an Images form invalidates ImageHandler's cached bundles and
+// embedded images, so it has to be rebuilt from the current node tree. See issue #1291.
+static void ReinitializeImagesForNode(Node* node)
+{
+    if (ContainsImagesForm(node))
     {
-        if (ContainsImagesForm(node))
-        {
-            Project.ReinitializeImageHandler();
-        }
+        Project.ReinitializeImageHandler();
     }
-}  // namespace
+}
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -138,14 +136,19 @@ void InsertNodeAction::Revert()
     UpdateImageFormForNode(m_node.get());
     ReinitializeImagesForNode(m_node.get());
 
-    if (m_fire_created_event)
-    {
-        wxGetFrame().FireDeletedEvent(m_node.get());
-    }
+    // Revert is only reached after Change() inserted the node, so the deleted event has to fire
+    // even when the caller pre-fired the created event and m_fire_created_event is false.
+    wxGetFrame().FireDeletedEvent(m_node.get());
+
     if (isAllowedSelectEvent())
     {
         wxGetFrame().SelectNode(m_old_selected.get());
     }
+}
+
+bool InsertNodeAction::IsReadOnly() const
+{
+    return m_parent && m_parent->is_ReadOnly();
 }
 
 ///////////////////////////////// RemoveNodeAction ////////////////////////////////////
@@ -206,10 +209,17 @@ void RemoveNodeAction::Revert()
     UpdateImageFormForNode(m_node.get());
     ReinitializeImagesForNode(m_node.get());
 
+    wxGetFrame().FireCreatedEvent(m_node.get());
+
     if (isAllowedSelectEvent())
     {
         wxGetFrame().SelectNode(m_old_selected.get(), evt_flags::force_selection);
     }
+}
+
+bool RemoveNodeAction::IsReadOnly() const
+{
+    return (m_node && m_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
 }
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
@@ -233,6 +243,9 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) :
     m_undo_string << "change " << prop->get_DeclName();
 
     m_change_value << value;
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
 }
 
 void ModifyPropertyAction::Change()
@@ -261,6 +274,12 @@ void ModifyPropertyAction::Revert()
     }
 
     wxGetFrame().FirePropChangeEvent(m_property);
+}
+
+bool ModifyPropertyAction::IsReadOnly() const
+{
+    const Node* node = m_property ? m_property->getNode() : nullptr;
+    return node && node->is_ReadOnly();
 }
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
@@ -315,9 +334,11 @@ void ModifyProperties::Change()
 
 void ModifyProperties::Revert()
 {
-    for (auto& iter: m_properties)
+    // Undo in reverse insertion order: a later entry may have been computed from the value an
+    // earlier entry reverts, so the last one recorded must be restored first.
+    for (auto iter = m_properties.rbegin(); iter != m_properties.rend(); ++iter)
     {
-        iter.property->set_value(iter.revert_value);
+        iter->property->set_value(iter->revert_value);
     }
 
     if (m_images_invalidated)
@@ -334,13 +355,130 @@ void ModifyProperties::Revert()
 
 size_t ModifyProperties::GetMemorySize()
 {
-    size_t total = sizeof(*this) + m_properties.size() * sizeof(MULTI_PROP);
+    size_t total = sizeof(*this) + (m_properties.size() * sizeof(MULTI_PROP));
     for (auto& iter: m_properties)
     {
         // The +2 is to account for the trailing zero in each std::string value.
         total += (iter.change_value.size() + iter.revert_value.size() + 2);
     }
     return total;
+}
+
+bool ModifyProperties::IsReadOnly() const
+{
+    for (const auto& iter: m_properties)
+    {
+        const Node* node = iter.property ? iter.property->getNode() : nullptr;
+        if (node && node->is_ReadOnly())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+///////////////////////////////// LinkProjectAction ////////////////////////////////////
+
+LinkProjectAction::LinkProjectAction(Node* folder, std::string_view new_value) :
+    m_folder(folder ? folder->get_SharedPtr() : NodeSharedPtr())
+{
+    m_undo_string = "change link_project";
+
+    if (m_folder && m_folder->HasProp(prop_link_project))
+    {
+        m_revert_value = m_folder->as_string(prop_link_project);
+    }
+
+    // Store the value relative to the project path, the same way a file property is stored.
+    // A relative value is resolved against the project directory (never the current working
+    // directory) because that is how the loader resolves link_project.
+    wxue::string normalized(new_value);
+    if (!normalized.empty())
+    {
+        wxFileName file(normalized.wx());
+        if (!file.IsAbsolute())
+        {
+            file.MakeAbsolute(Project.get_ProjectPath().wx());
+        }
+        file.MakeRelativeTo(Project.get_ProjectPath().wx());
+        normalized = file.GetFullPath().ToStdString();
+        normalized.backslashestoforward();
+    }
+    m_change_value = normalized;
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
+}
+
+void LinkProjectAction::Change()
+{
+    ApplyLink(m_change_value, m_revert_value, false);
+}
+
+void LinkProjectAction::Revert()
+{
+    ApplyLink(m_revert_value, m_change_value, true);
+}
+
+void LinkProjectAction::ApplyLink(const wxue::string& value, const wxue::string& fallback,
+                                  bool replace_silently)
+{
+    if (!m_folder || !m_folder->HasProp(prop_link_project))
+    {
+        return;
+    }
+
+    NodeProperty* property = m_folder->get_PropPtr(prop_link_project);
+    if (property->as_string() == value)
+    {
+        // Nothing to apply -- this is the case when the user refused to replace the existing
+        // children and the property was already put back.
+        return;
+    }
+
+    property->set_value(value);
+
+    bool load_succeeded = true;
+    if (value.empty())
+    {
+        Project.UnloadLinkedProject(m_folder.get());
+    }
+    else if (replace_silently)
+    {
+        // Undo/redo: the user already asked for this state, so replace the children without a
+        // second confirmation.
+        load_succeeded = Project.ReloadLinkedProject(m_folder.get(), Project.is_UiAllowed());
+    }
+    else
+    {
+        // LoadLinkedProject (not ReloadLinkedProject) replaces the children itself, and only
+        // after the user confirms that the existing children may be discarded.
+        load_succeeded = Project.LoadLinkedProject(m_folder.get(), Project.is_UiAllowed());
+    }
+
+    if (!load_succeeded)
+    {
+        // The load was refused or failed. Put the property back so the property grid matches the
+        // tree, and silently re-read the previous link in case the failure happened after its
+        // children had already been unloaded.
+        property->set_value(fallback);
+        if (fallback.empty())
+        {
+            // There is no previous link to restore, so make sure no partially loaded children are
+            // left behind.
+            Project.UnloadLinkedProject(m_folder.get());
+        }
+        else if (!Project.ReloadLinkedProject(m_folder.get(), false))
+        {
+            MSG_ERROR("Failed to restore the previous linked project");
+        }
+    }
+
+    wxGetFrame().FirePropChangeEvent(property);
+    if (NavigationPanel* nav_panel = wxGetFrame().getNavigationPanel(); nav_panel != nullptr)
+    {
+        nav_panel->RefreshParent(m_folder.get());
+    }
 }
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
@@ -366,6 +504,12 @@ void ModifyEventAction::Revert()
 {
     m_event->set_value(m_revert_value);
     wxGetFrame().FireChangeEventHandler(m_event);
+}
+
+bool ModifyEventAction::IsReadOnly() const
+{
+    const Node* node = m_event ? m_event->getNode() : nullptr;
+    return node && node->is_ReadOnly();
 }
 
 ///////////////////////////////// ChangePositionAction ////////////////////////////////////
@@ -405,7 +549,15 @@ void ChangePositionAction::Revert()
     }
 }
 
-///////////////////////////////// ChangeSizerType ////////////////////////////////////
+bool ChangePositionAction::IsReadOnly() const
+{
+    return (m_node && m_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
+}
+
+// Defined with the ChangeNodeType helpers below; declared here because ChangeSizerType uses it.
+static void CopyCommonProperties(Node* old_node, Node* new_node);
+
+/////////////////////////////// ChangeSizerType ////////////////////////////////////
 
 ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_sizer) :
     m_new_gen_sizer(new_sizer)
@@ -419,6 +571,7 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_sizer) :
     ASSERT(m_node);
     if (m_node)
     {
+        CopyCommonProperties(m_old_node.get(), m_node.get());
         const std::string new_name =
             m_old_node->get_UniqueName(m_node->as_string(prop_var_name), prop_var_name);
         m_node->set_value(prop_var_name, new_name);
@@ -436,6 +589,10 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_sizer) :
             }
         }
 
+        // These children are deep copies, so undoing the conversion restores the originals. Any
+        // action captured before the conversion still holds NodeSharedPtrs to those originals,
+        // therefore the conversion must be undone first (LIFO undo order) and no captured pointer
+        // may be used while these copies are live.
         for (const auto& iter: m_old_node->get_ChildNodePtrs())
         {
             m_node->AdoptChild(NodeCreation.MakeCopy(iter.get()));
@@ -445,6 +602,11 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_sizer) :
 
 void ChangeSizerType::Change()
 {
+    if (!m_node)
+    {
+        return;
+    }
+
     const size_t pos = m_parent->get_ChildPosition(m_old_node.get());
     m_parent->RemoveChild(m_old_node);
     m_old_node->set_Parent(NodeSharedPtr());
@@ -462,6 +624,11 @@ void ChangeSizerType::Change()
 
 void ChangeSizerType::Revert()
 {
+    if (!m_node)
+    {
+        return;
+    }
+
     const size_t pos = m_parent->get_ChildPosition(m_node.get());
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());
@@ -474,6 +641,12 @@ void ChangeSizerType::Revert()
     {
         wxGetFrame().SelectNode(m_old_node.get());
     }
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_old_node.get());
+}
+
+bool ChangeSizerType::IsReadOnly() const
+{
+    return (m_old_node && m_old_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
 }
 
 ///////////////////////////////// ChangeNodeType ////////////////////////////////////
@@ -533,12 +706,15 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
         std::ignore = new_node->set_value(prop_var_name, old_node->as_string(prop_var_name));
     }
 
-    if (old_node->HasValue(prop_validator_variable))
+    if (old_node->HasValue(prop_validator_variable) && new_node->HasProp(prop_validator_variable))
     {
         std::ignore = new_node->set_value(prop_validator_variable,
                                           old_node->as_string(prop_validator_variable));
-        std::ignore = new_node->set_value(prop_validator_data_type,
-                                          old_node->as_string(prop_validator_data_type));
+        if (new_node->HasProp(prop_validator_data_type))
+        {
+            std::ignore = new_node->set_value(prop_validator_data_type,
+                                              old_node->as_string(prop_validator_data_type));
+        }
     }
 
     if (old_node->is_Gen(gen_wxComboBox) && new_node->is_Gen(gen_wxChoice))
@@ -550,6 +726,23 @@ static void CopyCommonProperties(Node* old_node, Node* new_node)
             if (!event->second.get_value().empty())
             {
                 NodeEvent* new_event = new_node->get_Event("wxEVT_CHOICE");
+                if (new_event)
+                {
+                    new_event->set_value(event->second.get_value());
+                }
+            }
+        }
+    }
+    else if (old_node->is_Gen(gen_wxChoice) && new_node->is_Gen(gen_wxComboBox))
+    {
+        // Inverse of the remap above, so a Choice converted to a ComboBox keeps its handler.
+        NodeMapEvents map_old_events = old_node->get_MapEvents();
+        if (const NodeMapEvents::iterator event = map_old_events.find("wxEVT_CHOICE");
+            event != map_old_events.end())
+        {
+            if (!event->second.get_value().empty())
+            {
+                NodeEvent* new_event = new_node->get_Event("wxEVT_COMBOBOX");
                 if (new_event)
                 {
                     new_event->set_value(event->second.get_value());
@@ -579,11 +772,16 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
             m_old_node->get_UniqueName(m_node->as_string(prop_var_name), prop_var_name);
         CopyCommonProperties(m_old_node.get(), m_node.get());
         m_node->set_value(prop_var_name, new_name);
-        if (m_new_gen_node == gen_wxCheckBox || m_new_gen_node == gen_wxRadioBox)
+        if ((m_new_gen_node == gen_wxCheckBox || m_new_gen_node == gen_wxRadioBox) &&
+            m_old_node->HasProp(prop_checked))
         {
             m_node->set_value(prop_checked, m_old_node->as_bool(prop_checked));
         }
 
+        // These children are deep copies, so undoing the conversion restores the originals. Any
+        // action captured before the conversion still holds NodeSharedPtrs to those originals,
+        // therefore the conversion must be undone first (LIFO undo order) and no captured pointer
+        // may be used while these copies are live.
         for (const auto& iter: m_old_node->get_ChildNodePtrs())
         {
             m_node->AdoptChild(NodeCreation.MakeCopy(iter.get()));
@@ -593,6 +791,11 @@ ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
 
 void ChangeNodeType::Change()
 {
+    if (!m_node)
+    {
+        return;
+    }
+
     const size_t pos = m_parent->get_ChildPosition(m_old_node.get());
     m_parent->RemoveChild(m_old_node);
     m_old_node->set_Parent(NodeSharedPtr());
@@ -610,6 +813,11 @@ void ChangeNodeType::Change()
 
 void ChangeNodeType::Revert()
 {
+    if (!m_node)
+    {
+        return;
+    }
+
     const size_t pos = m_parent->get_ChildPosition(m_node.get());
     m_parent->RemoveChild(m_node);
     m_node->set_Parent(NodeSharedPtr());
@@ -622,6 +830,12 @@ void ChangeNodeType::Revert()
     {
         wxGetFrame().SelectNode(m_old_node.get());
     }
+    wxGetFrame().getNavigationPanel()->ChangeExpansion(m_old_node.get());
+}
+
+bool ChangeNodeType::IsReadOnly() const
+{
+    return (m_old_node && m_old_node->is_ReadOnly()) || (m_parent && m_parent->is_ReadOnly());
 }
 
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
@@ -634,8 +848,14 @@ ChangeParentAction::ChangeParentAction(Node* node, Node* parent, int pos)
     m_pos = pos;
 
     m_revert_position = m_revert_parent->get_ChildPosition(m_node);
-    m_revert_row = m_node->as_int(prop_row);
-    m_revert_col = m_node->as_int(prop_column);
+    if (const NodeProperty* row_prop = m_node->get_PropPtr(prop_row); row_prop)
+    {
+        m_revert_row = row_prop->as_int();
+    }
+    if (const NodeProperty* col_prop = m_node->get_PropPtr(prop_column); col_prop)
+    {
+        m_revert_col = col_prop->as_int();
+    }
 
     SetUndoString(wxue::string() << "change " << m_node->get_DeclName() << " parent");
 
@@ -658,6 +878,15 @@ void ChangeParentAction::Change()
             m_revert_parent->AddChild(m_node);
             m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
             // Since we deleted it from Navigation Panel, need to add it back
+            wxGetFrame().FireParentChangedEvent(this);
+            if (isAllowedSelectEvent())
+            {
+                wxGetFrame().SelectNode(m_node);
+            }
+        }
+        else
+        {
+            m_node->set_Parent(m_change_parent);
             wxGetFrame().FireParentChangedEvent(this);
             if (isAllowedSelectEvent())
             {
@@ -689,6 +918,18 @@ void ChangeParentAction::Change()
                 wxGetFrame().SelectNode(m_node);
             }
         }
+        else
+        {
+            m_node->set_Parent(m_revert_parent);
+            m_revert_parent->AddChild(m_node);
+            m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
+            // Since we deleted it from Navigation Panel, need to add it back
+            wxGetFrame().FireParentChangedEvent(this);
+            if (isAllowedSelectEvent())
+            {
+                wxGetFrame().SelectNode(m_node);
+            }
+        }
     }
 }
 
@@ -713,6 +954,13 @@ void ChangeParentAction::Revert()
     {
         wxGetFrame().SelectNode(m_node);
     }
+}
+
+bool ChangeParentAction::IsReadOnly() const
+{
+    return (m_node && m_node->is_ReadOnly()) ||
+           (m_change_parent && m_change_parent->is_ReadOnly()) ||
+           (m_revert_parent && m_revert_parent->is_ReadOnly());
 }
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
@@ -778,6 +1026,11 @@ void AppendGridBagAction::Revert()
     {
         wxGetFrame().SelectNode(m_old_selected.get());
     }
+}
+
+bool AppendGridBagAction::IsReadOnly() const
+{
+    return m_parent && m_parent->is_ReadOnly();
 }
 
 ///////////////////////////////// GridBagAction ////////////////////////////////////
@@ -879,6 +1132,11 @@ void GridBagAction::Update()
     nav_panel->Thaw();
 }
 
+bool GridBagAction::IsReadOnly() const
+{
+    return m_cur_gbsizer && m_cur_gbsizer->is_ReadOnly();
+}
+
 ///////////////////////////////// SortProjectAction ////////////////////////////////////
 
 static bool CompareClassNames(NodeSharedPtr node_a, NodeSharedPtr node_b)
@@ -905,6 +1163,54 @@ static bool CompareClassNames(NodeSharedPtr node_a, NodeSharedPtr node_b)
         return (node_a->as_string(prop_label).compare(node_b->as_string(prop_label)) < 0);
     }
     return (node_a->as_string(prop_class_name).compare(node_b->as_string(prop_class_name)) < 0);
+}
+
+// True when the pre-sort copy describes the same node as the live one. The properties compared
+// here are the ones CompareClassNames sorts on, plus the variable name for tie-breaks.
+static bool IsSameSortEntry(const Node& old_node, const Node& live_node)
+{
+    return old_node.as_string(prop_class_name) == live_node.as_string(prop_class_name) &&
+           old_node.as_string(prop_label) == live_node.as_string(prop_label) &&
+           old_node.as_string(prop_var_name) == live_node.as_string(prop_var_name);
+}
+
+// Reorders the live children to match the order captured in old_folder (a copy taken before the
+// sort). The children themselves are never replaced, because earlier undo actions, the Navigation
+// Panel and the current selection still hold NodeSharedPtrs to the live nodes.
+static void RestoreChildOrder(Node* live_folder, Node* old_folder)
+{
+    std::vector<NodeSharedPtr>& live_children = live_folder->get_ChildNodePtrs();
+    const std::vector<NodeSharedPtr>& old_children = old_folder->get_ChildNodePtrs();
+    if (old_children.size() != live_children.size())
+    {
+        // The tree changed after the sort, so there is no order left to restore.
+        return;
+    }
+
+    std::vector<NodeSharedPtr> restored_children;
+    restored_children.reserve(live_children.size());
+    std::vector<bool> claimed(live_children.size(), false);
+    for (const auto& old_child: old_children)
+    {
+        for (size_t child_index = 0; child_index < live_children.size(); ++child_index)
+        {
+            if (!claimed[child_index] && IsSameSortEntry(*old_child, *live_children[child_index]))
+            {
+                claimed[child_index] = true;
+                restored_children.push_back(live_children[child_index]);
+                if (!live_children[child_index]->get_ChildNodePtrs().empty())
+                {
+                    RestoreChildOrder(live_children[child_index].get(), old_child.get());
+                }
+                break;
+            }
+        }
+    }
+
+    if (restored_children.size() == live_children.size())
+    {
+        live_children = std::move(restored_children);
+    }
 }
 
 SortProjectAction::SortProjectAction()
@@ -955,11 +1261,9 @@ void SortProjectAction::SortFolder(Node* folder)
 
 void SortProjectAction::Revert()
 {
-    Project.get_ProjectNode()->removeAllChildren();
-    for (const auto& child: m_old_project->get_ChildNodePtrs())
-    {
-        Project.get_ProjectNode()->AdoptChild(NodeCreation.MakeCopy(child.get()));
-    }
+    // Restore the order in place: replacing the children with copies would detach the
+    // NodeSharedPtrs still held by earlier undo actions, the Navigation Panel and the selection.
+    RestoreChildOrder(Project.get_ProjectNode(), m_old_project.get());
 
     wxGetFrame().FireProjectUpdatedEvent();
     if (isAllowedSelectEvent())

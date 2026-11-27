@@ -294,6 +294,12 @@ bool ttFileProperty::DisplayEditorDialog(wxPropertyGrid* pg,  // NOLINT: matches
             wildcard = "All Files|*.*";
             break;
 
+        case prop_link_project:
+            root_path = Project.get_ProjectPath();
+            title = "Linked project file";
+            wildcard = "wxUiEditor Files|*.wxui|All files|*";
+            break;
+
         default:
             FAIL_MSG(wxue::string()
                      << "Unknown property type: " << m_prop->get_DeclName().substr());

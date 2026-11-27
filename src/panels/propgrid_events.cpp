@@ -37,6 +37,13 @@ void PropGridPanel::OnEventGridChanged(wxPropertyGridEvent& event)
     if (auto iter = m_event_map.find(event.GetProperty()); iter != m_event_map.end())
     {
         NodeEvent* event_ptr = iter->second;
+        if (const Node* node = event_ptr->getNode(); node && node->is_ReadOnly())
+        {
+            event.Veto();
+            wxGetFrame().ShowInfoBarMsg("This node belongs to a read-only linked project.");
+            return;
+        }
+
         const wxString handler = event.GetPropertyValue();
         wxue::string value = ConvertEscapeSlashes(handler.utf8_string());
         value.trim(wxue::TRIM::both);
@@ -698,6 +705,13 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 
     NodeProperty* prop = iter->second;
     Node* node = prop->getNode();
+
+    if (node->is_ReadOnly())
+    {
+        event.Veto();
+        wxGetFrame().ShowInfoBarMsg("This node belongs to a read-only linked project.");
+        return;
+    }
 
     if (auto* generator = node->get_Generator(); generator)
     {

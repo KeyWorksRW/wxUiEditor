@@ -7,12 +7,14 @@
 // CR: [11-07-2026]
 
 #include <array>
+#include <memory>  // std::shared_ptr
 #include <optional>
 #include <string_view>
 #include <tuple>  // std::ignore
 #include <vector>
 
 #include <wx/artprov.h>   // wxArtProvider class
+#include <wx/filedlg.h>   // wxFileDialog
 #include <wx/msgdlg.h>    // wxMessageDialog
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
@@ -23,13 +25,14 @@
 #include "clipboard.h"       // Handles reading and writing OS clipboard data
 #include "gen_common.h"      // Common component functions
 #include "gen_enums.h"
-#include "image_handler.h"  // ImageHandler -- ProjectImages
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "nav_panel.h"      // NavigationPanel -- Navigation Panel
-#include "node.h"           // Node class
-#include "node_creator.h"   // NodeCreator class
-#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"          // Utility functions that work with properties
+#include "image_handler.h"    // ImageHandler -- ProjectImages
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "nav_panel.h"        // NavigationPanel -- Navigation Panel
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
+#include "project_handler.h"  // ProjectHandler class
+#include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"      // Utility functions that work with properties
 
 struct StdButtonInfo
 {
@@ -289,6 +292,71 @@ static void AddButtonToExistingStdSizer(Node* sizer, Node* button, const StdButt
     wxGetFrame().PushUndoAction(group);
 }
 
+// Prompts for a .wxui file to link. Returns an empty string when the user cancels.
+static wxString AskForLinkedProjectFile()
+{
+    wxFileDialog file_dlg(wxGetFrame().getWindow(), "Linked project file",
+                          Project.get_ProjectPath().wx(), wxEmptyString,
+                          "wxUiEditor Files|*.wxui|All files|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (file_dlg.ShowModal() != wxID_OK)
+    {
+        return {};
+    }
+    return file_dlg.GetPath();
+}
+
+// Links node to the external file the user picks. The project node cannot hold link_project, so
+// linking the project creates a folder and links it in a single undoable group.
+static void LinkProjectToFile(Node* node)
+{
+    if (!node)
+    {
+        return;
+    }
+
+    const wxString linked_file = AskForLinkedProjectFile();
+    if (linked_file.empty())
+    {
+        return;
+    }
+
+    if (node->is_Gen(gen_Project))
+    {
+        auto [new_folder, validity] = NodeCreation.CreateNode(gen_folder, node);
+        if (!new_folder || validity != Node::Validity::valid_node)
+        {
+            return;
+        }
+        new_folder->set_value(prop_code_preference, Project.as_string(prop_code_preference));
+
+        const std::shared_ptr<GroupUndoActions> group =
+            std::make_shared<GroupUndoActions>("Link project", new_folder.get());
+        const std::shared_ptr<InsertNodeAction> insert_action =
+            std::make_shared<InsertNodeAction>(new_folder.get(), node, "Insert new folder");
+        // The folder is new, so nothing has fired a created event for it yet.
+        insert_action->SetFireCreatedEvent(true);
+        group->Add(insert_action);
+        group->Add(
+            std::make_shared<LinkProjectAction>(new_folder.get(), linked_file.utf8_string()));
+        wxGetFrame().PushUndoAction(group);
+        return;
+    }
+
+    wxGetFrame().PushUndoAction(
+        std::make_shared<LinkProjectAction>(node, linked_file.utf8_string()));
+}
+
+// Clears the folder's link_project value and removes the forms adopted from the linked file.
+static void UnlinkProjectFromFile(Node* node)
+{
+    if (!node || !node->is_LinkedProject())
+    {
+        return;
+    }
+
+    wxGetFrame().PushUndoAction(std::make_shared<LinkProjectAction>(node, std::string_view {}));
+}
+
 NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
 {
     if (!node)
@@ -364,6 +432,14 @@ bool NavPopupMenu::InvokeCommand(int id)
 
 void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 {
+    // Nothing may mutate a node inside a linked (read-only) project. Copying the node and expanding
+    // the tree are the only non-mutating commands; every other command is ignored.
+    if (m_node && m_node->is_ReadOnly() && event.GetId() != wxID_COPY &&
+        event.GetId() != std::to_underlying(Menu::ExpandAll))
+    {
+        return;
+    }
+
     switch (event.GetId())
     {
         case std::to_underlying(Menu::NewSiblingBoxSizer):
@@ -445,6 +521,14 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
         case std::to_underlying(Menu::ExpandAll):
             wxGetFrame().getNavigationPanel()->ExpandCollapse(m_node);
             wxGetFrame().SelectNode(m_node);
+            break;
+
+        case std::to_underlying(Menu::LinkProject):
+            LinkProjectToFile(m_node);
+            break;
+
+        case std::to_underlying(Menu::UnlinkProject):
+            UnlinkProjectFromFile(m_node);
             break;
 
         case wxID_CUT:
@@ -676,6 +760,14 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
 
 void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
 {
+    // Disable every command that would mutate a node inside a linked (read-only) project.
+    if (m_node && m_node->is_ReadOnly() && event.GetId() != wxID_COPY &&
+        event.GetId() != std::to_underlying(Menu::ExpandAll))
+    {
+        event.Enable(false);
+        return;
+    }
+
     switch (event.GetId())
     {
         case wxID_CUT:
@@ -900,6 +992,22 @@ void NavPopupMenu::MenuAddCommands()
         }
     }
 #endif
+
+    // Linking is offered on the project (it creates the folder that holds the link) and on a
+    // top-level folder. An existing link folder can be relinked or unlinked.
+    const bool offers_link = m_node->is_Gen(gen_Project) || m_node->is_Gen(gen_folder);
+    if (offers_link)
+    {
+        Append(std::to_underlying(Menu::LinkProject), "Link project...");
+    }
+    if (m_node->is_LinkedProject())
+    {
+        Append(std::to_underlying(Menu::UnlinkProject), "Unlink project");
+    }
+    if (offers_link)
+    {
+        AppendSeparator();
+    }
 
     if (m_node->is_Form() || m_node->is_Gen(gen_Images) || m_node->is_Gen(gen_embedded_image))
     {

@@ -95,7 +95,8 @@ void JuliaCodeGenerator::GenerateClass(GenLang language, PANEL_PAGE panel_type,
 
     std::string declarations;
     std::string handlers;
-    std::ignore = EmitFfiFormBody(code, m_source, m_form_node, info, "frame", declarations, handlers);
+    std::ignore =
+        EmitFfiFormBody(code, m_source, m_form_node, info, "frame", declarations, handlers);
 
     m_source->writeLine();
     m_source->writeLine("return frame");

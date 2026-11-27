@@ -457,7 +457,7 @@ namespace ffi_emit_detail
 
         // The embedded image's base64 constant is emitted by WriteImageConstruction under the
         // image's array_name + "_b64"; reuse that name instead of re-deriving it from the
-        // filename, which would not match for a name that needs sanitising.
+        // filename, which would not match for a name that needs sanitizing.
         std::string b64_name;
         if (const wxue::StringVector parts(bitmap_value, BMP_PROP_SEPARATOR, wxue::TRIM::both);
             parts.size() > IndexImage)
@@ -2054,7 +2054,7 @@ bool EmitFfiFormBody(Code& code, WriteCode* writer, Node* form, const FfiFormInf
                             form_receiver, args, std::string(form->get_DeclName()), form_receiver);
     }
 
-    // Form-level minimum size and centring, both descriptor roles.
+    // Form-level minimum size and centering, both descriptor roles.
     const wxSize min_size = form->as_wxSize(prop_minimum_size);
     FfiUiCall min_size_call;
     if (min_size != wxDefaultSize &&

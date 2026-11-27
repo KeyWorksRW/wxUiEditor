@@ -1111,7 +1111,11 @@ bool StyledTextGenerator::SettingsCode(Code& code)
     // would insert spaces if it were editable.
     if (code.IntValue(prop_tab_width) != 8)
     {
-        code.Eol(eol_if_needed).NodeName().Function("SetTabWidth(").as_string(prop_tab_width).EndFunction();
+        code.Eol(eol_if_needed)
+            .NodeName()
+            .Function("SetTabWidth(")
+            .as_string(prop_tab_width)
+            .EndFunction();
     }
 
     // Default is true, so only set if false

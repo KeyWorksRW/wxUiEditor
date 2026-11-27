@@ -202,7 +202,7 @@ static bool IsFormType(GenType type)
 // below the form (ending with `target`), or an empty vector when no chain exists within
 // MAX_CHAIN_DEPTH. Ties are broken by declaration name so the result is deterministic.
 static std::vector<const NodeDeclaration*> FindChain(const NodeDeclaration* form,
-                                                      const NodeDeclaration* target)
+                                                     const NodeDeclaration* target)
 {
     struct QueueItem
     {
@@ -232,7 +232,9 @@ static std::vector<const NodeDeclaration*> FindChain(const NodeDeclaration* form
 
         std::ranges::sort(candidates,
                           [](const NodeDeclaration* left, const NodeDeclaration* right)
-                          { return left->get_DeclName() < right->get_DeclName(); });
+                          {
+                              return left->get_DeclName() < right->get_DeclName();
+                          });
 
         for (const NodeDeclaration* candidate: candidates)
         {
@@ -298,8 +300,8 @@ static std::string MakeVarName(std::string_view declaration_name)
 
 // Property attributes, in a fixed order. A property is written only when the declaration has it,
 // so an unknown or unsupported property can never appear in the kit.
-static std::vector<std::pair<std::string, std::string>> GetPropertyAttributes(
-    const NodeDeclaration* declaration, bool is_form)
+static std::vector<std::pair<std::string, std::string>>
+    GetPropertyAttributes(const NodeDeclaration* declaration, bool is_form)
 {
     std::vector<std::pair<std::string, std::string>> attributes;
 
@@ -307,8 +309,8 @@ static std::vector<std::pair<std::string, std::string>> GetPropertyAttributes(
     {
         if (HasProperty(declaration, "title"))
         {
-            attributes.emplace_back(
-                "title", std::string("Conformance ") + std::string(declaration->get_DeclName()));
+            attributes.emplace_back("title", std::string("Conformance ") +
+                                                 std::string(declaration->get_DeclName()));
         }
         if (HasProperty(declaration, "minimum_size"))
         {
@@ -344,8 +346,8 @@ static std::vector<std::pair<std::string, std::string>> GetPropertyAttributes(
 
 // Per-language output files, so a generation run writes inside the kit and never into one of the
 // six repositories. `.tts/conformance.sh` creates `gen/<language>/` before generating.
-static std::vector<std::pair<std::string, std::string>> GetLanguageFileAttributes(
-    const KitEntry& entry)
+static std::vector<std::pair<std::string, std::string>>
+    GetLanguageFileAttributes(const KitEntry& entry)
 {
     static constexpr std::array<std::pair<std::string_view, std::string_view>, 6> LANGUAGES = {
         std::pair { "fortran_file", ".f90" }, std::pair { "go_file", ".go" },
@@ -365,9 +367,10 @@ static std::vector<std::pair<std::string, std::string>> GetLanguageFileAttribute
     return attributes;
 }
 
-static void AppendNodeOpen(
-    std::string& xml_text, const NodeDeclaration* declaration, bool is_form, size_t indent,
-    const std::vector<std::pair<std::string, std::string>>& extra_attributes = {})
+static void
+    AppendNodeOpen(std::string& xml_text, const NodeDeclaration* declaration, bool is_form,
+                   size_t indent,
+                   const std::vector<std::pair<std::string, std::string>>& extra_attributes = {})
 {
     const std::string padding(indent, ' ');
     xml_text += padding + "<node\n";
@@ -526,9 +529,9 @@ static bool WriteManifest(const wxString& path, const std::vector<KitEntry>& ent
 
 // Places one class in the kit: the class itself when the Project node allows it as a project child,
 // otherwise the shortest chain from one of the project children.
-static std::optional<KitEntry> BuildEntry(const NodeDeclaration* project,
-                                          const NodeDeclaration* declaration,
-                                          const std::vector<const NodeDeclaration*>& project_children)
+static std::optional<KitEntry>
+    BuildEntry(const NodeDeclaration* project, const NodeDeclaration* declaration,
+               const std::vector<const NodeDeclaration*>& project_children)
 {
     KitEntry entry;
     entry.class_name = std::string(declaration->get_DeclName());
@@ -543,7 +546,8 @@ static std::optional<KitEntry> BuildEntry(const NodeDeclaration* project,
         for (const std::string_view candidate_name: FORM_CANDIDATES)
         {
             const std::optional<const NodeDeclaration*> form = FindDeclaration(candidate_name);
-            if (!form.has_value() || project->get_AllowableChildren(form.value()->get_GenType()) == 0)
+            if (!form.has_value() ||
+                project->get_AllowableChildren(form.value()->get_GenType()) == 0)
             {
                 continue;
             }
@@ -630,8 +634,11 @@ bool WriteConformanceKit(const std::string& directory)
         }
         classes.emplace_back(declaration);
     }
-    std::ranges::sort(classes, [](const NodeDeclaration* left, const NodeDeclaration* right)
-                      { return left->get_DeclName() < right->get_DeclName(); });
+    std::ranges::sort(classes,
+                      [](const NodeDeclaration* left, const NodeDeclaration* right)
+                      {
+                          return left->get_DeclName() < right->get_DeclName();
+                      });
 
     // Every project child other than the class being placed, in sorted order.
     std::vector<const NodeDeclaration*> project_children;
@@ -648,8 +655,8 @@ bool WriteConformanceKit(const std::string& directory)
 
     for (const NodeDeclaration* declaration: classes)
     {
-        const std::optional<KitEntry> entry = BuildEntry(project.value(), declaration,
-                                                         project_children);
+        const std::optional<KitEntry> entry =
+            BuildEntry(project.value(), declaration, project_children);
         if (!entry.has_value())
         {
             omitted.push_back(
@@ -700,8 +707,8 @@ bool WriteConformanceKit(const std::string& directory)
         return false;
     }
 
-    wxLogStderr(nullptr).LogText(
-        wxString::Format("--gen_conformance: %d form(s), %d omitted",
-                         static_cast<int>(entries.size()), static_cast<int>(omitted.size())));
+    wxLogStderr(nullptr).LogText(wxString::Format("--gen_conformance: %d form(s), %d omitted",
+                                                  static_cast<int>(entries.size()),
+                                                  static_cast<int>(omitted.size())));
     return true;
 }

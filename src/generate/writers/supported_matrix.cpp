@@ -65,8 +65,7 @@
 // Phase 7 column order: the C++ baseline, the two native emitters, the six kwx FFI languages and
 // the XRC writer.
 static constexpr std::array<std::string_view, 10> MATRIX_COLUMNS = {
-    "c++",   "python",   "ruby",     "fortran",    "go",
-    "julia", "lua",      "rust",     "typescript", "xrc"
+    "c++", "python", "ruby", "fortran", "go", "julia", "lua", "rust", "typescript", "xrc"
 };
 
 // The six FFI languages carry a schema-1 descriptor. C++ is the driven baseline, Python and Ruby
@@ -86,10 +85,10 @@ static constexpr size_t COL_XRC = 9;
 // members: they remain the derivation vocabulary in coverage.json and are mapped by
 // ToMatrixState(). A symbol grep is not a drive PASS, and a wrapped class with no callable cannot
 // be emitted, so those two resolve to `unknown` and `absent` respectively.
-static constexpr std::array<std::string_view, 8> STATES = {
-    "verified-emitter", "verified-port", "binding-missing", "xrc-missing",
-    "handler-missing",  "absent",       "not-generated",   "unknown"
-};
+static constexpr std::array<std::string_view, 8> STATES = { "verified-emitter", "verified-port",
+                                                            "binding-missing",  "xrc-missing",
+                                                            "handler-missing",  "absent",
+                                                            "not-generated",    "unknown" };
 
 // One (class, role) row read from coverage.json: matrix column -> matrix state.
 struct CoverageRow

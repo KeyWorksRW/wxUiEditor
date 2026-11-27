@@ -57,10 +57,10 @@
 
 #include "wxui/ui_images.h"  // This is generated from the Images List
 
-#include "internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
-#include "internal/msg_logging.h"   // MsgLogging -- Message logging class
-#include "internal/node_info.h"     // NodeInfo
-#include "internal/undo_info.h"     // UndoInfo
+#include "internal/import_panel.h"       // ImportPanel -- Panel to display original imported file
+#include "internal/msg_logging.h"        // MsgLogging -- Message logging class
+#include "internal/node_info.h"          // NodeInfo
+#include "internal/undo_info.h"          // UndoInfo
 #include "internal/verify_sample_dlg.h"  // VerifySampleDlg
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)

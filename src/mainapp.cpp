@@ -31,7 +31,7 @@
 #include "mainapp.h"
 
 #include "cli_ui_guard.h"              // cli_ui::InstallModalGuard
-#include "conformance_kit.h"            // WriteConformanceKit -- generated conformance kit
+#include "conformance_kit.h"           // WriteConformanceKit -- generated conformance kit
 #include "ffi_ui.h"                    // FfiUiDescriptor load and role resolution
 #include "gen_common.h"                // Common component functions
 #include "gen_results.h"               // Code generation file writing functions
@@ -284,17 +284,18 @@ static std::vector<std::string> GetRolesUsed(Node* node)
     return roles;
 }
 
-// Returns true when the node's generator constructs a wx class of its own inside the form, so the FFI
-// emitters must resolve a descriptor class and a role set for it.
+// Returns true when the node's generator constructs a wx class of its own inside the form, so the
+// FFI emitters must resolve a descriptor class and a role set for it.
 //
 // Excluded are pseudo nodes that only describe a parent's properties (sizeritem, spacer, toolbar
-// tools, ribbon buttons, data view columns, property grid items, timers) and the project bookkeeping
-// nodes (folders, images, data).
+// tools, ribbon buttons, data view columns, property grid items, timers) and the project
+// bookkeeping nodes (folders, images, data).
 //
 // Node::is_Widget() is true only for `type_widget`, so a panel, notebook, data view, property grid,
-// splitter, toolbar or bar is not a widget. Testing `is_Widget() || is_Sizer()` alone silently dropped
-// every such class from the IR: measured 2026-11-14, a form declaring wxPanel emitted only the panel's
-// wxTextCtrl child, and `quick.wxui`'s wxMenuBar, wxMenu, wxMenuItem and wxStatusBar were absent.
+// splitter, toolbar or bar is not a widget. Testing `is_Widget() || is_Sizer()` alone silently
+// dropped every such class from the IR: measured 2026-11-14, a form declaring wxPanel emitted only
+// the panel's wxTextCtrl child, and `quick.wxui`'s wxMenuBar, wxMenu, wxMenuItem and wxStatusBar
+// were absent.
 static bool IsInstantiatedNode(const Node* node)
 {
     if (node->is_Widget() || node->is_Sizer() || node->is_MenuBar() || node->is_Menu() ||

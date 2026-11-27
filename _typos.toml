@@ -4,7 +4,9 @@
 [files]
 # Exclude third-party code and generated files
 extend-exclude = [
-    "scripts",
+    # Globbed form (not "scripts/") so it also matches file paths that are
+    # passed to typos explicitly, e.g. by scripts/pre_pr_check.sh --changed.
+    "**/scripts/**",
     "src/pugixml/",
     "3rdparty/",
     "frozen/",
